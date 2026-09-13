@@ -2,9 +2,9 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, ProcessActionDtoV1,
-    ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1,
-    ProcessScopeV1,
+    CanonicalCommandDtoV1, CanonicalEventDtoV1, LogicalTimeV1, ManualReviewDtoV1,
+    ProcessActionDtoV1, ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputEnvelopeV1,
+    ProcessOutcomeDtoV1, ProcessScopeV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -18,6 +18,7 @@ fuzz_target!(|data: &[u8]| {
     let _ = serde_json::from_slice::<ProcessOutcomeDtoV1>(data);
     let _ = serde_json::from_slice::<ProcessActionDtoV1>(data);
     let _ = serde_json::from_slice::<ProcessScopeV1>(data);
+    let _ = serde_json::from_slice::<LogicalTimeV1>(data);
     if let Ok(command) = serde_json::from_slice::<CanonicalCommandDtoV1>(data) {
         let _ = command.validate();
     }

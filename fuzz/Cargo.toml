@@ -73,3 +73,9 @@ name = "fuzz_process_input_parse"
 path = "fuzz_targets/fuzz_process_input_parse.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_process_control_ports"
+path = "fuzz_targets/fuzz_process_control_ports.rs"
+test = false
+doc = false

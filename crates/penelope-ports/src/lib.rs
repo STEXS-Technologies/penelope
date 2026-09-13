@@ -9,8 +9,9 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, PrincipalId,
-    ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1, ReviewId,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, LogicalTimeV1, ManualReviewDtoV1,
+    PrincipalId, ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessScopeV1,
+    ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -93,6 +94,48 @@ pub enum ManualReviewResolutionV1 {
     Cancel,
     /// Keep the process escalated for a higher-authority decision.
     Escalate,
+}
+
+/// A process operation requiring a caller-specific authorization decision.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ProcessAuthorizationOperationV1 {
+    /// Start a new process instance.
+    Start,
+    /// Request process cancellation.
+    Cancel,
+    /// Request an explicit retry.
+    Retry,
+    /// Submit a manual-review decision.
+    DecideReview,
+}
+
+/// Typed authorization request for one process operation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessAuthorizationRequestV1 {
+    /// Immutable process and definition scope targeted by the operation.
+    pub scope: ProcessScopeV1,
+    /// Authenticated caller identity.
+    pub principal_id: PrincipalId,
+    /// Typed requested operation.
+    pub operation: ProcessAuthorizationOperationV1,
+}
+
+/// Fail-closed authorization result returned by an outer policy adapter.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ProcessAuthorizationDecisionV1 {
+    /// The caller is authorized for the requested operation.
+    Authorized,
+    /// The caller is not authorized; no process mutation may occur.
+    Denied,
+}
+
+/// Due-time record for one durable timer action.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TimerScheduleV1 {
+    /// Independently idempotent timer action to deliver through the inbox.
+    pub action: ProcessActionDtoV1,
+    /// Deterministic due time supplied by the application layer.
+    pub due_at: LogicalTimeV1,
 }
 
 /// Idempotent claim request for a manual-review case.
@@ -265,9 +308,33 @@ pub trait ActionDispatcher: Send + Sync {
 #[async_trait]
 pub trait TimerScheduler: Send + Sync {
     /// Schedules a timer action whose firing returns through the inbox.
-    async fn schedule(&self, action: &ProcessActionDtoV1) -> Result<(), PortError>;
+    async fn schedule(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
     /// Cancels a previously scheduled action idempotently.
     async fn cancel(&self, action_id: &ActionId) -> Result<(), PortError>;
+}
+
+/// Injected wall-clock boundary for deterministic application decisions.
+#[async_trait]
+pub trait Clock: Send + Sync {
+    /// Returns the current time as a typed value; pure engine code never calls it.
+    async fn now(&self) -> Result<LogicalTimeV1, PortError>;
+}
+
+/// Injected source of fresh independently idempotent action identities.
+#[async_trait]
+pub trait ActionIdSource: Send + Sync {
+    /// Allocates an action identity for the supplied pinned process scope.
+    async fn next_action_id(&self, scope: &ProcessScopeV1) -> Result<ActionId, PortError>;
+}
+
+/// Authorization boundary for mutable process operations.
+#[async_trait]
+pub trait ProcessAuthorizer: Send + Sync {
+    /// Makes a fail-closed authorization decision for one typed request.
+    async fn authorize(
+        &self,
+        request: &ProcessAuthorizationRequestV1,
+    ) -> Result<ProcessAuthorizationDecisionV1, PortError>;
 }
 
 /// Canonical-state boundary implemented by a StateChronicle adapter.

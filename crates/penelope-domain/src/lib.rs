@@ -244,6 +244,13 @@ identifier!(
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct ContentDigest(pub [u8; 32]);
 
+/// A deterministic millisecond timestamp supplied by an injected clock.
+///
+/// The pure engine must never read wall clock time directly; it receives this
+/// typed value through an application command or port response.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct LogicalTimeV1(pub u64);
+
 /// The supported schema for a public DTO envelope.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SchemaV1 {

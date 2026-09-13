@@ -258,6 +258,7 @@ cargo fuzz run fuzz_atomic_process_commit -- -runs=100
 cargo fuzz run fuzz_canonical_reconciliation -- -runs=100
 cargo fuzz run fuzz_manual_review_lifecycle -- -runs=100
 cargo fuzz run fuzz_process_input_parse -- -runs=100
+cargo fuzz run fuzz_process_control_ports -- -runs=100
 cargo bench -p penelope-executor --bench linear_saga --locked
 ```
 

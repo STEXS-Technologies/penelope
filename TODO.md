@@ -189,8 +189,9 @@ this item.
 Current partial evidence: `RetryPolicyV1` bounds total per-step attempts with
 `NonZeroU32`. The reference engine escalates an exhausted retryable result and
 never emits a new action in that case. It does not yet include due time,
-backoff, jitter, persisted timer records, or timer race handling, so this item
-remains incomplete.
+backoff, jitter, persisted timer records, or timer race handling. The ports
+now expose typed logical time and a due-time timer schedule boundary, but the
+pure engine does not use them yet, so this item remains incomplete.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID
@@ -262,6 +263,14 @@ item remains incomplete.
 - How: `Send + Sync` request/result types include tenant, correlation and
   idempotency context; typed errors document retry/cancellation behavior.
 - Evidence: fake adapters and a shared contract-test suite.
+
+Current partial evidence: backend-neutral `Clock`, `ActionIdSource`,
+`ProcessAuthorizer`, and due-time `TimerScheduler` ports now use typed logical
+time, process scope, principal, action, and authorization operation values.
+Their public DTO parser boundary is fuzzed. Definition/process-store, inbox,
+outbox, executor and review interfaces exist in smaller forms, but there are
+no fake adapters, shared contract suite, authorization policy, or cancellation
+semantics evidence yet, so this item remains incomplete.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 

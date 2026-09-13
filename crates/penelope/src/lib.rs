@@ -15,8 +15,8 @@ pub use penelope_domain as domain;
 /// Frequently used typed protocol values and versioned DTOs.
 pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, ProcessActionDtoV1, ProcessActionKindV1, ProcessId,
-    ProcessInputEnvelopeV1, ProcessScopeV1, StepId, TenantId,
+    DefinitionVersion, DomainError, LogicalTimeV1, ProcessActionDtoV1, ProcessActionKindV1,
+    ProcessId, ProcessInputEnvelopeV1, ProcessScopeV1, StepId, TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
@@ -33,5 +33,10 @@ pub use penelope_intent as intent;
 pub use penelope_intent::{IntentError, parse_process_input};
 /// Backend-neutral ports implemented by the composition root.
 pub use penelope_ports as ports;
+/// Frequently used typed process-control port contracts.
+pub use penelope_ports::{
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
+    TimerScheduleV1,
+};
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;
