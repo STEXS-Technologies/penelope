@@ -222,6 +222,13 @@ The compiling pure happy-path reference is
 cargo run -p penelope --example trade_v1 --locked
 ```
 
+The known-failure/compensation reference is
+[`trade_compensation_v1.rs`](crates/penelope/examples/trade_compensation_v1.rs):
+
+```bash
+cargo run -p penelope --example trade_compensation_v1 --locked
+```
+
 It demonstrates the public facade only. It is not a durable integration: a
 production adapter must record outcomes and verify StateChronicle evidence as
 described above before calling the transition API.
