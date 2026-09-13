@@ -1,0 +1,15 @@
+[package]
+name = "penelope-ports"
+description = "Penelope adapter surface: backend-agnostic port traits for process stores, step execution, timers, and escalation — no implementations."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+penelope = { workspace = true }
+async-trait = { workspace = true }
+trait-variant = { workspace = true }
+thiserror = { workspace = true }
+
+[lints]
+workspace = true
