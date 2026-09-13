@@ -174,6 +174,10 @@ Errors are typed `thiserror` enums. Error variants communicate a stable failure
 class; they do not expose handwritten `Display`/`Error` implementations or use
 raw text as a programmatic error discriminator.
 
+The StateChronicle command expectation and verified-event boundary values are
+also serde-compatible `V1` protocol types, with their parser included in the
+correlation fuzz target.
+
 The reference engine gives every step an explicit typed maximum attempt count.
 An exhausted retryable failure escalates without producing another action;
 unknown outcomes escalate immediately. Deadline/backoff/timer policy still

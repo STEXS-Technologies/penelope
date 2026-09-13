@@ -13,10 +13,11 @@
 #![allow(clippy::must_use_candidate)]
 
 use penelope_domain::{ActionId, CanonicalEventDtoV1, OperationId, ResourceId, TenantId};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Immutable correlation requirements for a submitted canonical command.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CanonicalCommandExpectationV1 {
     /// Tenant authorized for the command.
     pub tenant_id: TenantId,
@@ -29,7 +30,7 @@ pub struct CanonicalCommandExpectationV1 {
 }
 
 /// A canonical event that passed Penelope's correlation checks.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerifiedCanonicalEventV1 {
     /// The event confirmed against the command expectation.
     pub event: CanonicalEventDtoV1,

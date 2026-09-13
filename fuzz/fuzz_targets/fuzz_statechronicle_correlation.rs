@@ -12,6 +12,7 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 }
 
 fuzz_target!(|data: &[u8]| {
+    let _ = serde_json::from_slice::<CanonicalCommandExpectationV1>(data);
     let expected = CanonicalCommandExpectationV1 {
         tenant_id: identifier::<TenantId>("tnt_fuzz"),
         action_id: identifier::<ActionId>("act_fuzz"),
