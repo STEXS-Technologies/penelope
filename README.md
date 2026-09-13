@@ -149,12 +149,22 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
 
-All DTOs are versioned by their Rust type name and required `schema` value,
-such as `penelope.process.outcome.v1`. New wire changes require a new DTO/schema
-version; no existing version may be reinterpreted. Port interfaces consume and
-produce only these DTOs. Infrastructure implementations must live in a
-consumer composition root or a separately reviewed adapter repository; this
-workspace deliberately ships none.
+All DTOs are versioned by their `V<N>` Rust type and immutable associated
+`SCHEMA` identity, such as `ProcessOutcomeDtoV1::SCHEMA`. New wire changes
+require a new DTO/schema version; no existing version may be reinterpreted.
+Every identity is a validated prefixed newtype, every category is a typed enum,
+and port APIs accept typed values only—application code never dispatches by
+matching raw strings. Infrastructure implementations must live in a consumer
+composition root or a separately reviewed adapter repository; this workspace
+deliberately ships none.
+
+Errors are typed `thiserror` enums. Error variants communicate a stable failure
+class; they do not expose handwritten `Display`/`Error` implementations or use
+raw text as a programmatic error discriminator.
+
+Public parsers and every versioned DTO deserializer are covered by cargo-fuzz
+targets in `fuzz/`. New public parse or DTO surfaces must add a target before
+they are considered complete.
 
 ## First reference saga: `trade.v1`
 
@@ -177,9 +187,11 @@ runs **zero tests** because no behavior exists yet.
 
 ```bash
 cargo fmt --all --check
-cargo test --workspace --all-targets --all-features --locked
+cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked
+cargo fuzz run fuzz_identifiers -- -runs=100
+cargo fuzz run fuzz_versioned_dtos -- -runs=100
 ```
 
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are

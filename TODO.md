@@ -50,21 +50,29 @@ The workspace now mirrors StateChronicle's layer boundaries:
 | Facade | `penelope` | Curated re-exports only. | Domain or infrastructure logic. |
 
 Every public wire DTO must have both a `V<N>` Rust type and an immutable
-schema identifier. Compatibility is additive: a new semantic interpretation
-requires a new schema/type, while adapters accept only versions they explicitly
-support.
+associated schema identifier. Every identity must be a validated newtype,
+every protocol category must be an enum or dedicated newtype, and ports must
+never receive raw `String`/`&str` identity or category values. Compatibility is
+additive: a new semantic interpretation requires a new schema/type, while
+adapters accept only versions they explicitly support.
+
+All errors must be `thiserror::Error` enums with typed variants. Do not hand
+write `Display` or `std::error::Error`, and do not make callers branch on an
+error message string.
 
 ### P0.0 Complete the hexagonal contract tests
 
 - [ ] Add compile-time dependency-boundary checks and DTO schema-version
-  validation for every public request, outcome, action and adapter message.
+  validation plus a fuzz target for every public parser/DTO boundary.
 - Why: a clean directory tree is not architecture if an inner crate can import
   an outer implementation or an adapter can silently reinterpret a DTO.
 - How: keep infrastructure crates out of this workspace; add forbidden
   dependency checks, DTO fixture/round-trip tests, and a compatibility matrix
   for each supported schema version.
 - Evidence: CI rejects boundary violations, unknown schema versions, changed
-  v1 fixtures and non-versioned public wire types.
+  v1 fixtures, non-versioned public wire types, raw-string port parameters and
+  missing fuzz targets. The normal workspace suite excludes `penelope-fuzz`;
+  CI invokes every fuzz target explicitly with a bounded run count.
 
 ## P0 — deterministic core
 

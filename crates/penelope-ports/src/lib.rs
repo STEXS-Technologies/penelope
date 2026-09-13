@@ -9,7 +9,7 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, ProcessActionDtoV1,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, ProcessActionDtoV1,
     ProcessInputDtoV1, ProcessOutcomeDtoV1,
 };
 use thiserror::Error;
@@ -18,11 +18,11 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum PortError {
     /// The adapter could not currently perform its durable operation.
-    #[error("port unavailable: {0}")]
-    Unavailable(String),
+    #[error("port unavailable")]
+    Unavailable,
     /// The adapter rejected a versioned DTO or port invariant.
-    #[error("port invariant violation: {0}")]
-    Invariant(String),
+    #[error("port invariant violation")]
+    Invariant,
 }
 
 /// Durable append-only process outcome store.
@@ -56,7 +56,7 @@ pub trait TimerScheduler: Send + Sync {
     /// Schedules a timer action whose firing returns through the inbox.
     async fn schedule(&self, action: &ProcessActionDtoV1) -> Result<(), PortError>;
     /// Cancels a previously scheduled action idempotently.
-    async fn cancel(&self, action_id: &str) -> Result<(), PortError>;
+    async fn cancel(&self, action_id: &ActionId) -> Result<(), PortError>;
 }
 
 /// Canonical-state boundary implemented by a StateChronicle adapter.

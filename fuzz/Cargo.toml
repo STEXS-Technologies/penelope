@@ -1,0 +1,27 @@
+[package]
+name = "penelope-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde_json = { workspace = true }
+
+[dependencies.penelope-domain]
+path = "../crates/penelope-domain"
+
+[[bin]]
+name = "fuzz_identifiers"
+path = "fuzz_targets/fuzz_identifiers.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_versioned_dtos"
+path = "fuzz_targets/fuzz_versioned_dtos.rs"
+test = false
+doc = false

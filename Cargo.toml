@@ -8,6 +8,7 @@ members = [
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
+    "fuzz",
 ]
 default-members = [
     "crates/penelope-core",
