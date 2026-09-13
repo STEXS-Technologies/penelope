@@ -220,6 +220,7 @@ dependencies = [
  "libfuzzer-sys",
  "penelope-domain",
  "penelope-executor",
+ "penelope-ports",
  "penelope-statechronicle",
  "serde_json",
 ]
@@ -238,6 +239,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "penelope-domain",
+ "serde",
  "thiserror",
 ]
 

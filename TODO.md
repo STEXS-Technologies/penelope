@@ -244,6 +244,13 @@ item remains incomplete.
   outbox and inbox state share the durability transaction.
 - Evidence: failpoints before/after every write and recovery convergence tests.
 
+Current partial evidence: `AtomicProcessCommitV1` defines one typed local
+transaction boundary for optional inbox acceptance, contiguous outcomes, and
+outgoing actions. It rejects scope/sequence mismatches before an adapter sees
+the request, and is parser/validation fuzzed. No durable implementation,
+optimistic conflict behavior, projection write, or failpoint recovery test
+exists yet, so this item remains incomplete.
+
 ### P1.3 Inbox/outbox and worker semantics
 
 - [ ] Implement tenant-scoped inbox dedup by immutable source event ID and
@@ -253,6 +260,11 @@ item remains incomplete.
   consumer idempotently handles its action ID.
 - Evidence: duplicate/reordered/redelivered messages, crash-before-ack and
   crash-after-publish drills.
+
+Current partial evidence: the atomic commit contract carries the immutable
+optional inbox input and outgoing actions together with outcomes, so an adapter
+has an explicit no-split-write boundary to implement. Inbox/outbox storage,
+acknowledgement, leases, redelivery, and crash drills remain incomplete.
 
 ### P1.4 StateChronicle contract
 

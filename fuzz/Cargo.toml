@@ -20,6 +20,9 @@ path = "../crates/penelope-executor"
 [dependencies.penelope-statechronicle]
 path = "../crates/penelope-statechronicle"
 
+[dependencies.penelope-ports]
+path = "../crates/penelope-ports"
+
 [[bin]]
 name = "fuzz_identifiers"
 path = "fuzz_targets/fuzz_identifiers.rs"
@@ -41,5 +44,11 @@ doc = false
 [[bin]]
 name = "fuzz_statechronicle_correlation"
 path = "fuzz_targets/fuzz_statechronicle_correlation.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_atomic_process_commit"
+path = "fuzz_targets/fuzz_atomic_process_commit.rs"
 test = false
 doc = false
