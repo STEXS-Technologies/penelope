@@ -680,7 +680,7 @@ impl CanonicalCommandDtoV1 {
     ///
     /// Returns a typed error for oversized or duplicate resource identifiers.
     pub fn validate(&self) -> Result<(), DomainError> {
-        validate_canonical_resource_ids(&self.resource_ids)
+        validate_canonical_resource_scope(&self.resource_ids)
     }
 }
 
@@ -694,11 +694,16 @@ impl CanonicalEventDtoV1 {
     ///
     /// Returns a typed error for oversized or duplicate resource identifiers.
     pub fn validate(&self) -> Result<(), DomainError> {
-        validate_canonical_resource_ids(&self.resource_ids)
+        validate_canonical_resource_scope(&self.resource_ids)
     }
 }
 
-fn validate_canonical_resource_ids(resource_ids: &[ResourceId]) -> Result<(), DomainError> {
+/// Validates a canonical operation's bounded, duplicate-free resource scope.
+///
+/// # Errors
+///
+/// Returns a typed error for an oversized scope or duplicate resource identity.
+pub fn validate_canonical_resource_scope(resource_ids: &[ResourceId]) -> Result<(), DomainError> {
     if resource_ids.len() > MAX_CANONICAL_RESOURCE_IDS {
         return Err(DomainError::CanonicalResourceLimitExceeded);
     }

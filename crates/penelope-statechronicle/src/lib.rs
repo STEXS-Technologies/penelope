@@ -12,7 +12,10 @@
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
 
-use penelope_domain::{ActionId, CanonicalEventDtoV1, OperationId, ResourceId, TenantId};
+use penelope_domain::{
+    ActionId, CanonicalEventDtoV1, DomainError, OperationId, ResourceId, TenantId,
+    validate_canonical_resource_scope,
+};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -29,6 +32,17 @@ pub struct CanonicalCommandExpectationV1 {
     pub resource_ids: Vec<ResourceId>,
 }
 
+impl CanonicalCommandExpectationV1 {
+    /// Validates the expected canonical resource scope before correlation.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed domain error for oversized or duplicate resource IDs.
+    pub fn validate(&self) -> Result<(), DomainError> {
+        validate_canonical_resource_scope(&self.resource_ids)
+    }
+}
+
 /// A canonical event that passed Penelope's correlation checks.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerifiedCanonicalEventV1 {
@@ -37,8 +51,22 @@ pub struct VerifiedCanonicalEventV1 {
 }
 
 /// Typed canonical-event correlation failure.
-#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum CorrelationError {
+    /// Expected command scope violated the canonical resource-scope invariant.
+    #[error("canonical command expectation is invalid")]
+    InvalidExpectation {
+        /// Underlying typed domain validation error.
+        #[source]
+        source: DomainError,
+    },
+    /// Received committed event violated the canonical resource-scope invariant.
+    #[error("canonical event is invalid")]
+    InvalidEvent {
+        /// Underlying typed domain validation error.
+        #[source]
+        source: DomainError,
+    },
     /// Event tenant does not match the authorized command tenant.
     #[error("canonical event tenant does not match command expectation")]
     TenantMismatch,
@@ -68,6 +96,12 @@ pub fn verify_committed_event(
     expected: &CanonicalCommandExpectationV1,
     event: CanonicalEventDtoV1,
 ) -> Result<VerifiedCanonicalEventV1, CorrelationError> {
+    expected
+        .validate()
+        .map_err(|source| CorrelationError::InvalidExpectation { source })?;
+    event
+        .validate()
+        .map_err(|source| CorrelationError::InvalidEvent { source })?;
     if event.tenant_id != expected.tenant_id {
         return Err(CorrelationError::TenantMismatch);
     }
@@ -127,5 +161,31 @@ mod tests {
         received.action_id = id("act_other");
         let error = verify_committed_event(&expectation(), received).unwrap_err();
         assert_eq!(error, CorrelationError::ActionMismatch);
+    }
+
+    #[test]
+    fn duplicate_resources_in_received_evidence_are_rejected_before_correlation() {
+        let mut received = event();
+        received.resource_ids.push(id("res_asset_a"));
+        let error = verify_committed_event(&expectation(), received).unwrap_err();
+        assert!(matches!(
+            error,
+            CorrelationError::InvalidEvent {
+                source: DomainError::DuplicateCanonicalResourceId
+            }
+        ));
+    }
+
+    #[test]
+    fn duplicate_resources_in_expected_scope_are_rejected_before_correlation() {
+        let mut expected = expectation();
+        expected.resource_ids.push(id("res_asset_a"));
+        let error = verify_committed_event(&expected, event()).unwrap_err();
+        assert!(matches!(
+            error,
+            CorrelationError::InvalidExpectation {
+                source: DomainError::DuplicateCanonicalResourceId
+            }
+        ));
     }
 }
