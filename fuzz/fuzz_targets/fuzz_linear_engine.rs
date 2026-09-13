@@ -4,7 +4,8 @@ use libfuzzer_sys::fuzz_target;
 use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventV1, RetryPolicyV1, StepPlanV1, apply_action_result, replay, start,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, RetryPolicyV1, StepPlanV1, apply_action_result,
+    replay, replay_ordered, start,
 };
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -48,6 +49,17 @@ fuzz_target!(|data: &[u8]| {
         },
     ];
     let _ = replay(&definition, &tenant_id, &process_id, &replay_events);
+    let ordered_replay_events = [
+        LinearSagaEventEnvelopeV1 {
+            sequence: 0,
+            event: replay_events[0].clone(),
+        },
+        LinearSagaEventEnvelopeV1 {
+            sequence: 1,
+            event: replay_events[1].clone(),
+        },
+    ];
+    let _ = replay_ordered(&definition, &tenant_id, &process_id, &ordered_replay_events);
     let Ok(mut decision) = start(
         &definition,
         tenant_id.clone(),

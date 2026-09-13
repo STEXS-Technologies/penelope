@@ -130,8 +130,9 @@ ordered steps, typed action IDs and attempts, retry, completion, and safe
 escalation for terminal or unknown outcomes. An observed result must match the
 active action ID before it may advance the projection. An ordered event replay
 function rebuilds only the final pending decision and has no effect-dispatch
-side effect. Its unit/property tests and `fuzz_linear_engine` target run in the
-commands documented in `README.md`.
+side effect. `replay_ordered` additionally rejects a non-contiguous zero-based
+event envelope sequence before applying it. Its unit/property tests and
+`fuzz_linear_engine` target run in the commands documented in `README.md`.
 It is not a complete `decide`/`apply` outcome-log engine and does not satisfy
 this item.
 

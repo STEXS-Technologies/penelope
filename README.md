@@ -49,6 +49,10 @@ action ID in the projection. A stale, duplicate, or cross-process result cannot
 advance a process; duplicate delivery must be handled by the durable outcome
 layer that is still to be implemented.
 
+The reference ordered replay API accepts only zero-based contiguous event
+envelopes. A missing, duplicate, or reordered sequence is rejected before
+event semantics are applied.
+
 ## Reliability model: record, recover, reconcile, repair
 
 Penelope is designed to make asynchronous sagas recoverable, not magical.

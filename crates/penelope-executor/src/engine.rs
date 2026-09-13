@@ -164,6 +164,15 @@ pub enum LinearSagaEventV1 {
     },
 }
 
+/// One sequenced immutable event from a process outcome log.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LinearSagaEventEnvelopeV1 {
+    /// Zero-based, contiguous event sequence for one process.
+    pub sequence: u64,
+    /// The event recorded at `sequence`.
+    pub event: LinearSagaEventV1,
+}
+
 impl ActionResultObservationV1 {
     /// Records a successful result for `action_id`.
     pub const fn succeeded(action_id: ActionId) -> Self {
@@ -229,6 +238,12 @@ pub enum EngineError {
     /// An ordered log attempted to start an existing process again.
     #[error("saga log contains more than one start event")]
     DuplicateStart,
+    /// An event log is not zero-based and contiguous.
+    #[error("saga event sequence is not contiguous")]
+    InvalidEventSequence,
+    /// The event sequence cannot be advanced without overflow.
+    #[error("saga event sequence overflowed")]
+    EventSequenceOverflow,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -631,6 +646,36 @@ pub fn replay(
         }
     }
     decision.ok_or(EngineError::MissingStart)
+}
+
+/// Rebuilds a decision after validating a contiguous ordered event log.
+///
+/// The first event must have sequence zero and every following event must
+/// increment by one. This function does not write, dispatch, or otherwise
+/// mutate external state.
+///
+/// # Errors
+///
+/// Returns a typed sequence error before evaluating an invalid log, or an
+/// engine invariant error from [`replay`] for invalid event semantics.
+pub fn replay_ordered(
+    definition: &LinearSagaDefinitionV1,
+    tenant_id: &TenantId,
+    process_id: &ProcessId,
+    envelopes: &[LinearSagaEventEnvelopeV1],
+) -> Result<SagaDecisionV1, EngineError> {
+    let mut expected_sequence = 0_u64;
+    let mut events = Vec::with_capacity(envelopes.len());
+    for envelope in envelopes {
+        if envelope.sequence != expected_sequence {
+            return Err(EngineError::InvalidEventSequence);
+        }
+        expected_sequence = expected_sequence
+            .checked_add(1)
+            .ok_or(EngineError::EventSequenceOverflow)?;
+        events.push(envelope.event.clone());
+    }
+    replay(definition, tenant_id, process_id, &events)
 }
 
 fn action_for(
@@ -1210,5 +1255,22 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::DuplicateStart);
+    }
+
+    #[test]
+    fn ordered_replay_rejects_a_sequence_gap_before_applying_events() {
+        let error = replay_ordered(
+            &definition(),
+            &id("tnt_game"),
+            &id("prc_trade"),
+            &[LinearSagaEventEnvelopeV1 {
+                sequence: 1,
+                event: LinearSagaEventV1::Started {
+                    action_id: id("act_lock"),
+                },
+            }],
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::InvalidEventSequence);
     }
 }
