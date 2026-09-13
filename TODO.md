@@ -353,6 +353,11 @@ does not yet cover source freshness/deduplication or response-loss recovery.
 - Evidence: scheduled extended fuzzing, retained minimized regressions and
   deterministic CI coverage.
 
+Current partial evidence: `.github/workflows/ci.yml` runs stable format, tests,
+Clippy, strict docs, benchmark build, and both reference examples, plus every
+fuzz target for 1,000 inputs under nightly. Extended scheduled fuzzing and
+retained/minimized crash-regression policy remain incomplete.
+
 ### P3.2 Fault injection and chaos
 
 - [ ] Inject failures around every durable boundary, lease, timer dispatch,

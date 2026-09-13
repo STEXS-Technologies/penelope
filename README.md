@@ -259,6 +259,12 @@ cargo bench -p penelope-executor --bench linear_saga --locked
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are
 complete and their CI verification exists.
 
+GitHub Actions in [ci.yml](.github/workflows/ci.yml) runs the stable format,
+test, Clippy, strict-doc, benchmark-build, and both reference examples on every
+push and pull request. A separate bounded nightly job runs every fuzz target
+for 1,000 inputs; it is a regression gate, not a substitute for scheduled
+long-running fuzz campaigns.
+
 ## Non-goals
 
 - Canonical financial, game, inventory or position state.
