@@ -954,6 +954,59 @@ mod tests {
         assert!(compensated.next_action.is_none());
     }
 
+    #[test]
+    fn crash_after_every_trade_event_replays_to_the_same_compensated_state() {
+        let policy = RetryPolicyV1::no_retry();
+        let definition = LinearSagaDefinitionV1 {
+            steps: vec![
+                StepPlanV1 {
+                    step_id: id("stp_lock"),
+                    action_kind: ProcessActionKindV1::CanonicalCommand,
+                    payload_digest: ContentDigest([1; 32]),
+                    retry_policy: policy,
+                    compensation: Some(CompensationPlanV1::canonical_command(
+                        ContentDigest([9; 32]),
+                        policy,
+                    )),
+                },
+                StepPlanV1::canonical_command(id("stp_settle"), ContentDigest([2; 32]), policy),
+            ],
+        };
+        let tenant_id = id::<TenantId>("tnt_game");
+        let process_id = id::<ProcessId>("prc_trade");
+        let events = vec![
+            LinearSagaEventV1::Started {
+                action_id: id("act_lock"),
+            },
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1::succeeded(id("act_lock")),
+                next_action_id: Some(id("act_settle")),
+            },
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1 {
+                    action_id: id("act_settle"),
+                    result: ActionResultV1::TerminalFailure,
+                },
+                next_action_id: Some(id("act_unlock")),
+            },
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1::succeeded(id("act_unlock")),
+                next_action_id: None,
+            },
+        ];
+
+        for prefix_length in 1..=events.len() {
+            let prefix: Vec<_> = events.iter().take(prefix_length).cloned().collect();
+            let restarted_once = replay(&definition, &tenant_id, &process_id, &prefix).unwrap();
+            let restarted_twice = replay(&definition, &tenant_id, &process_id, &prefix).unwrap();
+            assert_eq!(restarted_once, restarted_twice);
+        }
+
+        let final_decision = replay(&definition, &tenant_id, &process_id, &events).unwrap();
+        assert_eq!(final_decision.projection.status, SagaStatusV1::Compensated);
+        assert!(final_decision.next_action.is_none());
+    }
+
     proptest! {
         #[test]
         fn retry_attempt_is_monotonic_for_every_representable_attempt(
