@@ -80,9 +80,11 @@ error message string.
 Current partial evidence: `scripts/check-layer-boundaries.sh` validates the
 exact direct internal dependency graph through `cargo metadata` and rejects
 known production infrastructure clients from this ports-only workspace. CI runs
-it before compilation. It does not yet enforce all public DTO schema fixtures,
-unknown-schema rejection, raw-string port signatures, or fuzz-target coverage,
-so this item remains incomplete.
+it before compilation. `ProcessInputEnvelopeV1` carries an explicit typed
+schema discriminator, and the intent boundary parses byte input only after
+validating that discriminator; both its parser and DTO boundary are fuzzed. It
+does not yet enforce all public DTO schema fixtures, raw-string port
+signatures, or fuzz-target coverage, so this item remains incomplete.
 
 ## P0 — deterministic core
 

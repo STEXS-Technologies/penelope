@@ -16,7 +16,7 @@ pub use penelope_domain as domain;
 pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ContentDigest, DefinitionId,
     DefinitionVersion, DomainError, ProcessActionDtoV1, ProcessActionKindV1, ProcessId,
-    ProcessScopeV1, StepId, TenantId,
+    ProcessInputEnvelopeV1, ProcessScopeV1, StepId, TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
@@ -29,6 +29,8 @@ pub use penelope_executor::engine::{
 };
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;
+/// User-facing typed process-input parser.
+pub use penelope_intent::{IntentError, parse_process_input};
 /// Backend-neutral ports implemented by the composition root.
 pub use penelope_ports as ports;
 /// StateChronicle adapter boundary; no client implementation is included.

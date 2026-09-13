@@ -23,6 +23,9 @@ path = "../crates/penelope-statechronicle"
 [dependencies.penelope-ports]
 path = "../crates/penelope-ports"
 
+[dependencies.penelope-intent]
+path = "../crates/penelope-intent"
+
 [[bin]]
 name = "fuzz_identifiers"
 path = "fuzz_targets/fuzz_identifiers.rs"
@@ -62,5 +65,11 @@ doc = false
 [[bin]]
 name = "fuzz_manual_review_lifecycle"
 path = "fuzz_targets/fuzz_manual_review_lifecycle.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_process_input_parse"
+path = "fuzz_targets/fuzz_process_input_parse.rs"
 test = false
 doc = false

@@ -80,6 +80,9 @@ pub enum DomainError {
     /// A canonical operation scope contains the same resource more than once.
     #[error("canonical resource scope contains a duplicate resource identifier")]
     DuplicateCanonicalResourceId,
+    /// A process-input envelope declared a schema for a different DTO type.
+    #[error("process input envelope schema is invalid")]
+    InvalidProcessInputSchema,
 }
 
 fn validate_identifier(prefix: &str, value: &str) -> bool {
@@ -348,6 +351,39 @@ pub struct ProcessInputDtoV1 {
     pub kind: ProcessInputKindV1,
     /// Canonical payload digest.
     pub payload_digest: ContentDigest,
+}
+
+/// Explicitly versioned public envelope for one process input.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessInputEnvelopeV1 {
+    /// The immutable schema discriminator for the enclosed input.
+    pub schema: SchemaV1,
+    /// Typed process input supplied to the application boundary.
+    pub input: ProcessInputDtoV1,
+}
+
+impl ProcessInputEnvelopeV1 {
+    /// Creates an envelope carrying the only schema valid for this DTO.
+    pub const fn new(input: ProcessInputDtoV1) -> Self {
+        Self {
+            schema: SchemaV1::ProcessInput,
+            input,
+        }
+    }
+
+    /// Validates the immutable envelope schema discriminator.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the envelope does not declare the process
+    /// input schema.
+    pub const fn validate(&self) -> Result<(), DomainError> {
+        if matches!(self.schema, SchemaV1::ProcessInput) {
+            Ok(())
+        } else {
+            Err(DomainError::InvalidProcessInputSchema)
+        }
+    }
 }
 
 /// One immutable fact in a process outcome log.
