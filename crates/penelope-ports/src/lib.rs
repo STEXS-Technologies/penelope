@@ -302,8 +302,8 @@ mod tests {
     use super::*;
     use penelope_domain::{
         CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId, CausationIdV1, ContentDigest,
-        OperationId, OutcomeId, ProcessActionKindV1, ProcessOutcomeKindV1, ResourceId, StepId,
-        TenantId,
+        OperationId, OutcomeId, ProcessActionKindV1, ProcessOutcomeKindV1, ProcessScopeV1,
+        ResourceId, StepId, TenantId,
     };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -324,8 +324,13 @@ mod tests {
 
     fn action() -> ProcessActionDtoV1 {
         ProcessActionDtoV1::new(
-            id::<TenantId>("tnt_game"),
-            id("prc_trade"),
+            ProcessScopeV1::new(
+                id::<TenantId>("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
             id("act_dispatch"),
             id::<StepId>("stp_dispatch"),
             0,

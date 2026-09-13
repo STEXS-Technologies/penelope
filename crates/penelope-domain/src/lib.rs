@@ -369,6 +369,40 @@ pub struct ProcessOutcomeDtoV1 {
     pub payload_digest: ContentDigest,
 }
 
+/// Immutable identity and definition scope of one process.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessScopeV1 {
+    /// Isolated tenant scope.
+    pub tenant_id: TenantId,
+    /// Owning process instance.
+    pub process_id: ProcessId,
+    /// Immutable definition identity selected for this process.
+    pub definition_id: DefinitionId,
+    /// Immutable definition version selected for this process.
+    pub definition_version: DefinitionVersion,
+    /// Exact definition semantics selected for this process.
+    pub definition_digest: ContentDigest,
+}
+
+impl ProcessScopeV1 {
+    /// Creates the immutable identity and definition scope of one process.
+    pub const fn new(
+        tenant_id: TenantId,
+        process_id: ProcessId,
+        definition_id: DefinitionId,
+        definition_version: DefinitionVersion,
+        definition_digest: ContentDigest,
+    ) -> Self {
+        Self {
+            tenant_id,
+            process_id,
+            definition_id,
+            definition_version,
+            definition_digest,
+        }
+    }
+}
+
 /// A durable, independently idempotent process action.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ProcessActionDtoV1 {
@@ -376,6 +410,12 @@ pub struct ProcessActionDtoV1 {
     pub tenant_id: TenantId,
     /// Owning process instance.
     pub process_id: ProcessId,
+    /// Immutable definition identity selected for this process.
+    pub definition_id: DefinitionId,
+    /// Immutable definition version selected for this process.
+    pub definition_version: DefinitionVersion,
+    /// Exact definition semantics selected for this process.
+    pub definition_digest: ContentDigest,
     /// Stable action identity and external idempotency key.
     pub action_id: ActionId,
     /// Pinned definition step identity.
@@ -541,9 +581,8 @@ impl ProcessActionDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::ProcessAction;
 
     /// Creates a stable independently idempotent action DTO.
-    pub const fn new(
-        tenant_id: TenantId,
-        process_id: ProcessId,
+    pub fn new(
+        scope: ProcessScopeV1,
         action_id: ActionId,
         step_id: StepId,
         attempt: u32,
@@ -551,8 +590,11 @@ impl ProcessActionDtoV1 {
         payload_digest: ContentDigest,
     ) -> Self {
         Self {
-            tenant_id,
-            process_id,
+            tenant_id: scope.tenant_id,
+            process_id: scope.process_id,
+            definition_id: scope.definition_id,
+            definition_version: scope.definition_version,
+            definition_digest: scope.definition_digest,
             action_id,
             step_id,
             attempt,

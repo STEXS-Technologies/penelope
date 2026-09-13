@@ -2,7 +2,7 @@
 
 use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, ProcessActionDtoV1,
-    ProcessActionKindV1, ProcessId, StepId, TenantId,
+    ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU32;
@@ -800,8 +800,13 @@ fn action_for(
         (step.step_id.clone(), step.action_kind, step.payload_digest)
     };
     Ok(ProcessActionDtoV1::new(
-        tenant_id,
-        process_id,
+        ProcessScopeV1::new(
+            tenant_id,
+            process_id,
+            projection.definition_id.clone(),
+            projection.definition_version.clone(),
+            projection.definition_digest,
+        ),
         projection
             .active_action_id
             .clone()
@@ -860,16 +865,15 @@ mod tests {
 
     #[test]
     fn success_plans_ordered_steps_then_completes() {
-        let first = start(
-            &definition(),
-            id("tnt_game"),
-            id("prc_trade"),
-            id("act_lock"),
-        )
-        .unwrap();
+        let definition = definition();
+        let first = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
         assert_eq!(first.next_action.as_ref().unwrap().step_id, id("stp_lock"));
+        assert_eq!(
+            first.next_action.as_ref().unwrap().definition_digest,
+            definition.definition_digest
+        );
         let second = apply_action_result(
-            &definition(),
+            &definition,
             &first.projection,
             id("tnt_game"),
             id("prc_trade"),
@@ -885,7 +889,7 @@ mod tests {
             id("stp_settle")
         );
         let complete = apply_action_result(
-            &definition(),
+            &definition,
             &second.projection,
             id("tnt_game"),
             id("prc_trade"),
