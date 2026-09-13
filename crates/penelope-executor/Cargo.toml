@@ -10,6 +10,7 @@ penelope-core = { workspace = true }
 penelope-domain = { workspace = true }
 penelope-intent = { workspace = true }
 penelope-ports = { workspace = true }
+serde = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]

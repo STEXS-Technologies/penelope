@@ -192,6 +192,11 @@ transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
 parse, DTO, or decision surfaces must add a target before they are considered
 complete.
 
+The public linear-engine `V1` definitions, projections, decisions, outcomes,
+and ordered event envelopes are serde-compatible protocol values. Their schema
+evolution remains additive; durable adapter design and compatibility fixtures
+are still required before a production release.
+
 ## First reference saga: `trade.v1`
 
 The first implementation is a reference for the pattern, not special ledger

@@ -3,11 +3,12 @@
 use penelope_domain::{
     ActionId, ContentDigest, ProcessActionDtoV1, ProcessActionKindV1, ProcessId, StepId, TenantId,
 };
+use serde::{Deserialize, Serialize};
 use std::num::NonZeroU32;
 use thiserror::Error;
 
 /// A declared process step.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StepPlanV1 {
     /// Stable step identity from the pinned definition.
     pub step_id: StepId,
@@ -22,7 +23,7 @@ pub struct StepPlanV1 {
 }
 
 /// Declared action used to compensate a previously succeeded step.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CompensationPlanV1 {
     /// Action category for the compensating effect.
     pub action_kind: ProcessActionKindV1,
@@ -47,7 +48,7 @@ impl CompensationPlanV1 {
 }
 
 /// Explicit retry bound for one action step.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RetryPolicyV1 {
     /// Total number of permitted attempts, including the first attempt.
     pub max_attempts: NonZeroU32,
@@ -85,14 +86,14 @@ impl StepPlanV1 {
 }
 
 /// A deterministic, ordered saga definition.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinearSagaDefinitionV1 {
     /// Steps execute in vector order.
     pub steps: Vec<StepPlanV1>,
 }
 
 /// A replayable process projection.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinearSagaProjectionV1 {
     /// Index of the current step.
     pub next_step_index: usize,
@@ -109,7 +110,7 @@ pub struct LinearSagaProjectionV1 {
 }
 
 /// Process lifecycle status.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SagaStatusV1 {
     /// A step is pending or executing.
     Running,
@@ -124,7 +125,7 @@ pub enum SagaStatusV1 {
 }
 
 /// Observed terminal action result supplied as data to the pure engine.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ActionResultV1 {
     /// The current action completed successfully.
     Succeeded,
@@ -138,7 +139,7 @@ pub enum ActionResultV1 {
 
 /// An action result correlated to the independently idempotent action that
 /// produced it.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionResultObservationV1 {
     /// The action identity reported by the external effect boundary.
     pub action_id: ActionId,
@@ -147,7 +148,7 @@ pub struct ActionResultObservationV1 {
 }
 
 /// One immutable event from the linear engine's ordered process log.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LinearSagaEventV1 {
     /// The durable process-start record and its first planned action identity.
     Started {
@@ -165,7 +166,7 @@ pub enum LinearSagaEventV1 {
 }
 
 /// One sequenced immutable event from a process outcome log.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinearSagaEventEnvelopeV1 {
     /// Zero-based, contiguous event sequence for one process.
     pub sequence: u64,
@@ -200,7 +201,7 @@ impl ActionResultObservationV1 {
 }
 
 /// A deterministic decision from a transition.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SagaDecisionV1 {
     /// Resulting replayable projection.
     pub projection: LinearSagaProjectionV1,

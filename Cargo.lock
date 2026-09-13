@@ -209,6 +209,7 @@ dependencies = [
  "penelope-intent",
  "penelope-ports",
  "proptest",
+ "serde",
  "thiserror",
 ]
 

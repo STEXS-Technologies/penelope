@@ -16,6 +16,7 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 }
 
 fuzz_target!(|data: &[u8]| {
+    let _ = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data);
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
         steps: (0..step_count)
