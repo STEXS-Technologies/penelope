@@ -222,6 +222,12 @@ It demonstrates the public facade only. It is not a durable integration: a
 production adapter must record outcomes and verify StateChronicle evidence as
 described above before calling the transition API.
 
+The normal construction path is fluent and typed:
+`LinearSagaDefinitionV1::new`, `StepPlanV1::canonical_command`,
+`StepPlanV1::with_compensation`, `RetryPolicyV1`, and
+`ActionResultObservationV1` constructors. Raw text is needed only at an
+explicit identifier parsing boundary.
+
 ## Verification today
 
 The following pass locally. They validate only the implemented protocol and

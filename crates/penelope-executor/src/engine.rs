@@ -83,6 +83,12 @@ impl StepPlanV1 {
             compensation: None,
         }
     }
+
+    /// Attaches the compensating action declared for this forward step.
+    pub const fn with_compensation(mut self, compensation: CompensationPlanV1) -> Self {
+        self.compensation = Some(compensation);
+        self
+    }
 }
 
 /// A deterministic, ordered saga definition.
@@ -90,6 +96,13 @@ impl StepPlanV1 {
 pub struct LinearSagaDefinitionV1 {
     /// Steps execute in vector order.
     pub steps: Vec<StepPlanV1>,
+}
+
+impl LinearSagaDefinitionV1 {
+    /// Creates an ordered linear-saga definition.
+    pub const fn new(steps: Vec<StepPlanV1>) -> Self {
+        Self { steps }
+    }
 }
 
 /// A replayable process projection.
@@ -196,6 +209,14 @@ impl ActionResultObservationV1 {
         Self {
             action_id,
             result: ActionResultV1::Unknown,
+        }
+    }
+
+    /// Records a known terminal failure for `action_id`.
+    pub const fn terminal_failure(action_id: ActionId) -> Self {
+        Self {
+            action_id,
+            result: ActionResultV1::TerminalFailure,
         }
     }
 }
