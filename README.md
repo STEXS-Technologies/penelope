@@ -7,10 +7,9 @@ engine, market-data system, or canonical inventory/position store.
 
 > Status: **early implementation; not production-ready.** Penelope has typed
 > versioned protocol DTOs and a tested pure linear-saga reference engine with
-> ordered-event replay. It
-> does not yet have an append-only outcome implementation, durable adapters,
-> complete replay/compensation semantics, benchmarks, chaos evidence, CI, or a
-> release process. The complete execution plan is [TODO.md](TODO.md).
+> ordered-event replay. It does not yet have an append-only outcome
+> implementation, durable adapters, complete replay/compensation semantics, or
+> a release process. The complete execution plan is [TODO.md](TODO.md).
 
 ## Boundary with StateChronicle
 
@@ -260,16 +259,20 @@ cargo fuzz run fuzz_manual_review_lifecycle -- -runs=100
 cargo fuzz run fuzz_process_input_parse -- -runs=100
 cargo fuzz run fuzz_process_control_ports -- -runs=100
 cargo bench -p penelope-executor --bench linear_saga --locked
+PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=1000 \
+  PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
 ```
 
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are
 complete and their CI verification exists.
 
 GitHub Actions in [ci.yml](.github/workflows/ci.yml) runs the stable format,
-test, Clippy, strict-doc, benchmark-build, and both reference examples on every
+test, Clippy, strict-doc, benchmark-build, and all reference examples on every
 push and pull request. A separate bounded nightly job runs every fuzz target
-for 1,000 inputs; it is a regression gate, not a substitute for scheduled
-long-running fuzz campaigns.
+for 1,000 inputs. The scheduled
+[pure-chaos workflow](.github/workflows/pure-chaos.yml) repeatedly runs the
+restart/replay, timer-fault, and linear-engine fuzz drill. These are
+library-only checks, not evidence for a durable adapter deployment.
 
 ## Non-goals
 
