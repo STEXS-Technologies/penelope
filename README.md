@@ -170,6 +170,11 @@ Errors are typed `thiserror` enums. Error variants communicate a stable failure
 class; they do not expose handwritten `Display`/`Error` implementations or use
 raw text as a programmatic error discriminator.
 
+The reference engine gives every step an explicit typed maximum attempt count.
+An exhausted retryable failure escalates without producing another action;
+unknown outcomes escalate immediately. Deadline/backoff/timer policy still
+belongs to the remaining P0 implementation work.
+
 Public parsers, every versioned DTO deserializer, and the linear engine's
 transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
 parse, DTO, or decision surfaces must add a target before they are considered

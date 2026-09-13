@@ -6,7 +6,7 @@
 
 use penelope::{
     ActionId, ActionResultObservationV1, ContentDigest, DomainError, LinearSagaDefinitionV1,
-    ProcessActionKindV1, ProcessId, SagaStatusV1, StepId, StepPlanV1, TenantId,
+    ProcessActionKindV1, ProcessId, RetryPolicyV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
     apply_action_result, start,
 };
 use thiserror::Error;
@@ -34,16 +34,19 @@ fn main() -> Result<(), ExampleError> {
                 step_id: identifier::<StepId>("stp_lock_seller")?,
                 action_kind: ProcessActionKindV1::CanonicalCommand,
                 payload_digest: ContentDigest([1; 32]),
+                retry_policy: RetryPolicyV1::no_retry(),
             },
             StepPlanV1 {
                 step_id: identifier::<StepId>("stp_lock_buyer")?,
                 action_kind: ProcessActionKindV1::CanonicalCommand,
                 payload_digest: ContentDigest([2; 32]),
+                retry_policy: RetryPolicyV1::no_retry(),
             },
             StepPlanV1 {
                 step_id: identifier::<StepId>("stp_settle")?,
                 action_kind: ProcessActionKindV1::CanonicalCommand,
                 payload_digest: ContentDigest([3; 32]),
+                retry_policy: RetryPolicyV1::no_retry(),
             },
         ],
     };

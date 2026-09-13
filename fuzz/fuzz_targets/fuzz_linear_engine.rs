@@ -4,7 +4,7 @@ use libfuzzer_sys::fuzz_target;
 use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, LinearSagaDefinitionV1, LinearSagaEventV1,
-    StepPlanV1, apply_action_result, replay, start,
+    RetryPolicyV1, StepPlanV1, apply_action_result, replay, start,
 };
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -27,6 +27,7 @@ fuzz_target!(|data: &[u8]| {
                 },
                 action_kind: ProcessActionKindV1::CanonicalCommand,
                 payload_digest: ContentDigest([index as u8; 32]),
+                retry_policy: RetryPolicyV1::no_retry(),
             })
             .collect(),
     };

@@ -156,6 +156,12 @@ this item.
 - Evidence: simulated-clock tests for boundary, clock jump, fire/cancel race,
   exhausted retry and duplicate firing.
 
+Current partial evidence: `RetryPolicyV1` bounds total per-step attempts with
+`NonZeroU32`. The reference engine escalates an exhausted retryable result and
+never emits a new action in that case. It does not yet include due time,
+backoff, jitter, persisted timer records, or timer race handling, so this item
+remains incomplete.
+
 ### P0.7 Compensation and operator escalation
 
 - [ ] Build a persisted LIFO compensation plan for succeeded compensable steps.

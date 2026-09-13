@@ -3,6 +3,7 @@
 use penelope_domain::{
     ActionId, ContentDigest, ProcessActionDtoV1, ProcessActionKindV1, ProcessId, StepId, TenantId,
 };
+use std::num::NonZeroU32;
 use thiserror::Error;
 
 /// A declared process step.
@@ -14,6 +15,45 @@ pub struct StepPlanV1 {
     pub action_kind: ProcessActionKindV1,
     /// Digest of immutable action parameters.
     pub payload_digest: ContentDigest,
+    /// Bounded retry behavior for this step.
+    pub retry_policy: RetryPolicyV1,
+}
+
+/// Explicit retry bound for one action step.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RetryPolicyV1 {
+    /// Total number of permitted attempts, including the first attempt.
+    pub max_attempts: NonZeroU32,
+}
+
+impl RetryPolicyV1 {
+    /// Creates a retry policy with the given total attempt bound.
+    pub const fn new(max_attempts: NonZeroU32) -> Self {
+        Self { max_attempts }
+    }
+
+    /// Creates a policy permitting exactly one attempt and no retry.
+    pub const fn no_retry() -> Self {
+        Self {
+            max_attempts: NonZeroU32::MIN,
+        }
+    }
+}
+
+impl StepPlanV1 {
+    /// Declares a canonical-command step with a typed retry bound.
+    pub const fn canonical_command(
+        step_id: StepId,
+        payload_digest: ContentDigest,
+        retry_policy: RetryPolicyV1,
+    ) -> Self {
+        Self {
+            step_id,
+            action_kind: ProcessActionKindV1::CanonicalCommand,
+            payload_digest,
+            retry_policy,
+        }
+    }
 }
 
 /// A deterministic, ordered saga definition.
@@ -244,10 +284,25 @@ pub fn apply_action_result(
             }
         }
         ActionResultV1::RetryableFailure => {
+            let step = definition
+                .steps
+                .get(projection.next_step_index)
+                .ok_or(EngineError::InvalidProjection)?;
             let current_attempt = projection
                 .current_attempt
                 .checked_add(1)
                 .ok_or(EngineError::AttemptOverflow)?;
+            if current_attempt >= step.retry_policy.max_attempts.get() {
+                return Ok(SagaDecisionV1 {
+                    projection: LinearSagaProjectionV1 {
+                        next_step_index: projection.next_step_index,
+                        current_attempt: projection.current_attempt,
+                        active_action_id: None,
+                        status: SagaStatusV1::Escalated,
+                    },
+                    next_action: None,
+                });
+            }
             let retry = LinearSagaProjectionV1 {
                 next_step_index: projection.next_step_index,
                 current_attempt,
@@ -355,17 +410,20 @@ mod tests {
     }
 
     fn definition() -> LinearSagaDefinitionV1 {
+        let retry_policy = RetryPolicyV1::new(NonZeroU32::new(2).unwrap());
         LinearSagaDefinitionV1 {
             steps: vec![
                 StepPlanV1 {
                     step_id: id("stp_lock"),
                     action_kind: ProcessActionKindV1::CanonicalCommand,
                     payload_digest: ContentDigest([1; 32]),
+                    retry_policy,
                 },
                 StepPlanV1 {
                     step_id: id("stp_settle"),
                     action_kind: ProcessActionKindV1::CanonicalCommand,
                     payload_digest: ContentDigest([2; 32]),
+                    retry_policy,
                 },
             ],
         }
@@ -473,6 +531,32 @@ mod tests {
         assert_eq!(retry.next_action.as_ref().unwrap().step_id, id("stp_lock"));
     }
 
+    #[test]
+    fn exhausted_retry_policy_escalates_without_a_new_action() {
+        let definition = LinearSagaDefinitionV1 {
+            steps: vec![StepPlanV1::canonical_command(
+                id("stp_lock"),
+                ContentDigest([1; 32]),
+                RetryPolicyV1::no_retry(),
+            )],
+        };
+        let started = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
+        let decision = apply_action_result(
+            &definition,
+            &started.projection,
+            id("tnt_game"),
+            id("prc_trade"),
+            &observation(
+                started.next_action.as_ref().unwrap(),
+                ActionResultV1::RetryableFailure,
+            ),
+            Some(id("act_retry")),
+        )
+        .unwrap();
+        assert_eq!(decision.projection.status, SagaStatusV1::Escalated);
+        assert!(decision.next_action.is_none());
+    }
+
     proptest! {
         #[test]
         fn retry_attempt_is_monotonic_for_every_representable_attempt(
@@ -481,8 +565,13 @@ mod tests {
             let Some(expected_attempt) = current_attempt.checked_add(1) else {
                 return Ok(());
             };
+            let mut definition = definition();
+            let Some(step) = definition.steps.first_mut() else {
+                return Ok(());
+            };
+            step.retry_policy = RetryPolicyV1::new(NonZeroU32::new(u32::MAX).unwrap());
             let retry = apply_action_result(
-                &definition(),
+                &definition,
                 &LinearSagaProjectionV1 {
                     next_step_index: 0,
                     current_attempt,
