@@ -591,6 +591,81 @@ mod tests {
             prop_assert_eq!(retry.projection.current_attempt, expected_attempt);
             prop_assert_eq!(retry.next_action.unwrap().attempt, expected_attempt);
         }
+
+        #[test]
+        fn live_transitions_and_event_replay_converge(
+            result_codes in proptest::collection::vec(0_u8..4, 0..5),
+        ) {
+            let mut definition = definition();
+            let Some(step) = definition.steps.first_mut() else {
+                return Ok(());
+            };
+            step.retry_policy = RetryPolicyV1::new(NonZeroU32::new(u32::MAX).unwrap());
+            let tenant_id = id::<TenantId>("tnt_game");
+            let process_id = id::<ProcessId>("prc_trade");
+            let start_action_id = id::<ActionId>("act_start");
+            let mut action_ids = [
+                id::<ActionId>("act_one"),
+                id::<ActionId>("act_two"),
+                id::<ActionId>("act_three"),
+                id::<ActionId>("act_four"),
+                id::<ActionId>("act_five"),
+            ]
+            .into_iter();
+            let mut live = start(
+                &definition,
+                tenant_id.clone(),
+                process_id.clone(),
+                start_action_id.clone(),
+            )
+            .unwrap();
+            let mut events = vec![LinearSagaEventV1::Started {
+                action_id: start_action_id,
+            }];
+
+            for code in result_codes {
+                let Some(action) = live.next_action.as_ref() else {
+                    break;
+                };
+                let result = match code {
+                    0 => ActionResultV1::Succeeded,
+                    1 => ActionResultV1::RetryableFailure,
+                    2 => ActionResultV1::TerminalFailure,
+                    _ => ActionResultV1::Unknown,
+                };
+                let observation = ActionResultObservationV1 {
+                    action_id: action.action_id.clone(),
+                    result,
+                };
+                let next_action_id = match result {
+                    ActionResultV1::Succeeded | ActionResultV1::RetryableFailure => {
+                        action_ids.next()
+                    }
+                    ActionResultV1::TerminalFailure | ActionResultV1::Unknown => None,
+                };
+                if matches!(result, ActionResultV1::Succeeded | ActionResultV1::RetryableFailure)
+                    && next_action_id.is_none()
+                {
+                    break;
+                }
+                events.push(LinearSagaEventV1::ActionResultObserved {
+                    observation: observation.clone(),
+                    next_action_id: next_action_id.clone(),
+                });
+                live = apply_action_result(
+                    &definition,
+                    &live.projection,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    &observation,
+                    next_action_id,
+                )
+                .unwrap();
+            }
+
+            let replayed = replay(&definition, &tenant_id, &process_id, &events).unwrap();
+            prop_assert_eq!(replayed, live);
+        }
     }
 
     #[test]
