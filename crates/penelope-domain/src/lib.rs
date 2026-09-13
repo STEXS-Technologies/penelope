@@ -20,11 +20,47 @@ pub const MAX_IDENTIFIER_LENGTH: usize = 128;
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum DomainError {
     /// A typed identifier did not have its required canonical form.
-    #[error("invalid {kind} identifier")]
-    InvalidIdentifier {
-        /// Identifier category.
-        kind: &'static str,
-    },
+    #[error("invalid tenant identifier")]
+    InvalidTenantId,
+    /// A process identifier did not have its required canonical form.
+    #[error("invalid process identifier")]
+    InvalidProcessId,
+    /// A definition identifier did not have its required canonical form.
+    #[error("invalid definition identifier")]
+    InvalidDefinitionId,
+    /// A definition-version identifier did not have its required canonical form.
+    #[error("invalid definition version identifier")]
+    InvalidDefinitionVersion,
+    /// A step identifier did not have its required canonical form.
+    #[error("invalid step identifier")]
+    InvalidStepId,
+    /// An input identifier did not have its required canonical form.
+    #[error("invalid input identifier")]
+    InvalidInputId,
+    /// An outcome identifier did not have its required canonical form.
+    #[error("invalid outcome identifier")]
+    InvalidOutcomeId,
+    /// An action identifier did not have its required canonical form.
+    #[error("invalid action identifier")]
+    InvalidActionId,
+    /// A review identifier did not have its required canonical form.
+    #[error("invalid review identifier")]
+    InvalidReviewId,
+    /// A principal identifier did not have its required canonical form.
+    #[error("invalid principal identifier")]
+    InvalidPrincipalId,
+    /// A canonical-event identifier did not have its required canonical form.
+    #[error("invalid canonical event identifier")]
+    InvalidCanonicalEventId,
+    /// A canonical-commit identifier did not have its required canonical form.
+    #[error("invalid canonical commit identifier")]
+    InvalidCanonicalCommitId,
+    /// A resource identifier did not have its required canonical form.
+    #[error("invalid resource identifier")]
+    InvalidResourceId,
+    /// An operation identifier did not have its required canonical form.
+    #[error("invalid operation identifier")]
+    InvalidOperationId,
 }
 
 fn validate_identifier(prefix: &str, value: &str) -> bool {
@@ -35,7 +71,7 @@ fn validate_identifier(prefix: &str, value: &str) -> bool {
 }
 
 macro_rules! identifier {
-    ($name:ident, $prefix:literal, $kind:literal, $docs:literal) => {
+    ($name:ident, $prefix:literal, $error_variant:ident, $docs:literal) => {
         #[doc = $docs]
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub struct $name(String);
@@ -45,14 +81,14 @@ macro_rules! identifier {
             ///
             /// # Errors
             ///
-            /// Returns [`DomainError::InvalidIdentifier`] when the required
+            /// Returns a typed [`DomainError`] variant when the required
             /// prefix is absent, the body is empty, too long, or contains a
             /// control character.
             pub fn new(value: String) -> Result<Self, DomainError> {
                 if validate_identifier($prefix, &value) {
                     Ok(Self(value))
                 } else {
-                    Err(DomainError::InvalidIdentifier { kind: $kind })
+                    Err(DomainError::$error_variant)
                 }
             }
 
@@ -107,58 +143,78 @@ macro_rules! identifier {
     };
 }
 
-identifier!(TenantId, "tnt_", "tenant", "Isolated tenant identity.");
-identifier!(ProcessId, "prc_", "process", "Process-instance identity.");
+identifier!(
+    TenantId,
+    "tnt_",
+    InvalidTenantId,
+    "Isolated tenant identity."
+);
+identifier!(
+    ProcessId,
+    "prc_",
+    InvalidProcessId,
+    "Process-instance identity."
+);
 identifier!(
     DefinitionId,
     "def_",
-    "definition",
+    InvalidDefinitionId,
     "Process-definition identity."
 );
 identifier!(
     DefinitionVersion,
     "dfv_",
-    "definition version",
+    InvalidDefinitionVersion,
     "Pinned definition version identity."
 );
-identifier!(StepId, "stp_", "step", "Definition step identity.");
-identifier!(InputId, "inp_", "input", "Immutable inbox input identity.");
-identifier!(OutcomeId, "out_", "outcome", "Immutable outcome identity.");
+identifier!(StepId, "stp_", InvalidStepId, "Definition step identity.");
+identifier!(
+    InputId,
+    "inp_",
+    InvalidInputId,
+    "Immutable inbox input identity."
+);
+identifier!(
+    OutcomeId,
+    "out_",
+    InvalidOutcomeId,
+    "Immutable outcome identity."
+);
 identifier!(
     ActionId,
     "act_",
-    "action",
+    InvalidActionId,
     "Stable action and idempotency identity."
 );
-identifier!(ReviewId, "rev_", "review", "Manual-review identity.");
+identifier!(ReviewId, "rev_", InvalidReviewId, "Manual-review identity.");
 identifier!(
     PrincipalId,
     "pri_",
-    "principal",
+    InvalidPrincipalId,
     "Authorized actor identity."
 );
 identifier!(
     CanonicalEventId,
     "cev_",
-    "canonical event",
+    InvalidCanonicalEventId,
     "Canonical source-event identity."
 );
 identifier!(
     CanonicalCommitId,
     "cmt_",
-    "canonical commit",
+    InvalidCanonicalCommitId,
     "Canonical commit identity."
 );
 identifier!(
     ResourceId,
     "res_",
-    "resource",
+    InvalidResourceId,
     "Canonical resource-scope identity."
 );
 identifier!(
     OperationId,
     "op_",
-    "operation",
+    InvalidOperationId,
     "Registered canonical operation identity."
 );
 
@@ -504,5 +560,29 @@ impl ManualReviewDtoV1 {
             opened_at_sequence,
             evidence_digest,
         }
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn invalid_identifiers_report_their_typed_error_variant() {
+        assert_eq!(
+            TenantId::try_from("prc_wrong").unwrap_err(),
+            DomainError::InvalidTenantId
+        );
+        assert_eq!(
+            PrincipalId::try_from("tnt_wrong").unwrap_err(),
+            DomainError::InvalidPrincipalId
+        );
+    }
+
+    #[test]
+    fn deserialization_preserves_identifier_validation() {
+        let error = serde_json::from_str::<ActionId>("\"not-an-action\"").unwrap_err();
+        assert!(error.is_data());
     }
 }
