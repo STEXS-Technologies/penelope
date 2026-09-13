@@ -12,8 +12,18 @@
 pub use penelope_core as core;
 /// Versioned data-transfer objects.
 pub use penelope_domain as domain;
+/// Frequently used typed protocol values and versioned DTOs.
+pub use penelope_domain::{
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ContentDigest, DomainError,
+    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, StepId, TenantId,
+};
 /// Application execution boundary.
 pub use penelope_executor as executor;
+/// Deterministic linear-saga reference API.
+pub use penelope_executor::engine::{
+    ActionResultObservationV1, ActionResultV1, EngineError, LinearSagaDefinitionV1,
+    LinearSagaProjectionV1, SagaDecisionV1, SagaStatusV1, StepPlanV1, apply_action_result, start,
+};
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;
 /// Backend-neutral ports implemented by the composition root.

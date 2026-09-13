@@ -188,6 +188,17 @@ atomically settle → compensate/unlock or escalate`.
 - A terminal failure, inconsistency, or unresolved outcome produces an audited
   manual-review case; it never silently strands or releases assets.
 
+The compiling pure happy-path reference is
+[`trade_v1.rs`](crates/penelope/examples/trade_v1.rs). Run it with:
+
+```bash
+cargo run -p penelope --example trade_v1 --locked
+```
+
+It demonstrates the public facade only. It is not a durable integration: a
+production adapter must record outcomes and verify StateChronicle evidence as
+described above before calling the transition API.
+
 ## Verification today
 
 The following pass locally. They validate only the implemented protocol and

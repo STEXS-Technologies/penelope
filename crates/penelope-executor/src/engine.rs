@@ -70,6 +70,32 @@ pub struct ActionResultObservationV1 {
     pub result: ActionResultV1,
 }
 
+impl ActionResultObservationV1 {
+    /// Records a successful result for `action_id`.
+    pub const fn succeeded(action_id: ActionId) -> Self {
+        Self {
+            action_id,
+            result: ActionResultV1::Succeeded,
+        }
+    }
+
+    /// Records a retryable failure for `action_id`.
+    pub const fn retryable_failure(action_id: ActionId) -> Self {
+        Self {
+            action_id,
+            result: ActionResultV1::RetryableFailure,
+        }
+    }
+
+    /// Records an ambiguous result for `action_id`.
+    pub const fn unknown(action_id: ActionId) -> Self {
+        Self {
+            action_id,
+            result: ActionResultV1::Unknown,
+        }
+    }
+}
+
 /// A deterministic decision from a transition.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SagaDecisionV1 {
