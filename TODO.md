@@ -316,6 +316,15 @@ remains incomplete.
 - How: record who/why/when/which sequence; require authorized immutable input.
 - Evidence: concurrent operator, expired review, authorization and audit tests.
 
+Current partial evidence: `ManualReviewClaimV1` and `ManualReviewDecisionV1`
+are versioned typed port DTOs. They require a validated `PrincipalId`, typed
+resolution enum, immutable review ID, and redacted evidence digest; the review
+port records open, claim, and decision separately so no operator directly
+mutates a projection. They have parser fuzz coverage through the public review
+lifecycle target. Authorization policy, expiry, dual control, persistence,
+delivery as an inbox input, conflict behavior, and adversarial operator drills
+remain incomplete.
+
 ### P1.7 Security and supply chain baseline
 
 - [ ] Add `SECURITY.md`, disclosure/support policy, licenses, dependency policy,

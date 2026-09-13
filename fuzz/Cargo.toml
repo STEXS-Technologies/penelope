@@ -58,3 +58,9 @@ name = "fuzz_canonical_reconciliation"
 path = "fuzz_targets/fuzz_canonical_reconciliation.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_manual_review_lifecycle"
+path = "fuzz_targets/fuzz_manual_review_lifecycle.rs"
+test = false
+doc = false

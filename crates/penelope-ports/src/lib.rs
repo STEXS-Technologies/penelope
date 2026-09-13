@@ -9,8 +9,8 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, ProcessActionDtoV1,
-    ProcessInputDtoV1, ProcessOutcomeDtoV1,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ManualReviewDtoV1, PrincipalId,
+    ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1, ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -80,6 +80,41 @@ pub enum CanonicalReconciliationV1 {
         /// The action requiring escalation or later reconciliation.
         action_id: ActionId,
     },
+}
+
+/// Typed resolution selected by an authorized manual-review operator.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ManualReviewResolutionV1 {
+    /// Authorize a retry only after durable evidence establishes it is safe.
+    RetryAction,
+    /// Authorize a compensating action under the pinned process definition.
+    Compensate,
+    /// Cancel the process without further automatic effects.
+    Cancel,
+    /// Keep the process escalated for a higher-authority decision.
+    Escalate,
+}
+
+/// Idempotent claim request for a manual-review case.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ManualReviewClaimV1 {
+    /// The immutable review case being claimed.
+    pub review_id: ReviewId,
+    /// Validated identity of the claiming principal.
+    pub claimed_by: PrincipalId,
+}
+
+/// Immutable, attributable manual-review resolution request.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ManualReviewDecisionV1 {
+    /// The immutable review case being decided.
+    pub review_id: ReviewId,
+    /// Validated identity of the authorized deciding principal.
+    pub decided_by: PrincipalId,
+    /// Typed process-safe resolution selected by the operator.
+    pub resolution: ManualReviewResolutionV1,
+    /// Digest of the redacted evidence and authorization record.
+    pub evidence_digest: penelope_domain::ContentDigest,
 }
 
 impl CanonicalReconciliationV1 {
@@ -255,6 +290,10 @@ pub trait CanonicalState: Send + Sync {
 pub trait ManualReviewQueue: Send + Sync {
     /// Opens or returns the idempotent review case.
     async fn open(&self, review: &ManualReviewDtoV1) -> Result<(), PortError>;
+    /// Claims a review case without changing the process projection directly.
+    async fn claim(&self, claim: &ManualReviewClaimV1) -> Result<(), PortError>;
+    /// Records an authorized immutable resolution for subsequent inbox delivery.
+    async fn decide(&self, decision: &ManualReviewDecisionV1) -> Result<(), PortError>;
 }
 
 #[cfg(test)]

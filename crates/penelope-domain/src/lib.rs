@@ -132,6 +132,12 @@ identifier!(
 );
 identifier!(ReviewId, "rev_", "review", "Manual-review identity.");
 identifier!(
+    PrincipalId,
+    "pri_",
+    "principal",
+    "Authorized actor identity."
+);
+identifier!(
     CanonicalEventId,
     "cev_",
     "canonical event",
