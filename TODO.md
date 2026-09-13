@@ -159,6 +159,8 @@ function rebuilds only the final pending decision and has no effect-dispatch
 side effect. `replay_ordered` additionally rejects a non-contiguous zero-based
 event envelope sequence before applying it. Its unit/property tests and
 `fuzz_linear_engine` target run in the commands documented in `README.md`.
+`decide` provides one typed side-effect-free entry point for start and
+correlated-result inputs, requiring an existing replayed projection for results.
 All exposed linear-engine `V1` values now have serde forms, including ordered
 event envelopes; the engine fuzz target deserializes those envelopes. Explicit
 schema identities/fixtures and a compatibility matrix remain missing.

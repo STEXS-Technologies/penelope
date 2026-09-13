@@ -183,6 +183,23 @@ pub struct ActionResultObservationV1 {
     pub result: ActionResultV1,
 }
 
+/// Typed input accepted by the pure linear-saga decision function.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum LinearSagaInputV1 {
+    /// Start a previously absent process with its first action identity.
+    Start {
+        /// Fresh independently idempotent first action identity.
+        action_id: ActionId,
+    },
+    /// Apply a durably observed action result to an existing projection.
+    ActionResult {
+        /// Correlated immutable effect result.
+        observation: ActionResultObservationV1,
+        /// Already-persisted fresh identity for a following action or retry.
+        next_action_id: Option<ActionId>,
+    },
+}
+
 /// One immutable event from the linear engine's ordered process log.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LinearSagaEventV1 {
@@ -310,6 +327,12 @@ pub enum EngineError {
     /// The supplied definition does not match the process's pinned definition.
     #[error("supplied definition does not match the pinned process definition")]
     DefinitionMismatch,
+    /// A result input requires a projection rebuilt from durable outcomes.
+    #[error("saga result input requires an existing projection")]
+    MissingProjection,
+    /// A start input may not replace an existing projection.
+    #[error("saga start input requires an absent projection")]
+    StartWithProjection,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -324,6 +347,44 @@ impl LinearSagaDefinitionV1 {
         } else {
             Ok(())
         }
+    }
+}
+
+/// Makes one deterministic, side-effect-free linear-saga decision.
+///
+/// The outer application must durably record the accepted input and resulting
+/// decision before dispatching `next_action`. This function neither reads time
+/// nor performs I/O.
+///
+/// # Errors
+///
+/// Returns a typed error when the input/projection combination is illegal or
+/// the delegated start/result transition violates an engine invariant.
+pub fn decide(
+    definition: &LinearSagaDefinitionV1,
+    projection: Option<&LinearSagaProjectionV1>,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    input: &LinearSagaInputV1,
+) -> Result<SagaDecisionV1, EngineError> {
+    match input {
+        LinearSagaInputV1::Start { action_id } => {
+            if projection.is_some() {
+                return Err(EngineError::StartWithProjection);
+            }
+            start(definition, tenant_id, process_id, action_id.clone())
+        }
+        LinearSagaInputV1::ActionResult {
+            observation,
+            next_action_id,
+        } => apply_action_result(
+            definition,
+            projection.ok_or(EngineError::MissingProjection)?,
+            tenant_id,
+            process_id,
+            observation,
+            next_action_id.clone(),
+        ),
     }
 }
 
@@ -901,6 +962,54 @@ mod tests {
         )
         .unwrap();
         assert_eq!(complete.projection.status, SagaStatusV1::Completed);
+    }
+
+    #[test]
+    fn decide_routes_typed_start_and_result_inputs_without_side_effects() {
+        let definition = definition();
+        let started = decide(
+            &definition,
+            None,
+            id("tnt_game"),
+            id("prc_trade"),
+            &LinearSagaInputV1::Start {
+                action_id: id("act_lock"),
+            },
+        )
+        .unwrap();
+        let advanced = decide(
+            &definition,
+            Some(&started.projection),
+            id("tnt_game"),
+            id("prc_trade"),
+            &LinearSagaInputV1::ActionResult {
+                observation: ActionResultObservationV1::succeeded(
+                    started.next_action.as_ref().unwrap().action_id.clone(),
+                ),
+                next_action_id: Some(id("act_settle")),
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            advanced.next_action.as_ref().unwrap().step_id,
+            id("stp_settle")
+        );
+    }
+
+    #[test]
+    fn decide_rejects_a_result_without_a_replayed_projection() {
+        let error = decide(
+            &definition(),
+            None,
+            id("tnt_game"),
+            id("prc_trade"),
+            &LinearSagaInputV1::ActionResult {
+                observation: ActionResultObservationV1::succeeded(id("act_lock")),
+                next_action_id: Some(id("act_settle")),
+            },
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::MissingProjection);
     }
 
     #[test]

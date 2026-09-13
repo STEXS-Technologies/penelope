@@ -7,8 +7,8 @@ use penelope_domain::{
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventEnvelopeV1, LinearSagaEventV1, RetryPolicyV1, StepPlanV1, apply_action_result,
-    replay, replay_ordered, start,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryPolicyV1, StepPlanV1,
+    apply_action_result, replay, replay_ordered, start,
 };
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -21,6 +21,7 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 fuzz_target!(|data: &[u8]| {
     let _ = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data);
     let _ = serde_json::from_slice::<LinearSagaDefinitionV1>(data);
+    let _ = serde_json::from_slice::<LinearSagaInputV1>(data);
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
         definition_id: identifier::<DefinitionId>("def_fuzz"),
