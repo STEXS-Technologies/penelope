@@ -3,7 +3,8 @@
 use std::{hint::black_box, time::Instant};
 
 use penelope_domain::{
-    ActionId, ContentDigest, DomainError, ProcessActionKindV1, ProcessId, StepId, TenantId,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessActionKindV1,
+    ProcessId, StepId, TenantId,
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, EngineError, LinearSagaDefinitionV1, RetryPolicyV1, StepPlanV1,
@@ -32,6 +33,9 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
 fn main() -> Result<(), BenchmarkError> {
     let iterations = 100_000_u32;
     let definition = LinearSagaDefinitionV1 {
+        definition_id: identifier::<DefinitionId>("def_benchmark")?,
+        definition_version: identifier::<DefinitionVersion>("dfv_one")?,
+        definition_digest: ContentDigest([99; 32]),
         steps: vec![StepPlanV1 {
             step_id: identifier::<StepId>("stp_benchmark")?,
             action_kind: ProcessActionKindV1::CanonicalCommand,

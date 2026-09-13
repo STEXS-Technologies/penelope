@@ -4,9 +4,9 @@
 //! canonical evidence before passing an observation to the pure engine.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, CompensationPlanV1, ContentDigest, DomainError,
-    LinearSagaDefinitionV1, ProcessId, RetryPolicyV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
-    apply_action_result, start,
+    ActionId, ActionResultObservationV1, CompensationPlanV1, ContentDigest, DefinitionId,
+    DefinitionVersion, DomainError, LinearSagaDefinitionV1, ProcessId, RetryPolicyV1, SagaStatusV1,
+    StepId, StepPlanV1, TenantId, apply_action_result, start,
 };
 use thiserror::Error;
 
@@ -38,22 +38,27 @@ fn action_id(decision: &penelope::SagaDecisionV1) -> Result<ActionId, ExampleErr
 
 fn main() -> Result<(), ExampleError> {
     let policy = RetryPolicyV1::no_retry();
-    let definition = LinearSagaDefinitionV1::new(vec![
-        StepPlanV1::canonical_command(
-            identifier::<StepId>("stp_lock_seller")?,
-            ContentDigest([1; 32]),
-            policy,
-        )
-        .with_compensation(CompensationPlanV1::canonical_command(
-            ContentDigest([9; 32]),
-            policy,
-        )),
-        StepPlanV1::canonical_command(
-            identifier::<StepId>("stp_settle")?,
-            ContentDigest([2; 32]),
-            policy,
-        ),
-    ]);
+    let definition = LinearSagaDefinitionV1::new(
+        identifier::<DefinitionId>("def_trade")?,
+        identifier::<DefinitionVersion>("dfv_one")?,
+        ContentDigest([99; 32]),
+        vec![
+            StepPlanV1::canonical_command(
+                identifier::<StepId>("stp_lock_seller")?,
+                ContentDigest([1; 32]),
+                policy,
+            )
+            .with_compensation(CompensationPlanV1::canonical_command(
+                ContentDigest([9; 32]),
+                policy,
+            )),
+            StepPlanV1::canonical_command(
+                identifier::<StepId>("stp_settle")?,
+                ContentDigest([2; 32]),
+                policy,
+            ),
+        ],
+    );
     let tenant_id = identifier::<TenantId>("tnt_market")?;
     let process_id = identifier::<ProcessId>("prc_trade_failure")?;
 

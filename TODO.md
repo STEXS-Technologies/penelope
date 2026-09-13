@@ -118,6 +118,14 @@ compile-time non-substitutability tests remain incomplete.
 - Evidence: tests for invalid graphs, version pinning, digest mismatch, graph
   bounds and rejected incompatible migration.
 
+Current partial evidence: the linear reference definition and its projection
+now pin validated `DefinitionId`, `DefinitionVersion`, and a definition
+`ContentDigest`. Every transition compares the supplied definition to those
+pinned values and fails closed on mismatch; this is unit tested and the changed
+serde definition boundary is fuzzed. Graph validation, registration,
+compatibility/migration policy, non-linear transitions, full digest
+calculation, and deployment-time definition storage remain incomplete.
+
 ### P0.3 Append-only outcomes and deterministic projections
 
 - [ ] Implement ordered outcome envelopes with sequence, causal input, actor,

@@ -1,7 +1,8 @@
 //! Deterministic linear saga planning with typed inputs and outputs.
 
 use penelope_domain::{
-    ActionId, ContentDigest, ProcessActionDtoV1, ProcessActionKindV1, ProcessId, StepId, TenantId,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, ProcessActionDtoV1,
+    ProcessActionKindV1, ProcessId, StepId, TenantId,
 };
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU32;
@@ -94,20 +95,42 @@ impl StepPlanV1 {
 /// A deterministic, ordered saga definition.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinearSagaDefinitionV1 {
+    /// Stable immutable definition identity.
+    pub definition_id: DefinitionId,
+    /// Pinned definition version selected when this process starts.
+    pub definition_version: DefinitionVersion,
+    /// Digest of the exact definition semantics used for replay.
+    pub definition_digest: ContentDigest,
     /// Steps execute in vector order.
     pub steps: Vec<StepPlanV1>,
 }
 
 impl LinearSagaDefinitionV1 {
     /// Creates an ordered linear-saga definition.
-    pub const fn new(steps: Vec<StepPlanV1>) -> Self {
-        Self { steps }
+    pub const fn new(
+        definition_id: DefinitionId,
+        definition_version: DefinitionVersion,
+        definition_digest: ContentDigest,
+        steps: Vec<StepPlanV1>,
+    ) -> Self {
+        Self {
+            definition_id,
+            definition_version,
+            definition_digest,
+            steps,
+        }
     }
 }
 
 /// A replayable process projection.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinearSagaProjectionV1 {
+    /// Pinned immutable definition identity for this process instance.
+    pub definition_id: DefinitionId,
+    /// Pinned immutable definition version for this process instance.
+    pub definition_version: DefinitionVersion,
+    /// Pinned exact definition semantics digest for this process instance.
+    pub definition_digest: ContentDigest,
     /// Index of the current step.
     pub next_step_index: usize,
     /// Zero-based attempt for the current step.
@@ -266,6 +289,9 @@ pub enum EngineError {
     /// The event sequence cannot be advanced without overflow.
     #[error("saga event sequence overflowed")]
     EventSequenceOverflow,
+    /// The supplied definition does not match the process's pinned definition.
+    #[error("supplied definition does not match the pinned process definition")]
+    DefinitionMismatch,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -296,6 +322,9 @@ pub fn start(
 ) -> Result<SagaDecisionV1, EngineError> {
     definition.validate()?;
     let projection = LinearSagaProjectionV1 {
+        definition_id: definition.definition_id.clone(),
+        definition_version: definition.definition_version.clone(),
+        definition_digest: definition.definition_digest,
         next_step_index: 0,
         current_attempt: 0,
         active_action_id: Some(action_id.clone()),
@@ -326,6 +355,12 @@ pub fn apply_action_result(
     next_action_id: Option<ActionId>,
 ) -> Result<SagaDecisionV1, EngineError> {
     definition.validate()?;
+    if projection.definition_id != definition.definition_id
+        || projection.definition_version != definition.definition_version
+        || projection.definition_digest != definition.definition_digest
+    {
+        return Err(EngineError::DefinitionMismatch);
+    }
     if projection.status != SagaStatusV1::Running && projection.status != SagaStatusV1::Compensating
     {
         return Err(EngineError::TerminalProjection);
@@ -397,6 +432,7 @@ fn apply_forward_result(
                     issued_action_ids: issued_ids_after(projection, action_id),
                     compensable_step_indices,
                     status: SagaStatusV1::Running,
+                    ..projection.clone()
                 };
                 Ok(SagaDecisionV1 {
                     next_action: Some(action_for(definition, &next, tenant_id, process_id)?),
@@ -430,6 +466,7 @@ fn apply_forward_result(
                 issued_action_ids: issued_ids_after(projection, action_id),
                 compensable_step_indices: projection.compensable_step_indices.clone(),
                 status: SagaStatusV1::Running,
+                ..projection.clone()
             };
             Ok(SagaDecisionV1 {
                 next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
@@ -481,6 +518,7 @@ fn begin_compensation(
         issued_action_ids: issued_ids_after(projection, action_id),
         compensable_step_indices: projection.compensable_step_indices.clone(),
         status: SagaStatusV1::Compensating,
+        ..projection.clone()
     };
     Ok(SagaDecisionV1 {
         next_action: Some(action_for(
@@ -525,6 +563,7 @@ fn apply_compensation_result(
                 issued_action_ids: issued_ids_after(projection, action_id),
                 compensable_step_indices: remaining,
                 status: SagaStatusV1::Compensating,
+                ..projection.clone()
             };
             Ok(SagaDecisionV1 {
                 next_action: Some(action_for(definition, &next, tenant_id, process_id)?),
@@ -555,6 +594,7 @@ fn apply_compensation_result(
                 issued_action_ids: issued_ids_after(projection, action_id),
                 compensable_step_indices: projection.compensable_step_indices.clone(),
                 status: SagaStatusV1::Compensating,
+                ..projection.clone()
             };
             Ok(SagaDecisionV1 {
                 next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
@@ -601,6 +641,7 @@ fn terminal_projection(
         issued_action_ids: projection.issued_action_ids.clone(),
         compensable_step_indices,
         status,
+        ..projection.clone()
     }
 }
 
@@ -756,6 +797,9 @@ mod tests {
     fn definition() -> LinearSagaDefinitionV1 {
         let retry_policy = RetryPolicyV1::new(NonZeroU32::new(2).unwrap());
         LinearSagaDefinitionV1 {
+            definition_id: id("def_trade"),
+            definition_version: id("dfv_one"),
+            definition_digest: ContentDigest([99; 32]),
             steps: vec![
                 StepPlanV1 {
                     step_id: id("stp_lock"),
@@ -880,6 +924,9 @@ mod tests {
     #[test]
     fn exhausted_retry_policy_escalates_without_a_new_action() {
         let definition = LinearSagaDefinitionV1 {
+            definition_id: id("def_trade"),
+            definition_version: id("dfv_one"),
+            definition_digest: ContentDigest([99; 32]),
             steps: vec![StepPlanV1::canonical_command(
                 id("stp_lock"),
                 ContentDigest([1; 32]),
@@ -907,6 +954,9 @@ mod tests {
     fn known_terminal_failure_compensates_succeeded_steps_in_lifo_order() {
         let policy = RetryPolicyV1::no_retry();
         let definition = LinearSagaDefinitionV1 {
+            definition_id: id("def_trade"),
+            definition_version: id("dfv_one"),
+            definition_digest: ContentDigest([99; 32]),
             steps: vec![
                 StepPlanV1 {
                     step_id: id("stp_lock_a"),
@@ -1025,6 +1075,9 @@ mod tests {
     fn crash_after_every_trade_event_replays_to_the_same_compensated_state() {
         let policy = RetryPolicyV1::no_retry();
         let definition = LinearSagaDefinitionV1 {
+            definition_id: id("def_trade"),
+            definition_version: id("dfv_one"),
+            definition_digest: ContentDigest([99; 32]),
             steps: vec![
                 StepPlanV1 {
                     step_id: id("stp_lock"),
@@ -1090,6 +1143,9 @@ mod tests {
             let retry = apply_action_result(
                 &definition,
                 &LinearSagaProjectionV1 {
+                    definition_id: definition.definition_id.clone(),
+                    definition_version: definition.definition_version.clone(),
+                    definition_digest: definition.definition_digest,
                     next_step_index: 0,
                     current_attempt,
                     active_action_id: Some(id("act_lock")),
@@ -1209,6 +1265,27 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::UnexpectedAction);
+    }
+
+    #[test]
+    fn a_projection_rejects_a_definition_with_different_pinned_semantics() {
+        let definition = definition();
+        let started = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
+        let mut changed_definition = definition;
+        changed_definition.definition_digest = ContentDigest([42; 32]);
+        let error = apply_action_result(
+            &changed_definition,
+            &started.projection,
+            id("tnt_game"),
+            id("prc_trade"),
+            &observation(
+                started.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            Some(id("act_settle")),
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::DefinitionMismatch);
     }
 
     #[test]

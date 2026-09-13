@@ -1,7 +1,10 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
+use penelope_domain::{
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, ProcessActionKindV1, ProcessId,
+    TenantId,
+};
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
     LinearSagaEventEnvelopeV1, LinearSagaEventV1, RetryPolicyV1, StepPlanV1, apply_action_result,
@@ -17,8 +20,12 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 
 fuzz_target!(|data: &[u8]| {
     let _ = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data);
+    let _ = serde_json::from_slice::<LinearSagaDefinitionV1>(data);
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
+        definition_id: identifier::<DefinitionId>("def_fuzz"),
+        definition_version: identifier::<DefinitionVersion>("dfv_one"),
+        definition_digest: ContentDigest([99; 32]),
         steps: (0..step_count)
             .map(|index| StepPlanV1 {
                 step_id: match index {
