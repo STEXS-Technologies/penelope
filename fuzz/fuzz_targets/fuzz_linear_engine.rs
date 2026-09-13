@@ -3,8 +3,8 @@
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
 use penelope_executor::engine::{
-    ActionResultObservationV1, ActionResultV1, LinearSagaDefinitionV1, StepPlanV1,
-    apply_action_result, start,
+    ActionResultObservationV1, ActionResultV1, LinearSagaDefinitionV1, LinearSagaEventV1,
+    StepPlanV1, apply_action_result, replay, start,
 };
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -33,6 +33,16 @@ fuzz_target!(|data: &[u8]| {
     let tenant_id = identifier::<TenantId>("tnt_fuzz");
     let process_id = identifier::<ProcessId>("prc_fuzz");
     let action_id = identifier::<ActionId>("act_fuzz_start");
+    let replay_events = [
+        LinearSagaEventV1::Started {
+            action_id: action_id.clone(),
+        },
+        LinearSagaEventV1::ActionResultObserved {
+            observation: ActionResultObservationV1::succeeded(action_id.clone()),
+            next_action_id: Some(identifier("act_fuzz_next")),
+        },
+    ];
+    let _ = replay(&definition, &tenant_id, &process_id, &replay_events);
     let Ok(mut decision) = start(
         &definition,
         tenant_id.clone(),

@@ -6,7 +6,8 @@ workflow decided and what its steps observed. It is not a ledger, matching
 engine, market-data system, or canonical inventory/position store.
 
 > Status: **early implementation; not production-ready.** Penelope has typed
-> versioned protocol DTOs and a tested pure linear-saga reference engine. It
+> versioned protocol DTOs and a tested pure linear-saga reference engine with
+> ordered-event replay. It
 > does not yet have an append-only outcome implementation, durable adapters,
 > complete replay/compensation semantics, benchmarks, chaos evidence, CI, or a
 > release process. The complete execution plan is [TODO.md](TODO.md).
@@ -151,7 +152,7 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-core` | Pure schema constants and shared protocol primitives. | Versioned schema IDs only. |
 | `penelope-domain` | Versioned public DTOs for definitions, inputs, outcomes, actions, canonical commands/events and review. | DTOs only; no workflow logic. |
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
-| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
+| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces only; no implementation. |
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |

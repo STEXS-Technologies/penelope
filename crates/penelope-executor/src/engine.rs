@@ -70,6 +70,24 @@ pub struct ActionResultObservationV1 {
     pub result: ActionResultV1,
 }
 
+/// One immutable event from the linear engine's ordered process log.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum LinearSagaEventV1 {
+    /// The durable process-start record and its first planned action identity.
+    Started {
+        /// Identity for the first independently idempotent action.
+        action_id: ActionId,
+    },
+    /// A recorded, correlated action result and the identity already planned
+    /// for the next action, if that transition needs one.
+    ActionResultObserved {
+        /// Result accepted from the effect/canonical evidence boundary.
+        observation: ActionResultObservationV1,
+        /// Persisted identity for the following action or retry.
+        next_action_id: Option<ActionId>,
+    },
+}
+
 impl ActionResultObservationV1 {
     /// Records a successful result for `action_id`.
     pub const fn succeeded(action_id: ActionId) -> Self {
@@ -126,6 +144,12 @@ pub enum EngineError {
     /// A non-terminal transition did not receive an ID for its next action.
     #[error("next action identity is required")]
     MissingNextAction,
+    /// An ordered log had no durable start record.
+    #[error("saga log has no start event")]
+    MissingStart,
+    /// An ordered log attempted to start an existing process again.
+    #[error("saga log contains more than one start event")]
+    DuplicateStart,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -245,6 +269,55 @@ pub fn apply_action_result(
             next_action: None,
         }),
     }
+}
+
+/// Rebuilds the current decision from an ordered immutable process log.
+///
+/// The returned action, if any, is only the final pending action. Calling this
+/// function does not perform I/O or authorize a dispatcher to resend an
+/// earlier effect; an outer durable worker must reconcile and dispatch it.
+///
+/// # Errors
+///
+/// Returns an invariant error if the log lacks a start event, has multiple
+/// starts, or contains an invalid action transition.
+pub fn replay(
+    definition: &LinearSagaDefinitionV1,
+    tenant_id: &TenantId,
+    process_id: &ProcessId,
+    events: &[LinearSagaEventV1],
+) -> Result<SagaDecisionV1, EngineError> {
+    let mut decision: Option<SagaDecisionV1> = None;
+    for event in events {
+        match event {
+            LinearSagaEventV1::Started { action_id } => {
+                if decision.is_some() {
+                    return Err(EngineError::DuplicateStart);
+                }
+                decision = Some(start(
+                    definition,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    action_id.clone(),
+                )?);
+            }
+            LinearSagaEventV1::ActionResultObserved {
+                observation,
+                next_action_id,
+            } => {
+                let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
+                decision = Some(apply_action_result(
+                    definition,
+                    &current.projection,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    observation,
+                    next_action_id.clone(),
+                )?);
+            }
+        }
+    }
+    decision.ok_or(EngineError::MissingStart)
 }
 
 fn action_for(
@@ -453,5 +526,49 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::UnexpectedAction);
+    }
+
+    #[test]
+    fn replay_rebuilds_the_final_projection_from_immutable_events() {
+        let replayed = replay(
+            &definition(),
+            &id("tnt_game"),
+            &id("prc_trade"),
+            &[
+                LinearSagaEventV1::Started {
+                    action_id: id("act_lock"),
+                },
+                LinearSagaEventV1::ActionResultObserved {
+                    observation: ActionResultObservationV1::succeeded(id("act_lock")),
+                    next_action_id: Some(id("act_settle")),
+                },
+                LinearSagaEventV1::ActionResultObserved {
+                    observation: ActionResultObservationV1::succeeded(id("act_settle")),
+                    next_action_id: None,
+                },
+            ],
+        )
+        .unwrap();
+        assert_eq!(replayed.projection.status, SagaStatusV1::Completed);
+        assert!(replayed.next_action.is_none());
+    }
+
+    #[test]
+    fn replay_rejects_a_second_start_record() {
+        let error = replay(
+            &definition(),
+            &id("tnt_game"),
+            &id("prc_trade"),
+            &[
+                LinearSagaEventV1::Started {
+                    action_id: id("act_lock"),
+                },
+                LinearSagaEventV1::Started {
+                    action_id: id("act_other"),
+                },
+            ],
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::DuplicateStart);
     }
 }
