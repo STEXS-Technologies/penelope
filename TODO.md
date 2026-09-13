@@ -162,6 +162,12 @@ never emits a new action in that case. It does not yet include due time,
 backoff, jitter, persisted timer records, or timer race handling, so this item
 remains incomplete.
 
+Current partial P0.5 evidence: the projection retains all action IDs issued by
+one process. A result must correlate to the active ID, and any next/retry ID
+already issued by that process is rejected. This does not replace durable
+inbox/outbox deduplication or an effect-key contract, so P0.5 remains
+incomplete.
+
 ### P0.7 Compensation and operator escalation
 
 - [ ] Build a persisted LIFO compensation plan for succeeded compensable steps.

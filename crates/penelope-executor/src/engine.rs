@@ -72,6 +72,8 @@ pub struct LinearSagaProjectionV1 {
     pub current_attempt: u32,
     /// Stable identity of the action whose result may advance this projection.
     pub active_action_id: Option<ActionId>,
+    /// Every action identity issued by this process, in durable decision order.
+    pub issued_action_ids: Vec<ActionId>,
     /// Terminal/non-terminal process status.
     pub status: SagaStatusV1,
 }
@@ -184,6 +186,9 @@ pub enum EngineError {
     /// A non-terminal transition did not receive an ID for its next action.
     #[error("next action identity is required")]
     MissingNextAction,
+    /// A transition attempted to reuse an action identity from this process.
+    #[error("action identity was already issued by this process")]
+    ReusedActionId,
     /// An ordered log had no durable start record.
     #[error("saga log has no start event")]
     MissingStart,
@@ -222,7 +227,8 @@ pub fn start(
     let projection = LinearSagaProjectionV1 {
         next_step_index: 0,
         current_attempt: 0,
-        active_action_id: Some(action_id),
+        active_action_id: Some(action_id.clone()),
+        issued_action_ids: vec![action_id],
         status: SagaStatusV1::Running,
     };
     Ok(SagaDecisionV1 {
@@ -266,15 +272,18 @@ pub fn apply_action_result(
                         next_step_index,
                         current_attempt: 0,
                         active_action_id: None,
+                        issued_action_ids: projection.issued_action_ids.clone(),
                         status: SagaStatusV1::Completed,
                     },
                     next_action: None,
                 })
             } else {
+                let action_id = fresh_action_id(projection, next_action_id)?;
                 let next = LinearSagaProjectionV1 {
                     next_step_index,
                     current_attempt: 0,
-                    active_action_id: Some(next_action_id.ok_or(EngineError::MissingNextAction)?),
+                    active_action_id: Some(action_id.clone()),
+                    issued_action_ids: issued_ids_after(projection, action_id),
                     status: SagaStatusV1::Running,
                 };
                 Ok(SagaDecisionV1 {
@@ -298,15 +307,18 @@ pub fn apply_action_result(
                         next_step_index: projection.next_step_index,
                         current_attempt: projection.current_attempt,
                         active_action_id: None,
+                        issued_action_ids: projection.issued_action_ids.clone(),
                         status: SagaStatusV1::Escalated,
                     },
                     next_action: None,
                 });
             }
+            let action_id = fresh_action_id(projection, next_action_id)?;
             let retry = LinearSagaProjectionV1 {
                 next_step_index: projection.next_step_index,
                 current_attempt,
-                active_action_id: Some(next_action_id.ok_or(EngineError::MissingNextAction)?),
+                active_action_id: Some(action_id.clone()),
+                issued_action_ids: issued_ids_after(projection, action_id),
                 status: SagaStatusV1::Running,
             };
             Ok(SagaDecisionV1 {
@@ -319,11 +331,29 @@ pub fn apply_action_result(
                 next_step_index: projection.next_step_index,
                 current_attempt: projection.current_attempt,
                 active_action_id: None,
+                issued_action_ids: projection.issued_action_ids.clone(),
                 status: SagaStatusV1::Escalated,
             },
             next_action: None,
         }),
     }
+}
+
+fn fresh_action_id(
+    projection: &LinearSagaProjectionV1,
+    next_action_id: Option<ActionId>,
+) -> Result<ActionId, EngineError> {
+    let action_id = next_action_id.ok_or(EngineError::MissingNextAction)?;
+    if projection.issued_action_ids.contains(&action_id) {
+        return Err(EngineError::ReusedActionId);
+    }
+    Ok(action_id)
+}
+
+fn issued_ids_after(projection: &LinearSagaProjectionV1, action_id: ActionId) -> Vec<ActionId> {
+    let mut issued_action_ids = projection.issued_action_ids.clone();
+    issued_action_ids.push(action_id);
+    issued_action_ids
 }
 
 /// Rebuilds the current decision from an ordered immutable process log.
@@ -576,6 +606,7 @@ mod tests {
                     next_step_index: 0,
                     current_attempt,
                     active_action_id: Some(id("act_lock")),
+                    issued_action_ids: vec![id("act_lock")],
                     status: SagaStatusV1::Running,
                 },
                 id("tnt_game"),
@@ -690,6 +721,30 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::UnexpectedAction);
+    }
+
+    #[test]
+    fn retry_cannot_reuse_an_issued_action_identity() {
+        let started = start(
+            &definition(),
+            id("tnt_game"),
+            id("prc_trade"),
+            id("act_lock"),
+        )
+        .unwrap();
+        let error = apply_action_result(
+            &definition(),
+            &started.projection,
+            id("tnt_game"),
+            id("prc_trade"),
+            &observation(
+                started.next_action.as_ref().unwrap(),
+                ActionResultV1::RetryableFailure,
+            ),
+            Some(id("act_lock")),
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::ReusedActionId);
     }
 
     #[test]
