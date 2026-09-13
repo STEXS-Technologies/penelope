@@ -15,6 +15,26 @@ not call Penelope production-ready before every P0 and P1 item is complete.
 | P2 | Reference adapters and operational controls | Users need proven persistence and recovery patterns. |
 | P3 | Performance, chaos and ecosystem maturity | Scale claims are meaningful only after safety is established. |
 
+## Product contract to build
+
+Penelope is the durable process-truth engine for sagas and multi-step async
+events. It must record every causally relevant fact before or when it is acted
+upon: input receipt, decision, planned action, attempt, response, timer,
+committed canonical event, retry, compensation, review and terminal result.
+
+Its recovery contract is strict:
+
+```text
+replay outcome log -> rebuild process projection -> identify pending action
+  -> reconcile durable external/canonical evidence by action ID
+  -> retry only if policy and evidence permit
+  -> otherwise escalate with immutable evidence
+```
+
+Rewind is replay of Penelope's derived projection only. StateChronicle events
+and commits are immutable: a canonical correction is a new authorized,
+idempotent compensating or repair command, never history rewrite.
+
 ## P0 — deterministic core
 
 ### P0.1 Stable IDs, envelopes, validation and limits
@@ -107,6 +127,24 @@ not call Penelope production-ready before every P0 and P1 item is complete.
 - Evidence: authorization matrix, quota, redaction snapshot and public-parser
   fuzz tests.
 
+### P0.9 Build `trade.v1` as the reference saga
+
+- [ ] Implement the complete versioned reference process: validate proposal;
+  lock asset A; lock asset B; wait for acceptance or deadline; atomically
+  settle; compensate known non-settlement by LIFO unlock; escalate unresolved
+  outcomes.
+- Why: it forces the engine to prove every essential promise—correlation,
+  timers, retries, atomic canonical command, compensation and manual review—on
+  a real shared-inventory/economic workflow.
+- How: every action receives a unique process action ID; pin the process
+  definition digest; retain exact StateChronicle command/event correlation;
+  distinguish `settlement_not_committed`, `settlement_committed`, and
+  `settlement_unknown`. Only the first permits automatic unlock.
+- Evidence: deterministic simulations covering duplicate proposals, two
+  competing locks, delayed acceptance, timer duplication, crash at each action
+  boundary, commit-before-response loss, delayed canonical event, partial
+  evidence, compensation retry and operator resolution.
+
 ## P1 — durable ports and integration contract
 
 ### P1.1 Complete backend-neutral traits
@@ -145,11 +183,16 @@ not call Penelope production-ready before every P0 and P1 item is complete.
 - [ ] Publish types and a guide for canonical command submission and committed
   event correlation.
 - Why: Penelope must coordinate process truth without inventing ledger facts.
-- How: use a durable command ID per canonical mutation; submit through a
-  verified StateChronicle durable path; advance only after matching committed
-  evidence appears in the inbox.
+- How: implement `penelope-statechronicle` without a local path dependency;
+  publish a versioned adapter contract. In the Penelope append transaction,
+  persist the planned command action and outbox record. Submit with that exact
+  action ID as StateChronicle idempotency ID through a verified durable path.
+  Consume transactional-outbox events in a durable Penelope inbox and validate
+  tenant, command/action ID, expected operation, resource scope and committed
+  result before advancing. Reconcile pending actions by ID after restart.
 - Evidence: E2E fake-ledger cases for lost response, duplicate command, delayed
-  event, rejection, restart and compensation.
+  event, rejection, restart, compensation, wrong-tenant event, mismatched
+  event/action ID, unverified event and settlement-unknown state.
 
 ### P1.5 External executor ambiguity
 

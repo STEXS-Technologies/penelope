@@ -3,6 +3,12 @@ resolver = "3"
 members = [
     "crates/penelope",
     "crates/penelope-ports",
+    "crates/penelope-statechronicle",
+]
+default-members = [
+    "crates/penelope",
+    "crates/penelope-ports",
+    "crates/penelope-statechronicle",
 ]
 
 [workspace.package]
@@ -24,6 +30,7 @@ trait-variant = "0.1"
 # internal crates
 penelope = { path = "crates/penelope" }
 penelope-ports = { path = "crates/penelope-ports" }
+penelope-statechronicle = { path = "crates/penelope-statechronicle" }
 
 [workspace.lints.rust]
 rust_2024_prelude_collisions = "warn"

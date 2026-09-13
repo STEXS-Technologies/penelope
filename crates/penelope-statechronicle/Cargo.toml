@@ -1,0 +1,13 @@
+[package]
+name = "penelope-statechronicle"
+description = "Penelope adapter boundary for idempotent StateChronicle commands and verified committed-event correlation."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+penelope = { workspace = true }
+penelope-ports = { workspace = true }
+
+[lints]
+workspace = true
