@@ -280,10 +280,13 @@ item remains incomplete.
 Current partial evidence: backend-neutral `Clock`, `ActionIdSource`,
 `ProcessAuthorizer`, and due-time `TimerScheduler` ports now use typed logical
 time, process scope, principal, action, and authorization operation values.
-Their public DTO parser boundary is fuzzed. Definition/process-store, inbox,
-outbox, executor and review interfaces exist in smaller forms, but there are
-no fake adapters, shared contract suite, authorization policy, or cancellation
-semantics evidence yet, so this item remains incomplete.
+Their public DTO parser boundary is fuzzed. The `ports_conformance` test owns a
+test-only unavailable adapter that implements every current port, verifies
+object safety and `Send + Sync`, calls every method, and proves unavailable
+operations fail closed while authorization denies by default. Definition/
+process-store, inbox, outbox, executor and review interfaces remain smaller
+than the target contract; no authorization policy or cancellation-semantics
+evidence exists yet, so this item remains incomplete.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 
