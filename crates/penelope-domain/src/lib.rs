@@ -15,6 +15,10 @@ use thiserror::Error;
 
 /// Maximum length of a textual protocol identifier.
 pub const MAX_IDENTIFIER_LENGTH: usize = 128;
+/// Maximum steps in one immutable process definition.
+pub const MAX_DEFINITION_STEPS: usize = 128;
+/// Maximum resources a single canonical command or event may scope.
+pub const MAX_CANONICAL_RESOURCE_IDS: usize = 64;
 
 /// Domain validation failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
@@ -61,6 +65,21 @@ pub enum DomainError {
     /// An operation identifier did not have its required canonical form.
     #[error("invalid operation identifier")]
     InvalidOperationId,
+    /// A process definition has no executable steps.
+    #[error("process definition contains no steps")]
+    EmptyDefinitionSteps,
+    /// A process definition exceeds the bounded step limit.
+    #[error("process definition exceeds the step limit")]
+    DefinitionStepLimitExceeded,
+    /// A process definition declares the same step identity more than once.
+    #[error("process definition contains a duplicate step identifier")]
+    DuplicateStepId,
+    /// A canonical operation scope exceeds the bounded resource limit.
+    #[error("canonical resource scope exceeds the resource limit")]
+    CanonicalResourceLimitExceeded,
+    /// A canonical operation scope contains the same resource more than once.
+    #[error("canonical resource scope contains a duplicate resource identifier")]
+    DuplicateCanonicalResourceId,
 }
 
 fn validate_identifier(prefix: &str, value: &str) -> bool {
@@ -425,18 +444,47 @@ impl ProcessDefinitionDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::ProcessDefinition;
 
     /// Creates a version-pinned process definition DTO.
-    pub const fn new(
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for empty, oversized, or duplicate step lists.
+    pub fn new(
         definition_id: DefinitionId,
         definition_version: DefinitionVersion,
         definition_digest: ContentDigest,
         step_ids: Vec<StepId>,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, DomainError> {
+        let definition = Self {
             definition_id,
             definition_version,
             definition_digest,
             step_ids,
+        };
+        definition.validate()?;
+        Ok(definition)
+    }
+
+    /// Validates bounded, unambiguous definition steps.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for empty, oversized, or duplicate step lists.
+    pub fn validate(&self) -> Result<(), DomainError> {
+        if self.step_ids.is_empty() {
+            return Err(DomainError::EmptyDefinitionSteps);
         }
+        if self.step_ids.len() > MAX_DEFINITION_STEPS {
+            return Err(DomainError::DefinitionStepLimitExceeded);
+        }
+        if self.step_ids.iter().enumerate().any(|(index, step_id)| {
+            self.step_ids
+                .iter()
+                .skip(index.saturating_add(1))
+                .any(|other_step_id| other_step_id == step_id)
+        }) {
+            return Err(DomainError::DuplicateStepId);
+        }
+        Ok(())
     }
 }
 
@@ -519,26 +567,65 @@ impl CanonicalCommandDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::CanonicalCommand;
 
     /// Creates a typed canonical command DTO.
-    pub const fn new(
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for oversized or duplicate resource identifiers.
+    pub fn new(
         tenant_id: TenantId,
         action_id: ActionId,
         operation: OperationId,
         resource_ids: Vec<ResourceId>,
         payload_digest: ContentDigest,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, DomainError> {
+        let command = Self {
             tenant_id,
             action_id,
             operation,
             resource_ids,
             payload_digest,
-        }
+        };
+        command.validate()?;
+        Ok(command)
+    }
+
+    /// Validates the bounded, unambiguous canonical resource scope.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for oversized or duplicate resource identifiers.
+    pub fn validate(&self) -> Result<(), DomainError> {
+        validate_canonical_resource_ids(&self.resource_ids)
     }
 }
 
 impl CanonicalEventDtoV1 {
     /// Immutable schema identity for this DTO version.
     pub const SCHEMA: SchemaV1 = SchemaV1::CanonicalEvent;
+
+    /// Validates the bounded, unambiguous canonical resource scope.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for oversized or duplicate resource identifiers.
+    pub fn validate(&self) -> Result<(), DomainError> {
+        validate_canonical_resource_ids(&self.resource_ids)
+    }
+}
+
+fn validate_canonical_resource_ids(resource_ids: &[ResourceId]) -> Result<(), DomainError> {
+    if resource_ids.len() > MAX_CANONICAL_RESOURCE_IDS {
+        return Err(DomainError::CanonicalResourceLimitExceeded);
+    }
+    if resource_ids.iter().enumerate().any(|(index, resource_id)| {
+        resource_ids
+            .iter()
+            .skip(index.saturating_add(1))
+            .any(|other_resource_id| other_resource_id == resource_id)
+    }) {
+        return Err(DomainError::DuplicateCanonicalResourceId);
+    }
+    Ok(())
 }
 
 impl ManualReviewDtoV1 {
@@ -568,6 +655,10 @@ impl ManualReviewDtoV1 {
 mod tests {
     use super::*;
 
+    fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
+        T::try_from(value).ok().unwrap()
+    }
+
     #[test]
     fn invalid_identifiers_report_their_typed_error_variant() {
         assert_eq!(
@@ -584,5 +675,42 @@ mod tests {
     fn deserialization_preserves_identifier_validation() {
         let error = serde_json::from_str::<ActionId>("\"not-an-action\"").unwrap_err();
         assert!(error.is_data());
+    }
+
+    #[test]
+    fn definition_validation_bounds_and_deduplicates_steps() {
+        let oversized = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([0; 32]),
+            vec![id::<StepId>("stp_lock"); MAX_DEFINITION_STEPS.saturating_add(1)],
+        );
+        assert_eq!(
+            oversized.unwrap_err(),
+            DomainError::DefinitionStepLimitExceeded
+        );
+
+        let duplicate = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([0; 32]),
+            vec![id("stp_lock"), id("stp_lock")],
+        );
+        assert_eq!(duplicate.unwrap_err(), DomainError::DuplicateStepId);
+    }
+
+    #[test]
+    fn canonical_scope_validation_bounds_and_deduplicates_resources() {
+        let duplicate = CanonicalCommandDtoV1::new(
+            id("tnt_market"),
+            id("act_settle"),
+            id("op_settle"),
+            vec![id::<ResourceId>("res_asset"), id("res_asset")],
+            ContentDigest([0; 32]),
+        );
+        assert_eq!(
+            duplicate.unwrap_err(),
+            DomainError::DuplicateCanonicalResourceId
+        );
     }
 }

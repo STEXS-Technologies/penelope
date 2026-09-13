@@ -98,6 +98,15 @@ so this item remains incomplete.
 - Evidence: malformed-input/property tests, serialization golden tests, limit
   boundaries, and compile-time non-substitutability checks.
 
+Current partial evidence: all current identity values are validated prefixed
+newtypes with distinct typed `DomainError` variants. Definition construction
+and validation reject empty, oversized, or duplicate step lists; canonical
+commands/events reject oversized or duplicate resource scopes. The versioned
+DTO fuzz target executes these validators after parsing. Tenant/principal
+authorization context, the remaining ID categories, canonical encoding,
+payload/instance/timer limits, golden serialization fixtures, and
+compile-time non-substitutability tests remain incomplete.
+
 ### P0.2 Immutable versioned definitions
 
 - [ ] Implement `ProcessDefinition`, `DefinitionVersion`, `StepDefinition`,

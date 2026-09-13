@@ -7,11 +7,17 @@ use penelope_domain::{
 };
 
 fuzz_target!(|data: &[u8]| {
-    let _ = serde_json::from_slice::<ProcessDefinitionDtoV1>(data);
+    if let Ok(definition) = serde_json::from_slice::<ProcessDefinitionDtoV1>(data) {
+        let _ = definition.validate();
+    }
     let _ = serde_json::from_slice::<ProcessInputDtoV1>(data);
     let _ = serde_json::from_slice::<ProcessOutcomeDtoV1>(data);
     let _ = serde_json::from_slice::<ProcessActionDtoV1>(data);
-    let _ = serde_json::from_slice::<CanonicalCommandDtoV1>(data);
-    let _ = serde_json::from_slice::<CanonicalEventDtoV1>(data);
+    if let Ok(command) = serde_json::from_slice::<CanonicalCommandDtoV1>(data) {
+        let _ = command.validate();
+    }
+    if let Ok(event) = serde_json::from_slice::<CanonicalEventDtoV1>(data) {
+        let _ = event.validate();
+    }
     let _ = serde_json::from_slice::<ManualReviewDtoV1>(data);
 });
