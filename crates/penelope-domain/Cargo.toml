@@ -1,0 +1,13 @@
+[package]
+name = "penelope-domain"
+description = "Versioned Penelope process, action, canonical-event, and review DTOs."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+penelope-core = { workspace = true }
+serde = { workspace = true }
+
+[lints]
+workspace = true

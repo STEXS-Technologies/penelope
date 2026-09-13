@@ -1,11 +1,19 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/penelope-core",
+    "crates/penelope-domain",
+    "crates/penelope-intent",
+    "crates/penelope-executor",
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
 ]
 default-members = [
+    "crates/penelope-core",
+    "crates/penelope-domain",
+    "crates/penelope-intent",
+    "crates/penelope-executor",
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
@@ -27,7 +35,12 @@ thiserror = { version = "2.0.18", default-features = false }
 tokio = "1.48.0"
 trait-variant = "0.1"
 
-# internal crates
+# Internal hexagonal layers. `penelope-statechronicle` is an adapter boundary,
+# not a client implementation; infrastructure belongs in a consuming platform.
+penelope-core = { path = "crates/penelope-core" }
+penelope-domain = { path = "crates/penelope-domain" }
+penelope-intent = { path = "crates/penelope-intent" }
+penelope-executor = { path = "crates/penelope-executor" }
 penelope = { path = "crates/penelope" }
 penelope-ports = { path = "crates/penelope-ports" }
 penelope-statechronicle = { path = "crates/penelope-statechronicle" }

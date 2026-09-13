@@ -1,6 +1,6 @@
 [package]
-name = "penelope"
-description = "Penelope process engine: deterministic saga/process orchestration over an append-only outcome log (pure logic, no I/O)."
+name = "penelope-executor"
+description = "Penelope application boundary: deterministic decisions composed with injected ports."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -9,9 +9,7 @@ license.workspace = true
 penelope-core = { workspace = true }
 penelope-domain = { workspace = true }
 penelope-intent = { workspace = true }
-penelope-executor = { workspace = true }
 penelope-ports = { workspace = true }
-penelope-statechronicle = { workspace = true }
 
 [lints]
 workspace = true

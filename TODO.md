@@ -35,6 +35,37 @@ Rewind is replay of Penelope's derived projection only. StateChronicle events
 and commits are immutable: a canonical correction is a new authorized,
 idempotent compensating or repair command, never history rewrite.
 
+## Hexagonal workspace contract
+
+The workspace now mirrors StateChronicle's layer boundaries:
+
+| Layer | Crate | Permitted contents | Forbidden contents |
+| --- | --- | --- | --- |
+| Core | `penelope-core` | Schema constants and pure protocol primitives. | I/O, runtime, ports, adapters. |
+| Domain | `penelope-domain` | Versioned data-only DTOs. | Database/transport types and workflow side effects. |
+| Intent | `penelope-intent` | Transport-to-domain parsing and validation. | HTTP/broker/database clients. |
+| Executor | `penelope-executor` | Deterministic application decisions using injected ports. | Infrastructure implementation. |
+| Ports | `penelope-ports` | Async backend-neutral interfaces and port errors. | Storage, worker, transport or client implementation. |
+| Adapter boundary | `penelope-statechronicle` | StateChronicle mapping contract. | Local path dependency or actual StateChronicle client/database implementation. |
+| Facade | `penelope` | Curated re-exports only. | Domain or infrastructure logic. |
+
+Every public wire DTO must have both a `V<N>` Rust type and an immutable
+schema identifier. Compatibility is additive: a new semantic interpretation
+requires a new schema/type, while adapters accept only versions they explicitly
+support.
+
+### P0.0 Complete the hexagonal contract tests
+
+- [ ] Add compile-time dependency-boundary checks and DTO schema-version
+  validation for every public request, outcome, action and adapter message.
+- Why: a clean directory tree is not architecture if an inner crate can import
+  an outer implementation or an adapter can silently reinterpret a DTO.
+- How: keep infrastructure crates out of this workspace; add forbidden
+  dependency checks, DTO fixture/round-trip tests, and a compatibility matrix
+  for each supported schema version.
+- Evidence: CI rejects boundary violations, unknown schema versions, changed
+  v1 fixtures and non-versioned public wire types.
+
 ## P0 — deterministic core
 
 ### P0.1 Stable IDs, envelopes, validation and limits

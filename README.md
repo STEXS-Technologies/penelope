@@ -111,14 +111,50 @@ of ambiguous external effects, and manual escalation when ambiguity remains.
 
 ## Workspace
 
-| Crate | Intended responsibility | Current state |
-| --- | --- | --- |
-| `penelope` | Pure domain model, definition validation, replay, transitions, compensation planning. | Module scaffold only. |
-| `penelope-ports` | Backend-neutral persistence, worker, timer, inbox/outbox, command and review traits. | Module scaffold only. |
-| `penelope-statechronicle` | Adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
+Penelope follows StateChronicle's workspace-first hexagonal layout. Dependency
+arrows point inward only; a pure inner crate cannot depend on a port, adapter,
+database, broker, clock, transport, or local checkout.
 
-Adapters must be separate crates or live in the application composition root.
-They must never be required to use or test the pure engine.
+```text
+transport / database / broker / scheduler implementations (consumer-owned)
+                              |
+                              v
+                 penelope-statechronicle  [adapter boundary only]
+                              |
+                              v
+                   penelope-ports         [interfaces]
+                              |
+                              v
+                 penelope-executor        [application]
+                              |
+                              v
+                  penelope-intent         [inbound validation]
+                              |
+                              v
+                  penelope-domain         [versioned DTOs]
+                              |
+                              v
+                   penelope-core          [schema primitives]
+
+                  penelope                [umbrella facade]
+```
+
+| Crate | Responsibility | Current state |
+| --- | --- | --- |
+| `penelope-core` | Pure schema constants and shared protocol primitives. | Versioned schema IDs only. |
+| `penelope-domain` | Versioned public DTOs for definitions, inputs, outcomes, actions, canonical commands/events and review. | DTOs only; no workflow logic. |
+| `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
+| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Contract scaffold only. |
+| `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces only; no implementation. |
+| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
+| `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
+
+All DTOs are versioned by their Rust type name and required `schema` value,
+such as `penelope.process.outcome.v1`. New wire changes require a new DTO/schema
+version; no existing version may be reinterpreted. Port interfaces consume and
+produce only these DTOs. Infrastructure implementations must live in a
+consumer composition root or a separately reviewed adapter repository; this
+workspace deliberately ships none.
 
 ## First reference saga: `trade.v1`
 
