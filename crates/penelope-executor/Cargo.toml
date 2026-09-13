@@ -16,5 +16,9 @@ thiserror = { workspace = true }
 [dev-dependencies]
 proptest = { workspace = true }
 
+[[bench]]
+name = "linear_saga"
+harness = false
+
 [lints]
 workspace = true

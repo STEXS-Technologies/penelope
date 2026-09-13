@@ -373,6 +373,12 @@ does not yet cover source freshness/deduplication or response-loss recovery.
 - Evidence: versioned artifacts and regression thresholds; no unqualified
   “millions of operations” claim.
 
+Current partial evidence: `cargo bench -p penelope-executor --bench
+linear_saga --locked` measures a fixed 100,000-operation pure
+start/correlated-result/complete loop without external I/O. It is deliberately
+not an E2E, durable-store, or multithread throughput claim. Its measured output
+must always be reported with the executing hardware and command result.
+
 ### P3.4 Financial/economic security review
 
 - [ ] Threat-model tenant crossover, replay, forged events, command confusion,

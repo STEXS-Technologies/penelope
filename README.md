@@ -236,6 +236,7 @@ cargo fuzz run fuzz_identifiers -- -runs=100
 cargo fuzz run fuzz_versioned_dtos -- -runs=100
 cargo fuzz run fuzz_linear_engine -- -runs=100
 cargo fuzz run fuzz_statechronicle_correlation -- -runs=100
+cargo bench -p penelope-executor --bench linear_saga --locked
 ```
 
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are
