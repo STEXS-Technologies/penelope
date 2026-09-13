@@ -48,9 +48,7 @@ fuzz_target!(|data: &[u8]| {
     let process_id = identifier::<ProcessId>("prc_fuzz");
     let action_id = identifier::<ActionId>("act_fuzz_start");
     let replay_events = [
-        LinearSagaEventV1::Started {
-            action_id: action_id.clone(),
-        },
+        LinearSagaEventV1::started(&definition, action_id.clone()),
         LinearSagaEventV1::ActionResultObserved {
             observation: ActionResultObservationV1::succeeded(action_id.clone()),
             next_action_id: Some(identifier("act_fuzz_next")),

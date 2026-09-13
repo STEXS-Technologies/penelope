@@ -188,6 +188,12 @@ pub struct ActionResultObservationV1 {
 pub enum LinearSagaEventV1 {
     /// The durable process-start record and its first planned action identity.
     Started {
+        /// Immutable definition identity selected when this process began.
+        definition_id: DefinitionId,
+        /// Immutable definition version selected when this process began.
+        definition_version: DefinitionVersion,
+        /// Exact definition semantics selected when this process began.
+        definition_digest: ContentDigest,
         /// Identity for the first independently idempotent action.
         action_id: ActionId,
     },
@@ -240,6 +246,18 @@ impl ActionResultObservationV1 {
         Self {
             action_id,
             result: ActionResultV1::TerminalFailure,
+        }
+    }
+}
+
+impl LinearSagaEventV1 {
+    /// Records a start event pinned to the exact definition used by the process.
+    pub fn started(definition: &LinearSagaDefinitionV1, action_id: ActionId) -> Self {
+        Self::Started {
+            definition_id: definition.definition_id.clone(),
+            definition_version: definition.definition_version.clone(),
+            definition_digest: definition.definition_digest,
+            action_id,
         }
     }
 }
@@ -681,9 +699,20 @@ pub fn replay(
     let mut decision: Option<SagaDecisionV1> = None;
     for event in events {
         match event {
-            LinearSagaEventV1::Started { action_id } => {
+            LinearSagaEventV1::Started {
+                definition_id,
+                definition_version,
+                definition_digest,
+                action_id,
+            } => {
                 if decision.is_some() {
                     return Err(EngineError::DuplicateStart);
+                }
+                if definition_id != &definition.definition_id
+                    || definition_version != &definition.definition_version
+                    || definition_digest != &definition.definition_digest
+                {
+                    return Err(EngineError::DefinitionMismatch);
                 }
                 decision = Some(start(
                     definition,
@@ -1095,9 +1124,7 @@ mod tests {
         let tenant_id = id::<TenantId>("tnt_game");
         let process_id = id::<ProcessId>("prc_trade");
         let events = vec![
-            LinearSagaEventV1::Started {
-                action_id: id("act_lock"),
-            },
+            LinearSagaEventV1::started(&definition, id("act_lock")),
             LinearSagaEventV1::ActionResultObserved {
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
                 next_action_id: Some(id("act_settle")),
@@ -1194,9 +1221,7 @@ mod tests {
                 start_action_id.clone(),
             )
             .unwrap();
-            let mut events = vec![LinearSagaEventV1::Started {
-                action_id: start_action_id,
-            }];
+            let mut events = vec![LinearSagaEventV1::started(&definition, start_action_id)];
 
             for code in result_codes {
                 let Some(action) = live.next_action.as_ref() else {
@@ -1314,14 +1339,13 @@ mod tests {
 
     #[test]
     fn replay_rebuilds_the_final_projection_from_immutable_events() {
+        let definition = definition();
         let replayed = replay(
-            &definition(),
+            &definition,
             &id("tnt_game"),
             &id("prc_trade"),
             &[
-                LinearSagaEventV1::Started {
-                    action_id: id("act_lock"),
-                },
+                LinearSagaEventV1::started(&definition, id("act_lock")),
                 LinearSagaEventV1::ActionResultObserved {
                     observation: ActionResultObservationV1::succeeded(id("act_lock")),
                     next_action_id: Some(id("act_settle")),
@@ -1339,17 +1363,14 @@ mod tests {
 
     #[test]
     fn replay_rejects_a_second_start_record() {
+        let definition = definition();
         let error = replay(
-            &definition(),
+            &definition,
             &id("tnt_game"),
             &id("prc_trade"),
             &[
-                LinearSagaEventV1::Started {
-                    action_id: id("act_lock"),
-                },
-                LinearSagaEventV1::Started {
-                    action_id: id("act_other"),
-                },
+                LinearSagaEventV1::started(&definition, id("act_lock")),
+                LinearSagaEventV1::started(&definition, id("act_other")),
             ],
         )
         .unwrap_err();
@@ -1357,16 +1378,31 @@ mod tests {
     }
 
     #[test]
+    fn replay_rejects_a_start_event_with_different_pinned_semantics() {
+        let definition = definition();
+        let event = LinearSagaEventV1::started(&definition, id("act_lock"));
+        let mut changed_definition = definition;
+        changed_definition.definition_digest = ContentDigest([42; 32]);
+        let error = replay(
+            &changed_definition,
+            &id("tnt_game"),
+            &id("prc_trade"),
+            &[event],
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::DefinitionMismatch);
+    }
+
+    #[test]
     fn ordered_replay_rejects_a_sequence_gap_before_applying_events() {
+        let definition = definition();
         let error = replay_ordered(
-            &definition(),
+            &definition,
             &id("tnt_game"),
             &id("prc_trade"),
             &[LinearSagaEventEnvelopeV1 {
                 sequence: 1,
-                event: LinearSagaEventV1::Started {
-                    action_id: id("act_lock"),
-                },
+                event: LinearSagaEventV1::started(&definition, id("act_lock")),
             }],
         )
         .unwrap_err();
