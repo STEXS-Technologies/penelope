@@ -258,18 +258,25 @@ pub struct LogicalTimeV1(pub u64);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SchemaV1 {
     /// `penelope.process.definition.v1`.
+    #[serde(rename = "penelope.process.definition.v1")]
     ProcessDefinition,
     /// `penelope.process.input.v1`.
+    #[serde(rename = "penelope.process.input.v1")]
     ProcessInput,
     /// `penelope.process.outcome.v1`.
+    #[serde(rename = "penelope.process.outcome.v1")]
     ProcessOutcome,
     /// `penelope.process.action.v1`.
+    #[serde(rename = "penelope.process.action.v1")]
     ProcessAction,
     /// `penelope.canonical.command.v1`.
+    #[serde(rename = "penelope.canonical.command.v1")]
     CanonicalCommand,
     /// `penelope.canonical.event.v1`.
+    #[serde(rename = "penelope.canonical.event.v1")]
     CanonicalEvent,
     /// `penelope.manual-review.v1`.
+    #[serde(rename = "penelope.manual-review.v1")]
     ManualReview,
 }
 
@@ -942,6 +949,20 @@ mod tests {
     fn deserialization_preserves_identifier_validation() {
         let error = serde_json::from_str::<ActionId>("\"not-an-action\"").unwrap_err();
         assert!(error.is_data());
+    }
+
+    #[test]
+    fn schema_wire_discriminators_are_canonical_versioned_protocol_values() {
+        assert_eq!(
+            serde_json::to_string(&SchemaV1::ProcessInput).unwrap(),
+            format!("\"{}\"", penelope_core::schema::PROCESS_INPUT_V1)
+        );
+        assert_eq!(
+            serde_json::to_string(&SchemaV1::ProcessOutcome).unwrap(),
+            format!("\"{}\"", penelope_core::schema::PROCESS_OUTCOME_V1)
+        );
+        assert!(serde_json::from_str::<SchemaV1>("\"penelope.process.input.v2\"").is_err());
+        assert!(serde_json::from_str::<SchemaV1>("\"ProcessInput\"").is_err());
     }
 
     #[test]
