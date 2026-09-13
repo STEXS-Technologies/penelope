@@ -201,10 +201,12 @@ Current partial evidence: `RetryPolicyV1` bounds total per-step attempts with
 never emits a new action in that case. `RetryBackoffV1` calculates a
 deterministic exponential due time from supplied logical time, caps growth, and
 fails closed on invalid bounds or time overflow; it is unit tested and fuzzed
-through the serialized linear definition boundary. There is no jitter,
-persisted timer record, engine-issued timer decision, or timer race handling.
-The ports expose a due-time timer schedule boundary, so this item remains
-incomplete.
+through the serialized linear definition boundary. A retryable failure under a
+backoff policy now produces a typed durable timer action and due-time schedule;
+the pure engine rejects ordinary action-result delivery, early firing, and
+duplicate firing, and replay rebuilds the post-fire retry action exactly. There
+is no jitter, durable adapter implementation, timer cancellation, clock-jump
+policy, or compensation-timer support, so this item remains incomplete.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID
@@ -478,8 +480,10 @@ recorded action-result event, across success, retryable failure, terminal
 failure, unknown outcome, compensation, escalation, and completion paths. Each
 restart must equal the live projection and pending action decision. This is
 pure-engine crash-boundary evidence only; it does not exercise durable writes,
-worker crashes, network partitions, timers, or external canonical effects, so
-this item remains incomplete.
+worker crashes, network partitions, or external canonical effects. A focused
+retry-timer drill additionally proves early/duplicate timer fires fail closed
+and replay preserves the due-time transition. Durable timer adapters and chaos
+remain incomplete.
 
 ### P3.3 Reproducible performance evidence
 

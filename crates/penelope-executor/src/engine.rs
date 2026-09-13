@@ -4,6 +4,7 @@ use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, ProcessActionDtoV1,
     ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
+use penelope_ports::TimerScheduleV1;
 use serde::{Deserialize, Serialize};
 use std::num::{NonZeroU32, NonZeroU64};
 use thiserror::Error;
@@ -207,6 +208,8 @@ pub struct LinearSagaProjectionV1 {
     pub next_step_index: usize,
     /// Zero-based attempt for the current step.
     pub current_attempt: u32,
+    /// Due time while a retry timer is pending; no effect may run before it fires.
+    pub retry_due_at: Option<LogicalTimeV1>,
     /// Stable identity of the action whose result may advance this projection.
     pub active_action_id: Option<ActionId>,
     /// Every action identity issued by this process, in durable decision order.
@@ -270,6 +273,24 @@ pub enum LinearSagaInputV1 {
         /// Already-persisted fresh identity for a following action or retry.
         next_action_id: Option<ActionId>,
     },
+    /// Record a retryable effect failure and durably plan its timer action.
+    RetryTimerScheduled {
+        /// Correlated retryable result for the active effect action.
+        observation: ActionResultObservationV1,
+        /// Fresh timer action identity, or a compensation action if retries are exhausted.
+        next_action_id: Option<ActionId>,
+        /// Logical time at which the retryable result was durably observed.
+        observed_at: LogicalTimeV1,
+    },
+    /// Deliver one due retry timer firing and plan its next effect action.
+    RetryTimerFired {
+        /// Active timer action identity.
+        timer_action_id: ActionId,
+        /// Logical time at which the timer was delivered.
+        fired_at: LogicalTimeV1,
+        /// Fresh independently idempotent identity for the retry effect action.
+        next_action_id: ActionId,
+    },
 }
 
 /// One immutable event from the linear engine's ordered process log.
@@ -293,6 +314,24 @@ pub enum LinearSagaEventV1 {
         observation: ActionResultObservationV1,
         /// Persisted identity for the following action or retry.
         next_action_id: Option<ActionId>,
+    },
+    /// A retryable effect result was recorded with a durable timer decision.
+    RetryTimerScheduled {
+        /// Correlated retryable result for the active effect action.
+        observation: ActionResultObservationV1,
+        /// Persisted timer action identity, or a compensation action if exhausted.
+        next_action_id: Option<ActionId>,
+        /// Logical time at which the retryable result was durably observed.
+        observed_at: LogicalTimeV1,
+    },
+    /// A due retry timer fired and unlocked its retry effect action.
+    RetryTimerFired {
+        /// Active timer action identity.
+        timer_action_id: ActionId,
+        /// Logical time at which the timer was delivered.
+        fired_at: LogicalTimeV1,
+        /// Persisted fresh identity for the retry effect action.
+        next_action_id: ActionId,
     },
 }
 
@@ -360,6 +399,20 @@ pub struct SagaDecisionV1 {
     pub next_action: Option<ProcessActionDtoV1>,
 }
 
+impl SagaDecisionV1 {
+    /// Returns the durable timer schedule required for a pending retry, if any.
+    ///
+    /// The outer application must atomically persist this decision before it
+    /// asks a scheduler to deliver the timer action. A decision with a timer
+    /// must not be sent to the ordinary action dispatcher.
+    pub fn retry_timer_schedule(&self) -> Option<TimerScheduleV1> {
+        Some(TimerScheduleV1 {
+            action: self.next_action.clone()?,
+            due_at: self.projection.retry_due_at?,
+        })
+    }
+}
+
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
@@ -411,6 +464,27 @@ pub enum EngineError {
     /// A start input may not replace an existing projection.
     #[error("saga start input requires an absent projection")]
     StartWithProjection,
+    /// A backoff-enabled retry must be recorded through a timer decision.
+    #[error("retry with backoff requires a durable timer decision")]
+    RetryTimerRequired,
+    /// A retry timer was requested for a policy without backoff timing.
+    #[error("retry timer was requested without a retry backoff policy")]
+    RetryTimerNotConfigured,
+    /// A retry timer was requested although the retry budget is exhausted.
+    #[error("retry timer is not needed because the retry budget is exhausted")]
+    RetryTimerNotRequired,
+    /// A non-retryable result attempted to schedule a retry timer.
+    #[error("retry timer requires a retryable failure result")]
+    RetryTimerRequiresRetryableFailure,
+    /// A normal action-result transition attempted to consume a pending timer.
+    #[error("pending retry timer must be delivered through a timer firing input")]
+    RetryTimerMustFire,
+    /// A timer firing did not match the pending timer action.
+    #[error("retry timer firing does not match the pending timer action")]
+    UnexpectedRetryTimer,
+    /// A timer firing was delivered before its durable due time.
+    #[error("retry timer fired before its durable due time")]
+    RetryTimerFiredEarly,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -463,6 +537,32 @@ pub fn decide(
             observation,
             next_action_id.clone(),
         ),
+        LinearSagaInputV1::RetryTimerScheduled {
+            observation,
+            next_action_id,
+            observed_at,
+        } => schedule_retry_timer(
+            definition,
+            projection.ok_or(EngineError::MissingProjection)?,
+            tenant_id,
+            process_id,
+            observation,
+            next_action_id.clone(),
+            *observed_at,
+        ),
+        LinearSagaInputV1::RetryTimerFired {
+            timer_action_id,
+            fired_at,
+            next_action_id,
+        } => fire_retry_timer(
+            definition,
+            projection.ok_or(EngineError::MissingProjection)?,
+            tenant_id,
+            process_id,
+            timer_action_id,
+            *fired_at,
+            next_action_id.clone(),
+        ),
     }
 }
 
@@ -484,6 +584,7 @@ pub fn start(
         definition_digest: definition.definition_digest,
         next_step_index: 0,
         current_attempt: 0,
+        retry_due_at: None,
         active_action_id: Some(action_id.clone()),
         issued_action_ids: vec![action_id],
         compensable_step_indices: Vec::new(),
@@ -528,6 +629,9 @@ pub fn apply_action_result(
     if projection.active_action_id.as_ref() != Some(&observation.action_id) {
         return Err(EngineError::UnexpectedAction);
     }
+    if projection.retry_due_at.is_some() {
+        return Err(EngineError::RetryTimerMustFire);
+    }
     match projection.status {
         SagaStatusV1::Running => apply_forward_result(
             definition,
@@ -549,6 +653,128 @@ pub fn apply_action_result(
             Err(EngineError::TerminalProjection)
         }
     }
+}
+
+/// Records a retryable result and plans a durable timer instead of dispatching
+/// the retry effect immediately.
+///
+/// # Errors
+///
+/// Returns a typed invariant error when the observation is not the active
+/// retryable effect, its policy lacks backoff timing, or the projection cannot
+/// safely plan the timer action.
+pub fn schedule_retry_timer(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    observation: &ActionResultObservationV1,
+    next_action_id: Option<ActionId>,
+    observed_at: LogicalTimeV1,
+) -> Result<SagaDecisionV1, EngineError> {
+    definition.validate()?;
+    if projection.definition_id != definition.definition_id
+        || projection.definition_version != definition.definition_version
+        || projection.definition_digest != definition.definition_digest
+    {
+        return Err(EngineError::DefinitionMismatch);
+    }
+    if projection.status != SagaStatusV1::Running {
+        return Err(EngineError::TerminalProjection);
+    }
+    if projection.next_step_index >= definition.steps.len() {
+        return Err(EngineError::InvalidProjection);
+    }
+    if projection.active_action_id.as_ref() != Some(&observation.action_id) {
+        return Err(EngineError::UnexpectedAction);
+    }
+    if projection.retry_due_at.is_some() {
+        return Err(EngineError::RetryTimerMustFire);
+    }
+    if observation.result != ActionResultV1::RetryableFailure {
+        return Err(EngineError::RetryTimerRequiresRetryableFailure);
+    }
+    let step = definition
+        .steps
+        .get(projection.next_step_index)
+        .ok_or(EngineError::InvalidProjection)?;
+    if step.retry_policy.backoff.is_none() {
+        return Err(EngineError::RetryTimerNotConfigured);
+    }
+    let current_attempt = projection
+        .current_attempt
+        .checked_add(1)
+        .ok_or(EngineError::AttemptOverflow)?;
+    if current_attempt >= step.retry_policy.max_attempts.get() {
+        return Err(EngineError::RetryTimerNotRequired);
+    }
+    let due_at = step
+        .retry_policy
+        .retry_due_at(observed_at, projection.current_attempt)?
+        .ok_or(EngineError::RetryTimerNotConfigured)?;
+    let action_id = fresh_action_id(projection, next_action_id)?;
+    let timer = LinearSagaProjectionV1 {
+        current_attempt,
+        retry_due_at: Some(due_at),
+        active_action_id: Some(action_id.clone()),
+        issued_action_ids: issued_ids_after(projection, action_id),
+        ..projection.clone()
+    };
+    Ok(SagaDecisionV1 {
+        next_action: Some(action_for(definition, &timer, tenant_id, process_id)?),
+        projection: timer,
+    })
+}
+
+/// Delivers a due retry timer and unlocks the independently idempotent retry
+/// effect action.
+///
+/// # Errors
+///
+/// Returns a typed invariant error for a mismatched, premature, duplicate, or
+/// otherwise illegal timer delivery.
+pub fn fire_retry_timer(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    timer_action_id: &ActionId,
+    fired_at: LogicalTimeV1,
+    next_action_id: ActionId,
+) -> Result<SagaDecisionV1, EngineError> {
+    definition.validate()?;
+    if projection.definition_id != definition.definition_id
+        || projection.definition_version != definition.definition_version
+        || projection.definition_digest != definition.definition_digest
+    {
+        return Err(EngineError::DefinitionMismatch);
+    }
+    if projection.status != SagaStatusV1::Running {
+        return Err(EngineError::TerminalProjection);
+    }
+    if projection.next_step_index >= definition.steps.len() {
+        return Err(EngineError::InvalidProjection);
+    }
+    if projection.active_action_id.as_ref() != Some(timer_action_id) {
+        return Err(EngineError::UnexpectedRetryTimer);
+    }
+    let due_at = projection
+        .retry_due_at
+        .ok_or(EngineError::UnexpectedRetryTimer)?;
+    if fired_at < due_at {
+        return Err(EngineError::RetryTimerFiredEarly);
+    }
+    let action_id = fresh_action_id(projection, Some(next_action_id))?;
+    let retry = LinearSagaProjectionV1 {
+        retry_due_at: None,
+        active_action_id: Some(action_id.clone()),
+        issued_action_ids: issued_ids_after(projection, action_id),
+        ..projection.clone()
+    };
+    Ok(SagaDecisionV1 {
+        next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
+        projection: retry,
+    })
 }
 
 fn apply_forward_result(
@@ -614,6 +840,9 @@ fn apply_forward_result(
                     process_id,
                     next_action_id,
                 );
+            }
+            if step.retry_policy.backoff.is_some() {
+                return Err(EngineError::RetryTimerRequired);
             }
             let action_id = fresh_action_id(projection, next_action_id)?;
             let retry = LinearSagaProjectionV1 {
@@ -742,6 +971,9 @@ fn apply_compensation_result(
                     ),
                     next_action: None,
                 });
+            }
+            if compensation.retry_policy.backoff.is_some() {
+                return Err(EngineError::RetryTimerRequired);
             }
             let action_id = fresh_action_id(projection, next_action_id)?;
             let retry = LinearSagaProjectionV1 {
@@ -874,6 +1106,38 @@ pub fn replay(
                     next_action_id.clone(),
                 )?);
             }
+            LinearSagaEventV1::RetryTimerScheduled {
+                observation,
+                next_action_id,
+                observed_at,
+            } => {
+                let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
+                decision = Some(schedule_retry_timer(
+                    definition,
+                    &current.projection,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    observation,
+                    next_action_id.clone(),
+                    *observed_at,
+                )?);
+            }
+            LinearSagaEventV1::RetryTimerFired {
+                timer_action_id,
+                fired_at,
+                next_action_id,
+            } => {
+                let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
+                decision = Some(fire_retry_timer(
+                    definition,
+                    &current.projection,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    timer_action_id,
+                    *fired_at,
+                    next_action_id.clone(),
+                )?);
+            }
         }
     }
     decision.ok_or(EngineError::MissingStart)
@@ -915,8 +1179,17 @@ fn action_for(
     tenant_id: TenantId,
     process_id: ProcessId,
 ) -> Result<ProcessActionDtoV1, EngineError> {
-    let (step_id, action_kind, payload_digest) = if projection.status == SagaStatusV1::Compensating
-    {
+    let (step_id, action_kind, payload_digest) = if projection.retry_due_at.is_some() {
+        let step = definition
+            .steps
+            .get(projection.next_step_index)
+            .ok_or(EngineError::InvalidProjection)?;
+        (
+            step.step_id.clone(),
+            ProcessActionKindV1::Timer,
+            step.payload_digest,
+        )
+    } else if projection.status == SagaStatusV1::Compensating {
         let step_index = projection
             .compensable_step_indices
             .last()
@@ -1125,6 +1398,122 @@ mod tests {
         assert_eq!(
             policy.retry_due_at(LogicalTimeV1(u64::MAX), 0),
             Err(EngineError::RetryDueTimeOverflow)
+        );
+    }
+
+    #[test]
+    fn retry_backoff_plans_replayable_due_timer_and_rejects_early_or_duplicate_fire() {
+        let backoff =
+            RetryBackoffV1::new(NonZeroU64::new(10).unwrap(), NonZeroU64::new(100).unwrap())
+                .unwrap();
+        let definition = LinearSagaDefinitionV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([99; 32]),
+            vec![StepPlanV1::canonical_command(
+                id("stp_lock"),
+                ContentDigest([1; 32]),
+                RetryPolicyV1::new(NonZeroU32::new(3).unwrap()).with_backoff(backoff),
+            )],
+        );
+        let tenant_id = id::<TenantId>("tnt_game");
+        let process_id = id::<ProcessId>("prc_trade");
+        let started = start(
+            &definition,
+            tenant_id.clone(),
+            process_id.clone(),
+            id("act_first"),
+        )
+        .unwrap();
+        let failure = observation(
+            started.next_action.as_ref().unwrap(),
+            ActionResultV1::RetryableFailure,
+        );
+        let scheduled = schedule_retry_timer(
+            &definition,
+            &started.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &failure,
+            Some(id("act_retry_timer")),
+            LogicalTimeV1(100),
+        )
+        .unwrap();
+        let timer = scheduled.next_action.as_ref().unwrap();
+        assert_eq!(timer.kind, ProcessActionKindV1::Timer);
+        assert_eq!(
+            scheduled.retry_timer_schedule().unwrap().due_at,
+            LogicalTimeV1(110)
+        );
+        assert_eq!(
+            apply_action_result(
+                &definition,
+                &scheduled.projection,
+                tenant_id.clone(),
+                process_id.clone(),
+                &ActionResultObservationV1::succeeded(timer.action_id.clone()),
+                Some(id("act_wrong")),
+            )
+            .unwrap_err(),
+            EngineError::RetryTimerMustFire
+        );
+        assert_eq!(
+            fire_retry_timer(
+                &definition,
+                &scheduled.projection,
+                tenant_id.clone(),
+                process_id.clone(),
+                &timer.action_id,
+                LogicalTimeV1(109),
+                id("act_retry"),
+            )
+            .unwrap_err(),
+            EngineError::RetryTimerFiredEarly
+        );
+        let retry = fire_retry_timer(
+            &definition,
+            &scheduled.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &timer.action_id,
+            LogicalTimeV1(110),
+            id("act_retry"),
+        )
+        .unwrap();
+        assert_eq!(
+            retry.next_action.as_ref().unwrap().kind,
+            ProcessActionKindV1::CanonicalCommand
+        );
+        assert_eq!(retry.next_action.as_ref().unwrap().attempt, 1);
+        assert_eq!(
+            fire_retry_timer(
+                &definition,
+                &retry.projection,
+                tenant_id.clone(),
+                process_id.clone(),
+                &timer.action_id,
+                LogicalTimeV1(110),
+                id("act_retry_duplicate"),
+            )
+            .unwrap_err(),
+            EngineError::UnexpectedRetryTimer
+        );
+        let events = [
+            LinearSagaEventV1::started(&definition, id("act_first")),
+            LinearSagaEventV1::RetryTimerScheduled {
+                observation: failure,
+                next_action_id: Some(id("act_retry_timer")),
+                observed_at: LogicalTimeV1(100),
+            },
+            LinearSagaEventV1::RetryTimerFired {
+                timer_action_id: id("act_retry_timer"),
+                fired_at: LogicalTimeV1(110),
+                next_action_id: id("act_retry"),
+            },
+        ];
+        assert_eq!(
+            replay(&definition, &tenant_id, &process_id, &events).unwrap(),
+            retry
         );
     }
 
@@ -1404,6 +1793,7 @@ mod tests {
                     definition_digest: definition.definition_digest,
                     next_step_index: 0,
                     current_attempt,
+                    retry_due_at: None,
                     active_action_id: Some(id("act_lock")),
                     issued_action_ids: vec![id("act_lock")],
                     compensable_step_indices: Vec::new(),

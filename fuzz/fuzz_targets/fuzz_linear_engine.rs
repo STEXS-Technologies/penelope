@@ -2,14 +2,16 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, ProcessActionKindV1, ProcessId,
-    TenantId,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, ProcessActionKindV1,
+    ProcessId, TenantId,
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryPolicyV1, StepPlanV1,
-    apply_action_result, replay, replay_ordered, start,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryBackoffV1, RetryPolicyV1,
+    StepPlanV1, apply_action_result, fire_retry_timer, replay, replay_ordered,
+    schedule_retry_timer, start,
 };
+use std::num::{NonZeroU32, NonZeroU64};
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
     match T::try_from(value) {
@@ -107,5 +109,58 @@ fuzz_target!(|data: &[u8]| {
             return;
         };
         decision = next;
+    }
+
+    let backoff = match RetryBackoffV1::new(
+        NonZeroU64::MIN,
+        NonZeroU64::new(4).unwrap_or(NonZeroU64::MIN),
+    ) {
+        Ok(backoff) => backoff,
+        Err(_) => return,
+    };
+    let timer_definition = LinearSagaDefinitionV1::new(
+        identifier("def_timer"),
+        identifier("dfv_one"),
+        ContentDigest([88; 32]),
+        vec![StepPlanV1::canonical_command(
+            identifier("stp_timer"),
+            ContentDigest([7; 32]),
+            RetryPolicyV1::new(NonZeroU32::new(3).unwrap_or(NonZeroU32::MIN)).with_backoff(backoff),
+        )],
+    );
+    let Ok(started) = start(
+        &timer_definition,
+        tenant_id.clone(),
+        process_id.clone(),
+        identifier("act_timer_first"),
+    ) else {
+        return;
+    };
+    let Some(active) = started.next_action.as_ref() else {
+        return;
+    };
+    let now = LogicalTimeV1(data.first().copied().map_or(0, u64::from));
+    let scheduled = schedule_retry_timer(
+        &timer_definition,
+        &started.projection,
+        tenant_id.clone(),
+        process_id.clone(),
+        &ActionResultObservationV1::retryable_failure(active.action_id.clone()),
+        Some(identifier("act_timer_fire")),
+        now,
+    );
+    if let Ok(scheduled) = scheduled
+        && let Some(timer) = scheduled.next_action
+        && let Some(due_at) = scheduled.projection.retry_due_at
+    {
+        let _ = fire_retry_timer(
+            &timer_definition,
+            &scheduled.projection,
+            tenant_id,
+            process_id,
+            &timer.action_id,
+            due_at,
+            identifier("act_timer_retry"),
+        );
     }
 });
