@@ -275,5 +275,5 @@ long-running fuzz campaigns.
 
 ## License
 
-The manifests declare `MIT OR Apache-2.0`. Add the complete `LICENSE-MIT` and
-`LICENSE-APACHE` texts before publishing.
+Penelope is dual-licensed under [MIT](LICENSE-MIT) or
+[Apache-2.0](LICENSE-APACHE), at your option.

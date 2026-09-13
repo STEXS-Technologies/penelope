@@ -305,6 +305,13 @@ does not yet cover source freshness/deduplication or response-loss recovery.
 - How: define MSRV, pin or govern CI action updates, and retain audit artifacts.
 - Evidence: CI gates and documented vulnerability response rehearsal.
 
+Current partial evidence: `SECURITY.md` defines supported pre-1.0 scope,
+private reporting, response expectations, and saga-specific safety boundaries.
+Complete `LICENSE-MIT` and `LICENSE-APACHE` texts match the declared manifest
+license. Locked CI builds exist. Dependency policy, automated audit/deny,
+secret scanning, action pin governance, MSRV policy, and a response rehearsal
+remain incomplete.
+
 ## P2 — adapters, operations and user experience
 
 ### P2.1 Reference relational adapter
