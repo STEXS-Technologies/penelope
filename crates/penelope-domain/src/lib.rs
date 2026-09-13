@@ -400,6 +400,12 @@ pub struct ProcessOutcomeDtoV1 {
     pub tenant_id: TenantId,
     /// Process instance that owns the outcome.
     pub process_id: ProcessId,
+    /// Immutable definition identity pinned when this process started.
+    pub definition_id: DefinitionId,
+    /// Immutable definition version pinned when this process started.
+    pub definition_version: DefinitionVersion,
+    /// Digest of the exact pinned definition representation.
+    pub definition_digest: ContentDigest,
     /// Strictly ordered per-instance outcome sequence.
     pub sequence: u64,
     /// Immutable outcome identity.
@@ -598,9 +604,8 @@ impl ProcessOutcomeDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::ProcessOutcome;
 
     /// Creates an immutable process outcome DTO.
-    pub const fn new(
-        tenant_id: TenantId,
-        process_id: ProcessId,
+    pub fn new(
+        scope: ProcessScopeV1,
         sequence: u64,
         outcome_id: OutcomeId,
         causation_id: CausationIdV1,
@@ -608,8 +613,11 @@ impl ProcessOutcomeDtoV1 {
         payload_digest: ContentDigest,
     ) -> Self {
         Self {
-            tenant_id,
-            process_id,
+            tenant_id: scope.tenant_id,
+            process_id: scope.process_id,
+            definition_id: scope.definition_id,
+            definition_version: scope.definition_version,
+            definition_digest: scope.definition_digest,
             sequence,
             outcome_id,
             causation_id,

@@ -36,10 +36,10 @@ pub enum CommitValidationError {
     /// An outcome does not use the expected contiguous sequence.
     #[error("atomic process commit outcome sequence is not contiguous")]
     NonContiguousSequence,
-    /// One outcome is for a different tenant or process.
+    /// One outcome is for a different pinned process-definition scope.
     #[error("atomic process commit outcome scope does not match")]
     OutcomeScopeMismatch,
-    /// One outgoing action is for a different tenant or process.
+    /// One outgoing action is for a different pinned process-definition scope.
     #[error("atomic process commit action scope does not match")]
     ActionScopeMismatch,
     /// The deduplicated input is for a different tenant or process.
@@ -205,7 +205,7 @@ impl AtomicProcessCommitV1 {
     ///
     /// # Errors
     ///
-    /// Returns a typed validation error when sequences or tenant/process scopes
+    /// Returns a typed validation error when sequences or pinned process scopes
     /// are inconsistent.
     pub fn new(
         expected_sequence: u64,
@@ -223,7 +223,7 @@ impl AtomicProcessCommitV1 {
         Ok(commit)
     }
 
-    /// Validates outcome order and a single tenant/process scope.
+    /// Validates outcome order and a single pinned process-definition scope.
     ///
     /// # Errors
     ///
@@ -240,6 +240,9 @@ impl AtomicProcessCommitV1 {
             }
             if outcome.tenant_id != first_outcome.tenant_id
                 || outcome.process_id != first_outcome.process_id
+                || outcome.definition_id != first_outcome.definition_id
+                || outcome.definition_version != first_outcome.definition_version
+                || outcome.definition_digest != first_outcome.definition_digest
             {
                 return Err(CommitValidationError::OutcomeScopeMismatch);
             }
@@ -250,6 +253,9 @@ impl AtomicProcessCommitV1 {
         for action in &self.actions {
             if action.tenant_id != first_outcome.tenant_id
                 || action.process_id != first_outcome.process_id
+                || action.definition_id != first_outcome.definition_id
+                || action.definition_version != first_outcome.definition_version
+                || action.definition_digest != first_outcome.definition_digest
             {
                 return Err(CommitValidationError::ActionScopeMismatch);
             }
@@ -379,8 +385,13 @@ mod tests {
 
     fn outcome(sequence: u64) -> ProcessOutcomeDtoV1 {
         ProcessOutcomeDtoV1::new(
-            id::<TenantId>("tnt_game"),
-            id("prc_trade"),
+            ProcessScopeV1::new(
+                id::<TenantId>("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
             sequence,
             id::<OutcomeId>("out_event"),
             CausationIdV1::Action(id("act_cause")),
@@ -419,6 +430,25 @@ mod tests {
         let error =
             AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![wrong_action]).unwrap_err();
         assert_eq!(error, CommitValidationError::ActionScopeMismatch);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_outgoing_action_from_another_definition() {
+        let mut wrong_action = action();
+        wrong_action.definition_digest = ContentDigest([8; 32]);
+        let error =
+            AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![wrong_action]).unwrap_err();
+        assert_eq!(error, CommitValidationError::ActionScopeMismatch);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_outcomes_from_different_definitions() {
+        let mut wrong_outcome = outcome(1);
+        wrong_outcome.definition_version = id("dfv_two");
+        let error =
+            AtomicProcessCommitV1::new(0, None, vec![outcome(0), wrong_outcome], vec![action()])
+                .unwrap_err();
+        assert_eq!(error, CommitValidationError::OutcomeScopeMismatch);
     }
 
     #[test]
