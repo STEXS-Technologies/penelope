@@ -1226,6 +1226,8 @@ mod tests {
             )
             .unwrap();
             let mut events = vec![LinearSagaEventV1::started(&definition, start_action_id)];
+            let restarted_after_start = replay(&definition, &tenant_id, &process_id, &events).unwrap();
+            prop_assert_eq!(&restarted_after_start, &live);
 
             for code in result_codes {
                 let Some(action) = live.next_action.as_ref() else {
@@ -1265,6 +1267,9 @@ mod tests {
                     next_action_id,
                 )
                 .unwrap();
+                let restarted_after_event =
+                    replay(&definition, &tenant_id, &process_id, &events).unwrap();
+                prop_assert_eq!(&restarted_after_event, &live);
             }
 
             let replayed = replay(&definition, &tenant_id, &process_id, &events).unwrap();

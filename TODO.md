@@ -442,6 +442,15 @@ retained/minimized crash-regression policy remain incomplete.
 - Evidence: repeated drills prove no lost outcomes, no duplicate canonical
   command, replay validity and explicit ambiguity escalation.
 
+Current partial evidence: the linear engine has a generated legal-transition
+property that replays from the durable start record and after every individual
+recorded action-result event, across success, retryable failure, terminal
+failure, unknown outcome, compensation, escalation, and completion paths. Each
+restart must equal the live projection and pending action decision. This is
+pure-engine crash-boundary evidence only; it does not exercise durable writes,
+worker crashes, network partitions, timers, or external canonical effects, so
+this item remains incomplete.
+
 ### P3.3 Reproducible performance evidence
 
 - [ ] Benchmark pure decisions/replay, durable append/project, inbox/outbox,
