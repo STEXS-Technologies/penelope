@@ -214,7 +214,8 @@ also carries the pinned definition ID/version/digest alongside tenant, process,
 step, attempt, kind and action ID, preventing an adapter from losing the
 definition deployment context. `ProcessActionDtoV1::effect_key` derives a
 typed semantic idempotency key from that pinned scope plus step, attempt, and
-effect kind; it is unit tested and exercised at the action DTO fuzz boundary.
+effect kind and payload digest; it is unit tested and exercised at the action
+DTO fuzz boundary.
 Durable inbox/outbox deduplication and a complete state machine remain missing,
 so P0.5 remains incomplete.
 

@@ -556,6 +556,8 @@ pub struct EffectKeyV1 {
     pub attempt: u32,
     /// Typed external effect category.
     pub kind: ProcessActionKindV1,
+    /// Canonical payload semantics for this effect attempt.
+    pub payload_digest: ContentDigest,
 }
 
 /// A canonical-state command submitted through an adapter port.
@@ -755,6 +757,7 @@ impl ProcessActionDtoV1 {
             step_id: self.step_id.clone(),
             attempt: self.attempt,
             kind: self.kind,
+            payload_digest: self.payload_digest,
         }
     }
 }
@@ -896,7 +899,7 @@ mod tests {
             id::<StepId>("stp_settle"),
             0,
             ProcessActionKindV1::CanonicalCommand,
-            ContentDigest([3; 32]),
+            ContentDigest([2; 32]),
         );
         let retry = ProcessActionDtoV1::new(
             ProcessScopeV1::new(
@@ -912,12 +915,27 @@ mod tests {
             ProcessActionKindV1::CanonicalCommand,
             ContentDigest([3; 32]),
         );
+        let changed_payload = ProcessActionDtoV1::new(
+            ProcessScopeV1::new(
+                id::<TenantId>("tnt_game"),
+                id::<ProcessId>("prc_trade"),
+                id::<DefinitionId>("def_trade"),
+                id::<DefinitionVersion>("dfv_one"),
+                ContentDigest([1; 32]),
+            ),
+            id::<ActionId>("act_changed_payload"),
+            id::<StepId>("stp_settle"),
+            0,
+            ProcessActionKindV1::CanonicalCommand,
+            ContentDigest([4; 32]),
+        );
 
         assert_eq!(
             action.effect_key(),
             same_semantics_new_action_id.effect_key()
         );
         assert_ne!(action.effect_key(), retry.effect_key());
+        assert_ne!(action.effect_key(), changed_payload.effect_key());
     }
 
     #[test]
