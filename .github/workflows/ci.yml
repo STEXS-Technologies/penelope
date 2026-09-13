@@ -26,6 +26,7 @@ jobs:
       - run: cargo bench -p penelope-executor --bench linear_saga --locked
       - run: cargo run -p penelope --example trade_v1 --locked
       - run: cargo run -p penelope --example trade_compensation_v1 --locked
+      - run: cargo run -p penelope --example trade_retry_timer_v1 --locked
 
   fuzz:
     name: Bounded fuzzing

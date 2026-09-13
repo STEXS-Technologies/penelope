@@ -278,6 +278,14 @@ diagnostics, and sensitive-data snapshot tests remain incomplete.
   boundary, commit-before-response loss, delayed canonical event, partial
   evidence, compensation retry and operator resolution.
 
+Current partial evidence: the runnable `trade_v1`, `trade_compensation_v1`,
+and `trade_retry_timer_v1` examples demonstrate pinned three-step success,
+known settlement failure with LIFO compensation, and persist/schedule/fire/
+retry timer handling. They use the public facade and are CI-run. They do not
+model proposal validation, two competing locks, acceptance/deadline, canonical
+evidence, durable commits, or operator resolution, so this item remains
+incomplete.
+
 ## P1 — durable ports and integration contract
 
 ### P1.1 Complete backend-neutral traits
