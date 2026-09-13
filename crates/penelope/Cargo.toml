@@ -12,6 +12,7 @@ penelope-intent = { workspace = true }
 penelope-executor = { workspace = true }
 penelope-ports = { workspace = true }
 penelope-statechronicle = { workspace = true }
+thiserror = { workspace = true }
 
 [lints]
 workspace = true

@@ -9,6 +9,17 @@ use penelope::{
     ProcessActionKindV1, ProcessId, SagaStatusV1, StepId, StepPlanV1, TenantId,
     apply_action_result, start,
 };
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+enum ExampleError {
+    #[error(transparent)]
+    Domain(#[from] DomainError),
+    #[error(transparent)]
+    Engine(#[from] penelope::EngineError),
+    #[error("trade simulation did not complete")]
+    NotCompleted,
+}
 
 fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     value: &'static str,
@@ -16,7 +27,7 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     T::try_from(value)
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), ExampleError> {
     let definition = LinearSagaDefinitionV1 {
         steps: vec![
             StepPlanV1 {
@@ -66,6 +77,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if decision.projection.status == SagaStatusV1::Completed {
         Ok(())
     } else {
-        Err(Box::new(penelope::EngineError::TerminalProjection))
+        Err(ExampleError::NotCompleted)
     }
 }

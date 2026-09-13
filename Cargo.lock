@@ -184,6 +184,7 @@ dependencies = [
  "penelope-intent",
  "penelope-ports",
  "penelope-statechronicle",
+ "thiserror",
 ]
 
 [[package]]
