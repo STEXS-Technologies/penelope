@@ -158,7 +158,7 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
 | `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces only; no implementation. |
-| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
+| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed tenant/action/operation/resource-scope verifier; intentionally no StateChronicle client or local-checkout dependency. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
 
 All DTOs are versioned by their `V<N>` Rust type and immutable associated
@@ -230,6 +230,7 @@ RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --lock
 cargo fuzz run fuzz_identifiers -- -runs=100
 cargo fuzz run fuzz_versioned_dtos -- -runs=100
 cargo fuzz run fuzz_linear_engine -- -runs=100
+cargo fuzz run fuzz_statechronicle_correlation -- -runs=100
 ```
 
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are

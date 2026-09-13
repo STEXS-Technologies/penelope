@@ -17,6 +17,9 @@ path = "../crates/penelope-domain"
 [dependencies.penelope-executor]
 path = "../crates/penelope-executor"
 
+[dependencies.penelope-statechronicle]
+path = "../crates/penelope-statechronicle"
+
 [[bin]]
 name = "fuzz_identifiers"
 path = "fuzz_targets/fuzz_identifiers.rs"
@@ -32,5 +35,11 @@ doc = false
 [[bin]]
 name = "fuzz_linear_engine"
 path = "fuzz_targets/fuzz_linear_engine.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_statechronicle_correlation"
+path = "fuzz_targets/fuzz_statechronicle_correlation.rs"
 test = false
 doc = false

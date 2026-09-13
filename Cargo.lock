@@ -219,6 +219,7 @@ dependencies = [
  "libfuzzer-sys",
  "penelope-domain",
  "penelope-executor",
+ "penelope-statechronicle",
  "serde_json",
 ]
 
@@ -243,7 +244,9 @@ dependencies = [
 name = "penelope-statechronicle"
 version = "0.1.0"
 dependencies = [
+ "penelope-domain",
  "penelope-ports",
+ "thiserror",
 ]
 
 [[package]]
