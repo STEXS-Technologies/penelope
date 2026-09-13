@@ -3,7 +3,8 @@
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
 use penelope_executor::engine::{
-    ActionResultV1, LinearSagaDefinitionV1, StepPlanV1, apply_result, start,
+    ActionResultObservationV1, ActionResultV1, LinearSagaDefinitionV1, StepPlanV1,
+    apply_action_result, start,
 };
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -54,13 +55,20 @@ fuzz_target!(|data: &[u8]| {
             }
             ActionResultV1::TerminalFailure | ActionResultV1::Unknown => None,
         };
-        let Ok(next) = apply_result(
+        let Some(active_action) = decision.next_action.as_ref() else {
+            return;
+        };
+        let observation = ActionResultObservationV1 {
+            action_id: active_action.action_id.clone(),
+            result,
+        };
+        let Ok(next) = apply_action_result(
             &definition,
-            decision.projection,
+            &decision.projection,
             tenant_id.clone(),
             process_id.clone(),
+            &observation,
             next_action_id,
-            result,
         ) else {
             return;
         };

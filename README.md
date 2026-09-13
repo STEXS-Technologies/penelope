@@ -43,6 +43,11 @@ projection = apply(definition_version, ordered_outcome_log)
 An effect result is recorded as an outcome and is never recreated merely by
 replay. The core contains no I/O or wall-clock reads; adapters do I/O.
 
+An action result is accepted only when its typed action ID equals the active
+action ID in the projection. A stale, duplicate, or cross-process result cannot
+advance a process; duplicate delivery must be handled by the durable outcome
+layer that is still to be implemented.
+
 ## Reliability model: record, recover, reconcile, repair
 
 Penelope is designed to make asynchronous sagas recoverable, not magical.
