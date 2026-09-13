@@ -36,6 +36,9 @@ pub enum CommitValidationError {
     /// An outcome does not use the expected contiguous sequence.
     #[error("atomic process commit outcome sequence is not contiguous")]
     NonContiguousSequence,
+    /// An outcome declares a schema other than the immutable outcome schema.
+    #[error("atomic process commit outcome schema is invalid")]
+    InvalidOutcomeSchema,
     /// One outcome is for a different pinned process-definition scope.
     #[error("atomic process commit outcome scope does not match")]
     OutcomeScopeMismatch,
@@ -235,6 +238,9 @@ impl AtomicProcessCommitV1 {
         };
         let mut expected_sequence = self.expected_sequence;
         for outcome in &self.outcomes {
+            if outcome.validate().is_err() {
+                return Err(CommitValidationError::InvalidOutcomeSchema);
+            }
             if outcome.sequence != expected_sequence {
                 return Err(CommitValidationError::NonContiguousSequence);
             }
@@ -375,8 +381,8 @@ mod tests {
     use super::*;
     use penelope_domain::{
         CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId, CausationIdV1, ContentDigest,
-        OperationId, OutcomeId, ProcessActionKindV1, ProcessOutcomeKindV1, ProcessScopeV1,
-        ResourceId, StepId, TenantId,
+        LogicalTimeV1, OperationId, OutcomeActorV1, OutcomeId, ProcessActionKindV1,
+        ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId, StepId, TenantId,
     };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -393,10 +399,14 @@ mod tests {
                 ContentDigest([9; 32]),
             ),
             sequence,
-            id::<OutcomeId>("out_event"),
-            CausationIdV1::Action(id("act_cause")),
-            ProcessOutcomeKindV1::ActionPlanned,
-            ContentDigest([1; 32]),
+            ProcessOutcomeFactV1::new(
+                id::<OutcomeId>("out_event"),
+                CausationIdV1::Action(id("act_cause")),
+                OutcomeActorV1::System,
+                LogicalTimeV1(1),
+                ProcessOutcomeKindV1::ActionPlanned,
+                ContentDigest([1; 32]),
+            ),
         )
     }
 
@@ -449,6 +459,14 @@ mod tests {
             AtomicProcessCommitV1::new(0, None, vec![outcome(0), wrong_outcome], vec![action()])
                 .unwrap_err();
         assert_eq!(error, CommitValidationError::OutcomeScopeMismatch);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_an_outcome_with_another_schema() {
+        let mut wrong_outcome = outcome(0);
+        wrong_outcome.schema = penelope_domain::SchemaV1::ProcessAction;
+        let error = AtomicProcessCommitV1::new(0, None, vec![wrong_outcome], vec![]).unwrap_err();
+        assert_eq!(error, CommitValidationError::InvalidOutcomeSchema);
     }
 
     #[test]

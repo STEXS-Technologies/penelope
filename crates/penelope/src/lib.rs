@@ -15,8 +15,9 @@ pub use penelope_domain as domain;
 /// Frequently used typed protocol values and versioned DTOs.
 pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, LogicalTimeV1, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessInputEnvelopeV1, ProcessScopeV1, StepId, TenantId,
+    DefinitionVersion, DomainError, LogicalTimeV1, OutcomeActorV1, ProcessActionDtoV1,
+    ProcessActionKindV1, ProcessId, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1,
+    ProcessOutcomeFactV1, ProcessScopeV1, StepId, TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;

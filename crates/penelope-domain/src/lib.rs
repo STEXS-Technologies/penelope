@@ -83,6 +83,9 @@ pub enum DomainError {
     /// A process-input envelope declared a schema for a different DTO type.
     #[error("process input envelope schema is invalid")]
     InvalidProcessInputSchema,
+    /// A process-outcome record declared a schema for a different DTO type.
+    #[error("process outcome record schema is invalid")]
+    InvalidProcessOutcomeSchema,
 }
 
 fn validate_identifier(prefix: &str, value: &str) -> bool {
@@ -332,6 +335,53 @@ pub enum CausationIdV1 {
     Action(ActionId),
 }
 
+/// Attributable source that recorded one immutable process outcome.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OutcomeActorV1 {
+    /// The deterministic process runtime recorded the outcome.
+    System,
+    /// An authenticated principal recorded an authorized outcome.
+    Principal(PrincipalId),
+}
+
+/// Attributable immutable facts recorded in one process outcome.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessOutcomeFactV1 {
+    /// Immutable idempotency identity for this outcome.
+    pub outcome_id: OutcomeId,
+    /// Typed causal input or action identity.
+    pub causation_id: CausationIdV1,
+    /// Attributable source that recorded this immutable fact.
+    pub actor: OutcomeActorV1,
+    /// Deterministic recorded-at time supplied by an injected clock.
+    pub occurred_at: LogicalTimeV1,
+    /// Typed outcome category.
+    pub kind: ProcessOutcomeKindV1,
+    /// Canonical payload digest.
+    pub payload_digest: ContentDigest,
+}
+
+impl ProcessOutcomeFactV1 {
+    /// Groups the immutable fact fields for a process outcome record.
+    pub const fn new(
+        outcome_id: OutcomeId,
+        causation_id: CausationIdV1,
+        actor: OutcomeActorV1,
+        occurred_at: LogicalTimeV1,
+        kind: ProcessOutcomeKindV1,
+        payload_digest: ContentDigest,
+    ) -> Self {
+        Self {
+            outcome_id,
+            causation_id,
+            actor,
+            occurred_at,
+            kind,
+            payload_digest,
+        }
+    }
+}
+
 /// A version-pinned immutable process definition.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ProcessDefinitionDtoV1 {
@@ -396,6 +446,8 @@ impl ProcessInputEnvelopeV1 {
 /// One immutable fact in a process outcome log.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ProcessOutcomeDtoV1 {
+    /// The immutable schema discriminator for this record.
+    pub schema: SchemaV1,
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Process instance that owns the outcome.
@@ -412,6 +464,10 @@ pub struct ProcessOutcomeDtoV1 {
     pub outcome_id: OutcomeId,
     /// Typed causal input or action identity.
     pub causation_id: CausationIdV1,
+    /// Attributable source that recorded this immutable fact.
+    pub actor: OutcomeActorV1,
+    /// Deterministic recorded-at time supplied by an injected clock.
+    pub occurred_at: LogicalTimeV1,
     /// Typed outcome category.
     pub kind: ProcessOutcomeKindV1,
     /// Canonical payload digest.
@@ -604,25 +660,34 @@ impl ProcessOutcomeDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::ProcessOutcome;
 
     /// Creates an immutable process outcome DTO.
-    pub fn new(
-        scope: ProcessScopeV1,
-        sequence: u64,
-        outcome_id: OutcomeId,
-        causation_id: CausationIdV1,
-        kind: ProcessOutcomeKindV1,
-        payload_digest: ContentDigest,
-    ) -> Self {
+    pub fn new(scope: ProcessScopeV1, sequence: u64, fact: ProcessOutcomeFactV1) -> Self {
         Self {
+            schema: Self::SCHEMA,
             tenant_id: scope.tenant_id,
             process_id: scope.process_id,
             definition_id: scope.definition_id,
             definition_version: scope.definition_version,
             definition_digest: scope.definition_digest,
             sequence,
-            outcome_id,
-            causation_id,
-            kind,
-            payload_digest,
+            outcome_id: fact.outcome_id,
+            causation_id: fact.causation_id,
+            actor: fact.actor,
+            occurred_at: fact.occurred_at,
+            kind: fact.kind,
+            payload_digest: fact.payload_digest,
+        }
+    }
+
+    /// Validates the immutable outcome record schema discriminator.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the record declares a different DTO schema.
+    pub const fn validate(&self) -> Result<(), DomainError> {
+        if matches!(self.schema, SchemaV1::ProcessOutcome) {
+            Ok(())
+        } else {
+            Err(DomainError::InvalidProcessOutcomeSchema)
         }
     }
 }

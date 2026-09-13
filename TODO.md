@@ -140,6 +140,14 @@ calculation, and deployment-time definition storage remain incomplete.
 - Evidence: golden fixtures, schema compatibility tests, out-of-order/adversary
   tests, and `replay(log) == stored_projection` property tests.
 
+Current partial evidence: `ProcessOutcomeDtoV1` records a pinned process and
+definition scope, total sequence, causal input/action, immutable outcome ID,
+typed actor, injected logical timestamp, payload digest, and explicit schema.
+`AtomicProcessCommitV1` rejects non-outcome schemas before an adapter sees a
+commit; malformed versioned outcome DTOs and atomic commits are fuzzed. The
+engine does not yet emit the complete lifecycle outcome log or apply these
+records to a durable projection, so this item remains incomplete.
+
 ### P0.4 Pure transition and replay function
 
 - [ ] Implement `decide(definition, projection, input) -> Decision` and
