@@ -190,10 +190,13 @@ this item.
 
 Current partial evidence: `RetryPolicyV1` bounds total per-step attempts with
 `NonZeroU32`. The reference engine escalates an exhausted retryable result and
-never emits a new action in that case. It does not yet include due time,
-backoff, jitter, persisted timer records, or timer race handling. The ports
-now expose typed logical time and a due-time timer schedule boundary, but the
-pure engine does not use them yet, so this item remains incomplete.
+never emits a new action in that case. `RetryBackoffV1` calculates a
+deterministic exponential due time from supplied logical time, caps growth, and
+fails closed on invalid bounds or time overflow; it is unit tested and fuzzed
+through the serialized linear definition boundary. There is no jitter,
+persisted timer record, engine-issued timer decision, or timer race handling.
+The ports expose a due-time timer schedule boundary, so this item remains
+incomplete.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID

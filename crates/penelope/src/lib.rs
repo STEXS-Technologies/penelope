@@ -24,8 +24,8 @@ pub use penelope_executor as executor;
 pub use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, EngineError,
     LinearSagaDefinitionV1, LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1,
-    LinearSagaProjectionV1, RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepPlanV1,
-    apply_action_result, decide, replay, replay_ordered, start,
+    LinearSagaProjectionV1, RetryBackoffV1, RetryPolicyV1, SagaDecisionV1, SagaStatusV1,
+    StepPlanV1, apply_action_result, decide, replay, replay_ordered, start,
 };
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;

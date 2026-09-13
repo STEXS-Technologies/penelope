@@ -1,11 +1,11 @@
 //! Deterministic linear saga planning with typed inputs and outputs.
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, ProcessActionDtoV1,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, ProcessActionDtoV1,
     ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
 use serde::{Deserialize, Serialize};
-use std::num::NonZeroU32;
+use std::num::{NonZeroU32, NonZeroU64};
 use thiserror::Error;
 
 /// A declared process step.
@@ -53,19 +53,91 @@ impl CompensationPlanV1 {
 pub struct RetryPolicyV1 {
     /// Total number of permitted attempts, including the first attempt.
     pub max_attempts: NonZeroU32,
+    /// Optional deterministic exponential retry timing policy.
+    pub backoff: Option<RetryBackoffV1>,
+}
+
+/// Bounded deterministic exponential retry timing policy.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RetryBackoffV1 {
+    /// Delay for the first retry in logical milliseconds.
+    pub base_delay_millis: NonZeroU64,
+    /// Maximum delay after exponential growth in logical milliseconds.
+    pub max_delay_millis: NonZeroU64,
+}
+
+impl RetryBackoffV1 {
+    /// Creates a bounded exponential retry timing policy.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`EngineError::InvalidRetryBackoff`] when the first delay exceeds
+    /// the configured maximum delay.
+    pub const fn new(
+        base_delay_millis: NonZeroU64,
+        max_delay_millis: NonZeroU64,
+    ) -> Result<Self, EngineError> {
+        if base_delay_millis.get() > max_delay_millis.get() {
+            return Err(EngineError::InvalidRetryBackoff);
+        }
+        Ok(Self {
+            base_delay_millis,
+            max_delay_millis,
+        })
+    }
 }
 
 impl RetryPolicyV1 {
     /// Creates a retry policy with the given total attempt bound.
     pub const fn new(max_attempts: NonZeroU32) -> Self {
-        Self { max_attempts }
+        Self {
+            max_attempts,
+            backoff: None,
+        }
     }
 
     /// Creates a policy permitting exactly one attempt and no retry.
     pub const fn no_retry() -> Self {
         Self {
             max_attempts: NonZeroU32::MIN,
+            backoff: None,
         }
+    }
+
+    /// Attaches deterministic retry timing to a bounded attempt policy.
+    pub const fn with_backoff(mut self, backoff: RetryBackoffV1) -> Self {
+        self.backoff = Some(backoff);
+        self
+    }
+
+    /// Calculates the due time for a zero-based retry ordinal.
+    ///
+    /// The first retry uses `base_delay_millis`; each later retry doubles the
+    /// delay and caps it at `max_delay_millis`. No wall clock is read here.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`EngineError::RetryDueTimeOverflow`] when the supplied logical
+    /// time cannot represent the calculated due time.
+    pub fn retry_due_at(
+        &self,
+        now: LogicalTimeV1,
+        retry_ordinal: u32,
+    ) -> Result<Option<LogicalTimeV1>, EngineError> {
+        let Some(backoff) = self.backoff else {
+            return Ok(None);
+        };
+        let uncapped_delay = backoff
+            .base_delay_millis
+            .get()
+            .checked_shl(retry_ordinal)
+            .unwrap_or(u64::MAX);
+        let delay = uncapped_delay.min(backoff.max_delay_millis.get());
+        let due_at = now
+            .0
+            .checked_add(delay)
+            .ok_or(EngineError::RetryDueTimeOverflow)?;
+        Ok(Some(LogicalTimeV1(due_at)))
     }
 }
 
@@ -291,6 +363,12 @@ pub struct SagaDecisionV1 {
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
+    /// A retry backoff's first delay exceeds its configured maximum delay.
+    #[error("retry backoff base delay exceeds its maximum delay")]
+    InvalidRetryBackoff,
+    /// A calculated retry due time exceeds the logical time range.
+    #[error("retry due time overflowed")]
+    RetryDueTimeOverflow,
     /// A definition has no executable steps.
     #[error("saga definition has no steps")]
     EmptyDefinition,
@@ -1010,6 +1088,44 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::MissingProjection);
+    }
+
+    #[test]
+    fn retry_backoff_is_deterministic_exponential_and_capped() {
+        let backoff =
+            RetryBackoffV1::new(NonZeroU64::new(10).unwrap(), NonZeroU64::new(40).unwrap())
+                .unwrap();
+        let policy = RetryPolicyV1::new(NonZeroU32::new(5).unwrap()).with_backoff(backoff);
+        assert_eq!(
+            policy.retry_due_at(LogicalTimeV1(100), 0).unwrap(),
+            Some(LogicalTimeV1(110))
+        );
+        assert_eq!(
+            policy.retry_due_at(LogicalTimeV1(100), 1).unwrap(),
+            Some(LogicalTimeV1(120))
+        );
+        assert_eq!(
+            policy.retry_due_at(LogicalTimeV1(100), 2).unwrap(),
+            Some(LogicalTimeV1(140))
+        );
+        assert_eq!(
+            policy.retry_due_at(LogicalTimeV1(100), 31).unwrap(),
+            Some(LogicalTimeV1(140))
+        );
+    }
+
+    #[test]
+    fn retry_backoff_rejects_invalid_bounds_and_due_time_overflow() {
+        let invalid = RetryBackoffV1::new(NonZeroU64::new(2).unwrap(), NonZeroU64::new(1).unwrap());
+        assert_eq!(invalid.unwrap_err(), EngineError::InvalidRetryBackoff);
+
+        let backoff =
+            RetryBackoffV1::new(NonZeroU64::new(1).unwrap(), NonZeroU64::new(1).unwrap()).unwrap();
+        let policy = RetryPolicyV1::new(NonZeroU32::MIN).with_backoff(backoff);
+        assert_eq!(
+            policy.retry_due_at(LogicalTimeV1(u64::MAX), 0),
+            Err(EngineError::RetryDueTimeOverflow)
+        );
     }
 
     #[test]
