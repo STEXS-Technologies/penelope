@@ -246,6 +246,7 @@ linear-engine slice; they are not production-readiness evidence.
 
 ```bash
 cargo fmt --all --check
+./scripts/check-layer-boundaries.sh
 cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked

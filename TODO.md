@@ -77,6 +77,13 @@ error message string.
   missing fuzz targets. The normal workspace suite excludes `penelope-fuzz`;
   CI invokes every fuzz target explicitly with a bounded run count.
 
+Current partial evidence: `scripts/check-layer-boundaries.sh` validates the
+exact direct internal dependency graph through `cargo metadata` and rejects
+known production infrastructure clients from this ports-only workspace. CI runs
+it before compilation. It does not yet enforce all public DTO schema fixtures,
+unknown-schema rejection, raw-string port signatures, or fuzz-target coverage,
+so this item remains incomplete.
+
 ## P0 — deterministic core
 
 ### P0.1 Stable IDs, envelopes, validation and limits
