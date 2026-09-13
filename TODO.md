@@ -250,6 +250,14 @@ item remains incomplete.
 - Evidence: authorization matrix, quota, redaction snapshot and public-parser
   fuzz tests.
 
+Current partial evidence: every library error type derives `thiserror::Error`;
+no caller is expected to branch on an error message. Domain, engine, commit,
+reconciliation, intent, StateChronicle-correlation, and port failures use
+typed enums. `PortError` distinguishes unavailability, optimistic conflict,
+unauthorized access, quota exhaustion, timeout, cancellation, ambiguity, and
+adapter-invariant rejection. The authorization matrix, quotas, redacted
+diagnostics, and sensitive-data snapshot tests remain incomplete.
+
 ### P0.9 Build `trade.v1` as the reference saga
 
 - [ ] Implement the complete versioned reference process: validate proposal;

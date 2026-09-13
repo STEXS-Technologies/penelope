@@ -17,11 +17,29 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// A backend-independent port error.
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum PortError {
     /// The adapter could not currently perform its durable operation.
     #[error("port unavailable")]
     Unavailable,
+    /// Optimistic concurrency rejected the expected durable process version.
+    #[error("port optimistic concurrency conflict")]
+    Conflict,
+    /// The adapter denied the authenticated principal's requested operation.
+    #[error("port operation is unauthorized")]
+    Unauthorized,
+    /// A configured bounded resource or rate quota was exhausted.
+    #[error("port quota exceeded")]
+    QuotaExceeded,
+    /// The adapter could not complete the operation before its bounded deadline.
+    #[error("port operation timed out")]
+    TimedOut,
+    /// The operation was durably cancelled before it could complete.
+    #[error("port operation was cancelled")]
+    Cancelled,
+    /// The adapter cannot safely classify whether an external effect occurred.
+    #[error("port external effect outcome is ambiguous")]
+    Ambiguous,
     /// The adapter rejected a versioned DTO or port invariant.
     #[error("port invariant violation")]
     Invariant,
