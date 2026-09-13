@@ -179,6 +179,13 @@ incomplete.
 - Evidence: partial settlement, duplicate compensation, compensation failure,
   operator resolution and irreversible-step scenarios.
 
+Current partial evidence: linear steps can declare a typed compensation action.
+After a known terminal forward failure, the reference projection plans those
+actions in LIFO order, with fresh action IDs and independently bounded retries.
+Unknown outcomes and failed/exhausted compensation escalate. There is no
+persisted compensation outcome schema or manual-review workflow yet, so this
+item remains incomplete.
+
 ### P0.8 Errors, authorization and redaction
 
 - [ ] Add typed validation, conflict, sequence, definition, quota,

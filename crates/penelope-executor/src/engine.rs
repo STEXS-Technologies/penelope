@@ -17,6 +17,33 @@ pub struct StepPlanV1 {
     pub payload_digest: ContentDigest,
     /// Bounded retry behavior for this step.
     pub retry_policy: RetryPolicyV1,
+    /// Optional compensating action to run after a known terminal forward failure.
+    pub compensation: Option<CompensationPlanV1>,
+}
+
+/// Declared action used to compensate a previously succeeded step.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CompensationPlanV1 {
+    /// Action category for the compensating effect.
+    pub action_kind: ProcessActionKindV1,
+    /// Digest of immutable compensation parameters.
+    pub payload_digest: ContentDigest,
+    /// Bounded retry behavior for the compensating action.
+    pub retry_policy: RetryPolicyV1,
+}
+
+impl CompensationPlanV1 {
+    /// Declares a canonical command compensation action.
+    pub const fn canonical_command(
+        payload_digest: ContentDigest,
+        retry_policy: RetryPolicyV1,
+    ) -> Self {
+        Self {
+            action_kind: ProcessActionKindV1::CanonicalCommand,
+            payload_digest,
+            retry_policy,
+        }
+    }
 }
 
 /// Explicit retry bound for one action step.
@@ -52,6 +79,7 @@ impl StepPlanV1 {
             action_kind: ProcessActionKindV1::CanonicalCommand,
             payload_digest,
             retry_policy,
+            compensation: None,
         }
     }
 }
@@ -74,6 +102,8 @@ pub struct LinearSagaProjectionV1 {
     pub active_action_id: Option<ActionId>,
     /// Every action identity issued by this process, in durable decision order.
     pub issued_action_ids: Vec<ActionId>,
+    /// Succeeded forward steps with declared compensation, in success order.
+    pub compensable_step_indices: Vec<usize>,
     /// Terminal/non-terminal process status.
     pub status: SagaStatusV1,
 }
@@ -87,6 +117,10 @@ pub enum SagaStatusV1 {
     Completed,
     /// A terminal result requires human intervention.
     Escalated,
+    /// Every required compensation action completed in reverse success order.
+    Compensated,
+    /// A compensating action is currently pending or executing.
+    Compensating,
 }
 
 /// Observed terminal action result supplied as data to the pure engine.
@@ -229,6 +263,7 @@ pub fn start(
         current_attempt: 0,
         active_action_id: Some(action_id.clone()),
         issued_action_ids: vec![action_id],
+        compensable_step_indices: Vec::new(),
         status: SagaStatusV1::Running,
     };
     Ok(SagaDecisionV1 {
@@ -254,7 +289,8 @@ pub fn apply_action_result(
     next_action_id: Option<ActionId>,
 ) -> Result<SagaDecisionV1, EngineError> {
     definition.validate()?;
-    if projection.status != SagaStatusV1::Running {
+    if projection.status != SagaStatusV1::Running && projection.status != SagaStatusV1::Compensating
+    {
         return Err(EngineError::TerminalProjection);
     }
     if projection.next_step_index >= definition.steps.len() {
@@ -263,18 +299,56 @@ pub fn apply_action_result(
     if projection.active_action_id.as_ref() != Some(&observation.action_id) {
         return Err(EngineError::UnexpectedAction);
     }
-    match observation.result {
+    match projection.status {
+        SagaStatusV1::Running => apply_forward_result(
+            definition,
+            projection,
+            tenant_id,
+            process_id,
+            observation.result,
+            next_action_id,
+        ),
+        SagaStatusV1::Compensating => apply_compensation_result(
+            definition,
+            projection,
+            tenant_id,
+            process_id,
+            observation.result,
+            next_action_id,
+        ),
+        SagaStatusV1::Completed | SagaStatusV1::Escalated | SagaStatusV1::Compensated => {
+            Err(EngineError::TerminalProjection)
+        }
+    }
+}
+
+fn apply_forward_result(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    result: ActionResultV1,
+    next_action_id: Option<ActionId>,
+) -> Result<SagaDecisionV1, EngineError> {
+    match result {
         ActionResultV1::Succeeded => {
+            let step = definition
+                .steps
+                .get(projection.next_step_index)
+                .ok_or(EngineError::InvalidProjection)?;
+            let mut compensable_step_indices = projection.compensable_step_indices.clone();
+            if step.compensation.is_some() {
+                compensable_step_indices.push(projection.next_step_index);
+            }
             let next_step_index = projection.next_step_index.saturating_add(1);
             if next_step_index == definition.steps.len() {
                 Ok(SagaDecisionV1 {
-                    projection: LinearSagaProjectionV1 {
+                    projection: terminal_projection(
+                        projection,
                         next_step_index,
-                        current_attempt: 0,
-                        active_action_id: None,
-                        issued_action_ids: projection.issued_action_ids.clone(),
-                        status: SagaStatusV1::Completed,
-                    },
+                        compensable_step_indices,
+                        SagaStatusV1::Completed,
+                    ),
                     next_action: None,
                 })
             } else {
@@ -284,6 +358,7 @@ pub fn apply_action_result(
                     current_attempt: 0,
                     active_action_id: Some(action_id.clone()),
                     issued_action_ids: issued_ids_after(projection, action_id),
+                    compensable_step_indices,
                     status: SagaStatusV1::Running,
                 };
                 Ok(SagaDecisionV1 {
@@ -302,14 +377,136 @@ pub fn apply_action_result(
                 .checked_add(1)
                 .ok_or(EngineError::AttemptOverflow)?;
             if current_attempt >= step.retry_policy.max_attempts.get() {
+                return begin_compensation(
+                    definition,
+                    projection,
+                    tenant_id,
+                    process_id,
+                    next_action_id,
+                );
+            }
+            let action_id = fresh_action_id(projection, next_action_id)?;
+            let retry = LinearSagaProjectionV1 {
+                next_step_index: projection.next_step_index,
+                current_attempt,
+                active_action_id: Some(action_id.clone()),
+                issued_action_ids: issued_ids_after(projection, action_id),
+                compensable_step_indices: projection.compensable_step_indices.clone(),
+                status: SagaStatusV1::Running,
+            };
+            Ok(SagaDecisionV1 {
+                next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
+                projection: retry,
+            })
+        }
+        ActionResultV1::TerminalFailure => begin_compensation(
+            definition,
+            projection,
+            tenant_id,
+            process_id,
+            next_action_id,
+        ),
+        ActionResultV1::Unknown => Ok(SagaDecisionV1 {
+            projection: terminal_projection(
+                projection,
+                projection.next_step_index,
+                projection.compensable_step_indices.clone(),
+                SagaStatusV1::Escalated,
+            ),
+            next_action: None,
+        }),
+    }
+}
+
+fn begin_compensation(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    next_action_id: Option<ActionId>,
+) -> Result<SagaDecisionV1, EngineError> {
+    if projection.compensable_step_indices.is_empty() {
+        return Ok(SagaDecisionV1 {
+            projection: terminal_projection(
+                projection,
+                projection.next_step_index,
+                Vec::new(),
+                SagaStatusV1::Escalated,
+            ),
+            next_action: None,
+        });
+    }
+    let action_id = fresh_action_id(projection, next_action_id)?;
+    let compensating = LinearSagaProjectionV1 {
+        next_step_index: projection.next_step_index,
+        current_attempt: 0,
+        active_action_id: Some(action_id.clone()),
+        issued_action_ids: issued_ids_after(projection, action_id),
+        compensable_step_indices: projection.compensable_step_indices.clone(),
+        status: SagaStatusV1::Compensating,
+    };
+    Ok(SagaDecisionV1 {
+        next_action: Some(action_for(
+            definition,
+            &compensating,
+            tenant_id,
+            process_id,
+        )?),
+        projection: compensating,
+    })
+}
+
+fn apply_compensation_result(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    result: ActionResultV1,
+    next_action_id: Option<ActionId>,
+) -> Result<SagaDecisionV1, EngineError> {
+    let compensation = compensation_for(definition, projection)?;
+    match result {
+        ActionResultV1::Succeeded => {
+            let mut remaining = projection.compensable_step_indices.clone();
+            let _ = remaining.pop();
+            if remaining.is_empty() {
                 return Ok(SagaDecisionV1 {
-                    projection: LinearSagaProjectionV1 {
-                        next_step_index: projection.next_step_index,
-                        current_attempt: projection.current_attempt,
-                        active_action_id: None,
-                        issued_action_ids: projection.issued_action_ids.clone(),
-                        status: SagaStatusV1::Escalated,
-                    },
+                    projection: terminal_projection(
+                        projection,
+                        projection.next_step_index,
+                        remaining,
+                        SagaStatusV1::Compensated,
+                    ),
+                    next_action: None,
+                });
+            }
+            let action_id = fresh_action_id(projection, next_action_id)?;
+            let next = LinearSagaProjectionV1 {
+                next_step_index: projection.next_step_index,
+                current_attempt: 0,
+                active_action_id: Some(action_id.clone()),
+                issued_action_ids: issued_ids_after(projection, action_id),
+                compensable_step_indices: remaining,
+                status: SagaStatusV1::Compensating,
+            };
+            Ok(SagaDecisionV1 {
+                next_action: Some(action_for(definition, &next, tenant_id, process_id)?),
+                projection: next,
+            })
+        }
+        ActionResultV1::RetryableFailure => {
+            let current_attempt = projection
+                .current_attempt
+                .checked_add(1)
+                .ok_or(EngineError::AttemptOverflow)?;
+            if current_attempt >= compensation.retry_policy.max_attempts.get() {
+                return Ok(SagaDecisionV1 {
+                    projection: terminal_projection(
+                        projection,
+                        projection.next_step_index,
+                        projection.compensable_step_indices.clone(),
+                        SagaStatusV1::Escalated,
+                    ),
                     next_action: None,
                 });
             }
@@ -319,7 +516,8 @@ pub fn apply_action_result(
                 current_attempt,
                 active_action_id: Some(action_id.clone()),
                 issued_action_ids: issued_ids_after(projection, action_id),
-                status: SagaStatusV1::Running,
+                compensable_step_indices: projection.compensable_step_indices.clone(),
+                status: SagaStatusV1::Compensating,
             };
             Ok(SagaDecisionV1 {
                 next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
@@ -327,15 +525,45 @@ pub fn apply_action_result(
             })
         }
         ActionResultV1::TerminalFailure | ActionResultV1::Unknown => Ok(SagaDecisionV1 {
-            projection: LinearSagaProjectionV1 {
-                next_step_index: projection.next_step_index,
-                current_attempt: projection.current_attempt,
-                active_action_id: None,
-                issued_action_ids: projection.issued_action_ids.clone(),
-                status: SagaStatusV1::Escalated,
-            },
+            projection: terminal_projection(
+                projection,
+                projection.next_step_index,
+                projection.compensable_step_indices.clone(),
+                SagaStatusV1::Escalated,
+            ),
             next_action: None,
         }),
+    }
+}
+
+fn compensation_for(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+) -> Result<CompensationPlanV1, EngineError> {
+    let step_index = projection
+        .compensable_step_indices
+        .last()
+        .ok_or(EngineError::InvalidProjection)?;
+    let step = definition
+        .steps
+        .get(*step_index)
+        .ok_or(EngineError::InvalidProjection)?;
+    step.compensation.ok_or(EngineError::InvalidProjection)
+}
+
+fn terminal_projection(
+    projection: &LinearSagaProjectionV1,
+    next_step_index: usize,
+    compensable_step_indices: Vec<usize>,
+    status: SagaStatusV1,
+) -> LinearSagaProjectionV1 {
+    LinearSagaProjectionV1 {
+        next_step_index,
+        current_attempt: projection.current_attempt,
+        active_action_id: None,
+        issued_action_ids: projection.issued_action_ids.clone(),
+        compensable_step_indices,
+        status,
     }
 }
 
@@ -411,10 +639,29 @@ fn action_for(
     tenant_id: TenantId,
     process_id: ProcessId,
 ) -> Result<ProcessActionDtoV1, EngineError> {
-    let step = definition
-        .steps
-        .get(projection.next_step_index)
-        .ok_or(EngineError::InvalidProjection)?;
+    let (step_id, action_kind, payload_digest) = if projection.status == SagaStatusV1::Compensating
+    {
+        let step_index = projection
+            .compensable_step_indices
+            .last()
+            .ok_or(EngineError::InvalidProjection)?;
+        let step = definition
+            .steps
+            .get(*step_index)
+            .ok_or(EngineError::InvalidProjection)?;
+        let compensation = step.compensation.ok_or(EngineError::InvalidProjection)?;
+        (
+            step.step_id.clone(),
+            compensation.action_kind,
+            compensation.payload_digest,
+        )
+    } else {
+        let step = definition
+            .steps
+            .get(projection.next_step_index)
+            .ok_or(EngineError::InvalidProjection)?;
+        (step.step_id.clone(), step.action_kind, step.payload_digest)
+    };
     Ok(ProcessActionDtoV1::new(
         tenant_id,
         process_id,
@@ -422,10 +669,10 @@ fn action_for(
             .active_action_id
             .clone()
             .ok_or(EngineError::InvalidProjection)?,
-        step.step_id.clone(),
+        step_id,
         projection.current_attempt,
-        step.action_kind,
-        step.payload_digest,
+        action_kind,
+        payload_digest,
     ))
 }
 
@@ -448,12 +695,14 @@ mod tests {
                     action_kind: ProcessActionKindV1::CanonicalCommand,
                     payload_digest: ContentDigest([1; 32]),
                     retry_policy,
+                    compensation: None,
                 },
                 StepPlanV1 {
                     step_id: id("stp_settle"),
                     action_kind: ProcessActionKindV1::CanonicalCommand,
                     payload_digest: ContentDigest([2; 32]),
                     retry_policy,
+                    compensation: None,
                 },
             ],
         }
@@ -587,6 +836,124 @@ mod tests {
         assert!(decision.next_action.is_none());
     }
 
+    #[test]
+    fn known_terminal_failure_compensates_succeeded_steps_in_lifo_order() {
+        let policy = RetryPolicyV1::no_retry();
+        let definition = LinearSagaDefinitionV1 {
+            steps: vec![
+                StepPlanV1 {
+                    step_id: id("stp_lock_a"),
+                    action_kind: ProcessActionKindV1::CanonicalCommand,
+                    payload_digest: ContentDigest([1; 32]),
+                    retry_policy: policy,
+                    compensation: Some(CompensationPlanV1::canonical_command(
+                        ContentDigest([10; 32]),
+                        policy,
+                    )),
+                },
+                StepPlanV1 {
+                    step_id: id("stp_lock_b"),
+                    action_kind: ProcessActionKindV1::CanonicalCommand,
+                    payload_digest: ContentDigest([2; 32]),
+                    retry_policy: policy,
+                    compensation: Some(CompensationPlanV1::canonical_command(
+                        ContentDigest([11; 32]),
+                        policy,
+                    )),
+                },
+                StepPlanV1::canonical_command(id("stp_settle"), ContentDigest([3; 32]), policy),
+            ],
+        };
+        let tenant_id = id::<TenantId>("tnt_game");
+        let process_id = id::<ProcessId>("prc_trade");
+        let first = start(
+            &definition,
+            tenant_id.clone(),
+            process_id.clone(),
+            id("act_lock_a"),
+        )
+        .unwrap();
+        let second = apply_action_result(
+            &definition,
+            &first.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                first.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            Some(id("act_lock_b")),
+        )
+        .unwrap();
+        let settlement = apply_action_result(
+            &definition,
+            &second.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                second.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            Some(id("act_settle")),
+        )
+        .unwrap();
+        let unlock_b = apply_action_result(
+            &definition,
+            &settlement.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                settlement.next_action.as_ref().unwrap(),
+                ActionResultV1::TerminalFailure,
+            ),
+            Some(id("act_unlock_b")),
+        )
+        .unwrap();
+        assert_eq!(unlock_b.projection.status, SagaStatusV1::Compensating);
+        assert_eq!(
+            unlock_b.next_action.as_ref().unwrap().step_id,
+            id("stp_lock_b")
+        );
+        assert_eq!(
+            unlock_b.next_action.as_ref().unwrap().payload_digest,
+            ContentDigest([11; 32])
+        );
+        let unlock_a = apply_action_result(
+            &definition,
+            &unlock_b.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                unlock_b.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            Some(id("act_unlock_a")),
+        )
+        .unwrap();
+        assert_eq!(
+            unlock_a.next_action.as_ref().unwrap().step_id,
+            id("stp_lock_a")
+        );
+        assert_eq!(
+            unlock_a.next_action.as_ref().unwrap().payload_digest,
+            ContentDigest([10; 32])
+        );
+        let compensated = apply_action_result(
+            &definition,
+            &unlock_a.projection,
+            tenant_id,
+            process_id,
+            &observation(
+                unlock_a.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            None,
+        )
+        .unwrap();
+        assert_eq!(compensated.projection.status, SagaStatusV1::Compensated);
+        assert!(compensated.next_action.is_none());
+    }
+
     proptest! {
         #[test]
         fn retry_attempt_is_monotonic_for_every_representable_attempt(
@@ -607,6 +974,7 @@ mod tests {
                     current_attempt,
                     active_action_id: Some(id("act_lock")),
                     issued_action_ids: vec![id("act_lock")],
+                    compensable_step_indices: Vec::new(),
                     status: SagaStatusV1::Running,
                 },
                 id("tnt_game"),

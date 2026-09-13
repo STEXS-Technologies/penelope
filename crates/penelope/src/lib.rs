@@ -21,9 +21,9 @@ pub use penelope_domain::{
 pub use penelope_executor as executor;
 /// Deterministic linear-saga reference API.
 pub use penelope_executor::engine::{
-    ActionResultObservationV1, ActionResultV1, EngineError, LinearSagaDefinitionV1,
-    LinearSagaEventV1, LinearSagaProjectionV1, RetryPolicyV1, SagaDecisionV1, SagaStatusV1,
-    StepPlanV1, apply_action_result, replay, start,
+    ActionResultObservationV1, ActionResultV1, CompensationPlanV1, EngineError,
+    LinearSagaDefinitionV1, LinearSagaEventV1, LinearSagaProjectionV1, RetryPolicyV1,
+    SagaDecisionV1, SagaStatusV1, StepPlanV1, apply_action_result, replay, start,
 };
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;

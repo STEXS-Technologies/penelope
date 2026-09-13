@@ -179,6 +179,10 @@ Every planned action ID is retained in the replayable process projection. A
 transition that tries to reuse any previously issued ID is rejected as a typed
 engine error; retries require a fresh action identity.
 
+For a known terminal forward failure, the reference engine plans declared
+compensations in reverse success order. An unknown forward or compensation
+result never triggers compensation automatically and escalates instead.
+
 Public parsers, every versioned DTO deserializer, and the linear engine's
 transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
 parse, DTO, or decision surfaces must add a target before they are considered
