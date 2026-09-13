@@ -14,6 +14,9 @@ serde_json = { workspace = true }
 [dependencies.penelope-domain]
 path = "../crates/penelope-domain"
 
+[dependencies.penelope-executor]
+path = "../crates/penelope-executor"
+
 [[bin]]
 name = "fuzz_identifiers"
 path = "fuzz_targets/fuzz_identifiers.rs"
@@ -23,5 +26,11 @@ doc = false
 [[bin]]
 name = "fuzz_versioned_dtos"
 path = "fuzz_targets/fuzz_versioned_dtos.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_linear_engine"
+path = "fuzz_targets/fuzz_linear_engine.rs"
 test = false
 doc = false

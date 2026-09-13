@@ -5,9 +5,11 @@ multi-step processes. It is the **process-truth** layer: it records what a
 workflow decided and what its steps observed. It is not a ledger, matching
 engine, market-data system, or canonical inventory/position store.
 
-> Status: **scaffold only; not production-ready.** The workspace compiles, but
-> contains no domain implementation, port traits, tests, adapters, benchmarks,
-> CI, or release process. The complete execution plan is [TODO.md](TODO.md).
+> Status: **early implementation; not production-ready.** Penelope has typed
+> versioned protocol DTOs and a tested pure linear-saga reference engine. It
+> does not yet have an append-only outcome implementation, durable adapters,
+> complete replay/compensation semantics, benchmarks, chaos evidence, CI, or a
+> release process. The complete execution plan is [TODO.md](TODO.md).
 
 ## Boundary with StateChronicle
 
@@ -144,7 +146,7 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-core` | Pure schema constants and shared protocol primitives. | Versioned schema IDs only. |
 | `penelope-domain` | Versioned public DTOs for definitions, inputs, outcomes, actions, canonical commands/events and review. | DTOs only; no workflow logic. |
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
-| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Contract scaffold only. |
+| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces only; no implementation. |
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Contract scaffold only; intentionally has no path dependency on a local StateChronicle checkout. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
@@ -162,9 +164,10 @@ Errors are typed `thiserror` enums. Error variants communicate a stable failure
 class; they do not expose handwritten `Display`/`Error` implementations or use
 raw text as a programmatic error discriminator.
 
-Public parsers and every versioned DTO deserializer are covered by cargo-fuzz
-targets in `fuzz/`. New public parse or DTO surfaces must add a target before
-they are considered complete.
+Public parsers, every versioned DTO deserializer, and the linear engine's
+transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
+parse, DTO, or decision surfaces must add a target before they are considered
+complete.
 
 ## First reference saga: `trade.v1`
 
@@ -182,8 +185,8 @@ atomically settle → compensate/unlock or escalate`.
 
 ## Verification today
 
-The following currently pass but are only compile/lint checks: the test command
-runs **zero tests** because no behavior exists yet.
+The following pass locally. They validate only the implemented protocol and
+linear-engine slice; they are not production-readiness evidence.
 
 ```bash
 cargo fmt --all --check
@@ -192,6 +195,7 @@ cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked
 cargo fuzz run fuzz_identifiers -- -runs=100
 cargo fuzz run fuzz_versioned_dtos -- -runs=100
+cargo fuzz run fuzz_linear_engine -- -runs=100
 ```
 
 Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are

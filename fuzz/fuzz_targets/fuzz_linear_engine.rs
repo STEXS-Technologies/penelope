@@ -1,0 +1,69 @@
+#![no_main]
+
+use libfuzzer_sys::fuzz_target;
+use penelope_domain::{ActionId, ContentDigest, ProcessActionKindV1, ProcessId, TenantId};
+use penelope_executor::engine::{
+    ActionResultV1, LinearSagaDefinitionV1, StepPlanV1, apply_result, start,
+};
+
+fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
+    match T::try_from(value) {
+        Ok(identifier) => identifier,
+        Err(_) => unreachable!(),
+    }
+}
+
+fuzz_target!(|data: &[u8]| {
+    let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
+    let definition = LinearSagaDefinitionV1 {
+        steps: (0..step_count)
+            .map(|index| StepPlanV1 {
+                step_id: match index {
+                    0 => identifier("stp_zero"),
+                    1 => identifier("stp_one"),
+                    2 => identifier("stp_two"),
+                    _ => identifier("stp_three"),
+                },
+                action_kind: ProcessActionKindV1::CanonicalCommand,
+                payload_digest: ContentDigest([index as u8; 32]),
+            })
+            .collect(),
+    };
+    let tenant_id = identifier::<TenantId>("tnt_fuzz");
+    let process_id = identifier::<ProcessId>("prc_fuzz");
+    let action_id = identifier::<ActionId>("act_fuzz_start");
+    let Ok(mut decision) = start(
+        &definition,
+        tenant_id.clone(),
+        process_id.clone(),
+        action_id,
+    ) else {
+        return;
+    };
+
+    for byte in data.iter().skip(1) {
+        let result = match byte % 4 {
+            0 => ActionResultV1::Succeeded,
+            1 => ActionResultV1::RetryableFailure,
+            2 => ActionResultV1::TerminalFailure,
+            _ => ActionResultV1::Unknown,
+        };
+        let next_action_id = match result {
+            ActionResultV1::Succeeded | ActionResultV1::RetryableFailure => {
+                Some(identifier("act_fuzz_next"))
+            }
+            ActionResultV1::TerminalFailure | ActionResultV1::Unknown => None,
+        };
+        let Ok(next) = apply_result(
+            &definition,
+            decision.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            next_action_id,
+            result,
+        ) else {
+            return;
+        };
+        decision = next;
+    }
+});

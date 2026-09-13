@@ -6,3 +6,6 @@
 
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
+
+/// Pure deterministic saga decision engine.
+pub mod engine;

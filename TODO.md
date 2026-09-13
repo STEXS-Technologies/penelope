@@ -2,9 +2,12 @@
 
 ## Current state
 
-This repository is a documentation-only Rust scaffold. Nothing below is
-implemented unless checked off with linked tests and reproducible evidence. Do
-not call Penelope production-ready before every P0 and P1 item is complete.
+This repository contains an early pure-engine slice: versioned typed DTOs,
+validated newtype identities, ports, a reference linear state machine, unit and
+property tests, and parser/DTO/engine fuzz targets. It has no durable outcome
+store, production adapter, or production-readiness evidence. Nothing below is
+complete unless checked off with linked tests and reproducible evidence. Do not
+call Penelope production-ready before every P0 and P1 item is complete.
 
 ## Priority order
 
@@ -120,6 +123,14 @@ error message string.
   I/O, globals and wall-clock access in the core; issue stable action IDs.
 - Evidence: repeated-decision determinism tests, no-panic fuzz/property tests,
   and decision/apply consistency tests.
+
+Current partial evidence: `penelope-executor::engine` implements a deliberately
+small deterministic linear reference machine with a replayable projection,
+ordered steps, typed action attempts, retry, completion, and safe escalation
+for terminal or unknown outcomes. Its unit/property tests and
+`fuzz_linear_engine` target run in the commands documented in `README.md`.
+It is not a complete `decide`/`apply` outcome-log engine and does not satisfy
+this item.
 
 ### P0.5 Step state machine and effect idempotency
 
