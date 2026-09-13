@@ -40,3 +40,4 @@ jobs:
       - run: cargo +nightly fuzz run fuzz_linear_engine -- -runs=1000
       - run: cargo +nightly fuzz run fuzz_statechronicle_correlation -- -runs=1000
       - run: cargo +nightly fuzz run fuzz_atomic_process_commit -- -runs=1000
+      - run: cargo +nightly fuzz run fuzz_canonical_reconciliation -- -runs=1000

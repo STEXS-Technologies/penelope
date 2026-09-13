@@ -299,6 +299,15 @@ does not yet cover source freshness/deduplication or response-loss recovery.
 - Evidence: mock tests for crash, timeout-after-success, duplicate request and
   inconsistent remote status.
 
+Current partial evidence: `CanonicalReconciliationV1` makes three mutually
+exclusive typed states explicit: committed with immutable event evidence,
+authoritatively not committed, and unknown. It validates that the evidence
+belongs to the requested action ID, and the port contract prohibits treating
+unknown as retry permission. It is parser/validation fuzzed. There is no
+executor policy, remote reference contract, consistency-window implementation,
+timeout/cancellation model, or fault-injected adapter drill yet, so this item
+remains incomplete.
+
 ### P1.6 Manual review lifecycle
 
 - [ ] Add create, claim, evidence, decision, optional dual-control, expiry and

@@ -52,3 +52,9 @@ name = "fuzz_atomic_process_commit"
 path = "fuzz_targets/fuzz_atomic_process_commit.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_canonical_reconciliation"
+path = "fuzz_targets/fuzz_canonical_reconciliation.rs"
+test = false
+doc = false

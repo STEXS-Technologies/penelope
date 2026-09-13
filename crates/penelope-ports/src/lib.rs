@@ -49,6 +49,62 @@ pub enum CommitValidationError {
     SequenceOverflow,
 }
 
+/// Typed validation failure for canonical-effect reconciliation evidence.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ReconciliationValidationError {
+    /// The evidence was returned for a different process action.
+    #[error("canonical reconciliation action does not match the requested action")]
+    ActionMismatch,
+}
+
+/// Authoritative result of reconciling a canonical external effect.
+///
+/// `Unknown` is deliberately distinct from `NotCommitted`: callers must not
+/// retry an unknown effect merely because no success response was received.
+/// An adapter may return `NotCommitted` only after consulting the authoritative
+/// canonical evidence source according to its documented consistency window.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CanonicalReconciliationV1 {
+    /// A verified immutable canonical event proves the effect committed.
+    Committed {
+        /// The committed canonical evidence.
+        event: CanonicalEventDtoV1,
+    },
+    /// Authoritative evidence proves the action did not commit.
+    NotCommitted {
+        /// The action whose absence was authoritatively established.
+        action_id: ActionId,
+    },
+    /// The effect cannot safely be classified as committed or absent.
+    Unknown {
+        /// The action requiring escalation or later reconciliation.
+        action_id: ActionId,
+    },
+}
+
+impl CanonicalReconciliationV1 {
+    /// Validates that reconciliation evidence belongs to the requested action.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error if the result could be confused with evidence for
+    /// another action.
+    pub fn validate_for(
+        &self,
+        requested_action_id: &ActionId,
+    ) -> Result<(), ReconciliationValidationError> {
+        let observed_action_id = match self {
+            Self::Committed { event } => &event.action_id,
+            Self::NotCommitted { action_id } | Self::Unknown { action_id } => action_id,
+        };
+        if observed_action_id == requested_action_id {
+            Ok(())
+        } else {
+            Err(ReconciliationValidationError::ActionMismatch)
+        }
+    }
+}
+
 /// Atomically persisted input, outcomes, and outgoing actions for one process.
 ///
 /// An adapter must either make every field durable in one local transaction or
@@ -184,11 +240,14 @@ pub trait TimerScheduler: Send + Sync {
 pub trait CanonicalState: Send + Sync {
     /// Submits a command with the Penelope action ID as canonical idempotency ID.
     async fn submit(&self, command: &CanonicalCommandDtoV1) -> Result<(), PortError>;
-    /// Reconciles a pending action from durable canonical evidence.
+    /// Reconciles a pending action from authoritative canonical evidence.
+    ///
+    /// `Unknown` must be escalated or reconciled again; it is not permission to
+    /// resubmit a potentially non-idempotent remote effect.
     async fn reconcile(
         &self,
         action: &ProcessActionDtoV1,
-    ) -> Result<Option<CanonicalEventDtoV1>, PortError>;
+    ) -> Result<CanonicalReconciliationV1, PortError>;
 }
 
 /// Durable manual-review escalation boundary.
@@ -203,7 +262,8 @@ pub trait ManualReviewQueue: Send + Sync {
 mod tests {
     use super::*;
     use penelope_domain::{
-        CausationIdV1, ContentDigest, OutcomeId, ProcessActionKindV1, ProcessOutcomeKindV1, StepId,
+        CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId, CausationIdV1, ContentDigest,
+        OperationId, OutcomeId, ProcessActionKindV1, ProcessOutcomeKindV1, ResourceId, StepId,
         TenantId,
     };
 
@@ -248,5 +308,36 @@ mod tests {
         let error =
             AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![wrong_action]).unwrap_err();
         assert_eq!(error, CommitValidationError::ActionScopeMismatch);
+    }
+
+    #[test]
+    fn reconciliation_rejects_evidence_for_another_action() {
+        let result = CanonicalReconciliationV1::Unknown {
+            action_id: id("act_other"),
+        };
+        assert_eq!(
+            result.validate_for(&id("act_dispatch")),
+            Err(ReconciliationValidationError::ActionMismatch)
+        );
+    }
+
+    #[test]
+    fn reconciliation_rejects_committed_evidence_for_another_action() {
+        let result = CanonicalReconciliationV1::Committed {
+            event: CanonicalEventDtoV1 {
+                tenant_id: id("tnt_game"),
+                source_event_id: id::<CanonicalEventId>("cev_source"),
+                action_id: id("act_other"),
+                commit_id: id::<CanonicalCommitId>("cmt_commit"),
+                commit_sequence: 0,
+                operation: id::<OperationId>("op_settle"),
+                resource_ids: vec![id::<ResourceId>("res_market")],
+                payload_digest: ContentDigest([3; 32]),
+            },
+        };
+        assert_eq!(
+            result.validate_for(&id("act_dispatch")),
+            Err(ReconciliationValidationError::ActionMismatch)
+        );
     }
 }
