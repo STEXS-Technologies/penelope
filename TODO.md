@@ -209,11 +209,14 @@ incomplete.
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID
 already issued by that process is rejected. This does not replace durable
-inbox/outbox deduplication or an effect-key contract. Each emitted action now
+inbox/outbox deduplication. Each emitted action now
 also carries the pinned definition ID/version/digest alongside tenant, process,
 step, attempt, kind and action ID, preventing an adapter from losing the
-definition deployment context. P0.5 remains
-incomplete.
+definition deployment context. `ProcessActionDtoV1::effect_key` derives a
+typed semantic idempotency key from that pinned scope plus step, attempt, and
+effect kind; it is unit tested and exercised at the action DTO fuzz boundary.
+Durable inbox/outbox deduplication and a complete state machine remain missing,
+so P0.5 remains incomplete.
 
 ### P0.7 Compensation and operator escalation
 

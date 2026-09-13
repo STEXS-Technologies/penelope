@@ -533,6 +533,31 @@ pub struct ProcessActionDtoV1 {
     pub payload_digest: ContentDigest,
 }
 
+/// Stable semantic idempotency key for one process effect attempt.
+///
+/// Unlike [`ActionId`], this key is derived from the pinned process definition
+/// and the effect's semantic coordinates. Adapters can use it to detect a
+/// duplicate semantic dispatch without reconstructing an untyped string key.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EffectKeyV1 {
+    /// Isolated tenant scope.
+    pub tenant_id: TenantId,
+    /// Owning process instance.
+    pub process_id: ProcessId,
+    /// Immutable definition identity selected for this process.
+    pub definition_id: DefinitionId,
+    /// Immutable definition version selected for this process.
+    pub definition_version: DefinitionVersion,
+    /// Exact definition semantics selected for this process.
+    pub definition_digest: ContentDigest,
+    /// Pinned definition step identity.
+    pub step_id: StepId,
+    /// Attempt number for this effect.
+    pub attempt: u32,
+    /// Typed external effect category.
+    pub kind: ProcessActionKindV1,
+}
+
 /// A canonical-state command submitted through an adapter port.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CanonicalCommandDtoV1 {
@@ -718,6 +743,20 @@ impl ProcessActionDtoV1 {
             payload_digest,
         }
     }
+
+    /// Derives the stable semantic idempotency key for this action attempt.
+    pub fn effect_key(&self) -> EffectKeyV1 {
+        EffectKeyV1 {
+            tenant_id: self.tenant_id.clone(),
+            process_id: self.process_id.clone(),
+            definition_id: self.definition_id.clone(),
+            definition_version: self.definition_version.clone(),
+            definition_digest: self.definition_digest,
+            step_id: self.step_id.clone(),
+            attempt: self.attempt,
+            kind: self.kind,
+        }
+    }
 }
 
 impl CanonicalCommandDtoV1 {
@@ -832,6 +871,53 @@ mod tests {
             PrincipalId::try_from("tnt_wrong").unwrap_err(),
             DomainError::InvalidPrincipalId
         );
+    }
+
+    #[test]
+    fn effect_key_binds_every_semantic_effect_coordinate() {
+        let scope = ProcessScopeV1::new(
+            id::<TenantId>("tnt_game"),
+            id::<ProcessId>("prc_trade"),
+            id::<DefinitionId>("def_trade"),
+            id::<DefinitionVersion>("dfv_one"),
+            ContentDigest([1; 32]),
+        );
+        let action = ProcessActionDtoV1::new(
+            scope.clone(),
+            id::<ActionId>("act_first"),
+            id::<StepId>("stp_settle"),
+            0,
+            ProcessActionKindV1::CanonicalCommand,
+            ContentDigest([2; 32]),
+        );
+        let same_semantics_new_action_id = ProcessActionDtoV1::new(
+            scope,
+            id::<ActionId>("act_second"),
+            id::<StepId>("stp_settle"),
+            0,
+            ProcessActionKindV1::CanonicalCommand,
+            ContentDigest([3; 32]),
+        );
+        let retry = ProcessActionDtoV1::new(
+            ProcessScopeV1::new(
+                id::<TenantId>("tnt_game"),
+                id::<ProcessId>("prc_trade"),
+                id::<DefinitionId>("def_trade"),
+                id::<DefinitionVersion>("dfv_one"),
+                ContentDigest([1; 32]),
+            ),
+            id::<ActionId>("act_retry"),
+            id::<StepId>("stp_settle"),
+            1,
+            ProcessActionKindV1::CanonicalCommand,
+            ContentDigest([3; 32]),
+        );
+
+        assert_eq!(
+            action.effect_key(),
+            same_semantics_new_action_id.effect_key()
+        );
+        assert_ne!(action.effect_key(), retry.effect_key());
     }
 
     #[test]

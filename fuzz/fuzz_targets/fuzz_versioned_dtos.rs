@@ -18,7 +18,9 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(outcome) = serde_json::from_slice::<ProcessOutcomeDtoV1>(data) {
         let _ = outcome.validate();
     }
-    let _ = serde_json::from_slice::<ProcessActionDtoV1>(data);
+    if let Ok(action) = serde_json::from_slice::<ProcessActionDtoV1>(data) {
+        let _ = action.effect_key();
+    }
     let _ = serde_json::from_slice::<ProcessScopeV1>(data);
     let _ = serde_json::from_slice::<LogicalTimeV1>(data);
     if let Ok(command) = serde_json::from_slice::<CanonicalCommandDtoV1>(data) {
