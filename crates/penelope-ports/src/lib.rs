@@ -219,6 +219,27 @@ impl OutboxLeaseV1 {
         }
         Ok(())
     }
+
+    /// Returns whether this lease is expired at the supplied logical time.
+    #[must_use]
+    pub const fn is_expired_at(&self, now: LogicalTimeV1) -> bool {
+        now.0 > self.lease_expires_at.0
+    }
+
+    /// Validates the lease and rejects acknowledgement after expiry.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] when the lease has expired, or
+    /// [`PortError::Invariant`] when its record is invalid.
+    pub fn validate_at(&self, now: LogicalTimeV1) -> Result<(), PortError> {
+        self.validate()?;
+        if self.is_expired_at(now) {
+            Err(PortError::TimedOut)
+        } else {
+            Ok(())
+        }
+    }
 }
 
 /// Typed validation failure for one atomic process commit request.
@@ -1370,6 +1391,22 @@ mod tests {
         assert_eq!(
             lease.validate_for_claim(&request),
             Err(PortError::Invariant)
+        );
+    }
+
+    #[test]
+    fn outbox_lease_expiry_is_checked_at_logical_boundary() {
+        let lease = OutboxLeaseV1 {
+            record: OutboxRecordV1::new(action()),
+            owner: id("pri_worker"),
+            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTimeV1(5),
+        };
+        assert!(!lease.is_expired_at(LogicalTimeV1(5)));
+        assert!(lease.is_expired_at(LogicalTimeV1(6)));
+        assert_eq!(
+            lease.validate_at(LogicalTimeV1(6)),
+            Err(PortError::TimedOut)
         );
     }
 
