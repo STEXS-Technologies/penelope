@@ -265,15 +265,7 @@ cargo fmt --all --check
 cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked
-cargo fuzz run fuzz_identifiers -- -runs=100
-cargo fuzz run fuzz_versioned_dtos -- -runs=100
-cargo fuzz run fuzz_linear_engine -- -runs=100
-cargo fuzz run fuzz_statechronicle_correlation -- -runs=100
-cargo fuzz run fuzz_atomic_process_commit -- -runs=100
-cargo fuzz run fuzz_canonical_reconciliation -- -runs=100
-cargo fuzz run fuzz_manual_review_lifecycle -- -runs=100
-cargo fuzz run fuzz_process_input_parse -- -runs=100
-cargo fuzz run fuzz_process_control_ports -- -runs=100
+PENELOPE_FUZZ_RUNS=100 ./scripts/run_bounded_fuzz.sh
 cargo bench -p penelope-executor --bench linear_saga --locked
 cargo bench -p penelope-executor --bench parallel_linear_saga --locked
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=1000 \
@@ -285,8 +277,8 @@ complete and their CI verification exists.
 
 GitHub Actions in [ci.yml](.github/workflows/ci.yml) runs the stable format,
 test, Clippy, strict-doc, benchmark-build, and all reference examples on every
-push and pull request. A separate bounded nightly job runs every fuzz target
-for 1,000 inputs. The scheduled
+push and pull request. A separate bounded nightly job validates the required
+target/DTO coverage manifest and runs every fuzz target for 1,000 inputs. The scheduled
 [pure-chaos workflow](.github/workflows/pure-chaos.yml) repeatedly runs the
 restart/replay, timer-fault, and linear-engine fuzz drill. These are
 library-only checks, not evidence for a durable adapter deployment.

@@ -12,17 +12,6 @@ cd "${root_dir}"
 iterations="${PENELOPE_CHAOS_ITERATIONS:-3}"
 proptest_cases="${PENELOPE_CHAOS_PROPTEST_CASES:-1000}"
 fuzz_runs="${PENELOPE_CHAOS_FUZZ_RUNS:-10000}"
-fuzz_targets=(
-  fuzz_identifiers
-  fuzz_versioned_dtos
-  fuzz_linear_engine
-  fuzz_statechronicle_correlation
-  fuzz_atomic_process_commit
-  fuzz_canonical_reconciliation
-  fuzz_manual_review_lifecycle
-  fuzz_process_input_parse
-  fuzz_process_control_ports
-)
 
 for value_name in iterations proptest_cases fuzz_runs; do
   value="${!value_name}"
@@ -37,11 +26,9 @@ for iteration in $(seq 1 "${iterations}"); do
   PROPTEST_CASES="${proptest_cases}" \
     cargo test -p penelope-executor --all-targets --all-features --locked
 
-  for fuzz_target in "${fuzz_targets[@]}"; do
-    printf '[%s/%s] %s malformed-input drill\n' \
-      "${iteration}" "${iterations}" "${fuzz_target}"
-    cargo +nightly fuzz run "${fuzz_target}" -- -runs="${fuzz_runs}"
-  done
+  printf '[%s/%s] public-boundary malformed-input drill\n' \
+    "${iteration}" "${iterations}"
+  PENELOPE_FUZZ_RUNS="${fuzz_runs}" ./scripts/run_bounded_fuzz.sh
 done
 
 printf 'pure chaos drill passed (%s repeated iterations)\n' "${iterations}"

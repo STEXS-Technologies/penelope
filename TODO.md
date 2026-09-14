@@ -89,9 +89,11 @@ unknown and unversioned discriminators. Every current public wire DTO now
 carries and validates its immutable `SchemaV1` discriminator, including
 definition, input, outcome, action, canonical command/event, and manual review;
 negative tests cover a mismatched schema for each and the versioned-DTO fuzz
-target invokes each available validator. It does not yet enforce golden
-fixtures for every DTO, raw-string port signatures, or fuzz-target coverage, so
-this item remains incomplete. The layer-boundary gate additionally rejects raw
+target invokes each available validator. `scripts/run_bounded_fuzz.sh` verifies
+the required target registration/source set and that every current public
+versioned DTO appears in that DTO fuzz boundary before executing the bounded
+suite. It does not yet enforce golden fixtures for every DTO, so this item
+remains incomplete. The layer-boundary gate additionally rejects raw
 `String`/`&str` parameters in public port traits and handwritten
 `std::error::Error` implementations, preserving validated-newtype and
 `thiserror` error-taxonomy rules as the workspace evolves.
