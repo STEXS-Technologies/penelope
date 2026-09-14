@@ -127,8 +127,9 @@ Current partial evidence: the linear reference definition, durable start event,
 and its projection now pin validated `DefinitionId`, `DefinitionVersion`, and
 a definition `ContentDigest`. Replay and every transition compare the supplied
 definition to those pinned values and fail closed on mismatch; this is unit
-tested and the changed serde definition boundary is fuzzed. Graph validation, registration,
-compatibility/migration policy, non-linear transitions, full digest
+tested and the changed serde definition boundary is fuzzed. Both domain and
+linear definitions reject duplicate step identities and the bounded step limit.
+Graph validation, registration, compatibility/migration policy, non-linear transitions, full digest
 calculation, and deployment-time definition storage remain incomplete.
 
 ### P0.3 Append-only outcomes and deterministic projections

@@ -1,8 +1,8 @@
 //! Deterministic linear saga planning with typed inputs and outputs.
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, ProcessActionDtoV1,
-    ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, MAX_DEFINITION_STEPS,
+    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
 use penelope_ports::TimerScheduleV1;
 use serde::{Deserialize, Serialize};
@@ -425,6 +425,12 @@ pub enum EngineError {
     /// A definition has no executable steps.
     #[error("saga definition has no steps")]
     EmptyDefinition,
+    /// A definition exceeds the bounded executable step limit.
+    #[error("saga definition exceeds the step limit")]
+    DefinitionStepLimitExceeded,
+    /// A definition declares the same step identity more than once.
+    #[error("saga definition contains a duplicate step identifier")]
+    DuplicateStepId,
     /// A projection points outside the pinned definition.
     #[error("projection step index is outside the definition")]
     InvalidProjection,
@@ -493,12 +499,22 @@ impl LinearSagaDefinitionV1 {
     /// # Errors
     ///
     /// Returns [`EngineError::EmptyDefinition`] when no step is declared.
-    pub const fn validate(&self) -> Result<(), EngineError> {
+    pub fn validate(&self) -> Result<(), EngineError> {
         if self.steps.is_empty() {
-            Err(EngineError::EmptyDefinition)
-        } else {
-            Ok(())
+            return Err(EngineError::EmptyDefinition);
         }
+        if self.steps.len() > MAX_DEFINITION_STEPS {
+            return Err(EngineError::DefinitionStepLimitExceeded);
+        }
+        if self.steps.iter().enumerate().any(|(index, step)| {
+            self.steps
+                .iter()
+                .skip(index.saturating_add(1))
+                .any(|other_step| other_step.step_id == step.step_id)
+        }) {
+            return Err(EngineError::DuplicateStepId);
+        }
+        Ok(())
     }
 }
 
@@ -1263,6 +1279,37 @@ mod tests {
                 },
             ],
         }
+    }
+
+    #[test]
+    fn linear_definition_rejects_duplicate_and_oversized_steps() {
+        let policy = RetryPolicyV1::no_retry();
+        let duplicate = LinearSagaDefinitionV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([99; 32]),
+            vec![
+                StepPlanV1::canonical_command(id("stp_lock"), ContentDigest([1; 32]), policy),
+                StepPlanV1::canonical_command(id("stp_lock"), ContentDigest([2; 32]), policy),
+            ],
+        );
+        assert_eq!(
+            duplicate.validate().unwrap_err(),
+            EngineError::DuplicateStepId
+        );
+        let oversized = LinearSagaDefinitionV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([99; 32]),
+            vec![
+                StepPlanV1::canonical_command(id("stp_limit"), ContentDigest([3; 32]), policy);
+                MAX_DEFINITION_STEPS.saturating_add(1)
+            ],
+        );
+        assert_eq!(
+            oversized.validate().unwrap_err(),
+            EngineError::DefinitionStepLimitExceeded
+        );
     }
 
     fn observation(
