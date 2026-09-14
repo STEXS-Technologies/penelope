@@ -318,7 +318,7 @@ remains incomplete.
   idempotency context; typed errors document retry/cancellation behavior.
 - Evidence: fake adapters and a shared contract-test suite.
 
-Current partial evidence: backend-neutral `Clock`, `ActionIdSource`,
+Current partial evidence: backend-neutral `Clock`, `ActionIdSource`, `OutcomeIdSource`,
 `ProcessAuthorizer`, and due-time `TimerScheduler` ports now use typed logical
 time, process scope, principal, action, and authorization operation values.
 Their public DTO parser boundary is fuzzed. The `ports_conformance` test owns a

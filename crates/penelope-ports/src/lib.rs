@@ -10,8 +10,8 @@
 use async_trait::async_trait;
 use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, LogicalTimeV1, ManualReviewDtoV1,
-    PrincipalId, ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessScopeV1,
-    ReviewId,
+    OutcomeId, PrincipalId, ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1,
+    ProcessScopeV1, ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -412,6 +412,17 @@ pub trait Clock: Send + Sync {
 pub trait ActionIdSource: Send + Sync {
     /// Allocates an action identity for the supplied pinned process scope.
     async fn next_action_id(&self, scope: &ProcessScopeV1) -> Result<ActionId, PortError>;
+}
+
+/// Injected source of immutable outcome identities.
+///
+/// The application must allocate every identity before constructing an atomic
+/// outcome commit. Adapters must never derive an outcome identity from a clock,
+/// a sequence number, or an untyped string.
+#[async_trait]
+pub trait OutcomeIdSource: Send + Sync {
+    /// Allocates an outcome identity for the supplied pinned process scope.
+    async fn next_outcome_id(&self, scope: &ProcessScopeV1) -> Result<OutcomeId, PortError>;
 }
 
 /// Authorization boundary for mutable process operations.

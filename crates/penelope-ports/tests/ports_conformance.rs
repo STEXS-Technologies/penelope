@@ -20,9 +20,9 @@ use penelope_domain::{
 use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
     CanonicalReconciliationV1, CanonicalState, Clock, Inbox, ManualReviewClaimV1,
-    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, PortError,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
-    TimerScheduleV1, TimerScheduler,
+    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutcomeIdSource,
+    PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer,
+    ProcessStore, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -76,6 +76,13 @@ impl Clock for UnavailablePorts {
 #[async_trait]
 impl ActionIdSource for UnavailablePorts {
     async fn next_action_id(&self, _: &ProcessScopeV1) -> Result<ActionId, PortError> {
+        Err(PortError::Unavailable)
+    }
+}
+
+#[async_trait]
+impl OutcomeIdSource for UnavailablePorts {
+    async fn next_outcome_id(&self, _: &ProcessScopeV1) -> Result<OutcomeId, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -202,6 +209,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let scheduler: &dyn TimerScheduler = &ports;
     let clock: &dyn Clock = &ports;
     let action_ids: &dyn ActionIdSource = &ports;
+    let outcome_ids: &dyn OutcomeIdSource = &ports;
     let authorizer: &dyn ProcessAuthorizer = &ports;
     let canonical: &dyn CanonicalState = &ports;
     let reviews: &dyn ManualReviewQueue = &ports;
@@ -270,6 +278,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     assert!(matches!(ready(clock.now()), Err(PortError::Unavailable)));
     assert!(matches!(
         ready(action_ids.next_action_id(&scope())),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(outcome_ids.next_outcome_id(&scope())),
         Err(PortError::Unavailable)
     ));
     assert_eq!(
