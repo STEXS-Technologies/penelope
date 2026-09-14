@@ -74,6 +74,10 @@ reconcile the action ID with the external system and, for canonical mutations,
 with StateChronicle's committed history. If evidence remains ambiguous, it
 opens manual review with the complete process evidence.
 
+Canonical reconciliation evidence is bound to the same complete pinned process
+and definition scope as the pending action. A committed result is also rejected
+unless its canonical event is valid and from that action's tenant.
+
 ## StateChronicle integration contract
 
 The `penelope-statechronicle` workspace crate is the dedicated future adapter

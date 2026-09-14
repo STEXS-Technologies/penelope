@@ -126,6 +126,15 @@ pub enum ReconciliationValidationError {
     /// The evidence was returned for a different process action.
     #[error("canonical reconciliation action does not match the requested action")]
     ActionMismatch,
+    /// The evidence was returned for another pinned process-definition scope.
+    #[error("canonical reconciliation scope does not match the requested action")]
+    ScopeMismatch,
+    /// Committed evidence is malformed or has another schema identity.
+    #[error("canonical reconciliation committed evidence is invalid")]
+    InvalidCommittedEvidence,
+    /// Committed evidence has a tenant different from the requested action.
+    #[error("canonical reconciliation committed evidence tenant does not match")]
+    TenantMismatch,
 }
 
 /// Typed validation failure for one immutable manual-review operation.
@@ -152,16 +161,22 @@ pub enum ManualReviewValidationError {
 pub enum CanonicalReconciliationV1 {
     /// A verified immutable canonical event proves the effect committed.
     Committed {
+        /// Immutable process and definition scope of the reconciled action.
+        scope: ProcessScopeV1,
         /// The committed canonical evidence.
         event: CanonicalEventDtoV1,
     },
     /// Authoritative evidence proves the action did not commit.
     NotCommitted {
+        /// Immutable process and definition scope of the reconciled action.
+        scope: ProcessScopeV1,
         /// The action whose absence was authoritatively established.
         action_id: ActionId,
     },
     /// The effect cannot safely be classified as committed or absent.
     Unknown {
+        /// Immutable process and definition scope of the reconciled action.
+        scope: ProcessScopeV1,
         /// The action requiring escalation or later reconciliation.
         action_id: ActionId,
     },
@@ -320,14 +335,45 @@ impl CanonicalReconciliationV1 {
         requested_action_id: &ActionId,
     ) -> Result<(), ReconciliationValidationError> {
         let observed_action_id = match self {
-            Self::Committed { event } => &event.action_id,
-            Self::NotCommitted { action_id } | Self::Unknown { action_id } => action_id,
+            Self::Committed { event, .. } => &event.action_id,
+            Self::NotCommitted { action_id, .. } | Self::Unknown { action_id, .. } => action_id,
         };
         if observed_action_id == requested_action_id {
             Ok(())
         } else {
             Err(ReconciliationValidationError::ActionMismatch)
         }
+    }
+
+    /// Validates that reconciliation evidence is pinned to the complete action
+    /// scope and, for committed evidence, is a valid same-tenant event.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when scope, action identity, event schema, or
+    /// tenant would permit evidence for another process to advance this action.
+    pub fn validate_for_action(
+        &self,
+        action: &ProcessActionDtoV1,
+    ) -> Result<(), ReconciliationValidationError> {
+        let scope = match self {
+            Self::Committed { scope, .. }
+            | Self::NotCommitted { scope, .. }
+            | Self::Unknown { scope, .. } => scope,
+        };
+        if scope != &action.scope() {
+            return Err(ReconciliationValidationError::ScopeMismatch);
+        }
+        self.validate_for(&action.action_id)?;
+        if let Self::Committed { event, .. } = self {
+            if event.validate().is_err() {
+                return Err(ReconciliationValidationError::InvalidCommittedEvidence);
+            }
+            if event.tenant_id != action.tenant_id {
+                return Err(ReconciliationValidationError::TenantMismatch);
+            }
+        }
+        Ok(())
     }
 }
 
@@ -944,6 +990,7 @@ mod tests {
     #[test]
     fn reconciliation_rejects_evidence_for_another_action() {
         let result = CanonicalReconciliationV1::Unknown {
+            scope: action().scope(),
             action_id: id("act_other"),
         };
         assert_eq!(
@@ -955,6 +1002,7 @@ mod tests {
     #[test]
     fn reconciliation_rejects_committed_evidence_for_another_action() {
         let result = CanonicalReconciliationV1::Committed {
+            scope: action().scope(),
             event: CanonicalEventDtoV1::new(
                 id("tnt_game"),
                 id::<CanonicalEventId>("cev_source"),
@@ -970,6 +1018,31 @@ mod tests {
         assert_eq!(
             result.validate_for(&id("act_dispatch")),
             Err(ReconciliationValidationError::ActionMismatch)
+        );
+    }
+
+    #[test]
+    fn reconciliation_requires_the_action_scope_and_valid_committed_evidence() {
+        let expected = action();
+        let valid = CanonicalReconciliationV1::NotCommitted {
+            scope: expected.scope(),
+            action_id: expected.action_id.clone(),
+        };
+        assert_eq!(valid.validate_for_action(&expected), Ok(()));
+
+        let wrong_scope = CanonicalReconciliationV1::Unknown {
+            scope: ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_other"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            action_id: expected.action_id.clone(),
+        };
+        assert_eq!(
+            wrong_scope.validate_for_action(&expected),
+            Err(ReconciliationValidationError::ScopeMismatch)
         );
     }
 

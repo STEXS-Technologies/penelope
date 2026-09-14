@@ -830,6 +830,18 @@ impl ProcessActionDtoV1 {
         }
     }
 
+    /// Returns the immutable process and definition scope for this action.
+    #[must_use]
+    pub fn scope(&self) -> ProcessScopeV1 {
+        ProcessScopeV1::new(
+            self.tenant_id.clone(),
+            self.process_id.clone(),
+            self.definition_id.clone(),
+            self.definition_version.clone(),
+            self.definition_digest,
+        )
+    }
+
     /// Derives the stable semantic idempotency key for this action attempt.
     pub fn effect_key(&self) -> EffectKeyV1 {
         EffectKeyV1 {
