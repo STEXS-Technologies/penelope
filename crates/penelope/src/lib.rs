@@ -36,8 +36,9 @@ pub use penelope_executor::engine::{
 };
 /// Deterministic bounded graph-process API.
 pub use penelope_executor::graph::{
-    GraphEngineError, GraphSagaDecisionV1, GraphSagaEventV1, GraphSagaInputV1,
-    GraphSagaProjectionV1, apply_graph_result, replay_graph, start_graph,
+    GraphEngineError, GraphSagaDecisionV1, GraphSagaEventEnvelopeV1, GraphSagaEventV1,
+    GraphSagaInputV1, GraphSagaProjectionV1, apply_graph_result, replay_graph,
+    replay_graph_ordered, start_graph,
 };
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;

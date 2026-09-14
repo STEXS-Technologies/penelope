@@ -69,6 +69,15 @@ pub enum GraphSagaEventV1 {
     },
 }
 
+/// Ordered envelope for graph events in a durable process log.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GraphSagaEventEnvelopeV1 {
+    /// Zero-based contiguous position in the process log.
+    pub sequence: u64,
+    /// Immutable graph event at this position.
+    pub event: GraphSagaEventV1,
+}
+
 /// Graph execution failure.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum GraphEngineError {
@@ -106,6 +115,9 @@ pub enum GraphEngineError {
     /// Event replay did not match the pinned process scope.
     #[error("graph replay process scope does not match")]
     ScopeMismatch,
+    /// Event sequence was not zero-based and contiguous.
+    #[error("graph replay event sequence is not contiguous")]
+    SequenceMismatch,
 }
 
 /// Result of one pure graph decision.
@@ -395,6 +407,30 @@ pub fn replay_graph(
     projection.ok_or(GraphEngineError::NotRunning)
 }
 
+/// Replays graph events after validating their durable sequence envelope.
+///
+/// # Errors
+///
+/// Returns [`GraphEngineError::SequenceMismatch`] for gaps, duplicates, or
+/// reordered envelopes; otherwise returns the same errors as [`replay_graph`].
+pub fn replay_graph_ordered(
+    definition: &ProcessGraphDefinitionV1,
+    tenant_id: &TenantId,
+    process_id: &ProcessId,
+    events: &[GraphSagaEventEnvelopeV1],
+) -> Result<GraphSagaProjectionV1, GraphEngineError> {
+    for (expected, envelope) in events.iter().enumerate() {
+        if envelope.sequence != expected as u64 {
+            return Err(GraphEngineError::SequenceMismatch);
+        }
+    }
+    let unwrapped: Vec<_> = events
+        .iter()
+        .map(|envelope| envelope.event.clone())
+        .collect();
+    replay_graph(definition, tenant_id, process_id, &unwrapped)
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
@@ -477,6 +513,29 @@ mod tests {
         )
         .unwrap();
         assert_eq!(replayed, completed.projection);
+    }
+
+    #[test]
+    fn ordered_graph_replay_rejects_sequence_gaps() {
+        let definition = definition();
+        let started = start_graph(
+            &definition,
+            id("tnt_graph"),
+            id("prc_graph"),
+            GraphSagaInputV1::Start {
+                input_id: id("inp_start"),
+                action_id: id("act_first"),
+            },
+        )
+        .unwrap();
+        let events = [GraphSagaEventEnvelopeV1 {
+            sequence: 1,
+            event: started.event,
+        }];
+        assert_eq!(
+            replay_graph_ordered(&definition, &id("tnt_graph"), &id("prc_graph"), &events),
+            Err(GraphEngineError::SequenceMismatch)
+        );
     }
 
     #[test]

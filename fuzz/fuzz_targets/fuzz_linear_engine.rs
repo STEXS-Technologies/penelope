@@ -13,7 +13,10 @@ use penelope_executor::engine::{
     apply_action_result, apply_manual_resolution, fire_retry_timer, replay, replay_ordered,
     schedule_retry_timer, start,
 };
-use penelope_executor::graph::{GraphSagaInputV1, apply_graph_result, replay_graph, start_graph};
+use penelope_executor::graph::{
+    GraphSagaEventEnvelopeV1, GraphSagaInputV1, apply_graph_result, replay_graph,
+    replay_graph_ordered, start_graph,
+};
 use penelope_ports::ManualReviewResolutionV1;
 use std::num::{NonZeroU32, NonZeroU64};
 
@@ -47,6 +50,15 @@ fuzz_target!(|data: &[u8]| {
                 &identifier::<TenantId>("tnt_graph_fuzz"),
                 &identifier::<ProcessId>("prc_graph_fuzz"),
                 std::slice::from_ref(&started.event),
+            );
+            let _ = replay_graph_ordered(
+                &graph,
+                &identifier::<TenantId>("tnt_graph_fuzz"),
+                &identifier::<ProcessId>("prc_graph_fuzz"),
+                &[GraphSagaEventEnvelopeV1 {
+                    sequence: 0,
+                    event: started.event.clone(),
+                }],
             );
             if let Some(action) = started.next_action {
                 let _ = apply_graph_result(
