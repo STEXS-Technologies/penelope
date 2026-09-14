@@ -383,6 +383,9 @@ now requires the complete pinned `ProcessScopeV1` explicitly, preventing a
 lax adapter from treating a sequence number alone as authorization to append
 another tenant or process's outcomes. Conformance and atomic fault doubles
 exercise this binding; a real adapter must enforce it transactionally.
+`ProcessAuthorizationDecisionV1::require_authorized` now provides the
+fail-closed conversion from a denied policy result to `PortError::Unauthorized`,
+with unit coverage that does not inspect error text.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 
