@@ -59,6 +59,9 @@ pub enum CommitValidationError {
     /// A commit must contain at least one durable outcome.
     #[error("atomic process commit contains no outcomes")]
     EmptyOutcomes,
+    /// The deduplicated input declares a schema other than the immutable input schema.
+    #[error("atomic process commit input schema is invalid")]
+    InvalidInputSchema,
     /// An outcome does not use the expected contiguous sequence.
     #[error("atomic process commit outcome sequence is not contiguous")]
     NonContiguousSequence,
@@ -642,11 +645,15 @@ impl AtomicProcessCommitV1 {
                 return Err(CommitValidationError::DuplicateActionEffectKey);
             }
         }
-        if let Some(input) = &self.input
-            && (input.tenant_id != first_outcome.tenant_id
-                || input.process_id != first_outcome.process_id)
-        {
-            return Err(CommitValidationError::InputScopeMismatch);
+        if let Some(input) = &self.input {
+            if input.validate().is_err() {
+                return Err(CommitValidationError::InvalidInputSchema);
+            }
+            if input.tenant_id != first_outcome.tenant_id
+                || input.process_id != first_outcome.process_id
+            {
+                return Err(CommitValidationError::InputScopeMismatch);
+            }
         }
         Ok(())
     }
@@ -820,6 +827,16 @@ mod tests {
         )
     }
 
+    fn input() -> ProcessInputDtoV1 {
+        ProcessInputDtoV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            id("inp_event"),
+            penelope_domain::ProcessInputKindV1::CanonicalEvent,
+            ContentDigest([3; 32]),
+        )
+    }
+
     #[test]
     fn atomic_commit_requires_contiguous_outcomes_in_one_scope() {
         let commit =
@@ -889,6 +906,20 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, CommitValidationError::InvalidActionSchema);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_an_input_with_another_schema() {
+        let mut wrong_input = input();
+        wrong_input.schema = penelope_domain::SchemaV1::ProcessAction;
+        let error = AtomicProcessCommitV1::new(
+            0,
+            Some(wrong_input),
+            vec![outcome(0, id("out_event"))],
+            vec![action()],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::InvalidInputSchema);
     }
 
     #[test]
