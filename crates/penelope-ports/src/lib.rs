@@ -26,6 +26,8 @@ pub const MAX_ACTIONS_PER_ATOMIC_COMMIT: usize = 128;
 pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
 /// Maximum redelivery attempts represented by one outbox record.
 pub const MAX_OUTBOX_DELIVERY_ATTEMPTS: u32 = 64;
+/// Maximum records returned by one durable outbox claim.
+pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
 
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -127,6 +129,41 @@ impl OutboxRecordV1 {
         }
         self.delivery_attempt = self.delivery_attempt.saturating_add(1);
         Ok(self)
+    }
+}
+
+/// Bounded, scope-pinned request for claiming pending outbox records.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutboxClaimRequestV1 {
+    /// Process scope whose records may be claimed.
+    pub scope: ProcessScopeV1,
+    /// Maximum records to return.
+    pub limit: NonZeroU16,
+}
+
+impl OutboxClaimRequestV1 {
+    /// Creates a bounded outbox claim request.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::QuotaExceeded`] when `limit` exceeds the claim bound.
+    pub fn new(scope: ProcessScopeV1, limit: NonZeroU16) -> Result<Self, PortError> {
+        let request = Self { scope, limit };
+        request.validate()?;
+        Ok(request)
+    }
+
+    /// Validates the claim batch bound.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::QuotaExceeded`] when the limit exceeds the claim bound.
+    pub const fn validate(&self) -> Result<(), PortError> {
+        if self.limit.get() > MAX_OUTBOX_CLAIM_BATCH {
+            Err(PortError::QuotaExceeded)
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -963,6 +1000,21 @@ pub trait ProcessStore: Send + Sync {
     ) -> Result<OutcomeReplayPageV1, PortError>;
 }
 
+/// Backend-neutral durable outbox claim and acknowledgement boundary.
+///
+/// Implementations must claim records atomically with a lease/fencing policy,
+/// return only records for the requested process scope, and make
+/// acknowledgement idempotent by action identity and effect key.
+#[async_trait]
+pub trait OutboxStore: Send + Sync {
+    /// Claims a bounded batch of pending records for one process scope.
+    async fn claim(&self, request: &OutboxClaimRequestV1)
+    -> Result<Vec<OutboxRecordV1>, PortError>;
+
+    /// Acknowledges one exact action delivery after successful dispatch.
+    async fn acknowledge(&self, record: &OutboxRecordV1) -> Result<(), PortError>;
+}
+
 /// Durable inbox that deduplicates immutable source inputs.
 #[async_trait]
 pub trait Inbox: Send + Sync {
@@ -1247,6 +1299,15 @@ mod tests {
         );
         record.delivery_attempt = MAX_OUTBOX_DELIVERY_ATTEMPTS;
         assert_eq!(record.validate(), Err(PortError::Invariant));
+    }
+
+    #[test]
+    fn outbox_claim_request_rejects_an_oversized_batch() {
+        let request = OutboxClaimRequestV1 {
+            scope: outcome(0, id("out_claim_scope")).scope(),
+            limit: NonZeroU16::new(MAX_OUTBOX_CLAIM_BATCH.saturating_add(1)).unwrap(),
+        };
+        assert_eq!(request.validate(), Err(PortError::QuotaExceeded));
     }
 
     #[test]
