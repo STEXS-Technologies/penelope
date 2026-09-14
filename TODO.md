@@ -450,7 +450,9 @@ attempt exhaustion. Lease/fencing and durable dispatch semantics remain
 adapter-owned and incomplete. The backend-neutral `OutboxStore` port now
 exposes bounded, scope-pinned claim and exact-record acknowledgement
 operations; implementations must supply leases/fencing and durable redelivery
-behavior.
+behavior. `OutboxLeaseTokenV1` and `OutboxLeaseV1` now provide an opaque
+fencing token, owner, and expiry for stale-worker protection; adapters still
+own token allocation and expiry enforcement.
 
 ### P1.4 StateChronicle contract
 
@@ -615,7 +617,7 @@ retained/minimized crash-regression policy remain incomplete.
 On the current revision (including the bounded graph executor and its execution
 fuzz paths), all nine registered fuzz targets were run concurrently for 3,601
 seconds each. They completed with exit code 0, normal libFuzzer summaries,
-3,899,337,499 total executions, and no sanitizer, undefined-behavior,
+3,836,870,761 total executions, and no sanitizer, undefined-behavior,
 runtime-error, or crash markers. This is pure library-boundary evidence; it
 does not replace durable-adapter or deployment chaos testing.
 
