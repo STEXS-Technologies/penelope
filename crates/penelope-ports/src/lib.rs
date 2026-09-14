@@ -200,6 +200,25 @@ impl OutboxLeaseV1 {
     pub const fn validate(&self) -> Result<(), PortError> {
         self.record.validate()
     }
+
+    /// Validates that this lease is for the exact requested process scope.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] when the lease action is cross-scoped.
+    pub fn validate_for_claim(&self, request: &OutboxClaimRequestV1) -> Result<(), PortError> {
+        self.validate()?;
+        let action = &self.record.action;
+        if action.tenant_id != request.scope.tenant_id
+            || action.process_id != request.scope.process_id
+            || action.definition_id != request.scope.definition_id
+            || action.definition_version != request.scope.definition_version
+            || action.definition_digest != request.scope.definition_digest
+        {
+            return Err(PortError::Invariant);
+        }
+        Ok(())
+    }
 }
 
 /// Typed validation failure for one atomic process commit request.
@@ -1333,6 +1352,25 @@ mod tests {
         );
         record.delivery_attempt = MAX_OUTBOX_DELIVERY_ATTEMPTS;
         assert_eq!(record.validate(), Err(PortError::Invariant));
+    }
+
+    #[test]
+    fn outbox_lease_rejects_a_cross_scope_claim() {
+        let request =
+            OutboxClaimRequestV1::new(outcome(0, id("out_claim_scope")).scope(), NonZeroU16::MIN)
+                .unwrap();
+        let mut action = action();
+        action.process_id = id("prc_other");
+        let lease = OutboxLeaseV1 {
+            record: OutboxRecordV1::new(action),
+            owner: id("pri_worker"),
+            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTimeV1(5),
+        };
+        assert_eq!(
+            lease.validate_for_claim(&request),
+            Err(PortError::Invariant)
+        );
     }
 
     #[test]
