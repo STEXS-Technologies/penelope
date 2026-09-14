@@ -51,6 +51,15 @@ if awk '/^pub trait /,/^}/' crates/penelope-ports/src/lib.rs | rg -n '\bString\b
     exit 1
 fi
 
+# Versioned protocol records must not expose raw textual state. The explicit
+# identifier parsing constructors in the domain crate are the sole text entry
+# boundary; once parsed, public fields and tuple payloads remain typed values.
+if rg -n '^\s*pub\s+[[:alnum:]_]+\s*:\s*(?:String|&str)\b|^\s*pub\s+struct\s+[[:alnum:]_]+[^\{]*\(\s*pub\s+(?:String|&str)\b' \
+    crates --glob '*.rs' >/dev/null; then
+    printf '%s\n' 'layer violation: a public Penelope protocol value exposes raw text; use a validated newtype or enum' >&2
+    exit 1
+fi
+
 # Library failures are typed `thiserror` enums. Handwritten Error impls make
 # error taxonomy audits and source chaining inconsistent across crates.
 if rg -n 'impl\s+(?:std::error::)?Error\s+for' crates --glob '*.rs' >/dev/null; then

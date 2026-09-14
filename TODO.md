@@ -94,8 +94,9 @@ the required target registration/source set and that every current public
 versioned DTO appears in that DTO fuzz boundary before executing the bounded
 suite. Immutable checked-in v1 JSON fixtures now cover every current public
 wire DTO and input envelope; typed tests deserialize, validate, compare against
-the expected newtype DTO, and reserialize each fixture. The layer-boundary gate additionally rejects raw
-`String`/`&str` parameters in public port traits and handwritten
+the expected newtype DTO, and reserialize each fixture. The layer-boundary gate
+additionally rejects raw `String`/`&str` parameters in public port traits and
+fields in public protocol values, plus handwritten
 `std::error::Error` implementations, preserving validated-newtype and
 `thiserror` error-taxonomy rules as the workspace evolves. The repository also
 has a fail-closed reachable-history secret-scan script, and CI runs a complete
@@ -121,7 +122,7 @@ and validation reject empty, oversized, or duplicate step lists; canonical
 commands/events reject oversized or duplicate resource scopes. The versioned
 DTO fuzz target executes these validators after parsing. Tenant/principal
 authorization context, the remaining ID categories, canonical encoding,
-payload/instance/timer limits, golden serialization fixtures, and
+payload/instance/timer limits, and
 compile-time non-substitutability tests remain incomplete. The linear engine
 also bounds each forward or compensation step to 64 total attempts, preventing
 unbounded issued-action growth from a malformed definition.
