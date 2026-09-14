@@ -207,6 +207,7 @@ impl OutboxLeaseV1 {
     ///
     /// Returns [`PortError::Invariant`] when the lease action is cross-scoped.
     pub fn validate_for_claim(&self, request: &OutboxClaimRequestV1) -> Result<(), PortError> {
+        request.validate()?;
         self.validate()?;
         let action = &self.record.action;
         if action.tenant_id != request.scope.tenant_id
