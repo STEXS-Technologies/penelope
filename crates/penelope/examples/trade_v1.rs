@@ -138,6 +138,7 @@ fn main() -> Result<(), ExampleError> {
     ]
     .into_iter();
     let mut outcome_ids = [
+        identifier::<OutcomeId>("out_trade_start_input")?,
         identifier::<OutcomeId>("out_trade_started")?,
         identifier("out_trade_lock_seller_planned")?,
         identifier("out_trade_lock_seller_input")?,
@@ -151,9 +152,11 @@ fn main() -> Result<(), ExampleError> {
         identifier("out_trade_completed")?,
     ]
     .into_iter();
+    let start_input_id = identifier::<InputId>("inp_trade_start")?;
     let mut next_sequence = 0_u64;
     let first_action_id = identifier::<ActionId>("act_lock_seller")?;
-    let start_event = LinearSagaEventV1::started(&definition, first_action_id.clone());
+    let start_event =
+        LinearSagaEventV1::started(&definition, start_input_id, first_action_id.clone());
     let mut decision = start(
         &definition,
         tenant_id.clone(),

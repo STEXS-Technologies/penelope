@@ -319,6 +319,8 @@ pub enum LinearSagaInputV1 {
 pub enum LinearSagaEventV1 {
     /// The durable process-start record and its first planned action identity.
     Started {
+        /// Immutable inbox identity for the accepted process-start request.
+        input_id: InputId,
         /// Immutable definition identity selected when this process began.
         definition_id: DefinitionId,
         /// Immutable definition version selected when this process began.
@@ -414,10 +416,71 @@ impl ActionResultObservationV1 {
     }
 }
 
+impl LinearSagaInputV1 {
+    /// Converts one accepted typed input into its immutable replay event.
+    ///
+    /// The returned event retains the exact validated input identity, so the
+    /// input accepted by [`decide`] cannot be recorded under another inbox key.
+    #[must_use]
+    pub fn to_event(&self, definition: &LinearSagaDefinitionV1) -> LinearSagaEventV1 {
+        match self {
+            Self::Start {
+                input_id,
+                action_id,
+            } => LinearSagaEventV1::started(definition, input_id.clone(), action_id.clone()),
+            Self::ActionResult {
+                input_id,
+                observation,
+                next_action_id,
+            } => LinearSagaEventV1::ActionResultObserved {
+                input_id: input_id.clone(),
+                observation: observation.clone(),
+                next_action_id: next_action_id.clone(),
+            },
+            Self::RetryTimerScheduled {
+                input_id,
+                observation,
+                next_action_id,
+                observed_at,
+            } => LinearSagaEventV1::RetryTimerScheduled {
+                input_id: input_id.clone(),
+                observation: observation.clone(),
+                next_action_id: next_action_id.clone(),
+                observed_at: *observed_at,
+            },
+            Self::RetryTimerFired {
+                input_id,
+                timer_action_id,
+                fired_at,
+                next_action_id,
+            } => LinearSagaEventV1::RetryTimerFired {
+                input_id: input_id.clone(),
+                timer_action_id: timer_action_id.clone(),
+                fired_at: *fired_at,
+                next_action_id: next_action_id.clone(),
+            },
+            Self::ManualResolution {
+                input_id,
+                resolution,
+                next_action_id,
+            } => LinearSagaEventV1::ManualResolutionApplied {
+                input_id: input_id.clone(),
+                resolution: *resolution,
+                next_action_id: next_action_id.clone(),
+            },
+        }
+    }
+}
+
 impl LinearSagaEventV1 {
-    /// Records a start event pinned to the exact definition used by the process.
-    pub fn started(definition: &LinearSagaDefinitionV1, action_id: ActionId) -> Self {
+    /// Records an accepted start event pinned to the exact definition used by the process.
+    pub fn started(
+        definition: &LinearSagaDefinitionV1,
+        input_id: InputId,
+        action_id: ActionId,
+    ) -> Self {
         Self::Started {
+            input_id,
             definition_id: definition.definition_id.clone(),
             definition_version: definition.definition_version.clone(),
             definition_digest: definition.definition_digest,
@@ -427,12 +490,11 @@ impl LinearSagaEventV1 {
 
     /// Returns the immutable inbox identity for an externally delivered event.
     ///
-    /// A start record is process creation rather than an inbox-delivered input.
     #[must_use]
     pub const fn input_id(&self) -> Option<&InputId> {
         match self {
-            Self::Started { .. } => None,
-            Self::ActionResultObserved { input_id, .. }
+            Self::Started { input_id, .. }
+            | Self::ActionResultObserved { input_id, .. }
             | Self::RetryTimerScheduled { input_id, .. }
             | Self::RetryTimerFired { input_id, .. }
             | Self::ManualResolutionApplied { input_id, .. } => Some(input_id),
@@ -446,7 +508,10 @@ impl LinearSagaEventV1 {
     #[must_use]
     pub const fn observed_outcome_kinds(&self) -> &'static [ProcessOutcomeKindV1] {
         match self {
-            Self::Started { .. } => &[ProcessOutcomeKindV1::Started],
+            Self::Started { .. } => &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::Started,
+            ],
             Self::ActionResultObserved { observation, .. } => match observation.result {
                 ActionResultV1::Succeeded => &[
                     ProcessOutcomeKindV1::InputAccepted,
@@ -1428,6 +1493,7 @@ pub fn replay(
                 definition_version,
                 definition_digest,
                 action_id,
+                ..
             } => {
                 if decision.is_some() {
                     return Err(EngineError::DuplicateStart);
@@ -1705,10 +1771,21 @@ mod tests {
         )
     }
 
+    fn input_accepted_fact(outcome_id: OutcomeId, input_id: InputId) -> ProcessOutcomeFactV1 {
+        ProcessOutcomeFactV1::new(
+            outcome_id,
+            CausationIdV1::Input(input_id),
+            OutcomeActorV1::System,
+            LogicalTimeV1(0),
+            ProcessOutcomeKindV1::InputAccepted,
+            ContentDigest([0; 32]),
+        )
+    }
+
     #[test]
     fn outcome_plan_requires_every_observed_and_planned_lifecycle_fact_in_order() {
         let definition = definition();
-        let event = LinearSagaEventV1::started(&definition, id("act_lock"));
+        let event = LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock"));
         let decision = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
         assert_eq!(
             event
@@ -1718,6 +1795,7 @@ mod tests {
                 .copied()
                 .collect::<Vec<_>>(),
             vec![
+                ProcessOutcomeKindV1::InputAccepted,
                 ProcessOutcomeKindV1::Started,
                 ProcessOutcomeKindV1::ActionPlanned,
             ]
@@ -1735,6 +1813,7 @@ mod tests {
                 &scope,
                 0,
                 &[
+                    input_accepted_fact(id("out_input"), id("inp_start")),
                     outcome_fact(id("out_started"), ProcessOutcomeKindV1::Started),
                     outcome_fact(id("out_planned"), ProcessOutcomeKindV1::ActionPlanned),
                 ],
@@ -1769,6 +1848,7 @@ mod tests {
                 &scope,
                 u64::MAX,
                 &[
+                    input_accepted_fact(id("out_overflow_input"), id("inp_start")),
                     outcome_fact(id("out_overflow_started"), ProcessOutcomeKindV1::Started),
                     outcome_fact(
                         id("out_overflow_planned"),
@@ -1945,6 +2025,28 @@ mod tests {
     }
 
     #[test]
+    fn input_to_event_preserves_the_exact_immutable_input_identity() {
+        let input = LinearSagaInputV1::ActionResult {
+            input_id: id("inp_result"),
+            observation: ActionResultObservationV1::succeeded(id("act_lock")),
+            next_action_id: Some(id("act_settle")),
+        };
+        let event = input.to_event(&definition());
+        assert_eq!(event.input_id(), Some(&id("inp_result")));
+        assert!(matches!(
+            event,
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1 {
+                    action_id,
+                    result: ActionResultV1::Succeeded,
+                },
+                next_action_id: Some(_),
+                ..
+            } if action_id == id("act_lock")
+        ));
+    }
+
+    #[test]
     fn decide_rejects_a_result_without_a_replayed_projection() {
         let error = decide(
             &definition(),
@@ -2097,7 +2199,7 @@ mod tests {
             EngineError::UnexpectedRetryTimer
         );
         let events = [
-            LinearSagaEventV1::started(&definition, id("act_first")),
+            LinearSagaEventV1::started(&definition, id("inp_start"), id("act_first")),
             LinearSagaEventV1::RetryTimerScheduled {
                 input_id: id("inp_retry_failure"),
                 observation: failure,
@@ -2204,7 +2306,7 @@ mod tests {
             EngineError::ManualResolutionRequiresEscalation
         );
         let events = [
-            LinearSagaEventV1::started(&definition, id("act_lock")),
+            LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
             LinearSagaEventV1::ActionResultObserved {
                 input_id: id("inp_lock_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
@@ -2452,7 +2554,7 @@ mod tests {
         let tenant_id = id::<TenantId>("tnt_game");
         let process_id = id::<ProcessId>("prc_trade");
         let events = vec![
-            LinearSagaEventV1::started(&definition, id("act_lock")),
+            LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
             LinearSagaEventV1::ActionResultObserved {
                 input_id: id("inp_lock_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
@@ -2557,7 +2659,11 @@ mod tests {
                 start_action_id.clone(),
             )
             .unwrap();
-            let mut events = vec![LinearSagaEventV1::started(&definition, start_action_id)];
+            let mut events = vec![LinearSagaEventV1::started(
+                &definition,
+                id("inp_property_start"),
+                start_action_id,
+            )];
             let restarted_after_start = replay(&definition, &tenant_id, &process_id, &events).unwrap();
             prop_assert_eq!(&restarted_after_start, &live);
 
@@ -2687,7 +2793,7 @@ mod tests {
             &id("tnt_game"),
             &id("prc_trade"),
             &[
-                LinearSagaEventV1::started(&definition, id("act_lock")),
+                LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
                 LinearSagaEventV1::ActionResultObserved {
                     input_id: id("inp_lock_result"),
                     observation: ActionResultObservationV1::succeeded(id("act_lock")),
@@ -2713,8 +2819,8 @@ mod tests {
             &id("tnt_game"),
             &id("prc_trade"),
             &[
-                LinearSagaEventV1::started(&definition, id("act_lock")),
-                LinearSagaEventV1::started(&definition, id("act_other")),
+                LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
+                LinearSagaEventV1::started(&definition, id("inp_duplicate_start"), id("act_other")),
             ],
         )
         .unwrap_err();
@@ -2724,7 +2830,7 @@ mod tests {
     #[test]
     fn replay_rejects_a_start_event_with_different_pinned_semantics() {
         let definition = definition();
-        let event = LinearSagaEventV1::started(&definition, id("act_lock"));
+        let event = LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock"));
         let mut changed_definition = definition;
         changed_definition.definition_digest = ContentDigest([42; 32]);
         let error = replay(
@@ -2746,7 +2852,7 @@ mod tests {
             &id("prc_trade"),
             &[LinearSagaEventEnvelopeV1 {
                 sequence: 1,
-                event: LinearSagaEventV1::started(&definition, id("act_lock")),
+                event: LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
             }],
         )
         .unwrap_err();

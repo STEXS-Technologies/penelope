@@ -29,7 +29,6 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<LinearSagaDefinitionV1>(data) {
         let _ = definition.validate();
     }
-    let _ = serde_json::from_slice::<LinearSagaInputV1>(data);
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
         definition_id: identifier::<DefinitionId>("def_fuzz"),
@@ -53,11 +52,18 @@ fuzz_target!(|data: &[u8]| {
             })
             .collect(),
     };
+    if let Ok(input) = serde_json::from_slice::<LinearSagaInputV1>(data) {
+        let _ = input.to_event(&definition);
+    }
     let tenant_id = identifier::<TenantId>("tnt_fuzz");
     let process_id = identifier::<ProcessId>("prc_fuzz");
     let action_id = identifier::<ActionId>("act_fuzz_start");
     let replay_events = [
-        LinearSagaEventV1::started(&definition, action_id.clone()),
+        LinearSagaEventV1::started(
+            &definition,
+            identifier::<InputId>("inp_fuzz_start"),
+            action_id.clone(),
+        ),
         LinearSagaEventV1::ActionResultObserved {
             input_id: identifier::<InputId>("inp_fuzz_result"),
             observation: ActionResultObservationV1::succeeded(action_id.clone()),
@@ -85,8 +91,13 @@ fuzz_target!(|data: &[u8]| {
         return;
     };
     let _ = decision.planned_outcome_kinds();
-    let start_event = LinearSagaEventV1::started(&definition, action_id.clone());
+    let start_event = LinearSagaEventV1::started(
+        &definition,
+        identifier::<InputId>("inp_fuzz_start"),
+        action_id.clone(),
+    );
     let outcome_ids = [
+        identifier::<OutcomeId>("out_fuzz_input"),
         identifier::<OutcomeId>("out_fuzz_started"),
         identifier::<OutcomeId>("out_fuzz_planned"),
     ];
@@ -98,7 +109,11 @@ fuzz_target!(|data: &[u8]| {
         .map(|(kind, outcome_id)| {
             ProcessOutcomeFactV1::new(
                 outcome_id,
-                CausationIdV1::Action(action_id.clone()),
+                if matches!(kind, penelope_domain::ProcessOutcomeKindV1::InputAccepted) {
+                    CausationIdV1::Input(identifier("inp_fuzz_start"))
+                } else {
+                    CausationIdV1::Action(action_id.clone())
+                },
                 OutcomeActorV1::System,
                 LogicalTimeV1(data.first().copied().map_or(0, u64::from)),
                 *kind,
