@@ -615,7 +615,7 @@ retained/minimized crash-regression policy remain incomplete.
 On the current revision (including the bounded graph executor and its execution
 fuzz paths), all nine registered fuzz targets were run concurrently for 3,601
 seconds each. They completed with exit code 0, normal libFuzzer summaries,
-3,685,354,557 total executions, and no sanitizer, undefined-behavior,
+3,899,337,499 total executions, and no sanitizer, undefined-behavior,
 runtime-error, or crash markers. This is pure library-boundary evidence; it
 does not replace durable-adapter or deployment chaos testing.
 
