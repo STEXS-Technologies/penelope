@@ -453,6 +453,9 @@ authorization context after correlation. It rejects malformed expected or
 received scopes before correlation, has unit tests and the
 `fuzz_statechronicle_correlation` target. It deliberately does not claim
 that a transport response proves a commit and does not implement a client.
+`CanonicalCommandExpectationV1::from_command` now derives the action,
+operation, and resource scope from a validated command, reducing field-copying
+confusion at the consumer composition root; its equality is unit tested.
 `AtomicProcessCommitV1` now accepts a canonical source-event key only beside a
 canonical inbox input, requiring the store to deduplicate that key in the same
 transaction as the input, outcomes, and actions. Its fault-injection drill
