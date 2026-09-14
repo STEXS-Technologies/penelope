@@ -19,7 +19,8 @@ use penelope_domain::{
 };
 use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
-    CanonicalReconciliationV1, CanonicalState, Clock, Inbox, ManualReviewClaimV1,
+    CanonicalReconciliationV1, CanonicalState, Clock, EffectDispatchRequestV1,
+    ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, ManualReviewClaimV1,
     ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutcomeIdSource,
     PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer,
     ProcessStore, TimerScheduleV1, TimerScheduler,
@@ -58,6 +59,27 @@ impl Inbox for UnavailablePorts {
 #[async_trait]
 impl ActionDispatcher for UnavailablePorts {
     async fn dispatch(&self, _: &ProcessActionDtoV1) -> Result<(), PortError> {
+        Err(PortError::Unavailable)
+    }
+}
+
+#[async_trait]
+impl ExternalEffectExecutor for UnavailablePorts {
+    async fn execute(
+        &self,
+        _: &EffectDispatchRequestV1,
+    ) -> Result<ExternalEffectEvidenceV1, PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn reconcile(
+        &self,
+        _: &EffectDispatchRequestV1,
+    ) -> Result<ExternalEffectEvidenceV1, PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn cancel(&self, _: &EffectDispatchRequestV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -213,6 +235,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let process_store: &dyn ProcessStore = &ports;
     let inbox: &dyn Inbox = &ports;
     let dispatcher: &dyn ActionDispatcher = &ports;
+    let external_executor: &dyn ExternalEffectExecutor = &ports;
     let scheduler: &dyn TimerScheduler = &ports;
     let clock: &dyn Clock = &ports;
     let action_ids: &dyn ActionIdSource = &ports;
@@ -265,6 +288,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         action: action.clone(),
         due_at: LogicalTimeV1(2),
     };
+    let effect_request = EffectDispatchRequestV1::new(action.clone());
 
     assert!(matches!(
         ready(process_store.commit(&commit)),
@@ -284,6 +308,18 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     ));
     assert!(matches!(
         ready(dispatcher.dispatch(&action)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(external_executor.execute(&effect_request)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(external_executor.reconcile(&effect_request)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(external_executor.cancel(&effect_request)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(

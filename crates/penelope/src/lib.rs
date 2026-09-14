@@ -16,8 +16,8 @@ pub use penelope_domain as domain;
 pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId,
     CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, DomainError, EffectKeyV1,
-    InputId, LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1, OutcomeId,
-    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessInputEnvelopeV1,
+    ExternalReferenceId, InputId, LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1,
+    OutcomeId, ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessInputEnvelopeV1,
     ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId,
     ReviewId, StepId, TenantId,
 };
@@ -40,11 +40,13 @@ pub use penelope_intent::{IntentError, parse_process_input};
 pub use penelope_ports as ports;
 /// Frequently used typed process-control port contracts.
 pub use penelope_ports::{
-    CanonicalReconciliationV1, MAX_OUTCOMES_PER_READ_PAGE, ManualReviewClaimV1,
-    ManualReviewControlV1, ManualReviewDecisionV1, ManualReviewResolutionV1,
-    ManualReviewValidationError, OutcomeIdSource, OutcomePageValidationError, OutcomeReplayPageV1,
-    OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1,
-    ProcessAuthorizationRequestV1, ReconciliationValidationError, TimerScheduleV1,
+    CanonicalReconciliationV1, EffectDispatchRequestV1, EffectReconciliationValidationError,
+    ExternalEffectEvidenceV1, ExternalEffectExecutor, ExternalEffectStateV1,
+    MAX_OUTCOMES_PER_READ_PAGE, ManualReviewClaimV1, ManualReviewControlV1, ManualReviewDecisionV1,
+    ManualReviewResolutionV1, ManualReviewValidationError, OutcomeIdSource,
+    OutcomePageValidationError, OutcomeReplayPageV1, OutcomeReplayRequestV1,
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
+    ReconciliationValidationError, TimerScheduleV1,
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;

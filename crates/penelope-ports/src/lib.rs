@@ -9,9 +9,9 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, LogicalTimeV1, ManualReviewDtoV1,
-    OutcomeId, PrincipalId, ProcessActionDtoV1, ProcessInputDtoV1, ProcessOutcomeDtoV1,
-    ProcessScopeV1, ReviewId,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, EffectKeyV1, ExternalReferenceId,
+    LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
+    ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessScopeV1, ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU16;
@@ -160,6 +160,20 @@ pub enum ManualReviewValidationError {
     Expired,
 }
 
+/// Typed validation failure for an external-effect dispatch or reconciliation record.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum EffectReconciliationValidationError {
+    /// The request action does not carry the immutable action schema.
+    #[error("external effect action schema is invalid")]
+    InvalidActionSchema,
+    /// Evidence belongs to another independently idempotent action.
+    #[error("external effect evidence action does not match the request")]
+    ActionMismatch,
+    /// Evidence does not retain the action's exact semantic idempotency key.
+    #[error("external effect evidence key does not match the request")]
+    EffectKeyMismatch,
+}
+
 /// Authoritative result of reconciling a canonical external effect.
 ///
 /// `Unknown` is deliberately distinct from `NotCommitted`: callers must not
@@ -244,6 +258,101 @@ pub enum ProcessAuthorizationDecisionV1 {
     Authorized,
     /// The caller is not authorized; no process mutation may occur.
     Denied,
+}
+
+/// Typed external-effect execution or reconciliation result.
+///
+/// `Unknown` is distinct from `KnownFailure`: a timeout or response loss may
+/// leave an external effect indeterminate, in which case callers must
+/// reconcile again or escalate rather than blindly dispatch another effect.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ExternalEffectStateV1 {
+    /// Authoritative evidence proves the external effect completed.
+    Succeeded,
+    /// Authoritative evidence proves the external effect did not complete.
+    KnownFailure,
+    /// The external effect cannot safely be classified yet.
+    Unknown,
+}
+
+/// Stable, idempotent request supplied to an external effect adapter.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EffectDispatchRequestV1 {
+    /// Independently idempotent action to execute or reconcile.
+    pub action: ProcessActionDtoV1,
+    /// Semantic effect key derived from the exact action coordinates.
+    pub effect_key: EffectKeyV1,
+    /// Optional inclusive logical deadline supplied by the application layer.
+    pub deadline: Option<LogicalTimeV1>,
+}
+
+/// Durable evidence returned by an external effect adapter.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExternalEffectEvidenceV1 {
+    /// Independently idempotent action this evidence describes.
+    pub action_id: ActionId,
+    /// Exact semantic key of the action this evidence describes.
+    pub effect_key: EffectKeyV1,
+    /// Opaque remote reference if the external system assigned one.
+    pub external_reference_id: Option<ExternalReferenceId>,
+    /// Authoritative result classification.
+    pub state: ExternalEffectStateV1,
+}
+
+impl EffectDispatchRequestV1 {
+    /// Creates an external effect request with no application deadline.
+    #[must_use]
+    pub fn new(action: ProcessActionDtoV1) -> Self {
+        let effect_key = action.effect_key();
+        Self {
+            action,
+            effect_key,
+            deadline: None,
+        }
+    }
+
+    /// Attaches an inclusive logical execution/reconciliation deadline.
+    #[must_use]
+    pub const fn with_deadline(mut self, deadline: LogicalTimeV1) -> Self {
+        self.deadline = Some(deadline);
+        self
+    }
+
+    /// Validates the immutable action schema and derived effect key.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when a caller substitutes an action or key.
+    pub fn validate(&self) -> Result<(), EffectReconciliationValidationError> {
+        if self.action.validate().is_err() {
+            return Err(EffectReconciliationValidationError::InvalidActionSchema);
+        }
+        if self.effect_key != self.action.effect_key() {
+            return Err(EffectReconciliationValidationError::EffectKeyMismatch);
+        }
+        Ok(())
+    }
+}
+
+impl ExternalEffectEvidenceV1 {
+    /// Validates that evidence belongs to the exact requested effect.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when action identity or semantic effect key differs.
+    pub fn validate_for(
+        &self,
+        request: &EffectDispatchRequestV1,
+    ) -> Result<(), EffectReconciliationValidationError> {
+        request.validate()?;
+        if self.action_id != request.action.action_id {
+            return Err(EffectReconciliationValidationError::ActionMismatch);
+        }
+        if self.effect_key != request.effect_key {
+            return Err(EffectReconciliationValidationError::EffectKeyMismatch);
+        }
+        Ok(())
+    }
 }
 
 /// Due-time record for one durable timer action.
@@ -705,6 +814,28 @@ pub trait ActionDispatcher: Send + Sync {
     async fn dispatch(&self, action: &ProcessActionDtoV1) -> Result<(), PortError>;
 }
 
+/// External-effect execution boundary with explicit reconciliation and cancellation.
+///
+/// Implementations must persist or otherwise retain the exact action ID and
+/// effect key before sending an effect. `Unknown` evidence is not permission
+/// to retry. Cancellation is best effort and cannot erase an already-issued
+/// external effect; callers must reconcile its final state afterward.
+#[async_trait]
+pub trait ExternalEffectExecutor: Send + Sync {
+    /// Attempts the independently idempotent external effect.
+    async fn execute(
+        &self,
+        request: &EffectDispatchRequestV1,
+    ) -> Result<ExternalEffectEvidenceV1, PortError>;
+    /// Resolves a potentially ambiguous external effect by its stable identity.
+    async fn reconcile(
+        &self,
+        request: &EffectDispatchRequestV1,
+    ) -> Result<ExternalEffectEvidenceV1, PortError>;
+    /// Requests best-effort cancellation without assuming the effect is absent.
+    async fn cancel(&self, request: &EffectDispatchRequestV1) -> Result<(), PortError>;
+}
+
 /// Durable timer scheduling boundary.
 #[async_trait]
 pub trait TimerScheduler: Send + Sync {
@@ -920,6 +1051,35 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, CommitValidationError::InvalidInputSchema);
+    }
+
+    #[test]
+    fn external_effect_evidence_requires_the_exact_action_and_effect_key() {
+        let request = EffectDispatchRequestV1::new(action()).with_deadline(LogicalTimeV1(10));
+        assert_eq!(request.validate(), Ok(()));
+        let evidence = ExternalEffectEvidenceV1 {
+            action_id: request.action.action_id.clone(),
+            effect_key: request.effect_key.clone(),
+            external_reference_id: Some(id("ext_remote_effect")),
+            state: ExternalEffectStateV1::Unknown,
+        };
+        assert_eq!(evidence.validate_for(&request), Ok(()));
+
+        let wrong_action = ExternalEffectEvidenceV1 {
+            action_id: id("act_other"),
+            ..evidence
+        };
+        assert_eq!(
+            wrong_action.validate_for(&request),
+            Err(EffectReconciliationValidationError::ActionMismatch)
+        );
+
+        let mut mismatched_request = request;
+        mismatched_request.effect_key.payload_digest = ContentDigest([8; 32]);
+        assert_eq!(
+            mismatched_request.validate(),
+            Err(EffectReconciliationValidationError::EffectKeyMismatch)
+        );
     }
 
     #[test]

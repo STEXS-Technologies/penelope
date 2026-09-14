@@ -67,6 +67,9 @@ pub enum DomainError {
     /// An operation identifier did not have its required canonical form.
     #[error("invalid operation identifier")]
     InvalidOperationId,
+    /// An external-effect reference did not have its required canonical form.
+    #[error("invalid external effect reference identifier")]
+    InvalidExternalReferenceId,
     /// A process definition has no executable steps.
     #[error("process definition contains no steps")]
     EmptyDefinitionSteps,
@@ -258,6 +261,12 @@ identifier!(
     "op_",
     InvalidOperationId,
     "Registered canonical operation identity."
+);
+identifier!(
+    ExternalReferenceId,
+    "ext_",
+    InvalidExternalReferenceId,
+    "External executor or remote-system reference identity."
 );
 
 /// Fixed-size digest of canonical payload bytes.

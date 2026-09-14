@@ -2,11 +2,18 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_ports::{
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, TimerScheduleV1,
+    EffectDispatchRequestV1, ExternalEffectEvidenceV1, ProcessAuthorizationDecisionV1,
+    ProcessAuthorizationRequestV1, TimerScheduleV1,
 };
 
 fuzz_target!(|data: &[u8]| {
     let _ = serde_json::from_slice::<ProcessAuthorizationRequestV1>(data);
     let _ = serde_json::from_slice::<ProcessAuthorizationDecisionV1>(data);
     let _ = serde_json::from_slice::<TimerScheduleV1>(data);
+    if let Ok(request) = serde_json::from_slice::<EffectDispatchRequestV1>(data) {
+        let _ = request.validate();
+    }
+    if let Ok(evidence) = serde_json::from_slice::<ExternalEffectEvidenceV1>(data) {
+        let _ = evidence;
+    }
 });

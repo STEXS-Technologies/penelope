@@ -357,6 +357,11 @@ remains incomplete.
 Current partial evidence: backend-neutral `Clock`, `ActionIdSource`, `OutcomeIdSource`,
 `ProcessAuthorizer`, and due-time `TimerScheduler` ports now use typed logical
 time, process scope, principal, action, and authorization operation values.
+`ExternalEffectExecutor` now defines typed execute, reconcile, and best-effort
+cancel operations over a scope-bound action/effect key, optional logical
+deadline, opaque external reference identity, and explicit succeeded,
+known-failure, or unknown evidence state. Its validation rejects substituted
+actions or effect keys, and its unavailable test double fails closed.
 Their public DTO parser boundary is fuzzed. The `ports_conformance` test owns a
 test-only unavailable adapter that implements every current port, verifies
 object safety and `Send + Sync`, calls every method, and proves unavailable
@@ -452,9 +457,11 @@ authoritatively not committed, and unknown. It validates that the evidence
 belongs to the requested action ID and complete pinned process-definition
 scope; committed evidence must also carry a valid same-tenant event. The port
 contract prohibits treating unknown as retry permission. It is parser/validation
-fuzzed. There is no executor policy, remote reference contract,
-consistency-window implementation, timeout/cancellation model, or fault-injected
-adapter drill yet, so this item remains incomplete.
+fuzzed. `ExternalEffectExecutor` additionally defines a typed remote reference,
+effect-key, optional deadline, reconciliation, and best-effort cancellation
+contract; its unknown state remains explicitly non-retryable. There is no
+executor policy, consistency-window implementation, or fault-injected adapter
+drill yet, so this item remains incomplete.
 
 ### P1.6 Manual review lifecycle
 
