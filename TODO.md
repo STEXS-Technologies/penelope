@@ -485,7 +485,9 @@ remain incomplete.
 Current partial evidence: `SECURITY.md` defines supported pre-1.0 scope,
 private reporting, response expectations, and saga-specific safety boundaries.
 Complete `LICENSE-MIT` and `LICENSE-APACHE` texts match the declared manifest
-license. Locked CI builds exist. Dependency policy, automated audit/deny,
+license. Locked CI builds exist, and previously unused `chrono`, `tokio`, and
+`trait-variant` workspace declarations have been removed. Dependency policy,
+automated audit/deny,
 secret scanning, action pin governance, MSRV policy, and a response rehearsal
 remain incomplete.
 

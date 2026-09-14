@@ -28,13 +28,10 @@ description = "Penelope — process-truth engine: deterministic saga/process orc
 
 [workspace.dependencies]
 async-trait = "0.1"
-chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
 proptest = "1"
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
 serde_json = { version = "1.0", default-features = false, features = ["std"] }
 thiserror = { version = "2.0.18", default-features = false }
-tokio = "1.48.0"
-trait-variant = "0.1"
 
 # Internal hexagonal layers. `penelope-statechronicle` is an adapter boundary,
 # not a client implementation; infrastructure belongs in a consuming platform.
