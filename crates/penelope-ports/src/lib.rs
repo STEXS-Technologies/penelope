@@ -281,6 +281,26 @@ pub enum ProcessAuthorizationDecisionV1 {
     Denied,
 }
 
+impl ProcessAuthorizationDecisionV1 {
+    /// Returns whether the requested operation may proceed.
+    #[must_use]
+    pub const fn is_authorized(self) -> bool {
+        matches!(self, Self::Authorized)
+    }
+
+    /// Converts this decision into a fail-closed port result.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Unauthorized`] for a denied decision.
+    pub const fn require_authorized(self) -> Result<(), PortError> {
+        match self {
+            Self::Authorized => Ok(()),
+            Self::Denied => Err(PortError::Unauthorized),
+        }
+    }
+}
+
 /// Typed external-effect execution or reconciliation result.
 ///
 /// `Unknown` is distinct from `KnownFailure`: a timeout or response loss may
@@ -1122,6 +1142,20 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, CommitValidationError::InvalidInputSchema);
+    }
+
+    #[test]
+    fn authorization_decisions_fail_closed_without_message_matching() {
+        assert!(ProcessAuthorizationDecisionV1::Authorized.is_authorized());
+        assert_eq!(
+            ProcessAuthorizationDecisionV1::Authorized.require_authorized(),
+            Ok(())
+        );
+        assert!(!ProcessAuthorizationDecisionV1::Denied.is_authorized());
+        assert_eq!(
+            ProcessAuthorizationDecisionV1::Denied.require_authorized(),
+            Err(PortError::Unauthorized)
+        );
     }
 
     #[test]
