@@ -574,9 +574,14 @@ durable deployment drill.
 
 Current partial evidence: `cargo bench -p penelope-executor --bench
 linear_saga --locked` measures a fixed 100,000-operation pure
-start/correlated-result/complete loop without external I/O. It is deliberately
-not an E2E, durable-store, or multithread throughput claim. Its measured output
-must always be reported with the executing hardware and command result.
+start/correlated-result/complete loop without external I/O. `cargo bench -p
+penelope-executor --bench parallel_linear_saga --locked` runs the same pure
+transition across one isolated in-memory worker per available logical CPU,
+with 100,000 operations per worker. Neither benchmark shares process state,
+uses a store, coordinates workers, or crosses a network boundary. They are
+therefore deliberately not E2E, durable-store, shared-state, or market-engine
+throughput claims. Each result must be reported with the exact command, source
+revision, worker count, and executing hardware.
 
 ### P3.4 Financial/economic security review
 

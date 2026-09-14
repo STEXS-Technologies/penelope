@@ -20,5 +20,9 @@ proptest = { workspace = true }
 name = "linear_saga"
 harness = false
 
+[[bench]]
+name = "parallel_linear_saga"
+harness = false
+
 [lints]
 workspace = true

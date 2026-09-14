@@ -275,6 +275,7 @@ cargo fuzz run fuzz_manual_review_lifecycle -- -runs=100
 cargo fuzz run fuzz_process_input_parse -- -runs=100
 cargo fuzz run fuzz_process_control_ports -- -runs=100
 cargo bench -p penelope-executor --bench linear_saga --locked
+cargo bench -p penelope-executor --bench parallel_linear_saga --locked
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=1000 \
   PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
 ```
