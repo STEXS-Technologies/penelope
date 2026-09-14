@@ -441,7 +441,11 @@ incomplete.
 Current partial evidence: the atomic commit contract carries the immutable
 optional inbox input and outgoing actions together with outcomes, so an adapter
 has an explicit no-split-write boundary to implement. Inbox/outbox storage,
-acknowledgement, leases, redelivery, and crash drills remain incomplete.
+acknowledgement, leases, redelivery, and crash drills remain incomplete. The
+versioned `OutboxRecordV1` now makes action, delivery attempt, and explicit
+pending/acknowledged state part of the reusable port contract, with a bounded
+attempt validator and DTO fuzz coverage. Lease/fencing and durable dispatch
+semantics remain adapter-owned and incomplete.
 
 ### P1.4 StateChronicle contract
 
@@ -606,7 +610,7 @@ retained/minimized crash-regression policy remain incomplete.
 On the current revision (including the bounded graph executor and its execution
 fuzz paths), all nine registered fuzz targets were run concurrently for 3,601
 seconds each. They completed with exit code 0, normal libFuzzer summaries,
-3,688,349,004 total executions, and no sanitizer, undefined-behavior,
+3,631,793,046 total executions, and no sanitizer, undefined-behavior,
 runtime-error, or crash markers. This is pure library-boundary evidence; it
 does not replace durable-adapter or deployment chaos testing.
 
