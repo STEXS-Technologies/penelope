@@ -377,9 +377,11 @@ definition ID, definition version, and definition digest. It rejects
 cross-definition, scope, sequence, duplicate-outcome identity, duplicate
 action identity, duplicate semantic action effect keys, and oversized outcome
 or action batches before an adapter sees the request, and is parser/validation
-fuzzed. No durable implementation,
-optimistic conflict behavior, projection write, or failpoint recovery test
-exists yet, so this item remains incomplete.
+fuzzed. A test-only atomic-store drill injects a failure before commit and
+proves no input, outcome, or action becomes visible; recovery commits exactly
+once, duplicate inbox delivery is idempotent, stale sequence conflicts, and a
+bounded outcome page replays the committed state. No durable implementation or
+projection write exists yet, so this item remains incomplete.
 
 ### P1.3 Inbox/outbox and worker semantics
 
