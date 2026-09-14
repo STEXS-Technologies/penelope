@@ -3,7 +3,7 @@
 use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
     MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessScopeV1, StepId, TenantId,
+    ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeKindV1, ProcessScopeV1, StepId, TenantId,
 };
 use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
@@ -405,6 +405,29 @@ impl LinearSagaEventV1 {
             action_id,
         }
     }
+
+    /// Returns the immutable fact categories directly observed by this event.
+    ///
+    /// The caller combines these with [`SagaDecisionV1::planned_outcome_kinds`]
+    /// and persists the resulting ordered list atomically with the decision.
+    #[must_use]
+    pub const fn observed_outcome_kinds(&self) -> &'static [ProcessOutcomeKindV1] {
+        match self {
+            Self::Started { .. } => &[ProcessOutcomeKindV1::Started],
+            Self::ActionResultObserved { observation, .. } => match observation.result {
+                ActionResultV1::Succeeded => &[ProcessOutcomeKindV1::ActionSucceeded],
+                ActionResultV1::RetryableFailure | ActionResultV1::TerminalFailure => {
+                    &[ProcessOutcomeKindV1::ActionFailed]
+                }
+                ActionResultV1::Unknown => &[ProcessOutcomeKindV1::ActionOutcomeUnknown],
+            },
+            Self::RetryTimerScheduled { .. } => &[ProcessOutcomeKindV1::ActionFailed],
+            Self::RetryTimerFired { .. } => &[ProcessOutcomeKindV1::TimerFired],
+            Self::ManualResolutionApplied { .. } => {
+                &[ProcessOutcomeKindV1::ManualResolutionApplied]
+            }
+        }
+    }
 }
 
 /// A deterministic decision from a transition.
@@ -428,11 +451,64 @@ impl SagaDecisionV1 {
             due_at: self.projection.retry_due_at?,
         })
     }
+
+    /// Returns the immutable fact categories planned by this decision.
+    ///
+    /// A caller must append these after the observed categories from the input
+    /// event, in one atomic commit, before dispatching `next_action`.
+    #[must_use]
+    pub const fn planned_outcome_kinds(&self) -> &'static [ProcessOutcomeKindV1] {
+        if self.next_action.is_some() {
+            if self.projection.retry_due_at.is_some() {
+                return &[
+                    ProcessOutcomeKindV1::RetryScheduled,
+                    ProcessOutcomeKindV1::ActionPlanned,
+                ];
+            }
+            if matches!(self.projection.status, SagaStatusV1::Compensating) {
+                return &[ProcessOutcomeKindV1::CompensationPlanned];
+            }
+            return &[ProcessOutcomeKindV1::ActionPlanned];
+        }
+        match self.projection.status {
+            SagaStatusV1::Completed => &[ProcessOutcomeKindV1::Completed],
+            SagaStatusV1::Cancelled => &[ProcessOutcomeKindV1::Cancelled],
+            SagaStatusV1::Compensated => &[ProcessOutcomeKindV1::Compensated],
+            SagaStatusV1::Escalated => &[ProcessOutcomeKindV1::Escalated],
+            SagaStatusV1::Running | SagaStatusV1::Compensating => &[],
+        }
+    }
+
+    /// Validates the exact ordered outcome kinds required by one event and its
+    /// pure decision before an adapter receives an atomic process commit.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`EngineError::OutcomeKindPlanMismatch`] if the supplied log
+    /// omits, reorders, or substitutes an observed or planned lifecycle fact.
+    pub fn validate_required_outcomes(
+        &self,
+        event: &LinearSagaEventV1,
+        outcomes: &[ProcessOutcomeDtoV1],
+    ) -> Result<(), EngineError> {
+        let expected = event
+            .observed_outcome_kinds()
+            .iter()
+            .chain(self.planned_outcome_kinds())
+            .copied();
+        if !outcomes.iter().map(|outcome| outcome.kind).eq(expected) {
+            return Err(EngineError::OutcomeKindPlanMismatch);
+        }
+        Ok(())
+    }
 }
 
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
+    /// An atomic outcome batch does not match the deterministic transition plan.
+    #[error("outcome kinds do not match the deterministic saga transition plan")]
+    OutcomeKindPlanMismatch,
     /// A retry backoff's first delay exceeds its configured maximum delay.
     #[error("retry backoff base delay exceeds its maximum delay")]
     InvalidRetryBackoff,
@@ -1401,6 +1477,7 @@ fn action_for(
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
+    use penelope_domain::{CausationIdV1, OutcomeActorV1, OutcomeId, ProcessOutcomeFactV1};
     use proptest::prelude::*;
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -1487,6 +1564,75 @@ mod tests {
             action_id: action.action_id.clone(),
             result,
         }
+    }
+
+    fn outcome(
+        scope: ProcessScopeV1,
+        sequence: u64,
+        outcome_id: OutcomeId,
+        kind: ProcessOutcomeKindV1,
+    ) -> ProcessOutcomeDtoV1 {
+        ProcessOutcomeDtoV1::new(
+            scope,
+            sequence,
+            ProcessOutcomeFactV1::new(
+                outcome_id,
+                CausationIdV1::Action(id("act_cause")),
+                OutcomeActorV1::System,
+                LogicalTimeV1(sequence),
+                kind,
+                ContentDigest([0; 32]),
+            ),
+        )
+    }
+
+    #[test]
+    fn outcome_plan_requires_every_observed_and_planned_lifecycle_fact_in_order() {
+        let definition = definition();
+        let event = LinearSagaEventV1::started(&definition, id("act_lock"));
+        let decision = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
+        assert_eq!(
+            event
+                .observed_outcome_kinds()
+                .iter()
+                .chain(decision.planned_outcome_kinds())
+                .copied()
+                .collect::<Vec<_>>(),
+            vec![
+                ProcessOutcomeKindV1::Started,
+                ProcessOutcomeKindV1::ActionPlanned,
+            ]
+        );
+        let scope = ProcessScopeV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+            definition.definition_digest,
+        );
+        let outcomes = vec![
+            outcome(
+                scope.clone(),
+                0,
+                id("out_started"),
+                ProcessOutcomeKindV1::Started,
+            ),
+            outcome(
+                scope,
+                1,
+                id("out_planned"),
+                ProcessOutcomeKindV1::ActionPlanned,
+            ),
+        ];
+        assert_eq!(
+            decision.validate_required_outcomes(&event, &outcomes),
+            Ok(())
+        );
+        let incomplete_outcomes = vec![outcomes.first().cloned().unwrap()];
+        assert_eq!(
+            decision.validate_required_outcomes(&event, &incomplete_outcomes),
+            Err(EngineError::OutcomeKindPlanMismatch)
+        );
     }
 
     #[test]

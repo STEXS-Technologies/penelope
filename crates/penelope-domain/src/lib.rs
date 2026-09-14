@@ -321,18 +321,28 @@ pub enum ProcessOutcomeKindV1 {
     ActionAttempted,
     /// A command committed canonically.
     CommandCommitted,
+    /// An action completed successfully without asserting a canonical commit.
+    ActionSucceeded,
     /// An action has a known terminal failure.
     ActionFailed,
+    /// An action result is ambiguous and therefore cannot be retried blindly.
+    ActionOutcomeUnknown,
     /// A retry was planned.
     RetryScheduled,
+    /// A durable retry timer firing was accepted.
+    TimerFired,
     /// A compensation action was planned.
     CompensationPlanned,
     /// Manual review was opened.
     ReviewOpened,
+    /// An authorized manual-review decision was accepted.
+    ManualResolutionApplied,
     /// Process completion was recorded.
     Completed,
     /// Process cancellation was recorded.
     Cancelled,
+    /// All required compensations completed successfully.
+    Compensated,
     /// Process escalation was recorded.
     Escalated,
 }

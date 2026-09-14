@@ -160,8 +160,14 @@ definition scope, total sequence, causal input/action, immutable outcome ID,
 typed actor, injected logical timestamp, payload digest, and explicit schema.
 `AtomicProcessCommitV1` rejects non-outcome schemas before an adapter sees a
 commit; malformed versioned outcome DTOs and atomic commits are fuzzed. The
-engine does not yet emit the complete lifecycle outcome log or apply these
-records to a durable projection, so this item remains incomplete.
+linear engine now derives an ordered required outcome-kind plan from each
+immutable event and pure decision (observed result plus planned action/retry,
+compensation, review resolution, or terminal state). It rejects a supplied
+outcome batch that omits, reorders, or substitutes those lifecycle kinds; the
+start-plan contract is unit tested and the helper is exercised by engine fuzzing.
+The engine still does not allocate outcome IDs/timestamps, construct the full
+DTO batch, or apply these records to a durable projection, so this item remains
+incomplete.
 
 ### P0.4 Pure transition and replay function
 

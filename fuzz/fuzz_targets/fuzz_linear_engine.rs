@@ -22,7 +22,9 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 }
 
 fuzz_target!(|data: &[u8]| {
-    let _ = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data);
+    if let Ok(envelope) = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data) {
+        let _ = envelope.event.observed_outcome_kinds();
+    }
     if let Ok(definition) = serde_json::from_slice::<LinearSagaDefinitionV1>(data) {
         let _ = definition.validate();
     }
@@ -80,6 +82,7 @@ fuzz_target!(|data: &[u8]| {
     ) else {
         return;
     };
+    let _ = decision.planned_outcome_kinds();
 
     for byte in data.iter().skip(1) {
         let result = match byte % 4 {
@@ -112,6 +115,7 @@ fuzz_target!(|data: &[u8]| {
             return;
         };
         decision = next;
+        let _ = decision.planned_outcome_kinds();
     }
 
     let backoff = match RetryBackoffV1::new(
