@@ -164,7 +164,7 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-core` | Pure schema constants and shared protocol primitives. | Versioned schema IDs only. |
 | `penelope-domain` | Versioned public DTOs for definitions, inputs, outcomes, actions, canonical commands/events and review. | DTOs only; no workflow logic. |
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
-| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
+| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine plus a separately validated bounded graph-definition contract: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces plus typed atomic inbox/outcome/action commit contract; no implementation. |
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed scope/action/operation/resource/digest verifier; intentionally no StateChronicle client or local-checkout dependency. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
@@ -201,6 +201,11 @@ The reference engine gives every step an explicit typed maximum attempt count.
 An exhausted retryable failure escalates without producing another action;
 unknown outcomes escalate immediately. Deadline/backoff/timer policy still
 belongs to the remaining P0 implementation work.
+
+`ProcessGraphDefinitionV1` is validation-only until a graph executor is added.
+It must not be passed to the linear executor or implicitly interpreted as
+vector order; consumers must choose an explicit graph execution implementation
+and enforce the declared visit bound.
 
 Retry backoff can include bounded deterministic jitter. Its typed seed is
 explicit input to the timer-scheduling event, and is retained in the replay
