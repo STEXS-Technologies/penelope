@@ -165,9 +165,10 @@ immutable event and pure decision (observed result plus planned action/retry,
 compensation, review resolution, or terminal state). It rejects a supplied
 outcome batch that omits, reorders, or substitutes those lifecycle kinds; the
 start-plan contract is unit tested and the helper is exercised by engine fuzzing.
-The engine still does not allocate outcome IDs/timestamps, construct the full
-DTO batch, or apply these records to a durable projection, so this item remains
-incomplete.
+The engine now constructs the full scope-pinned, contiguous DTO batch from
+outer-supplied immutable facts and rejects mismatched scopes or sequence
+overflow. It still does not allocate outcome IDs/timestamps or apply these
+records to a durable projection, so this item remains incomplete.
 
 ### P0.4 Pure transition and replay function
 

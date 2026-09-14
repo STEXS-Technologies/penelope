@@ -3,7 +3,8 @@
 use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
     MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeKindV1, ProcessScopeV1, StepId, TenantId,
+    ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1,
+    StepId, TenantId,
 };
 use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
@@ -501,11 +502,70 @@ impl SagaDecisionV1 {
         }
         Ok(())
     }
+
+    /// Builds the exact ordered outcome DTO batch required by one event and
+    /// pure decision.
+    ///
+    /// The outer application supplies one immutable fact for every required
+    /// category, including identities, causation, actors, logical times, and
+    /// payload digests. This pure helper pins each record to the process scope
+    /// and assigns a contiguous sequence without reading a clock or allocating
+    /// identities.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error if the supplied scope does not match the pinned
+    /// definition, the facts do not exactly match the required plan, or their
+    /// sequence would overflow.
+    pub fn build_required_outcomes(
+        &self,
+        event: &LinearSagaEventV1,
+        scope: &ProcessScopeV1,
+        first_sequence: u64,
+        facts: &[ProcessOutcomeFactV1],
+    ) -> Result<Vec<ProcessOutcomeDtoV1>, EngineError> {
+        if scope.definition_id != self.projection.definition_id
+            || scope.definition_version != self.projection.definition_version
+            || scope.definition_digest != self.projection.definition_digest
+        {
+            return Err(EngineError::OutcomeScopeMismatch);
+        }
+        let expected = event
+            .observed_outcome_kinds()
+            .iter()
+            .chain(self.planned_outcome_kinds())
+            .copied();
+        if !facts.iter().map(|fact| fact.kind).eq(expected) {
+            return Err(EngineError::OutcomeKindPlanMismatch);
+        }
+        facts
+            .iter()
+            .enumerate()
+            .map(|(index, fact)| {
+                let offset = u64::try_from(index)
+                    .map_err(|_conversion_error| EngineError::OutcomeSequenceOverflow)?;
+                let sequence = first_sequence
+                    .checked_add(offset)
+                    .ok_or(EngineError::OutcomeSequenceOverflow)?;
+                Ok(ProcessOutcomeDtoV1::new(
+                    scope.clone(),
+                    sequence,
+                    fact.clone(),
+                ))
+            })
+            .collect()
+    }
 }
 
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
+    /// An outcome scope does not match the decision's pinned definition.
+    #[error("outcome scope does not match the pinned saga definition")]
+    OutcomeScopeMismatch,
+    /// Building an outcome batch would overflow its per-process sequence.
+    #[error("outcome sequence overflowed")]
+    OutcomeSequenceOverflow,
     /// An atomic outcome batch does not match the deterministic transition plan.
     #[error("outcome kinds do not match the deterministic saga transition plan")]
     OutcomeKindPlanMismatch,
@@ -1566,23 +1626,14 @@ mod tests {
         }
     }
 
-    fn outcome(
-        scope: ProcessScopeV1,
-        sequence: u64,
-        outcome_id: OutcomeId,
-        kind: ProcessOutcomeKindV1,
-    ) -> ProcessOutcomeDtoV1 {
-        ProcessOutcomeDtoV1::new(
-            scope,
-            sequence,
-            ProcessOutcomeFactV1::new(
-                outcome_id,
-                CausationIdV1::Action(id("act_cause")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(sequence),
-                kind,
-                ContentDigest([0; 32]),
-            ),
+    fn outcome_fact(outcome_id: OutcomeId, kind: ProcessOutcomeKindV1) -> ProcessOutcomeFactV1 {
+        ProcessOutcomeFactV1::new(
+            outcome_id,
+            CausationIdV1::Action(id("act_cause")),
+            OutcomeActorV1::System,
+            LogicalTimeV1(0),
+            kind,
+            ContentDigest([0; 32]),
         )
     }
 
@@ -1610,20 +1661,17 @@ mod tests {
             definition.definition_version.clone(),
             definition.definition_digest,
         );
-        let outcomes = vec![
-            outcome(
-                scope.clone(),
+        let outcomes = decision
+            .build_required_outcomes(
+                &event,
+                &scope,
                 0,
-                id("out_started"),
-                ProcessOutcomeKindV1::Started,
-            ),
-            outcome(
-                scope,
-                1,
-                id("out_planned"),
-                ProcessOutcomeKindV1::ActionPlanned,
-            ),
-        ];
+                &[
+                    outcome_fact(id("out_started"), ProcessOutcomeKindV1::Started),
+                    outcome_fact(id("out_planned"), ProcessOutcomeKindV1::ActionPlanned),
+                ],
+            )
+            .unwrap();
         assert_eq!(
             decision.validate_required_outcomes(&event, &outcomes),
             Ok(())
@@ -1632,6 +1680,35 @@ mod tests {
         assert_eq!(
             decision.validate_required_outcomes(&event, &incomplete_outcomes),
             Err(EngineError::OutcomeKindPlanMismatch)
+        );
+        let mut wrong_scope = scope.clone();
+        wrong_scope.definition_digest = ContentDigest([0; 32]);
+        assert_eq!(
+            decision.build_required_outcomes(
+                &event,
+                &wrong_scope,
+                0,
+                &[
+                    outcome_fact(id("out_wrong_started"), ProcessOutcomeKindV1::Started),
+                    outcome_fact(id("out_wrong_planned"), ProcessOutcomeKindV1::ActionPlanned),
+                ],
+            ),
+            Err(EngineError::OutcomeScopeMismatch)
+        );
+        assert_eq!(
+            decision.build_required_outcomes(
+                &event,
+                &scope,
+                u64::MAX,
+                &[
+                    outcome_fact(id("out_overflow_started"), ProcessOutcomeKindV1::Started),
+                    outcome_fact(
+                        id("out_overflow_planned"),
+                        ProcessOutcomeKindV1::ActionPlanned,
+                    ),
+                ],
+            ),
+            Err(EngineError::OutcomeSequenceOverflow)
         );
     }
 

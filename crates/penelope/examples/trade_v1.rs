@@ -7,9 +7,9 @@
 use penelope::{
     ActionId, ActionResultObservationV1, CausationIdV1, ContentDigest, DefinitionId,
     DefinitionVersion, DomainError, InputId, LinearSagaDefinitionV1, LinearSagaEventV1,
-    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
-    ProcessScopeV1, RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
-    apply_action_result, start,
+    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessId, ProcessOutcomeFactV1, ProcessScopeV1,
+    RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepId, StepPlanV1, TenantId, apply_action_result,
+    start,
 };
 use thiserror::Error;
 
@@ -57,30 +57,28 @@ fn validate_outcome_plan(
     outcome_ids: &mut impl Iterator<Item = OutcomeId>,
 ) -> Result<(), ExampleError> {
     let causation_id = causation_for(event)?;
-    let mut outcomes = Vec::new();
+    let mut facts = Vec::new();
     for kind in event
         .observed_outcome_kinds()
         .iter()
         .chain(decision.planned_outcome_kinds())
     {
         let outcome_id = outcome_ids.next().ok_or(ExampleError::MissingOutcomeId)?;
-        outcomes.push(ProcessOutcomeDtoV1::new(
-            scope.clone(),
-            *next_sequence,
-            ProcessOutcomeFactV1::new(
-                outcome_id,
-                causation_id.clone(),
-                OutcomeActorV1::System,
-                LogicalTimeV1(*next_sequence),
-                *kind,
-                ContentDigest([0; 32]),
-            ),
+        facts.push(ProcessOutcomeFactV1::new(
+            outcome_id,
+            causation_id.clone(),
+            OutcomeActorV1::System,
+            LogicalTimeV1(*next_sequence),
+            *kind,
+            ContentDigest([0; 32]),
         ));
-        *next_sequence = next_sequence
-            .checked_add(1)
-            .ok_or(ExampleError::OutcomeSequenceOverflow)?;
     }
-    decision.validate_required_outcomes(event, &outcomes)?;
+    let outcomes = decision.build_required_outcomes(event, scope, *next_sequence, &facts)?;
+    let count = u64::try_from(outcomes.len())
+        .map_err(|_conversion_error| ExampleError::OutcomeSequenceOverflow)?;
+    *next_sequence = next_sequence
+        .checked_add(count)
+        .ok_or(ExampleError::OutcomeSequenceOverflow)?;
     Ok(())
 }
 
