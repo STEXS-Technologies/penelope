@@ -769,20 +769,16 @@ impl AtomicProcessCommitV1 {
             return Err(CommitValidationError::OutcomeLimitExceeded);
         }
         let mut expected_sequence = self.expected_sequence;
+        let expected_scope = first_outcome.scope();
         for (index, outcome) in self.outcomes.iter().enumerate() {
             if outcome.validate().is_err() {
                 return Err(CommitValidationError::InvalidOutcomeSchema);
             }
+            if outcome.validate_for_scope(&expected_scope).is_err() {
+                return Err(CommitValidationError::OutcomeScopeMismatch);
+            }
             if outcome.sequence != expected_sequence {
                 return Err(CommitValidationError::NonContiguousSequence);
-            }
-            if outcome.tenant_id != first_outcome.tenant_id
-                || outcome.process_id != first_outcome.process_id
-                || outcome.definition_id != first_outcome.definition_id
-                || outcome.definition_version != first_outcome.definition_version
-                || outcome.definition_digest != first_outcome.definition_digest
-            {
-                return Err(CommitValidationError::OutcomeScopeMismatch);
             }
             if self
                 .outcomes

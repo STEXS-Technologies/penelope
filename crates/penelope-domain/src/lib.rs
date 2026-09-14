@@ -85,6 +85,9 @@ pub enum DomainError {
     /// A canonical operation scope contains the same resource more than once.
     #[error("canonical resource scope contains a duplicate resource identifier")]
     DuplicateCanonicalResourceId,
+    /// An outcome does not belong to the requested process scope.
+    #[error("process outcome scope does not match the requested process")]
+    OutcomeScopeMismatch,
     /// A process-input envelope declared a schema for a different DTO type.
     #[error("process input envelope schema is invalid")]
     InvalidProcessInputSchema,
@@ -800,6 +803,32 @@ impl ProcessOutcomeDtoV1 {
             Err(DomainError::InvalidProcessOutcomeSchema)
         }
     }
+
+    /// Returns the immutable process scope carried by this outcome.
+    #[must_use]
+    pub fn scope(&self) -> ProcessScopeV1 {
+        ProcessScopeV1::new(
+            self.tenant_id.clone(),
+            self.process_id.clone(),
+            self.definition_id.clone(),
+            self.definition_version.clone(),
+            self.definition_digest,
+        )
+    }
+
+    /// Validates both the DTO schema and its exact pinned process scope.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the schema or scope is invalid.
+    pub fn validate_for_scope(&self, expected: &ProcessScopeV1) -> Result<(), DomainError> {
+        self.validate()?;
+        if self.scope() == *expected {
+            Ok(())
+        } else {
+            Err(DomainError::OutcomeScopeMismatch)
+        }
+    }
 }
 
 impl ProcessActionDtoV1 {
@@ -1267,6 +1296,41 @@ mod tests {
             review.validate(),
             Err(DomainError::InvalidManualReviewSchema)
         );
+    }
+
+    #[test]
+    fn outcome_scope_validation_rejects_cross_process_records() {
+        let scope = ProcessScopeV1::new(
+            id("tnt_market"),
+            id("prc_trade"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([2; 32]),
+        );
+        let outcome = ProcessOutcomeDtoV1::new(
+            scope.clone(),
+            0,
+            ProcessOutcomeFactV1::new(
+                id("out_started"),
+                CausationIdV1::Input(id("inp_event")),
+                OutcomeActorV1::System,
+                LogicalTimeV1(0),
+                ProcessOutcomeKindV1::Started,
+                ContentDigest([3; 32]),
+            ),
+        );
+        let other = ProcessScopeV1::new(
+            id("tnt_market"),
+            id("prc_other"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([2; 32]),
+        );
+        assert_eq!(
+            outcome.validate_for_scope(&other),
+            Err(DomainError::OutcomeScopeMismatch)
+        );
+        assert!(outcome.validate_for_scope(&scope).is_ok());
     }
 
     #[test]
