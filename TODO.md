@@ -595,6 +595,12 @@ Clippy, strict docs, benchmark build, and both reference examples, plus every
 fuzz target for 1,000 inputs under nightly. Extended scheduled fuzzing and
 retained/minimized crash-regression policy remain incomplete.
 
+On the current revision, all nine registered fuzz targets were run concurrently
+for 3,601 seconds each. They completed with exit code 0, normal libFuzzer
+summaries, 3,751,216,856 total executions, and no sanitizer, undefined-behavior,
+runtime-error, or crash markers. This is pure library-boundary evidence; it
+does not replace durable-adapter or deployment chaos testing.
+
 ### P3.2 Fault injection and chaos
 
 - [ ] Inject failures around every durable boundary, lease, timer dispatch,
