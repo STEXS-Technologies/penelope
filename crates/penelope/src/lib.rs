@@ -38,8 +38,10 @@ pub use penelope_intent::{IntentError, parse_process_input};
 pub use penelope_ports as ports;
 /// Frequently used typed process-control port contracts.
 pub use penelope_ports::{
-    ManualReviewResolutionV1, ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1,
-    ProcessAuthorizationRequestV1, TimerScheduleV1,
+    MAX_OUTCOMES_PER_READ_PAGE, ManualReviewResolutionV1, OutcomeIdSource,
+    OutcomePageValidationError, OutcomeReplayPageV1, OutcomeReplayRequestV1,
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
+    TimerScheduleV1,
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;
