@@ -16,6 +16,9 @@ use penelope_domain::{
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+/// Maximum append-only outcomes accepted in one atomic process commit.
+pub const MAX_OUTCOMES_PER_ATOMIC_COMMIT: usize = 128;
+
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum PortError {
@@ -54,6 +57,12 @@ pub enum CommitValidationError {
     /// An outcome does not use the expected contiguous sequence.
     #[error("atomic process commit outcome sequence is not contiguous")]
     NonContiguousSequence,
+    /// A commit attempted to append too many outcomes at once.
+    #[error("atomic process commit exceeds the outcome limit")]
+    OutcomeLimitExceeded,
+    /// A commit contains the same immutable outcome identity more than once.
+    #[error("atomic process commit contains a duplicate outcome identity")]
+    DuplicateOutcomeId,
     /// An outcome declares a schema other than the immutable outcome schema.
     #[error("atomic process commit outcome schema is invalid")]
     InvalidOutcomeSchema,
@@ -254,8 +263,11 @@ impl AtomicProcessCommitV1 {
         let Some(first_outcome) = self.outcomes.first() else {
             return Err(CommitValidationError::EmptyOutcomes);
         };
+        if self.outcomes.len() > MAX_OUTCOMES_PER_ATOMIC_COMMIT {
+            return Err(CommitValidationError::OutcomeLimitExceeded);
+        }
         let mut expected_sequence = self.expected_sequence;
-        for outcome in &self.outcomes {
+        for (index, outcome) in self.outcomes.iter().enumerate() {
             if outcome.validate().is_err() {
                 return Err(CommitValidationError::InvalidOutcomeSchema);
             }
@@ -269,6 +281,14 @@ impl AtomicProcessCommitV1 {
                 || outcome.definition_digest != first_outcome.definition_digest
             {
                 return Err(CommitValidationError::OutcomeScopeMismatch);
+            }
+            if self
+                .outcomes
+                .iter()
+                .skip(index.saturating_add(1))
+                .any(|other_outcome| other_outcome.outcome_id == outcome.outcome_id)
+            {
+                return Err(CommitValidationError::DuplicateOutcomeId);
             }
             expected_sequence = expected_sequence
                 .checked_add(1)
@@ -407,7 +427,7 @@ mod tests {
         T::try_from(value).ok().unwrap()
     }
 
-    fn outcome(sequence: u64) -> ProcessOutcomeDtoV1 {
+    fn outcome(sequence: u64, outcome_id: OutcomeId) -> ProcessOutcomeDtoV1 {
         ProcessOutcomeDtoV1::new(
             ProcessScopeV1::new(
                 id::<TenantId>("tnt_game"),
@@ -418,7 +438,7 @@ mod tests {
             ),
             sequence,
             ProcessOutcomeFactV1::new(
-                id::<OutcomeId>("out_event"),
+                outcome_id,
                 CausationIdV1::Action(id("act_cause")),
                 OutcomeActorV1::System,
                 LogicalTimeV1(1),
@@ -447,7 +467,8 @@ mod tests {
 
     #[test]
     fn atomic_commit_requires_contiguous_outcomes_in_one_scope() {
-        let commit = AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![action()]);
+        let commit =
+            AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], vec![action()]);
         assert!(commit.is_ok());
     }
 
@@ -455,8 +476,13 @@ mod tests {
     fn atomic_commit_rejects_outgoing_action_from_another_process() {
         let mut wrong_action = action();
         wrong_action.process_id = id("prc_other");
-        let error =
-            AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![wrong_action]).unwrap_err();
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_event"))],
+            vec![wrong_action],
+        )
+        .unwrap_err();
         assert_eq!(error, CommitValidationError::ActionScopeMismatch);
     }
 
@@ -464,27 +490,59 @@ mod tests {
     fn atomic_commit_rejects_outgoing_action_from_another_definition() {
         let mut wrong_action = action();
         wrong_action.definition_digest = ContentDigest([8; 32]);
-        let error =
-            AtomicProcessCommitV1::new(0, None, vec![outcome(0)], vec![wrong_action]).unwrap_err();
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_event"))],
+            vec![wrong_action],
+        )
+        .unwrap_err();
         assert_eq!(error, CommitValidationError::ActionScopeMismatch);
     }
 
     #[test]
     fn atomic_commit_rejects_outcomes_from_different_definitions() {
-        let mut wrong_outcome = outcome(1);
+        let mut wrong_outcome = outcome(1, id("out_second"));
         wrong_outcome.definition_version = id("dfv_two");
-        let error =
-            AtomicProcessCommitV1::new(0, None, vec![outcome(0), wrong_outcome], vec![action()])
-                .unwrap_err();
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_first")), wrong_outcome],
+            vec![action()],
+        )
+        .unwrap_err();
         assert_eq!(error, CommitValidationError::OutcomeScopeMismatch);
     }
 
     #[test]
     fn atomic_commit_rejects_an_outcome_with_another_schema() {
-        let mut wrong_outcome = outcome(0);
+        let mut wrong_outcome = outcome(0, id("out_event"));
         wrong_outcome.schema = penelope_domain::SchemaV1::ProcessAction;
         let error = AtomicProcessCommitV1::new(0, None, vec![wrong_outcome], vec![]).unwrap_err();
         assert_eq!(error, CommitValidationError::InvalidOutcomeSchema);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_duplicate_outcome_identity() {
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![
+                outcome(0, id("out_duplicate")),
+                outcome(1, id("out_duplicate")),
+            ],
+            vec![action()],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::DuplicateOutcomeId);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_an_oversized_outcome_batch() {
+        let outcomes =
+            vec![outcome(0, id("out_limit")); MAX_OUTCOMES_PER_ATOMIC_COMMIT.saturating_add(1)];
+        let error = AtomicProcessCommitV1::new(0, None, outcomes, vec![]).unwrap_err();
+        assert_eq!(error, CommitValidationError::OutcomeLimitExceeded);
     }
 
     #[test]
