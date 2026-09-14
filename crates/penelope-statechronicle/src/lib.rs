@@ -13,9 +13,10 @@
 #![allow(clippy::must_use_candidate)]
 
 use penelope_domain::{
-    ActionId, CanonicalEventDtoV1, ContentDigest, DomainError, OperationId, ProcessScopeV1,
-    ResourceId, validate_canonical_resource_scope,
+    ActionId, CanonicalEventDtoV1, ContentDigest, DomainError, OperationId, ProcessInputKindV1,
+    ProcessScopeV1, ResourceId, validate_canonical_resource_scope,
 };
+use penelope_ports::{AtomicProcessCommitV1, CommitValidationError};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -88,6 +89,33 @@ pub enum CorrelationError {
     PayloadDigestMismatch,
 }
 
+/// Failure while binding verified canonical evidence to an atomic Penelope commit.
+#[derive(Debug, Error, Clone, PartialEq, Eq)]
+pub enum CanonicalCommitBindingError {
+    /// The proposed commit violates its own typed atomic invariants.
+    #[error("atomic process commit is invalid")]
+    InvalidCommit {
+        /// Underlying typed commit-validation failure.
+        #[source]
+        source: CommitValidationError,
+    },
+    /// Verified canonical evidence requires an accepted inbox input.
+    #[error("verified canonical evidence requires an inbox input")]
+    MissingInput,
+    /// The inbox input does not identify a canonical-event delivery.
+    #[error("verified canonical evidence requires a canonical-event input")]
+    InputKindMismatch,
+    /// The input tenant/process does not match the verified process scope.
+    #[error("canonical inbox input scope does not match verified event scope")]
+    InputScopeMismatch,
+    /// The input digest does not exactly bind to the verified canonical event.
+    #[error("canonical inbox input digest does not match verified event")]
+    InputPayloadDigestMismatch,
+    /// The atomic outcome scope does not match the verified process scope.
+    #[error("atomic commit outcome scope does not match verified event scope")]
+    CommitScopeMismatch,
+}
+
 /// Correlates an event from a trusted committed-event stream to a previously
 /// submitted canonical command.
 ///
@@ -128,6 +156,52 @@ pub fn verify_committed_event(
         scope: expected.scope.clone(),
         event,
     })
+}
+
+/// Binds a previously verified canonical event to one atomic process commit.
+///
+/// This is the safe adapter path after [`verify_committed_event`]: it requires
+/// a canonical inbox input with the exact event digest and pins the source event
+/// ID for same-transaction source deduplication.
+///
+/// # Errors
+///
+/// Returns a typed error when the commit, inbox input, or outcome scope cannot
+/// be proven to belong to the verified canonical event.
+pub fn bind_verified_event_to_commit(
+    commit: AtomicProcessCommitV1,
+    verified: &VerifiedCanonicalEventV1,
+) -> Result<AtomicProcessCommitV1, CanonicalCommitBindingError> {
+    commit
+        .validate()
+        .map_err(|source| CanonicalCommitBindingError::InvalidCommit { source })?;
+    let input = commit
+        .input
+        .as_ref()
+        .ok_or(CanonicalCommitBindingError::MissingInput)?;
+    if input.kind != ProcessInputKindV1::CanonicalEvent {
+        return Err(CanonicalCommitBindingError::InputKindMismatch);
+    }
+    if input.tenant_id != verified.scope.tenant_id || input.process_id != verified.scope.process_id
+    {
+        return Err(CanonicalCommitBindingError::InputScopeMismatch);
+    }
+    if input.payload_digest != verified.event.payload_digest {
+        return Err(CanonicalCommitBindingError::InputPayloadDigestMismatch);
+    }
+    let outcome = commit
+        .outcomes
+        .first()
+        .ok_or(CanonicalCommitBindingError::CommitScopeMismatch)?;
+    if outcome.tenant_id != verified.scope.tenant_id
+        || outcome.process_id != verified.scope.process_id
+        || outcome.definition_id != verified.scope.definition_id
+        || outcome.definition_version != verified.scope.definition_version
+        || outcome.definition_digest != verified.scope.definition_digest
+    {
+        return Err(CanonicalCommitBindingError::CommitScopeMismatch);
+    }
+    Ok(commit.with_canonical_source_event(verified.event.source_event_id.clone()))
 }
 
 #[cfg(test)]
