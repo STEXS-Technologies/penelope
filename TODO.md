@@ -176,6 +176,8 @@ The public `LinearSagaInputV1` boundary likewise requires a validated `InputId`
 for start, result, timer, and manual-resolution commands.
 Its `to_event` conversion preserves that exact ID in the immutable replay event;
 start events now likewise require and record input acceptance before creation.
+Replay rejects a process log that repeats any accepted input identity, providing
+a second fail-closed guard in addition to the future durable inbox.
 The engine now constructs the full scope-pinned, contiguous DTO batch from
 outer-supplied immutable facts and rejects mismatched scopes or sequence
 overflow. It still does not allocate outcome IDs/timestamps or apply these

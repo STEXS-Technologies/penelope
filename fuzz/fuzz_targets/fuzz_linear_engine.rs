@@ -71,6 +71,20 @@ fuzz_target!(|data: &[u8]| {
         },
     ];
     let _ = replay(&definition, &tenant_id, &process_id, &replay_events);
+    let duplicate_input_events = [
+        replay_events[0].clone(),
+        LinearSagaEventV1::ActionResultObserved {
+            input_id: identifier::<InputId>("inp_fuzz_start"),
+            observation: ActionResultObservationV1::succeeded(action_id.clone()),
+            next_action_id: Some(identifier("act_fuzz_next")),
+        },
+    ];
+    let _ = replay(
+        &definition,
+        &tenant_id,
+        &process_id,
+        &duplicate_input_events,
+    );
     let ordered_replay_events = [
         LinearSagaEventEnvelopeV1 {
             sequence: 0,

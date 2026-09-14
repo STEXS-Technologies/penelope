@@ -8,6 +8,7 @@ use penelope_domain::{
 };
 use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 use std::num::{NonZeroU32, NonZeroU64};
 use thiserror::Error;
 
@@ -900,6 +901,9 @@ pub enum EngineError {
     /// An ordered log attempted to start an existing process again.
     #[error("saga log contains more than one start event")]
     DuplicateStart,
+    /// An immutable input identity appears more than once in one process log.
+    #[error("saga log contains a duplicate accepted input identity")]
+    DuplicateInput,
     /// An event log is not zero-based and contiguous.
     #[error("saga event sequence is not contiguous")]
     InvalidEventSequence,
@@ -1670,7 +1674,12 @@ pub fn replay(
     events: &[LinearSagaEventV1],
 ) -> Result<SagaDecisionV1, EngineError> {
     let mut decision: Option<SagaDecisionV1> = None;
+    let mut accepted_input_ids = BTreeSet::new();
     for event in events {
+        let input_id = event.input_id().ok_or(EngineError::InvalidProjection)?;
+        if !accepted_input_ids.insert(input_id.clone()) {
+            return Err(EngineError::DuplicateInput);
+        }
         match event {
             LinearSagaEventV1::Started {
                 definition_id,
@@ -2999,6 +3008,14 @@ mod tests {
                 id::<ActionId>("act_five"),
             ]
             .into_iter();
+            let mut input_ids = [
+                id::<InputId>("inp_property_one"),
+                id::<InputId>("inp_property_two"),
+                id::<InputId>("inp_property_three"),
+                id::<InputId>("inp_property_four"),
+                id::<InputId>("inp_property_five"),
+            ]
+            .into_iter();
             let mut live = start(
                 &definition,
                 tenant_id.clone(),
@@ -3039,8 +3056,11 @@ mod tests {
                 {
                     break;
                 }
+                let Some(input_id) = input_ids.next() else {
+                    break;
+                };
                 events.push(LinearSagaEventV1::ActionResultObserved {
-                    input_id: id("inp_property_result"),
+                    input_id,
                     observation: observation.clone(),
                     next_action_id: next_action_id.clone(),
                 });
@@ -3172,6 +3192,26 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, EngineError::DuplicateStart);
+    }
+
+    #[test]
+    fn replay_rejects_a_duplicate_accepted_input_identity() {
+        let definition = definition();
+        let error = replay(
+            &definition,
+            &id("tnt_game"),
+            &id("prc_trade"),
+            &[
+                LinearSagaEventV1::started(&definition, id("inp_start"), id("act_lock")),
+                LinearSagaEventV1::ActionResultObserved {
+                    input_id: id("inp_start"),
+                    observation: ActionResultObservationV1::succeeded(id("act_lock")),
+                    next_action_id: Some(id("act_settle")),
+                },
+            ],
+        )
+        .unwrap_err();
+        assert_eq!(error, EngineError::DuplicateInput);
     }
 
     #[test]
