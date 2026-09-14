@@ -549,8 +549,8 @@ worker crashes, network partitions, or external canonical effects. A focused
 retry-timer drill additionally proves early/duplicate timer fires fail closed
 and replay preserves the due-time transition. Durable timer adapters and chaos
 remain incomplete. `scripts/run_pure_chaos_drill.sh` repeats the executor's
-restart/timer properties and `fuzz_linear_engine`; a scheduled workflow runs
-the bounded extended drill weekly. This remains pure-library evidence, not a
+restart/timer properties and every current public-boundary fuzz target; a
+scheduled workflow runs the bounded extended drill weekly. This remains pure-library evidence, not a
 durable deployment drill.
 
 ### P3.3 Reproducible performance evidence
