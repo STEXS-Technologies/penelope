@@ -9,3 +9,5 @@
 
 /// Pure deterministic saga decision engine.
 pub mod engine;
+/// Deterministic bounded graph-process execution.
+pub mod graph;

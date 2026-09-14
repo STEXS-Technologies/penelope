@@ -34,6 +34,11 @@ pub use penelope_executor::engine::{
     StepPlanV1, apply_action_result, apply_manual_resolution, decide, fire_retry_timer, replay,
     replay_ordered, schedule_retry_timer, start,
 };
+/// Deterministic bounded graph-process API.
+pub use penelope_executor::graph::{
+    GraphEngineError, GraphSagaDecisionV1, GraphSagaEventV1, GraphSagaInputV1,
+    GraphSagaProjectionV1, apply_graph_result, replay_graph, start_graph,
+};
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;
 /// User-facing typed process-input parser.

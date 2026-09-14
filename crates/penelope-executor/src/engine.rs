@@ -360,7 +360,7 @@ impl ProcessGraphDefinitionV1 {
                 if !step_ids.contains(to_step) {
                     return Err(GraphDefinitionError::UnknownDestinationStep);
                 }
-            } else if transition.on != GraphTransitionOutcomeV1::TerminalFailure {
+            } else if transition.on == GraphTransitionOutcomeV1::RetryableFailure {
                 return Err(GraphDefinitionError::MissingDestination);
             }
             if !transition_keys.insert((&transition.from_step, transition.on)) {
@@ -2124,6 +2124,8 @@ mod tests {
         assert_eq!(graph.validate(), Ok(()));
 
         let mut missing_destination = graph.clone();
+        missing_destination.transitions.first_mut().unwrap().on =
+            GraphTransitionOutcomeV1::RetryableFailure;
         missing_destination.transitions.first_mut().unwrap().to_step = None;
         assert_eq!(
             missing_destination.validate(),
