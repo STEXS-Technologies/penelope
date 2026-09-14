@@ -246,8 +246,11 @@ the exact due time replays without hidden entropy; unit and fuzz paths exercise
 that wire field. A typed inclusive deadline is also retained in that input/event;
 the reference engine allows an exact-boundary retry but takes the existing safe
 compensation-or-escalation path when the calculated due time would exceed it.
-There is no durable adapter implementation, timer cancellation, clock-jump
-policy, or compensation-timer support, so this item remains incomplete.
+`TimerScheduleV1` now rejects non-timer or malformed actions, and the timer
+port accepts that complete scope-pinned record for both scheduling and
+cancellation rather than an action ID alone. There is no durable adapter
+implementation, clock-jump policy, or compensation-timer support, so this item
+remains incomplete.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID

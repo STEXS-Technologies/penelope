@@ -9,7 +9,9 @@ use penelope_ports::{
 fuzz_target!(|data: &[u8]| {
     let _ = serde_json::from_slice::<ProcessAuthorizationRequestV1>(data);
     let _ = serde_json::from_slice::<ProcessAuthorizationDecisionV1>(data);
-    let _ = serde_json::from_slice::<TimerScheduleV1>(data);
+    if let Ok(timer) = serde_json::from_slice::<TimerScheduleV1>(data) {
+        let _ = timer.validate();
+    }
     if let Ok(request) = serde_json::from_slice::<EffectDispatchRequestV1>(data) {
         let _ = request.validate();
     }

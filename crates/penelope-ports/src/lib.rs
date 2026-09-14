@@ -174,6 +174,17 @@ pub enum EffectReconciliationValidationError {
     EffectKeyMismatch,
 }
 
+/// Typed validation failure for a durable retry-timer record.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum TimerValidationError {
+    /// The timer action does not carry the immutable action schema.
+    #[error("timer action schema is invalid")]
+    InvalidActionSchema,
+    /// A non-timer action was supplied to a timer scheduler boundary.
+    #[error("timer schedule requires a timer action kind")]
+    InvalidActionKind,
+}
+
 /// Authoritative result of reconciling a canonical external effect.
 ///
 /// `Unknown` is deliberately distinct from `NotCommitted`: callers must not
@@ -362,6 +373,23 @@ pub struct TimerScheduleV1 {
     pub action: ProcessActionDtoV1,
     /// Deterministic due time supplied by the application layer.
     pub due_at: LogicalTimeV1,
+}
+
+impl TimerScheduleV1 {
+    /// Validates that this record retains a full, typed timer action scope.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when an action schema or kind is substituted.
+    pub fn validate(&self) -> Result<(), TimerValidationError> {
+        if self.action.validate().is_err() {
+            return Err(TimerValidationError::InvalidActionSchema);
+        }
+        if self.action.kind != penelope_domain::ProcessActionKindV1::Timer {
+            return Err(TimerValidationError::InvalidActionKind);
+        }
+        Ok(())
+    }
 }
 
 /// Idempotent claim request for a manual-review case.
@@ -841,8 +869,8 @@ pub trait ExternalEffectExecutor: Send + Sync {
 pub trait TimerScheduler: Send + Sync {
     /// Schedules a timer action whose firing returns through the inbox.
     async fn schedule(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
-    /// Cancels a previously scheduled action idempotently.
-    async fn cancel(&self, action_id: &ActionId) -> Result<(), PortError>;
+    /// Cancels a timer while retaining its full pinned action scope.
+    async fn cancel(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
 }
 
 /// Injected wall-clock boundary for deterministic application decisions.
@@ -1079,6 +1107,33 @@ mod tests {
         assert_eq!(
             mismatched_request.validate(),
             Err(EffectReconciliationValidationError::EffectKeyMismatch)
+        );
+    }
+
+    #[test]
+    fn timer_schedule_requires_a_schema_valid_timer_action() {
+        let schedule = TimerScheduleV1 {
+            action: action(),
+            due_at: LogicalTimeV1(10),
+        };
+        assert_eq!(
+            schedule.validate(),
+            Err(TimerValidationError::InvalidActionKind)
+        );
+
+        let mut timer_action = action();
+        timer_action.kind = penelope_domain::ProcessActionKindV1::Timer;
+        let timer_schedule = TimerScheduleV1 {
+            action: timer_action,
+            due_at: LogicalTimeV1(10),
+        };
+        assert_eq!(timer_schedule.validate(), Ok(()));
+
+        let mut malformed_timer = timer_schedule;
+        malformed_timer.action.schema = penelope_domain::SchemaV1::ProcessOutcome;
+        assert_eq!(
+            malformed_timer.validate(),
+            Err(TimerValidationError::InvalidActionSchema)
         );
     }
 

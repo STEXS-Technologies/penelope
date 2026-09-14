@@ -90,7 +90,7 @@ impl TimerScheduler for UnavailablePorts {
         Err(PortError::Unavailable)
     }
 
-    async fn cancel(&self, _: &ActionId) -> Result<(), PortError> {
+    async fn cancel(&self, _: &TimerScheduleV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -284,8 +284,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         control: penelope_ports::ManualReviewControlV1::SingleOperator,
         evidence_digest: ContentDigest([7; 32]),
     };
+    let mut timer_action = action.clone();
+    timer_action.kind = ProcessActionKindV1::Timer;
     let timer = TimerScheduleV1 {
-        action: action.clone(),
+        action: timer_action,
         due_at: LogicalTimeV1(2),
     };
     let effect_request = EffectDispatchRequestV1::new(action.clone());
@@ -327,7 +329,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(scheduler.cancel(&action.action_id)),
+        ready(scheduler.cancel(&timer)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(ready(clock.now()), Err(PortError::Unavailable)));
