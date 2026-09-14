@@ -3,6 +3,8 @@
 //! This measures deterministic recovery only. It does not include storage,
 //! serialization, broker delivery, or StateChronicle coordination.
 
+#![allow(clippy::arithmetic_side_effects, clippy::expect_used)]
+
 use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, InputId, ProcessId, StepId, TenantId,
 };
