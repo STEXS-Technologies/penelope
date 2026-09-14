@@ -21,9 +21,10 @@ use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
     CanonicalReconciliationV1, CanonicalState, Clock, EffectDispatchRequestV1,
     ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, ManualReviewClaimV1,
-    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutcomeIdSource,
-    PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer,
-    ProcessStore, TimerScheduleV1, TimerScheduler,
+    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutboxClaimRequestV1,
+    OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
+    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerScheduleV1,
+    TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -50,6 +51,17 @@ impl ProcessStore for UnavailablePorts {
         &self,
         _: &penelope_ports::OutcomeReplayRequestV1,
     ) -> Result<penelope_ports::OutcomeReplayPageV1, PortError> {
+        Err(PortError::Unavailable)
+    }
+}
+
+#[async_trait]
+impl OutboxStore for UnavailablePorts {
+    async fn claim(&self, _: &OutboxClaimRequestV1) -> Result<Vec<OutboxRecordV1>, PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn acknowledge(&self, _: &OutboxRecordV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -238,6 +250,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     assert_send_sync::<UnavailablePorts>();
     let ports = UnavailablePorts;
     let process_store: &dyn ProcessStore = &ports;
+    let outbox: &dyn OutboxStore = &ports;
     let inbox: &dyn Inbox = &ports;
     let dispatcher: &dyn ActionDispatcher = &ports;
     let external_executor: &dyn ExternalEffectExecutor = &ports;
@@ -307,6 +320,16 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     ));
     assert!(matches!(
         ready(process_store.read_outcomes(&replay_request)),
+        Err(PortError::Unavailable)
+    ));
+    let outbox_claim = OutboxClaimRequestV1::new(scope(), std::num::NonZeroU16::MIN).unwrap();
+    let record = OutboxRecordV1::new(action.clone());
+    assert!(matches!(
+        ready(outbox.claim(&outbox_claim)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(outbox.acknowledge(&record)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
