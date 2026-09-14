@@ -378,7 +378,11 @@ contract: every returned outcome must have the requested scope, schema, and
 contiguous sequence, and continuation must be exact; request/page validators
 are fuzzed. Definition, inbox, outbox, executor and review interfaces remain smaller
 than the target contract; no authorization policy or cancellation-semantics
-evidence exists yet, so this item remains incomplete.
+evidence exists yet, so this item remains incomplete. `ProcessStore::append_outcomes`
+now requires the complete pinned `ProcessScopeV1` explicitly, preventing a
+lax adapter from treating a sequence number alone as authorization to append
+another tenant or process's outcomes. Conformance and atomic fault doubles
+exercise this binding; a real adapter must enforce it transactionally.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 
