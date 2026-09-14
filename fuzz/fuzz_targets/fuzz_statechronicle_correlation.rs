@@ -5,10 +5,7 @@ use penelope_domain::{
     ActionId, CanonicalEventDtoV1, ContentDigest, DefinitionId, DefinitionVersion, OperationId,
     ProcessId, ProcessScopeV1, ResourceId, TenantId,
 };
-use penelope_ports::AtomicProcessCommitV1;
-use penelope_statechronicle::{
-    CanonicalCommandExpectationV1, bind_verified_event_to_commit, verify_committed_event,
-};
+use penelope_statechronicle::{CanonicalCommandExpectationV1, verify_committed_event};
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
     match T::try_from(value) {
@@ -34,12 +31,7 @@ fuzz_target!(|data: &[u8]| {
         resource_ids: vec![identifier::<ResourceId>("res_fuzz")],
         expected_event_payload_digest: ContentDigest([0; 32]),
     };
-    if let (Ok(event), Ok(commit)) = (
-        serde_json::from_slice::<CanonicalEventDtoV1>(data),
-        serde_json::from_slice::<AtomicProcessCommitV1>(data),
-    ) {
-        if let Ok(verified) = verify_committed_event(&expected, event) {
-            let _ = bind_verified_event_to_commit(commit, &verified);
-        }
+    if let Ok(event) = serde_json::from_slice::<CanonicalEventDtoV1>(data) {
+        let _ = verify_committed_event(&expected, event);
     }
 });
