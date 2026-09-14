@@ -85,8 +85,9 @@ boundary. It must implement this protocol exactly:
    exact same idempotency ID. A network response alone is not success.
 3. Consume the StateChronicle transactional-outbox notification through a
    durable Penelope inbox keyed by its immutable delivery/event identity.
-4. Verify the notification is a committed canonical result for the expected
-   tenant, command/action ID, resource scope, and transition. Only then append
+4. Verify the notification is a committed canonical result for the pinned
+   Penelope process/definition scope, tenant, command/action ID, operation,
+   exact resource scope, and expected redacted result digest. Only then append
    the Penelope `CommandCommitted` outcome and advance the saga.
 5. On restart, replay the Penelope log. Pending commands are reconciled by ID;
    no action is resubmitted until its current StateChronicle result is known.

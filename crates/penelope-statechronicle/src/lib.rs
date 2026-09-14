@@ -13,8 +13,8 @@
 #![allow(clippy::must_use_candidate)]
 
 use penelope_domain::{
-    ActionId, CanonicalEventDtoV1, DomainError, OperationId, ResourceId, TenantId,
-    validate_canonical_resource_scope,
+    ActionId, CanonicalEventDtoV1, ContentDigest, DomainError, OperationId, ProcessScopeV1,
+    ResourceId, validate_canonical_resource_scope,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -22,14 +22,16 @@ use thiserror::Error;
 /// Immutable correlation requirements for a submitted canonical command.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CanonicalCommandExpectationV1 {
-    /// Tenant authorized for the command.
-    pub tenant_id: TenantId,
+    /// Immutable Penelope process and definition scope that authorized this command.
+    pub scope: ProcessScopeV1,
     /// Penelope action ID reused as canonical idempotency identity.
     pub action_id: ActionId,
     /// Registered canonical operation expected to commit.
     pub operation: OperationId,
     /// Exact canonical resource scope expected to commit.
     pub resource_ids: Vec<ResourceId>,
+    /// Exact redacted digest expected from the committed canonical result.
+    pub expected_event_payload_digest: ContentDigest,
 }
 
 impl CanonicalCommandExpectationV1 {
@@ -46,6 +48,8 @@ impl CanonicalCommandExpectationV1 {
 /// A canonical event that passed Penelope's correlation checks.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerifiedCanonicalEventV1 {
+    /// Pinned Penelope scope that authorized and correlated this event.
+    pub scope: ProcessScopeV1,
     /// The event confirmed against the command expectation.
     pub event: CanonicalEventDtoV1,
 }
@@ -67,7 +71,7 @@ pub enum CorrelationError {
         #[source]
         source: DomainError,
     },
-    /// Event tenant does not match the authorized command tenant.
+    /// Event tenant does not match the authorized process scope.
     #[error("canonical event tenant does not match command expectation")]
     TenantMismatch,
     /// Event action identity does not match the submitted action.
@@ -79,6 +83,9 @@ pub enum CorrelationError {
     /// Event resource scope does not exactly match the submitted scope.
     #[error("canonical event resource scope does not match command expectation")]
     ResourceScopeMismatch,
+    /// Committed canonical result digest differs from the exact expected result.
+    #[error("canonical event payload digest does not match command expectation")]
+    PayloadDigestMismatch,
 }
 
 /// Correlates an event from a trusted committed-event stream to a previously
@@ -102,7 +109,7 @@ pub fn verify_committed_event(
     event
         .validate()
         .map_err(|source| CorrelationError::InvalidEvent { source })?;
-    if event.tenant_id != expected.tenant_id {
+    if event.tenant_id != expected.scope.tenant_id {
         return Err(CorrelationError::TenantMismatch);
     }
     if event.action_id != expected.action_id {
@@ -114,7 +121,13 @@ pub fn verify_committed_event(
     if event.resource_ids != expected.resource_ids {
         return Err(CorrelationError::ResourceScopeMismatch);
     }
-    Ok(VerifiedCanonicalEventV1 { event })
+    if event.payload_digest != expected.expected_event_payload_digest {
+        return Err(CorrelationError::PayloadDigestMismatch);
+    }
+    Ok(VerifiedCanonicalEventV1 {
+        scope: expected.scope.clone(),
+        event,
+    })
 }
 
 #[cfg(test)]
@@ -129,10 +142,17 @@ mod tests {
 
     fn expectation() -> CanonicalCommandExpectationV1 {
         CanonicalCommandExpectationV1 {
-            tenant_id: id("tnt_market"),
+            scope: ProcessScopeV1::new(
+                id("tnt_market"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
             action_id: id("act_settle"),
             operation: id("op_settle"),
             resource_ids: vec![id("res_asset_a"), id("res_asset_b")],
+            expected_event_payload_digest: ContentDigest([1; 32]),
         }
     }
 
@@ -154,6 +174,7 @@ mod tests {
     fn verified_event_requires_full_correlation() {
         let verified = verify_committed_event(&expectation(), event()).unwrap();
         assert_eq!(verified.event.commit_sequence, 7);
+        assert_eq!(verified.scope.process_id, id("prc_trade"));
     }
 
     #[test]
@@ -188,5 +209,15 @@ mod tests {
                 source: DomainError::DuplicateCanonicalResourceId
             }
         ));
+    }
+
+    #[test]
+    fn wrong_committed_result_digest_cannot_advance_a_saga() {
+        let mut received = event();
+        received.payload_digest = ContentDigest([2; 32]);
+        assert_eq!(
+            verify_committed_event(&expectation(), received).unwrap_err(),
+            CorrelationError::PayloadDigestMismatch
+        );
     }
 }

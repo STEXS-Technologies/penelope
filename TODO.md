@@ -414,9 +414,12 @@ acknowledgement, leases, redelivery, and crash drills remain incomplete.
 
 Current partial evidence: `penelope-statechronicle` provides a typed command
 expectation and a verifier that accepts a canonical event only when tenant,
-action ID, operation, and exact bounded, duplicate-free resource scope all
-match. It rejects malformed expected or received scopes before correlation, has
-unit tests and the `fuzz_statechronicle_correlation` target. It deliberately does not claim
+action ID, operation, exact bounded duplicate-free resource scope, and expected
+redacted committed-result digest all match. The verified result retains the
+pinned Penelope process/definition scope, preventing a caller from losing that
+authorization context after correlation. It rejects malformed expected or
+received scopes before correlation, has unit tests and the
+`fuzz_statechronicle_correlation` target. It deliberately does not claim
 that a transport response proves a commit, does not implement a client, and
 does not yet cover source freshness/deduplication or response-loss recovery.
 
