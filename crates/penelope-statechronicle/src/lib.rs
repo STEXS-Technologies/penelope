@@ -137,16 +137,17 @@ mod tests {
     }
 
     fn event() -> CanonicalEventDtoV1 {
-        CanonicalEventDtoV1 {
-            tenant_id: id("tnt_market"),
-            source_event_id: id("cev_outbox"),
-            action_id: id("act_settle"),
-            commit_id: id("cmt_commit"),
-            commit_sequence: 7,
-            operation: id("op_settle"),
-            resource_ids: vec![id("res_asset_a"), id("res_asset_b")],
-            payload_digest: ContentDigest([1; 32]),
-        }
+        CanonicalEventDtoV1::new(
+            id("tnt_market"),
+            id("cev_outbox"),
+            id("act_settle"),
+            id("cmt_commit"),
+            7,
+            id("op_settle"),
+            vec![id("res_asset_a"), id("res_asset_b")],
+            ContentDigest([1; 32]),
+        )
+        .unwrap()
     }
 
     #[test]

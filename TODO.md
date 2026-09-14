@@ -85,9 +85,13 @@ schema discriminator, and the intent boundary parses byte input only after
 validating that discriminator; both its parser and DTO boundary are fuzzed. It
 uses canonical versioned wire discriminators (for example,
 `penelope.process.input.v1`) rather than Rust enum names; fixture tests reject
-unknown and unversioned discriminators. It does not yet enforce fixtures for
-every public DTO, raw-string port signatures, or fuzz-target coverage, so this
-item remains incomplete.
+unknown and unversioned discriminators. Every current public wire DTO now
+carries and validates its immutable `SchemaV1` discriminator, including
+definition, input, outcome, action, canonical command/event, and manual review;
+negative tests cover a mismatched schema for each and the versioned-DTO fuzz
+target invokes each available validator. It does not yet enforce golden
+fixtures for every DTO, raw-string port signatures, or fuzz-target coverage, so
+this item remains incomplete.
 
 ## P0 — deterministic core
 

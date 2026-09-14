@@ -68,6 +68,9 @@ pub enum CommitValidationError {
     /// An outcome declares a schema other than the immutable outcome schema.
     #[error("atomic process commit outcome schema is invalid")]
     InvalidOutcomeSchema,
+    /// An outgoing action declares a schema other than the immutable action schema.
+    #[error("atomic process commit action schema is invalid")]
+    InvalidActionSchema,
     /// One outcome is for a different pinned process-definition scope.
     #[error("atomic process commit outcome scope does not match")]
     OutcomeScopeMismatch,
@@ -309,6 +312,9 @@ impl AtomicProcessCommitV1 {
             return Err(CommitValidationError::ActionLimitExceeded);
         }
         for (index, action) in self.actions.iter().enumerate() {
+            if action.validate().is_err() {
+                return Err(CommitValidationError::InvalidActionSchema);
+            }
             if action.tenant_id != first_outcome.tenant_id
                 || action.process_id != first_outcome.process_id
                 || action.definition_id != first_outcome.definition_id
@@ -554,6 +560,20 @@ mod tests {
     }
 
     #[test]
+    fn atomic_commit_rejects_an_action_with_another_schema() {
+        let mut wrong_action = action();
+        wrong_action.schema = penelope_domain::SchemaV1::ProcessOutcome;
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_event"))],
+            vec![wrong_action],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::InvalidActionSchema);
+    }
+
+    #[test]
     fn atomic_commit_rejects_duplicate_outcome_identity() {
         let error = AtomicProcessCommitV1::new(
             0,
@@ -624,16 +644,17 @@ mod tests {
     #[test]
     fn reconciliation_rejects_committed_evidence_for_another_action() {
         let result = CanonicalReconciliationV1::Committed {
-            event: CanonicalEventDtoV1 {
-                tenant_id: id("tnt_game"),
-                source_event_id: id::<CanonicalEventId>("cev_source"),
-                action_id: id("act_other"),
-                commit_id: id::<CanonicalCommitId>("cmt_commit"),
-                commit_sequence: 0,
-                operation: id::<OperationId>("op_settle"),
-                resource_ids: vec![id::<ResourceId>("res_market")],
-                payload_digest: ContentDigest([3; 32]),
-            },
+            event: CanonicalEventDtoV1::new(
+                id("tnt_game"),
+                id::<CanonicalEventId>("cev_source"),
+                id("act_other"),
+                id::<CanonicalCommitId>("cmt_commit"),
+                0,
+                id::<OperationId>("op_settle"),
+                vec![id::<ResourceId>("res_market")],
+                ContentDigest([3; 32]),
+            )
+            .unwrap(),
         };
         assert_eq!(
             result.validate_for(&id("act_dispatch")),

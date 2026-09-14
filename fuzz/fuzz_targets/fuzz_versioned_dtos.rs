@@ -11,7 +11,9 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<ProcessDefinitionDtoV1>(data) {
         let _ = definition.validate();
     }
-    let _ = serde_json::from_slice::<ProcessInputDtoV1>(data);
+    if let Ok(input) = serde_json::from_slice::<ProcessInputDtoV1>(data) {
+        let _ = input.validate();
+    }
     if let Ok(envelope) = serde_json::from_slice::<ProcessInputEnvelopeV1>(data) {
         let _ = envelope.validate();
     }
@@ -19,6 +21,7 @@ fuzz_target!(|data: &[u8]| {
         let _ = outcome.validate();
     }
     if let Ok(action) = serde_json::from_slice::<ProcessActionDtoV1>(data) {
+        let _ = action.validate();
         let _ = action.effect_key();
     }
     let _ = serde_json::from_slice::<ProcessScopeV1>(data);
@@ -29,5 +32,7 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(event) = serde_json::from_slice::<CanonicalEventDtoV1>(data) {
         let _ = event.validate();
     }
-    let _ = serde_json::from_slice::<ManualReviewDtoV1>(data);
+    if let Ok(review) = serde_json::from_slice::<ManualReviewDtoV1>(data) {
+        let _ = review.validate();
+    }
 });
