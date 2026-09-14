@@ -182,6 +182,15 @@ Errors are typed `thiserror` enums. Error variants communicate a stable failure
 class; they do not expose handwritten `Display`/`Error` implementations or use
 raw text as a programmatic error discriminator.
 
+Security verification includes a fail-closed reachable-history secret scan:
+
+```bash
+./scripts/check-no-secrets.sh
+```
+
+It requires `gitleaks` locally; CI independently performs the same category of
+scan over the complete checkout history on every push and pull request.
+
 The StateChronicle command expectation and verified-event boundary values are
 also serde-compatible `V1` protocol types, with their parser included in the
 correlation fuzz target.

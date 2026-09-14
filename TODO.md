@@ -96,7 +96,9 @@ suite. It does not yet enforce golden fixtures for every DTO, so this item
 remains incomplete. The layer-boundary gate additionally rejects raw
 `String`/`&str` parameters in public port traits and handwritten
 `std::error::Error` implementations, preserving validated-newtype and
-`thiserror` error-taxonomy rules as the workspace evolves.
+`thiserror` error-taxonomy rules as the workspace evolves. The repository also
+has a fail-closed reachable-history secret-scan script, and CI runs a complete
+checkout-history scan on every push and pull request.
 
 ## P0 — deterministic core
 
