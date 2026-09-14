@@ -513,8 +513,9 @@ license. Locked CI builds exist, and previously unused `chrono`, `tokio`, and
 only the reviewed MIT, Apache-2.0, NCSA, Unicode-3.0, and Unlicense dependency
 licenses, rejects unknown registries/git sources, and CI runs both `cargo audit`
 and `cargo deny` across advisories, bans, licenses, and sources. Secret
-scanning, action pin governance, MSRV policy, and a response rehearsal remain
-incomplete.
+scanning is fail closed locally over reachable history and runs in CI over the
+complete checkout history on every push and pull request. Action pin governance,
+MSRV policy, and a response rehearsal remain incomplete.
 
 ## P2 — adapters, operations and user experience
 
