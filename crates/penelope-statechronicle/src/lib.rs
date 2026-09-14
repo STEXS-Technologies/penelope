@@ -52,6 +52,9 @@ impl CanonicalCommandExpectationV1 {
         command
             .validate()
             .map_err(|source| CorrelationError::InvalidExpectation { source })?;
+        if command.tenant_id != scope.tenant_id {
+            return Err(CorrelationError::CommandScopeMismatch);
+        }
         let expectation = Self {
             scope,
             action_id: command.action_id.clone(),
@@ -94,6 +97,9 @@ pub enum CorrelationError {
         #[source]
         source: DomainError,
     },
+    /// Command tenant does not match the process scope being authorized.
+    #[error("canonical command tenant does not match process scope")]
+    CommandScopeMismatch,
     /// Received committed event violated the canonical resource-scope invariant.
     #[error("canonical event is invalid")]
     InvalidEvent {
@@ -326,6 +332,27 @@ mod tests {
         )
         .unwrap();
         assert_eq!(derived, expected);
+    }
+
+    #[test]
+    fn expectation_rejects_a_command_from_another_tenant() {
+        let expected = expectation();
+        let command = CanonicalCommandDtoV1::new(
+            id("tnt_other"),
+            expected.action_id.clone(),
+            expected.operation.clone(),
+            expected.resource_ids.clone(),
+            ContentDigest([4; 32]),
+        )
+        .unwrap();
+        assert_eq!(
+            CanonicalCommandExpectationV1::from_command(
+                expected.scope,
+                &command,
+                expected.expected_event_payload_digest,
+            ),
+            Err(CorrelationError::CommandScopeMismatch)
+        );
     }
 
     #[test]
