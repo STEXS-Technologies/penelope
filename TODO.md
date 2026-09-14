@@ -642,6 +642,12 @@ durable deployment drill.
 - Evidence: versioned artifacts and regression thresholds; no unqualified
   “millions of operations” claim.
 
+Current partial evidence: the new `graph_saga` release benchmark measures a
+two-step pure graph start/result/result operation at approximately 985 ns/op
+(1.01M ops/s) on the local host. This excludes serialization, storage,
+network, contention, and adapter coordination; p95/p99 and regression
+thresholds remain to be established.
+
 Current partial evidence: `cargo bench -p penelope-executor --bench
 linear_saga --locked` measures a fixed 100,000-operation pure
 start/correlated-result/complete loop without external I/O. `cargo bench -p
