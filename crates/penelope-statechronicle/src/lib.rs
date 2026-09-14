@@ -208,7 +208,10 @@ pub fn bind_verified_event_to_commit(
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
-    use penelope_domain::ContentDigest;
+    use penelope_domain::{
+        CausationIdV1, ContentDigest, InputId, LogicalTimeV1, OutcomeActorV1, OutcomeId,
+        ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1,
+    };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
         T::try_from(value).ok().unwrap()
@@ -242,6 +245,30 @@ mod tests {
             ContentDigest([1; 32]),
         )
         .unwrap()
+    }
+
+    fn canonical_commit(payload_digest: ContentDigest) -> AtomicProcessCommitV1 {
+        let scope = expectation().scope;
+        let input = ProcessInputDtoV1::new(
+            scope.tenant_id.clone(),
+            scope.process_id.clone(),
+            id::<InputId>("inp_outbox"),
+            ProcessInputKindV1::CanonicalEvent,
+            payload_digest,
+        );
+        let outcome = ProcessOutcomeDtoV1::new(
+            scope,
+            0,
+            ProcessOutcomeFactV1::new(
+                id::<OutcomeId>("out_event"),
+                CausationIdV1::Input(input.input_id.clone()),
+                OutcomeActorV1::System,
+                LogicalTimeV1(7),
+                ProcessOutcomeKindV1::InputAccepted,
+                payload_digest,
+            ),
+        );
+        AtomicProcessCommitV1::new(0, Some(input), vec![outcome], Vec::new()).unwrap()
     }
 
     #[test]
@@ -292,6 +319,25 @@ mod tests {
         assert_eq!(
             verify_committed_event(&expectation(), received).unwrap_err(),
             CorrelationError::PayloadDigestMismatch
+        );
+    }
+
+    #[test]
+    fn verified_event_binding_pins_source_and_rejects_substituted_digest() {
+        let verified = verify_committed_event(&expectation(), event()).unwrap();
+        let bound = bind_verified_event_to_commit(
+            canonical_commit(verified.event.payload_digest),
+            &verified,
+        )
+        .unwrap();
+        assert_eq!(
+            bound.canonical_source_event_id,
+            Some(verified.event.source_event_id.clone())
+        );
+
+        assert_eq!(
+            bind_verified_event_to_commit(canonical_commit(ContentDigest([2; 32])), &verified),
+            Err(CanonicalCommitBindingError::InputPayloadDigestMismatch)
         );
     }
 }
