@@ -10,6 +10,9 @@ use penelope_domain::{
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+/// Maximum number of graph events accepted by one replay operation.
+pub const MAX_GRAPH_REPLAY_EVENTS: usize = 4_096;
+
 /// Replayable projection for a graph process.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GraphSagaProjectionV1 {
@@ -118,6 +121,9 @@ pub enum GraphEngineError {
     /// Event sequence was not zero-based and contiguous.
     #[error("graph replay event sequence is not contiguous")]
     SequenceMismatch,
+    /// Replay input exceeded the bounded process-log limit.
+    #[error("graph replay event limit was exceeded")]
+    ReplayLimitExceeded,
 }
 
 /// Result of one pure graph decision.
@@ -349,6 +355,9 @@ pub fn replay_graph(
     process_id: &ProcessId,
     events: &[GraphSagaEventV1],
 ) -> Result<GraphSagaProjectionV1, GraphEngineError> {
+    if events.len() > MAX_GRAPH_REPLAY_EVENTS {
+        return Err(GraphEngineError::ReplayLimitExceeded);
+    }
     let mut projection = None;
     let mut accepted_inputs = Vec::new();
     for event in events {
@@ -419,6 +428,9 @@ pub fn replay_graph_ordered(
     process_id: &ProcessId,
     events: &[GraphSagaEventEnvelopeV1],
 ) -> Result<GraphSagaProjectionV1, GraphEngineError> {
+    if events.len() > MAX_GRAPH_REPLAY_EVENTS {
+        return Err(GraphEngineError::ReplayLimitExceeded);
+    }
     for (expected, envelope) in events.iter().enumerate() {
         if envelope.sequence != expected as u64 {
             return Err(GraphEngineError::SequenceMismatch);
@@ -535,6 +547,26 @@ mod tests {
         assert_eq!(
             replay_graph_ordered(&definition, &id("tnt_graph"), &id("prc_graph"), &events),
             Err(GraphEngineError::SequenceMismatch)
+        );
+    }
+
+    #[test]
+    fn graph_replay_rejects_oversized_logs_before_allocating_tracking_state() {
+        let definition = definition();
+        let started = start_graph(
+            &definition,
+            id("tnt_graph"),
+            id("prc_graph"),
+            GraphSagaInputV1::Start {
+                input_id: id("inp_start"),
+                action_id: id("act_first"),
+            },
+        )
+        .unwrap();
+        let events = vec![started.event; MAX_GRAPH_REPLAY_EVENTS + 1];
+        assert_eq!(
+            replay_graph(&definition, &id("tnt_graph"), &id("prc_graph"), &events),
+            Err(GraphEngineError::ReplayLimitExceeded)
         );
     }
 
