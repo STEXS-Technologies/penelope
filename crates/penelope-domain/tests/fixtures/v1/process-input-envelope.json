@@ -1,0 +1,1 @@
+{"schema":"penelope.process.input.v1","input":{"schema":"penelope.process.input.v1","tenant_id":"tnt_market","process_id":"prc_trade","input_id":"inp_start","kind":"CanonicalEvent","payload_digest":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}}

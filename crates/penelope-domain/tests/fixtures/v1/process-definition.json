@@ -1,0 +1,1 @@
+{"schema":"penelope.process.definition.v1","definition_id":"def_trade","definition_version":"dfv_one","definition_digest":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"step_ids":["stp_lock","stp_settle"]}

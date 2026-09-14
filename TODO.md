@@ -92,8 +92,9 @@ negative tests cover a mismatched schema for each and the versioned-DTO fuzz
 target invokes each available validator. `scripts/run_bounded_fuzz.sh` verifies
 the required target registration/source set and that every current public
 versioned DTO appears in that DTO fuzz boundary before executing the bounded
-suite. It does not yet enforce golden fixtures for every DTO, so this item
-remains incomplete. The layer-boundary gate additionally rejects raw
+suite. Immutable checked-in v1 JSON fixtures now cover every current public
+wire DTO and input envelope; typed tests deserialize, validate, compare against
+the expected newtype DTO, and reserialize each fixture. The layer-boundary gate additionally rejects raw
 `String`/`&str` parameters in public port traits and handwritten
 `std::error::Error` implementations, preserving validated-newtype and
 `thiserror` error-taxonomy rules as the workspace evolves. The repository also

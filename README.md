@@ -172,11 +172,13 @@ transport / database / broker / scheduler implementations (consumer-owned)
 All DTOs are versioned by their `V<N>` Rust type and immutable associated
 `SCHEMA` identity, such as `ProcessOutcomeDtoV1::SCHEMA`. New wire changes
 require a new DTO/schema version; no existing version may be reinterpreted.
-Every identity is a validated prefixed newtype, every category is a typed enum,
-and port APIs accept typed values only—application code never dispatches by
-matching raw strings. Infrastructure implementations must live in a consumer
-composition root or a separately reviewed adapter repository; this workspace
-deliberately ships none.
+Checked-in v1 JSON fixtures independently lock every current public wire DTO
+and input envelope: CI must deserialize, validate, and reserialize each one
+without changing its JSON value. Every identity is a validated prefixed newtype,
+every category is a typed enum, and port APIs accept typed values only—application
+code never dispatches by matching raw strings. Infrastructure implementations
+must live in a consumer composition root or a separately reviewed adapter
+repository; this workspace deliberately ships none.
 
 Errors are typed `thiserror` enums. Error variants communicate a stable failure
 class; they do not expose handwritten `Display`/`Error` implementations or use
