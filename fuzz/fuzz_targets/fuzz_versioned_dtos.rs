@@ -6,7 +6,7 @@ use penelope_domain::{
     ProcessActionDtoV1, ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputEnvelopeV1,
     ProcessOutcomeDtoV1, ProcessScopeV1,
 };
-use penelope_ports::{OutboxClaimRequestV1, OutboxRecordV1};
+use penelope_ports::{OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1};
 
 fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<ProcessDefinitionDtoV1>(data) {
@@ -30,6 +30,9 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(claim) = serde_json::from_slice::<OutboxClaimRequestV1>(data) {
         let _ = claim.validate();
+    }
+    if let Ok(lease) = serde_json::from_slice::<OutboxLeaseV1>(data) {
+        let _ = lease.validate();
     }
     let _ = serde_json::from_slice::<ProcessScopeV1>(data);
     let _ = serde_json::from_slice::<LogicalTimeV1>(data);
