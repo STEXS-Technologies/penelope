@@ -24,5 +24,9 @@ harness = false
 name = "parallel_linear_saga"
 harness = false
 
+[[bench]]
+name = "replay_saga"
+harness = false
+
 [lints]
 workspace = true

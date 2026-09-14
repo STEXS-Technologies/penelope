@@ -625,7 +625,10 @@ with 100,000 operations per worker. Neither benchmark shares process state,
 uses a store, coordinates workers, or crosses a network boundary. They are
 therefore deliberately not E2E, durable-store, shared-state, or market-engine
 throughput claims. Each result must be reported with the exact command, source
-revision, worker count, and executing hardware.
+revision, worker count, and executing hardware. The additional
+`replay_saga` benchmark replays a fixed two-event recovery log one million
+times; it measured 405 ns/replay in the current release build. This is still
+pure recovery cost and does not establish durable or network throughput.
 
 ### P3.4 Financial/economic security review
 
