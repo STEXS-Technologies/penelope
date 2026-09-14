@@ -704,6 +704,7 @@ impl SagaDecisionV1 {
         scope: &ProcessScopeV1,
         review_id: ReviewId,
         opened_at_sequence: u64,
+        expires_at: Option<LogicalTimeV1>,
         evidence_digest: ContentDigest,
     ) -> Result<ManualReviewDtoV1, EngineError> {
         if self.projection.status != SagaStatusV1::Escalated {
@@ -719,6 +720,7 @@ impl SagaDecisionV1 {
             scope.clone(),
             review_id,
             opened_at_sequence,
+            expires_at,
             evidence_digest,
         ))
     }
@@ -2160,13 +2162,20 @@ mod tests {
             definition.definition_digest,
         );
         let request = escalated
-            .manual_review_request(&scope, id("rev_trade"), 2, ContentDigest([4; 32]))
+            .manual_review_request(
+                &scope,
+                id("rev_trade"),
+                2,
+                Some(LogicalTimeV1(9)),
+                ContentDigest([4; 32]),
+            )
             .unwrap();
         assert_eq!(request.review_id, id("rev_trade"));
         assert_eq!(request.opened_at_sequence, 2);
+        assert_eq!(request.expires_at, Some(LogicalTimeV1(9)));
         assert_eq!(request.scope(), scope);
         assert_eq!(
-            started.manual_review_request(&scope, id("rev_trade"), 0, ContentDigest([0; 32])),
+            started.manual_review_request(&scope, id("rev_trade"), 0, None, ContentDigest([0; 32])),
             Err(EngineError::ManualReviewNotRequired)
         );
     }

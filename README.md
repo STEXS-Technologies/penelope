@@ -78,6 +78,10 @@ Canonical reconciliation evidence is bound to the same complete pinned process
 and definition scope as the pending action. A committed result is also rejected
 unless its canonical event is valid and from that action's tenant.
 
+Manual-review cases carry an optional inclusive logical expiry. Claims and
+decisions are scope-pinned and must be recorded no later than that deadline;
+dual-control decisions can require a different operator from the claimant.
+
 ## StateChronicle integration contract
 
 The `penelope-statechronicle` workspace crate is the dedicated future adapter

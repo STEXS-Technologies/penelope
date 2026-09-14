@@ -149,6 +149,9 @@ pub enum ManualReviewValidationError {
     /// A dual-control decision was made by the same principal that claimed it.
     #[error("manual review dual control requires a distinct deciding principal")]
     DualControlViolation,
+    /// A claim or decision occurred after the review's immutable deadline.
+    #[error("manual review operation occurred after the review deadline")]
+    Expired,
 }
 
 /// Authoritative result of reconciling a canonical external effect.
@@ -255,6 +258,8 @@ pub struct ManualReviewClaimV1 {
     pub review_id: ReviewId,
     /// Validated identity of the claiming principal.
     pub claimed_by: PrincipalId,
+    /// Logical time at which the durable claim was recorded.
+    pub claimed_at: LogicalTimeV1,
 }
 
 /// Immutable, attributable manual-review resolution request.
@@ -268,6 +273,8 @@ pub struct ManualReviewDecisionV1 {
     pub claimed_by: PrincipalId,
     /// Validated identity of the authorized deciding principal.
     pub decided_by: PrincipalId,
+    /// Logical time at which the durable decision was recorded.
+    pub decided_at: LogicalTimeV1,
     /// Typed process-safe resolution selected by the operator.
     pub resolution: ManualReviewResolutionV1,
     /// Required separation between the claim and decision principals.
@@ -293,6 +300,12 @@ impl ManualReviewClaimV1 {
         if self.scope != review.scope() {
             return Err(ManualReviewValidationError::ScopeMismatch);
         }
+        if review
+            .expires_at
+            .is_some_and(|expires_at| self.claimed_at > expires_at)
+        {
+            return Err(ManualReviewValidationError::Expired);
+        }
         Ok(())
     }
 }
@@ -313,6 +326,12 @@ impl ManualReviewDecisionV1 {
         }
         if self.scope != review.scope() {
             return Err(ManualReviewValidationError::ScopeMismatch);
+        }
+        if review
+            .expires_at
+            .is_some_and(|expires_at| self.decided_at > expires_at)
+        {
+            return Err(ManualReviewValidationError::Expired);
         }
         if matches!(self.control, ManualReviewControlV1::DistinctDecider)
             && self.claimed_by == self.decided_by
@@ -1058,12 +1077,14 @@ mod tests {
             ),
             id("rev_trade"),
             4,
+            Some(LogicalTimeV1(10)),
             ContentDigest([6; 32]),
         );
         let claim = ManualReviewClaimV1 {
             scope: review.scope(),
             review_id: review.review_id.clone(),
             claimed_by: id("pri_claimant"),
+            claimed_at: LogicalTimeV1(5),
         };
         assert_eq!(claim.validate_for(&review), Ok(()));
 
@@ -1072,6 +1093,7 @@ mod tests {
             review_id: review.review_id.clone(),
             claimed_by: claim.claimed_by.clone(),
             decided_by: id("pri_decider"),
+            decided_at: LogicalTimeV1(10),
             resolution: ManualReviewResolutionV1::Compensate,
             control: ManualReviewControlV1::DistinctDecider,
             evidence_digest: ContentDigest([7; 32]),
@@ -1100,6 +1122,15 @@ mod tests {
         assert_eq!(
             wrong_scope.validate_for(&review),
             Err(ManualReviewValidationError::ScopeMismatch)
+        );
+
+        let expired = ManualReviewDecisionV1 {
+            decided_at: LogicalTimeV1(11),
+            ..same_operator
+        };
+        assert_eq!(
+            expired.validate_for(&review),
+            Err(ManualReviewValidationError::Expired)
         );
     }
 }

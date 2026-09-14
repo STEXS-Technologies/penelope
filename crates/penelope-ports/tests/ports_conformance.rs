@@ -237,6 +237,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         scope(),
         id::<ReviewId>("rev_case"),
         0,
+        None,
         ContentDigest([6; 32]),
     );
     let request = ProcessAuthorizationRequestV1 {
@@ -248,12 +249,14 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         scope: scope(),
         review_id: review.review_id.clone(),
         claimed_by: id::<PrincipalId>("pri_operator"),
+        claimed_at: LogicalTimeV1(1),
     };
     let decision = ManualReviewDecisionV1 {
         scope: scope(),
         review_id: review.review_id.clone(),
         claimed_by: id::<PrincipalId>("pri_operator"),
         decided_by: id::<PrincipalId>("pri_operator"),
+        decided_at: LogicalTimeV1(2),
         resolution: ManualReviewResolutionV1::Escalate,
         control: penelope_ports::ManualReviewControlV1::SingleOperator,
         evidence_digest: ContentDigest([7; 32]),

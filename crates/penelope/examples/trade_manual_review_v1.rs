@@ -100,6 +100,7 @@ fn main() -> Result<(), ExampleError> {
         &scope,
         identifier::<ReviewId>("rev_trade_settlement_unknown")?,
         9,
+        Some(penelope::LogicalTimeV1(10_000)),
         ContentDigest([77; 32]),
     )?;
     review.validate()?;

@@ -659,6 +659,8 @@ pub struct ManualReviewDtoV1 {
     pub review_id: ReviewId,
     /// Outcome sequence at which review was opened.
     pub opened_at_sequence: u64,
+    /// Optional inclusive logical deadline for an authorized review decision.
+    pub expires_at: Option<LogicalTimeV1>,
     /// Redacted evidence digest.
     pub evidence_digest: ContentDigest,
 }
@@ -976,6 +978,7 @@ impl ManualReviewDtoV1 {
         scope: ProcessScopeV1,
         review_id: ReviewId,
         opened_at_sequence: u64,
+        expires_at: Option<LogicalTimeV1>,
         evidence_digest: ContentDigest,
     ) -> Self {
         Self {
@@ -987,6 +990,7 @@ impl ManualReviewDtoV1 {
             definition_digest: scope.definition_digest,
             review_id,
             opened_at_sequence,
+            expires_at,
             evidence_digest,
         }
     }
@@ -1228,6 +1232,7 @@ mod tests {
             ),
             id("rev_trade"),
             0,
+            None,
             ContentDigest([7; 32]),
         );
         review.schema = SchemaV1::ProcessDefinition;
