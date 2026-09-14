@@ -306,7 +306,9 @@ Current partial evidence: the runnable `trade_v1`, `trade_compensation_v1`,
 `trade_retry_timer_v1`, and `trade_manual_review_v1` examples demonstrate
 pinned three-step success, known settlement failure with LIFO compensation,
 persist/schedule/fire/retry timer handling, and settlement-unknown resolution
-through authorized compensation. They use the public facade and are CI-run.
+through authorized compensation. `trade_v1` additionally builds the ordered
+immutable outcome records required for every happy-path event/decision and
+validates the plan before advancing. They use the public facade and are CI-run.
 They do not model proposal validation, two competing locks, acceptance/deadline,
 canonical evidence, durable commits, or full operator workflow, so this item
 remains incomplete.
