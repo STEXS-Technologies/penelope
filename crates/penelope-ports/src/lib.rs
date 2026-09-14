@@ -14,12 +14,15 @@ use penelope_domain::{
     ProcessScopeV1, ReviewId,
 };
 use serde::{Deserialize, Serialize};
+use std::num::NonZeroU16;
 use thiserror::Error;
 
 /// Maximum append-only outcomes accepted in one atomic process commit.
 pub const MAX_OUTCOMES_PER_ATOMIC_COMMIT: usize = 128;
 /// Maximum independently idempotent actions accepted in one atomic commit.
 pub const MAX_ACTIONS_PER_ATOMIC_COMMIT: usize = 128;
+/// Maximum immutable outcomes returned by one bounded replay-read request.
+pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
 
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -91,6 +94,29 @@ pub enum CommitValidationError {
     InputScopeMismatch,
     /// Advancing the expected outcome sequence would overflow.
     #[error("atomic process commit outcome sequence overflowed")]
+    SequenceOverflow,
+}
+
+/// Typed validation failure for a bounded immutable outcome replay page.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum OutcomePageValidationError {
+    /// A requested page exceeds the contract's bounded outcome limit.
+    #[error("outcome replay page exceeds the configured limit")]
+    LimitExceeded,
+    /// One returned outcome declared a schema other than the immutable outcome schema.
+    #[error("outcome replay page contains an invalid outcome schema")]
+    InvalidOutcomeSchema,
+    /// One returned outcome does not match the page's pinned process scope.
+    #[error("outcome replay page contains an outcome from another process scope")]
+    OutcomeScopeMismatch,
+    /// Returned outcomes do not begin at the requested sequence and remain contiguous.
+    #[error("outcome replay page sequence is not contiguous")]
+    NonContiguousSequence,
+    /// The supplied continuation does not immediately follow the page's final outcome.
+    #[error("outcome replay page continuation is inconsistent")]
+    InvalidContinuation,
+    /// Advancing a page sequence would overflow.
+    #[error("outcome replay page sequence overflowed")]
     SequenceOverflow,
 }
 
@@ -244,6 +270,126 @@ pub struct AtomicProcessCommitV1 {
     pub actions: Vec<ProcessActionDtoV1>,
 }
 
+/// A bounded request to read immutable outcomes for deterministic replay.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutcomeReplayRequestV1 {
+    /// Immutable process and definition scope being replayed.
+    pub scope: ProcessScopeV1,
+    /// First per-process outcome sequence requested.
+    pub from_sequence: u64,
+    /// Maximum records accepted in this page.
+    pub limit: NonZeroU16,
+}
+
+impl OutcomeReplayRequestV1 {
+    /// Creates a bounded immutable outcome replay request.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when `limit` exceeds the public page bound.
+    pub fn new(
+        scope: ProcessScopeV1,
+        from_sequence: u64,
+        limit: NonZeroU16,
+    ) -> Result<Self, OutcomePageValidationError> {
+        let request = Self {
+            scope,
+            from_sequence,
+            limit,
+        };
+        request.validate()?;
+        Ok(request)
+    }
+
+    /// Validates the bounded replay page size.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the requested page is too large.
+    pub const fn validate(&self) -> Result<(), OutcomePageValidationError> {
+        if self.limit.get() > MAX_OUTCOMES_PER_READ_PAGE {
+            Err(OutcomePageValidationError::LimitExceeded)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+/// One bounded immutable outcome page returned for deterministic replay.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutcomeReplayPageV1 {
+    /// Immutable process and definition scope shared by every returned outcome.
+    pub scope: ProcessScopeV1,
+    /// First per-process outcome sequence returned in this page.
+    pub from_sequence: u64,
+    /// Ordered immutable outcomes, bounded by [`MAX_OUTCOMES_PER_READ_PAGE`].
+    pub outcomes: Vec<ProcessOutcomeDtoV1>,
+    /// Immediate continuation when more immutable outcomes exist.
+    pub next_sequence: Option<u64>,
+}
+
+impl OutcomeReplayPageV1 {
+    /// Creates and validates a bounded replay page.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for invalid schemas, scopes, ordering, bounds, or
+    /// continuation semantics.
+    pub fn new(
+        scope: ProcessScopeV1,
+        from_sequence: u64,
+        outcomes: Vec<ProcessOutcomeDtoV1>,
+        next_sequence: Option<u64>,
+    ) -> Result<Self, OutcomePageValidationError> {
+        let page = Self {
+            scope,
+            from_sequence,
+            outcomes,
+            next_sequence,
+        };
+        page.validate()?;
+        Ok(page)
+    }
+
+    /// Validates exact scope, ordering, bounded size, and continuation.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when this page cannot safely drive deterministic replay.
+    pub fn validate(&self) -> Result<(), OutcomePageValidationError> {
+        if self.outcomes.len() > usize::from(MAX_OUTCOMES_PER_READ_PAGE) {
+            return Err(OutcomePageValidationError::LimitExceeded);
+        }
+        let mut expected_sequence = self.from_sequence;
+        for outcome in &self.outcomes {
+            if outcome.validate().is_err() {
+                return Err(OutcomePageValidationError::InvalidOutcomeSchema);
+            }
+            if outcome.tenant_id != self.scope.tenant_id
+                || outcome.process_id != self.scope.process_id
+                || outcome.definition_id != self.scope.definition_id
+                || outcome.definition_version != self.scope.definition_version
+                || outcome.definition_digest != self.scope.definition_digest
+            {
+                return Err(OutcomePageValidationError::OutcomeScopeMismatch);
+            }
+            if outcome.sequence != expected_sequence {
+                return Err(OutcomePageValidationError::NonContiguousSequence);
+            }
+            expected_sequence = expected_sequence
+                .checked_add(1)
+                .ok_or(OutcomePageValidationError::SequenceOverflow)?;
+        }
+        if self
+            .next_sequence
+            .is_some_and(|next| next != expected_sequence)
+        {
+            return Err(OutcomePageValidationError::InvalidContinuation);
+        }
+        Ok(())
+    }
+}
+
 impl AtomicProcessCommitV1 {
     /// Creates and validates a single atomic process commit request.
     ///
@@ -375,6 +521,12 @@ pub trait ProcessStore: Send + Sync {
         expected_sequence: u64,
         outcomes: &[ProcessOutcomeDtoV1],
     ) -> Result<(), PortError>;
+
+    /// Reads one bounded immutable outcome page for deterministic replay.
+    async fn read_outcomes(
+        &self,
+        request: &OutcomeReplayRequestV1,
+    ) -> Result<OutcomeReplayPageV1, PortError>;
 }
 
 /// Durable inbox that deduplicates immutable source inputs.
@@ -639,6 +791,55 @@ mod tests {
         let error = AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], actions)
             .unwrap_err();
         assert_eq!(error, CommitValidationError::ActionLimitExceeded);
+    }
+
+    #[test]
+    fn outcome_replay_pages_are_bounded_scope_pinned_and_contiguous() {
+        let page = OutcomeReplayPageV1::new(
+            ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            0,
+            vec![outcome(0, id("out_first")), outcome(1, id("out_second"))],
+            Some(2),
+        );
+        assert!(page.is_ok());
+
+        let bad_continuation = OutcomeReplayPageV1::new(
+            ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            0,
+            vec![outcome(0, id("out_first"))],
+            Some(2),
+        )
+        .unwrap_err();
+        assert_eq!(
+            bad_continuation,
+            OutcomePageValidationError::InvalidContinuation
+        );
+
+        let oversized_limit = OutcomeReplayRequestV1::new(
+            ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            0,
+            std::num::NonZeroU16::new(MAX_OUTCOMES_PER_READ_PAGE.saturating_add(1)).unwrap(),
+        )
+        .unwrap_err();
+        assert_eq!(oversized_limit, OutcomePageValidationError::LimitExceeded);
     }
 
     #[test]

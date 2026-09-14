@@ -334,7 +334,10 @@ Their public DTO parser boundary is fuzzed. The `ports_conformance` test owns a
 test-only unavailable adapter that implements every current port, verifies
 object safety and `Send + Sync`, calls every method, and proves unavailable
 operations fail closed while authorization denies by default. Definition/
-process-store, inbox, outbox, executor and review interfaces remain smaller
+The process store now also defines a bounded `OutcomeReplayRequestV1`/page read
+contract: every returned outcome must have the requested scope, schema, and
+contiguous sequence, and continuation must be exact; request/page validators
+are fuzzed. Definition, inbox, outbox, executor and review interfaces remain smaller
 than the target contract; no authorization policy or cancellation-semantics
 evidence exists yet, so this item remains incomplete.
 

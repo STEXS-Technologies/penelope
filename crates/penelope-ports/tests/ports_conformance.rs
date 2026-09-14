@@ -39,6 +39,13 @@ impl ProcessStore for UnavailablePorts {
     async fn append_outcomes(&self, _: u64, _: &[ProcessOutcomeDtoV1]) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
+
+    async fn read_outcomes(
+        &self,
+        _: &penelope_ports::OutcomeReplayRequestV1,
+    ) -> Result<penelope_ports::OutcomeReplayPageV1, PortError> {
+        Err(PortError::Unavailable)
+    }
 }
 
 #[async_trait]
@@ -224,6 +231,8 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         vec![action.clone()],
     )
     .unwrap();
+    let replay_request =
+        penelope_ports::OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN).unwrap();
     let review = ManualReviewDtoV1::new(
         id::<TenantId>("tnt_game"),
         id::<ProcessId>("prc_trade"),
@@ -257,6 +266,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     ));
     assert!(matches!(
         ready(process_store.append_outcomes(0, &[outcome])),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(process_store.read_outcomes(&replay_request)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
