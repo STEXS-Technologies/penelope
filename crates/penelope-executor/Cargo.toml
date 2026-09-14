@@ -32,5 +32,9 @@ harness = false
 name = "graph_saga"
 harness = false
 
+[[bench]]
+name = "parallel_graph_saga"
+harness = false
+
 [lints]
 workspace = true

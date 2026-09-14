@@ -646,7 +646,9 @@ Current partial evidence: the new `graph_saga` release benchmark measures a
 two-step pure graph start/result/result operation at approximately 985 ns/op
 (1.01M ops/s) on the local host. This excludes serialization, storage,
 network, contention, and adapter coordination; p95/p99 and regression
-thresholds remain to be established.
+thresholds remain to be established. The parallel companion benchmark measured
+3,200,000 isolated operations across 32 workers at approximately 12.25M ops/s
+on the same host; this is not shared-process or durable-store throughput.
 
 Current partial evidence: `cargo bench -p penelope-executor --bench
 linear_saga --locked` measures a fixed 100,000-operation pure
