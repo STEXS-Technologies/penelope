@@ -339,6 +339,8 @@ pub struct RetryTimerScheduleRequestV1 {
     pub observed_at: LogicalTimeV1,
     /// Stable process-specific entropy for deterministic retry jitter.
     pub jitter_seed: RetryJitterSeedV1,
+    /// Optional inclusive logical deadline beyond which a retry is unsafe.
+    pub retry_deadline: Option<LogicalTimeV1>,
 }
 
 impl RetryTimerScheduleRequestV1 {
@@ -355,7 +357,20 @@ impl RetryTimerScheduleRequestV1 {
             next_action_id,
             observed_at,
             jitter_seed,
+            retry_deadline: None,
         }
+    }
+
+    /// Requires the calculated retry due time to be no later than `deadline`.
+    #[must_use]
+    pub const fn with_deadline(mut self, deadline: LogicalTimeV1) -> Self {
+        self.retry_deadline = Some(deadline);
+        self
+    }
+
+    const fn with_optional_deadline(mut self, deadline: Option<LogicalTimeV1>) -> Self {
+        self.retry_deadline = deadline;
+        self
     }
 }
 
@@ -390,6 +405,9 @@ pub enum LinearSagaInputV1 {
         observed_at: LogicalTimeV1,
         /// Stable process-specific entropy for deterministic retry jitter.
         jitter_seed: RetryJitterSeedV1,
+        /// Optional inclusive deadline beyond which this retry cannot run.
+        #[serde(default)]
+        retry_deadline: Option<LogicalTimeV1>,
     },
     /// Deliver one due retry timer firing and plan its next effect action.
     RetryTimerFired {
@@ -451,6 +469,9 @@ pub enum LinearSagaEventV1 {
         observed_at: LogicalTimeV1,
         /// Stable process-specific entropy used for deterministic retry jitter.
         jitter_seed: RetryJitterSeedV1,
+        /// Optional inclusive deadline beyond which this retry cannot run.
+        #[serde(default)]
+        retry_deadline: Option<LogicalTimeV1>,
     },
     /// A due retry timer fired and unlocked its retry effect action.
     RetryTimerFired {
@@ -544,12 +565,14 @@ impl LinearSagaInputV1 {
                 next_action_id,
                 observed_at,
                 jitter_seed,
+                retry_deadline,
             } => LinearSagaEventV1::RetryTimerScheduled {
                 input_id: input_id.clone(),
                 observation: observation.clone(),
                 next_action_id: next_action_id.clone(),
                 observed_at: *observed_at,
                 jitter_seed: *jitter_seed,
+                retry_deadline: *retry_deadline,
             },
             Self::RetryTimerFired {
                 input_id,
@@ -991,6 +1014,7 @@ pub fn decide(
             next_action_id,
             observed_at,
             jitter_seed,
+            retry_deadline,
             ..
         } => schedule_retry_timer(
             definition,
@@ -1002,7 +1026,8 @@ pub fn decide(
                 next_action_id.clone(),
                 *observed_at,
                 *jitter_seed,
-            ),
+            )
+            .with_optional_deadline(*retry_deadline),
         ),
         LinearSagaInputV1::RetryTimerFired {
             timer_action_id,
@@ -1182,6 +1207,18 @@ pub fn schedule_retry_timer(
             request.jitter_seed,
         )?
         .ok_or(EngineError::RetryTimerNotConfigured)?;
+    if request
+        .retry_deadline
+        .is_some_and(|deadline| due_at > deadline)
+    {
+        return begin_compensation(
+            definition,
+            projection,
+            tenant_id,
+            process_id,
+            request.next_action_id.clone(),
+        );
+    }
     let action_id = fresh_action_id(projection, request.next_action_id.clone())?;
     let timer = LinearSagaProjectionV1 {
         current_attempt,
@@ -1677,6 +1714,7 @@ pub fn replay(
                 next_action_id,
                 observed_at,
                 jitter_seed,
+                retry_deadline,
                 ..
             } => {
                 let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
@@ -1690,7 +1728,8 @@ pub fn replay(
                         next_action_id.clone(),
                         *observed_at,
                         *jitter_seed,
-                    ),
+                    )
+                    .with_optional_deadline(*retry_deadline),
                 )?);
             }
             LinearSagaEventV1::RetryTimerFired {
@@ -2237,6 +2276,7 @@ mod tests {
             next_action_id: Some(id("act_retry_timer")),
             observed_at: LogicalTimeV1(100),
             jitter_seed: seed,
+            retry_deadline: None,
         };
         assert!(matches!(
             input.to_event(&definition()),
@@ -2303,6 +2343,75 @@ mod tests {
         let replayed = policy.retry_due_at(LogicalTimeV1(100), 0, seed).unwrap();
         assert_eq!(first, replayed);
         assert!(matches!(first, Some(LogicalTimeV1(due_at)) if (110..117).contains(&due_at)));
+    }
+
+    #[test]
+    fn retry_deadline_allows_its_boundary_and_escalates_after_it() {
+        let backoff =
+            RetryBackoffV1::new(NonZeroU64::new(10).unwrap(), NonZeroU64::new(10).unwrap())
+                .unwrap();
+        let definition = LinearSagaDefinitionV1::new(
+            id("def_deadline"),
+            id("dfv_one"),
+            ContentDigest([31; 32]),
+            vec![StepPlanV1::canonical_command(
+                id("stp_settle"),
+                ContentDigest([1; 32]),
+                RetryPolicyV1::new(NonZeroU32::new(2).unwrap()).with_backoff(backoff),
+            )],
+        );
+        let tenant_id = id::<TenantId>("tnt_market");
+        let process_id = id::<ProcessId>("prc_deadline");
+        let started = start(
+            &definition,
+            tenant_id.clone(),
+            process_id.clone(),
+            id("act_settle"),
+        )
+        .unwrap();
+        let observation = ActionResultObservationV1::retryable_failure(id("act_settle"));
+        let request = RetryTimerScheduleRequestV1::new(
+            observation.clone(),
+            Some(id("act_timer")),
+            LogicalTimeV1(100),
+            RetryJitterSeedV1::from_digest(ContentDigest([0; 32])),
+        );
+        let allowed = schedule_retry_timer(
+            &definition,
+            &started.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &request.clone().with_deadline(LogicalTimeV1(110)),
+        )
+        .unwrap();
+        assert_eq!(allowed.projection.retry_due_at, Some(LogicalTimeV1(110)));
+
+        let expired = schedule_retry_timer(
+            &definition,
+            &started.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &request.with_deadline(LogicalTimeV1(109)),
+        )
+        .unwrap();
+        assert_eq!(expired.projection.status, SagaStatusV1::Escalated);
+        assert!(expired.next_action.is_none());
+
+        let events = [
+            LinearSagaEventV1::started(&definition, id("inp_start"), id("act_settle")),
+            LinearSagaEventV1::RetryTimerScheduled {
+                input_id: id("inp_failure"),
+                observation,
+                next_action_id: Some(id("act_timer")),
+                observed_at: LogicalTimeV1(100),
+                jitter_seed: RetryJitterSeedV1::from_digest(ContentDigest([0; 32])),
+                retry_deadline: Some(LogicalTimeV1(109)),
+            },
+        ];
+        assert_eq!(
+            replay(&definition, &tenant_id, &process_id, &events).unwrap(),
+            expired
+        );
     }
 
     #[test]
@@ -2433,6 +2542,7 @@ mod tests {
                 next_action_id: Some(id("act_retry_timer")),
                 observed_at: LogicalTimeV1(100),
                 jitter_seed,
+                retry_deadline: None,
             },
             LinearSagaEventV1::RetryTimerFired {
                 input_id: id("inp_retry_timer"),

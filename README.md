@@ -185,7 +185,9 @@ belongs to the remaining P0 implementation work.
 Retry backoff can include bounded deterministic jitter. Its typed seed is
 explicit input to the timer-scheduling event, and is retained in the replay
 log: the engine never samples random state or wall-clock time while calculating
-the due time.
+the due time. A schedule may also carry an inclusive logical deadline; a retry
+whose calculated due time would pass it is not scheduled and instead follows
+the normal safe compensation-or-escalation path.
 
 Every planned action ID is retained in the replayable process projection. A
 transition that tries to reuse any previously issued ID is rejected as a typed

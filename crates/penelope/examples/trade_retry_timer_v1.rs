@@ -72,7 +72,8 @@ fn main() -> Result<(), ExampleError> {
             Some(identifier("act_settle_timer")?),
             LogicalTimeV1(10_000),
             RetryJitterSeedV1::from_digest(ContentDigest([7; 32])),
-        ),
+        )
+        .with_deadline(LogicalTimeV1(10_100)),
     )?;
     let timer = waiting
         .retry_timer_schedule()
