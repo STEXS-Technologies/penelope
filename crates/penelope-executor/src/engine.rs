@@ -267,11 +267,15 @@ pub struct ActionResultObservationV1 {
 pub enum LinearSagaInputV1 {
     /// Start a previously absent process with its first action identity.
     Start {
+        /// Immutable inbox identity for the accepted start request.
+        input_id: InputId,
         /// Fresh independently idempotent first action identity.
         action_id: ActionId,
     },
     /// Apply a durably observed action result to an existing projection.
     ActionResult {
+        /// Immutable inbox identity for the accepted external result.
+        input_id: InputId,
         /// Correlated immutable effect result.
         observation: ActionResultObservationV1,
         /// Already-persisted fresh identity for a following action or retry.
@@ -279,6 +283,8 @@ pub enum LinearSagaInputV1 {
     },
     /// Record a retryable effect failure and durably plan its timer action.
     RetryTimerScheduled {
+        /// Immutable inbox identity for the accepted retryable result.
+        input_id: InputId,
         /// Correlated retryable result for the active effect action.
         observation: ActionResultObservationV1,
         /// Fresh timer action identity, or a compensation action if retries are exhausted.
@@ -288,6 +294,8 @@ pub enum LinearSagaInputV1 {
     },
     /// Deliver one due retry timer firing and plan its next effect action.
     RetryTimerFired {
+        /// Immutable inbox identity for the accepted timer delivery.
+        input_id: InputId,
         /// Active timer action identity.
         timer_action_id: ActionId,
         /// Logical time at which the timer was delivered.
@@ -297,6 +305,8 @@ pub enum LinearSagaInputV1 {
     },
     /// Apply an already-authorized immutable manual-review resolution.
     ManualResolution {
+        /// Immutable inbox identity for the accepted manual resolution.
+        input_id: InputId,
         /// Typed resolution recorded by the manual-review port.
         resolution: ManualReviewResolutionV1,
         /// Fresh action identity when the resolution resumes work.
@@ -753,7 +763,7 @@ pub fn decide(
     input: &LinearSagaInputV1,
 ) -> Result<SagaDecisionV1, EngineError> {
     match input {
-        LinearSagaInputV1::Start { action_id } => {
+        LinearSagaInputV1::Start { action_id, .. } => {
             if projection.is_some() {
                 return Err(EngineError::StartWithProjection);
             }
@@ -762,6 +772,7 @@ pub fn decide(
         LinearSagaInputV1::ActionResult {
             observation,
             next_action_id,
+            ..
         } => apply_action_result(
             definition,
             projection.ok_or(EngineError::MissingProjection)?,
@@ -774,6 +785,7 @@ pub fn decide(
             observation,
             next_action_id,
             observed_at,
+            ..
         } => schedule_retry_timer(
             definition,
             projection.ok_or(EngineError::MissingProjection)?,
@@ -787,6 +799,7 @@ pub fn decide(
             timer_action_id,
             fired_at,
             next_action_id,
+            ..
         } => fire_retry_timer(
             definition,
             projection.ok_or(EngineError::MissingProjection)?,
@@ -799,6 +812,7 @@ pub fn decide(
         LinearSagaInputV1::ManualResolution {
             resolution,
             next_action_id,
+            ..
         } => apply_manual_resolution(
             definition,
             projection.ok_or(EngineError::MissingProjection)?,
@@ -1905,6 +1919,7 @@ mod tests {
             id("tnt_game"),
             id("prc_trade"),
             &LinearSagaInputV1::Start {
+                input_id: id("inp_start"),
                 action_id: id("act_lock"),
             },
         )
@@ -1915,6 +1930,7 @@ mod tests {
             id("tnt_game"),
             id("prc_trade"),
             &LinearSagaInputV1::ActionResult {
+                input_id: id("inp_lock_result"),
                 observation: ActionResultObservationV1::succeeded(
                     started.next_action.as_ref().unwrap().action_id.clone(),
                 ),
@@ -1936,6 +1952,7 @@ mod tests {
             id("tnt_game"),
             id("prc_trade"),
             &LinearSagaInputV1::ActionResult {
+                input_id: id("inp_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
                 next_action_id: Some(id("act_settle")),
             },
