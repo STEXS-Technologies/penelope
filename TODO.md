@@ -273,7 +273,9 @@ start LIFO compensation, cancel, or retain escalation; direct resolution of a
 non-escalated process fails closed. An escalated pure decision can also build a
 scope-pinned `ManualReviewDtoV1` for the `ManualReviewQueue` port, while a
 non-escalated decision rejects the request. There is still no durable review workflow,
-so this item remains incomplete.
+so this item remains incomplete. The `trade_manual_review_v1` example drills
+the handoff by creating and schema-validating that request before applying the
+authorized resolution.
 
 ### P0.8 Errors, authorization and redaction
 

@@ -6,8 +6,8 @@
 use penelope::{
     ActionId, ActionResultObservationV1, CompensationPlanV1, ContentDigest, DefinitionId,
     DefinitionVersion, DomainError, EngineError, LinearSagaDefinitionV1, ManualReviewResolutionV1,
-    ProcessId, RetryPolicyV1, SagaStatusV1, StepId, StepPlanV1, TenantId, apply_action_result,
-    apply_manual_resolution, start,
+    ProcessId, ProcessScopeV1, RetryPolicyV1, ReviewId, SagaStatusV1, StepId, StepPlanV1, TenantId,
+    apply_action_result, apply_manual_resolution, start,
 };
 use thiserror::Error;
 
@@ -87,6 +87,22 @@ fn main() -> Result<(), ExampleError> {
     if escalated.projection.status != SagaStatusV1::Escalated {
         return Err(ExampleError::UnexpectedState);
     }
+    let scope = ProcessScopeV1::new(
+        tenant_id.clone(),
+        process_id.clone(),
+        definition.definition_id.clone(),
+        definition.definition_version.clone(),
+        definition.definition_digest,
+    );
+    // In a durable composition root this is written atomically with the
+    // `ReviewOpened` outcome, before the review queue is notified.
+    let review = escalated.manual_review_request(
+        &scope,
+        identifier::<ReviewId>("rev_trade_settlement_unknown")?,
+        9,
+        ContentDigest([77; 32]),
+    )?;
+    review.validate()?;
 
     // The review port has verified the authority/evidence for this decision.
     let compensation = apply_manual_resolution(
