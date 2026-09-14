@@ -102,6 +102,9 @@ pub enum CommitValidationError {
     /// A canonical source-event key may only deduplicate a canonical-event input.
     #[error("canonical source-event key requires a canonical-event input")]
     CanonicalSourceWithWrongInputKind,
+    /// An atomically accepted input must causally explain at least one appended outcome.
+    #[error("atomic process commit input is not the cause of any appended outcome")]
+    InputNotCausallyRecorded,
     /// Advancing the expected outcome sequence would overflow.
     #[error("atomic process commit outcome sequence overflowed")]
     SequenceOverflow,
@@ -824,6 +827,13 @@ impl AtomicProcessCommitV1 {
                 return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
+        if let Some(input) = &self.input {
+            if !self.outcomes.iter().any(|outcome| {
+                matches!(&outcome.causation_id, penelope_domain::CausationIdV1::Input(input_id) if input_id == &input.input_id)
+            }) {
+                return Err(CommitValidationError::InputNotCausallyRecorded);
+            }
+        }
         Ok(())
     }
 }
@@ -1117,14 +1127,12 @@ mod tests {
     #[test]
     fn canonical_source_event_key_requires_a_canonical_inbox_input() {
         let source_event_id: CanonicalEventId = id("cev_lock");
-        let valid = AtomicProcessCommitV1::new(
-            0,
-            Some(input()),
-            vec![outcome(0, id("out_event"))],
-            vec![action()],
-        )
-        .unwrap()
-        .with_canonical_source_event(source_event_id.clone());
+        let mut accepted_outcome = outcome(0, id("out_event"));
+        accepted_outcome.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+        let valid =
+            AtomicProcessCommitV1::new(0, Some(input()), vec![accepted_outcome], vec![action()])
+                .unwrap()
+                .with_canonical_source_event(source_event_id.clone());
         assert_eq!(valid.validate(), Ok(()));
 
         let mut missing_input =
@@ -1139,7 +1147,11 @@ mod tests {
         let mut wrong_kind = AtomicProcessCommitV1::new(
             0,
             Some(input()),
-            vec![outcome(0, id("out_event"))],
+            vec![{
+                let mut accepted = outcome(0, id("out_event"));
+                accepted.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+                accepted
+            }],
             vec![action()],
         )
         .unwrap();
@@ -1149,6 +1161,18 @@ mod tests {
             wrong_kind.validate(),
             Err(CommitValidationError::CanonicalSourceWithWrongInputKind)
         );
+    }
+
+    #[test]
+    fn atomic_commit_requires_accepted_input_causation() {
+        let error = AtomicProcessCommitV1::new(
+            0,
+            Some(input()),
+            vec![outcome(0, id("out_event"))],
+            vec![action()],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::InputNotCausallyRecorded);
     }
 
     #[test]

@@ -302,6 +302,11 @@ fn injected_failure_at_every_atomic_boundary_has_no_visible_partial_state() {
             .as_mut()
             .expect("commit has input")
             .input_id = id("inp_redelivery");
+        same_source_new_inbox_id
+            .outcomes
+            .first_mut()
+            .expect("commit has an outcome")
+            .causation_id = penelope_domain::CausationIdV1::Input(id("inp_redelivery"));
         let duplicate_source = block_on(store.commit(&same_source_new_inbox_id))
             .expect("canonical source redelivery is idempotent");
         assert!(duplicate_source.duplicate_input);
