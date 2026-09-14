@@ -57,3 +57,30 @@ if rg -n 'impl\s+(?:std::error::)?Error\s+for' crates --glob '*.rs' >/dev/null; 
     printf '%s\n' 'layer violation: handwritten Error implementation found; derive thiserror::Error instead' >&2
     exit 1
 fi
+
+# Error taxonomies must remain typed `thiserror` enums. Looking at the small
+# attribute window keeps this source-level gate independent of fragile error
+# text, while still catching a newly added hand-rolled error enum in any crate,
+# example, or benchmark.
+missing_thiserror_derive="$(
+    rg --files crates --glob '*.rs' | while IFS= read -r source; do
+        awk '
+            /^#\[derive\(/ {
+                derive = $0
+                next
+            }
+            /^(pub )?enum [[:alnum:]_]*Error[[:space:]]*\{/ {
+                if (derive !~ /derive\([^)]*Error/) {
+                    printf "%s:%d: error enum does not derive thiserror::Error\\n", FILENAME, NR
+                }
+                derive = ""
+            }
+            /^[[:space:]]*$/ { next }
+            { derive = "" }
+        ' "$source"
+    done
+)"
+if [[ -n "$missing_thiserror_derive" ]]; then
+    printf '%s\n' "$missing_thiserror_derive" >&2
+    exit 1
+fi
