@@ -203,7 +203,9 @@ unknown outcomes escalate immediately. Deadline/backoff/timer policy still
 belongs to the remaining P0 implementation work.
 
 `ProcessGraphDefinitionV1` has a dedicated deterministic graph executor
-(`start_graph`, `apply_graph_result`, and `replay_graph`). It must not be passed
+(`start_graph`, `apply_graph_result`, `replay_graph`, and
+`replay_graph_ordered` with `GraphSagaEventEnvelopeV1`). Ordered replay rejects
+sequence gaps, duplicates, and reordering before applying any event. It must not be passed
 to the linear executor or implicitly interpreted as vector order. Unknown
 external outcomes always escalate, and every selected action identity is
 checked against the process's issued-action set and visit bound.
