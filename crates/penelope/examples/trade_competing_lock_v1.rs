@@ -8,9 +8,11 @@
 //! canonical inventory implementation.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, ContentDigest, DefinitionId, DefinitionVersion,
-    DomainError, LinearSagaDefinitionV1, ProcessId, RetryPolicyV1, SagaDecisionV1, SagaStatusV1,
-    StepId, StepPlanV1, TenantId, apply_action_result, start,
+    ActionId, ActionResultObservationV1, CanonicalCommandExpectationV1, CanonicalCommitId,
+    CanonicalEventDtoV1, CanonicalEventId, ContentDigest, CorrelationError, DefinitionId,
+    DefinitionVersion, DomainError, LinearSagaDefinitionV1, OperationId, ProcessId, ProcessScopeV1,
+    ResourceId, RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
+    apply_action_result, start, verify_committed_event,
 };
 use thiserror::Error;
 
@@ -20,6 +22,8 @@ enum ExampleError {
     Domain(#[from] DomainError),
     #[error(transparent)]
     Engine(#[from] penelope::EngineError),
+    #[error(transparent)]
+    Correlation(#[from] CorrelationError),
     #[error("trade winner did not advance to settlement")]
     WinnerDidNotAdvance,
     #[error("competing trade did not escalate after its rejected lock")]
@@ -65,28 +69,59 @@ fn definition() -> Result<LinearSagaDefinitionV1, ExampleError> {
 fn main() -> Result<(), ExampleError> {
     let definition = definition()?;
     let tenant_id = identifier::<TenantId>("tnt_market")?;
+    let winning_process_id = identifier::<ProcessId>("prc_trade_winner")?;
+    let losing_process_id = identifier::<ProcessId>("prc_trade_loser")?;
 
     let winning_lock = start(
         &definition,
         tenant_id.clone(),
-        identifier::<ProcessId>("prc_trade_winner")?,
+        winning_process_id.clone(),
         identifier("act_lock_winner")?,
     )?;
     let losing_lock = start(
         &definition,
         tenant_id.clone(),
-        identifier::<ProcessId>("prc_trade_loser")?,
+        losing_process_id.clone(),
         identifier("act_lock_loser")?,
     )?;
 
-    // The outer adapter passes this only after verified StateChronicle evidence
-    // proves the winner's typed lock command committed.
+    let winner_lock_action_id = active_action_id(&winning_lock)?;
+    let operation = identifier::<OperationId>("op_lock_asset")?;
+    let resource_id = identifier::<ResourceId>("res_shared_asset")?;
+    let winner_scope = ProcessScopeV1::new(
+        tenant_id.clone(),
+        winning_process_id.clone(),
+        definition.definition_id.clone(),
+        definition.definition_version.clone(),
+        definition.definition_digest,
+    );
+    let expectation = CanonicalCommandExpectationV1 {
+        scope: winner_scope,
+        action_id: winner_lock_action_id.clone(),
+        operation: operation.clone(),
+        resource_ids: vec![resource_id.clone()],
+        expected_event_payload_digest: ContentDigest([3; 32]),
+    };
+    let committed_event = CanonicalEventDtoV1::new(
+        tenant_id.clone(),
+        identifier::<CanonicalEventId>("cev_lock_winner")?,
+        winner_lock_action_id,
+        identifier::<CanonicalCommitId>("cmt_lock_winner")?,
+        1,
+        operation,
+        vec![resource_id],
+        ContentDigest([3; 32]),
+    )?;
+    // The outer adapter passes this only after its trusted StateChronicle
+    // committed-event stream yields the event. The verifier pins every
+    // correlation coordinate before the saga may advance.
+    let verified_event = verify_committed_event(&expectation, committed_event)?;
     let winner = apply_action_result(
         &definition,
         &winning_lock.projection,
         tenant_id.clone(),
-        identifier::<ProcessId>("prc_trade_winner")?,
-        &ActionResultObservationV1::succeeded(active_action_id(&winning_lock)?),
+        winning_process_id,
+        &ActionResultObservationV1::succeeded(verified_event.event.action_id),
         Some(identifier("act_settle_winner")?),
     )?;
     let winner_settlement = winner
@@ -103,7 +138,7 @@ fn main() -> Result<(), ExampleError> {
         &definition,
         &losing_lock.projection,
         tenant_id,
-        identifier::<ProcessId>("prc_trade_loser")?,
+        losing_process_id,
         &ActionResultObservationV1::terminal_failure(active_action_id(&losing_lock)?),
         None,
     )?;

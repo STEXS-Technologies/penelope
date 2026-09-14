@@ -14,11 +14,12 @@ pub use penelope_core as core;
 pub use penelope_domain as domain;
 /// Frequently used typed protocol values and versioned DTOs.
 pub use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CausationIdV1, ContentDigest,
-    DefinitionId, DefinitionVersion, DomainError, EffectKeyV1, InputId, LogicalTimeV1,
-    ManualReviewDtoV1, OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
-    ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
+    ActionId, CanonicalCommandDtoV1, CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId,
+    CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, DomainError, EffectKeyV1,
+    InputId, LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1, OutcomeId,
+    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessInputEnvelopeV1,
+    ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId,
+    ReviewId, StepId, TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
@@ -47,3 +48,8 @@ pub use penelope_ports::{
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;
+/// Frequently used StateChronicle committed-event correlation contracts.
+pub use penelope_statechronicle::{
+    CanonicalCommandExpectationV1, CorrelationError, VerifiedCanonicalEventV1,
+    verify_committed_event,
+};
