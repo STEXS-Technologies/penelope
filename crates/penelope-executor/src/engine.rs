@@ -244,6 +244,147 @@ pub struct LinearSagaDefinitionV1 {
     pub steps: Vec<StepPlanV1>,
 }
 
+/// Maximum graph transitions in one immutable process definition.
+pub const MAX_GRAPH_TRANSITIONS: usize = 512;
+
+/// Result category used to select a graph transition.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Ord)]
+pub enum GraphTransitionOutcomeV1 {
+    /// Select this edge after a successful step.
+    Succeeded,
+    /// Select this edge after a retryable failure.
+    RetryableFailure,
+    /// Select this edge after a terminal failure.
+    TerminalFailure,
+}
+
+/// One explicitly typed edge in a bounded process graph.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GraphTransitionV1 {
+    /// Step whose result selects this edge.
+    pub from_step: StepId,
+    /// Typed result category selecting this edge.
+    pub on: GraphTransitionOutcomeV1,
+    /// Next step, or `None` for a terminal transition.
+    pub to_step: Option<StepId>,
+}
+
+/// A validated, bounded, version-pinned non-linear process definition.
+///
+/// This is a contract and validation surface for graph-based consumers. The
+/// existing linear executor remains unchanged until a graph transition engine
+/// is introduced; graph definitions must not be silently interpreted as linear.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessGraphDefinitionV1 {
+    /// Stable immutable definition identity.
+    pub definition_id: DefinitionId,
+    /// Pinned immutable definition version.
+    pub definition_version: DefinitionVersion,
+    /// Digest of the exact graph semantics.
+    pub definition_digest: ContentDigest,
+    /// Ordered step plans referenced by graph edges.
+    pub steps: Vec<StepPlanV1>,
+    /// Entry step for a newly started process.
+    pub entry_step_id: StepId,
+    /// Explicit graph edges keyed by step and result category.
+    pub transitions: Vec<GraphTransitionV1>,
+    /// Maximum number of step visits permitted for one process instance.
+    pub max_step_visits: NonZeroU32,
+}
+
+/// Graph-definition validation failure.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum GraphDefinitionError {
+    /// No executable steps were declared.
+    #[error("process graph contains no steps")]
+    EmptySteps,
+    /// The graph exceeds the bounded step limit.
+    #[error("process graph exceeds the step limit")]
+    StepLimitExceeded,
+    /// The graph exceeds the bounded transition limit.
+    #[error("process graph exceeds the transition limit")]
+    TransitionLimitExceeded,
+    /// A step identity appears more than once.
+    #[error("process graph contains a duplicate step")]
+    DuplicateStep,
+    /// The entry step is not declared in the graph.
+    #[error("process graph entry step is undeclared")]
+    UnknownEntryStep,
+    /// An edge references an undeclared source step.
+    #[error("process graph transition source is undeclared")]
+    UnknownSourceStep,
+    /// An edge references an undeclared destination step.
+    #[error("process graph transition destination is undeclared")]
+    UnknownDestinationStep,
+    /// Two edges have the same source and result category.
+    #[error("process graph contains a duplicate transition")]
+    DuplicateTransition,
+    /// A non-terminal result must name a destination step.
+    #[error("non-terminal process graph transition has no destination")]
+    MissingDestination,
+    /// A declared step cannot be reached from the entry step.
+    #[error("process graph contains an unreachable step")]
+    UnreachableStep,
+}
+
+impl ProcessGraphDefinitionV1 {
+    /// Validates graph bounds, references, deterministic edge keys, and reachability.
+    pub fn validate(&self) -> Result<(), GraphDefinitionError> {
+        if self.steps.is_empty() {
+            return Err(GraphDefinitionError::EmptySteps);
+        }
+        if self.steps.len() > MAX_DEFINITION_STEPS {
+            return Err(GraphDefinitionError::StepLimitExceeded);
+        }
+        if self.transitions.len() > MAX_GRAPH_TRANSITIONS {
+            return Err(GraphDefinitionError::TransitionLimitExceeded);
+        }
+        let step_ids: BTreeSet<&StepId> = self.steps.iter().map(|step| &step.step_id).collect();
+        if step_ids.len() != self.steps.len() {
+            return Err(GraphDefinitionError::DuplicateStep);
+        }
+        if !step_ids.contains(&self.entry_step_id) {
+            return Err(GraphDefinitionError::UnknownEntryStep);
+        }
+        let mut transition_keys = BTreeSet::new();
+        for transition in &self.transitions {
+            if !step_ids.contains(&transition.from_step) {
+                return Err(GraphDefinitionError::UnknownSourceStep);
+            }
+            if let Some(to_step) = &transition.to_step {
+                if !step_ids.contains(to_step) {
+                    return Err(GraphDefinitionError::UnknownDestinationStep);
+                }
+            } else if transition.on != GraphTransitionOutcomeV1::TerminalFailure {
+                return Err(GraphDefinitionError::MissingDestination);
+            }
+            if !transition_keys.insert((&transition.from_step, transition.on)) {
+                return Err(GraphDefinitionError::DuplicateTransition);
+            }
+        }
+        let mut reachable = BTreeSet::new();
+        let mut pending = vec![&self.entry_step_id];
+        while let Some(step_id) = pending.pop() {
+            if !reachable.insert(step_id) {
+                continue;
+            }
+            for transition in self
+                .transitions
+                .iter()
+                .filter(|edge| &edge.from_step == step_id)
+            {
+                if let Some(next) = &transition.to_step {
+                    pending.push(next);
+                }
+            }
+        }
+        if step_ids.iter().any(|step_id| !reachable.contains(step_id)) {
+            return Err(GraphDefinitionError::UnreachableStep);
+        }
+        Ok(())
+    }
+}
+
 impl LinearSagaDefinitionV1 {
     /// Creates an ordered linear-saga definition.
     pub const fn new(
@@ -1946,6 +2087,53 @@ mod tests {
         assert_eq!(
             excessive_retries.validate().unwrap_err(),
             EngineError::RetryAttemptLimitExceeded
+        );
+    }
+
+    #[test]
+    fn graph_definition_validates_references_reachability_and_terminal_edges() {
+        let policy = RetryPolicyV1::no_retry();
+        let graph = ProcessGraphDefinitionV1 {
+            definition_id: id("def_graph"),
+            definition_version: id("dfv_one"),
+            definition_digest: ContentDigest([4; 32]),
+            steps: vec![
+                StepPlanV1::canonical_command(id("stp_entry"), ContentDigest([1; 32]), policy),
+                StepPlanV1::canonical_command(id("stp_next"), ContentDigest([2; 32]), policy),
+            ],
+            entry_step_id: id("stp_entry"),
+            transitions: vec![
+                GraphTransitionV1 {
+                    from_step: id("stp_entry"),
+                    on: GraphTransitionOutcomeV1::Succeeded,
+                    to_step: Some(id("stp_next")),
+                },
+                GraphTransitionV1 {
+                    from_step: id("stp_next"),
+                    on: GraphTransitionOutcomeV1::TerminalFailure,
+                    to_step: None,
+                },
+            ],
+            max_step_visits: NonZeroU32::new(4).unwrap(),
+        };
+        assert_eq!(graph.validate(), Ok(()));
+
+        let mut missing_destination = graph.clone();
+        missing_destination.transitions[0].to_step = None;
+        assert_eq!(
+            missing_destination.validate(),
+            Err(GraphDefinitionError::MissingDestination)
+        );
+
+        let mut unreachable = graph;
+        unreachable.steps.push(StepPlanV1::canonical_command(
+            id("stp_orphan"),
+            ContentDigest([3; 32]),
+            policy,
+        ));
+        assert_eq!(
+            unreachable.validate(),
+            Err(GraphDefinitionError::UnreachableStep)
         );
     }
 

@@ -149,6 +149,13 @@ attempt limit. Graph validation, registration, compatibility/migration policy,
 non-linear transitions, full digest
 calculation, and deployment-time definition storage remain incomplete.
 
+`ProcessGraphDefinitionV1` now provides a separate versioned graph contract
+with bounded steps/transitions, typed result edges, explicit entry step,
+bounded visit count, duplicate/reference checks, and reachability validation.
+It is deliberately not accepted by the linear executor yet; graph definitions
+cannot be silently coerced into vector order. Its adversarial validation cases
+are unit tested and its serde boundary is exercised by `fuzz_linear_engine`.
+
 ### P0.3 Append-only outcomes and deterministic projections
 
 - [ ] Implement ordered outcome envelopes with sequence, causal input, actor,

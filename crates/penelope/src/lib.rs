@@ -27,11 +27,12 @@ pub use penelope_executor as executor;
 /// Deterministic linear-saga reference API.
 pub use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, EngineError,
-    LinearSagaDefinitionV1, LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1,
-    LinearSagaProjectionV1, RetryBackoffV1, RetryJitterSeedV1, RetryJitterV1, RetryPolicyV1,
-    RetryTimerScheduleRequestV1, SagaDecisionV1, SagaStatusV1, StepPlanV1, apply_action_result,
-    apply_manual_resolution, decide, fire_retry_timer, replay, replay_ordered,
-    schedule_retry_timer, start,
+    GraphDefinitionError, GraphTransitionOutcomeV1, GraphTransitionV1, LinearSagaDefinitionV1,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, LinearSagaProjectionV1,
+    MAX_GRAPH_TRANSITIONS, ProcessGraphDefinitionV1, RetryBackoffV1, RetryJitterSeedV1,
+    RetryJitterV1, RetryPolicyV1, RetryTimerScheduleRequestV1, SagaDecisionV1, SagaStatusV1,
+    StepPlanV1, apply_action_result, apply_manual_resolution, decide, fire_retry_timer, replay,
+    replay_ordered, schedule_retry_timer, start,
 };
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;

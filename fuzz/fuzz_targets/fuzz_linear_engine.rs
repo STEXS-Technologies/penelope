@@ -8,9 +8,10 @@ use penelope_domain::{
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryBackoffV1,
-    RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1, StepPlanV1, apply_action_result,
-    apply_manual_resolution, fire_retry_timer, replay, replay_ordered, schedule_retry_timer, start,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, ProcessGraphDefinitionV1,
+    RetryBackoffV1, RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1, StepPlanV1,
+    apply_action_result, apply_manual_resolution, fire_retry_timer, replay, replay_ordered,
+    schedule_retry_timer, start,
 };
 use penelope_ports::ManualReviewResolutionV1;
 use std::num::{NonZeroU32, NonZeroU64};
@@ -28,6 +29,9 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(definition) = serde_json::from_slice::<LinearSagaDefinitionV1>(data) {
         let _ = definition.validate();
+    }
+    if let Ok(graph) = serde_json::from_slice::<ProcessGraphDefinitionV1>(data) {
+        let _ = graph.validate();
     }
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
