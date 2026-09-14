@@ -22,9 +22,9 @@ use penelope_ports::{
     CanonicalReconciliationV1, CanonicalState, Clock, EffectDispatchRequestV1,
     ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, ManualReviewClaimV1,
     ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutboxClaimRequestV1,
-    OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
-    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerScheduleV1,
-    TimerScheduler,
+    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
+    TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -57,11 +57,11 @@ impl ProcessStore for UnavailablePorts {
 
 #[async_trait]
 impl OutboxStore for UnavailablePorts {
-    async fn claim(&self, _: &OutboxClaimRequestV1) -> Result<Vec<OutboxRecordV1>, PortError> {
+    async fn claim(&self, _: &OutboxClaimRequestV1) -> Result<Vec<OutboxLeaseV1>, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn acknowledge(&self, _: &OutboxRecordV1) -> Result<(), PortError> {
+    async fn acknowledge(&self, _: &OutboxLeaseV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -323,7 +323,12 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     let outbox_claim = OutboxClaimRequestV1::new(scope(), std::num::NonZeroU16::MIN).unwrap();
-    let record = OutboxRecordV1::new(action.clone());
+    let record = OutboxLeaseV1 {
+        record: OutboxRecordV1::new(action.clone()),
+        owner: id("pri_worker"),
+        token: penelope_ports::OutboxLeaseTokenV1::new(std::num::NonZeroU64::MIN),
+        lease_expires_at: LogicalTimeV1(5),
+    };
     assert!(matches!(
         ready(outbox.claim(&outbox_claim)),
         Err(PortError::Unavailable)

@@ -15,7 +15,7 @@ use penelope_domain::{
     ReviewId,
 };
 use serde::{Deserialize, Serialize};
-use std::num::NonZeroU16;
+use std::num::{NonZeroU16, NonZeroU64};
 use thiserror::Error;
 
 /// Maximum append-only outcomes accepted in one atomic process commit.
@@ -28,6 +28,17 @@ pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
 pub const MAX_OUTBOX_DELIVERY_ATTEMPTS: u32 = 64;
 /// Maximum records returned by one durable outbox claim.
 pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
+
+/// Opaque fencing token assigned to one outbox lease.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutboxLeaseTokenV1(NonZeroU64);
+
+impl OutboxLeaseTokenV1 {
+    /// Creates a non-zero fencing token.
+    pub const fn new(value: NonZeroU64) -> Self {
+        Self(value)
+    }
+}
 
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -164,6 +175,30 @@ impl OutboxClaimRequestV1 {
         } else {
             Ok(())
         }
+    }
+}
+
+/// One claimed outbox record and its fencing lease.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutboxLeaseV1 {
+    /// Claimed action and delivery state.
+    pub record: OutboxRecordV1,
+    /// Principal/worker that owns the lease.
+    pub owner: PrincipalId,
+    /// Opaque token used to fence stale acknowledgements.
+    pub token: OutboxLeaseTokenV1,
+    /// Inclusive logical lease expiry supplied by the adapter.
+    pub lease_expires_at: LogicalTimeV1,
+}
+
+impl OutboxLeaseV1 {
+    /// Validates the claimed record and lease identity.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] when the record is invalid.
+    pub const fn validate(&self) -> Result<(), PortError> {
+        self.record.validate()
     }
 }
 
@@ -1008,11 +1043,10 @@ pub trait ProcessStore: Send + Sync {
 #[async_trait]
 pub trait OutboxStore: Send + Sync {
     /// Claims a bounded batch of pending records for one process scope.
-    async fn claim(&self, request: &OutboxClaimRequestV1)
-    -> Result<Vec<OutboxRecordV1>, PortError>;
+    async fn claim(&self, request: &OutboxClaimRequestV1) -> Result<Vec<OutboxLeaseV1>, PortError>;
 
     /// Acknowledges one exact action delivery after successful dispatch.
-    async fn acknowledge(&self, record: &OutboxRecordV1) -> Result<(), PortError>;
+    async fn acknowledge(&self, lease: &OutboxLeaseV1) -> Result<(), PortError>;
 }
 
 /// Durable inbox that deduplicates immutable source inputs.
