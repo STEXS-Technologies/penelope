@@ -153,7 +153,10 @@ calculation, and deployment-time definition storage remain incomplete.
 with bounded steps/transitions, typed result edges, explicit entry step,
 bounded visit count, duplicate/reference checks, and reachability validation.
 It is deliberately not accepted by the linear executor yet; graph definitions
-cannot be silently coerced into vector order. Its adversarial validation cases
+cannot be silently coerced into vector order. A dedicated pure graph executor
+now provides typed start/result events, deterministic transition selection,
+replay convergence, issued-action uniqueness, bounded visits, and immediate
+escalation for unknown outcomes. Its adversarial validation and execution cases
 are unit tested and its serde boundary is exercised by `fuzz_linear_engine`.
 
 ### P0.3 Append-only outcomes and deterministic projections

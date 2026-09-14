@@ -202,10 +202,11 @@ An exhausted retryable failure escalates without producing another action;
 unknown outcomes escalate immediately. Deadline/backoff/timer policy still
 belongs to the remaining P0 implementation work.
 
-`ProcessGraphDefinitionV1` is validation-only until a graph executor is added.
-It must not be passed to the linear executor or implicitly interpreted as
-vector order; consumers must choose an explicit graph execution implementation
-and enforce the declared visit bound.
+`ProcessGraphDefinitionV1` has a dedicated deterministic graph executor
+(`start_graph`, `apply_graph_result`, and `replay_graph`). It must not be passed
+to the linear executor or implicitly interpreted as vector order. Unknown
+external outcomes always escalate, and every selected action identity is
+checked against the process's issued-action set and visit bound.
 
 Retry backoff can include bounded deterministic jitter. Its typed seed is
 explicit input to the timer-scheduling event, and is retained in the replay
