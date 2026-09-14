@@ -461,8 +461,10 @@ scope, a validated `PrincipalId`, typed resolution/control enums, immutable
 review ID, and redacted evidence digest; both validate against the durable
 review's full scope. The decision may require a distinct deciding principal
 from the claimant, and the validator fails closed when that dual-control rule
-is violated. Reviews can carry an immutable inclusive logical expiry; claims or
-decisions after it fail closed. The review port records open, claim, and decision separately so no
+is violated. Claim and decision validation also rejects a malformed review
+record before using its scope. Reviews can carry an immutable inclusive logical
+expiry; claims or decisions after it fail closed. The review port records open,
+claim, and decision separately so no
 operator directly mutates a projection. Their authorized resolution is now an
 explicit replayable engine input rather than a direct projection mutation. They
 have parser and engine-transition fuzz coverage through the public review

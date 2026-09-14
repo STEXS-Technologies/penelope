@@ -140,6 +140,9 @@ pub enum ReconciliationValidationError {
 /// Typed validation failure for one immutable manual-review operation.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum ManualReviewValidationError {
+    /// The supplied review record does not carry the immutable review schema.
+    #[error("manual review record schema is invalid")]
+    InvalidReviewSchema,
     /// A claim or decision does not target the review's pinned process scope.
     #[error("manual review operation scope does not match the review")]
     ScopeMismatch,
@@ -294,6 +297,9 @@ impl ManualReviewClaimV1 {
         &self,
         review: &ManualReviewDtoV1,
     ) -> Result<(), ManualReviewValidationError> {
+        if review.validate().is_err() {
+            return Err(ManualReviewValidationError::InvalidReviewSchema);
+        }
         if self.review_id != review.review_id {
             return Err(ManualReviewValidationError::ReviewIdMismatch);
         }
@@ -321,6 +327,9 @@ impl ManualReviewDecisionV1 {
         &self,
         review: &ManualReviewDtoV1,
     ) -> Result<(), ManualReviewValidationError> {
+        if review.validate().is_err() {
+            return Err(ManualReviewValidationError::InvalidReviewSchema);
+        }
         if self.review_id != review.review_id {
             return Err(ManualReviewValidationError::ReviewIdMismatch);
         }
@@ -1099,6 +1108,17 @@ mod tests {
             evidence_digest: ContentDigest([7; 32]),
         };
         assert_eq!(valid_decision.validate_for(&review), Ok(()));
+
+        let mut malformed_review = review.clone();
+        malformed_review.schema = penelope_domain::SchemaV1::ProcessAction;
+        assert_eq!(
+            claim.validate_for(&malformed_review),
+            Err(ManualReviewValidationError::InvalidReviewSchema)
+        );
+        assert_eq!(
+            valid_decision.validate_for(&malformed_review),
+            Err(ManualReviewValidationError::InvalidReviewSchema)
+        );
 
         let same_operator = ManualReviewDecisionV1 {
             decided_by: claim.claimed_by.clone(),

@@ -1,7 +1,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use penelope_domain::{ContentDigest, LogicalTimeV1, ManualReviewDtoV1};
+use penelope_domain::{ContentDigest, LogicalTimeV1, ManualReviewDtoV1, SchemaV1};
 use penelope_ports::{ManualReviewClaimV1, ManualReviewDecisionV1};
 
 fuzz_target!(|data: &[u8]| {
@@ -14,6 +14,9 @@ fuzz_target!(|data: &[u8]| {
             ContentDigest([0; 32]),
         );
         let _ = claim.validate_for(&review);
+        let mut malformed_review = review;
+        malformed_review.schema = SchemaV1::ProcessAction;
+        let _ = claim.validate_for(&malformed_review);
     }
     if let Ok(decision) = serde_json::from_slice::<ManualReviewDecisionV1>(data) {
         let review = ManualReviewDtoV1::new(
@@ -24,5 +27,8 @@ fuzz_target!(|data: &[u8]| {
             decision.evidence_digest,
         );
         let _ = decision.validate_for(&review);
+        let mut malformed_review = review;
+        malformed_review.schema = SchemaV1::ProcessAction;
+        let _ = decision.validate_for(&malformed_review);
     }
 });
