@@ -234,8 +234,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let replay_request =
         penelope_ports::OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN).unwrap();
     let review = ManualReviewDtoV1::new(
-        id::<TenantId>("tnt_game"),
-        id::<ProcessId>("prc_trade"),
+        scope(),
         id::<ReviewId>("rev_case"),
         0,
         ContentDigest([6; 32]),
@@ -246,13 +245,17 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         operation: penelope_ports::ProcessAuthorizationOperationV1::Retry,
     };
     let claim = ManualReviewClaimV1 {
+        scope: scope(),
         review_id: review.review_id.clone(),
         claimed_by: id::<PrincipalId>("pri_operator"),
     };
     let decision = ManualReviewDecisionV1 {
+        scope: scope(),
         review_id: review.review_id.clone(),
+        claimed_by: id::<PrincipalId>("pri_operator"),
         decided_by: id::<PrincipalId>("pri_operator"),
         resolution: ManualReviewResolutionV1::Escalate,
+        control: penelope_ports::ManualReviewControlV1::SingleOperator,
         evidence_digest: ContentDigest([7; 32]),
     };
     let timer = TimerScheduleV1 {

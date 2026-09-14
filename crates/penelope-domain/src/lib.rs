@@ -649,6 +649,12 @@ pub struct ManualReviewDtoV1 {
     pub tenant_id: TenantId,
     /// Owning process instance.
     pub process_id: ProcessId,
+    /// Immutable definition identity selected for this process.
+    pub definition_id: DefinitionId,
+    /// Immutable definition version selected for this process.
+    pub definition_version: DefinitionVersion,
+    /// Exact definition semantics selected for this process.
+    pub definition_digest: ContentDigest,
     /// Stable review identity.
     pub review_id: ReviewId,
     /// Outcome sequence at which review was opened.
@@ -954,17 +960,19 @@ impl ManualReviewDtoV1 {
     pub const SCHEMA: SchemaV1 = SchemaV1::ManualReview;
 
     /// Creates a durable manual-review escalation DTO.
-    pub const fn new(
-        tenant_id: TenantId,
-        process_id: ProcessId,
+    pub fn new(
+        scope: ProcessScopeV1,
         review_id: ReviewId,
         opened_at_sequence: u64,
         evidence_digest: ContentDigest,
     ) -> Self {
         Self {
             schema: Self::SCHEMA,
-            tenant_id,
-            process_id,
+            tenant_id: scope.tenant_id,
+            process_id: scope.process_id,
+            definition_id: scope.definition_id,
+            definition_version: scope.definition_version,
+            definition_digest: scope.definition_digest,
             review_id,
             opened_at_sequence,
             evidence_digest,
@@ -982,6 +990,18 @@ impl ManualReviewDtoV1 {
         } else {
             Err(DomainError::InvalidManualReviewSchema)
         }
+    }
+
+    /// Returns the immutable process and definition scope for this review.
+    #[must_use]
+    pub fn scope(&self) -> ProcessScopeV1 {
+        ProcessScopeV1::new(
+            self.tenant_id.clone(),
+            self.process_id.clone(),
+            self.definition_id.clone(),
+            self.definition_version.clone(),
+            self.definition_digest,
+        )
     }
 }
 
@@ -1187,8 +1207,13 @@ mod tests {
         );
 
         let mut review = ManualReviewDtoV1::new(
-            id("tnt_market"),
-            id("prc_trade"),
+            ProcessScopeV1::new(
+                id("tnt_market"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([4; 32]),
+            ),
             id("rev_trade"),
             0,
             ContentDigest([7; 32]),

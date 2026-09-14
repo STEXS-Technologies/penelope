@@ -158,7 +158,7 @@ transport / database / broker / scheduler implementations (consumer-owned)
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
 | `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces plus typed atomic inbox/outcome/action commit contract; no implementation. |
-| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed tenant/action/operation/resource-scope verifier; intentionally no StateChronicle client or local-checkout dependency. |
+| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed scope/action/operation/resource/digest verifier; intentionally no StateChronicle client or local-checkout dependency. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
 
 All DTOs are versioned by their `V<N>` Rust type and immutable associated

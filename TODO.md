@@ -277,7 +277,7 @@ persisted compensation outcome schema. An authorized typed manual resolution
 is now a replayable engine input: it can resume a specifically authorized retry,
 start LIFO compensation, cancel, or retain escalation; direct resolution of a
 non-escalated process fails closed. An escalated pure decision can also build a
-scope-pinned `ManualReviewDtoV1` for the `ManualReviewQueue` port, while a
+full-definition-scope-pinned `ManualReviewDtoV1` for the `ManualReviewQueue` port, while a
 non-escalated decision rejects the request. There is still no durable review workflow,
 so this item remains incomplete. The `trade_manual_review_v1` example drills
 the handoff by creating and schema-validating that request before applying the
@@ -451,13 +451,16 @@ remains incomplete.
 - Evidence: concurrent operator, expired review, authorization and audit tests.
 
 Current partial evidence: `ManualReviewClaimV1` and `ManualReviewDecisionV1`
-are versioned typed port DTOs. They require a validated `PrincipalId`, typed
-resolution enum, immutable review ID, and redacted evidence digest; the review
-port records open, claim, and decision separately so no operator directly
-mutates a projection. Their authorized resolution is now an explicit replayable
-engine input rather than a direct projection mutation. They have parser and
-engine-transition fuzz coverage through the public review lifecycle and linear
-engine targets. Authorization policy, expiry, dual control, persistence,
+are versioned typed port DTOs. They require the exact pinned process-definition
+scope, a validated `PrincipalId`, typed resolution/control enums, immutable
+review ID, and redacted evidence digest; both validate against the durable
+review's full scope. The decision may require a distinct deciding principal
+from the claimant, and the validator fails closed when that dual-control rule
+is violated. The review port records open, claim, and decision separately so no
+operator directly mutates a projection. Their authorized resolution is now an
+explicit replayable engine input rather than a direct projection mutation. They
+have parser and engine-transition fuzz coverage through the public review
+lifecycle and linear engine targets. Authorization policy, expiry, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
 remain incomplete.
 

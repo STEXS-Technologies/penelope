@@ -716,8 +716,7 @@ impl SagaDecisionV1 {
             return Err(EngineError::OutcomeScopeMismatch);
         }
         Ok(ManualReviewDtoV1::new(
-            scope.tenant_id.clone(),
-            scope.process_id.clone(),
+            scope.clone(),
             review_id,
             opened_at_sequence,
             evidence_digest,
@@ -2165,6 +2164,7 @@ mod tests {
             .unwrap();
         assert_eq!(request.review_id, id("rev_trade"));
         assert_eq!(request.opened_at_sequence, 2);
+        assert_eq!(request.scope(), scope);
         assert_eq!(
             started.manual_review_request(&scope, id("rev_trade"), 0, ContentDigest([0; 32])),
             Err(EngineError::ManualReviewNotRequired)

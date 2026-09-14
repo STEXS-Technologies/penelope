@@ -128,6 +128,20 @@ pub enum ReconciliationValidationError {
     ActionMismatch,
 }
 
+/// Typed validation failure for one immutable manual-review operation.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ManualReviewValidationError {
+    /// A claim or decision does not target the review's pinned process scope.
+    #[error("manual review operation scope does not match the review")]
+    ScopeMismatch,
+    /// A claim or decision names another review case.
+    #[error("manual review operation does not match the review identity")]
+    ReviewIdMismatch,
+    /// A dual-control decision was made by the same principal that claimed it.
+    #[error("manual review dual control requires a distinct deciding principal")]
+    DualControlViolation,
+}
+
 /// Authoritative result of reconciling a canonical external effect.
 ///
 /// `Unknown` is deliberately distinct from `NotCommitted`: callers must not
@@ -164,6 +178,15 @@ pub enum ManualReviewResolutionV1 {
     Cancel,
     /// Keep the process escalated for a higher-authority decision.
     Escalate,
+}
+
+/// Required operator separation for one immutable manual-review decision.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ManualReviewControlV1 {
+    /// One authorized operator may claim and decide the review.
+    SingleOperator,
+    /// The deciding principal must differ from the principal that claimed it.
+    DistinctDecider,
 }
 
 /// A process operation requiring a caller-specific authorization decision.
@@ -211,6 +234,8 @@ pub struct TimerScheduleV1 {
 /// Idempotent claim request for a manual-review case.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ManualReviewClaimV1 {
+    /// Immutable process and definition scope of the review being claimed.
+    pub scope: ProcessScopeV1,
     /// The immutable review case being claimed.
     pub review_id: ReviewId,
     /// Validated identity of the claiming principal.
@@ -220,14 +245,67 @@ pub struct ManualReviewClaimV1 {
 /// Immutable, attributable manual-review resolution request.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ManualReviewDecisionV1 {
+    /// Immutable process and definition scope of the review being decided.
+    pub scope: ProcessScopeV1,
     /// The immutable review case being decided.
     pub review_id: ReviewId,
+    /// Principal that holds the durable claim being resolved.
+    pub claimed_by: PrincipalId,
     /// Validated identity of the authorized deciding principal.
     pub decided_by: PrincipalId,
     /// Typed process-safe resolution selected by the operator.
     pub resolution: ManualReviewResolutionV1,
+    /// Required separation between the claim and decision principals.
+    pub control: ManualReviewControlV1,
     /// Digest of the redacted evidence and authorization record.
     pub evidence_digest: penelope_domain::ContentDigest,
+}
+
+impl ManualReviewClaimV1 {
+    /// Validates that this claim is bound to the immutable review it targets.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error if the review identity or full process-definition
+    /// scope differs.
+    pub fn validate_for(
+        &self,
+        review: &ManualReviewDtoV1,
+    ) -> Result<(), ManualReviewValidationError> {
+        if self.review_id != review.review_id {
+            return Err(ManualReviewValidationError::ReviewIdMismatch);
+        }
+        if self.scope != review.scope() {
+            return Err(ManualReviewValidationError::ScopeMismatch);
+        }
+        Ok(())
+    }
+}
+
+impl ManualReviewDecisionV1 {
+    /// Validates review binding and any declared dual-control requirement.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error if review identity/scope differs or the selected
+    /// control policy is violated.
+    pub fn validate_for(
+        &self,
+        review: &ManualReviewDtoV1,
+    ) -> Result<(), ManualReviewValidationError> {
+        if self.review_id != review.review_id {
+            return Err(ManualReviewValidationError::ReviewIdMismatch);
+        }
+        if self.scope != review.scope() {
+            return Err(ManualReviewValidationError::ScopeMismatch);
+        }
+        if matches!(self.control, ManualReviewControlV1::DistinctDecider)
+            && self.claimed_by == self.decided_by
+        {
+            return Err(ManualReviewValidationError::DualControlViolation);
+        }
+        Ok(())
+    }
 }
 
 impl CanonicalReconciliationV1 {
@@ -892,6 +970,63 @@ mod tests {
         assert_eq!(
             result.validate_for(&id("act_dispatch")),
             Err(ReconciliationValidationError::ActionMismatch)
+        );
+    }
+
+    #[test]
+    fn manual_review_operations_require_the_pinned_scope_and_dual_control() {
+        let review = ManualReviewDtoV1::new(
+            ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            id("rev_trade"),
+            4,
+            ContentDigest([6; 32]),
+        );
+        let claim = ManualReviewClaimV1 {
+            scope: review.scope(),
+            review_id: review.review_id.clone(),
+            claimed_by: id("pri_claimant"),
+        };
+        assert_eq!(claim.validate_for(&review), Ok(()));
+
+        let valid_decision = ManualReviewDecisionV1 {
+            scope: review.scope(),
+            review_id: review.review_id.clone(),
+            claimed_by: claim.claimed_by.clone(),
+            decided_by: id("pri_decider"),
+            resolution: ManualReviewResolutionV1::Compensate,
+            control: ManualReviewControlV1::DistinctDecider,
+            evidence_digest: ContentDigest([7; 32]),
+        };
+        assert_eq!(valid_decision.validate_for(&review), Ok(()));
+
+        let same_operator = ManualReviewDecisionV1 {
+            decided_by: claim.claimed_by.clone(),
+            ..valid_decision
+        };
+        assert_eq!(
+            same_operator.validate_for(&review),
+            Err(ManualReviewValidationError::DualControlViolation)
+        );
+
+        let wrong_scope = ManualReviewClaimV1 {
+            scope: ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_other"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            ..claim
+        };
+        assert_eq!(
+            wrong_scope.validate_for(&review),
+            Err(ManualReviewValidationError::ScopeMismatch)
         );
     }
 }
