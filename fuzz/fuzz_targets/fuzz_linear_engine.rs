@@ -8,9 +8,10 @@ use penelope_domain::{
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
     LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryBackoffV1, RetryPolicyV1,
-    StepPlanV1, apply_action_result, fire_retry_timer, replay, replay_ordered,
-    schedule_retry_timer, start,
+    StepPlanV1, apply_action_result, apply_manual_resolution, fire_retry_timer, replay,
+    replay_ordered, schedule_retry_timer, start,
 };
+use penelope_ports::ManualReviewResolutionV1;
 use std::num::{NonZeroU32, NonZeroU64};
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -165,4 +166,56 @@ fuzz_target!(|data: &[u8]| {
             identifier("act_timer_retry"),
         );
     }
+
+    let review_definition = LinearSagaDefinitionV1::new(
+        identifier("def_review"),
+        identifier("dfv_one"),
+        ContentDigest([77; 32]),
+        vec![StepPlanV1::canonical_command(
+            identifier("stp_review"),
+            ContentDigest([6; 32]),
+            RetryPolicyV1::no_retry(),
+        )],
+    );
+    let Ok(review_started) = start(
+        &review_definition,
+        identifier("tnt_review"),
+        identifier("prc_review"),
+        identifier("act_review_first"),
+    ) else {
+        return;
+    };
+    let Some(review_action) = review_started.next_action.as_ref() else {
+        return;
+    };
+    let Ok(escalated) = apply_action_result(
+        &review_definition,
+        &review_started.projection,
+        identifier("tnt_review"),
+        identifier("prc_review"),
+        &ActionResultObservationV1::unknown(review_action.action_id.clone()),
+        None,
+    ) else {
+        return;
+    };
+    let resolution = match data.first().map_or(0, |byte| byte % 4) {
+        0 => ManualReviewResolutionV1::RetryAction,
+        1 => ManualReviewResolutionV1::Compensate,
+        2 => ManualReviewResolutionV1::Cancel,
+        _ => ManualReviewResolutionV1::Escalate,
+    };
+    let next_action_id = match resolution {
+        ManualReviewResolutionV1::RetryAction | ManualReviewResolutionV1::Compensate => {
+            Some(identifier("act_review_resolution"))
+        }
+        ManualReviewResolutionV1::Cancel | ManualReviewResolutionV1::Escalate => None,
+    };
+    let _ = apply_manual_resolution(
+        &review_definition,
+        &escalated.projection,
+        identifier("tnt_review"),
+        identifier("prc_review"),
+        resolution,
+        next_action_id,
+    );
 });

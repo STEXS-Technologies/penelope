@@ -4,7 +4,7 @@ use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, MAX_DEFINITION_STEPS,
     ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
-use penelope_ports::TimerScheduleV1;
+use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
 use std::num::{NonZeroU32, NonZeroU64};
 use thiserror::Error;
@@ -229,6 +229,8 @@ pub enum SagaStatusV1 {
     Completed,
     /// A terminal result requires human intervention.
     Escalated,
+    /// An authorized manual-review resolution cancelled the process.
+    Cancelled,
     /// Every required compensation action completed in reverse success order.
     Compensated,
     /// A compensating action is currently pending or executing.
@@ -291,6 +293,13 @@ pub enum LinearSagaInputV1 {
         /// Fresh independently idempotent identity for the retry effect action.
         next_action_id: ActionId,
     },
+    /// Apply an already-authorized immutable manual-review resolution.
+    ManualResolution {
+        /// Typed resolution recorded by the manual-review port.
+        resolution: ManualReviewResolutionV1,
+        /// Fresh action identity when the resolution resumes work.
+        next_action_id: Option<ActionId>,
+    },
 }
 
 /// One immutable event from the linear engine's ordered process log.
@@ -332,6 +341,13 @@ pub enum LinearSagaEventV1 {
         fired_at: LogicalTimeV1,
         /// Persisted fresh identity for the retry effect action.
         next_action_id: ActionId,
+    },
+    /// An authorized immutable manual-review resolution was accepted.
+    ManualResolutionApplied {
+        /// Typed operator resolution.
+        resolution: ManualReviewResolutionV1,
+        /// Persisted fresh action identity when the resolution resumes work.
+        next_action_id: Option<ActionId>,
     },
 }
 
@@ -491,6 +507,9 @@ pub enum EngineError {
     /// A timer firing was delivered before its durable due time.
     #[error("retry timer fired before its durable due time")]
     RetryTimerFiredEarly,
+    /// A manual resolution was supplied for a process that is not escalated.
+    #[error("manual resolution requires an escalated process")]
+    ManualResolutionRequiresEscalation,
 }
 
 impl LinearSagaDefinitionV1 {
@@ -579,6 +598,17 @@ pub fn decide(
             *fired_at,
             next_action_id.clone(),
         ),
+        LinearSagaInputV1::ManualResolution {
+            resolution,
+            next_action_id,
+        } => apply_manual_resolution(
+            definition,
+            projection.ok_or(EngineError::MissingProjection)?,
+            tenant_id,
+            process_id,
+            *resolution,
+            next_action_id.clone(),
+        ),
     }
 }
 
@@ -665,9 +695,10 @@ pub fn apply_action_result(
             observation.result,
             next_action_id,
         ),
-        SagaStatusV1::Completed | SagaStatusV1::Escalated | SagaStatusV1::Compensated => {
-            Err(EngineError::TerminalProjection)
-        }
+        SagaStatusV1::Completed
+        | SagaStatusV1::Escalated
+        | SagaStatusV1::Cancelled
+        | SagaStatusV1::Compensated => Err(EngineError::TerminalProjection),
     }
 }
 
@@ -791,6 +822,100 @@ pub fn fire_retry_timer(
         next_action: Some(action_for(definition, &retry, tenant_id, process_id)?),
         projection: retry,
     })
+}
+
+/// Applies an already-authorized manual-review resolution to an escalated
+/// process.
+///
+/// Authorization, attribution, and evidence retention are enforced by the
+/// outer manual-review port before this pure transition is called. The accepted
+/// resolution must be appended to the process log before dispatching any
+/// returned action.
+///
+/// # Errors
+///
+/// Returns a typed invariant error when the process is not escalated, the
+/// pinned definition differs, or a resolution requiring work lacks a fresh
+/// action identity.
+pub fn apply_manual_resolution(
+    definition: &LinearSagaDefinitionV1,
+    projection: &LinearSagaProjectionV1,
+    tenant_id: TenantId,
+    process_id: ProcessId,
+    resolution: ManualReviewResolutionV1,
+    next_action_id: Option<ActionId>,
+) -> Result<SagaDecisionV1, EngineError> {
+    definition.validate()?;
+    if projection.definition_id != definition.definition_id
+        || projection.definition_version != definition.definition_version
+        || projection.definition_digest != definition.definition_digest
+    {
+        return Err(EngineError::DefinitionMismatch);
+    }
+    if projection.status != SagaStatusV1::Escalated {
+        return Err(EngineError::ManualResolutionRequiresEscalation);
+    }
+    if projection.next_step_index >= definition.steps.len() {
+        return Err(EngineError::InvalidProjection);
+    }
+    match resolution {
+        ManualReviewResolutionV1::RetryAction => {
+            let action_id = fresh_action_id(projection, next_action_id)?;
+            let resumed = LinearSagaProjectionV1 {
+                active_action_id: Some(action_id.clone()),
+                issued_action_ids: issued_ids_after(projection, action_id),
+                status: SagaStatusV1::Running,
+                ..projection.clone()
+            };
+            Ok(SagaDecisionV1 {
+                next_action: Some(action_for(definition, &resumed, tenant_id, process_id)?),
+                projection: resumed,
+            })
+        }
+        ManualReviewResolutionV1::Compensate => {
+            if projection.compensable_step_indices.is_empty() {
+                return Ok(SagaDecisionV1 {
+                    projection: terminal_projection(
+                        projection,
+                        projection.next_step_index,
+                        Vec::new(),
+                        SagaStatusV1::Cancelled,
+                    ),
+                    next_action: None,
+                });
+            }
+            let action_id = fresh_action_id(projection, next_action_id)?;
+            let compensating = LinearSagaProjectionV1 {
+                current_attempt: 0,
+                active_action_id: Some(action_id.clone()),
+                issued_action_ids: issued_ids_after(projection, action_id),
+                status: SagaStatusV1::Compensating,
+                ..projection.clone()
+            };
+            Ok(SagaDecisionV1 {
+                next_action: Some(action_for(
+                    definition,
+                    &compensating,
+                    tenant_id,
+                    process_id,
+                )?),
+                projection: compensating,
+            })
+        }
+        ManualReviewResolutionV1::Cancel => Ok(SagaDecisionV1 {
+            projection: terminal_projection(
+                projection,
+                projection.next_step_index,
+                projection.compensable_step_indices.clone(),
+                SagaStatusV1::Cancelled,
+            ),
+            next_action: None,
+        }),
+        ManualReviewResolutionV1::Escalate => Ok(SagaDecisionV1 {
+            projection: projection.clone(),
+            next_action: None,
+        }),
+    }
 }
 
 fn apply_forward_result(
@@ -1151,6 +1276,20 @@ pub fn replay(
                     process_id.clone(),
                     timer_action_id,
                     *fired_at,
+                    next_action_id.clone(),
+                )?);
+            }
+            LinearSagaEventV1::ManualResolutionApplied {
+                resolution,
+                next_action_id,
+            } => {
+                let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
+                decision = Some(apply_manual_resolution(
+                    definition,
+                    &current.projection,
+                    tenant_id.clone(),
+                    process_id.clone(),
+                    *resolution,
                     next_action_id.clone(),
                 )?);
             }
@@ -1561,6 +1700,113 @@ mod tests {
         assert_eq!(
             replay(&definition, &tenant_id, &process_id, &events).unwrap(),
             retry
+        );
+    }
+
+    #[test]
+    fn authorized_manual_resolution_replays_compensation_or_cancellation() {
+        let policy = RetryPolicyV1::no_retry();
+        let definition = LinearSagaDefinitionV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([99; 32]),
+            vec![
+                StepPlanV1::canonical_command(id("stp_lock"), ContentDigest([1; 32]), policy)
+                    .with_compensation(CompensationPlanV1::canonical_command(
+                        ContentDigest([9; 32]),
+                        policy,
+                    )),
+                StepPlanV1::canonical_command(id("stp_settle"), ContentDigest([2; 32]), policy),
+            ],
+        );
+        let tenant_id = id::<TenantId>("tnt_market");
+        let process_id = id::<ProcessId>("prc_trade");
+        let started = start(
+            &definition,
+            tenant_id.clone(),
+            process_id.clone(),
+            id("act_lock"),
+        )
+        .unwrap();
+        let settle = apply_action_result(
+            &definition,
+            &started.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                started.next_action.as_ref().unwrap(),
+                ActionResultV1::Succeeded,
+            ),
+            Some(id("act_settle")),
+        )
+        .unwrap();
+        let escalated = apply_action_result(
+            &definition,
+            &settle.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            &observation(
+                settle.next_action.as_ref().unwrap(),
+                ActionResultV1::Unknown,
+            ),
+            None,
+        )
+        .unwrap();
+        assert_eq!(escalated.projection.status, SagaStatusV1::Escalated);
+        let compensation = apply_manual_resolution(
+            &definition,
+            &escalated.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            ManualReviewResolutionV1::Compensate,
+            Some(id("act_unlock")),
+        )
+        .unwrap();
+        assert_eq!(compensation.projection.status, SagaStatusV1::Compensating);
+        assert_eq!(
+            compensation.next_action.as_ref().unwrap().step_id,
+            id("stp_lock")
+        );
+        let cancelled = apply_manual_resolution(
+            &definition,
+            &escalated.projection,
+            tenant_id.clone(),
+            process_id.clone(),
+            ManualReviewResolutionV1::Cancel,
+            None,
+        )
+        .unwrap();
+        assert_eq!(cancelled.projection.status, SagaStatusV1::Cancelled);
+        assert_eq!(
+            apply_manual_resolution(
+                &definition,
+                &settle.projection,
+                tenant_id.clone(),
+                process_id.clone(),
+                ManualReviewResolutionV1::Cancel,
+                None,
+            )
+            .unwrap_err(),
+            EngineError::ManualResolutionRequiresEscalation
+        );
+        let events = [
+            LinearSagaEventV1::started(&definition, id("act_lock")),
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1::succeeded(id("act_lock")),
+                next_action_id: Some(id("act_settle")),
+            },
+            LinearSagaEventV1::ActionResultObserved {
+                observation: ActionResultObservationV1::unknown(id("act_settle")),
+                next_action_id: None,
+            },
+            LinearSagaEventV1::ManualResolutionApplied {
+                resolution: ManualReviewResolutionV1::Compensate,
+                next_action_id: Some(id("act_unlock")),
+            },
+        ];
+        assert_eq!(
+            replay(&definition, &tenant_id, &process_id, &events).unwrap(),
+            compensation
         );
     }
 

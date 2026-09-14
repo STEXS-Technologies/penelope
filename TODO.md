@@ -240,8 +240,11 @@ Current partial evidence: linear steps can declare a typed compensation action.
 After a known terminal forward failure, the reference projection plans those
 actions in LIFO order, with fresh action IDs and independently bounded retries.
 Unknown outcomes and failed/exhausted compensation escalate. There is no
-persisted compensation outcome schema or manual-review workflow yet, so this
-item remains incomplete.
+persisted compensation outcome schema. An authorized typed manual resolution
+is now a replayable engine input: it can resume a specifically authorized retry,
+start LIFO compensation, cancel, or retain escalation; direct resolution of a
+non-escalated process fails closed. There is still no durable review workflow,
+so this item remains incomplete.
 
 ### P0.8 Errors, authorization and redaction
 
@@ -403,8 +406,10 @@ Current partial evidence: `ManualReviewClaimV1` and `ManualReviewDecisionV1`
 are versioned typed port DTOs. They require a validated `PrincipalId`, typed
 resolution enum, immutable review ID, and redacted evidence digest; the review
 port records open, claim, and decision separately so no operator directly
-mutates a projection. They have parser fuzz coverage through the public review
-lifecycle target. Authorization policy, expiry, dual control, persistence,
+mutates a projection. Their authorized resolution is now an explicit replayable
+engine input rather than a direct projection mutation. They have parser and
+engine-transition fuzz coverage through the public review lifecycle and linear
+engine targets. Authorization policy, expiry, dual control, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
 remain incomplete.
 
