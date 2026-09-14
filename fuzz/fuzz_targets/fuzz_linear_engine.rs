@@ -13,6 +13,7 @@ use penelope_executor::engine::{
     apply_action_result, apply_manual_resolution, fire_retry_timer, replay, replay_ordered,
     schedule_retry_timer, start,
 };
+use penelope_executor::graph::{GraphSagaInputV1, apply_graph_result, replay_graph, start_graph};
 use penelope_ports::ManualReviewResolutionV1;
 use std::num::{NonZeroU32, NonZeroU64};
 
@@ -32,6 +33,33 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(graph) = serde_json::from_slice::<ProcessGraphDefinitionV1>(data) {
         let _ = graph.validate();
+        if let Ok(started) = start_graph(
+            &graph,
+            identifier::<TenantId>("tnt_graph_fuzz"),
+            identifier::<ProcessId>("prc_graph_fuzz"),
+            GraphSagaInputV1::Start {
+                input_id: identifier::<InputId>("inp_graph_fuzz_start"),
+                action_id: identifier::<ActionId>("act_graph_fuzz_start"),
+            },
+        ) {
+            let _ = replay_graph(
+                &graph,
+                &identifier::<TenantId>("tnt_graph_fuzz"),
+                &identifier::<ProcessId>("prc_graph_fuzz"),
+                std::slice::from_ref(&started.event),
+            );
+            if let Some(action) = started.next_action {
+                let _ = apply_graph_result(
+                    &graph,
+                    &started.projection,
+                    GraphSagaInputV1::ActionResult {
+                        input_id: identifier::<InputId>("inp_graph_fuzz_result"),
+                        observation: ActionResultObservationV1::succeeded(action.action_id),
+                        next_action_id: None,
+                    },
+                );
+            }
+        }
     }
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
     let definition = LinearSagaDefinitionV1 {
