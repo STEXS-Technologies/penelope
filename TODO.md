@@ -91,7 +91,10 @@ definition, input, outcome, action, canonical command/event, and manual review;
 negative tests cover a mismatched schema for each and the versioned-DTO fuzz
 target invokes each available validator. It does not yet enforce golden
 fixtures for every DTO, raw-string port signatures, or fuzz-target coverage, so
-this item remains incomplete.
+this item remains incomplete. The layer-boundary gate additionally rejects raw
+`String`/`&str` parameters in public port traits and handwritten
+`std::error::Error` implementations, preserving validated-newtype and
+`thiserror` error-taxonomy rules as the workspace evolves.
 
 ## P0 — deterministic core
 

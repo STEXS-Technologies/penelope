@@ -43,3 +43,17 @@ if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
     printf '%s\n' 'layer violation: production infrastructure dependency found in Penelope workspace' >&2
     exit 1
 fi
+
+# Port contracts are the infrastructure-facing API. Identity and category text
+# must be admitted through validated DTO parsing, never passed as raw text.
+if awk '/^pub trait /,/^}/' crates/penelope-ports/src/lib.rs | rg -n '\bString\b|&str' >/dev/null; then
+    printf '%s\n' 'layer violation: a Penelope port accepts raw text; use a validated newtype or DTO' >&2
+    exit 1
+fi
+
+# Library failures are typed `thiserror` enums. Handwritten Error impls make
+# error taxonomy audits and source chaining inconsistent across crates.
+if rg -n 'impl\s+(?:std::error::)?Error\s+for' crates --glob '*.rs' >/dev/null; then
+    printf '%s\n' 'layer violation: handwritten Error implementation found; derive thiserror::Error instead' >&2
+    exit 1
+fi
