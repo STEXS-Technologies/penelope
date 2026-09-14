@@ -380,6 +380,9 @@ impl OutcomeReplayPageV1 {
                 .checked_add(1)
                 .ok_or(OutcomePageValidationError::SequenceOverflow)?;
         }
+        if self.outcomes.is_empty() && self.next_sequence.is_some() {
+            return Err(OutcomePageValidationError::InvalidContinuation);
+        }
         if self
             .next_sequence
             .is_some_and(|next| next != expected_sequence)
@@ -824,6 +827,24 @@ mod tests {
         .unwrap_err();
         assert_eq!(
             bad_continuation,
+            OutcomePageValidationError::InvalidContinuation
+        );
+
+        let empty_continuation = OutcomeReplayPageV1::new(
+            ProcessScopeV1::new(
+                id("tnt_game"),
+                id("prc_trade"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([9; 32]),
+            ),
+            0,
+            vec![],
+            Some(0),
+        )
+        .unwrap_err();
+        assert_eq!(
+            empty_continuation,
             OutcomePageValidationError::InvalidContinuation
         );
 
