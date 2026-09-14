@@ -447,7 +447,10 @@ pending/acknowledged state part of the reusable port contract, with a bounded
 attempt validator and DTO fuzz coverage. Monotonic transition helpers make
 acknowledgement idempotent and reject redelivery after acknowledgement or
 attempt exhaustion. Lease/fencing and durable dispatch semantics remain
-adapter-owned and incomplete.
+adapter-owned and incomplete. The backend-neutral `OutboxStore` port now
+exposes bounded, scope-pinned claim and exact-record acknowledgement
+operations; implementations must supply leases/fencing and durable redelivery
+behavior.
 
 ### P1.4 StateChronicle contract
 
