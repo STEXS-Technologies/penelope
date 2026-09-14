@@ -92,12 +92,41 @@ impl OutboxRecordV1 {
     /// # Errors
     ///
     /// Returns [`PortError::Invariant`] when the action or attempt is invalid.
-    pub fn validate(&self) -> Result<(), PortError> {
+    pub const fn validate(&self) -> Result<(), PortError> {
         if self.action.validate().is_err() || self.delivery_attempt >= MAX_OUTBOX_DELIVERY_ATTEMPTS
         {
             return Err(PortError::Invariant);
         }
         Ok(())
+    }
+
+    /// Returns an acknowledged copy; acknowledging an already acknowledged
+    /// record is idempotent.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] when the record is invalid.
+    pub fn acknowledge(mut self) -> Result<Self, PortError> {
+        self.validate()?;
+        self.acknowledgement = OutboxAcknowledgementV1::Acknowledged;
+        Ok(self)
+    }
+
+    /// Advances one pending record to its next bounded delivery attempt.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] when the record is acknowledged or
+    /// the attempt bound would be exceeded.
+    pub fn next_delivery_attempt(mut self) -> Result<Self, PortError> {
+        self.validate()?;
+        if self.acknowledgement != OutboxAcknowledgementV1::Pending
+            || self.delivery_attempt.saturating_add(1) >= MAX_OUTBOX_DELIVERY_ATTEMPTS
+        {
+            return Err(PortError::Invariant);
+        }
+        self.delivery_attempt = self.delivery_attempt.saturating_add(1);
+        Ok(self)
     }
 }
 
@@ -1205,6 +1234,17 @@ mod tests {
     fn outbox_record_requires_valid_action_and_bounded_attempt() {
         let mut record = OutboxRecordV1::new(action());
         assert!(record.validate().is_ok());
+        record = record.next_delivery_attempt().unwrap();
+        assert_eq!(record.delivery_attempt, 1);
+        record = record.acknowledge().unwrap();
+        assert_eq!(
+            record.clone().next_delivery_attempt(),
+            Err(PortError::Invariant)
+        );
+        assert_eq!(
+            record.clone().acknowledge().unwrap().acknowledgement,
+            OutboxAcknowledgementV1::Acknowledged
+        );
         record.delivery_attempt = MAX_OUTBOX_DELIVERY_ATTEMPTS;
         assert_eq!(record.validate(), Err(PortError::Invariant));
     }
