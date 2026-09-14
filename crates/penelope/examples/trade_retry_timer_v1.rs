@@ -9,8 +9,9 @@ use std::num::{NonZeroU32, NonZeroU64};
 use penelope::{
     ActionId, ActionResultObservationV1, ContentDigest, DefinitionId, DefinitionVersion,
     DomainError, EngineError, LinearSagaDefinitionV1, LogicalTimeV1, ProcessActionKindV1,
-    ProcessId, RetryBackoffV1, RetryPolicyV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
-    apply_action_result, fire_retry_timer, schedule_retry_timer, start,
+    ProcessId, RetryBackoffV1, RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1,
+    SagaStatusV1, StepId, StepPlanV1, TenantId, apply_action_result, fire_retry_timer,
+    schedule_retry_timer, start,
 };
 use thiserror::Error;
 
@@ -66,9 +67,12 @@ fn main() -> Result<(), ExampleError> {
         &first.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::retryable_failure(first_action.action_id.clone()),
-        Some(identifier("act_settle_timer")?),
-        LogicalTimeV1(10_000),
+        &RetryTimerScheduleRequestV1::new(
+            ActionResultObservationV1::retryable_failure(first_action.action_id.clone()),
+            Some(identifier("act_settle_timer")?),
+            LogicalTimeV1(10_000),
+            RetryJitterSeedV1::from_digest(ContentDigest([7; 32])),
+        ),
     )?;
     let timer = waiting
         .retry_timer_schedule()

@@ -8,9 +8,9 @@ use penelope_domain::{
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryBackoffV1, RetryPolicyV1,
-    StepPlanV1, apply_action_result, apply_manual_resolution, fire_retry_timer, replay,
-    replay_ordered, schedule_retry_timer, start,
+    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, RetryBackoffV1,
+    RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1, StepPlanV1, apply_action_result,
+    apply_manual_resolution, fire_retry_timer, replay, replay_ordered, schedule_retry_timer, start,
 };
 use penelope_ports::ManualReviewResolutionV1;
 use std::num::{NonZeroU32, NonZeroU64};
@@ -203,9 +203,12 @@ fuzz_target!(|data: &[u8]| {
         &started.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::retryable_failure(active.action_id.clone()),
-        Some(identifier("act_timer_fire")),
-        now,
+        &RetryTimerScheduleRequestV1::new(
+            ActionResultObservationV1::retryable_failure(active.action_id.clone()),
+            Some(identifier("act_timer_fire")),
+            now,
+            RetryJitterSeedV1::from_digest(ContentDigest([data.first().copied().unwrap_or(0); 32])),
+        ),
     );
     if let Ok(scheduled) = scheduled
         && let Some(timer) = scheduled.next_action

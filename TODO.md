@@ -236,8 +236,11 @@ through the serialized linear definition boundary. A retryable failure under a
 backoff policy now produces a typed durable timer action and due-time schedule;
 the pure engine rejects ordinary action-result delivery, early firing, and
 duplicate firing, and replay rebuilds the post-fire retry action exactly. There
-is no jitter, durable adapter implementation, timer cancellation, clock-jump
-policy, or compensation-timer support, so this item remains incomplete.
+is now optional bounded deterministic jitter. Its opaque typed seed is supplied
+by the composition root and persisted in the retry scheduling input/event, so
+the exact due time replays without hidden entropy; unit and fuzz paths exercise
+that wire field. There is no durable adapter implementation, timer cancellation,
+clock-jump policy, or compensation-timer support, so this item remains incomplete.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID

@@ -182,6 +182,11 @@ An exhausted retryable failure escalates without producing another action;
 unknown outcomes escalate immediately. Deadline/backoff/timer policy still
 belongs to the remaining P0 implementation work.
 
+Retry backoff can include bounded deterministic jitter. Its typed seed is
+explicit input to the timer-scheduling event, and is retained in the replay
+log: the engine never samples random state or wall-clock time while calculating
+the due time.
+
 Every planned action ID is retained in the replayable process projection. A
 transition that tries to reuse any previously issued ID is rejected as a typed
 engine error; retries require a fresh action identity.
