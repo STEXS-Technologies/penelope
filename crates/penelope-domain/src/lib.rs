@@ -112,7 +112,9 @@ fn validate_identifier(prefix: &str, value: &str) -> bool {
     value.starts_with(prefix)
         && value.len() > prefix.len()
         && value.len() <= MAX_IDENTIFIER_LENGTH
-        && !value.chars().any(char::is_control)
+        && value[prefix.len()..]
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.'))
 }
 
 macro_rules! identifier {
@@ -1049,6 +1051,22 @@ mod tests {
             PrincipalId::try_from("tnt_wrong").unwrap_err(),
             DomainError::InvalidPrincipalId
         );
+    }
+
+    #[test]
+    fn identifiers_reject_ambiguous_storage_and_log_characters() {
+        for value in [
+            "tnt_with space",
+            "tnt_with/slash",
+            "tnt_with\\\\slash",
+            "tnt_ümlaut",
+        ] {
+            assert_eq!(
+                TenantId::try_from(value).unwrap_err(),
+                DomainError::InvalidTenantId
+            );
+        }
+        assert!(TenantId::try_from("tnt_safe-id.v1").is_ok());
     }
 
     #[test]
