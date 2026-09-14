@@ -240,6 +240,17 @@ impl OutboxLeaseV1 {
             Ok(())
         }
     }
+
+    /// Produces an acknowledged record only while this lease is valid.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] after expiry or
+    /// [`PortError::Invariant`] for an invalid record.
+    pub fn acknowledge_at(&self, now: LogicalTimeV1) -> Result<OutboxRecordV1, PortError> {
+        self.validate_at(now)?;
+        self.record.clone().acknowledge()
+    }
 }
 
 /// Typed validation failure for one atomic process commit request.
@@ -1411,6 +1422,17 @@ mod tests {
         assert_eq!(
             lease.validate_at(LogicalTimeV1(6)),
             Err(PortError::TimedOut)
+        );
+        assert_eq!(
+            lease.acknowledge_at(LogicalTimeV1(6)),
+            Err(PortError::TimedOut)
+        );
+        assert_eq!(
+            lease
+                .acknowledge_at(LogicalTimeV1(5))
+                .unwrap()
+                .acknowledgement,
+            OutboxAcknowledgementV1::Acknowledged
         );
     }
 
