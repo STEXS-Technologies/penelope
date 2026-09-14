@@ -6,6 +6,7 @@ use penelope_domain::{
     ProcessActionDtoV1, ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputEnvelopeV1,
     ProcessOutcomeDtoV1, ProcessScopeV1,
 };
+use penelope_ports::OutboxRecordV1;
 
 fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<ProcessDefinitionDtoV1>(data) {
@@ -23,6 +24,9 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(action) = serde_json::from_slice::<ProcessActionDtoV1>(data) {
         let _ = action.validate();
         let _ = action.effect_key();
+    }
+    if let Ok(outbox) = serde_json::from_slice::<OutboxRecordV1>(data) {
+        let _ = outbox.validate();
     }
     let _ = serde_json::from_slice::<ProcessScopeV1>(data);
     let _ = serde_json::from_slice::<LogicalTimeV1>(data);

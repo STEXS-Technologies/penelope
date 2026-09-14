@@ -24,6 +24,8 @@ pub const MAX_OUTCOMES_PER_ATOMIC_COMMIT: usize = 128;
 pub const MAX_ACTIONS_PER_ATOMIC_COMMIT: usize = 128;
 /// Maximum immutable outcomes returned by one bounded replay-read request.
 pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
+/// Maximum redelivery attempts represented by one outbox record.
+pub const MAX_OUTBOX_DELIVERY_ATTEMPTS: u32 = 64;
 
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -52,6 +54,51 @@ pub enum PortError {
     /// The adapter rejected a versioned DTO or port invariant.
     #[error("port invariant violation")]
     Invariant,
+}
+
+/// Durable acknowledgement state of an independently idempotent outbox item.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OutboxAcknowledgementV1 {
+    /// The action remains eligible for claiming or redelivery.
+    Pending,
+    /// The adapter recorded a successful dispatch acknowledgement.
+    Acknowledged,
+}
+
+/// Versioned outbox record retained with the exact action and delivery attempt.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutboxRecordV1 {
+    /// Independently idempotent action being delivered.
+    pub action: ProcessActionDtoV1,
+    /// Monotonic delivery attempt number for this action.
+    pub delivery_attempt: u32,
+    /// Explicit durable acknowledgement state.
+    pub acknowledgement: OutboxAcknowledgementV1,
+}
+
+impl OutboxRecordV1 {
+    /// Creates a pending outbox record at the first delivery attempt.
+    #[must_use]
+    pub const fn new(action: ProcessActionDtoV1) -> Self {
+        Self {
+            action,
+            delivery_attempt: 0,
+            acknowledgement: OutboxAcknowledgementV1::Pending,
+        }
+    }
+
+    /// Validates the action schema and bounded delivery attempt.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] when the action or attempt is invalid.
+    pub fn validate(&self) -> Result<(), PortError> {
+        if self.action.validate().is_err() || self.delivery_attempt >= MAX_OUTBOX_DELIVERY_ATTEMPTS
+        {
+            return Err(PortError::Invariant);
+        }
+        Ok(())
+    }
 }
 
 /// Typed validation failure for one atomic process commit request.
@@ -1152,6 +1199,14 @@ mod tests {
             ProcessAuthorizationDecisionV1::Denied.require_authorized(),
             Err(PortError::Unauthorized)
         );
+    }
+
+    #[test]
+    fn outbox_record_requires_valid_action_and_bounded_attempt() {
+        let mut record = OutboxRecordV1::new(action());
+        assert!(record.validate().is_ok());
+        record.delivery_attempt = MAX_OUTBOX_DELIVERY_ATTEMPTS;
+        assert_eq!(record.validate(), Err(PortError::Invariant));
     }
 
     #[test]
