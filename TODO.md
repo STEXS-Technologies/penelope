@@ -488,10 +488,12 @@ Current partial evidence: `SECURITY.md` defines supported pre-1.0 scope,
 private reporting, response expectations, and saga-specific safety boundaries.
 Complete `LICENSE-MIT` and `LICENSE-APACHE` texts match the declared manifest
 license. Locked CI builds exist, and previously unused `chrono`, `tokio`, and
-`trait-variant` workspace declarations have been removed. Dependency policy,
-automated audit/deny,
-secret scanning, action pin governance, MSRV policy, and a response rehearsal
-remain incomplete.
+`trait-variant` workspace declarations have been removed. `deny.toml` permits
+only the reviewed MIT, Apache-2.0, NCSA, Unicode-3.0, and Unlicense dependency
+licenses, rejects unknown registries/git sources, and CI runs both `cargo audit`
+and `cargo deny` across advisories, bans, licenses, and sources. Secret
+scanning, action pin governance, MSRV policy, and a response rehearsal remain
+incomplete.
 
 ## P2 — adapters, operations and user experience
 

@@ -1,0 +1,34 @@
+# Supply-chain policy for the library and its test/fuzz toolchain.
+#
+# Any license or source outside these explicit choices requires a reviewed
+# policy change; dependency advisories fail CI through `cargo deny` and
+# `cargo audit`.
+
+[graph]
+all-features = true
+
+[advisories]
+version = 2
+yanked = "warn"
+
+[licenses]
+version = 2
+confidence-threshold = 0.8
+allow = [
+  "Apache-2.0",
+  "MIT",
+  "NCSA",
+  "Unicode-3.0",
+  "Unlicense",
+]
+
+[bans]
+multiple-versions = "warn"
+# `cargo-deny` treats local workspace path dependencies as wildcards even when
+# their package version is workspace-pinned. External dependency requirements
+# remain explicit in the workspace manifest and are locked in Cargo.lock.
+wildcards = "allow"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

@@ -40,3 +40,16 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo install cargo-fuzz --locked
       - run: PENELOPE_FUZZ_RUNS=1000 ./scripts/run_bounded_fuzz.sh
+
+  supply-chain:
+    name: Supply-chain verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-audit --locked
+      - run: cargo install cargo-deny --locked
+      - run: cargo audit
+      - run: cargo deny check advisories bans licenses sources
