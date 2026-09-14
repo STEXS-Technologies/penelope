@@ -1085,8 +1085,12 @@ pub trait OutboxStore: Send + Sync {
     /// Claims a bounded batch of pending records for one process scope.
     async fn claim(&self, request: &OutboxClaimRequestV1) -> Result<Vec<OutboxLeaseV1>, PortError>;
 
-    /// Acknowledges one exact action delivery after successful dispatch.
-    async fn acknowledge(&self, lease: &OutboxLeaseV1) -> Result<(), PortError>;
+    /// Acknowledges one exact, unexpired action delivery after successful dispatch.
+    ///
+    /// Implementations must call [`OutboxLeaseV1::validate_at`] with `now`
+    /// before changing durable acknowledgement state.
+    async fn acknowledge(&self, lease: &OutboxLeaseV1, now: LogicalTimeV1)
+    -> Result<(), PortError>;
 }
 
 /// Durable inbox that deduplicates immutable source inputs.

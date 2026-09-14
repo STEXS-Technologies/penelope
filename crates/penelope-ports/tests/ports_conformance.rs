@@ -61,7 +61,7 @@ impl OutboxStore for UnavailablePorts {
         Err(PortError::Unavailable)
     }
 
-    async fn acknowledge(&self, _: &OutboxLeaseV1) -> Result<(), PortError> {
+    async fn acknowledge(&self, _: &OutboxLeaseV1, _: LogicalTimeV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -334,7 +334,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(outbox.acknowledge(&record)),
+        ready(outbox.acknowledge(&record, LogicalTimeV1(2))),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
