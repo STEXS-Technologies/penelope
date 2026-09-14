@@ -12,9 +12,9 @@ use std::task::{Context, Poll, Waker};
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, InputId,
-    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1, ProcessId,
-    ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
+    ActionId, CanonicalEventId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion,
+    InputId, LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1,
+    ProcessId, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
     ProcessOutcomeKindV1, ProcessScopeV1, StepId, TenantId,
 };
 use penelope_ports::{
@@ -26,6 +26,7 @@ use penelope_ports::{
 struct StoreState {
     next_sequence: u64,
     inputs: Vec<InputId>,
+    canonical_source_events: Vec<CanonicalEventId>,
     outcomes: Vec<ProcessOutcomeDtoV1>,
     actions: Vec<ProcessActionDtoV1>,
 }
@@ -55,6 +56,7 @@ impl FaultInjectingStore {
             state: Mutex::new(StoreState {
                 next_sequence: 0,
                 inputs: Vec::new(),
+                canonical_source_events: Vec::new(),
                 outcomes: Vec::new(),
                 actions: Vec::new(),
             }),
@@ -97,6 +99,21 @@ impl ProcessStore for FaultInjectingStore {
                 duplicate_input: true,
             });
         }
+        if commit
+            .canonical_source_event_id
+            .as_ref()
+            .is_some_and(|source_event_id| {
+                current
+                    .canonical_source_events
+                    .iter()
+                    .any(|seen| seen == source_event_id)
+            })
+        {
+            return Ok(AtomicProcessCommitReceiptV1 {
+                committed_through_sequence: current.next_sequence.saturating_sub(1),
+                duplicate_input: true,
+            });
+        }
         if commit.expected_sequence != current.next_sequence {
             return Err(PortError::Conflict);
         }
@@ -113,6 +130,9 @@ impl ProcessStore for FaultInjectingStore {
                 return Err(PortError::Unavailable);
             }
             staged.inputs.push(input.input_id.clone());
+            if let Some(source_event_id) = &commit.canonical_source_event_id {
+                staged.canonical_source_events.push(source_event_id.clone());
+            }
             if self.take_failpoint(CommitFailpoint::AfterInputStage) {
                 return Err(PortError::Unavailable);
             }
@@ -243,6 +263,7 @@ fn commit() -> AtomicProcessCommitV1 {
     );
     AtomicProcessCommitV1::new(0, Some(input), vec![outcome], vec![action])
         .expect("valid atomic commit")
+        .with_canonical_source_event(id("cev_fault"))
 }
 
 #[test]
@@ -265,6 +286,15 @@ fn injected_failure_at_every_atomic_boundary_has_no_visible_partial_state() {
         assert!(!receipt.duplicate_input);
         let duplicate = block_on(store.commit(&commit)).expect("duplicate is idempotent");
         assert!(duplicate.duplicate_input);
+        let mut same_source_new_inbox_id = commit.clone();
+        same_source_new_inbox_id
+            .input
+            .as_mut()
+            .expect("commit has input")
+            .input_id = id("inp_redelivery");
+        let duplicate_source = block_on(store.commit(&same_source_new_inbox_id))
+            .expect("canonical source redelivery is idempotent");
+        assert!(duplicate_source.duplicate_input);
         assert_eq!(store.snapshot().outcomes.len(), 1);
         assert_eq!(store.snapshot().actions.len(), 1);
 

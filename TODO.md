@@ -445,8 +445,13 @@ pinned Penelope process/definition scope, preventing a caller from losing that
 authorization context after correlation. It rejects malformed expected or
 received scopes before correlation, has unit tests and the
 `fuzz_statechronicle_correlation` target. It deliberately does not claim
-that a transport response proves a commit, does not implement a client, and
-does not yet cover source freshness/deduplication or response-loss recovery.
+that a transport response proves a commit and does not implement a client.
+`AtomicProcessCommitV1` now accepts a canonical source-event key only beside a
+canonical inbox input, requiring the store to deduplicate that key in the same
+transaction as the input, outcomes, and actions. Its fault-injection drill
+proves source redelivery under a different inbox ID cannot append a second
+outcome after recovery. Response-loss recovery and a durable adapter remain
+incomplete.
 
 ### P1.5 External executor ambiguity
 
