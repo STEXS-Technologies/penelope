@@ -23,6 +23,8 @@ enum ExampleError {
     NotCompleted,
     #[error("trade simulation ran out of preallocated outcome identities")]
     MissingOutcomeId,
+    #[error("trade simulation ran out of immutable external input identities")]
+    MissingInputId,
     #[error("trade outcome sequence overflowed")]
     OutcomeSequenceOverflow,
 }
@@ -64,9 +66,19 @@ fn validate_outcome_plan(
         .chain(decision.planned_outcome_kinds())
     {
         let outcome_id = outcome_ids.next().ok_or(ExampleError::MissingOutcomeId)?;
+        let fact_causation_id = if matches!(kind, penelope::ProcessOutcomeKindV1::InputAccepted) {
+            CausationIdV1::Input(
+                event
+                    .input_id()
+                    .cloned()
+                    .ok_or(ExampleError::MissingInputId)?,
+            )
+        } else {
+            causation_id.clone()
+        };
         facts.push(ProcessOutcomeFactV1::new(
             outcome_id,
-            causation_id.clone(),
+            fact_causation_id,
             OutcomeActorV1::System,
             LogicalTimeV1(*next_sequence),
             *kind,
@@ -119,6 +131,12 @@ fn main() -> Result<(), ExampleError> {
         identifier::<ActionId>("act_settle")?,
     ]
     .into_iter();
+    let mut input_ids = [
+        identifier::<InputId>("inp_trade_lock_seller_result")?,
+        identifier("inp_trade_lock_buyer_result")?,
+        identifier("inp_trade_settle_result")?,
+    ]
+    .into_iter();
     let mut outcome_ids = [
         identifier::<OutcomeId>("out_trade_started")?,
         identifier("out_trade_lock_seller_planned")?,
@@ -155,6 +173,7 @@ fn main() -> Result<(), ExampleError> {
         let observed = ActionResultObservationV1::succeeded(action.action_id.clone());
         let next_action_id = next_action_ids.next();
         let event = LinearSagaEventV1::ActionResultObserved {
+            input_id: input_ids.next().ok_or(ExampleError::MissingInputId)?,
             observation: observed.clone(),
             next_action_id: next_action_id.clone(),
         };

@@ -2,8 +2,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    ActionId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
-    OutcomeActorV1, OutcomeId, ProcessActionKindV1, ProcessId, ProcessOutcomeFactV1,
+    ActionId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, InputId,
+    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessActionKindV1, ProcessId, ProcessOutcomeFactV1,
     ProcessScopeV1, TenantId,
 };
 use penelope_executor::engine::{
@@ -59,6 +59,7 @@ fuzz_target!(|data: &[u8]| {
     let replay_events = [
         LinearSagaEventV1::started(&definition, action_id.clone()),
         LinearSagaEventV1::ActionResultObserved {
+            input_id: identifier::<InputId>("inp_fuzz_result"),
             observation: ActionResultObservationV1::succeeded(action_id.clone()),
             next_action_id: Some(identifier("act_fuzz_next")),
         },

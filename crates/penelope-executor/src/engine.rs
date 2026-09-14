@@ -1,7 +1,7 @@
 //! Deterministic linear saga planning with typed inputs and outputs.
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, InputId, LogicalTimeV1,
     MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ProcessActionDtoV1, ProcessActionKindV1,
     ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1,
     StepId, TenantId,
@@ -321,6 +321,8 @@ pub enum LinearSagaEventV1 {
     /// A recorded, correlated action result and the identity already planned
     /// for the next action, if that transition needs one.
     ActionResultObserved {
+        /// Immutable inbox identity for this accepted external result.
+        input_id: InputId,
         /// Result accepted from the effect/canonical evidence boundary.
         observation: ActionResultObservationV1,
         /// Persisted identity for the following action or retry.
@@ -328,6 +330,8 @@ pub enum LinearSagaEventV1 {
     },
     /// A retryable effect result was recorded with a durable timer decision.
     RetryTimerScheduled {
+        /// Immutable inbox identity for this accepted retryable result.
+        input_id: InputId,
         /// Correlated retryable result for the active effect action.
         observation: ActionResultObservationV1,
         /// Persisted timer action identity, or a compensation action if exhausted.
@@ -337,6 +341,8 @@ pub enum LinearSagaEventV1 {
     },
     /// A due retry timer fired and unlocked its retry effect action.
     RetryTimerFired {
+        /// Immutable inbox identity for this accepted timer delivery.
+        input_id: InputId,
         /// Active timer action identity.
         timer_action_id: ActionId,
         /// Logical time at which the timer was delivered.
@@ -346,6 +352,8 @@ pub enum LinearSagaEventV1 {
     },
     /// An authorized immutable manual-review resolution was accepted.
     ManualResolutionApplied {
+        /// Immutable inbox identity for this accepted manual resolution.
+        input_id: InputId,
         /// Typed operator resolution.
         resolution: ManualReviewResolutionV1,
         /// Persisted fresh action identity when the resolution resumes work.
@@ -404,6 +412,20 @@ impl LinearSagaEventV1 {
             definition_version: definition.definition_version.clone(),
             definition_digest: definition.definition_digest,
             action_id,
+        }
+    }
+
+    /// Returns the immutable inbox identity for an externally delivered event.
+    ///
+    /// A start record is process creation rather than an inbox-delivered input.
+    #[must_use]
+    pub const fn input_id(&self) -> Option<&InputId> {
+        match self {
+            Self::Started { .. } => None,
+            Self::ActionResultObserved { input_id, .. }
+            | Self::RetryTimerScheduled { input_id, .. }
+            | Self::RetryTimerFired { input_id, .. }
+            | Self::ManualResolutionApplied { input_id, .. } => Some(input_id),
         }
     }
 
@@ -552,6 +574,17 @@ impl SagaDecisionV1 {
         if !facts.iter().map(|fact| fact.kind).eq(expected) {
             return Err(EngineError::OutcomeKindPlanMismatch);
         }
+        for fact in facts
+            .iter()
+            .filter(|fact| matches!(fact.kind, ProcessOutcomeKindV1::InputAccepted))
+        {
+            let Some(input_id) = event.input_id() else {
+                return Err(EngineError::OutcomeInputCausationMismatch);
+            };
+            if fact.causation_id != penelope_domain::CausationIdV1::Input(input_id.clone()) {
+                return Err(EngineError::OutcomeInputCausationMismatch);
+            }
+        }
         facts
             .iter()
             .enumerate()
@@ -574,6 +607,9 @@ impl SagaDecisionV1 {
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
+    /// An accepted-input outcome is not causally bound to the received input ID.
+    #[error("accepted-input outcome causation does not match the received input")]
+    OutcomeInputCausationMismatch,
     /// An outcome scope does not match the decision's pinned definition.
     #[error("outcome scope does not match the pinned saga definition")]
     OutcomeScopeMismatch,
@@ -1398,6 +1434,7 @@ pub fn replay(
             LinearSagaEventV1::ActionResultObserved {
                 observation,
                 next_action_id,
+                ..
             } => {
                 let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
                 decision = Some(apply_action_result(
@@ -1413,6 +1450,7 @@ pub fn replay(
                 observation,
                 next_action_id,
                 observed_at,
+                ..
             } => {
                 let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
                 decision = Some(schedule_retry_timer(
@@ -1429,6 +1467,7 @@ pub fn replay(
                 timer_action_id,
                 fired_at,
                 next_action_id,
+                ..
             } => {
                 let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
                 decision = Some(fire_retry_timer(
@@ -1444,6 +1483,7 @@ pub fn replay(
             LinearSagaEventV1::ManualResolutionApplied {
                 resolution,
                 next_action_id,
+                ..
             } => {
                 let current = decision.as_ref().ok_or(EngineError::MissingStart)?;
                 decision = Some(apply_manual_resolution(
@@ -1729,6 +1769,7 @@ mod tests {
     #[test]
     fn external_saga_inputs_always_require_an_accepted_input_record() {
         let event = LinearSagaEventV1::ActionResultObserved {
+            input_id: id("inp_action_result"),
             observation: ActionResultObservationV1::succeeded(id("act_lock")),
             next_action_id: Some(id("act_next")),
         };
@@ -1740,6 +1781,7 @@ mod tests {
             ]
         );
         let timer_event = LinearSagaEventV1::RetryTimerFired {
+            input_id: id("inp_timer_fire"),
             timer_action_id: id("act_timer"),
             fired_at: LogicalTimeV1(1),
             next_action_id: id("act_retry"),
@@ -1752,6 +1794,7 @@ mod tests {
             ]
         );
         let resolution_event = LinearSagaEventV1::ManualResolutionApplied {
+            input_id: id("inp_resolution"),
             resolution: ManualReviewResolutionV1::Escalate,
             next_action_id: None,
         };
@@ -1761,6 +1804,55 @@ mod tests {
                 ProcessOutcomeKindV1::InputAccepted,
                 ProcessOutcomeKindV1::ManualResolutionApplied,
             ]
+        );
+    }
+
+    #[test]
+    fn outcome_batch_binds_accepted_input_to_the_event_input_identity() {
+        let definition = definition();
+        let started = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
+        let action_id = started.next_action.as_ref().unwrap().action_id.clone();
+        let event = LinearSagaEventV1::ActionResultObserved {
+            input_id: id("inp_expected"),
+            observation: ActionResultObservationV1::succeeded(action_id.clone()),
+            next_action_id: Some(id("act_settle")),
+        };
+        let decision = apply_action_result(
+            &definition,
+            &started.projection,
+            id("tnt_game"),
+            id("prc_trade"),
+            &ActionResultObservationV1::succeeded(action_id),
+            Some(id("act_settle")),
+        )
+        .unwrap();
+        let scope = ProcessScopeV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+            definition.definition_digest,
+        );
+        let wrong_input_fact = ProcessOutcomeFactV1::new(
+            id("out_wrong_input"),
+            CausationIdV1::Input(id("inp_other")),
+            OutcomeActorV1::System,
+            LogicalTimeV1(1),
+            ProcessOutcomeKindV1::InputAccepted,
+            ContentDigest([0; 32]),
+        );
+        assert_eq!(
+            decision.build_required_outcomes(
+                &event,
+                &scope,
+                2,
+                &[
+                    wrong_input_fact,
+                    outcome_fact(id("out_result"), ProcessOutcomeKindV1::ActionSucceeded),
+                    outcome_fact(id("out_next"), ProcessOutcomeKindV1::ActionPlanned),
+                ],
+            ),
+            Err(EngineError::OutcomeInputCausationMismatch)
         );
     }
 
@@ -1990,11 +2082,13 @@ mod tests {
         let events = [
             LinearSagaEventV1::started(&definition, id("act_first")),
             LinearSagaEventV1::RetryTimerScheduled {
+                input_id: id("inp_retry_failure"),
                 observation: failure,
                 next_action_id: Some(id("act_retry_timer")),
                 observed_at: LogicalTimeV1(100),
             },
             LinearSagaEventV1::RetryTimerFired {
+                input_id: id("inp_retry_timer"),
                 timer_action_id: id("act_retry_timer"),
                 fired_at: LogicalTimeV1(110),
                 next_action_id: id("act_retry"),
@@ -2095,14 +2189,17 @@ mod tests {
         let events = [
             LinearSagaEventV1::started(&definition, id("act_lock")),
             LinearSagaEventV1::ActionResultObserved {
+                input_id: id("inp_lock_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
                 next_action_id: Some(id("act_settle")),
             },
             LinearSagaEventV1::ActionResultObserved {
+                input_id: id("inp_settle_result"),
                 observation: ActionResultObservationV1::unknown(id("act_settle")),
                 next_action_id: None,
             },
             LinearSagaEventV1::ManualResolutionApplied {
+                input_id: id("inp_manual_resolution"),
                 resolution: ManualReviewResolutionV1::Compensate,
                 next_action_id: Some(id("act_unlock")),
             },
@@ -2340,10 +2437,12 @@ mod tests {
         let events = vec![
             LinearSagaEventV1::started(&definition, id("act_lock")),
             LinearSagaEventV1::ActionResultObserved {
+                input_id: id("inp_lock_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_lock")),
                 next_action_id: Some(id("act_settle")),
             },
             LinearSagaEventV1::ActionResultObserved {
+                input_id: id("inp_settle_failure"),
                 observation: ActionResultObservationV1 {
                     action_id: id("act_settle"),
                     result: ActionResultV1::TerminalFailure,
@@ -2351,6 +2450,7 @@ mod tests {
                 next_action_id: Some(id("act_unlock")),
             },
             LinearSagaEventV1::ActionResultObserved {
+                input_id: id("inp_unlock_result"),
                 observation: ActionResultObservationV1::succeeded(id("act_unlock")),
                 next_action_id: None,
             },
@@ -2470,6 +2570,7 @@ mod tests {
                     break;
                 }
                 events.push(LinearSagaEventV1::ActionResultObserved {
+                    input_id: id("inp_property_result"),
                     observation: observation.clone(),
                     next_action_id: next_action_id.clone(),
                 });
@@ -2571,10 +2672,12 @@ mod tests {
             &[
                 LinearSagaEventV1::started(&definition, id("act_lock")),
                 LinearSagaEventV1::ActionResultObserved {
+                    input_id: id("inp_lock_result"),
                     observation: ActionResultObservationV1::succeeded(id("act_lock")),
                     next_action_id: Some(id("act_settle")),
                 },
                 LinearSagaEventV1::ActionResultObserved {
+                    input_id: id("inp_settle_result"),
                     observation: ActionResultObservationV1::succeeded(id("act_settle")),
                     next_action_id: None,
                 },
