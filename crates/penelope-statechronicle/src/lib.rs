@@ -36,6 +36,35 @@ pub struct CanonicalCommandExpectationV1 {
 }
 
 impl CanonicalCommandExpectationV1 {
+    /// Derives correlation requirements directly from a validated canonical
+    /// command, preventing callers from reconstructing scope or action fields
+    /// independently.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CorrelationError::InvalidExpectation`] when the command's
+    /// resource scope is invalid.
+    pub fn from_command(
+        scope: ProcessScopeV1,
+        command: &penelope_domain::CanonicalCommandDtoV1,
+        expected_event_payload_digest: ContentDigest,
+    ) -> Result<Self, CorrelationError> {
+        command
+            .validate()
+            .map_err(|source| CorrelationError::InvalidExpectation { source })?;
+        let expectation = Self {
+            scope,
+            action_id: command.action_id.clone(),
+            operation: command.operation.clone(),
+            resource_ids: command.resource_ids.clone(),
+            expected_event_payload_digest,
+        };
+        expectation
+            .validate()
+            .map_err(|source| CorrelationError::InvalidExpectation { source })?;
+        Ok(expectation)
+    }
+
     /// Validates the expected canonical resource scope before correlation.
     ///
     /// # Errors
@@ -209,8 +238,9 @@ pub fn bind_verified_event_to_commit(
 mod tests {
     use super::*;
     use penelope_domain::{
-        CausationIdV1, ContentDigest, InputId, LogicalTimeV1, OutcomeActorV1, OutcomeId,
-        ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1,
+        CanonicalCommandDtoV1, CausationIdV1, ContentDigest, InputId, LogicalTimeV1,
+        OutcomeActorV1, OutcomeId, ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
+        ProcessOutcomeKindV1,
     };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -276,6 +306,26 @@ mod tests {
         let verified = verify_committed_event(&expectation(), event()).unwrap();
         assert_eq!(verified.event.commit_sequence, 7);
         assert_eq!(verified.scope.process_id, id("prc_trade"));
+    }
+
+    #[test]
+    fn expectation_can_be_derived_from_a_validated_command() {
+        let expected = expectation();
+        let command = CanonicalCommandDtoV1::new(
+            expected.scope.tenant_id.clone(),
+            expected.action_id.clone(),
+            expected.operation.clone(),
+            expected.resource_ids.clone(),
+            ContentDigest([4; 32]),
+        )
+        .unwrap();
+        let derived = CanonicalCommandExpectationV1::from_command(
+            expected.scope.clone(),
+            &command,
+            expected.expected_event_payload_digest,
+        )
+        .unwrap();
+        assert_eq!(derived, expected);
     }
 
     #[test]
