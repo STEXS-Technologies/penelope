@@ -323,7 +323,10 @@ reconciliation, intent, StateChronicle-correlation, and port failures use
 typed enums. `PortError` distinguishes unavailability, optimistic conflict,
 unauthorized access, quota exhaustion, timeout, cancellation, ambiguity, and
 adapter-invariant rejection. The authorization matrix, quotas, redacted
-diagnostics, and sensitive-data snapshot tests remain incomplete.
+diagnostics, and sensitive-data snapshot tests remain incomplete. The
+StateChronicle expectation constructor now rejects a canonical command whose
+tenant differs from the authorized process scope (`CommandScopeMismatch`),
+with an adversarial regression test and correlation fuzz coverage.
 
 ### P0.9 Build `trade.v1` as the reference saga
 
@@ -601,7 +604,7 @@ retained/minimized crash-regression policy remain incomplete.
 On the current revision (including the bounded graph executor and its execution
 fuzz paths), all nine registered fuzz targets were run concurrently for 3,601
 seconds each. They completed with exit code 0, normal libFuzzer summaries,
-3,759,001,587 total executions, and no sanitizer, undefined-behavior,
+3,333,212,944 total executions, and no sanitizer, undefined-behavior,
 runtime-error, or crash markers. This is pure library-boundary evidence; it
 does not replace durable-adapter or deployment chaos testing.
 
