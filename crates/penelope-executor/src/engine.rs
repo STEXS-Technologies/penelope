@@ -329,6 +329,11 @@ pub enum GraphDefinitionError {
 
 impl ProcessGraphDefinitionV1 {
     /// Validates graph bounds, references, deterministic edge keys, and reachability.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed [`GraphDefinitionError`] when bounds, references,
+    /// transition keys, or reachability invariants are violated.
     pub fn validate(&self) -> Result<(), GraphDefinitionError> {
         if self.steps.is_empty() {
             return Err(GraphDefinitionError::EmptySteps);
@@ -2119,7 +2124,7 @@ mod tests {
         assert_eq!(graph.validate(), Ok(()));
 
         let mut missing_destination = graph.clone();
-        missing_destination.transitions[0].to_step = None;
+        missing_destination.transitions.first_mut().unwrap().to_step = None;
         assert_eq!(
             missing_destination.validate(),
             Err(GraphDefinitionError::MissingDestination)
