@@ -452,7 +452,8 @@ exposes bounded, scope-pinned claim and exact-record acknowledgement
 operations; implementations must supply leases/fencing and durable redelivery
 behavior. `OutboxLeaseTokenV1` and `OutboxLeaseV1` now provide an opaque
 fencing token, owner, and expiry for stale-worker protection; adapters still
-own token allocation and expiry enforcement.
+own token allocation and expiry enforcement. `OutboxLeaseV1::validate_for_claim`
+also rejects a lease whose action scope differs from the claim scope.
 
 ### P1.4 StateChronicle contract
 
