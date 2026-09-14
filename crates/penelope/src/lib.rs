@@ -54,6 +54,6 @@ pub use penelope_ports::{
 pub use penelope_statechronicle as statechronicle;
 /// Frequently used StateChronicle committed-event correlation contracts.
 pub use penelope_statechronicle::{
-    CanonicalCommandExpectationV1, CorrelationError, VerifiedCanonicalEventV1,
-    verify_committed_event,
+    CanonicalCommandExpectationV1, CanonicalCommitBindingError, CorrelationError,
+    VerifiedCanonicalEventV1, bind_verified_event_to_commit, verify_committed_event,
 };

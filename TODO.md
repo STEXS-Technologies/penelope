@@ -450,8 +450,11 @@ that a transport response proves a commit and does not implement a client.
 canonical inbox input, requiring the store to deduplicate that key in the same
 transaction as the input, outcomes, and actions. Its fault-injection drill
 proves source redelivery under a different inbox ID cannot append a second
-outcome after recovery. Response-loss recovery and a durable adapter remain
-incomplete.
+outcome after recovery. `bind_verified_event_to_commit` provides the
+user-facing safe path from verified event to atomic source-bound commit; it
+rejects input kind, scope, digest, and outcome-scope substitution, with typed
+tests for source pinning and digest substitution. Response-loss recovery and a
+durable adapter remain incomplete.
 
 ### P1.5 External executor ambiguity
 
