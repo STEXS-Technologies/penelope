@@ -9,9 +9,10 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, EffectKeyV1, ExternalReferenceId,
-    LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
-    ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessScopeV1, ReviewId,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, EffectKeyV1,
+    ExternalReferenceId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId,
+    ProcessActionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessScopeV1,
+    ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU16;
@@ -95,6 +96,12 @@ pub enum CommitValidationError {
     /// The deduplicated input is for a different tenant or process.
     #[error("atomic process commit input scope does not match")]
     InputScopeMismatch,
+    /// Canonical source-event deduplication requires an inbox input in the same commit.
+    #[error("canonical source-event key requires an atomic inbox input")]
+    CanonicalSourceWithoutInput,
+    /// A canonical source-event key may only deduplicate a canonical-event input.
+    #[error("canonical source-event key requires a canonical-event input")]
+    CanonicalSourceWithWrongInputKind,
     /// Advancing the expected outcome sequence would overflow.
     #[error("atomic process commit outcome sequence overflowed")]
     SequenceOverflow,
@@ -556,6 +563,15 @@ pub struct AtomicProcessCommitV1 {
     pub expected_sequence: u64,
     /// Optional immutable input accepted by the durable inbox.
     pub input: Option<ProcessInputDtoV1>,
+    /// Verified canonical source event deduplicated with this input, when this
+    /// commit advances from a StateChronicle committed-event delivery.
+    ///
+    /// An adapter must set this only after `penelope-statechronicle` verifies
+    /// the event. The store must deduplicate it in the same transaction as
+    /// `input`, outcomes, and actions, preventing the same source event from
+    /// advancing the process under a second inbox identity.
+    #[serde(default)]
+    pub canonical_source_event_id: Option<CanonicalEventId>,
     /// Contiguous append-only process outcomes.
     pub outcomes: Vec<ProcessOutcomeDtoV1>,
     /// Independently idempotent outgoing actions persisted with the outcomes.
@@ -701,11 +717,19 @@ impl AtomicProcessCommitV1 {
         let commit = Self {
             expected_sequence,
             input,
+            canonical_source_event_id: None,
             outcomes,
             actions,
         };
         commit.validate()?;
         Ok(commit)
+    }
+
+    /// Binds this commit to a previously verified canonical source event.
+    #[must_use]
+    pub fn with_canonical_source_event(mut self, source_event_id: CanonicalEventId) -> Self {
+        self.canonical_source_event_id = Some(source_event_id);
+        self
     }
 
     /// Validates outcome order and a single pinned process-definition scope.
@@ -790,6 +814,14 @@ impl AtomicProcessCommitV1 {
                 || input.process_id != first_outcome.process_id
             {
                 return Err(CommitValidationError::InputScopeMismatch);
+            }
+        }
+        if self.canonical_source_event_id.is_some() {
+            let Some(input) = &self.input else {
+                return Err(CommitValidationError::CanonicalSourceWithoutInput);
+            };
+            if input.kind != ProcessInputKindV1::CanonicalEvent {
+                return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
         Ok(())
@@ -1079,6 +1111,43 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error, CommitValidationError::InvalidInputSchema);
+    }
+
+    #[test]
+    fn canonical_source_event_key_requires_a_canonical_inbox_input() {
+        let source_event_id: CanonicalEventId = id("cev_lock");
+        let valid = AtomicProcessCommitV1::new(
+            0,
+            Some(input()),
+            vec![outcome(0, id("out_event"))],
+            vec![action()],
+        )
+        .unwrap()
+        .with_canonical_source_event(source_event_id.clone());
+        assert_eq!(valid.validate(), Ok(()));
+
+        let mut missing_input =
+            AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], vec![action()])
+                .unwrap();
+        missing_input.canonical_source_event_id = Some(source_event_id.clone());
+        assert_eq!(
+            missing_input.validate(),
+            Err(CommitValidationError::CanonicalSourceWithoutInput)
+        );
+
+        let mut wrong_kind = AtomicProcessCommitV1::new(
+            0,
+            Some(input()),
+            vec![outcome(0, id("out_event"))],
+            vec![action()],
+        )
+        .unwrap();
+        wrong_kind.input.as_mut().unwrap().kind = ProcessInputKindV1::TimerFired;
+        wrong_kind.canonical_source_event_id = Some(source_event_id);
+        assert_eq!(
+            wrong_kind.validate(),
+            Err(CommitValidationError::CanonicalSourceWithWrongInputKind)
+        );
     }
 
     #[test]
