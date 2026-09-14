@@ -161,9 +161,19 @@ impl ProcessStore for FaultInjectingStore {
 
     async fn append_outcomes(
         &self,
+        scope: &ProcessScopeV1,
         expected_sequence: u64,
         outcomes: &[ProcessOutcomeDtoV1],
     ) -> Result<(), PortError> {
+        if outcomes.iter().any(|outcome| {
+            outcome.tenant_id != scope.tenant_id
+                || outcome.process_id != scope.process_id
+                || outcome.definition_id != scope.definition_id
+                || outcome.definition_version != scope.definition_version
+                || outcome.definition_digest != scope.definition_digest
+        }) {
+            return Err(PortError::Invariant);
+        }
         let commit =
             AtomicProcessCommitV1::new(expected_sequence, None, outcomes.to_vec(), Vec::new())
                 .map_err(|_error| PortError::Invariant)?;

@@ -849,6 +849,7 @@ pub trait ProcessStore: Send + Sync {
     /// Appends outcomes using the expected per-instance sequence.
     async fn append_outcomes(
         &self,
+        scope: &ProcessScopeV1,
         expected_sequence: u64,
         outcomes: &[ProcessOutcomeDtoV1],
     ) -> Result<(), PortError>;

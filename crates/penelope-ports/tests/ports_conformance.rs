@@ -37,7 +37,12 @@ impl ProcessStore for UnavailablePorts {
         Err(PortError::Unavailable)
     }
 
-    async fn append_outcomes(&self, _: u64, _: &[ProcessOutcomeDtoV1]) -> Result<(), PortError> {
+    async fn append_outcomes(
+        &self,
+        _: &ProcessScopeV1,
+        _: u64,
+        _: &[ProcessOutcomeDtoV1],
+    ) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 
@@ -297,7 +302,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(process_store.append_outcomes(0, &[outcome])),
+        ready(process_store.append_outcomes(&scope(), 0, &[outcome])),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
