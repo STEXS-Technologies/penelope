@@ -2,9 +2,9 @@
 
 use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, InputId, LogicalTimeV1,
-    MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1,
-    StepId, TenantId,
+    MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ManualReviewDtoV1, ProcessActionDtoV1,
+    ProcessActionKindV1, ProcessId, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
+    ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
 };
 use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
@@ -564,6 +564,40 @@ impl SagaDecisionV1 {
         })
     }
 
+    /// Builds the typed durable manual-review request for an escalated process.
+    ///
+    /// The outer application must atomically record the corresponding outcome
+    /// batch before calling [`penelope_ports::ManualReviewQueue::open`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error if this decision is not escalated or `scope` does
+    /// not match the definition pinned by the decision.
+    pub fn manual_review_request(
+        &self,
+        scope: &ProcessScopeV1,
+        review_id: ReviewId,
+        opened_at_sequence: u64,
+        evidence_digest: ContentDigest,
+    ) -> Result<ManualReviewDtoV1, EngineError> {
+        if self.projection.status != SagaStatusV1::Escalated {
+            return Err(EngineError::ManualReviewNotRequired);
+        }
+        if scope.definition_id != self.projection.definition_id
+            || scope.definition_version != self.projection.definition_version
+            || scope.definition_digest != self.projection.definition_digest
+        {
+            return Err(EngineError::OutcomeScopeMismatch);
+        }
+        Ok(ManualReviewDtoV1::new(
+            scope.tenant_id.clone(),
+            scope.process_id.clone(),
+            review_id,
+            opened_at_sequence,
+            evidence_digest,
+        ))
+    }
+
     /// Returns the immutable fact categories planned by this decision.
     ///
     /// A caller must append these after the observed categories from the input
@@ -682,6 +716,9 @@ impl SagaDecisionV1 {
 /// Engine invariant failure.
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum EngineError {
+    /// A manual-review request was requested for a non-escalated decision.
+    #[error("manual review is required only for an escalated saga")]
+    ManualReviewNotRequired,
     /// An accepted-input outcome is not causally bound to the received input ID.
     #[error("accepted-input outcome causation does not match the received input")]
     OutcomeInputCausationMismatch,
@@ -1947,6 +1984,38 @@ mod tests {
                 ],
             ),
             Err(EngineError::OutcomeInputCausationMismatch)
+        );
+    }
+
+    #[test]
+    fn escalated_decision_builds_a_scope_pinned_manual_review_request() {
+        let definition = definition();
+        let started = start(&definition, id("tnt_game"), id("prc_trade"), id("act_lock")).unwrap();
+        let action_id = started.next_action.as_ref().unwrap().action_id.clone();
+        let escalated = apply_action_result(
+            &definition,
+            &started.projection,
+            id("tnt_game"),
+            id("prc_trade"),
+            &ActionResultObservationV1::unknown(action_id),
+            None,
+        )
+        .unwrap();
+        let scope = ProcessScopeV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+            definition.definition_digest,
+        );
+        let request = escalated
+            .manual_review_request(&scope, id("rev_trade"), 2, ContentDigest([4; 32]))
+            .unwrap();
+        assert_eq!(request.review_id, id("rev_trade"));
+        assert_eq!(request.opened_at_sequence, 2);
+        assert_eq!(
+            started.manual_review_request(&scope, id("rev_trade"), 0, ContentDigest([0; 32])),
+            Err(EngineError::ManualReviewNotRequired)
         );
     }
 

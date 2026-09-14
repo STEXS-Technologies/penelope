@@ -270,7 +270,9 @@ Unknown outcomes and failed/exhausted compensation escalate. There is no
 persisted compensation outcome schema. An authorized typed manual resolution
 is now a replayable engine input: it can resume a specifically authorized retry,
 start LIFO compensation, cancel, or retain escalation; direct resolution of a
-non-escalated process fails closed. There is still no durable review workflow,
+non-escalated process fails closed. An escalated pure decision can also build a
+scope-pinned `ManualReviewDtoV1` for the `ManualReviewQueue` port, while a
+non-escalated decision rejects the request. There is still no durable review workflow,
 so this item remains incomplete.
 
 ### P0.8 Errors, authorization and redaction

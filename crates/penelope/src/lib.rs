@@ -16,9 +16,9 @@ pub use penelope_domain as domain;
 pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CausationIdV1, ContentDigest,
     DefinitionId, DefinitionVersion, DomainError, EffectKeyV1, InputId, LogicalTimeV1,
-    OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1, ProcessId,
-    ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1,
-    ProcessScopeV1, StepId, TenantId,
+    ManualReviewDtoV1, OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1,
+    ProcessId, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
+    ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
