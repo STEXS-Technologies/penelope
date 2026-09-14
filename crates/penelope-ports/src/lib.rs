@@ -18,6 +18,8 @@ use thiserror::Error;
 
 /// Maximum append-only outcomes accepted in one atomic process commit.
 pub const MAX_OUTCOMES_PER_ATOMIC_COMMIT: usize = 128;
+/// Maximum independently idempotent actions accepted in one atomic commit.
+pub const MAX_ACTIONS_PER_ATOMIC_COMMIT: usize = 128;
 
 /// A backend-independent port error.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -72,6 +74,15 @@ pub enum CommitValidationError {
     /// One outgoing action is for a different pinned process-definition scope.
     #[error("atomic process commit action scope does not match")]
     ActionScopeMismatch,
+    /// A commit attempted to enqueue too many actions at once.
+    #[error("atomic process commit exceeds the action limit")]
+    ActionLimitExceeded,
+    /// A commit contains the same independently idempotent action identity twice.
+    #[error("atomic process commit contains a duplicate action identity")]
+    DuplicateActionId,
+    /// A commit contains two action identities for the same semantic effect.
+    #[error("atomic process commit contains a duplicate action effect key")]
+    DuplicateActionEffectKey,
     /// The deduplicated input is for a different tenant or process.
     #[error("atomic process commit input scope does not match")]
     InputScopeMismatch,
@@ -294,7 +305,10 @@ impl AtomicProcessCommitV1 {
                 .checked_add(1)
                 .ok_or(CommitValidationError::SequenceOverflow)?;
         }
-        for action in &self.actions {
+        if self.actions.len() > MAX_ACTIONS_PER_ATOMIC_COMMIT {
+            return Err(CommitValidationError::ActionLimitExceeded);
+        }
+        for (index, action) in self.actions.iter().enumerate() {
             if action.tenant_id != first_outcome.tenant_id
                 || action.process_id != first_outcome.process_id
                 || action.definition_id != first_outcome.definition_id
@@ -302,6 +316,23 @@ impl AtomicProcessCommitV1 {
                 || action.definition_digest != first_outcome.definition_digest
             {
                 return Err(CommitValidationError::ActionScopeMismatch);
+            }
+            if self
+                .actions
+                .iter()
+                .skip(index.saturating_add(1))
+                .any(|other_action| other_action.action_id == action.action_id)
+            {
+                return Err(CommitValidationError::DuplicateActionId);
+            }
+            let effect_key = action.effect_key();
+            if self
+                .actions
+                .iter()
+                .skip(index.saturating_add(1))
+                .any(|other_action| other_action.effect_key() == effect_key)
+            {
+                return Err(CommitValidationError::DuplicateActionEffectKey);
             }
         }
         if let Some(input) = &self.input
@@ -543,6 +574,40 @@ mod tests {
             vec![outcome(0, id("out_limit")); MAX_OUTCOMES_PER_ATOMIC_COMMIT.saturating_add(1)];
         let error = AtomicProcessCommitV1::new(0, None, outcomes, vec![]).unwrap_err();
         assert_eq!(error, CommitValidationError::OutcomeLimitExceeded);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_duplicate_action_identity() {
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_event"))],
+            vec![action(), action()],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::DuplicateActionId);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_duplicate_action_effect_key() {
+        let mut second_action = action();
+        second_action.action_id = id("act_other");
+        let error = AtomicProcessCommitV1::new(
+            0,
+            None,
+            vec![outcome(0, id("out_event"))],
+            vec![action(), second_action],
+        )
+        .unwrap_err();
+        assert_eq!(error, CommitValidationError::DuplicateActionEffectKey);
+    }
+
+    #[test]
+    fn atomic_commit_rejects_an_oversized_action_batch() {
+        let actions = vec![action(); MAX_ACTIONS_PER_ATOMIC_COMMIT.saturating_add(1)];
+        let error = AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], actions)
+            .unwrap_err();
+        assert_eq!(error, CommitValidationError::ActionLimitExceeded);
     }
 
     #[test]

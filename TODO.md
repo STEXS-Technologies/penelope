@@ -336,8 +336,9 @@ Current partial evidence: `AtomicProcessCommitV1` defines one typed local
 transaction boundary for optional inbox acceptance, contiguous outcomes, and
 outgoing actions. Every outcome and action carries the pinned tenant, process,
 definition ID, definition version, and definition digest. It rejects
-cross-definition, scope, sequence, duplicate-outcome identity, and oversized
-batch mismatches before an adapter sees the request, and is parser/validation
+cross-definition, scope, sequence, duplicate-outcome identity, duplicate
+action identity, duplicate semantic action effect keys, and oversized outcome
+or action batches before an adapter sees the request, and is parser/validation
 fuzzed. No durable implementation,
 optimistic conflict behavior, projection write, or failpoint recovery test
 exists yet, so this item remains incomplete.
