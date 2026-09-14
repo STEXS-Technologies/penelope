@@ -827,12 +827,12 @@ impl AtomicProcessCommitV1 {
                 return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
-        if let Some(input) = &self.input {
-            if !self.outcomes.iter().any(|outcome| {
+        if let Some(input) = &self.input
+            && !self.outcomes.iter().any(|outcome| {
                 matches!(&outcome.causation_id, penelope_domain::CausationIdV1::Input(input_id) if input_id == &input.input_id)
-            }) {
-                return Err(CommitValidationError::InputNotCausallyRecorded);
-            }
+            })
+        {
+            return Err(CommitValidationError::InputNotCausallyRecorded);
         }
         Ok(())
     }
