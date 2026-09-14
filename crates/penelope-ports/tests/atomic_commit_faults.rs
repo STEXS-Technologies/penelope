@@ -6,7 +6,7 @@
 #![allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
 
 use std::future::Future;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicU8, Ordering};
 use std::sync::{Mutex, MutexGuard};
 use std::task::{Context, Poll, Waker};
 
@@ -30,9 +30,23 @@ struct StoreState {
     actions: Vec<ProcessActionDtoV1>,
 }
 
+/// Logical points before the test double makes one staged atomic commit visible.
+///
+/// These are deliberately test-only failpoints. A production adapter must
+/// provide an equivalent transactional guarantee through its own durable
+/// implementation rather than importing this fixture.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+enum CommitFailpoint {
+    BeforeInputStage = 1,
+    AfterInputStage = 2,
+    AfterOutcomeAppend = 3,
+    AfterActionEnqueue = 4,
+}
+
 struct FaultInjectingStore {
     state: Mutex<StoreState>,
-    fail_before_commit: AtomicBool,
+    failpoint: AtomicU8,
 }
 
 impl FaultInjectingStore {
@@ -44,12 +58,18 @@ impl FaultInjectingStore {
                 outcomes: Vec::new(),
                 actions: Vec::new(),
             }),
-            fail_before_commit: AtomicBool::new(false),
+            failpoint: AtomicU8::new(0),
         }
     }
 
-    fn fail_next_commit(&self) {
-        self.fail_before_commit.store(true, Ordering::Release);
+    fn fail_next_commit_at(&self, failpoint: CommitFailpoint) {
+        self.failpoint.store(failpoint as u8, Ordering::Release);
+    }
+
+    fn take_failpoint(&self, failpoint: CommitFailpoint) -> bool {
+        self.failpoint
+            .compare_exchange(failpoint as u8, 0, Ordering::AcqRel, Ordering::Acquire)
+            .is_ok()
     }
 
     fn snapshot(&self) -> StoreState {
@@ -68,9 +88,6 @@ impl ProcessStore for FaultInjectingStore {
         commit: &AtomicProcessCommitV1,
     ) -> Result<AtomicProcessCommitReceiptV1, PortError> {
         commit.validate().map_err(|_error| PortError::Invariant)?;
-        if self.fail_before_commit.swap(false, Ordering::AcqRel) {
-            return Err(PortError::Unavailable);
-        }
         let mut current = self.lock();
         if let Some(input) = &commit.input
             && current.inputs.iter().any(|seen| seen == &input.input_id)
@@ -92,7 +109,13 @@ impl ProcessStore for FaultInjectingStore {
         }
         let mut staged = current.clone();
         if let Some(input) = &commit.input {
+            if self.take_failpoint(CommitFailpoint::BeforeInputStage) {
+                return Err(PortError::Unavailable);
+            }
             staged.inputs.push(input.input_id.clone());
+            if self.take_failpoint(CommitFailpoint::AfterInputStage) {
+                return Err(PortError::Unavailable);
+            }
         }
         staged.next_sequence = staged
             .next_sequence
@@ -101,7 +124,13 @@ impl ProcessStore for FaultInjectingStore {
             )
             .ok_or(PortError::Invariant)?;
         staged.outcomes.extend(commit.outcomes.clone());
+        if self.take_failpoint(CommitFailpoint::AfterOutcomeAppend) {
+            return Err(PortError::Unavailable);
+        }
         staged.actions.extend(commit.actions.clone());
+        if self.take_failpoint(CommitFailpoint::AfterActionEnqueue) {
+            return Err(PortError::Unavailable);
+        }
         let receipt = AtomicProcessCommitReceiptV1 {
             committed_through_sequence: staged.next_sequence.saturating_sub(1),
             duplicate_input: false,
@@ -217,30 +246,37 @@ fn commit() -> AtomicProcessCommitV1 {
 }
 
 #[test]
-fn injected_failure_is_atomic_and_recovery_replays_one_committed_input() {
-    let store = FaultInjectingStore::new();
-    let commit = commit();
-    let before = store.snapshot();
-    store.fail_next_commit();
-    assert_eq!(block_on(store.commit(&commit)), Err(PortError::Unavailable));
-    assert_eq!(store.snapshot(), before);
+fn injected_failure_at_every_atomic_boundary_has_no_visible_partial_state() {
+    for failpoint in [
+        CommitFailpoint::BeforeInputStage,
+        CommitFailpoint::AfterInputStage,
+        CommitFailpoint::AfterOutcomeAppend,
+        CommitFailpoint::AfterActionEnqueue,
+    ] {
+        let store = FaultInjectingStore::new();
+        let commit = commit();
+        let before = store.snapshot();
+        store.fail_next_commit_at(failpoint);
+        assert_eq!(block_on(store.commit(&commit)), Err(PortError::Unavailable));
+        assert_eq!(store.snapshot(), before);
 
-    let receipt = block_on(store.commit(&commit)).expect("commit recovers");
-    assert_eq!(receipt.committed_through_sequence, 0);
-    assert!(!receipt.duplicate_input);
-    let duplicate = block_on(store.commit(&commit)).expect("duplicate is idempotent");
-    assert!(duplicate.duplicate_input);
-    assert_eq!(store.snapshot().outcomes.len(), 1);
-    assert_eq!(store.snapshot().actions.len(), 1);
+        let receipt = block_on(store.commit(&commit)).expect("commit recovers");
+        assert_eq!(receipt.committed_through_sequence, 0);
+        assert!(!receipt.duplicate_input);
+        let duplicate = block_on(store.commit(&commit)).expect("duplicate is idempotent");
+        assert!(duplicate.duplicate_input);
+        assert_eq!(store.snapshot().outcomes.len(), 1);
+        assert_eq!(store.snapshot().actions.len(), 1);
 
-    let request = OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN)
-        .expect("bounded replay request");
-    let page = block_on(store.read_outcomes(&request)).expect("replay succeeds after recovery");
-    assert_eq!(page.outcomes.len(), 1);
-    let first_outcome = page.outcomes.first().expect("one replayed outcome");
-    assert_eq!(first_outcome.sequence, 0);
+        let request = OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN)
+            .expect("bounded replay request");
+        let page = block_on(store.read_outcomes(&request)).expect("replay succeeds after recovery");
+        assert_eq!(page.outcomes.len(), 1);
+        let first_outcome = page.outcomes.first().expect("one replayed outcome");
+        assert_eq!(first_outcome.sequence, 0);
 
-    let conflict = AtomicProcessCommitV1::new(0, None, vec![first_outcome.clone()], Vec::new())
-        .expect("locally valid stale commit");
-    assert_eq!(block_on(store.commit(&conflict)), Err(PortError::Conflict));
+        let conflict = AtomicProcessCommitV1::new(0, None, vec![first_outcome.clone()], Vec::new())
+            .expect("locally valid stale commit");
+        assert_eq!(block_on(store.commit(&conflict)), Err(PortError::Conflict));
+    }
 }
