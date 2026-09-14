@@ -164,7 +164,8 @@ linear engine now derives an ordered required outcome-kind plan from each
 immutable event and pure decision (observed result plus planned action/retry,
 compensation, review resolution, or terminal state). It rejects a supplied
 outcome batch that omits, reorders, or substitutes those lifecycle kinds; the
-start-plan contract is unit tested and the helper is exercised by engine fuzzing.
+start-plan contract is unit tested and engine fuzzing exercises both plan
+derivation and full outcome-batch construction.
 The engine now constructs the full scope-pinned, contiguous DTO batch from
 outer-supplied immutable facts and rejects mismatched scopes or sequence
 overflow. It still does not allocate outcome IDs/timestamps or apply these

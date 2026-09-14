@@ -2,8 +2,9 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, ProcessActionKindV1,
-    ProcessId, TenantId,
+    ActionId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
+    OutcomeActorV1, OutcomeId, ProcessActionKindV1, ProcessId, ProcessOutcomeFactV1,
+    ProcessScopeV1, TenantId,
 };
 use penelope_executor::engine::{
     ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
@@ -78,11 +79,45 @@ fuzz_target!(|data: &[u8]| {
         &definition,
         tenant_id.clone(),
         process_id.clone(),
-        action_id,
+        action_id.clone(),
     ) else {
         return;
     };
     let _ = decision.planned_outcome_kinds();
+    let start_event = LinearSagaEventV1::started(&definition, action_id.clone());
+    let outcome_ids = [
+        identifier::<OutcomeId>("out_fuzz_started"),
+        identifier::<OutcomeId>("out_fuzz_planned"),
+    ];
+    let facts = start_event
+        .observed_outcome_kinds()
+        .iter()
+        .chain(decision.planned_outcome_kinds())
+        .zip(outcome_ids)
+        .map(|(kind, outcome_id)| {
+            ProcessOutcomeFactV1::new(
+                outcome_id,
+                CausationIdV1::Action(action_id.clone()),
+                OutcomeActorV1::System,
+                LogicalTimeV1(data.first().copied().map_or(0, u64::from)),
+                *kind,
+                ContentDigest([0; 32]),
+            )
+        })
+        .collect::<Vec<_>>();
+    let scope = ProcessScopeV1::new(
+        tenant_id.clone(),
+        process_id.clone(),
+        definition.definition_id.clone(),
+        definition.definition_version.clone(),
+        definition.definition_digest,
+    );
+    let _ = decision.build_required_outcomes(
+        &start_event,
+        &scope,
+        data.first().copied().map_or(0, u64::from),
+        &facts,
+    );
 
     for byte in data.iter().skip(1) {
         let result = match byte % 4 {
