@@ -122,10 +122,13 @@ fn main() -> Result<(), ExampleError> {
     let mut outcome_ids = [
         identifier::<OutcomeId>("out_trade_started")?,
         identifier("out_trade_lock_seller_planned")?,
+        identifier("out_trade_lock_seller_input")?,
         identifier("out_trade_lock_seller_succeeded")?,
         identifier("out_trade_lock_buyer_planned")?,
+        identifier("out_trade_lock_buyer_input")?,
         identifier("out_trade_lock_buyer_succeeded")?,
         identifier("out_trade_settle_planned")?,
+        identifier("out_trade_settle_input")?,
         identifier("out_trade_settle_succeeded")?,
         identifier("out_trade_completed")?,
     ]

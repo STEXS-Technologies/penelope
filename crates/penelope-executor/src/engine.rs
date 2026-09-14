@@ -416,17 +416,31 @@ impl LinearSagaEventV1 {
         match self {
             Self::Started { .. } => &[ProcessOutcomeKindV1::Started],
             Self::ActionResultObserved { observation, .. } => match observation.result {
-                ActionResultV1::Succeeded => &[ProcessOutcomeKindV1::ActionSucceeded],
-                ActionResultV1::RetryableFailure | ActionResultV1::TerminalFailure => {
-                    &[ProcessOutcomeKindV1::ActionFailed]
-                }
-                ActionResultV1::Unknown => &[ProcessOutcomeKindV1::ActionOutcomeUnknown],
+                ActionResultV1::Succeeded => &[
+                    ProcessOutcomeKindV1::InputAccepted,
+                    ProcessOutcomeKindV1::ActionSucceeded,
+                ],
+                ActionResultV1::RetryableFailure | ActionResultV1::TerminalFailure => &[
+                    ProcessOutcomeKindV1::InputAccepted,
+                    ProcessOutcomeKindV1::ActionFailed,
+                ],
+                ActionResultV1::Unknown => &[
+                    ProcessOutcomeKindV1::InputAccepted,
+                    ProcessOutcomeKindV1::ActionOutcomeUnknown,
+                ],
             },
-            Self::RetryTimerScheduled { .. } => &[ProcessOutcomeKindV1::ActionFailed],
-            Self::RetryTimerFired { .. } => &[ProcessOutcomeKindV1::TimerFired],
-            Self::ManualResolutionApplied { .. } => {
-                &[ProcessOutcomeKindV1::ManualResolutionApplied]
-            }
+            Self::RetryTimerScheduled { .. } => &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::ActionFailed,
+            ],
+            Self::RetryTimerFired { .. } => &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::TimerFired,
+            ],
+            Self::ManualResolutionApplied { .. } => &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::ManualResolutionApplied,
+            ],
         }
     }
 }
@@ -1709,6 +1723,44 @@ mod tests {
                 ],
             ),
             Err(EngineError::OutcomeSequenceOverflow)
+        );
+    }
+
+    #[test]
+    fn external_saga_inputs_always_require_an_accepted_input_record() {
+        let event = LinearSagaEventV1::ActionResultObserved {
+            observation: ActionResultObservationV1::succeeded(id("act_lock")),
+            next_action_id: Some(id("act_next")),
+        };
+        assert_eq!(
+            event.observed_outcome_kinds(),
+            &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::ActionSucceeded,
+            ]
+        );
+        let timer_event = LinearSagaEventV1::RetryTimerFired {
+            timer_action_id: id("act_timer"),
+            fired_at: LogicalTimeV1(1),
+            next_action_id: id("act_retry"),
+        };
+        assert_eq!(
+            timer_event.observed_outcome_kinds(),
+            &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::TimerFired,
+            ]
+        );
+        let resolution_event = LinearSagaEventV1::ManualResolutionApplied {
+            resolution: ManualReviewResolutionV1::Escalate,
+            next_action_id: None,
+        };
+        assert_eq!(
+            resolution_event.observed_outcome_kinds(),
+            &[
+                ProcessOutcomeKindV1::InputAccepted,
+                ProcessOutcomeKindV1::ManualResolutionApplied,
+            ]
         );
     }
 

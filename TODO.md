@@ -166,6 +166,8 @@ compensation, review resolution, or terminal state). It rejects a supplied
 outcome batch that omits, reorders, or substitutes those lifecycle kinds; the
 start-plan contract is unit tested and engine fuzzing exercises both plan
 derivation and full outcome-batch construction.
+Every externally delivered action result, retry-timer fire, and manual review
+resolution now also requires an `InputAccepted` fact before its observed fact.
 The engine now constructs the full scope-pinned, contiguous DTO batch from
 outer-supplied immutable facts and rejects mismatched scopes or sequence
 overflow. It still does not allocate outcome IDs/timestamps or apply these
