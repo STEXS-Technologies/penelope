@@ -110,7 +110,9 @@ commands/events reject oversized or duplicate resource scopes. The versioned
 DTO fuzz target executes these validators after parsing. Tenant/principal
 authorization context, the remaining ID categories, canonical encoding,
 payload/instance/timer limits, golden serialization fixtures, and
-compile-time non-substitutability tests remain incomplete.
+compile-time non-substitutability tests remain incomplete. The linear engine
+also bounds each forward or compensation step to 64 total attempts, preventing
+unbounded issued-action growth from a malformed definition.
 
 ### P0.2 Immutable versioned definitions
 
@@ -129,7 +131,9 @@ a definition `ContentDigest`. Replay and every transition compare the supplied
 definition to those pinned values and fail closed on mismatch; this is unit
 tested and the changed serde definition boundary is fuzzed. Both domain and
 linear definitions reject duplicate step identities and the bounded step limit.
-Graph validation, registration, compatibility/migration policy, non-linear transitions, full digest
+The engine rejects retry and compensation policies above its bounded per-step
+attempt limit. Graph validation, registration, compatibility/migration policy,
+non-linear transitions, full digest
 calculation, and deployment-time definition storage remain incomplete.
 
 ### P0.3 Append-only outcomes and deterministic projections

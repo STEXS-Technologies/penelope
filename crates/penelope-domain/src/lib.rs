@@ -17,6 +17,8 @@ use thiserror::Error;
 pub const MAX_IDENTIFIER_LENGTH: usize = 128;
 /// Maximum steps in one immutable process definition.
 pub const MAX_DEFINITION_STEPS: usize = 128;
+/// Maximum total action attempts allowed for one declared step.
+pub const MAX_ACTION_ATTEMPTS_PER_STEP: u32 = 64;
 /// Maximum resources a single canonical command or event may scope.
 pub const MAX_CANONICAL_RESOURCE_IDS: usize = 64;
 

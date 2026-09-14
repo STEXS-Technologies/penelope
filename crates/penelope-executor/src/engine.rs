@@ -1,8 +1,9 @@
 //! Deterministic linear saga planning with typed inputs and outputs.
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1, MAX_DEFINITION_STEPS,
-    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessScopeV1, StepId, TenantId,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, LogicalTimeV1,
+    MAX_ACTION_ATTEMPTS_PER_STEP, MAX_DEFINITION_STEPS, ProcessActionDtoV1, ProcessActionKindV1,
+    ProcessId, ProcessScopeV1, StepId, TenantId,
 };
 use penelope_ports::{ManualReviewResolutionV1, TimerScheduleV1};
 use serde::{Deserialize, Serialize};
@@ -447,6 +448,9 @@ pub enum EngineError {
     /// A definition declares the same step identity more than once.
     #[error("saga definition contains a duplicate step identifier")]
     DuplicateStepId,
+    /// A step or its compensation permits too many action attempts.
+    #[error("saga retry attempt limit exceeds the per-step maximum")]
+    RetryAttemptLimitExceeded,
     /// A projection points outside the pinned definition.
     #[error("projection step index is outside the definition")]
     InvalidProjection,
@@ -532,6 +536,14 @@ impl LinearSagaDefinitionV1 {
                 .any(|other_step| other_step.step_id == step.step_id)
         }) {
             return Err(EngineError::DuplicateStepId);
+        }
+        if self.steps.iter().any(|step| {
+            step.retry_policy.max_attempts.get() > MAX_ACTION_ATTEMPTS_PER_STEP
+                || step.compensation.is_some_and(|compensation| {
+                    compensation.retry_policy.max_attempts.get() > MAX_ACTION_ATTEMPTS_PER_STEP
+                })
+        }) {
+            return Err(EngineError::RetryAttemptLimitExceeded);
         }
         Ok(())
     }
@@ -1449,6 +1461,22 @@ mod tests {
             oversized.validate().unwrap_err(),
             EngineError::DefinitionStepLimitExceeded
         );
+        let excessive_retries = LinearSagaDefinitionV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([99; 32]),
+            vec![StepPlanV1::canonical_command(
+                id("stp_retry_limit"),
+                ContentDigest([4; 32]),
+                RetryPolicyV1::new(
+                    NonZeroU32::new(MAX_ACTION_ATTEMPTS_PER_STEP.saturating_add(1)).unwrap(),
+                ),
+            )],
+        );
+        assert_eq!(
+            excessive_retries.validate().unwrap_err(),
+            EngineError::RetryAttemptLimitExceeded
+        );
     }
 
     fn observation(
@@ -2067,8 +2095,8 @@ mod tests {
 
     proptest! {
         #[test]
-        fn retry_attempt_is_monotonic_for_every_representable_attempt(
-            current_attempt in 0_u32..u32::MAX,
+        fn retry_attempt_is_monotonic_within_the_bounded_retry_policy(
+            current_attempt in 0_u32..MAX_ACTION_ATTEMPTS_PER_STEP.saturating_sub(1),
         ) {
             let Some(expected_attempt) = current_attempt.checked_add(1) else {
                 return Ok(());
@@ -2077,7 +2105,9 @@ mod tests {
             let Some(step) = definition.steps.first_mut() else {
                 return Ok(());
             };
-            step.retry_policy = RetryPolicyV1::new(NonZeroU32::new(u32::MAX).unwrap());
+            step.retry_policy = RetryPolicyV1::new(
+                NonZeroU32::new(MAX_ACTION_ATTEMPTS_PER_STEP).unwrap(),
+            );
             let retry = apply_action_result(
                 &definition,
                 &LinearSagaProjectionV1 {
@@ -2114,7 +2144,9 @@ mod tests {
             let Some(step) = definition.steps.first_mut() else {
                 return Ok(());
             };
-            step.retry_policy = RetryPolicyV1::new(NonZeroU32::new(u32::MAX).unwrap());
+            step.retry_policy = RetryPolicyV1::new(
+                NonZeroU32::new(MAX_ACTION_ATTEMPTS_PER_STEP).unwrap(),
+            );
             let tenant_id = id::<TenantId>("tnt_game");
             let process_id = id::<ProcessId>("prc_trade");
             let start_action_id = id::<ActionId>("act_start");
