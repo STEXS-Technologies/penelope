@@ -17,9 +17,10 @@ pub use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId,
     CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, DomainError, EffectKeyV1,
     ExternalReferenceId, InputId, LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1,
-    OutcomeId, ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessInputEnvelopeV1,
-    ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId,
-    ReviewId, StepId, TenantId,
+    OutcomeId, ProcessActionDtoV1, ProcessActionKindV1, ProcessDefinitionDtoV1, ProcessId,
+    ProcessInputDtoV1, ProcessInputEnvelopeV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
+    ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId, ReviewId, StepId,
+    TenantId,
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
@@ -40,7 +41,8 @@ pub use penelope_intent::{IntentError, parse_process_input};
 pub use penelope_ports as ports;
 /// Frequently used typed process-control port contracts.
 pub use penelope_ports::{
-    CanonicalReconciliationV1, EffectDispatchRequestV1, EffectReconciliationValidationError,
+    AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, CanonicalReconciliationV1,
+    CommitValidationError, EffectDispatchRequestV1, EffectReconciliationValidationError,
     ExternalEffectEvidenceV1, ExternalEffectExecutor, ExternalEffectStateV1,
     MAX_OUTCOMES_PER_READ_PAGE, ManualReviewClaimV1, ManualReviewControlV1, ManualReviewDecisionV1,
     ManualReviewResolutionV1, ManualReviewValidationError, OutcomeIdSource,
