@@ -10,9 +10,10 @@
 use async_trait::async_trait;
 use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, CanonicalWireBytesV1,
-    EffectKeyV1, ExternalReferenceId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId,
-    ProcessActionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessScopeV1,
-    ReviewId,
+    DefinitionId, DefinitionMigrationV1, DefinitionVersion, EffectKeyV1, ExternalReferenceId,
+    LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
+    ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
+    ProcessScopeV1, ReviewId,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -32,6 +33,26 @@ pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
 /// Maximum immutable outcomes retained by one in-memory replay accumulator.
 /// Durable adapters may page larger histories through [`OutcomeReplayPageV1`].
 pub const MAX_OUTCOMES_PER_REPLAY_LOG: usize = 4096;
+
+/// Typed key for looking up one immutable registered definition version.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DefinitionLookupV1 {
+    /// Stable definition identity.
+    pub definition_id: DefinitionId,
+    /// Exact version requested by a process start or replay.
+    pub definition_version: DefinitionVersion,
+}
+
+impl DefinitionLookupV1 {
+    /// Creates a typed immutable-definition lookup key.
+    #[must_use]
+    pub const fn new(definition_id: DefinitionId, definition_version: DefinitionVersion) -> Self {
+        Self {
+            definition_id,
+            definition_version,
+        }
+    }
+}
 
 /// Opaque fencing token assigned to one outbox lease.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -1453,6 +1474,21 @@ pub struct AtomicProcessCommitReceiptV1 {
 
 /// Durable append-only process outcome store.
 #[async_trait]
+pub trait DefinitionRegistry: Send + Sync {
+    /// Registers one immutable definition after schema and bound validation.
+    /// Registration must be idempotent for the same identity and digest and
+    /// must reject a changed digest under an existing identity/version.
+    async fn register(&self, definition: &ProcessDefinitionDtoV1) -> Result<(), PortError>;
+
+    /// Looks up the exact immutable definition requested by a process.
+    async fn get(&self, lookup: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError>;
+
+    /// Registers an explicit version migration after validating its binding.
+    async fn register_migration(&self, migration: &DefinitionMigrationV1) -> Result<(), PortError>;
+}
+
+/// Durable append-only process outcome store.
+#[async_trait]
 pub trait ProcessStore: Send + Sync {
     /// Atomically commits inbox acceptance, outcomes, and outgoing actions.
     async fn commit(
@@ -1627,6 +1663,7 @@ macro_rules! canonical_port_impl {
 }
 
 canonical_port_impl!(
+    DefinitionLookupV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
     OutboxRecordV1,

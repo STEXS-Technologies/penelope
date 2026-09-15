@@ -11,23 +11,38 @@ use std::task::{Context, Poll, Waker};
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion,
-    InputId, LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1, OutcomeId, PrincipalId,
-    ProcessActionDtoV1, ProcessActionKindV1, ProcessId, ProcessInputDtoV1, ProcessInputKindV1,
-    ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ReviewId,
-    StepId, TenantId,
+    ActionId, CanonicalCommandDtoV1, CausationIdV1, ContentDigest, DefinitionId,
+    DefinitionMigrationV1, DefinitionVersion, InputId, LogicalTimeV1, ManualReviewDtoV1,
+    OperationId, OutcomeActorV1, OutcomeId, PrincipalId, ProcessActionDtoV1, ProcessActionKindV1,
+    ProcessDefinitionDtoV1, ProcessId, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
+    ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
 };
 use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
-    CanonicalReconciliationV1, CanonicalState, Clock, EffectDispatchRequestV1,
-    ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, ManualReviewClaimV1,
-    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1, OutboxClaimRequestV1,
-    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
+    CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1, DefinitionRegistry,
+    EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
+    ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1,
+    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
     ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
     TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
+
+#[async_trait]
+impl DefinitionRegistry for UnavailablePorts {
+    async fn register(&self, _: &ProcessDefinitionDtoV1) -> Result<(), PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn get(&self, _: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn register_migration(&self, _: &DefinitionMigrationV1) -> Result<(), PortError> {
+        Err(PortError::Unavailable)
+    }
+}
 
 #[async_trait]
 impl ProcessStore for UnavailablePorts {
@@ -258,6 +273,7 @@ const fn assert_send_sync<T: Send + Sync>() {}
 fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     assert_send_sync::<UnavailablePorts>();
     let ports = UnavailablePorts;
+    let definitions: &dyn DefinitionRegistry = &ports;
     let process_store: &dyn ProcessStore = &ports;
     let outbox: &dyn OutboxStore = &ports;
     let inbox: &dyn Inbox = &ports;
@@ -272,6 +288,13 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let reviews: &dyn ManualReviewQueue = &ports;
 
     let action = action();
+    let definition = ProcessDefinitionDtoV1::new(
+        id("def_trade"),
+        id("dfv_one"),
+        ContentDigest([9; 32]),
+        vec![id("stp_dispatch")],
+    )
+    .unwrap();
     let input = input();
     let outcome = outcome();
     let commit = AtomicProcessCommitV1::new(
@@ -319,6 +342,30 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     };
     let effect_request = EffectDispatchRequestV1::new(action.clone());
 
+    assert!(matches!(
+        ready(definitions.register(&definition)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(definitions.get(&DefinitionLookupV1::new(
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+        ))),
+        Err(PortError::Unavailable)
+    ));
+    let migration = DefinitionMigrationV1::new(
+        id("mig_trade"),
+        definition.definition_id.clone(),
+        definition.definition_version.clone(),
+        definition.definition_digest,
+        id("dfv_two"),
+        ContentDigest([8; 32]),
+    )
+    .unwrap();
+    assert!(matches!(
+        ready(definitions.register_migration(&migration)),
+        Err(PortError::Unavailable)
+    ));
     assert!(matches!(
         ready(process_store.commit(&commit)),
         Err(PortError::Unavailable)
