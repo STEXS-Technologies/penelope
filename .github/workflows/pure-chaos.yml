@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: dtolnay/rust-toolchain@be39649afda95dbf70f87cce95f68b8d5797b296 # nightly
+      - uses: Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c # v2
       - run: cargo install cargo-fuzz --locked
       - run: PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=2000 PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
