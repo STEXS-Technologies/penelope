@@ -710,6 +710,8 @@ immutable commit SHAs with version comments. Evidence for the executed
 2026-09-15 rehearsal is retained in
 `docs/security-response-rehearsal-2026-09-15.md`; adapter-specific drills remain
 composition-root work.
+`scripts/check-action-pins.sh` now fails CI if any workflow action ref is not a
+40-character commit SHA.
 
 ## P2 — adapters, operations and user experience
 
