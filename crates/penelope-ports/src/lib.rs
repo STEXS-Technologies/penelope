@@ -200,6 +200,8 @@ pub struct ActionDispatchReceiptV1 {
 /// Receipt from idempotent canonical-command submission/enqueue.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CanonicalSubmitReceiptV1 {
+    /// Complete process-definition scope acknowledged by the canonical adapter.
+    pub tenant_id: penelope_domain::TenantId,
     /// Penelope action identity reused as the canonical idempotency key.
     pub action_id: ActionId,
     /// Whether this command identity was already durably submitted.
@@ -212,14 +214,18 @@ pub enum CanonicalSubmitReceiptValidationError {
     /// The adapter acknowledged another command identity.
     #[error("canonical submit receipt does not match the requested command")]
     ActionMismatch,
+    /// The adapter acknowledged a command under another pinned scope.
+    #[error("canonical submit receipt scope does not match the requested command")]
+    ScopeMismatch,
 }
 
 impl CanonicalSubmitReceiptV1 {
     /// Creates a receipt for one canonical command identity.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
-    pub fn new(action_id: ActionId, duplicate: bool) -> Self {
+    pub fn new(tenant_id: penelope_domain::TenantId, action_id: ActionId, duplicate: bool) -> Self {
         Self {
+            tenant_id,
             action_id,
             duplicate,
         }
@@ -235,7 +241,9 @@ impl CanonicalSubmitReceiptV1 {
         &self,
         command: &CanonicalCommandDtoV1,
     ) -> Result<(), CanonicalSubmitReceiptValidationError> {
-        if self.action_id == command.action_id {
+        if self.tenant_id != command.tenant_id {
+            Err(CanonicalSubmitReceiptValidationError::ScopeMismatch)
+        } else if self.action_id == command.action_id {
             Ok(())
         } else {
             Err(CanonicalSubmitReceiptValidationError::ActionMismatch)
@@ -3400,13 +3408,23 @@ mod tests {
             resource_ids: vec![id("res_wallet")],
             payload_digest: ContentDigest([4; 32]),
         };
-        let receipt = CanonicalSubmitReceiptV1::new(submitted.action_id.clone(), true);
+        let receipt = CanonicalSubmitReceiptV1::new(
+            submitted.tenant_id.clone(),
+            submitted.action_id.clone(),
+            true,
+        );
         assert_eq!(receipt.validate_for(&submitted), Ok(()));
-        let mut other = submitted;
+        let mut other = submitted.clone();
         other.action_id = id("act_other");
         assert_eq!(
             receipt.validate_for(&other),
             Err(CanonicalSubmitReceiptValidationError::ActionMismatch)
+        );
+        let mut wrong_tenant = submitted;
+        wrong_tenant.tenant_id = id("tnt_other");
+        assert_eq!(
+            receipt.validate_for(&wrong_tenant),
+            Err(CanonicalSubmitReceiptValidationError::ScopeMismatch)
         );
     }
 
