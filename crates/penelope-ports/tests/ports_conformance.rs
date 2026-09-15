@@ -24,7 +24,8 @@ use penelope_ports::{
     InboxAcceptanceReceiptV1, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue,
     ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore,
     OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1,
-    ProcessAuthorizer, ProcessStore, TimerScheduleV1, TimerScheduler,
+    ProcessAuthorizer, ProcessStore, TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1,
+    TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -132,6 +133,17 @@ impl TimerScheduler for UnavailablePorts {
     }
 
     async fn cancel(&self, _: &TimerScheduleV1) -> Result<(), PortError> {
+        Err(PortError::Unavailable)
+    }
+}
+
+#[async_trait]
+impl TimerClaimStore for UnavailablePorts {
+    async fn claim_due(&self, _: &TimerClaimRequestV1) -> Result<Vec<TimerLeaseV1>, PortError> {
+        Err(PortError::Unavailable)
+    }
+
+    async fn acknowledge(&self, _: &TimerLeaseV1, _: LogicalTimeV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -280,6 +292,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let dispatcher: &dyn ActionDispatcher = &ports;
     let external_executor: &dyn ExternalEffectExecutor = &ports;
     let scheduler: &dyn TimerScheduler = &ports;
+    let timer_claims: &dyn TimerClaimStore = &ports;
     let clock: &dyn Clock = &ports;
     let action_ids: &dyn ActionIdSource = &ports;
     let outcome_ids: &dyn OutcomeIdSource = &ports;
@@ -424,6 +437,27 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     ));
     assert!(matches!(
         ready(scheduler.cancel(&timer)),
+        Err(PortError::Unavailable)
+    ));
+    let timer_claim = TimerClaimRequestV1::new(
+        scope(),
+        id("pri_worker"),
+        LogicalTimeV1(3),
+        std::num::NonZeroU16::MIN,
+    )
+    .unwrap();
+    let timer_lease = TimerLeaseV1 {
+        timer,
+        owner: id("pri_worker"),
+        token: penelope_ports::OutboxLeaseTokenV1::new(std::num::NonZeroU64::MIN),
+        lease_expires_at: LogicalTimeV1(5),
+    };
+    assert!(matches!(
+        ready(timer_claims.claim_due(&timer_claim)),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
+        ready(timer_claims.acknowledge(&timer_lease, LogicalTimeV1(3))),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(ready(clock.now()), Err(PortError::Unavailable)));

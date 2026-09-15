@@ -323,6 +323,11 @@ cancellation rather than an action ID alone. There is no durable adapter
 implementation, clock-jump policy, or compensation-timer support, so this item
 remains incomplete.
 
+The timer boundary now also has a bounded `TimerClaimRequestV1` and fenced
+`TimerLeaseV1` plus a `TimerClaimStore` port. Claims require the exact scope,
+owner, due logical time and unexpired lease, preventing duplicate worker fires;
+the adapter still owns atomic claim persistence and acknowledgement.
+
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID
 already issued by that process is rejected. This does not replace durable

@@ -30,6 +30,8 @@ pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
 pub const MAX_OUTBOX_DELIVERY_ATTEMPTS: u32 = 64;
 /// Maximum records returned by one durable outbox claim.
 pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
+/// Maximum due timers returned by one worker claim.
+pub const MAX_TIMER_CLAIM_BATCH: u16 = 128;
 /// Maximum immutable outcomes retained by one in-memory replay accumulator.
 /// Durable adapters may page larger histories through [`OutcomeReplayPageV1`].
 pub const MAX_OUTCOMES_PER_REPLAY_LOG: usize = 4096;
@@ -964,6 +966,108 @@ pub struct TimerScheduleV1 {
     pub due_at: LogicalTimeV1,
 }
 
+/// Bounded request for atomically claiming due timers for one process.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TimerClaimRequestV1 {
+    /// Process scope whose timers may be claimed.
+    pub scope: ProcessScopeV1,
+    /// Authenticated worker receiving the fencing leases.
+    pub owner: PrincipalId,
+    /// Logical time used to determine due timers.
+    pub now: LogicalTimeV1,
+    /// Maximum timers to claim.
+    pub limit: NonZeroU16,
+}
+
+impl TimerClaimRequestV1 {
+    /// Creates a bounded timer-claim request.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::QuotaExceeded`] when the batch is too large.
+    pub fn new(
+        scope: ProcessScopeV1,
+        owner: PrincipalId,
+        now: LogicalTimeV1,
+        limit: NonZeroU16,
+    ) -> Result<Self, PortError> {
+        let request = Self {
+            scope,
+            owner,
+            now,
+            limit,
+        };
+        request.validate()?;
+        Ok(request)
+    }
+
+    /// Validates the bounded claim size.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::QuotaExceeded`] when the batch is too large.
+    pub const fn validate(&self) -> Result<(), PortError> {
+        if self.limit.get() > MAX_TIMER_CLAIM_BATCH {
+            Err(PortError::QuotaExceeded)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+/// Fenced lease for one due timer delivery.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TimerLeaseV1 {
+    /// Full timer schedule retained under the lease.
+    pub timer: TimerScheduleV1,
+    /// Worker that owns this lease.
+    pub owner: PrincipalId,
+    /// Opaque fencing token preventing stale acknowledgements.
+    pub token: OutboxLeaseTokenV1,
+    /// Inclusive logical expiry of the claim.
+    pub lease_expires_at: LogicalTimeV1,
+}
+
+impl TimerLeaseV1 {
+    /// Validates timer shape, process scope, owner and due-time claim.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::Invariant`] for substitution or malformed timers.
+    pub fn validate_for_claim(&self, request: &TimerClaimRequestV1) -> Result<(), PortError> {
+        request.validate()?;
+        self.timer
+            .validate()
+            .map_err(|_timer_error| PortError::Invariant)?;
+        if self.timer.action.scope() != request.scope
+            || self.owner != request.owner
+            || self.timer.due_at > request.now
+        {
+            return Err(PortError::Invariant);
+        }
+        if request.now > self.lease_expires_at {
+            return Err(PortError::TimedOut);
+        }
+        Ok(())
+    }
+
+    /// Validates lease expiry at a logical boundary.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] after expiry.
+    pub fn validate_at(&self, now: LogicalTimeV1) -> Result<(), PortError> {
+        self.timer
+            .validate()
+            .map_err(|_timer_error| PortError::Invariant)?;
+        if now > self.lease_expires_at {
+            Err(PortError::TimedOut)
+        } else {
+            Ok(())
+        }
+    }
+}
+
 impl TimerScheduleV1 {
     /// Validates that this record retains a full, typed timer action scope.
     ///
@@ -1632,6 +1736,19 @@ pub trait TimerScheduler: Send + Sync {
     async fn cancel(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
 }
 
+/// Durable due-timer claim boundary with fencing semantics.
+#[async_trait]
+pub trait TimerClaimStore: Send + Sync {
+    /// Atomically claims due timers for one owner and returns fenced leases.
+    async fn claim_due(
+        &self,
+        request: &TimerClaimRequestV1,
+    ) -> Result<Vec<TimerLeaseV1>, PortError>;
+
+    /// Acknowledges one exact, unexpired timer lease after inbox delivery.
+    async fn acknowledge(&self, lease: &TimerLeaseV1, now: LogicalTimeV1) -> Result<(), PortError>;
+}
+
 /// Injected wall-clock boundary for deterministic application decisions.
 #[async_trait]
 pub trait Clock: Send + Sync {
@@ -1735,6 +1852,8 @@ canonical_port_impl!(
     EffectDispatchRequestV1,
     ExternalEffectEvidenceV1,
     TimerScheduleV1,
+    TimerClaimRequestV1,
+    TimerLeaseV1,
     ManualReviewClaimV1,
     ManualReviewDecisionV1,
     AtomicProcessCommitV1,
@@ -2549,6 +2668,35 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&wrong),
             Err(InboxReceiptValidationError::InputMismatch)
+        );
+    }
+
+    #[test]
+    fn timer_claim_lease_requires_due_time_scope_owner_and_expiry() {
+        let mut timer_action = action();
+        timer_action.kind = penelope_domain::ProcessActionKindV1::Timer;
+        let timer = TimerScheduleV1 {
+            action: timer_action,
+            due_at: LogicalTimeV1(5),
+        };
+        let request = TimerClaimRequestV1::new(
+            timer.action.scope(),
+            id("pri_worker"),
+            LogicalTimeV1(5),
+            NonZeroU16::MIN,
+        )
+        .unwrap();
+        let lease = TimerLeaseV1 {
+            timer,
+            owner: id("pri_worker"),
+            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTimeV1(6),
+        };
+        assert_eq!(lease.validate_for_claim(&request), Ok(()));
+        assert_eq!(lease.validate_at(LogicalTimeV1(6)), Ok(()));
+        assert_eq!(
+            lease.validate_at(LogicalTimeV1(7)),
+            Err(PortError::TimedOut)
         );
     }
 }
