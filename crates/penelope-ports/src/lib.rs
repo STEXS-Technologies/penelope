@@ -148,6 +148,8 @@ impl OutboxRecordV1 {
 pub struct OutboxClaimRequestV1 {
     /// Process scope whose records may be claimed.
     pub scope: ProcessScopeV1,
+    /// Authenticated worker that will own returned leases.
+    pub owner: PrincipalId,
     /// Maximum records to return.
     pub limit: NonZeroU16,
 }
@@ -158,8 +160,16 @@ impl OutboxClaimRequestV1 {
     /// # Errors
     ///
     /// Returns [`PortError::QuotaExceeded`] when `limit` exceeds the claim bound.
-    pub fn new(scope: ProcessScopeV1, limit: NonZeroU16) -> Result<Self, PortError> {
-        let request = Self { scope, limit };
+    pub fn new(
+        scope: ProcessScopeV1,
+        owner: PrincipalId,
+        limit: NonZeroU16,
+    ) -> Result<Self, PortError> {
+        let request = Self {
+            scope,
+            owner,
+            limit,
+        };
         request.validate()?;
         Ok(request)
     }
@@ -216,6 +226,9 @@ impl OutboxLeaseV1 {
             || action.definition_version != request.scope.definition_version
             || action.definition_digest != request.scope.definition_digest
         {
+            return Err(PortError::Invariant);
+        }
+        if self.owner != request.owner {
             return Err(PortError::Invariant);
         }
         Ok(())
@@ -1451,9 +1464,12 @@ mod tests {
 
     #[test]
     fn outbox_lease_rejects_a_cross_scope_claim() {
-        let request =
-            OutboxClaimRequestV1::new(outcome(0, id("out_claim_scope")).scope(), NonZeroU16::MIN)
-                .unwrap();
+        let request = OutboxClaimRequestV1::new(
+            outcome(0, id("out_claim_scope")).scope(),
+            id("pri_worker"),
+            NonZeroU16::MIN,
+        )
+        .unwrap();
         let mut action = action();
         action.process_id = id("prc_other");
         let lease = OutboxLeaseV1 {
@@ -1464,6 +1480,16 @@ mod tests {
         };
         assert_eq!(
             lease.validate_for_claim(&request),
+            Err(PortError::Invariant)
+        );
+        let owner_mismatch = OutboxClaimRequestV1::new(
+            outcome(0, id("out_claim_scope")).scope(),
+            id("pri_other"),
+            NonZeroU16::MIN,
+        )
+        .unwrap();
+        assert_eq!(
+            lease.validate_for_claim(&owner_mismatch),
             Err(PortError::Invariant)
         );
     }
@@ -1510,6 +1536,7 @@ mod tests {
     fn outbox_claim_request_rejects_an_oversized_batch() {
         let request = OutboxClaimRequestV1 {
             scope: outcome(0, id("out_claim_scope")).scope(),
+            owner: id("pri_worker"),
             limit: NonZeroU16::new(MAX_OUTBOX_CLAIM_BATCH.saturating_add(1)).unwrap(),
         };
         assert_eq!(request.validate(), Err(PortError::QuotaExceeded));

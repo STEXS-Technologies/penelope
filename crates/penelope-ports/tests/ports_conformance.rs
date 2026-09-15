@@ -331,7 +331,8 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         ready(process_store.read_outcomes(&replay_request)),
         Err(PortError::Unavailable)
     ));
-    let outbox_claim = OutboxClaimRequestV1::new(scope(), std::num::NonZeroU16::MIN).unwrap();
+    let outbox_claim =
+        OutboxClaimRequestV1::new(scope(), id("pri_worker"), std::num::NonZeroU16::MIN).unwrap();
     let record = OutboxLeaseV1 {
         record: OutboxRecordV1::new(action.clone()),
         owner: id("pri_worker"),
