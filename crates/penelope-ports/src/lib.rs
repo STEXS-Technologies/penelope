@@ -1987,6 +1987,41 @@ pub struct AtomicProcessCommitReceiptV1 {
     pub duplicate_input: bool,
 }
 
+/// Typed validation failure for an atomic commit acknowledgement.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum AtomicProcessCommitReceiptValidationError {
+    /// The acknowledgement does not identify the submitted commit's final sequence.
+    #[error("atomic commit receipt sequence does not match the submitted commit")]
+    SequenceMismatch,
+    /// A duplicate-input flag cannot be asserted when no input was submitted.
+    #[error("atomic commit receipt claims a duplicate input without an input")]
+    DuplicateInputWithoutInput,
+}
+
+impl AtomicProcessCommitReceiptV1 {
+    /// Validates the acknowledgement against the exact atomic commit request.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when sequence arithmetic or duplicate-input
+    /// semantics do not match the request.
+    pub fn validate_for(
+        &self,
+        commit: &AtomicProcessCommitV1,
+    ) -> Result<(), AtomicProcessCommitReceiptValidationError> {
+        let expected_last = commit
+            .expected_sequence
+            .checked_add((commit.outcomes.len().saturating_sub(1)) as u64);
+        if expected_last != Some(self.committed_through_sequence) {
+            return Err(AtomicProcessCommitReceiptValidationError::SequenceMismatch);
+        }
+        if self.duplicate_input && commit.input.is_none() {
+            return Err(AtomicProcessCommitReceiptValidationError::DuplicateInputWithoutInput);
+        }
+        Ok(())
+    }
+}
+
 /// Durable append-only process outcome store.
 #[async_trait]
 pub trait DefinitionRegistry: Send + Sync {
@@ -3221,6 +3256,43 @@ mod tests {
         assert_eq!(
             wrong.validate_for(&migration),
             Err(DefinitionMigrationReceiptValidationError::MigrationMismatch)
+        );
+    }
+
+    #[test]
+    fn atomic_commit_receipt_is_bound_to_sequence_and_input_semantics() {
+        let mut accepted_outcome = outcome(4, id("out_commit"));
+        accepted_outcome.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+        let commit =
+            AtomicProcessCommitV1::new(4, Some(input()), vec![accepted_outcome], vec![action()])
+                .unwrap();
+        let receipt = AtomicProcessCommitReceiptV1 {
+            committed_through_sequence: 4,
+            duplicate_input: true,
+        };
+        assert_eq!(receipt.validate_for(&commit), Ok(()));
+        let wrong_sequence = AtomicProcessCommitReceiptV1 {
+            committed_through_sequence: 5,
+            duplicate_input: false,
+        };
+        assert_eq!(
+            wrong_sequence.validate_for(&commit),
+            Err(AtomicProcessCommitReceiptValidationError::SequenceMismatch)
+        );
+        let no_input = AtomicProcessCommitV1::new(
+            4,
+            None,
+            vec![outcome(4, id("out_commit_no_input"))],
+            vec![action()],
+        )
+        .unwrap();
+        let invalid_duplicate = AtomicProcessCommitReceiptV1 {
+            committed_through_sequence: 4,
+            duplicate_input: true,
+        };
+        assert_eq!(
+            invalid_duplicate.validate_for(&no_input),
+            Err(AtomicProcessCommitReceiptValidationError::DuplicateInputWithoutInput)
         );
     }
 

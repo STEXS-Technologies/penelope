@@ -51,8 +51,8 @@ pub use penelope_ports as ports;
 /// Frequently used typed process-control port contracts.
 pub use penelope_ports::{
     ActionDispatchReceiptV1, ActionReceiptValidationError, AtomicProcessCommitReceiptV1,
-    AtomicProcessCommitV1, AuthorizationRequirementV1, CanonicalReconciliationV1,
-    CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
+    AtomicProcessCommitReceiptValidationError, AtomicProcessCommitV1, AuthorizationRequirementV1,
+    CanonicalReconciliationV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
     CanonicalSubmitReceiptValidationError, CommitValidationError, ConsistencyWindowValidationError,
     DefinitionMigrationReceiptV1, DefinitionMigrationReceiptValidationError,
     DefinitionRegistrationReceiptV1, DefinitionRegistrationReceiptValidationError,
