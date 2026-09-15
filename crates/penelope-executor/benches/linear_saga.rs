@@ -3,11 +3,11 @@
 use std::{hint::black_box, time::Instant};
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessActionKindV1,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessActionKind,
     ProcessId, StepId, TenantId,
 };
 use penelope_executor::engine::{
-    ActionResultObservationV1, EngineError, LinearSagaDefinitionV1, RetryPolicyV1, StepPlanV1,
+    ActionResultObservation, EngineError, LinearSagaDefinition, RetryPolicy, StepPlan,
     apply_action_result, start,
 };
 use thiserror::Error;
@@ -32,15 +32,15 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
 
 fn main() -> Result<(), BenchmarkError> {
     let iterations = 100_000_u32;
-    let definition = LinearSagaDefinitionV1 {
+    let definition = LinearSagaDefinition {
         definition_id: identifier::<DefinitionId>("def_benchmark")?,
         definition_version: identifier::<DefinitionVersion>("dfv_one")?,
         definition_digest: ContentDigest([99; 32]),
-        steps: vec![StepPlanV1 {
+        steps: vec![StepPlan {
             step_id: identifier::<StepId>("stp_benchmark")?,
-            action_kind: ProcessActionKindV1::CanonicalCommand,
+            action_kind: ProcessActionKind::CanonicalCommand,
             payload_digest: ContentDigest([1; 32]),
-            retry_policy: RetryPolicyV1::no_retry(),
+            retry_policy: RetryPolicy::no_retry(),
             compensation: None,
         }],
     };
@@ -65,7 +65,7 @@ fn main() -> Result<(), BenchmarkError> {
             &started.projection,
             tenant_id.clone(),
             process_id.clone(),
-            &ActionResultObservationV1::succeeded(action.action_id.clone()),
+            &ActionResultObservation::succeeded(action.action_id.clone()),
             None,
         )?;
         black_box(completed);

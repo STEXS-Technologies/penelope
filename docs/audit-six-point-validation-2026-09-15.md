@@ -6,7 +6,7 @@ adapter is production-ready.
 
 ## 1. Atomicity and durable contracts
 
-**Validated:** `AtomicProcessCommitV1` rejects cross-scope records, sequence
+**Validated:** `AtomicProcessCommit` rejects cross-scope records, sequence
 gaps, duplicate outcome identities, duplicate action identities, duplicate
 effect keys, invalid schemas, oversized batches, and unbound canonical source
 events. `atomic_commit_faults.rs` injects failure before input staging and

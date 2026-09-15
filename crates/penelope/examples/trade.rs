@@ -5,11 +5,10 @@
 //! action ID. It may advance only after verified, correlated evidence arrives.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, CausationIdV1, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, InputId, LinearSagaDefinitionV1, LinearSagaEventV1,
-    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessId, ProcessOutcomeFactV1, ProcessScopeV1,
-    RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepId, StepPlanV1, TenantId, apply_action_result,
-    start,
+    ActionId, ActionResultObservation, CausationId, ContentDigest, DefinitionId, DefinitionVersion,
+    DomainError, InputId, LinearSagaDefinition, LinearSagaEvent, LogicalTime, OutcomeActor,
+    OutcomeId, ProcessId, ProcessOutcomeFact, ProcessScope, RetryPolicy, SagaDecision, SagaStatus,
+    StepId, StepPlan, TenantId, apply_action_result, start,
 };
 use thiserror::Error;
 
@@ -35,26 +34,26 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     T::try_from(value)
 }
 
-fn causation_for(event: &LinearSagaEventV1) -> Result<CausationIdV1, ExampleError> {
+fn causation_for(event: &LinearSagaEvent) -> Result<CausationId, ExampleError> {
     Ok(match event {
-        LinearSagaEventV1::Started { action_id, .. } => CausationIdV1::Action(action_id.clone()),
-        LinearSagaEventV1::ActionResultObserved { observation, .. }
-        | LinearSagaEventV1::RetryTimerScheduled { observation, .. } => {
-            CausationIdV1::Action(observation.action_id.clone())
+        LinearSagaEvent::Started { action_id, .. } => CausationId::Action(action_id.clone()),
+        LinearSagaEvent::ActionResultObserved { observation, .. }
+        | LinearSagaEvent::RetryTimerScheduled { observation, .. } => {
+            CausationId::Action(observation.action_id.clone())
         }
-        LinearSagaEventV1::RetryTimerFired {
+        LinearSagaEvent::RetryTimerFired {
             timer_action_id, ..
-        } => CausationIdV1::Action(timer_action_id.clone()),
-        LinearSagaEventV1::ManualResolutionApplied { .. } => {
-            CausationIdV1::Input(identifier::<InputId>("inp_manual_resolution")?)
+        } => CausationId::Action(timer_action_id.clone()),
+        LinearSagaEvent::ManualResolutionApplied { .. } => {
+            CausationId::Input(identifier::<InputId>("inp_manual_resolution")?)
         }
     })
 }
 
 fn validate_outcome_plan(
-    event: &LinearSagaEventV1,
-    decision: &SagaDecisionV1,
-    scope: &ProcessScopeV1,
+    event: &LinearSagaEvent,
+    decision: &SagaDecision,
+    scope: &ProcessScope,
     next_sequence: &mut u64,
     outcome_ids: &mut impl Iterator<Item = OutcomeId>,
 ) -> Result<(), ExampleError> {
@@ -66,8 +65,8 @@ fn validate_outcome_plan(
         .chain(decision.planned_outcome_kinds())
     {
         let outcome_id = outcome_ids.next().ok_or(ExampleError::MissingOutcomeId)?;
-        let fact_causation_id = if matches!(kind, penelope::ProcessOutcomeKindV1::InputAccepted) {
-            CausationIdV1::Input(
+        let fact_causation_id = if matches!(kind, penelope::ProcessOutcomeKind::InputAccepted) {
+            CausationId::Input(
                 event
                     .input_id()
                     .cloned()
@@ -76,11 +75,11 @@ fn validate_outcome_plan(
         } else {
             causation_id.clone()
         };
-        facts.push(ProcessOutcomeFactV1::new(
+        facts.push(ProcessOutcomeFact::new(
             outcome_id,
             fact_causation_id,
-            OutcomeActorV1::System,
-            LogicalTimeV1(*next_sequence),
+            OutcomeActor::System,
+            LogicalTime(*next_sequence),
             *kind,
             ContentDigest([0; 32]),
         ));
@@ -95,31 +94,31 @@ fn validate_outcome_plan(
 }
 
 fn main() -> Result<(), ExampleError> {
-    let definition = LinearSagaDefinitionV1::new(
+    let definition = LinearSagaDefinition::new(
         identifier::<DefinitionId>("def_trade")?,
         identifier::<DefinitionVersion>("dfv_one")?,
         ContentDigest([99; 32]),
         vec![
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_lock_seller")?,
                 ContentDigest([1; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_lock_buyer")?,
                 ContentDigest([2; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_settle")?,
                 ContentDigest([3; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
         ],
     );
     let tenant_id = identifier::<TenantId>("tnt_market")?;
     let process_id = identifier::<ProcessId>("prc_trade_42")?;
-    let scope = ProcessScopeV1::new(
+    let scope = ProcessScope::new(
         tenant_id.clone(),
         process_id.clone(),
         definition.definition_id.clone(),
@@ -156,7 +155,7 @@ fn main() -> Result<(), ExampleError> {
     let mut next_sequence = 0_u64;
     let first_action_id = identifier::<ActionId>("act_lock_seller")?;
     let start_event =
-        LinearSagaEventV1::started(&definition, start_input_id, first_action_id.clone());
+        LinearSagaEvent::started(&definition, start_input_id, first_action_id.clone());
     let mut decision = start(
         &definition,
         tenant_id.clone(),
@@ -173,9 +172,9 @@ fn main() -> Result<(), ExampleError> {
 
     while let Some(action) = decision.next_action.as_ref() {
         // A real adapter obtains this only after durable StateChronicle evidence.
-        let observed = ActionResultObservationV1::succeeded(action.action_id.clone());
+        let observed = ActionResultObservation::succeeded(action.action_id.clone());
         let next_action_id = next_action_ids.next();
-        let event = LinearSagaEventV1::ActionResultObserved {
+        let event = LinearSagaEvent::ActionResultObserved {
             input_id: input_ids.next().ok_or(ExampleError::MissingInputId)?,
             observation: observed.clone(),
             next_action_id: next_action_id.clone(),
@@ -197,7 +196,7 @@ fn main() -> Result<(), ExampleError> {
         )?;
     }
 
-    if decision.projection.status == SagaStatusV1::Completed {
+    if decision.projection.status == SagaStatus::Completed {
         Ok(())
     } else {
         Err(ExampleError::NotCompleted)

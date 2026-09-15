@@ -1,0 +1,1 @@
+{"tenant_id":"tnt_market","source_event_id":"cev_lock","action_id":"act_lock","commit_id":"cmt_lock","commit_sequence":9,"operation":"op_lock","resource_ids":["res_asset_a","res_asset_b"],"payload_digest":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]}

@@ -2,12 +2,38 @@
 
 ## Current state
 
-This repository contains an early pure-engine slice: versioned typed DTOs,
+This repository contains an early pure-engine slice: typed protocol values,
 validated newtype identities, ports, a reference linear state machine, unit and
 property tests, and parser/DTO/engine fuzz targets. It has no durable outcome
 store, production adapter, or production-readiness evidence. Nothing below is
 complete unless checked off with linked tests and reproducible evidence. Do not
 call Penelope production-ready before every P0 and P1 item is complete.
+
+## Developer-experience direction (2026-09-15)
+
+DTO wire-versioning and embedded schema discriminators were intentionally
+removed. Public values are constructed with typed newtypes and validated by
+constructors/`validate()`. `DefinitionVersion` remains because it pins workflow
+semantics, not transport format. Keep transport envelopes and compatibility
+policy in the consumer edge.
+
+DX priorities, in execution order:
+
+1. **P0 — ergonomic saga builder.** Add a small typed builder/facade that makes
+   definitions, steps, retries, compensation and review policy discoverable,
+   while compiling to the existing pure engine types.
+2. **P0 — one documented async loop.** Provide a concise example showing
+   `accept input → decide → atomic commit → dispatch → record result`, including
+   restart and duplicate delivery paths.
+3. **P1 — reconciliation helpers.** Expose typed queries for pending action,
+   effect key, reconciliation horizon and manual-review escalation. Never infer
+   success from transport acknowledgement.
+4. **P1 — consumer adapter conformance kit.** Keep persistence/network code out
+   of Penelope, but ship reusable contract tests adapters can run against their
+   own transaction, inbox, outbox and lease implementations.
+5. **P2 — migration guide.** Document the breaking removal of `Schema`/`V<N>`
+   DTO names and show how to add an application-owned transport envelope when
+   compatibility is needed.
 
 ## Deep audit snapshot (2026-09-15)
 
@@ -31,13 +57,13 @@ Open risks found by the deeper security, stability and reliability audit:
    length-prefixed canonical byte encoders now exist for process scopes and
    effect keys, and are fuzz-exercised. Definitions now have a stable SHA-256
    digest over canonical bytes plus a fail-closed verifier. The shared
-   `CanonicalWireBytesV1` trait now covers every current domain and port DTO;
+   `CanonicalWireBytes` trait now covers every current domain and port DTO;
    the v1 digest migration policy remains open. Never use display text as an
    idempotency key or signature input.
 3. **P1 — recovery semantics are incomplete.** Durable inbox/outcome replay,
    timer claiming, cancellation, compensation ordering and ambiguous-effect
    reconciliation lack a complete portable contract and adversarial state-machine
-   tests. A bounded, atomic in-memory `OutcomeLogV1` validator now centralizes
+   tests. A bounded, atomic in-memory `OutcomeLog` validator now centralizes
    scope/order/duplicate checks, but persistence and restart behavior remain
    adapter responsibilities. Its mutable internals are encapsulated behind
    read-only accessors so callers cannot desynchronize the identity index.
@@ -45,17 +71,17 @@ Open risks found by the deeper security, stability and reliability audit:
    currently restart-safe.
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
    helpers do not yet define a complete operation/resource matrix or durable
-   quota accounting. A typed `QuotaRequestV1` now bounds typed resource classes
-   and admission units. `ProcessAuthorizationOperationV1` now publishes a
+   quota accounting. A typed `QuotaRequest` now bounds typed resource classes
+   and admission units. `ProcessAuthorizationOperation` now publishes a
    minimum control matrix, requiring distinct principals for review decisions
-   and terminal overrides. A typed `RedactedDiagnosticV1` carries only a coarse class,
+   and terminal overrides. A typed `RedactedDiagnostic` carries only a coarse class,
    bounded metadata size and an evidence digest—never a raw message or payload—
    with tests for bounds and error classification. Consumers must deny by default
    and avoid logging raw payloads.
 5. **P1 — definition evolution is incomplete.** Pinning and digest comparison
    exist, and a typed compatibility classifier now distinguishes exact,
    migration-required and incompatible definitions with a fail-closed exact
-   requirement and tests. `DefinitionMigrationV1` now binds a same-definition
+   requirement and tests. `DefinitionMigration` now binds a same-definition
    source/destination version and digest and rejects no-op or cross-identity
    migrations. Registration now returns an identity-bound receipt, and
    `validate_source_and_destination` rejects applying a migration to a
@@ -145,13 +171,13 @@ error message string.
 Current partial evidence: `scripts/check-layer-boundaries.sh` validates the
 exact direct internal dependency graph through `cargo metadata` and rejects
 known production infrastructure clients from this ports-only workspace. CI runs
-it before compilation. `ProcessInputEnvelopeV1` carries an explicit typed
+it before compilation. `ProcessInputEnvelope` carries an explicit typed
 schema discriminator, and the intent boundary parses byte input only after
 validating that discriminator; both its parser and DTO boundary are fuzzed. It
 uses canonical versioned wire discriminators (for example,
 `penelope.process.input.v1`) rather than Rust enum names; fixture tests reject
 unknown and unversioned discriminators. Every current public wire DTO now
-carries and validates its immutable `SchemaV1` discriminator, including
+carries and validates its immutable `Schema` discriminator, including
 definition, input, outcome, action, canonical command/event, and manual review;
 negative tests cover a mismatched schema for each and the versioned-DTO fuzz
 target invokes each available validator. `scripts/run_bounded_fuzz.sh` verifies
@@ -214,7 +240,7 @@ attempt limit. Graph validation, registration, compatibility/migration policy,
 non-linear transitions, full digest
 calculation, and deployment-time definition storage remain incomplete.
 
-`ProcessGraphDefinitionV1` now provides a separate versioned graph contract
+`ProcessGraphDefinition` now provides a separate versioned graph contract
 with bounded steps/transitions, typed result edges, explicit entry step,
 bounded visit count, duplicate/reference checks, and reachability validation.
 It is deliberately not accepted by the linear executor yet; graph definitions
@@ -236,10 +262,10 @@ are unit tested and its serde boundary is exercised by `fuzz_linear_engine`.
 - Evidence: golden fixtures, schema compatibility tests, out-of-order/adversary
   tests, and `replay(log) == stored_projection` property tests.
 
-Current partial evidence: `ProcessOutcomeDtoV1` records a pinned process and
+Current partial evidence: `ProcessOutcomeDto` records a pinned process and
 definition scope, total sequence, causal input/action, immutable outcome ID,
 typed actor, injected logical timestamp, payload digest, and explicit schema.
-`AtomicProcessCommitV1` rejects non-outcome schemas before an adapter sees a
+`AtomicProcessCommit` rejects non-outcome schemas before an adapter sees a
 commit; malformed versioned outcome DTOs and atomic commits are fuzzed. The
 linear engine now derives an ordered required outcome-kind plan from each
 immutable event and pure decision (observed result plus planned action/retry,
@@ -251,7 +277,7 @@ Every externally delivered action result, retry-timer fire, and manual review
 resolution now also requires an `InputAccepted` fact before its observed fact.
 Those immutable events carry validated `InputId` values, and the builder rejects
 an accepted-input fact whose causation identifies another input.
-The public `LinearSagaInputV1` boundary likewise requires a validated `InputId`
+The public `LinearSagaInput` boundary likewise requires a validated `InputId`
 for start, result, timer, and manual-resolution commands.
 Its `to_event` conversion preserves that exact ID in the immutable replay event;
 start events now likewise require and record input acceptance before creation.
@@ -283,7 +309,7 @@ event envelope sequence before applying it. Its unit/property tests and
 `fuzz_linear_engine` target run in the commands documented in `README.md`.
 `decide` provides one typed side-effect-free entry point for start and
 correlated-result inputs, requiring an existing replayed projection for results.
-All exposed linear-engine `V1` values now have serde forms, including ordered
+All exposed linear-engine `` values now have serde forms, including ordered
 event envelopes; the engine fuzz target deserializes those envelopes. Explicit
 schema identities/fixtures and a compatibility matrix remain missing.
 It is not a complete `decide`/`apply` outcome-log engine and does not satisfy
@@ -310,9 +336,9 @@ this item.
 - Evidence: simulated-clock tests for boundary, clock jump, fire/cancel race,
   exhausted retry and duplicate firing.
 
-Current partial evidence: `RetryPolicyV1` bounds total per-step attempts with
+Current partial evidence: `RetryPolicy` bounds total per-step attempts with
 `NonZeroU32`. The reference engine escalates an exhausted retryable result and
-never emits a new action in that case. `RetryBackoffV1` calculates a
+never emits a new action in that case. `RetryBackoff` calculates a
 deterministic exponential due time from supplied logical time, caps growth, and
 fails closed on invalid bounds or time overflow; it is unit tested and fuzzed
 through the serialized linear definition boundary. A retryable failure under a
@@ -325,16 +351,16 @@ the exact due time replays without hidden entropy; unit and fuzz paths exercise
 that wire field. A typed inclusive deadline is also retained in that input/event;
 the reference engine allows an exact-boundary retry but takes the existing safe
 compensation-or-escalation path when the calculated due time would exceed it.
-`TimerScheduleV1` now rejects non-timer or malformed actions, and the timer
+`TimerSchedule` now rejects non-timer or malformed actions, and the timer
 port accepts that complete scope-pinned record for both scheduling and
 cancellation rather than an action ID alone. There is no durable adapter
 implementation, clock-jump policy, or compensation-timer support, so this item
 remains incomplete.
 
-The timer boundary now also has a bounded `TimerClaimRequestV1` and fenced
-`TimerLeaseV1` plus a `TimerClaimStore` port. Claims require the exact scope,
+The timer boundary now also has a bounded `TimerClaimRequest` and fenced
+`TimerLease` plus a `TimerClaimStore` port. Claims require the exact scope,
 owner, due logical time and unexpired lease, preventing duplicate worker fires;
-the adapter still owns atomic claim persistence. `TimerLeaseV1::acknowledge_at`
+the adapter still owns atomic claim persistence. `TimerLease::acknowledge_at`
 now provides a pure expiry-checked acknowledgement path, preventing a worker
 from acknowledging a lease after its logical fence has elapsed.
 
@@ -344,7 +370,7 @@ already issued by that process is rejected. This does not replace durable
 inbox/outbox deduplication. Each emitted action now
 also carries the pinned definition ID/version/digest alongside tenant, process,
 step, attempt, kind and action ID, preventing an adapter from losing the
-definition deployment context. `ProcessActionDtoV1::effect_key` derives a
+definition deployment context. `ProcessActionDto::effect_key` derives a
 typed semantic idempotency key from that pinned scope plus step, attempt, and
 effect kind and payload digest; it is unit tested and exercised at the action
 DTO fuzz boundary.
@@ -370,7 +396,7 @@ persisted compensation outcome schema. An authorized typed manual resolution
 is now a replayable engine input: it can resume a specifically authorized retry,
 start LIFO compensation, cancel, or retain escalation; direct resolution of a
 non-escalated process fails closed. An escalated pure decision can also build a
-full-definition-scope-pinned `ManualReviewDtoV1` for the `ManualReviewQueue` port, while a
+full-definition-scope-pinned `ManualReviewDto` for the `ManualReviewQueue` port, while a
 non-escalated decision rejects the request. There is still no durable review workflow,
 so this item remains incomplete. The `trade_manual_review_v1` example drills
 the handoff by creating and schema-validating that request before applying the
@@ -460,7 +486,7 @@ Their public DTO parser boundary is fuzzed. The `ports_conformance` test owns a
 test-only unavailable adapter that implements every current port, verifies
 object safety and `Send + Sync`, calls every method, and proves unavailable
 operations fail closed while authorization denies by default. Definition/
-The process store now also defines a bounded `OutcomeReplayRequestV1`/page read
+The process store now also defines a bounded `OutcomeReplayRequest`/page read
 contract: every returned outcome must have the requested scope, schema, and
 contiguous sequence, and continuation must be exact; request/page validators
 are fuzzed. `DefinitionRegistry` now defines typed immutable-definition lookup,
@@ -468,30 +494,30 @@ idempotent registration, and explicit migration registration without any
 infrastructure implementation. Definition, inbox, outbox, executor and review interfaces remain smaller
 than the target contract; no authorization policy or cancellation-semantics
 evidence exists yet, so this item remains incomplete. `ProcessStore::append_outcomes`
-now requires the complete pinned `ProcessScopeV1` explicitly, preventing a
+now requires the complete pinned `ProcessScope` explicitly, preventing a
 lax adapter from treating a sequence number alone as authorization to append
 another tenant or process's outcomes. Conformance and atomic fault doubles
 exercise this binding; a real adapter must enforce it transactionally.
-`ProcessAuthorizationDecisionV1::require_authorized` now provides the
+`ProcessAuthorizationDecision::require_authorized` now provides the
 fail-closed conversion from a denied policy result to `PortError::Unauthorized`,
 with unit coverage that does not inspect error text.
 `LeaseTokenSource` now makes fresh fencing-token allocation an explicit typed
 port; its contract requires uniqueness among live leases and no token recycling
 while an old lease may exist. Allocation remains infrastructure-owned.
-`ActionDispatcher::dispatch` now returns an `ActionDispatchReceiptV1` carrying
+`ActionDispatcher::dispatch` now returns an `ActionDispatchReceipt` carrying
 the complete pinned action scope, exact action identity, and duplicate flag,
 with a validator that rejects cross-scope or cross-action receipt substitution.
 Durable dispatch ordering remains adapter-owned.
 `DiagnosticSink` now provides a typed observability boundary that accepts only
-bounded `RedactedDiagnosticV1` values; the unavailable-port conformance double
+bounded `RedactedDiagnostic` values; the unavailable-port conformance double
 proves it fails closed. Structured retention, access control, and sampling are
 still composition-root responsibilities.
 `DefinitionRegistry::register` now returns a
-`DefinitionRegistrationReceiptV1` bound to immutable identity, version, and
+`DefinitionRegistrationReceipt` bound to immutable identity, version, and
 digest, making duplicate publication observable without allowing a changed
 definition to masquerade as an idempotent registration. Migration execution
 and deployment policy remain outside this library.
-`register_migration` likewise returns a `DefinitionMigrationReceiptV1` bound to
+`register_migration` likewise returns a `DefinitionMigrationReceipt` bound to
 the immutable migration ID, and its DTO boundary is fuzzed. The receipt only
 proves idempotent registration; it does not authorize applying a migration to
 running instances.
@@ -506,7 +532,7 @@ running instances.
   outbox and inbox state share the durability transaction.
 - Evidence: failpoints before/after every write and recovery convergence tests.
 
-Current partial evidence: `AtomicProcessCommitV1` defines one typed local
+Current partial evidence: `AtomicProcessCommit` defines one typed local
 transaction boundary for optional inbox acceptance, contiguous outcomes, and
 outgoing actions. Every outcome and action carries the pinned tenant, process,
 definition ID, definition version, and definition digest. It rejects
@@ -519,7 +545,7 @@ after inbox staging, after outcome append staging, and after action enqueue
 staging. At each point it proves no input, outcome, or action becomes visible;
 recovery commits exactly once, duplicate inbox delivery is idempotent, stale
 sequence conflicts, and a bounded outcome page replays the committed state.
-`AtomicProcessCommitReceiptV1::validate_for` now verifies that an adapter
+`AtomicProcessCommitReceipt::validate_for` now verifies that an adapter
 acknowledgement names the exact final sequence and cannot claim a duplicate
 input when no input was submitted. This closes receipt-substitution ambiguity;
 it also rejects validation against a malformed or empty commit before sequence
@@ -542,7 +568,7 @@ Current partial evidence: the atomic commit contract carries the immutable
 optional inbox input and outgoing actions together with outcomes, so an adapter
 has an explicit no-split-write boundary to implement. Inbox/outbox storage,
 acknowledgement, leases, redelivery, and crash drills remain incomplete. The
-versioned `OutboxRecordV1` now makes action, delivery attempt, and explicit
+versioned `OutboxRecord` now makes action, delivery attempt, and explicit
 pending/acknowledged state part of the reusable port contract, with a bounded
 attempt validator and DTO fuzz coverage. Monotonic transition helpers make
 acknowledgement idempotent and reject redelivery after acknowledgement or
@@ -550,9 +576,9 @@ attempt exhaustion. Lease/fencing and durable dispatch semantics remain
 adapter-owned and incomplete. The backend-neutral `OutboxStore` port now
 exposes bounded, scope-pinned claim and exact-record acknowledgement
 operations; implementations must supply leases/fencing and durable redelivery
-behavior. `OutboxLeaseTokenV1` and `OutboxLeaseV1` now provide an opaque
+behavior. `OutboxLeaseToken` and `OutboxLease` now provide an opaque
 fencing token, owner, and expiry for stale-worker protection; adapters still
-own token allocation and expiry enforcement. `OutboxLeaseV1::validate_for_claim`
+own token allocation and expiry enforcement. `OutboxLease::validate_for_claim`
 also rejects a lease whose action scope differs from the claim scope, while
 `validate_at` rejects acknowledgement after the logical expiry boundary.
 Claim requests now carry the authenticated owner principal, and lease
@@ -566,10 +592,10 @@ that adapters can apply before persisting the acknowledgement. `renew_at` and
 the `OutboxStore::renew` port require an unexpired lease and strictly later
 logical expiry, preventing stale or non-extending renewals. Renewal is also
 rejected after acknowledgement, preventing lease resurrection. `Inbox::accept`
-now returns an `InboxAcceptanceReceiptV1` carrying tenant, process, and exact
+now returns an `InboxAcceptanceReceipt` carrying tenant, process, and exact
 input identity,
 duplicate flag, so redelivery can be a durable no-op without rerunning a
-   decision. `InboxAcceptanceReceiptV1::validate_for` now rejects an adapter
+   decision. `InboxAcceptanceReceipt::validate_for` now rejects an adapter
    receipt bound to another scope or input identity. Storage, acknowledgement
    ordering, and crash recovery remain adapter-owned.
 
@@ -577,7 +603,7 @@ duplicate flag, so redelivery can be a durable no-op without rerunning a
 
 - [ ] Publish a guide and adapter evidence for canonical command submission and
   committed event correlation. The port now returns a typed
-  `CanonicalSubmitReceiptV1` bound to the exact command action ID, making
+  `CanonicalSubmitReceipt` bound to the exact command action ID, making
   duplicate submission a durable, observable no-op; this receipt does not claim
   canonical commit and must still be followed by verified committed-event
   correlation.
@@ -602,14 +628,14 @@ authorization context after correlation. It rejects malformed expected or
 received scopes before correlation, has unit tests and the
 `fuzz_statechronicle_correlation` target. It deliberately does not claim
 that a transport response proves a commit and does not implement a client.
-`CanonicalCommandExpectationV1::from_command` now derives the action,
+`CanonicalCommandExpectation::from_command` now derives the action,
 operation, and resource scope from a validated command, reducing field-copying
 confusion at the consumer composition root; its equality is unit tested.
-`CanonicalState::submit` now returns `CanonicalSubmitReceiptV1`, which binds
+`CanonicalState::submit` now returns `CanonicalSubmitReceipt`, which binds
 the adapter acknowledgement to the command tenant and exact action ID and
 exposes duplicate submission without treating acknowledgement as commit
 evidence.
-`AtomicProcessCommitV1` now accepts a canonical source-event key only beside a
+`AtomicProcessCommit` now accepts a canonical source-event key only beside a
 canonical inbox input, requiring the store to deduplicate that key in the same
 transaction as the input, outcomes, and actions. Its fault-injection drill
 proves source redelivery under a different inbox ID cannot append a second
@@ -629,7 +655,7 @@ durable adapter remain incomplete.
 - Evidence: mock tests for crash, timeout-after-success, duplicate request and
   inconsistent remote status.
 
-Current partial evidence: `CanonicalReconciliationV1` makes three mutually
+Current partial evidence: `CanonicalReconciliation` makes three mutually
 exclusive typed states explicit: committed with immutable event evidence,
 authoritatively not committed, and unknown. It validates that the evidence
 belongs to the requested action ID and complete pinned process-definition
@@ -639,20 +665,20 @@ fuzzed. `ExternalEffectExecutor` additionally defines a typed remote reference,
 effect-key, optional deadline, reconciliation, and best-effort cancellation
 contract; its unknown state remains explicitly non-retryable. There is no
 executor policy, consistency-window implementation, or fault-injected adapter
-drill yet, so this item remains incomplete. `EffectDispatchRequestV1::validate_at`
+drill yet, so this item remains incomplete. `EffectDispatchRequest::validate_at`
 now provides an inclusive logical deadline check, returning typed
 `DeadlineExceeded` instead of leaving expiry behavior to adapter conventions.
-`CanonicalReconciliationWindowV1` now binds reconciliation to an observation
+`CanonicalReconciliationWindow` now binds reconciliation to an observation
 time and consistency horizon; only an authoritative `NotCommitted` result after
 that horizon can authorize retry. Committed and unknown results remain
 non-retryable. `validate_for_action` now validates the wrapped evidence against
 the complete pinned action scope before retry policy can consume it. The adapter
 still supplies the authoritative horizon and durable evidence.
-`RecoveryDispositionV1::disposition_at` now centralizes the safe next step:
+`RecoveryDisposition::disposition_at` now centralizes the safe next step:
 committed evidence is terminal, pre-horizon absence waits, post-horizon absence
 may retry, and unknown evidence escalates. This remains evidence classification,
 not durable transport behavior.
-`ExternalEffectEvidenceV1::disposition_at` likewise maps succeeded, known
+`ExternalEffectEvidence::disposition_at` likewise maps succeeded, known
 failure, and unknown evidence to completed, retry, and escalation outcomes
 after validating the exact effect key. It continues to accept authoritative
 committed evidence after an execution deadline, while post-deadline known
@@ -666,7 +692,7 @@ failure escalates instead of retrying.
 - How: record who/why/when/which sequence; require authorized immutable input.
 - Evidence: concurrent operator, expired review, authorization and audit tests.
 
-Current partial evidence: `ManualReviewClaimV1` and `ManualReviewDecisionV1`
+Current partial evidence: `ManualReviewClaim` and `ManualReviewDecision`
 are versioned typed port DTOs. They require the exact pinned process-definition
 scope, a validated `PrincipalId`, typed resolution/control enums, immutable
 review ID, and redacted evidence digest; both validate against the durable
@@ -681,12 +707,12 @@ explicit replayable engine input rather than a direct projection mutation. They
 have parser and engine-transition fuzz coverage through the public review
 lifecycle and linear engine targets. Authorization policy, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
-   remain incomplete. `ManualReviewReceiptV1` now makes open/claim/decision
+   remain incomplete. `ManualReviewReceipt` now makes open/claim/decision
 redelivery idempotency explicit and validates the returned review identity; it
 now also carries the operation (`Open`, `Claim`, or `Decide`) and rejects
 cross-operation receipt substitution. Durable queue conflict handling remains
 adapter-owned.
-`ManualReviewAuditEntryV1` now provides a scope-bound, expiry-checked audit
+`ManualReviewAuditEntry` now provides a scope-bound, expiry-checked audit
 record with operation, principal, logical time, and redacted evidence digest;
 durable append ordering and authorization policy remain adapter-owned.
 

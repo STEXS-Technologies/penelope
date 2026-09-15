@@ -12,14 +12,14 @@ use std::task::{Context, Poll, Waker};
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalEventId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion,
-    InputId, LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessId, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
-    ProcessOutcomeKindV1, ProcessScopeV1, StepId, TenantId,
+    ActionId, CanonicalEventId, CausationId, ContentDigest, DefinitionId, DefinitionVersion,
+    InputId, LogicalTime, OutcomeActor, OutcomeId, ProcessAction, ProcessActionKind, ProcessId,
+    ProcessInput, ProcessInputKind, ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind,
+    ProcessScope, StepId, TenantId,
 };
 use penelope_ports::{
-    AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, OutcomeReplayPageV1,
-    OutcomeReplayRequestV1, PortError, ProcessStore,
+    AtomicProcessCommit, AtomicProcessCommitReceipt, OutcomeReplayPage, OutcomeReplayRequest,
+    PortError, ProcessStore,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -27,8 +27,8 @@ struct StoreState {
     next_sequence: u64,
     inputs: Vec<InputId>,
     canonical_source_events: Vec<CanonicalEventId>,
-    outcomes: Vec<ProcessOutcomeDtoV1>,
-    actions: Vec<ProcessActionDtoV1>,
+    outcomes: Vec<ProcessOutcome>,
+    actions: Vec<ProcessAction>,
 }
 
 /// Logical points before the test double makes one staged atomic commit visible.
@@ -87,14 +87,14 @@ impl FaultInjectingStore {
 impl ProcessStore for FaultInjectingStore {
     async fn commit(
         &self,
-        commit: &AtomicProcessCommitV1,
-    ) -> Result<AtomicProcessCommitReceiptV1, PortError> {
+        commit: &AtomicProcessCommit,
+    ) -> Result<AtomicProcessCommitReceipt, PortError> {
         commit.validate().map_err(|_error| PortError::Invariant)?;
         let mut current = self.lock();
         if let Some(input) = &commit.input
             && current.inputs.iter().any(|seen| seen == &input.input_id)
         {
-            return Ok(AtomicProcessCommitReceiptV1 {
+            return Ok(AtomicProcessCommitReceipt {
                 committed_through_sequence: current.next_sequence.saturating_sub(1),
                 duplicate_input: true,
             });
@@ -109,7 +109,7 @@ impl ProcessStore for FaultInjectingStore {
                     .any(|seen| seen == source_event_id)
             })
         {
-            return Ok(AtomicProcessCommitReceiptV1 {
+            return Ok(AtomicProcessCommitReceipt {
                 committed_through_sequence: current.next_sequence.saturating_sub(1),
                 duplicate_input: true,
             });
@@ -151,7 +151,7 @@ impl ProcessStore for FaultInjectingStore {
         if self.take_failpoint(CommitFailpoint::AfterActionEnqueue) {
             return Err(PortError::Unavailable);
         }
-        let receipt = AtomicProcessCommitReceiptV1 {
+        let receipt = AtomicProcessCommitReceipt {
             committed_through_sequence: staged.next_sequence.saturating_sub(1),
             duplicate_input: false,
         };
@@ -161,9 +161,9 @@ impl ProcessStore for FaultInjectingStore {
 
     async fn append_outcomes(
         &self,
-        scope: &ProcessScopeV1,
+        scope: &ProcessScope,
         expected_sequence: u64,
-        outcomes: &[ProcessOutcomeDtoV1],
+        outcomes: &[ProcessOutcome],
     ) -> Result<(), PortError> {
         if outcomes.iter().any(|outcome| {
             outcome.tenant_id != scope.tenant_id
@@ -175,15 +175,15 @@ impl ProcessStore for FaultInjectingStore {
             return Err(PortError::Invariant);
         }
         let commit =
-            AtomicProcessCommitV1::new(expected_sequence, None, outcomes.to_vec(), Vec::new())
+            AtomicProcessCommit::new(expected_sequence, None, outcomes.to_vec(), Vec::new())
                 .map_err(|_error| PortError::Invariant)?;
         self.commit(&commit).await.map(|_| ())
     }
 
     async fn read_outcomes(
         &self,
-        request: &OutcomeReplayRequestV1,
-    ) -> Result<OutcomeReplayPageV1, PortError> {
+        request: &OutcomeReplayRequest,
+    ) -> Result<OutcomeReplayPage, PortError> {
         request.validate().map_err(|_error| PortError::Invariant)?;
         let current = self.lock();
         let outcomes = current
@@ -208,7 +208,7 @@ impl ProcessStore for FaultInjectingStore {
                 .checked_add(1)
                 .filter(|next| *next < current.next_sequence)
         });
-        OutcomeReplayPageV1::new(
+        OutcomeReplayPage::new(
             request.scope.clone(),
             request.from_sequence,
             outcomes,
@@ -232,8 +232,8 @@ fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
     T::try_from(value).ok().expect("valid test identifier")
 }
 
-fn scope() -> ProcessScopeV1 {
-    ProcessScopeV1::new(
+fn scope() -> ProcessScope {
+    ProcessScope::new(
         id::<TenantId>("tnt_fault"),
         id::<ProcessId>("prc_fault"),
         id::<DefinitionId>("def_fault"),
@@ -242,36 +242,36 @@ fn scope() -> ProcessScopeV1 {
     )
 }
 
-fn commit() -> AtomicProcessCommitV1 {
+fn commit() -> AtomicProcessCommit {
     let scope = scope();
-    let input = ProcessInputDtoV1::new(
+    let input = ProcessInput::new(
         scope.tenant_id.clone(),
         scope.process_id.clone(),
         id::<InputId>("inp_fault"),
-        ProcessInputKindV1::CanonicalEvent,
+        ProcessInputKind::CanonicalEvent,
         ContentDigest([1; 32]),
     );
-    let outcome = ProcessOutcomeDtoV1::new(
+    let outcome = ProcessOutcome::new(
         scope.clone(),
         0,
-        ProcessOutcomeFactV1::new(
+        ProcessOutcomeFact::new(
             id::<OutcomeId>("out_fault"),
-            CausationIdV1::Input(input.input_id.clone()),
-            OutcomeActorV1::System,
-            LogicalTimeV1(1),
-            ProcessOutcomeKindV1::Started,
+            CausationId::Input(input.input_id.clone()),
+            OutcomeActor::System,
+            LogicalTime(1),
+            ProcessOutcomeKind::Started,
             ContentDigest([2; 32]),
         ),
     );
-    let action = ProcessActionDtoV1::new(
+    let action = ProcessAction::new(
         scope,
         id::<ActionId>("act_fault"),
         id::<StepId>("stp_fault"),
         0,
-        ProcessActionKindV1::CanonicalCommand,
+        ProcessActionKind::CanonicalCommand,
         ContentDigest([3; 32]),
     );
-    AtomicProcessCommitV1::new(0, Some(input), vec![outcome], vec![action])
+    AtomicProcessCommit::new(0, Some(input), vec![outcome], vec![action])
         .expect("valid atomic commit")
         .with_canonical_source_event(id("cev_fault"))
 }
@@ -306,21 +306,21 @@ fn injected_failure_at_every_atomic_boundary_has_no_visible_partial_state() {
             .outcomes
             .first_mut()
             .expect("commit has an outcome")
-            .causation_id = penelope_domain::CausationIdV1::Input(id("inp_redelivery"));
+            .causation_id = penelope_domain::CausationId::Input(id("inp_redelivery"));
         let duplicate_source = block_on(store.commit(&same_source_new_inbox_id))
             .expect("canonical source redelivery is idempotent");
         assert!(duplicate_source.duplicate_input);
         assert_eq!(store.snapshot().outcomes.len(), 1);
         assert_eq!(store.snapshot().actions.len(), 1);
 
-        let request = OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN)
+        let request = OutcomeReplayRequest::new(scope(), 0, std::num::NonZeroU16::MIN)
             .expect("bounded replay request");
         let page = block_on(store.read_outcomes(&request)).expect("replay succeeds after recovery");
         assert_eq!(page.outcomes.len(), 1);
         let first_outcome = page.outcomes.first().expect("one replayed outcome");
         assert_eq!(first_outcome.sequence, 0);
 
-        let conflict = AtomicProcessCommitV1::new(0, None, vec![first_outcome.clone()], Vec::new())
+        let conflict = AtomicProcessCommit::new(0, None, vec![first_outcome.clone()], Vec::new())
             .expect("locally valid stale commit");
         assert_eq!(block_on(store.commit(&conflict)), Err(PortError::Conflict));
     }

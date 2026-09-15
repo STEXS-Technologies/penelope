@@ -8,10 +8,10 @@
 //! canonical inventory implementation.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, CanonicalCommandExpectationV1, CanonicalCommitId,
-    CanonicalEventDtoV1, CanonicalEventId, ContentDigest, CorrelationError, DefinitionId,
-    DefinitionVersion, DomainError, LinearSagaDefinitionV1, OperationId, ProcessId, ProcessScopeV1,
-    ResourceId, RetryPolicyV1, SagaDecisionV1, SagaStatusV1, StepId, StepPlanV1, TenantId,
+    ActionId, ActionResultObservation, CanonicalCommandExpectation, CanonicalCommitId,
+    CanonicalEvent, CanonicalEventId, ContentDigest, CorrelationError, DefinitionId,
+    DefinitionVersion, DomainError, LinearSagaDefinition, OperationId, ProcessId, ProcessScope,
+    ResourceId, RetryPolicy, SagaDecision, SagaStatus, StepId, StepPlan, TenantId,
     apply_action_result, start, verify_committed_event,
 };
 use thiserror::Error;
@@ -38,7 +38,7 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     T::try_from(value)
 }
 
-fn active_action_id(decision: &SagaDecisionV1) -> Result<ActionId, ExampleError> {
+fn active_action_id(decision: &SagaDecision) -> Result<ActionId, ExampleError> {
     decision
         .next_action
         .as_ref()
@@ -46,21 +46,21 @@ fn active_action_id(decision: &SagaDecisionV1) -> Result<ActionId, ExampleError>
         .ok_or(ExampleError::MissingAction)
 }
 
-fn definition() -> Result<LinearSagaDefinitionV1, ExampleError> {
-    Ok(LinearSagaDefinitionV1::new(
+fn definition() -> Result<LinearSagaDefinition, ExampleError> {
+    Ok(LinearSagaDefinition::new(
         identifier::<DefinitionId>("def_trade")?,
         identifier::<DefinitionVersion>("dfv_one")?,
         ContentDigest([99; 32]),
         vec![
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_lock_shared_asset")?,
                 ContentDigest([1; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_settle")?,
                 ContentDigest([2; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
         ],
     ))
@@ -88,21 +88,21 @@ fn main() -> Result<(), ExampleError> {
     let winner_lock_action_id = active_action_id(&winning_lock)?;
     let operation = identifier::<OperationId>("op_lock_asset")?;
     let resource_id = identifier::<ResourceId>("res_shared_asset")?;
-    let winner_scope = ProcessScopeV1::new(
+    let winner_scope = ProcessScope::new(
         tenant_id.clone(),
         winning_process_id.clone(),
         definition.definition_id.clone(),
         definition.definition_version.clone(),
         definition.definition_digest,
     );
-    let expectation = CanonicalCommandExpectationV1 {
+    let expectation = CanonicalCommandExpectation {
         scope: winner_scope,
         action_id: winner_lock_action_id.clone(),
         operation: operation.clone(),
         resource_ids: vec![resource_id.clone()],
         expected_event_payload_digest: ContentDigest([3; 32]),
     };
-    let committed_event = CanonicalEventDtoV1::new(
+    let committed_event = CanonicalEvent::new(
         tenant_id.clone(),
         identifier::<CanonicalEventId>("cev_lock_winner")?,
         winner_lock_action_id,
@@ -121,7 +121,7 @@ fn main() -> Result<(), ExampleError> {
         &winning_lock.projection,
         tenant_id.clone(),
         winning_process_id,
-        &ActionResultObservationV1::succeeded(verified_event.event.action_id),
+        &ActionResultObservation::succeeded(verified_event.event.action_id),
         Some(identifier("act_settle_winner")?),
     )?;
     let winner_settlement = winner
@@ -139,10 +139,10 @@ fn main() -> Result<(), ExampleError> {
         &losing_lock.projection,
         tenant_id,
         losing_process_id,
-        &ActionResultObservationV1::terminal_failure(active_action_id(&losing_lock)?),
+        &ActionResultObservation::terminal_failure(active_action_id(&losing_lock)?),
         None,
     )?;
-    if loser.projection.status != SagaStatusV1::Escalated || loser.next_action.is_some() {
+    if loser.projection.status != SagaStatus::Escalated || loser.next_action.is_some() {
         return Err(ExampleError::LoserDidNotEscalate);
     }
     Ok(())

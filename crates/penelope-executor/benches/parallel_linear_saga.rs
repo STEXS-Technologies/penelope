@@ -8,11 +8,11 @@
 use std::{hint::black_box, thread, time::Instant};
 
 use penelope_domain::{
-    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessActionKindV1,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessActionKind,
     ProcessId, StepId, TenantId,
 };
 use penelope_executor::engine::{
-    ActionResultObservationV1, EngineError, LinearSagaDefinitionV1, RetryPolicyV1, StepPlanV1,
+    ActionResultObservation, EngineError, LinearSagaDefinition, RetryPolicy, StepPlan,
     apply_action_result, start,
 };
 use thiserror::Error;
@@ -44,7 +44,7 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
 }
 
 fn run_worker(
-    definition: &LinearSagaDefinitionV1,
+    definition: &LinearSagaDefinition,
     tenant_id: &TenantId,
     process_id: &ProcessId,
     action_id: &ActionId,
@@ -65,7 +65,7 @@ fn run_worker(
             &started.projection,
             tenant_id.clone(),
             process_id.clone(),
-            &ActionResultObservationV1::succeeded(action.action_id.clone()),
+            &ActionResultObservation::succeeded(action.action_id.clone()),
             None,
         )?);
     }
@@ -78,15 +78,15 @@ fn main() -> Result<(), BenchmarkError> {
     let total_operations = workers
         .checked_mul(ITERATIONS_PER_WORKER)
         .ok_or(BenchmarkError::OperationCountOverflow)?;
-    let definition = LinearSagaDefinitionV1 {
+    let definition = LinearSagaDefinition {
         definition_id: identifier::<DefinitionId>("def_parallel_benchmark")?,
         definition_version: identifier::<DefinitionVersion>("dfv_one")?,
         definition_digest: ContentDigest([99; 32]),
-        steps: vec![StepPlanV1 {
+        steps: vec![StepPlan {
             step_id: identifier::<StepId>("stp_parallel_benchmark")?,
-            action_kind: ProcessActionKindV1::CanonicalCommand,
+            action_kind: ProcessActionKind::CanonicalCommand,
             payload_digest: ContentDigest([1; 32]),
-            retry_policy: RetryPolicyV1::no_retry(),
+            retry_policy: RetryPolicy::no_retry(),
             compensation: None,
         }],
     };

@@ -4,9 +4,9 @@
 //! canonical evidence before passing an observation to the pure engine.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, CompensationPlanV1, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, LinearSagaDefinitionV1, ProcessId, RetryPolicyV1, SagaStatusV1,
-    StepId, StepPlanV1, TenantId, apply_action_result, start,
+    ActionId, ActionResultObservation, CompensationPlan, ContentDigest, DefinitionId,
+    DefinitionVersion, DomainError, LinearSagaDefinition, ProcessId, RetryPolicy, SagaStatus,
+    StepId, StepPlan, TenantId, apply_action_result, start,
 };
 use thiserror::Error;
 
@@ -28,7 +28,7 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     T::try_from(value)
 }
 
-fn action_id(decision: &penelope::SagaDecisionV1) -> Result<ActionId, ExampleError> {
+fn action_id(decision: &penelope::SagaDecision) -> Result<ActionId, ExampleError> {
     decision
         .next_action
         .as_ref()
@@ -37,22 +37,22 @@ fn action_id(decision: &penelope::SagaDecisionV1) -> Result<ActionId, ExampleErr
 }
 
 fn main() -> Result<(), ExampleError> {
-    let policy = RetryPolicyV1::no_retry();
-    let definition = LinearSagaDefinitionV1::new(
+    let policy = RetryPolicy::no_retry();
+    let definition = LinearSagaDefinition::new(
         identifier::<DefinitionId>("def_trade")?,
         identifier::<DefinitionVersion>("dfv_one")?,
         ContentDigest([99; 32]),
         vec![
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_lock_seller")?,
                 ContentDigest([1; 32]),
                 policy,
             )
-            .with_compensation(CompensationPlanV1::canonical_command(
+            .with_compensation(CompensationPlan::canonical_command(
                 ContentDigest([9; 32]),
                 policy,
             )),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_settle")?,
                 ContentDigest([2; 32]),
                 policy,
@@ -73,7 +73,7 @@ fn main() -> Result<(), ExampleError> {
         &lock.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::succeeded(action_id(&lock)?),
+        &ActionResultObservation::succeeded(action_id(&lock)?),
         Some(identifier("act_settle")?),
     )?;
     let unlock = apply_action_result(
@@ -81,7 +81,7 @@ fn main() -> Result<(), ExampleError> {
         &settle.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::terminal_failure(action_id(&settle)?),
+        &ActionResultObservation::terminal_failure(action_id(&settle)?),
         Some(identifier("act_unlock_seller")?),
     )?;
     let completed = apply_action_result(
@@ -89,11 +89,11 @@ fn main() -> Result<(), ExampleError> {
         &unlock.projection,
         tenant_id,
         process_id,
-        &ActionResultObservationV1::succeeded(action_id(&unlock)?),
+        &ActionResultObservation::succeeded(action_id(&unlock)?),
         None,
     )?;
 
-    if completed.projection.status == SagaStatusV1::Compensated {
+    if completed.projection.status == SagaStatus::Compensated {
         Ok(())
     } else {
         Err(ExampleError::NotCompensated)

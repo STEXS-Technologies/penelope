@@ -34,8 +34,8 @@ test = false
 doc = false
 
 [[bin]]
-name = "fuzz_versioned_dtos"
-path = "fuzz_targets/fuzz_versioned_dtos.rs"
+name = "fuzz_dtos"
+path = "fuzz_targets/fuzz_dtos.rs"
 test = false
 doc = false
 

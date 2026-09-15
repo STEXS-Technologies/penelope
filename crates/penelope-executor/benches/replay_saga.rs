@@ -9,8 +9,8 @@ use penelope_domain::{
     ActionId, ContentDigest, DefinitionId, DefinitionVersion, InputId, ProcessId, StepId, TenantId,
 };
 use penelope_executor::engine::{
-    ActionResultObservationV1, LinearSagaDefinitionV1, LinearSagaEventEnvelopeV1,
-    LinearSagaInputV1, RetryPolicyV1, StepPlanV1, replay_ordered,
+    ActionResultObservation, LinearSagaDefinition, LinearSagaEventEnvelope, LinearSagaInput,
+    RetryPolicy, StepPlan, replay_ordered,
 };
 use std::time::Instant;
 
@@ -22,33 +22,33 @@ where
 }
 
 fn main() {
-    let definition = LinearSagaDefinitionV1::new(
+    let definition = LinearSagaDefinition::new(
         id::<DefinitionId>("def_benchmark_replay"),
         id::<DefinitionVersion>("dfv_one"),
         ContentDigest([7; 32]),
-        vec![StepPlanV1::canonical_command(
+        vec![StepPlan::canonical_command(
             id::<StepId>("stp_benchmark"),
             ContentDigest([8; 32]),
-            RetryPolicyV1::no_retry(),
+            RetryPolicy::no_retry(),
         )],
     );
-    let start = LinearSagaInputV1::Start {
+    let start = LinearSagaInput::Start {
         input_id: id::<InputId>("inp_replay_start"),
         action_id: id::<ActionId>("act_replay_start"),
     }
     .to_event(&definition);
-    let result = LinearSagaInputV1::ActionResult {
+    let result = LinearSagaInput::ActionResult {
         input_id: id::<InputId>("inp_replay_result"),
-        observation: ActionResultObservationV1::succeeded(id("act_replay_start")),
+        observation: ActionResultObservation::succeeded(id("act_replay_start")),
         next_action_id: None,
     }
     .to_event(&definition);
     let log = vec![
-        LinearSagaEventEnvelopeV1 {
+        LinearSagaEventEnvelope {
             sequence: 0,
             event: start,
         },
-        LinearSagaEventEnvelopeV1 {
+        LinearSagaEventEnvelope {
             sequence: 1,
             event: result,
         },

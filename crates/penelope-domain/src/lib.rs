@@ -92,32 +92,11 @@ pub enum DomainError {
     /// An outcome does not belong to the requested process scope.
     #[error("process outcome scope does not match the requested process")]
     OutcomeScopeMismatch,
-    /// A process-input envelope declared a schema for a different DTO type.
-    #[error("process input envelope schema is invalid")]
-    InvalidProcessInputSchema,
-    /// A process-definition record declared a schema for a different DTO type.
-    #[error("process definition record schema is invalid")]
-    InvalidProcessDefinitionSchema,
-    /// A process-outcome record declared a schema for a different DTO type.
-    #[error("process outcome record schema is invalid")]
-    InvalidProcessOutcomeSchema,
-    /// A process-action record declared a schema for a different DTO type.
-    #[error("process action record schema is invalid")]
-    InvalidProcessActionSchema,
-    /// A canonical command declared a schema for a different DTO type.
-    #[error("canonical command schema is invalid")]
-    InvalidCanonicalCommandSchema,
-    /// A canonical event declared a schema for a different DTO type.
-    #[error("canonical event schema is invalid")]
-    InvalidCanonicalEventSchema,
-    /// A manual-review record declared a schema for a different DTO type.
-    #[error("manual review schema is invalid")]
-    InvalidManualReviewSchema,
 }
 
 /// Result of comparing a candidate definition with an already pinned one.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum DefinitionCompatibilityV1 {
+pub enum DefinitionCompatibility {
     /// The candidate is byte-for-byte equivalent under the pinned identity.
     Exact,
     /// The candidate keeps the definition identity but changes semantics and
@@ -150,10 +129,10 @@ pub enum DefinitionMigrationError {
     /// A migration must change version or semantics.
     #[error("definition migration is a no-op")]
     NoOp,
-    /// The destination definition failed its own schema or bound validation.
+    /// The destination definition failed its own bound validation.
     #[error("definition migration destination is invalid")]
     InvalidDestination,
-    /// The pinned source definition failed schema or bound validation.
+    /// The pinned source definition failed bound validation.
     #[error("definition migration source is invalid")]
     InvalidSource,
 }
@@ -161,15 +140,14 @@ pub enum DefinitionMigrationError {
 /// Typed failure for canonical wire encoding.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum CanonicalEncodingError {
-    /// The serializer could not encode the value under the supported schema.
+    /// The serializer could not encode the value.
     #[error("canonical wire encoding failed")]
     Serialization,
 }
 
-/// Canonical, deterministic bytes for a versioned public value.
-pub trait CanonicalWireBytesV1 {
-    /// Encodes the value with stable struct field order and its explicit schema
-    /// discriminator where the value defines one.
+/// Canonical, deterministic bytes for a public value.
+pub trait CanonicalWireBytes {
+    /// Encodes the value with stable struct field order.
     ///
     /// # Errors
     ///
@@ -373,37 +351,11 @@ impl ContentDigest {
 /// The pure engine must never read wall clock time directly; it receives this
 /// typed value through an application command or port response.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-pub struct LogicalTimeV1(pub u64);
-
-/// The supported schema for a public DTO envelope.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum SchemaV1 {
-    /// `penelope.process.definition.v1`.
-    #[serde(rename = "penelope.process.definition.v1")]
-    ProcessDefinition,
-    /// `penelope.process.input.v1`.
-    #[serde(rename = "penelope.process.input.v1")]
-    ProcessInput,
-    /// `penelope.process.outcome.v1`.
-    #[serde(rename = "penelope.process.outcome.v1")]
-    ProcessOutcome,
-    /// `penelope.process.action.v1`.
-    #[serde(rename = "penelope.process.action.v1")]
-    ProcessAction,
-    /// `penelope.canonical.command.v1`.
-    #[serde(rename = "penelope.canonical.command.v1")]
-    CanonicalCommand,
-    /// `penelope.canonical.event.v1`.
-    #[serde(rename = "penelope.canonical.event.v1")]
-    CanonicalEvent,
-    /// `penelope.manual-review.v1`.
-    #[serde(rename = "penelope.manual-review.v1")]
-    ManualReview,
-}
+pub struct LogicalTime(pub u64);
 
 /// Typed process input category.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProcessInputKindV1 {
+pub enum ProcessInputKind {
     /// A verified committed canonical event.
     CanonicalEvent,
     /// A durable timer firing.
@@ -414,7 +366,7 @@ pub enum ProcessInputKindV1 {
 
 /// Typed append-only process outcome category.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProcessOutcomeKindV1 {
+pub enum ProcessOutcomeKind {
     /// Process creation was recorded.
     Started,
     /// An input was durably accepted.
@@ -453,7 +405,7 @@ pub enum ProcessOutcomeKindV1 {
 
 /// Typed durable action category.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProcessActionKindV1 {
+pub enum ProcessActionKind {
     /// An idempotent StateChronicle command.
     CanonicalCommand,
     /// A timer schedule/cancel operation.
@@ -466,7 +418,7 @@ pub enum ProcessActionKindV1 {
 
 /// Typed causal identity of an outcome.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum CausationIdV1 {
+pub enum CausationId {
     /// The outcome was caused by an accepted input.
     Input(InputId),
     /// The outcome was caused by an action.
@@ -475,7 +427,7 @@ pub enum CausationIdV1 {
 
 /// Attributable source that recorded one immutable process outcome.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum OutcomeActorV1 {
+pub enum OutcomeActor {
     /// The deterministic process runtime recorded the outcome.
     System,
     /// An authenticated principal recorded an authorized outcome.
@@ -484,29 +436,29 @@ pub enum OutcomeActorV1 {
 
 /// Attributable immutable facts recorded in one process outcome.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessOutcomeFactV1 {
+pub struct ProcessOutcomeFact {
     /// Immutable idempotency identity for this outcome.
     pub outcome_id: OutcomeId,
     /// Typed causal input or action identity.
-    pub causation_id: CausationIdV1,
+    pub causation_id: CausationId,
     /// Attributable source that recorded this immutable fact.
-    pub actor: OutcomeActorV1,
+    pub actor: OutcomeActor,
     /// Deterministic recorded-at time supplied by an injected clock.
-    pub occurred_at: LogicalTimeV1,
+    pub occurred_at: LogicalTime,
     /// Typed outcome category.
-    pub kind: ProcessOutcomeKindV1,
+    pub kind: ProcessOutcomeKind,
     /// Canonical payload digest.
     pub payload_digest: ContentDigest,
 }
 
-impl ProcessOutcomeFactV1 {
+impl ProcessOutcomeFact {
     /// Groups the immutable fact fields for a process outcome record.
     pub const fn new(
         outcome_id: OutcomeId,
-        causation_id: CausationIdV1,
-        actor: OutcomeActorV1,
-        occurred_at: LogicalTimeV1,
-        kind: ProcessOutcomeKindV1,
+        causation_id: CausationId,
+        actor: OutcomeActor,
+        occurred_at: LogicalTime,
+        kind: ProcessOutcomeKind,
         payload_digest: ContentDigest,
     ) -> Self {
         Self {
@@ -522,9 +474,7 @@ impl ProcessOutcomeFactV1 {
 
 /// A version-pinned immutable process definition.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessDefinitionDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct ProcessDefinition {
     /// Stable definition identity.
     pub definition_id: DefinitionId,
     /// Immutable definition version selected when an instance starts.
@@ -541,7 +491,7 @@ pub struct ProcessDefinitionDtoV1 {
 /// validate and authorize the migration, transform any process state under its
 /// own policy, and retain this record alongside the new definition.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DefinitionMigrationV1 {
+pub struct DefinitionMigration {
     /// Stable migration identity used for idempotent registration.
     pub migration_id: MigrationId,
     /// Definition identity shared by both versions.
@@ -556,7 +506,7 @@ pub struct DefinitionMigrationV1 {
     pub to_digest: ContentDigest,
 }
 
-impl DefinitionMigrationV1 {
+impl DefinitionMigration {
     /// Creates and validates an explicit definition migration record.
     ///
     /// # Errors
@@ -602,7 +552,7 @@ impl DefinitionMigrationV1 {
     /// candidate uses another definition identity or destination version/digest.
     pub fn validate_destination(
         &self,
-        candidate: &ProcessDefinitionDtoV1,
+        candidate: &ProcessDefinition,
     ) -> Result<(), DefinitionMigrationError> {
         if candidate.validate().is_err() {
             return Err(DefinitionMigrationError::InvalidDestination);
@@ -625,8 +575,8 @@ impl DefinitionMigrationV1 {
     /// identity/version/digest does not match this migration record.
     pub fn validate_source_and_destination(
         &self,
-        source: &ProcessDefinitionDtoV1,
-        destination: &ProcessDefinitionDtoV1,
+        source: &ProcessDefinition,
+        destination: &ProcessDefinition,
     ) -> Result<(), DefinitionMigrationError> {
         if source.validate().is_err() {
             return Err(DefinitionMigrationError::InvalidSource);
@@ -643,9 +593,7 @@ impl DefinitionMigrationV1 {
 
 /// A causally attributable process input.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessInputDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct ProcessInput {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Target process instance.
@@ -653,49 +601,36 @@ pub struct ProcessInputDtoV1 {
     /// Immutable input identity used for inbox deduplication.
     pub input_id: InputId,
     /// Typed input category.
-    pub kind: ProcessInputKindV1,
+    pub kind: ProcessInputKind,
     /// Canonical payload digest.
     pub payload_digest: ContentDigest,
 }
 
 /// Explicitly versioned public envelope for one process input.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessInputEnvelopeV1 {
-    /// The immutable schema discriminator for the enclosed input.
-    pub schema: SchemaV1,
+pub struct ProcessInputEnvelope {
     /// Typed process input supplied to the application boundary.
-    pub input: ProcessInputDtoV1,
+    pub input: ProcessInput,
 }
 
-impl ProcessInputEnvelopeV1 {
-    /// Creates an envelope carrying the only schema valid for this DTO.
-    pub const fn new(input: ProcessInputDtoV1) -> Self {
-        Self {
-            schema: SchemaV1::ProcessInput,
-            input,
-        }
+impl ProcessInputEnvelope {
+    pub const fn new(input: ProcessInput) -> Self {
+        Self { input }
     }
 
-    /// Validates the immutable envelope schema discriminator.
+    /// Validates the enclosed process input.
     ///
     /// # Errors
     ///
-    /// Returns a typed error when the envelope does not declare the process
-    /// input schema.
-    pub fn validate(&self) -> Result<(), DomainError> {
-        self.input.validate()?;
-        if !matches!(self.schema, SchemaV1::ProcessInput) {
-            return Err(DomainError::InvalidProcessInputSchema);
-        }
-        Ok(())
+    /// Returns the typed input validation error when any identifier is invalid.
+    pub const fn validate(&self) -> Result<(), DomainError> {
+        self.input.validate()
     }
 }
 
 /// One immutable fact in a process outcome log.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessOutcomeDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct ProcessOutcome {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Process instance that owns the outcome.
@@ -711,20 +646,20 @@ pub struct ProcessOutcomeDtoV1 {
     /// Immutable outcome identity.
     pub outcome_id: OutcomeId,
     /// Typed causal input or action identity.
-    pub causation_id: CausationIdV1,
+    pub causation_id: CausationId,
     /// Attributable source that recorded this immutable fact.
-    pub actor: OutcomeActorV1,
+    pub actor: OutcomeActor,
     /// Deterministic recorded-at time supplied by an injected clock.
-    pub occurred_at: LogicalTimeV1,
+    pub occurred_at: LogicalTime,
     /// Typed outcome category.
-    pub kind: ProcessOutcomeKindV1,
+    pub kind: ProcessOutcomeKind,
     /// Canonical payload digest.
     pub payload_digest: ContentDigest,
 }
 
 /// Immutable identity and definition scope of one process.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessScopeV1 {
+pub struct ProcessScope {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Owning process instance.
@@ -737,7 +672,7 @@ pub struct ProcessScopeV1 {
     pub definition_digest: ContentDigest,
 }
 
-impl ProcessScopeV1 {
+impl ProcessScope {
     /// Creates the immutable identity and definition scope of one process.
     pub const fn new(
         tenant_id: TenantId,
@@ -774,9 +709,7 @@ impl ProcessScopeV1 {
 
 /// A durable, independently idempotent process action.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessActionDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct ProcessAction {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Owning process instance.
@@ -794,7 +727,7 @@ pub struct ProcessActionDtoV1 {
     /// Attempt number for this action.
     pub attempt: u32,
     /// Typed action category.
-    pub kind: ProcessActionKindV1,
+    pub kind: ProcessActionKind,
     /// Canonical payload digest.
     pub payload_digest: ContentDigest,
 }
@@ -805,7 +738,7 @@ pub struct ProcessActionDtoV1 {
 /// and the effect's semantic coordinates. Adapters can use it to detect a
 /// duplicate semantic dispatch without reconstructing an untyped string key.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct EffectKeyV1 {
+pub struct EffectKey {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Owning process instance.
@@ -821,12 +754,12 @@ pub struct EffectKeyV1 {
     /// Attempt number for this effect.
     pub attempt: u32,
     /// Typed external effect category.
-    pub kind: ProcessActionKindV1,
+    pub kind: ProcessActionKind,
     /// Canonical payload semantics for this effect attempt.
     pub payload_digest: ContentDigest,
 }
 
-impl EffectKeyV1 {
+impl EffectKey {
     /// Encodes every semantic effect coordinate deterministically.
     ///
     /// The encoding is length-prefixed and includes the action kind and
@@ -842,10 +775,10 @@ impl EffectKeyV1 {
         encode_identifier(&mut bytes, self.step_id.as_str());
         bytes.extend_from_slice(&self.attempt.to_be_bytes());
         bytes.push(match self.kind {
-            ProcessActionKindV1::CanonicalCommand => 0,
-            ProcessActionKindV1::Timer => 1,
-            ProcessActionKindV1::ExternalEffect => 2,
-            ProcessActionKindV1::ManualReview => 3,
+            ProcessActionKind::CanonicalCommand => 0,
+            ProcessActionKind::Timer => 1,
+            ProcessActionKind::ExternalEffect => 2,
+            ProcessActionKind::ManualReview => 3,
         });
         bytes.extend_from_slice(&self.payload_digest.0);
         bytes
@@ -854,9 +787,7 @@ impl EffectKeyV1 {
 
 /// A canonical-state command submitted through an adapter port.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CanonicalCommandDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct CanonicalCommand {
     /// Tenant authorized for the command.
     pub tenant_id: TenantId,
     /// Penelope action ID reused as canonical idempotency ID.
@@ -871,9 +802,7 @@ pub struct CanonicalCommandDtoV1 {
 
 /// Evidence of a verified committed canonical-state result.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CanonicalEventDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct CanonicalEvent {
     /// Tenant of the committed event.
     pub tenant_id: TenantId,
     /// Immutable source delivery/event identity used by the inbox.
@@ -894,9 +823,7 @@ pub struct CanonicalEventDtoV1 {
 
 /// A durable request for authorized human resolution.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ManualReviewDtoV1 {
-    /// The immutable schema discriminator for this record.
-    pub schema: SchemaV1,
+pub struct ManualReview {
     /// Isolated tenant scope.
     pub tenant_id: TenantId,
     /// Owning process instance.
@@ -912,7 +839,7 @@ pub struct ManualReviewDtoV1 {
     /// Outcome sequence at which review was opened.
     pub opened_at_sequence: u64,
     /// Optional inclusive logical deadline for an authorized review decision.
-    pub expires_at: Option<LogicalTimeV1>,
+    pub expires_at: Option<LogicalTime>,
     /// Redacted evidence digest.
     pub evidence_digest: ContentDigest,
 }
@@ -924,7 +851,7 @@ fn canonical_serialize<T: Serialize>(value: &T) -> Result<Vec<u8>, CanonicalEnco
 macro_rules! canonical_wire_impl {
     ($($ty:ty),+ $(,)?) => {
         $(
-            impl CanonicalWireBytesV1 for $ty {
+            impl CanonicalWireBytes for $ty {
                 fn canonical_wire_bytes(&self) -> Result<Vec<u8>, CanonicalEncodingError> {
                     canonical_serialize(self)
                 }
@@ -935,31 +862,27 @@ macro_rules! canonical_wire_impl {
 
 canonical_wire_impl!(
     ContentDigest,
-    LogicalTimeV1,
-    SchemaV1,
-    ProcessInputKindV1,
-    ProcessOutcomeKindV1,
-    ProcessActionKindV1,
-    CausationIdV1,
-    OutcomeActorV1,
-    ProcessOutcomeFactV1,
-    ProcessDefinitionDtoV1,
-    DefinitionMigrationV1,
-    ProcessInputDtoV1,
-    ProcessInputEnvelopeV1,
-    ProcessOutcomeDtoV1,
-    ProcessScopeV1,
-    ProcessActionDtoV1,
-    EffectKeyV1,
-    CanonicalCommandDtoV1,
-    CanonicalEventDtoV1,
-    ManualReviewDtoV1,
+    LogicalTime,
+    ProcessInputKind,
+    ProcessOutcomeKind,
+    ProcessActionKind,
+    CausationId,
+    OutcomeActor,
+    ProcessOutcomeFact,
+    ProcessDefinition,
+    DefinitionMigration,
+    ProcessInput,
+    ProcessInputEnvelope,
+    ProcessOutcome,
+    ProcessScope,
+    ProcessAction,
+    EffectKey,
+    CanonicalCommand,
+    CanonicalEvent,
+    ManualReview,
 );
 
-impl ProcessDefinitionDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::ProcessDefinition;
-
+impl ProcessDefinition {
     /// Creates a version-pinned process definition DTO.
     ///
     /// # Errors
@@ -972,7 +895,6 @@ impl ProcessDefinitionDtoV1 {
         step_ids: Vec<StepId>,
     ) -> Result<Self, DomainError> {
         let definition = Self {
-            schema: Self::SCHEMA,
             definition_id,
             definition_version,
             definition_digest,
@@ -988,9 +910,6 @@ impl ProcessDefinitionDtoV1 {
     ///
     /// Returns a typed error for empty, oversized, or duplicate step lists.
     pub fn validate(&self) -> Result<(), DomainError> {
-        if !matches!(self.schema, SchemaV1::ProcessDefinition) {
-            return Err(DomainError::InvalidProcessDefinitionSchema);
-        }
         if self.step_ids.is_empty() {
             return Err(DomainError::EmptyDefinitionSteps);
         }
@@ -1045,17 +964,17 @@ impl ProcessDefinitionDtoV1 {
 
     /// Classifies whether this definition can replace a pinned definition.
     #[must_use]
-    pub fn compatibility_with(&self, pinned: &Self) -> DefinitionCompatibilityV1 {
+    pub fn compatibility_with(&self, pinned: &Self) -> DefinitionCompatibility {
         if self.definition_id != pinned.definition_id
             || self.definition_version != pinned.definition_version
         {
-            DefinitionCompatibilityV1::Incompatible
+            DefinitionCompatibility::Incompatible
         } else if self.definition_digest != pinned.definition_digest
             || self.step_ids != pinned.step_ids
         {
-            DefinitionCompatibilityV1::RequiresMigration
+            DefinitionCompatibility::RequiresMigration
         } else {
-            DefinitionCompatibilityV1::Exact
+            DefinitionCompatibility::Exact
         }
     }
 
@@ -1072,31 +991,27 @@ impl ProcessDefinitionDtoV1 {
         pinned: &Self,
     ) -> Result<(), DefinitionCompatibilityError> {
         match self.compatibility_with(pinned) {
-            DefinitionCompatibilityV1::Exact => Ok(()),
-            DefinitionCompatibilityV1::RequiresMigration => {
+            DefinitionCompatibility::Exact => Ok(()),
+            DefinitionCompatibility::RequiresMigration => {
                 Err(DefinitionCompatibilityError::RequiresMigration)
             }
-            DefinitionCompatibilityV1::Incompatible => {
+            DefinitionCompatibility::Incompatible => {
                 Err(DefinitionCompatibilityError::IdentityMismatch)
             }
         }
     }
 }
 
-impl ProcessInputDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::ProcessInput;
-
+impl ProcessInput {
     /// Creates a typed process input DTO.
     pub const fn new(
         tenant_id: TenantId,
         process_id: ProcessId,
         input_id: InputId,
-        kind: ProcessInputKindV1,
+        kind: ProcessInputKind,
         payload_digest: ContentDigest,
     ) -> Self {
         Self {
-            schema: Self::SCHEMA,
             tenant_id,
             process_id,
             input_id,
@@ -1105,28 +1020,20 @@ impl ProcessInputDtoV1 {
         }
     }
 
-    /// Validates the immutable input schema discriminator.
+    /// Validates the immutable input typed invariant.
     ///
     /// # Errors
     ///
     /// Returns a typed error when this record declares another DTO schema.
     pub const fn validate(&self) -> Result<(), DomainError> {
-        if matches!(self.schema, SchemaV1::ProcessInput) {
-            Ok(())
-        } else {
-            Err(DomainError::InvalidProcessInputSchema)
-        }
+        Ok(())
     }
 }
 
-impl ProcessOutcomeDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::ProcessOutcome;
-
+impl ProcessOutcome {
     /// Creates an immutable process outcome DTO.
-    pub fn new(scope: ProcessScopeV1, sequence: u64, fact: ProcessOutcomeFactV1) -> Self {
+    pub fn new(scope: ProcessScope, sequence: u64, fact: ProcessOutcomeFact) -> Self {
         Self {
-            schema: Self::SCHEMA,
             tenant_id: scope.tenant_id,
             process_id: scope.process_id,
             definition_id: scope.definition_id,
@@ -1142,23 +1049,19 @@ impl ProcessOutcomeDtoV1 {
         }
     }
 
-    /// Validates the immutable outcome record schema discriminator.
+    /// Validates the immutable outcome record typed invariant.
     ///
     /// # Errors
     ///
     /// Returns a typed error when the record declares a different DTO schema.
     pub const fn validate(&self) -> Result<(), DomainError> {
-        if matches!(self.schema, SchemaV1::ProcessOutcome) {
-            Ok(())
-        } else {
-            Err(DomainError::InvalidProcessOutcomeSchema)
-        }
+        Ok(())
     }
 
     /// Returns the immutable process scope carried by this outcome.
     #[must_use]
-    pub fn scope(&self) -> ProcessScopeV1 {
-        ProcessScopeV1::new(
+    pub fn scope(&self) -> ProcessScope {
+        ProcessScope::new(
             self.tenant_id.clone(),
             self.process_id.clone(),
             self.definition_id.clone(),
@@ -1172,7 +1075,7 @@ impl ProcessOutcomeDtoV1 {
     /// # Errors
     ///
     /// Returns a typed error when the schema or scope is invalid.
-    pub fn validate_for_scope(&self, expected: &ProcessScopeV1) -> Result<(), DomainError> {
+    pub fn validate_for_scope(&self, expected: &ProcessScope) -> Result<(), DomainError> {
         self.validate()?;
         if self.scope() == *expected {
             Ok(())
@@ -1182,21 +1085,17 @@ impl ProcessOutcomeDtoV1 {
     }
 }
 
-impl ProcessActionDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::ProcessAction;
-
+impl ProcessAction {
     /// Creates a stable independently idempotent action DTO.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         action_id: ActionId,
         step_id: StepId,
         attempt: u32,
-        kind: ProcessActionKindV1,
+        kind: ProcessActionKind,
         payload_digest: ContentDigest,
     ) -> Self {
         Self {
-            schema: Self::SCHEMA,
             tenant_id: scope.tenant_id,
             process_id: scope.process_id,
             definition_id: scope.definition_id,
@@ -1210,23 +1109,19 @@ impl ProcessActionDtoV1 {
         }
     }
 
-    /// Validates the immutable action schema discriminator.
+    /// Validates the immutable action typed invariant.
     ///
     /// # Errors
     ///
     /// Returns a typed error when this record declares another DTO schema.
     pub const fn validate(&self) -> Result<(), DomainError> {
-        if matches!(self.schema, SchemaV1::ProcessAction) {
-            Ok(())
-        } else {
-            Err(DomainError::InvalidProcessActionSchema)
-        }
+        Ok(())
     }
 
     /// Returns the immutable process and definition scope for this action.
     #[must_use]
-    pub fn scope(&self) -> ProcessScopeV1 {
-        ProcessScopeV1::new(
+    pub fn scope(&self) -> ProcessScope {
+        ProcessScope::new(
             self.tenant_id.clone(),
             self.process_id.clone(),
             self.definition_id.clone(),
@@ -1236,8 +1131,8 @@ impl ProcessActionDtoV1 {
     }
 
     /// Derives the stable semantic idempotency key for this action attempt.
-    pub fn effect_key(&self) -> EffectKeyV1 {
-        EffectKeyV1 {
+    pub fn effect_key(&self) -> EffectKey {
+        EffectKey {
             tenant_id: self.tenant_id.clone(),
             process_id: self.process_id.clone(),
             definition_id: self.definition_id.clone(),
@@ -1251,10 +1146,7 @@ impl ProcessActionDtoV1 {
     }
 }
 
-impl CanonicalCommandDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::CanonicalCommand;
-
+impl CanonicalCommand {
     /// Creates a typed canonical command DTO.
     ///
     /// # Errors
@@ -1268,7 +1160,6 @@ impl CanonicalCommandDtoV1 {
         payload_digest: ContentDigest,
     ) -> Result<Self, DomainError> {
         let command = Self {
-            schema: Self::SCHEMA,
             tenant_id,
             action_id,
             operation,
@@ -1285,17 +1176,11 @@ impl CanonicalCommandDtoV1 {
     ///
     /// Returns a typed error for oversized or duplicate resource identifiers.
     pub fn validate(&self) -> Result<(), DomainError> {
-        if !matches!(self.schema, SchemaV1::CanonicalCommand) {
-            return Err(DomainError::InvalidCanonicalCommandSchema);
-        }
         validate_canonical_resource_scope(&self.resource_ids)
     }
 }
 
-impl CanonicalEventDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::CanonicalEvent;
-
+impl CanonicalEvent {
     /// Creates a typed committed canonical event.
     ///
     /// # Errors
@@ -1313,7 +1198,6 @@ impl CanonicalEventDtoV1 {
         payload_digest: ContentDigest,
     ) -> Result<Self, DomainError> {
         let event = Self {
-            schema: Self::SCHEMA,
             tenant_id,
             source_event_id,
             action_id,
@@ -1333,9 +1217,6 @@ impl CanonicalEventDtoV1 {
     ///
     /// Returns a typed error for oversized or duplicate resource identifiers.
     pub fn validate(&self) -> Result<(), DomainError> {
-        if !matches!(self.schema, SchemaV1::CanonicalEvent) {
-            return Err(DomainError::InvalidCanonicalEventSchema);
-        }
         validate_canonical_resource_scope(&self.resource_ids)
     }
 }
@@ -1360,20 +1241,16 @@ pub fn validate_canonical_resource_scope(resource_ids: &[ResourceId]) -> Result<
     Ok(())
 }
 
-impl ManualReviewDtoV1 {
-    /// Immutable schema identity for this DTO version.
-    pub const SCHEMA: SchemaV1 = SchemaV1::ManualReview;
-
+impl ManualReview {
     /// Creates a durable manual-review escalation DTO.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         review_id: ReviewId,
         opened_at_sequence: u64,
-        expires_at: Option<LogicalTimeV1>,
+        expires_at: Option<LogicalTime>,
         evidence_digest: ContentDigest,
     ) -> Self {
         Self {
-            schema: Self::SCHEMA,
             tenant_id: scope.tenant_id,
             process_id: scope.process_id,
             definition_id: scope.definition_id,
@@ -1386,23 +1263,19 @@ impl ManualReviewDtoV1 {
         }
     }
 
-    /// Validates the immutable manual-review schema discriminator.
+    /// Validates the immutable manual-review typed invariant.
     ///
     /// # Errors
     ///
     /// Returns a typed error when this record declares another DTO schema.
     pub const fn validate(&self) -> Result<(), DomainError> {
-        if matches!(self.schema, SchemaV1::ManualReview) {
-            Ok(())
-        } else {
-            Err(DomainError::InvalidManualReviewSchema)
-        }
+        Ok(())
     }
 
     /// Returns the immutable process and definition scope for this review.
     #[must_use]
-    pub fn scope(&self) -> ProcessScopeV1 {
-        ProcessScopeV1::new(
+    pub fn scope(&self) -> ProcessScope {
+        ProcessScope::new(
             self.tenant_id.clone(),
             self.process_id.clone(),
             self.definition_id.clone(),
@@ -1451,31 +1324,31 @@ mod tests {
 
     #[test]
     fn effect_key_binds_every_semantic_effect_coordinate() {
-        let scope = ProcessScopeV1::new(
+        let scope = ProcessScope::new(
             id::<TenantId>("tnt_game"),
             id::<ProcessId>("prc_trade"),
             id::<DefinitionId>("def_trade"),
             id::<DefinitionVersion>("dfv_one"),
             ContentDigest([1; 32]),
         );
-        let action = ProcessActionDtoV1::new(
+        let action = ProcessAction::new(
             scope.clone(),
             id::<ActionId>("act_first"),
             id::<StepId>("stp_settle"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([2; 32]),
         );
-        let same_semantics_new_action_id = ProcessActionDtoV1::new(
+        let same_semantics_new_action_id = ProcessAction::new(
             scope,
             id::<ActionId>("act_second"),
             id::<StepId>("stp_settle"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([2; 32]),
         );
-        let retry = ProcessActionDtoV1::new(
-            ProcessScopeV1::new(
+        let retry = ProcessAction::new(
+            ProcessScope::new(
                 id::<TenantId>("tnt_game"),
                 id::<ProcessId>("prc_trade"),
                 id::<DefinitionId>("def_trade"),
@@ -1485,11 +1358,11 @@ mod tests {
             id::<ActionId>("act_retry"),
             id::<StepId>("stp_settle"),
             1,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([3; 32]),
         );
-        let changed_payload = ProcessActionDtoV1::new(
-            ProcessScopeV1::new(
+        let changed_payload = ProcessAction::new(
+            ProcessScope::new(
                 id::<TenantId>("tnt_game"),
                 id::<ProcessId>("prc_trade"),
                 id::<DefinitionId>("def_trade"),
@@ -1499,7 +1372,7 @@ mod tests {
             id::<ActionId>("act_changed_payload"),
             id::<StepId>("stp_settle"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([4; 32]),
         );
 
@@ -1513,19 +1386,19 @@ mod tests {
 
     #[test]
     fn canonical_bytes_are_deterministic_and_bind_effect_semantics() {
-        let scope = ProcessScopeV1::new(
+        let scope = ProcessScope::new(
             id("tnt_game"),
             id("prc_trade"),
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([1; 32]),
         );
-        let action = ProcessActionDtoV1::new(
+        let action = ProcessAction::new(
             scope.clone(),
             id("act_first"),
             id("stp_settle"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([2; 32]),
         );
         let same_scope = scope.clone();
@@ -1543,159 +1416,27 @@ mod tests {
     }
 
     #[test]
-    fn schema_wire_discriminators_are_canonical_versioned_protocol_values() {
-        assert_eq!(
-            serde_json::to_string(&SchemaV1::ProcessInput).unwrap(),
-            format!("\"{}\"", penelope_core::schema::PROCESS_INPUT_V1)
-        );
-        assert_eq!(
-            serde_json::to_string(&SchemaV1::ProcessOutcome).unwrap(),
-            format!("\"{}\"", penelope_core::schema::PROCESS_OUTCOME_V1)
-        );
-        assert!(serde_json::from_str::<SchemaV1>("\"penelope.process.input.v2\"").is_err());
-        assert!(serde_json::from_str::<SchemaV1>("\"ProcessInput\"").is_err());
-    }
-
-    #[test]
-    fn every_public_wire_dto_rejects_a_mismatched_schema() {
-        let mut definition = ProcessDefinitionDtoV1::new(
-            id("def_trade"),
-            id("dfv_one"),
-            ContentDigest([0; 32]),
-            vec![id("stp_lock")],
-        )
-        .unwrap();
-        definition.schema = SchemaV1::ProcessInput;
-        assert_eq!(
-            definition.validate(),
-            Err(DomainError::InvalidProcessDefinitionSchema)
-        );
-
-        let mut input = ProcessInputDtoV1::new(
-            id("tnt_market"),
-            id("prc_trade"),
-            id("inp_event"),
-            ProcessInputKindV1::CanonicalEvent,
-            ContentDigest([1; 32]),
-        );
-        input.schema = SchemaV1::ProcessOutcome;
-        assert_eq!(
-            input.validate(),
-            Err(DomainError::InvalidProcessInputSchema)
-        );
-
-        let scope = ProcessScopeV1::new(
-            id("tnt_market"),
-            id("prc_trade"),
-            id("def_trade"),
-            id("dfv_one"),
-            ContentDigest([2; 32]),
-        );
-        let mut outcome = ProcessOutcomeDtoV1::new(
-            scope.clone(),
-            0,
-            ProcessOutcomeFactV1::new(
-                id("out_started"),
-                CausationIdV1::Input(id("inp_event")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(0),
-                ProcessOutcomeKindV1::Started,
-                ContentDigest([3; 32]),
-            ),
-        );
-        outcome.schema = SchemaV1::ProcessAction;
-        assert_eq!(
-            outcome.validate(),
-            Err(DomainError::InvalidProcessOutcomeSchema)
-        );
-
-        let mut action = ProcessActionDtoV1::new(
-            scope,
-            id("act_lock"),
-            id("stp_lock"),
-            0,
-            ProcessActionKindV1::CanonicalCommand,
-            ContentDigest([4; 32]),
-        );
-        action.schema = SchemaV1::CanonicalCommand;
-        assert_eq!(
-            action.validate(),
-            Err(DomainError::InvalidProcessActionSchema)
-        );
-
-        let mut command = CanonicalCommandDtoV1::new(
-            id("tnt_market"),
-            id("act_lock"),
-            id("op_lock"),
-            vec![id("res_asset")],
-            ContentDigest([5; 32]),
-        )
-        .unwrap();
-        command.schema = SchemaV1::CanonicalEvent;
-        assert_eq!(
-            command.validate(),
-            Err(DomainError::InvalidCanonicalCommandSchema)
-        );
-
-        let mut event = CanonicalEventDtoV1::new(
-            id("tnt_market"),
-            id("cev_event"),
-            id("act_lock"),
-            id("cmt_commit"),
-            0,
-            id("op_lock"),
-            vec![id("res_asset")],
-            ContentDigest([6; 32]),
-        )
-        .unwrap();
-        event.schema = SchemaV1::ManualReview;
-        assert_eq!(
-            event.validate(),
-            Err(DomainError::InvalidCanonicalEventSchema)
-        );
-
-        let mut review = ManualReviewDtoV1::new(
-            ProcessScopeV1::new(
-                id("tnt_market"),
-                id("prc_trade"),
-                id("def_trade"),
-                id("dfv_one"),
-                ContentDigest([4; 32]),
-            ),
-            id("rev_trade"),
-            0,
-            None,
-            ContentDigest([7; 32]),
-        );
-        review.schema = SchemaV1::ProcessDefinition;
-        assert_eq!(
-            review.validate(),
-            Err(DomainError::InvalidManualReviewSchema)
-        );
-    }
-
-    #[test]
     fn outcome_scope_validation_rejects_cross_process_records() {
-        let scope = ProcessScopeV1::new(
+        let scope = ProcessScope::new(
             id("tnt_market"),
             id("prc_trade"),
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([2; 32]),
         );
-        let outcome = ProcessOutcomeDtoV1::new(
+        let outcome = ProcessOutcome::new(
             scope.clone(),
             0,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 id("out_started"),
-                CausationIdV1::Input(id("inp_event")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(0),
-                ProcessOutcomeKindV1::Started,
+                CausationId::Input(id("inp_event")),
+                OutcomeActor::System,
+                LogicalTime(0),
+                ProcessOutcomeKind::Started,
                 ContentDigest([3; 32]),
             ),
         );
-        let other = ProcessScopeV1::new(
+        let other = ProcessScope::new(
             id("tnt_market"),
             id("prc_other"),
             id("def_trade"),
@@ -1711,7 +1452,7 @@ mod tests {
 
     #[test]
     fn definition_validation_bounds_and_deduplicates_steps() {
-        let oversized = ProcessDefinitionDtoV1::new(
+        let oversized = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([0; 32]),
@@ -1722,7 +1463,7 @@ mod tests {
             DomainError::DefinitionStepLimitExceeded
         );
 
-        let duplicate = ProcessDefinitionDtoV1::new(
+        let duplicate = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([0; 32]),
@@ -1733,7 +1474,7 @@ mod tests {
 
     #[test]
     fn definition_compatibility_fails_closed_on_identity_and_semantic_changes() {
-        let pinned = ProcessDefinitionDtoV1::new(
+        let pinned = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([1; 32]),
@@ -1742,10 +1483,10 @@ mod tests {
         .unwrap();
         assert_eq!(
             pinned.compatibility_with(&pinned),
-            DefinitionCompatibilityV1::Exact
+            DefinitionCompatibility::Exact
         );
 
-        let changed_content = ProcessDefinitionDtoV1::new(
+        let changed_content = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([2; 32]),
@@ -1754,14 +1495,14 @@ mod tests {
         .unwrap();
         assert_eq!(
             changed_content.compatibility_with(&pinned),
-            DefinitionCompatibilityV1::RequiresMigration
+            DefinitionCompatibility::RequiresMigration
         );
         assert_eq!(
             changed_content.require_exact_compatibility(&pinned),
             Err(DefinitionCompatibilityError::RequiresMigration)
         );
 
-        let changed_identity = ProcessDefinitionDtoV1::new(
+        let changed_identity = ProcessDefinition::new(
             id("def_other"),
             id("dfv_one"),
             ContentDigest([1; 32]),
@@ -1770,7 +1511,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             changed_identity.compatibility_with(&pinned),
-            DefinitionCompatibilityV1::Incompatible
+            DefinitionCompatibility::Incompatible
         );
         assert_eq!(
             changed_identity.require_exact_compatibility(&pinned),
@@ -1780,7 +1521,7 @@ mod tests {
 
     #[test]
     fn canonical_definition_digest_is_reproducible_and_rejects_tampering() {
-        let mut definition = ProcessDefinitionDtoV1::new(
+        let mut definition = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([0; 32]),
@@ -1803,7 +1544,7 @@ mod tests {
 
     #[test]
     fn definition_migration_binds_identity_and_destination_digest() {
-        let migration = DefinitionMigrationV1::new(
+        let migration = DefinitionMigration::new(
             id("mig_trade_v2"),
             id("def_trade"),
             id("dfv_one"),
@@ -1812,14 +1553,14 @@ mod tests {
             ContentDigest([2; 32]),
         )
         .unwrap();
-        let destination = ProcessDefinitionDtoV1::new(
+        let destination = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_two"),
             ContentDigest([2; 32]),
             vec![id("stp_lock")],
         )
         .unwrap();
-        let source = ProcessDefinitionDtoV1::new(
+        let source = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([1; 32]),
@@ -1830,7 +1571,7 @@ mod tests {
             migration.validate_source_and_destination(&source, &destination),
             Ok(())
         );
-        let wrong_source = ProcessDefinitionDtoV1::new(
+        let wrong_source = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([9; 32]),
@@ -1842,7 +1583,7 @@ mod tests {
             Err(DefinitionMigrationError::IdentityMismatch)
         );
         assert_eq!(migration.validate_destination(&destination), Ok(()));
-        let wrong = ProcessDefinitionDtoV1::new(
+        let wrong = ProcessDefinition::new(
             id("def_other"),
             id("dfv_two"),
             ContentDigest([2; 32]),
@@ -1854,13 +1595,13 @@ mod tests {
             Err(DefinitionMigrationError::IdentityMismatch)
         );
         let mut malformed = destination;
-        malformed.schema = SchemaV1::ProcessAction;
+        malformed.step_ids.clear();
         assert_eq!(
             migration.validate_destination(&malformed),
             Err(DefinitionMigrationError::InvalidDestination)
         );
         assert_eq!(
-            DefinitionMigrationV1::new(
+            DefinitionMigration::new(
                 id("mig_noop"),
                 id("def_trade"),
                 id("dfv_one"),
@@ -1874,14 +1615,14 @@ mod tests {
 
     #[test]
     fn every_public_wire_value_has_deterministic_canonical_bytes() {
-        let input = ProcessInputDtoV1::new(
+        let input = ProcessInput::new(
             id("tnt_game"),
             id("prc_trade"),
             id("inp_start"),
-            ProcessInputKindV1::CanonicalEvent,
+            ProcessInputKind::CanonicalEvent,
             ContentDigest([4; 32]),
         );
-        let envelope = ProcessInputEnvelopeV1::new(input);
+        let envelope = ProcessInputEnvelope::new(input);
         let first = envelope.canonical_wire_bytes().unwrap();
         let second = envelope.canonical_wire_bytes().unwrap();
         assert_eq!(first, second);
@@ -1890,7 +1631,7 @@ mod tests {
 
     #[test]
     fn canonical_scope_validation_bounds_and_deduplicates_resources() {
-        let duplicate = CanonicalCommandDtoV1::new(
+        let duplicate = CanonicalCommand::new(
             id("tnt_market"),
             id("act_settle"),
             id("op_settle"),

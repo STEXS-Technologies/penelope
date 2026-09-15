@@ -17,7 +17,7 @@ fi
 
 fuzz_targets=(
   fuzz_identifiers
-  fuzz_versioned_dtos
+  fuzz_dtos
   fuzz_linear_engine
   fuzz_statechronicle_correlation
   fuzz_atomic_process_commit
@@ -27,15 +27,15 @@ fuzz_targets=(
   fuzz_process_control_ports
 )
 
-versioned_dtos=(
-  ProcessDefinitionDtoV1
-  ProcessInputDtoV1
-  ProcessInputEnvelopeV1
-  ProcessOutcomeDtoV1
-  ProcessActionDtoV1
-  CanonicalCommandDtoV1
-  CanonicalEventDtoV1
-  ManualReviewDtoV1
+dtos=(
+  ProcessDefinition
+  ProcessInput
+  ProcessInputEnvelope
+  ProcessOutcome
+  ProcessAction
+  CanonicalCommand
+  CanonicalEvent
+  ManualReview
 )
 
 for fuzz_target in "${fuzz_targets[@]}"; do
@@ -49,9 +49,9 @@ for fuzz_target in "${fuzz_targets[@]}"; do
   fi
 done
 
-for versioned_dto in "${versioned_dtos[@]}"; do
-  if ! rg -Fwq "${versioned_dto}" fuzz/fuzz_targets/fuzz_versioned_dtos.rs; then
-    printf 'missing versioned DTO fuzz coverage: %s\n' "${versioned_dto}" >&2
+for dto in "${dtos[@]}"; do
+  if ! rg -Fwq "${dto}" fuzz/fuzz_targets/fuzz_dtos.rs; then
+    printf 'missing typed protocol value fuzz coverage: %s\n' "${dto}" >&2
     exit 1
   fi
 done

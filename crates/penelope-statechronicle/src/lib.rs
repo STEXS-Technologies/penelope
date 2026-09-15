@@ -13,18 +13,18 @@
 #![allow(clippy::must_use_candidate)]
 
 use penelope_domain::{
-    ActionId, CanonicalEventDtoV1, ContentDigest, DomainError, OperationId, ProcessInputKindV1,
-    ProcessScopeV1, ResourceId, validate_canonical_resource_scope,
+    ActionId, CanonicalEvent, ContentDigest, DomainError, OperationId, ProcessInputKind,
+    ProcessScope, ResourceId, validate_canonical_resource_scope,
 };
-use penelope_ports::{AtomicProcessCommitV1, CommitValidationError};
+use penelope_ports::{AtomicProcessCommit, CommitValidationError};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Immutable correlation requirements for a submitted canonical command.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CanonicalCommandExpectationV1 {
+pub struct CanonicalCommandExpectation {
     /// Immutable Penelope process and definition scope that authorized this command.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Penelope action ID reused as canonical idempotency identity.
     pub action_id: ActionId,
     /// Registered canonical operation expected to commit.
@@ -35,7 +35,7 @@ pub struct CanonicalCommandExpectationV1 {
     pub expected_event_payload_digest: ContentDigest,
 }
 
-impl CanonicalCommandExpectationV1 {
+impl CanonicalCommandExpectation {
     /// Derives correlation requirements directly from a validated canonical
     /// command, preventing callers from reconstructing scope or action fields
     /// independently.
@@ -45,8 +45,8 @@ impl CanonicalCommandExpectationV1 {
     /// Returns [`CorrelationError::InvalidExpectation`] when the command's
     /// resource scope is invalid.
     pub fn from_command(
-        scope: ProcessScopeV1,
-        command: &penelope_domain::CanonicalCommandDtoV1,
+        scope: ProcessScope,
+        command: &penelope_domain::CanonicalCommand,
         expected_event_payload_digest: ContentDigest,
     ) -> Result<Self, CorrelationError> {
         command
@@ -80,11 +80,11 @@ impl CanonicalCommandExpectationV1 {
 
 /// A canonical event that passed Penelope's correlation checks.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct VerifiedCanonicalEventV1 {
+pub struct VerifiedCanonicalEvent {
     /// Pinned Penelope scope that authorized and correlated this event.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// The event confirmed against the command expectation.
-    pub event: CanonicalEventDtoV1,
+    pub event: CanonicalEvent,
 }
 
 /// Typed canonical-event correlation failure.
@@ -163,9 +163,9 @@ pub enum CanonicalCommitBindingError {
 /// Returns a typed mismatch when any tenant, action, operation, or exact
 /// resource scope does not match the submitted command expectation.
 pub fn verify_committed_event(
-    expected: &CanonicalCommandExpectationV1,
-    event: CanonicalEventDtoV1,
-) -> Result<VerifiedCanonicalEventV1, CorrelationError> {
+    expected: &CanonicalCommandExpectation,
+    event: CanonicalEvent,
+) -> Result<VerifiedCanonicalEvent, CorrelationError> {
     expected
         .validate()
         .map_err(|source| CorrelationError::InvalidExpectation { source })?;
@@ -187,7 +187,7 @@ pub fn verify_committed_event(
     if event.payload_digest != expected.expected_event_payload_digest {
         return Err(CorrelationError::PayloadDigestMismatch);
     }
-    Ok(VerifiedCanonicalEventV1 {
+    Ok(VerifiedCanonicalEvent {
         scope: expected.scope.clone(),
         event,
     })
@@ -204,9 +204,9 @@ pub fn verify_committed_event(
 /// Returns a typed error when the commit, inbox input, or outcome scope cannot
 /// be proven to belong to the verified canonical event.
 pub fn bind_verified_event_to_commit(
-    commit: AtomicProcessCommitV1,
-    verified: &VerifiedCanonicalEventV1,
-) -> Result<AtomicProcessCommitV1, CanonicalCommitBindingError> {
+    commit: AtomicProcessCommit,
+    verified: &VerifiedCanonicalEvent,
+) -> Result<AtomicProcessCommit, CanonicalCommitBindingError> {
     commit
         .validate()
         .map_err(|source| CanonicalCommitBindingError::InvalidCommit { source })?;
@@ -214,7 +214,7 @@ pub fn bind_verified_event_to_commit(
         .input
         .as_ref()
         .ok_or(CanonicalCommitBindingError::MissingInput)?;
-    if input.kind != ProcessInputKindV1::CanonicalEvent {
+    if input.kind != ProcessInputKind::CanonicalEvent {
         return Err(CanonicalCommitBindingError::InputKindMismatch);
     }
     if input.tenant_id != verified.scope.tenant_id || input.process_id != verified.scope.process_id
@@ -244,18 +244,17 @@ pub fn bind_verified_event_to_commit(
 mod tests {
     use super::*;
     use penelope_domain::{
-        CanonicalCommandDtoV1, CausationIdV1, ContentDigest, InputId, LogicalTimeV1,
-        OutcomeActorV1, OutcomeId, ProcessInputDtoV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
-        ProcessOutcomeKindV1,
+        CanonicalCommand, CausationId, ContentDigest, InputId, LogicalTime, OutcomeActor,
+        OutcomeId, ProcessInput, ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind,
     };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
         T::try_from(value).ok().unwrap()
     }
 
-    fn expectation() -> CanonicalCommandExpectationV1 {
-        CanonicalCommandExpectationV1 {
-            scope: ProcessScopeV1::new(
+    fn expectation() -> CanonicalCommandExpectation {
+        CanonicalCommandExpectation {
+            scope: ProcessScope::new(
                 id("tnt_market"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -269,8 +268,8 @@ mod tests {
         }
     }
 
-    fn event() -> CanonicalEventDtoV1 {
-        CanonicalEventDtoV1::new(
+    fn event() -> CanonicalEvent {
+        CanonicalEvent::new(
             id("tnt_market"),
             id("cev_outbox"),
             id("act_settle"),
@@ -283,28 +282,28 @@ mod tests {
         .unwrap()
     }
 
-    fn canonical_commit(payload_digest: ContentDigest) -> AtomicProcessCommitV1 {
+    fn canonical_commit(payload_digest: ContentDigest) -> AtomicProcessCommit {
         let scope = expectation().scope;
-        let input = ProcessInputDtoV1::new(
+        let input = ProcessInput::new(
             scope.tenant_id.clone(),
             scope.process_id.clone(),
             id::<InputId>("inp_outbox"),
-            ProcessInputKindV1::CanonicalEvent,
+            ProcessInputKind::CanonicalEvent,
             payload_digest,
         );
-        let outcome = ProcessOutcomeDtoV1::new(
+        let outcome = ProcessOutcome::new(
             scope,
             0,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 id::<OutcomeId>("out_event"),
-                CausationIdV1::Input(input.input_id.clone()),
-                OutcomeActorV1::System,
-                LogicalTimeV1(7),
-                ProcessOutcomeKindV1::InputAccepted,
+                CausationId::Input(input.input_id.clone()),
+                OutcomeActor::System,
+                LogicalTime(7),
+                ProcessOutcomeKind::InputAccepted,
                 payload_digest,
             ),
         );
-        AtomicProcessCommitV1::new(0, Some(input), vec![outcome], Vec::new()).unwrap()
+        AtomicProcessCommit::new(0, Some(input), vec![outcome], Vec::new()).unwrap()
     }
 
     #[test]
@@ -317,7 +316,7 @@ mod tests {
     #[test]
     fn expectation_can_be_derived_from_a_validated_command() {
         let expected = expectation();
-        let command = CanonicalCommandDtoV1::new(
+        let command = CanonicalCommand::new(
             expected.scope.tenant_id.clone(),
             expected.action_id.clone(),
             expected.operation.clone(),
@@ -325,7 +324,7 @@ mod tests {
             ContentDigest([4; 32]),
         )
         .unwrap();
-        let derived = CanonicalCommandExpectationV1::from_command(
+        let derived = CanonicalCommandExpectation::from_command(
             expected.scope.clone(),
             &command,
             expected.expected_event_payload_digest,
@@ -337,7 +336,7 @@ mod tests {
     #[test]
     fn expectation_rejects_a_command_from_another_tenant() {
         let expected = expectation();
-        let command = CanonicalCommandDtoV1::new(
+        let command = CanonicalCommand::new(
             id("tnt_other"),
             expected.action_id.clone(),
             expected.operation.clone(),
@@ -346,7 +345,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            CanonicalCommandExpectationV1::from_command(
+            CanonicalCommandExpectation::from_command(
                 expected.scope,
                 &command,
                 expected.expected_event_payload_digest,

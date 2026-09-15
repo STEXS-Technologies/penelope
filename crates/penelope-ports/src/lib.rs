@@ -1,6 +1,6 @@
 //! Backend-neutral ports for Penelope's hexagonal architecture.
 //!
-//! This crate intentionally contains interfaces and versioned DTO contracts
+//! This crate intentionally contains interfaces and typed protocol value contracts
 //! only. Database, broker, scheduler, HTTP, StateChronicle-client, and worker
 //! implementations belong in an outer composition root.
 
@@ -9,11 +9,10 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, CanonicalWireBytesV1,
-    DefinitionId, DefinitionMigrationV1, DefinitionVersion, EffectKeyV1, ExternalReferenceId,
-    InputId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
-    ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
-    ProcessScopeV1, ReviewId,
+    ActionId, CanonicalCommand, CanonicalEvent, CanonicalEventId, CanonicalWireBytes, DefinitionId,
+    DefinitionMigration, DefinitionVersion, EffectKey, ExternalReferenceId, InputId, LogicalTime,
+    ManualReview, OutcomeId, PrincipalId, ProcessAction, ProcessDefinition, ProcessInput,
+    ProcessInputKind, ProcessOutcome, ProcessScope, ReviewId,
 };
 use serde::de::Error as _;
 use serde::{Deserialize, Deserializer, Serialize};
@@ -34,12 +33,12 @@ pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
 /// Maximum due timers returned by one worker claim.
 pub const MAX_TIMER_CLAIM_BATCH: u16 = 128;
 /// Maximum immutable outcomes retained by one in-memory replay accumulator.
-/// Durable adapters may page larger histories through [`OutcomeReplayPageV1`].
+/// Durable adapters may page larger histories through [`OutcomeReplayPage`].
 pub const MAX_OUTCOMES_PER_REPLAY_LOG: usize = 4096;
 
 /// Typed key for looking up one immutable registered definition version.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DefinitionLookupV1 {
+pub struct DefinitionLookup {
     /// Stable definition identity.
     pub definition_id: DefinitionId,
     /// Exact version requested by a process start or replay.
@@ -48,7 +47,7 @@ pub struct DefinitionLookupV1 {
 
 /// Receipt from idempotent immutable-definition registration.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DefinitionRegistrationReceiptV1 {
+pub struct DefinitionRegistrationReceipt {
     /// Registered immutable definition identity.
     pub definition_id: DefinitionId,
     /// Registered immutable version.
@@ -61,7 +60,7 @@ pub struct DefinitionRegistrationReceiptV1 {
 
 /// Receipt from idempotent definition-migration registration.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DefinitionMigrationReceiptV1 {
+pub struct DefinitionMigrationReceipt {
     /// Immutable migration identity acknowledged by the registry.
     pub migration_id: penelope_domain::MigrationId,
     /// Whether this migration identity was already registered.
@@ -76,7 +75,7 @@ pub enum DefinitionMigrationReceiptValidationError {
     MigrationMismatch,
 }
 
-impl DefinitionMigrationReceiptV1 {
+impl DefinitionMigrationReceipt {
     /// Creates a receipt for one immutable migration identity.
     #[must_use]
     pub const fn new(migration_id: penelope_domain::MigrationId, duplicate: bool) -> Self {
@@ -94,7 +93,7 @@ impl DefinitionMigrationReceiptV1 {
     /// when the migration identity differs.
     pub fn validate_for(
         &self,
-        migration: &DefinitionMigrationV1,
+        migration: &DefinitionMigration,
     ) -> Result<(), DefinitionMigrationReceiptValidationError> {
         if self.migration_id == migration.migration_id {
             Ok(())
@@ -112,7 +111,7 @@ pub enum DefinitionRegistrationReceiptValidationError {
     DefinitionMismatch,
 }
 
-impl DefinitionRegistrationReceiptV1 {
+impl DefinitionRegistrationReceipt {
     /// Creates a receipt for one immutable definition identity and digest.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
@@ -138,7 +137,7 @@ impl DefinitionRegistrationReceiptV1 {
     /// when identity, version, or digest differs.
     pub fn validate_for(
         &self,
-        definition: &ProcessDefinitionDtoV1,
+        definition: &ProcessDefinition,
     ) -> Result<(), DefinitionRegistrationReceiptValidationError> {
         if self.definition_id == definition.definition_id
             && self.definition_version == definition.definition_version
@@ -153,7 +152,7 @@ impl DefinitionRegistrationReceiptV1 {
 
 /// Receipt from an idempotent durable inbox acceptance attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct InboxAcceptanceReceiptV1 {
+pub struct InboxAcceptanceReceipt {
     /// Tenant scope of the accepted input.
     pub tenant_id: penelope_domain::TenantId,
     /// Process scope of the accepted input.
@@ -166,7 +165,7 @@ pub struct InboxAcceptanceReceiptV1 {
 
 /// Receipt from an idempotent manual-review mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ManualReviewOperationV1 {
+pub enum ManualReviewOperation {
     /// Opening or returning an existing review case.
     Open,
     /// Claiming an existing review case.
@@ -177,28 +176,28 @@ pub enum ManualReviewOperationV1 {
 
 /// Receipt from an idempotent manual-review mutation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ManualReviewReceiptV1 {
+pub struct ManualReviewReceipt {
     /// Immutable review identity mutated or redelivered.
     pub review_id: ReviewId,
     /// Mutation operation acknowledged by the queue.
-    pub operation: ManualReviewOperationV1,
+    pub operation: ManualReviewOperation,
     /// Whether the mutation was already durably recorded.
     pub duplicate: bool,
 }
 
 /// Immutable audit entry for one manual-review mutation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ManualReviewAuditEntryV1 {
+pub struct ManualReviewAuditEntry {
     /// Complete process-definition scope of the review.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Review identity being mutated.
     pub review_id: ReviewId,
     /// Mutation operation represented by this entry.
-    pub operation: ManualReviewOperationV1,
+    pub operation: ManualReviewOperation,
     /// Authenticated principal responsible for the mutation.
     pub principal_id: PrincipalId,
     /// Logical time at which the mutation was recorded.
-    pub occurred_at: LogicalTimeV1,
+    pub occurred_at: LogicalTime,
     /// Digest of access-controlled evidence, never raw operator text.
     pub evidence_digest: penelope_domain::ContentDigest,
 }
@@ -214,7 +213,7 @@ pub enum ManualReviewAuditValidationError {
     Expired,
 }
 
-impl ManualReviewAuditEntryV1 {
+impl ManualReviewAuditEntry {
     /// Validates this audit entry against its durable review record.
     ///
     /// # Errors
@@ -222,7 +221,7 @@ impl ManualReviewAuditEntryV1 {
     /// Returns a typed error for scope/identity substitution or expiry.
     pub fn validate_for(
         &self,
-        review: &ManualReviewDtoV1,
+        review: &ManualReview,
     ) -> Result<(), ManualReviewAuditValidationError> {
         if self.scope != review.scope() || self.review_id != review.review_id {
             return Err(ManualReviewAuditValidationError::ReviewMismatch);
@@ -239,9 +238,9 @@ impl ManualReviewAuditEntryV1 {
 
 /// Receipt from an idempotent action-dispatch attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ActionDispatchReceiptV1 {
+pub struct ActionDispatchReceipt {
     /// Complete process-definition scope acknowledged by the dispatcher.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Immutable action identity dispatched or redelivered.
     pub action_id: ActionId,
     /// Whether this action was already durably dispatched.
@@ -250,7 +249,7 @@ pub struct ActionDispatchReceiptV1 {
 
 /// Receipt from idempotent canonical-command submission/enqueue.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CanonicalSubmitReceiptV1 {
+pub struct CanonicalSubmitReceipt {
     /// Complete process-definition scope acknowledged by the canonical adapter.
     pub tenant_id: penelope_domain::TenantId,
     /// Penelope action identity reused as the canonical idempotency key.
@@ -270,7 +269,7 @@ pub enum CanonicalSubmitReceiptValidationError {
     ScopeMismatch,
 }
 
-impl CanonicalSubmitReceiptV1 {
+impl CanonicalSubmitReceipt {
     /// Creates a receipt for one canonical command identity.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
@@ -290,7 +289,7 @@ impl CanonicalSubmitReceiptV1 {
     /// the adapter acknowledges another command.
     pub fn validate_for(
         &self,
-        command: &CanonicalCommandDtoV1,
+        command: &CanonicalCommand,
     ) -> Result<(), CanonicalSubmitReceiptValidationError> {
         if self.tenant_id != command.tenant_id {
             Err(CanonicalSubmitReceiptValidationError::ScopeMismatch)
@@ -313,11 +312,11 @@ pub enum ActionReceiptValidationError {
     ScopeMismatch,
 }
 
-impl ActionDispatchReceiptV1 {
+impl ActionDispatchReceipt {
     /// Creates a receipt for one action identity.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
-    pub fn new(scope: ProcessScopeV1, action_id: ActionId, duplicate: bool) -> Self {
+    pub fn new(scope: ProcessScope, action_id: ActionId, duplicate: bool) -> Self {
         Self {
             scope,
             action_id,
@@ -331,10 +330,7 @@ impl ActionDispatchReceiptV1 {
     ///
     /// Returns [`ActionReceiptValidationError::ActionMismatch`] when the
     /// adapter acknowledges another action.
-    pub fn validate_for(
-        &self,
-        action: &ProcessActionDtoV1,
-    ) -> Result<(), ActionReceiptValidationError> {
+    pub fn validate_for(&self, action: &ProcessAction) -> Result<(), ActionReceiptValidationError> {
         if self.scope != action.scope() {
             Err(ActionReceiptValidationError::ScopeMismatch)
         } else if self.action_id == action.action_id {
@@ -356,12 +352,12 @@ pub enum ManualReviewReceiptValidationError {
     OperationMismatch,
 }
 
-impl ManualReviewReceiptV1 {
+impl ManualReviewReceipt {
     /// Creates a receipt for one review identity.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
     pub fn new(review_id: ReviewId, duplicate: bool) -> Self {
-        Self::new_for_operation(review_id, ManualReviewOperationV1::Open, duplicate)
+        Self::new_for_operation(review_id, ManualReviewOperation::Open, duplicate)
     }
 
     /// Creates a receipt for one review identity and mutation operation.
@@ -369,7 +365,7 @@ impl ManualReviewReceiptV1 {
     #[allow(clippy::missing_const_for_fn)]
     pub fn new_for_operation(
         review_id: ReviewId,
-        operation: ManualReviewOperationV1,
+        operation: ManualReviewOperation,
         duplicate: bool,
     ) -> Self {
         Self {
@@ -405,7 +401,7 @@ impl ManualReviewReceiptV1 {
     pub fn validate_for_operation(
         &self,
         review_id: &ReviewId,
-        operation: ManualReviewOperationV1,
+        operation: ManualReviewOperation,
     ) -> Result<(), ManualReviewReceiptValidationError> {
         self.validate_for(review_id)?;
         if self.operation == operation {
@@ -427,7 +423,7 @@ pub enum InboxReceiptValidationError {
     ScopeMismatch,
 }
 
-impl InboxAcceptanceReceiptV1 {
+impl InboxAcceptanceReceipt {
     /// Creates a receipt for one input identity.
     #[must_use]
     pub const fn new(
@@ -450,10 +446,7 @@ impl InboxAcceptanceReceiptV1 {
     ///
     /// Returns [`InboxReceiptValidationError::InputMismatch`] when an adapter
     /// returns a receipt for another input identity.
-    pub fn validate_for(
-        &self,
-        input: &ProcessInputDtoV1,
-    ) -> Result<(), InboxReceiptValidationError> {
+    pub fn validate_for(&self, input: &ProcessInput) -> Result<(), InboxReceiptValidationError> {
         if self.tenant_id != input.tenant_id || self.process_id != input.process_id {
             Err(InboxReceiptValidationError::ScopeMismatch)
         } else if self.input_id == input.input_id {
@@ -464,7 +457,7 @@ impl InboxAcceptanceReceiptV1 {
     }
 }
 
-impl DefinitionLookupV1 {
+impl DefinitionLookup {
     /// Creates a typed immutable-definition lookup key.
     #[must_use]
     pub const fn new(definition_id: DefinitionId, definition_version: DefinitionVersion) -> Self {
@@ -477,9 +470,9 @@ impl DefinitionLookupV1 {
 
 /// Opaque fencing token assigned to one outbox lease.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutboxLeaseTokenV1(NonZeroU64);
+pub struct OutboxLeaseToken(NonZeroU64);
 
-impl OutboxLeaseTokenV1 {
+impl OutboxLeaseToken {
     /// Creates a non-zero fencing token.
     pub const fn new(value: NonZeroU64) -> Self {
         Self(value)
@@ -510,14 +503,14 @@ pub enum PortError {
     /// The adapter cannot safely classify whether an external effect occurred.
     #[error("port external effect outcome is ambiguous")]
     Ambiguous,
-    /// The adapter rejected a versioned DTO or port invariant.
+    /// The adapter rejected a typed protocol value or port invariant.
     #[error("port invariant violation")]
     Invariant,
 }
 
 /// Coarse, stable diagnostic class safe to expose without payload contents.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum DiagnosticClassV1 {
+pub enum DiagnosticClass {
     /// Input or DTO validation failed.
     Validation,
     /// Authorization policy denied the operation.
@@ -534,7 +527,7 @@ pub enum DiagnosticClassV1 {
     Invariant,
 }
 
-impl DiagnosticClassV1 {
+impl DiagnosticClass {
     /// Maps a port failure to a stable, non-sensitive class.
     #[must_use]
     pub const fn from_port_error(error: PortError) -> Self {
@@ -556,7 +549,7 @@ pub const MAX_QUOTA_CAPACITY: u32 = 1_000_000;
 
 /// Stable resource class for bounded admission control.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum QuotaKindV1 {
+pub enum QuotaKind {
     /// Number of concurrently open process instances.
     OpenProcesses,
     /// Number of outstanding actions.
@@ -569,9 +562,9 @@ pub enum QuotaKindV1 {
 
 /// Typed quota admission request; no resource names or free-form policy text.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct QuotaRequestV1 {
+pub struct QuotaRequest {
     /// Resource class being accounted.
-    pub kind: QuotaKindV1,
+    pub kind: QuotaKind,
     /// Units requested by the operation.
     pub requested: NonZeroU32,
     /// Maximum units permitted by the pinned policy.
@@ -589,14 +582,14 @@ pub enum QuotaValidationError {
     RequestExceedsCapacity,
 }
 
-impl QuotaRequestV1 {
+impl QuotaRequest {
     /// Creates and validates a bounded quota request.
     ///
     /// # Errors
     ///
     /// Returns a typed error when capacity or requested units exceed policy.
     pub const fn new(
-        kind: QuotaKindV1,
+        kind: QuotaKind,
         requested: NonZeroU32,
         capacity: NonZeroU32,
     ) -> Result<Self, QuotaValidationError> {
@@ -639,18 +632,18 @@ pub enum DiagnosticValidationError {
 /// or payload. `evidence_digest` refers to separately retained, access-
 /// controlled evidence and is not itself a disclosure of that evidence.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct RedactedDiagnosticV1 {
+pub struct RedactedDiagnostic {
     /// Pinned process scope associated with the diagnostic.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Coarse stable classification.
-    pub class: DiagnosticClassV1,
+    pub class: DiagnosticClass,
     /// Digest of access-controlled evidence, if any.
     pub evidence_digest: penelope_domain::ContentDigest,
     /// Bounded byte count of redacted metadata retained out of band.
     pub metadata_bytes: u32,
 }
 
-impl RedactedDiagnosticV1 {
+impl RedactedDiagnostic {
     /// Creates bounded diagnostic metadata without accepting a raw message.
     ///
     /// # Errors
@@ -658,8 +651,8 @@ impl RedactedDiagnosticV1 {
     /// Returns [`DiagnosticValidationError::MetadataLimitExceeded`] when the
     /// claimed metadata size exceeds the public bound.
     pub fn new(
-        scope: ProcessScopeV1,
-        class: DiagnosticClassV1,
+        scope: ProcessScope,
+        class: DiagnosticClass,
         evidence_digest: penelope_domain::ContentDigest,
         metadata_bytes: u32,
     ) -> Result<Self, DiagnosticValidationError> {
@@ -677,7 +670,7 @@ impl RedactedDiagnosticV1 {
 
 /// Durable acknowledgement state of an independently idempotent outbox item.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum OutboxAcknowledgementV1 {
+pub enum OutboxAcknowledgement {
     /// The action remains eligible for claiming or redelivery.
     Pending,
     /// The adapter recorded a successful dispatch acknowledgement.
@@ -686,23 +679,23 @@ pub enum OutboxAcknowledgementV1 {
 
 /// Versioned outbox record retained with the exact action and delivery attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutboxRecordV1 {
+pub struct OutboxRecord {
     /// Independently idempotent action being delivered.
-    pub action: ProcessActionDtoV1,
+    pub action: ProcessAction,
     /// Monotonic delivery attempt number for this action.
     pub delivery_attempt: u32,
     /// Explicit durable acknowledgement state.
-    pub acknowledgement: OutboxAcknowledgementV1,
+    pub acknowledgement: OutboxAcknowledgement,
 }
 
-impl OutboxRecordV1 {
+impl OutboxRecord {
     /// Creates a pending outbox record at the first delivery attempt.
     #[must_use]
-    pub const fn new(action: ProcessActionDtoV1) -> Self {
+    pub const fn new(action: ProcessAction) -> Self {
         Self {
             action,
             delivery_attempt: 0,
-            acknowledgement: OutboxAcknowledgementV1::Pending,
+            acknowledgement: OutboxAcknowledgement::Pending,
         }
     }
 
@@ -727,7 +720,7 @@ impl OutboxRecordV1 {
     /// Returns [`PortError::Invariant`] when the record is invalid.
     pub fn acknowledge(mut self) -> Result<Self, PortError> {
         self.validate()?;
-        self.acknowledgement = OutboxAcknowledgementV1::Acknowledged;
+        self.acknowledgement = OutboxAcknowledgement::Acknowledged;
         Ok(self)
     }
 
@@ -739,7 +732,7 @@ impl OutboxRecordV1 {
     /// the attempt bound would be exceeded.
     pub fn next_delivery_attempt(mut self) -> Result<Self, PortError> {
         self.validate()?;
-        if self.acknowledgement != OutboxAcknowledgementV1::Pending
+        if self.acknowledgement != OutboxAcknowledgement::Pending
             || self.delivery_attempt.saturating_add(1) >= MAX_OUTBOX_DELIVERY_ATTEMPTS
         {
             return Err(PortError::Invariant);
@@ -751,23 +744,23 @@ impl OutboxRecordV1 {
 
 /// Bounded, scope-pinned request for claiming pending outbox records.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutboxClaimRequestV1 {
+pub struct OutboxClaimRequest {
     /// Process scope whose records may be claimed.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Authenticated worker that will own returned leases.
     pub owner: PrincipalId,
     /// Maximum records to return.
     pub limit: NonZeroU16,
 }
 
-impl OutboxClaimRequestV1 {
+impl OutboxClaimRequest {
     /// Creates a bounded outbox claim request.
     ///
     /// # Errors
     ///
     /// Returns [`PortError::QuotaExceeded`] when `limit` exceeds the claim bound.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         owner: PrincipalId,
         limit: NonZeroU16,
     ) -> Result<Self, PortError> {
@@ -796,18 +789,18 @@ impl OutboxClaimRequestV1 {
 
 /// One claimed outbox record and its fencing lease.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutboxLeaseV1 {
+pub struct OutboxLease {
     /// Claimed action and delivery state.
-    pub record: OutboxRecordV1,
+    pub record: OutboxRecord,
     /// Principal/worker that owns the lease.
     pub owner: PrincipalId,
     /// Opaque token used to fence stale acknowledgements.
-    pub token: OutboxLeaseTokenV1,
+    pub token: OutboxLeaseToken,
     /// Inclusive logical lease expiry supplied by the adapter.
-    pub lease_expires_at: LogicalTimeV1,
+    pub lease_expires_at: LogicalTime,
 }
 
-impl OutboxLeaseV1 {
+impl OutboxLease {
     /// Validates the claimed record and lease identity.
     ///
     /// # Errors
@@ -822,7 +815,7 @@ impl OutboxLeaseV1 {
     /// # Errors
     ///
     /// Returns [`PortError::Invariant`] when the lease action is cross-scoped.
-    pub fn validate_for_claim(&self, request: &OutboxClaimRequestV1) -> Result<(), PortError> {
+    pub fn validate_for_claim(&self, request: &OutboxClaimRequest) -> Result<(), PortError> {
         request.validate()?;
         self.validate()?;
         let action = &self.record.action;
@@ -848,8 +841,8 @@ impl OutboxLeaseV1 {
     /// [`PortError::Invariant`] for a malformed or cross-scoped lease.
     pub fn validate_for_claim_at(
         &self,
-        request: &OutboxClaimRequestV1,
-        now: LogicalTimeV1,
+        request: &OutboxClaimRequest,
+        now: LogicalTime,
     ) -> Result<(), PortError> {
         self.validate_for_claim(request)?;
         self.validate_at(now)
@@ -857,7 +850,7 @@ impl OutboxLeaseV1 {
 
     /// Returns whether this lease is expired at the supplied logical time.
     #[must_use]
-    pub const fn is_expired_at(&self, now: LogicalTimeV1) -> bool {
+    pub const fn is_expired_at(&self, now: LogicalTime) -> bool {
         now.0 > self.lease_expires_at.0
     }
 
@@ -867,7 +860,7 @@ impl OutboxLeaseV1 {
     ///
     /// Returns [`PortError::TimedOut`] when the lease has expired, or
     /// [`PortError::Invariant`] when its record is invalid.
-    pub fn validate_at(&self, now: LogicalTimeV1) -> Result<(), PortError> {
+    pub fn validate_at(&self, now: LogicalTime) -> Result<(), PortError> {
         self.validate()?;
         if self.is_expired_at(now) {
             Err(PortError::TimedOut)
@@ -882,7 +875,7 @@ impl OutboxLeaseV1 {
     ///
     /// Returns [`PortError::TimedOut`] after expiry or
     /// [`PortError::Invariant`] for an invalid record.
-    pub fn acknowledge_at(&self, now: LogicalTimeV1) -> Result<OutboxRecordV1, PortError> {
+    pub fn acknowledge_at(&self, now: LogicalTime) -> Result<OutboxRecord, PortError> {
         self.validate_at(now)?;
         self.record.clone().acknowledge()
     }
@@ -893,13 +886,9 @@ impl OutboxLeaseV1 {
     ///
     /// Returns [`PortError::TimedOut`] after expiry or
     /// [`PortError::Invariant`] for a non-extending expiry.
-    pub fn renew_at(
-        &self,
-        now: LogicalTimeV1,
-        new_expiry: LogicalTimeV1,
-    ) -> Result<Self, PortError> {
+    pub fn renew_at(&self, now: LogicalTime, new_expiry: LogicalTime) -> Result<Self, PortError> {
         self.validate_at(now)?;
-        if self.record.acknowledgement != OutboxAcknowledgementV1::Pending
+        if self.record.acknowledgement != OutboxAcknowledgement::Pending
             || new_expiry.0 <= self.lease_expires_at.0
         {
             return Err(PortError::Invariant);
@@ -918,7 +907,7 @@ pub enum CommitValidationError {
     EmptyOutcomes,
     /// The deduplicated input declares a schema other than the immutable input schema.
     #[error("atomic process commit input schema is invalid")]
-    InvalidInputSchema,
+    InvalidInput,
     /// An outcome does not use the expected contiguous sequence.
     #[error("atomic process commit outcome sequence is not contiguous")]
     NonContiguousSequence,
@@ -930,10 +919,10 @@ pub enum CommitValidationError {
     DuplicateOutcomeId,
     /// An outcome declares a schema other than the immutable outcome schema.
     #[error("atomic process commit outcome schema is invalid")]
-    InvalidOutcomeSchema,
+    InvalidOutcome,
     /// An outgoing action declares a schema other than the immutable action schema.
     #[error("atomic process commit action schema is invalid")]
-    InvalidActionSchema,
+    InvalidAction,
     /// One outcome is for a different pinned process-definition scope.
     #[error("atomic process commit outcome scope does not match")]
     OutcomeScopeMismatch,
@@ -974,7 +963,7 @@ pub enum OutcomePageValidationError {
     LimitExceeded,
     /// One returned outcome declared a schema other than the immutable outcome schema.
     #[error("outcome replay page contains an invalid outcome schema")]
-    InvalidOutcomeSchema,
+    InvalidOutcome,
     /// One returned outcome does not match the page's pinned process scope.
     #[error("outcome replay page contains an outcome from another process scope")]
     OutcomeScopeMismatch,
@@ -1011,7 +1000,7 @@ pub enum ReconciliationValidationError {
 pub enum ManualReviewValidationError {
     /// The supplied review record does not carry the immutable review schema.
     #[error("manual review record schema is invalid")]
-    InvalidReviewSchema,
+    InvalidReview,
     /// A claim or decision does not target the review's pinned process scope.
     #[error("manual review operation scope does not match the review")]
     ScopeMismatch,
@@ -1031,7 +1020,7 @@ pub enum ManualReviewValidationError {
 pub enum EffectReconciliationValidationError {
     /// The request action does not carry the immutable action schema.
     #[error("external effect action schema is invalid")]
-    InvalidActionSchema,
+    InvalidAction,
     /// Evidence belongs to another independently idempotent action.
     #[error("external effect evidence action does not match the request")]
     ActionMismatch,
@@ -1048,7 +1037,7 @@ pub enum EffectReconciliationValidationError {
 pub enum TimerValidationError {
     /// The timer action does not carry the immutable action schema.
     #[error("timer action schema is invalid")]
-    InvalidActionSchema,
+    InvalidAction,
     /// A non-timer action was supplied to a timer scheduler boundary.
     #[error("timer schedule requires a timer action kind")]
     InvalidActionKind,
@@ -1069,7 +1058,7 @@ pub enum OutcomeLogValidationError {
     /// The bounded in-memory log limit would be exceeded.
     #[error("outcome log exceeds the replay bound")]
     LimitExceeded,
-    /// The DTO's versioned schema or internal validation failed.
+    /// The DTO's schema or internal validation failed.
     #[error("outcome log contains an invalid outcome")]
     InvalidOutcome,
     /// Advancing the sequence would overflow.
@@ -1084,25 +1073,25 @@ pub enum OutcomeLogValidationError {
 /// An adapter may return `NotCommitted` only after consulting the authoritative
 /// canonical evidence source according to its documented consistency window.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum CanonicalReconciliationV1 {
+pub enum CanonicalReconciliation {
     /// A verified immutable canonical event proves the effect committed.
     Committed {
         /// Immutable process and definition scope of the reconciled action.
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         /// The committed canonical evidence.
-        event: CanonicalEventDtoV1,
+        event: CanonicalEvent,
     },
     /// Authoritative evidence proves the action did not commit.
     NotCommitted {
         /// Immutable process and definition scope of the reconciled action.
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         /// The action whose absence was authoritatively established.
         action_id: ActionId,
     },
     /// The effect cannot safely be classified as committed or absent.
     Unknown {
         /// Immutable process and definition scope of the reconciled action.
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         /// The action requiring escalation or later reconciliation.
         action_id: ActionId,
     },
@@ -1125,27 +1114,27 @@ pub enum ConsistencyWindowValidationError {
 /// Reconciliation result paired with the adapter's authoritative observation
 /// time and consistency horizon.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CanonicalReconciliationWindowV1 {
+pub struct CanonicalReconciliationWindow {
     /// Typed reconciliation result.
-    pub result: CanonicalReconciliationV1,
+    pub result: CanonicalReconciliation,
     /// Logical time at which the authoritative source was checked.
-    pub checked_at: LogicalTimeV1,
+    pub checked_at: LogicalTime,
     /// Earliest logical time at which `NotCommitted` may authorize retry.
-    pub consistency_until: LogicalTimeV1,
+    pub consistency_until: LogicalTime,
 }
 
 /// Safe next step derived from authoritative reconciliation evidence.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum RecoveryDispositionV1 {
+pub enum RecoveryDisposition {
     /// The effect is committed and must not be retried.
     Committed {
         /// Verified canonical event proving commitment.
-        event: CanonicalEventDtoV1,
+        event: CanonicalEvent,
     },
     /// Authoritative absence is not yet safe to use before the horizon.
     Wait {
         /// Earliest logical time at which retry may be reconsidered.
-        until: LogicalTimeV1,
+        until: LogicalTime,
     },
     /// The action is safe to retry after authoritative absence and horizon.
     Retry {
@@ -1159,7 +1148,7 @@ pub enum RecoveryDispositionV1 {
     },
 }
 
-impl CanonicalReconciliationWindowV1 {
+impl CanonicalReconciliationWindow {
     /// Creates and validates a consistency-window result.
     ///
     /// # Errors
@@ -1167,9 +1156,9 @@ impl CanonicalReconciliationWindowV1 {
     /// Returns [`ConsistencyWindowValidationError::InvalidWindow`] when the
     /// horizon precedes the observation time.
     pub fn new(
-        result: CanonicalReconciliationV1,
-        checked_at: LogicalTimeV1,
-        consistency_until: LogicalTimeV1,
+        result: CanonicalReconciliation,
+        checked_at: LogicalTime,
+        consistency_until: LogicalTime,
     ) -> Result<Self, ConsistencyWindowValidationError> {
         if consistency_until.0 < checked_at.0 {
             return Err(ConsistencyWindowValidationError::InvalidWindow);
@@ -1189,15 +1178,14 @@ impl CanonicalReconciliationWindowV1 {
     /// unknown results that are never retry permission.
     pub fn require_retry_safe_at(
         &self,
-        now: LogicalTimeV1,
+        now: LogicalTime,
     ) -> Result<ActionId, ConsistencyWindowValidationError> {
         if now.0 < self.consistency_until.0 {
             return Err(ConsistencyWindowValidationError::WindowNotElapsed);
         }
         match &self.result {
-            CanonicalReconciliationV1::NotCommitted { action_id, .. } => Ok(action_id.clone()),
-            CanonicalReconciliationV1::Committed { .. }
-            | CanonicalReconciliationV1::Unknown { .. } => {
+            CanonicalReconciliation::NotCommitted { action_id, .. } => Ok(action_id.clone()),
+            CanonicalReconciliation::Committed { .. } | CanonicalReconciliation::Unknown { .. } => {
                 Err(ConsistencyWindowValidationError::NotRetrySafe)
             }
         }
@@ -1211,7 +1199,7 @@ impl CanonicalReconciliationWindowV1 {
     /// action-substituted, or contains malformed committed evidence.
     pub fn validate_for_action(
         &self,
-        action: &ProcessActionDtoV1,
+        action: &ProcessAction,
     ) -> Result<(), ReconciliationValidationError> {
         self.result.validate_for_action(action)
     }
@@ -1224,38 +1212,32 @@ impl CanonicalReconciliationWindowV1 {
     /// the requested action.
     pub fn disposition_at(
         &self,
-        action: &ProcessActionDtoV1,
-        now: LogicalTimeV1,
-    ) -> Result<RecoveryDispositionV1, ReconciliationValidationError> {
+        action: &ProcessAction,
+        now: LogicalTime,
+    ) -> Result<RecoveryDisposition, ReconciliationValidationError> {
         self.validate_for_action(action)?;
         Ok(match &self.result {
-            CanonicalReconciliationV1::Committed { event, .. } => {
-                RecoveryDispositionV1::Committed {
-                    event: event.clone(),
-                }
-            }
-            CanonicalReconciliationV1::NotCommitted { .. } if now.0 < self.consistency_until.0 => {
-                RecoveryDispositionV1::Wait {
+            CanonicalReconciliation::Committed { event, .. } => RecoveryDisposition::Committed {
+                event: event.clone(),
+            },
+            CanonicalReconciliation::NotCommitted { .. } if now.0 < self.consistency_until.0 => {
+                RecoveryDisposition::Wait {
                     until: self.consistency_until,
                 }
             }
-            CanonicalReconciliationV1::NotCommitted { action_id, .. } => {
-                RecoveryDispositionV1::Retry {
-                    action_id: action_id.clone(),
-                }
-            }
-            CanonicalReconciliationV1::Unknown { action_id, .. } => {
-                RecoveryDispositionV1::Escalate {
-                    action_id: action_id.clone(),
-                }
-            }
+            CanonicalReconciliation::NotCommitted { action_id, .. } => RecoveryDisposition::Retry {
+                action_id: action_id.clone(),
+            },
+            CanonicalReconciliation::Unknown { action_id, .. } => RecoveryDisposition::Escalate {
+                action_id: action_id.clone(),
+            },
         })
     }
 }
 
 /// Typed resolution selected by an authorized manual-review operator.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ManualReviewResolutionV1 {
+pub enum ManualReviewResolution {
     /// Authorize a retry only after durable evidence establishes it is safe.
     RetryAction,
     /// Authorize a compensating action under the pinned process definition.
@@ -1268,7 +1250,7 @@ pub enum ManualReviewResolutionV1 {
 
 /// Required operator separation for one immutable manual-review decision.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ManualReviewControlV1 {
+pub enum ManualReviewControl {
     /// One authorized operator may claim and decide the review.
     SingleOperator,
     /// The deciding principal must differ from the principal that claimed it.
@@ -1277,7 +1259,7 @@ pub enum ManualReviewControlV1 {
 
 /// A process operation requiring a caller-specific authorization decision.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProcessAuthorizationOperationV1 {
+pub enum ProcessAuthorizationOperation {
     /// Start a new process instance.
     Start,
     /// Request process cancellation.
@@ -1292,23 +1274,23 @@ pub enum ProcessAuthorizationOperationV1 {
 
 /// Minimum control required before a mutable process operation can proceed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum AuthorizationRequirementV1 {
+pub enum AuthorizationRequirement {
     /// One authenticated principal may authorize the operation.
     AuthenticatedPrincipal,
     /// Two distinct authenticated principals are required.
     DistinctPrincipals,
 }
 
-impl ProcessAuthorizationOperationV1 {
+impl ProcessAuthorizationOperation {
     /// Returns the minimum control level for this high-value operation.
     #[must_use]
-    pub const fn minimum_requirement(self) -> AuthorizationRequirementV1 {
+    pub const fn minimum_requirement(self) -> AuthorizationRequirement {
         match self {
             Self::Start | Self::Cancel | Self::Retry => {
-                AuthorizationRequirementV1::AuthenticatedPrincipal
+                AuthorizationRequirement::AuthenticatedPrincipal
             }
             Self::DecideReview | Self::TerminalOverride => {
-                AuthorizationRequirementV1::DistinctPrincipals
+                AuthorizationRequirement::DistinctPrincipals
             }
         }
     }
@@ -1316,25 +1298,25 @@ impl ProcessAuthorizationOperationV1 {
 
 /// Typed authorization request for one process operation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProcessAuthorizationRequestV1 {
+pub struct ProcessAuthorizationRequest {
     /// Immutable process and definition scope targeted by the operation.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Authenticated caller identity.
     pub principal_id: PrincipalId,
     /// Typed requested operation.
-    pub operation: ProcessAuthorizationOperationV1,
+    pub operation: ProcessAuthorizationOperation,
 }
 
 /// Fail-closed authorization result returned by an outer policy adapter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProcessAuthorizationDecisionV1 {
+pub enum ProcessAuthorizationDecision {
     /// The caller is authorized for the requested operation.
     Authorized,
     /// The caller is not authorized; no process mutation may occur.
     Denied,
 }
 
-impl ProcessAuthorizationDecisionV1 {
+impl ProcessAuthorizationDecision {
     /// Returns whether the requested operation may proceed.
     #[must_use]
     pub const fn is_authorized(self) -> bool {
@@ -1360,7 +1342,7 @@ impl ProcessAuthorizationDecisionV1 {
 /// leave an external effect indeterminate, in which case callers must
 /// reconcile again or escalate rather than blindly dispatch another effect.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ExternalEffectStateV1 {
+pub enum ExternalEffectState {
     /// Authoritative evidence proves the external effect completed.
     Succeeded,
     /// Authoritative evidence proves the external effect did not complete.
@@ -1371,31 +1353,31 @@ pub enum ExternalEffectStateV1 {
 
 /// Stable, idempotent request supplied to an external effect adapter.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct EffectDispatchRequestV1 {
+pub struct EffectDispatchRequest {
     /// Independently idempotent action to execute or reconcile.
-    pub action: ProcessActionDtoV1,
+    pub action: ProcessAction,
     /// Semantic effect key derived from the exact action coordinates.
-    pub effect_key: EffectKeyV1,
+    pub effect_key: EffectKey,
     /// Optional inclusive logical deadline supplied by the application layer.
-    pub deadline: Option<LogicalTimeV1>,
+    pub deadline: Option<LogicalTime>,
 }
 
 /// Durable evidence returned by an external effect adapter.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ExternalEffectEvidenceV1 {
+pub struct ExternalEffectEvidence {
     /// Independently idempotent action this evidence describes.
     pub action_id: ActionId,
     /// Exact semantic key of the action this evidence describes.
-    pub effect_key: EffectKeyV1,
+    pub effect_key: EffectKey,
     /// Opaque remote reference if the external system assigned one.
     pub external_reference_id: Option<ExternalReferenceId>,
     /// Authoritative result classification.
-    pub state: ExternalEffectStateV1,
+    pub state: ExternalEffectState,
 }
 
 /// Safe next step derived from external-effect evidence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ExternalEffectDispositionV1 {
+pub enum ExternalEffectDisposition {
     /// The effect is known to have completed; do not execute again.
     Completed,
     /// Authoritative known failure permits a policy-controlled retry.
@@ -1404,10 +1386,10 @@ pub enum ExternalEffectDispositionV1 {
     Escalate,
 }
 
-impl EffectDispatchRequestV1 {
+impl EffectDispatchRequest {
     /// Creates an external effect request with no application deadline.
     #[must_use]
-    pub fn new(action: ProcessActionDtoV1) -> Self {
+    pub fn new(action: ProcessAction) -> Self {
         let effect_key = action.effect_key();
         Self {
             action,
@@ -1418,7 +1400,7 @@ impl EffectDispatchRequestV1 {
 
     /// Attaches an inclusive logical execution/reconciliation deadline.
     #[must_use]
-    pub const fn with_deadline(mut self, deadline: LogicalTimeV1) -> Self {
+    pub const fn with_deadline(mut self, deadline: LogicalTime) -> Self {
         self.deadline = Some(deadline);
         self
     }
@@ -1430,7 +1412,7 @@ impl EffectDispatchRequestV1 {
     /// Returns a typed error when a caller substitutes an action or key.
     pub fn validate(&self) -> Result<(), EffectReconciliationValidationError> {
         if self.action.validate().is_err() {
-            return Err(EffectReconciliationValidationError::InvalidActionSchema);
+            return Err(EffectReconciliationValidationError::InvalidAction);
         }
         if self.effect_key != self.action.effect_key() {
             return Err(EffectReconciliationValidationError::EffectKeyMismatch);
@@ -1440,7 +1422,7 @@ impl EffectDispatchRequestV1 {
 
     /// Returns whether the request is past its inclusive logical deadline.
     #[must_use]
-    pub const fn is_expired_at(&self, now: LogicalTimeV1) -> bool {
+    pub const fn is_expired_at(&self, now: LogicalTime) -> bool {
         match self.deadline {
             Some(deadline) => now.0 > deadline.0,
             None => false,
@@ -1453,10 +1435,7 @@ impl EffectDispatchRequestV1 {
     ///
     /// Returns [`EffectReconciliationValidationError::DeadlineExceeded`] when
     /// the logical deadline has passed.
-    pub fn validate_at(
-        &self,
-        now: LogicalTimeV1,
-    ) -> Result<(), EffectReconciliationValidationError> {
+    pub fn validate_at(&self, now: LogicalTime) -> Result<(), EffectReconciliationValidationError> {
         self.validate()?;
         if self.is_expired_at(now) {
             Err(EffectReconciliationValidationError::DeadlineExceeded)
@@ -1466,7 +1445,7 @@ impl EffectDispatchRequestV1 {
     }
 }
 
-impl ExternalEffectEvidenceV1 {
+impl ExternalEffectEvidence {
     /// Validates that evidence belongs to the exact requested effect.
     ///
     /// # Errors
@@ -1474,7 +1453,7 @@ impl ExternalEffectEvidenceV1 {
     /// Returns a typed error when action identity or semantic effect key differs.
     pub fn validate_for(
         &self,
-        request: &EffectDispatchRequestV1,
+        request: &EffectDispatchRequest,
     ) -> Result<(), EffectReconciliationValidationError> {
         request.validate()?;
         if self.action_id != request.action.action_id {
@@ -1495,54 +1474,54 @@ impl ExternalEffectEvidenceV1 {
     /// it only changes known-failure disposition from retry to escalation.
     pub fn disposition_at(
         &self,
-        request: &EffectDispatchRequestV1,
-        now: LogicalTimeV1,
-    ) -> Result<ExternalEffectDispositionV1, EffectReconciliationValidationError> {
+        request: &EffectDispatchRequest,
+        now: LogicalTime,
+    ) -> Result<ExternalEffectDisposition, EffectReconciliationValidationError> {
         request.validate()?;
         self.validate_for(request)?;
         Ok(match self.state {
-            ExternalEffectStateV1::Succeeded => ExternalEffectDispositionV1::Completed,
-            ExternalEffectStateV1::KnownFailure if request.is_expired_at(now) => {
-                ExternalEffectDispositionV1::Escalate
+            ExternalEffectState::Succeeded => ExternalEffectDisposition::Completed,
+            ExternalEffectState::KnownFailure if request.is_expired_at(now) => {
+                ExternalEffectDisposition::Escalate
             }
-            ExternalEffectStateV1::KnownFailure => ExternalEffectDispositionV1::Retry,
-            ExternalEffectStateV1::Unknown => ExternalEffectDispositionV1::Escalate,
+            ExternalEffectState::KnownFailure => ExternalEffectDisposition::Retry,
+            ExternalEffectState::Unknown => ExternalEffectDisposition::Escalate,
         })
     }
 }
 
 /// Due-time record for one durable timer action.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TimerScheduleV1 {
+pub struct TimerSchedule {
     /// Independently idempotent timer action to deliver through the inbox.
-    pub action: ProcessActionDtoV1,
+    pub action: ProcessAction,
     /// Deterministic due time supplied by the application layer.
-    pub due_at: LogicalTimeV1,
+    pub due_at: LogicalTime,
 }
 
 /// Bounded request for atomically claiming due timers for one process.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TimerClaimRequestV1 {
+pub struct TimerClaimRequest {
     /// Process scope whose timers may be claimed.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Authenticated worker receiving the fencing leases.
     pub owner: PrincipalId,
     /// Logical time used to determine due timers.
-    pub now: LogicalTimeV1,
+    pub now: LogicalTime,
     /// Maximum timers to claim.
     pub limit: NonZeroU16,
 }
 
-impl TimerClaimRequestV1 {
+impl TimerClaimRequest {
     /// Creates a bounded timer-claim request.
     ///
     /// # Errors
     ///
     /// Returns [`PortError::QuotaExceeded`] when the batch is too large.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         owner: PrincipalId,
-        now: LogicalTimeV1,
+        now: LogicalTime,
         limit: NonZeroU16,
     ) -> Result<Self, PortError> {
         let request = Self {
@@ -1571,24 +1550,24 @@ impl TimerClaimRequestV1 {
 
 /// Fenced lease for one due timer delivery.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TimerLeaseV1 {
+pub struct TimerLease {
     /// Full timer schedule retained under the lease.
-    pub timer: TimerScheduleV1,
+    pub timer: TimerSchedule,
     /// Worker that owns this lease.
     pub owner: PrincipalId,
     /// Opaque fencing token preventing stale acknowledgements.
-    pub token: OutboxLeaseTokenV1,
+    pub token: OutboxLeaseToken,
     /// Inclusive logical expiry of the claim.
-    pub lease_expires_at: LogicalTimeV1,
+    pub lease_expires_at: LogicalTime,
 }
 
-impl TimerLeaseV1 {
+impl TimerLease {
     /// Validates timer shape, process scope, owner and due-time claim.
     ///
     /// # Errors
     ///
     /// Returns [`PortError::Invariant`] for substitution or malformed timers.
-    pub fn validate_for_claim(&self, request: &TimerClaimRequestV1) -> Result<(), PortError> {
+    pub fn validate_for_claim(&self, request: &TimerClaimRequest) -> Result<(), PortError> {
         request.validate()?;
         self.timer
             .validate()
@@ -1610,7 +1589,7 @@ impl TimerLeaseV1 {
     /// # Errors
     ///
     /// Returns [`PortError::TimedOut`] after expiry.
-    pub fn validate_at(&self, now: LogicalTimeV1) -> Result<(), PortError> {
+    pub fn validate_at(&self, now: LogicalTime) -> Result<(), PortError> {
         self.timer
             .validate()
             .map_err(|_timer_error| PortError::Invariant)?;
@@ -1627,13 +1606,13 @@ impl TimerLeaseV1 {
     ///
     /// Returns [`PortError::TimedOut`] after expiry or
     /// [`PortError::Invariant`] for a malformed timer lease.
-    pub fn acknowledge_at(&self, now: LogicalTimeV1) -> Result<TimerScheduleV1, PortError> {
+    pub fn acknowledge_at(&self, now: LogicalTime) -> Result<TimerSchedule, PortError> {
         self.validate_at(now)?;
         Ok(self.timer.clone())
     }
 }
 
-impl TimerScheduleV1 {
+impl TimerSchedule {
     /// Validates that this record retains a full, typed timer action scope.
     ///
     /// # Errors
@@ -1641,9 +1620,9 @@ impl TimerScheduleV1 {
     /// Returns a typed error when an action schema or kind is substituted.
     pub fn validate(&self) -> Result<(), TimerValidationError> {
         if self.action.validate().is_err() {
-            return Err(TimerValidationError::InvalidActionSchema);
+            return Err(TimerValidationError::InvalidAction);
         }
-        if self.action.kind != penelope_domain::ProcessActionKindV1::Timer {
+        if self.action.kind != penelope_domain::ProcessActionKind::Timer {
             return Err(TimerValidationError::InvalidActionKind);
         }
         Ok(())
@@ -1652,22 +1631,22 @@ impl TimerScheduleV1 {
 
 /// Idempotent claim request for a manual-review case.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ManualReviewClaimV1 {
+pub struct ManualReviewClaim {
     /// Immutable process and definition scope of the review being claimed.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// The immutable review case being claimed.
     pub review_id: ReviewId,
     /// Validated identity of the claiming principal.
     pub claimed_by: PrincipalId,
     /// Logical time at which the durable claim was recorded.
-    pub claimed_at: LogicalTimeV1,
+    pub claimed_at: LogicalTime,
 }
 
 /// Immutable, attributable manual-review resolution request.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ManualReviewDecisionV1 {
+pub struct ManualReviewDecision {
     /// Immutable process and definition scope of the review being decided.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// The immutable review case being decided.
     pub review_id: ReviewId,
     /// Principal that holds the durable claim being resolved.
@@ -1675,28 +1654,25 @@ pub struct ManualReviewDecisionV1 {
     /// Validated identity of the authorized deciding principal.
     pub decided_by: PrincipalId,
     /// Logical time at which the durable decision was recorded.
-    pub decided_at: LogicalTimeV1,
+    pub decided_at: LogicalTime,
     /// Typed process-safe resolution selected by the operator.
-    pub resolution: ManualReviewResolutionV1,
+    pub resolution: ManualReviewResolution,
     /// Required separation between the claim and decision principals.
-    pub control: ManualReviewControlV1,
+    pub control: ManualReviewControl,
     /// Digest of the redacted evidence and authorization record.
     pub evidence_digest: penelope_domain::ContentDigest,
 }
 
-impl ManualReviewClaimV1 {
+impl ManualReviewClaim {
     /// Validates that this claim is bound to the immutable review it targets.
     ///
     /// # Errors
     ///
     /// Returns a typed error if the review identity or full process-definition
     /// scope differs.
-    pub fn validate_for(
-        &self,
-        review: &ManualReviewDtoV1,
-    ) -> Result<(), ManualReviewValidationError> {
+    pub fn validate_for(&self, review: &ManualReview) -> Result<(), ManualReviewValidationError> {
         if review.validate().is_err() {
-            return Err(ManualReviewValidationError::InvalidReviewSchema);
+            return Err(ManualReviewValidationError::InvalidReview);
         }
         if self.review_id != review.review_id {
             return Err(ManualReviewValidationError::ReviewIdMismatch);
@@ -1714,19 +1690,16 @@ impl ManualReviewClaimV1 {
     }
 }
 
-impl ManualReviewDecisionV1 {
+impl ManualReviewDecision {
     /// Validates review binding and any declared dual-control requirement.
     ///
     /// # Errors
     ///
     /// Returns a typed error if review identity/scope differs or the selected
     /// control policy is violated.
-    pub fn validate_for(
-        &self,
-        review: &ManualReviewDtoV1,
-    ) -> Result<(), ManualReviewValidationError> {
+    pub fn validate_for(&self, review: &ManualReview) -> Result<(), ManualReviewValidationError> {
         if review.validate().is_err() {
-            return Err(ManualReviewValidationError::InvalidReviewSchema);
+            return Err(ManualReviewValidationError::InvalidReview);
         }
         if self.review_id != review.review_id {
             return Err(ManualReviewValidationError::ReviewIdMismatch);
@@ -1740,7 +1713,7 @@ impl ManualReviewDecisionV1 {
         {
             return Err(ManualReviewValidationError::Expired);
         }
-        if matches!(self.control, ManualReviewControlV1::DistinctDecider)
+        if matches!(self.control, ManualReviewControl::DistinctDecider)
             && self.claimed_by == self.decided_by
         {
             return Err(ManualReviewValidationError::DualControlViolation);
@@ -1749,7 +1722,7 @@ impl ManualReviewDecisionV1 {
     }
 }
 
-impl CanonicalReconciliationV1 {
+impl CanonicalReconciliation {
     /// Validates that reconciliation evidence belongs to the requested action.
     ///
     /// # Errors
@@ -1780,7 +1753,7 @@ impl CanonicalReconciliationV1 {
     /// tenant would permit evidence for another process to advance this action.
     pub fn validate_for_action(
         &self,
-        action: &ProcessActionDtoV1,
+        action: &ProcessAction,
     ) -> Result<(), ReconciliationValidationError> {
         let scope = match self {
             Self::Committed { scope, .. }
@@ -1809,11 +1782,11 @@ impl CanonicalReconciliationV1 {
 /// make none of them durable. `input`, when present, is the immutable inbox key
 /// that is deduplicated in that same transaction.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct AtomicProcessCommitV1 {
+pub struct AtomicProcessCommit {
     /// Expected first outcome sequence for optimistic concurrency.
     pub expected_sequence: u64,
     /// Optional immutable input accepted by the durable inbox.
-    pub input: Option<ProcessInputDtoV1>,
+    pub input: Option<ProcessInput>,
     /// Verified canonical source event deduplicated with this input, when this
     /// commit advances from a StateChronicle committed-event delivery.
     ///
@@ -1824,30 +1797,30 @@ pub struct AtomicProcessCommitV1 {
     #[serde(default)]
     pub canonical_source_event_id: Option<CanonicalEventId>,
     /// Contiguous append-only process outcomes.
-    pub outcomes: Vec<ProcessOutcomeDtoV1>,
+    pub outcomes: Vec<ProcessOutcome>,
     /// Independently idempotent outgoing actions persisted with the outcomes.
-    pub actions: Vec<ProcessActionDtoV1>,
+    pub actions: Vec<ProcessAction>,
 }
 
 /// A bounded request to read immutable outcomes for deterministic replay.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutcomeReplayRequestV1 {
+pub struct OutcomeReplayRequest {
     /// Immutable process and definition scope being replayed.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// First per-process outcome sequence requested.
     pub from_sequence: u64,
     /// Maximum records accepted in this page.
     pub limit: NonZeroU16,
 }
 
-impl OutcomeReplayRequestV1 {
+impl OutcomeReplayRequest {
     /// Creates a bounded immutable outcome replay request.
     ///
     /// # Errors
     ///
     /// Returns a typed error when `limit` exceeds the public page bound.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         from_sequence: u64,
         limit: NonZeroU16,
     ) -> Result<Self, OutcomePageValidationError> {
@@ -1876,18 +1849,18 @@ impl OutcomeReplayRequestV1 {
 
 /// One bounded immutable outcome page returned for deterministic replay.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OutcomeReplayPageV1 {
+pub struct OutcomeReplayPage {
     /// Immutable process and definition scope shared by every returned outcome.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// First per-process outcome sequence returned in this page.
     pub from_sequence: u64,
     /// Ordered immutable outcomes, bounded by [`MAX_OUTCOMES_PER_READ_PAGE`].
-    pub outcomes: Vec<ProcessOutcomeDtoV1>,
+    pub outcomes: Vec<ProcessOutcome>,
     /// Immediate continuation when more immutable outcomes exist.
     pub next_sequence: Option<u64>,
 }
 
-impl OutcomeReplayPageV1 {
+impl OutcomeReplayPage {
     /// Creates and validates a bounded replay page.
     ///
     /// # Errors
@@ -1895,9 +1868,9 @@ impl OutcomeReplayPageV1 {
     /// Returns a typed error for invalid schemas, scopes, ordering, bounds, or
     /// continuation semantics.
     pub fn new(
-        scope: ProcessScopeV1,
+        scope: ProcessScope,
         from_sequence: u64,
-        outcomes: Vec<ProcessOutcomeDtoV1>,
+        outcomes: Vec<ProcessOutcome>,
         next_sequence: Option<u64>,
     ) -> Result<Self, OutcomePageValidationError> {
         let page = Self {
@@ -1922,7 +1895,7 @@ impl OutcomeReplayPageV1 {
         let mut expected_sequence = self.from_sequence;
         for outcome in &self.outcomes {
             if outcome.validate().is_err() {
-                return Err(OutcomePageValidationError::InvalidOutcomeSchema);
+                return Err(OutcomePageValidationError::InvalidOutcome);
             }
             if outcome.tenant_id != self.scope.tenant_id
                 || outcome.process_id != self.scope.process_id
@@ -1959,31 +1932,31 @@ impl OutcomeReplayPageV1 {
 /// outcome identities. Persistence and compare-and-append remain the adapter's
 /// responsibility.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct OutcomeLogV1 {
+pub struct OutcomeLog {
     /// Immutable process and definition scope of every outcome.
-    scope: ProcessScopeV1,
+    scope: ProcessScope,
     /// Ordered outcomes accepted so far.
-    outcomes: Vec<ProcessOutcomeDtoV1>,
+    outcomes: Vec<ProcessOutcome>,
     #[serde(skip)]
     seen_outcome_ids: HashSet<OutcomeId>,
 }
 
-impl<'de> Deserialize<'de> for OutcomeLogV1 {
+impl<'de> Deserialize<'de> for OutcomeLog {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         #[derive(Deserialize)]
         struct Wire {
-            scope: ProcessScopeV1,
-            outcomes: Vec<ProcessOutcomeDtoV1>,
+            scope: ProcessScope,
+            outcomes: Vec<ProcessOutcome>,
         }
         let wire = Wire::deserialize(deserializer)?;
         Self::from_ordered(wire.scope, &wire.outcomes).map_err(D::Error::custom)
     }
 }
 
-impl OutcomeLogV1 {
+impl OutcomeLog {
     /// Creates an empty log whose first accepted outcome must use sequence zero.
     #[must_use]
-    pub fn new(scope: ProcessScopeV1) -> Self {
+    pub fn new(scope: ProcessScope) -> Self {
         Self {
             scope,
             outcomes: Vec::new(),
@@ -1993,13 +1966,13 @@ impl OutcomeLogV1 {
 
     /// Returns the immutable scope pinned to this log.
     #[must_use]
-    pub const fn scope(&self) -> &ProcessScopeV1 {
+    pub const fn scope(&self) -> &ProcessScope {
         &self.scope
     }
 
     /// Returns accepted outcomes in contiguous sequence order.
     #[must_use]
-    pub fn outcomes(&self) -> &[ProcessOutcomeDtoV1] {
+    pub fn outcomes(&self) -> &[ProcessOutcome] {
         &self.outcomes
     }
 
@@ -2022,8 +1995,8 @@ impl OutcomeLogV1 {
     /// Returns a typed error when the slice is malformed, out of order,
     /// cross-scoped, duplicated, or exceeds the replay bound.
     pub fn from_ordered(
-        scope: ProcessScopeV1,
-        outcomes: &[ProcessOutcomeDtoV1],
+        scope: ProcessScope,
+        outcomes: &[ProcessOutcome],
     ) -> Result<Self, OutcomeLogValidationError> {
         let mut log = Self::new(scope);
         log.append(outcomes)?;
@@ -2039,10 +2012,7 @@ impl OutcomeLogV1 {
     ///
     /// Returns a typed error when any outcome is malformed, cross-scoped,
     /// duplicated, out of order, or would exceed the replay bound.
-    pub fn append(
-        &mut self,
-        outcomes: &[ProcessOutcomeDtoV1],
-    ) -> Result<(), OutcomeLogValidationError> {
+    pub fn append(&mut self, outcomes: &[ProcessOutcome]) -> Result<(), OutcomeLogValidationError> {
         let new_len = self
             .outcomes
             .len()
@@ -2085,7 +2055,7 @@ impl OutcomeLogV1 {
     }
 }
 
-impl AtomicProcessCommitV1 {
+impl AtomicProcessCommit {
     /// Creates and validates a single atomic process commit request.
     ///
     /// # Errors
@@ -2094,9 +2064,9 @@ impl AtomicProcessCommitV1 {
     /// are inconsistent.
     pub fn new(
         expected_sequence: u64,
-        input: Option<ProcessInputDtoV1>,
-        outcomes: Vec<ProcessOutcomeDtoV1>,
-        actions: Vec<ProcessActionDtoV1>,
+        input: Option<ProcessInput>,
+        outcomes: Vec<ProcessOutcome>,
+        actions: Vec<ProcessAction>,
     ) -> Result<Self, CommitValidationError> {
         let commit = Self {
             expected_sequence,
@@ -2133,7 +2103,7 @@ impl AtomicProcessCommitV1 {
         let expected_scope = first_outcome.scope();
         for (index, outcome) in self.outcomes.iter().enumerate() {
             if outcome.validate().is_err() {
-                return Err(CommitValidationError::InvalidOutcomeSchema);
+                return Err(CommitValidationError::InvalidOutcome);
             }
             if outcome.validate_for_scope(&expected_scope).is_err() {
                 return Err(CommitValidationError::OutcomeScopeMismatch);
@@ -2158,7 +2128,7 @@ impl AtomicProcessCommitV1 {
         }
         for (index, action) in self.actions.iter().enumerate() {
             if action.validate().is_err() {
-                return Err(CommitValidationError::InvalidActionSchema);
+                return Err(CommitValidationError::InvalidAction);
             }
             if action.tenant_id != first_outcome.tenant_id
                 || action.process_id != first_outcome.process_id
@@ -2188,7 +2158,7 @@ impl AtomicProcessCommitV1 {
         }
         if let Some(input) = &self.input {
             if input.validate().is_err() {
-                return Err(CommitValidationError::InvalidInputSchema);
+                return Err(CommitValidationError::InvalidInput);
             }
             if input.tenant_id != first_outcome.tenant_id
                 || input.process_id != first_outcome.process_id
@@ -2200,13 +2170,13 @@ impl AtomicProcessCommitV1 {
             let Some(input) = &self.input else {
                 return Err(CommitValidationError::CanonicalSourceWithoutInput);
             };
-            if input.kind != ProcessInputKindV1::CanonicalEvent {
+            if input.kind != ProcessInputKind::CanonicalEvent {
                 return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
         if let Some(input) = &self.input
             && !self.outcomes.iter().any(|outcome| {
-                matches!(&outcome.causation_id, penelope_domain::CausationIdV1::Input(input_id) if input_id == &input.input_id)
+                matches!(&outcome.causation_id, penelope_domain::CausationId::Input(input_id) if input_id == &input.input_id)
             })
         {
             return Err(CommitValidationError::InputNotCausallyRecorded);
@@ -2217,7 +2187,7 @@ impl AtomicProcessCommitV1 {
 
 /// Receipt returned after a successful atomic local commit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct AtomicProcessCommitReceiptV1 {
+pub struct AtomicProcessCommitReceipt {
     /// Last sequence made durable by this commit.
     pub committed_through_sequence: u64,
     /// Whether the inbox input was already durably accepted.
@@ -2238,7 +2208,7 @@ pub enum AtomicProcessCommitReceiptValidationError {
     DuplicateInputWithoutInput,
 }
 
-impl AtomicProcessCommitReceiptV1 {
+impl AtomicProcessCommitReceipt {
     /// Validates the acknowledgement against the exact atomic commit request.
     ///
     /// # Errors
@@ -2247,7 +2217,7 @@ impl AtomicProcessCommitReceiptV1 {
     /// semantics do not match the request.
     pub fn validate_for(
         &self,
-        commit: &AtomicProcessCommitV1,
+        commit: &AtomicProcessCommit,
     ) -> Result<(), AtomicProcessCommitReceiptValidationError> {
         if commit.validate().is_err() {
             return Err(AtomicProcessCommitReceiptValidationError::InvalidCommit);
@@ -2273,17 +2243,17 @@ pub trait DefinitionRegistry: Send + Sync {
     /// must reject a changed digest under an existing identity/version.
     async fn register(
         &self,
-        definition: &ProcessDefinitionDtoV1,
-    ) -> Result<DefinitionRegistrationReceiptV1, PortError>;
+        definition: &ProcessDefinition,
+    ) -> Result<DefinitionRegistrationReceipt, PortError>;
 
     /// Looks up the exact immutable definition requested by a process.
-    async fn get(&self, lookup: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError>;
+    async fn get(&self, lookup: &DefinitionLookup) -> Result<ProcessDefinition, PortError>;
 
     /// Registers an explicit version migration after validating its binding.
     async fn register_migration(
         &self,
-        migration: &DefinitionMigrationV1,
-    ) -> Result<DefinitionMigrationReceiptV1, PortError>;
+        migration: &DefinitionMigration,
+    ) -> Result<DefinitionMigrationReceipt, PortError>;
 }
 
 /// Durable append-only process outcome store.
@@ -2292,22 +2262,22 @@ pub trait ProcessStore: Send + Sync {
     /// Atomically commits inbox acceptance, outcomes, and outgoing actions.
     async fn commit(
         &self,
-        commit: &AtomicProcessCommitV1,
-    ) -> Result<AtomicProcessCommitReceiptV1, PortError>;
+        commit: &AtomicProcessCommit,
+    ) -> Result<AtomicProcessCommitReceipt, PortError>;
 
     /// Appends outcomes using the expected per-instance sequence.
     async fn append_outcomes(
         &self,
-        scope: &ProcessScopeV1,
+        scope: &ProcessScope,
         expected_sequence: u64,
-        outcomes: &[ProcessOutcomeDtoV1],
+        outcomes: &[ProcessOutcome],
     ) -> Result<(), PortError>;
 
     /// Reads one bounded immutable outcome page for deterministic replay.
     async fn read_outcomes(
         &self,
-        request: &OutcomeReplayRequestV1,
-    ) -> Result<OutcomeReplayPageV1, PortError>;
+        request: &OutcomeReplayRequest,
+    ) -> Result<OutcomeReplayPage, PortError>;
 }
 
 /// Backend-neutral durable outbox claim and acknowledgement boundary.
@@ -2318,22 +2288,21 @@ pub trait ProcessStore: Send + Sync {
 #[async_trait]
 pub trait OutboxStore: Send + Sync {
     /// Claims a bounded batch of pending records for one process scope.
-    async fn claim(&self, request: &OutboxClaimRequestV1) -> Result<Vec<OutboxLeaseV1>, PortError>;
+    async fn claim(&self, request: &OutboxClaimRequest) -> Result<Vec<OutboxLease>, PortError>;
 
     /// Acknowledges one exact, unexpired action delivery after successful dispatch.
     ///
-    /// Implementations must call [`OutboxLeaseV1::validate_at`] with `now`
+    /// Implementations must call [`OutboxLease::validate_at`] with `now`
     /// before changing durable acknowledgement state.
-    async fn acknowledge(&self, lease: &OutboxLeaseV1, now: LogicalTimeV1)
-    -> Result<(), PortError>;
+    async fn acknowledge(&self, lease: &OutboxLease, now: LogicalTime) -> Result<(), PortError>;
 
     /// Renews one exact unexpired lease with a later logical expiry.
     async fn renew(
         &self,
-        lease: &OutboxLeaseV1,
-        now: LogicalTimeV1,
-        new_expiry: LogicalTimeV1,
-    ) -> Result<OutboxLeaseV1, PortError>;
+        lease: &OutboxLease,
+        now: LogicalTime,
+        new_expiry: LogicalTime,
+    ) -> Result<OutboxLease, PortError>;
 }
 
 /// Durable inbox that deduplicates immutable source inputs.
@@ -2342,20 +2311,14 @@ pub trait Inbox: Send + Sync {
     /// Records an input exactly once before it is processed.
     /// The returned receipt lets callers treat a duplicate as a successful
     /// no-op without re-running the process decision.
-    async fn accept(
-        &self,
-        input: &ProcessInputDtoV1,
-    ) -> Result<InboxAcceptanceReceiptV1, PortError>;
+    async fn accept(&self, input: &ProcessInput) -> Result<InboxAcceptanceReceipt, PortError>;
 }
 
 /// Durable process-action dispatch boundary.
 #[async_trait]
 pub trait ActionDispatcher: Send + Sync {
     /// Dispatches one action using its stable action identity as idempotency key.
-    async fn dispatch(
-        &self,
-        action: &ProcessActionDtoV1,
-    ) -> Result<ActionDispatchReceiptV1, PortError>;
+    async fn dispatch(&self, action: &ProcessAction) -> Result<ActionDispatchReceipt, PortError>;
 }
 
 /// External-effect execution boundary with explicit reconciliation and cancellation.
@@ -2369,37 +2332,34 @@ pub trait ExternalEffectExecutor: Send + Sync {
     /// Attempts the independently idempotent external effect.
     async fn execute(
         &self,
-        request: &EffectDispatchRequestV1,
-    ) -> Result<ExternalEffectEvidenceV1, PortError>;
+        request: &EffectDispatchRequest,
+    ) -> Result<ExternalEffectEvidence, PortError>;
     /// Resolves a potentially ambiguous external effect by its stable identity.
     async fn reconcile(
         &self,
-        request: &EffectDispatchRequestV1,
-    ) -> Result<ExternalEffectEvidenceV1, PortError>;
+        request: &EffectDispatchRequest,
+    ) -> Result<ExternalEffectEvidence, PortError>;
     /// Requests best-effort cancellation without assuming the effect is absent.
-    async fn cancel(&self, request: &EffectDispatchRequestV1) -> Result<(), PortError>;
+    async fn cancel(&self, request: &EffectDispatchRequest) -> Result<(), PortError>;
 }
 
 /// Durable timer scheduling boundary.
 #[async_trait]
 pub trait TimerScheduler: Send + Sync {
     /// Schedules a timer action whose firing returns through the inbox.
-    async fn schedule(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
+    async fn schedule(&self, timer: &TimerSchedule) -> Result<(), PortError>;
     /// Cancels a timer while retaining its full pinned action scope.
-    async fn cancel(&self, timer: &TimerScheduleV1) -> Result<(), PortError>;
+    async fn cancel(&self, timer: &TimerSchedule) -> Result<(), PortError>;
 }
 
 /// Durable due-timer claim boundary with fencing semantics.
 #[async_trait]
 pub trait TimerClaimStore: Send + Sync {
     /// Atomically claims due timers for one owner and returns fenced leases.
-    async fn claim_due(
-        &self,
-        request: &TimerClaimRequestV1,
-    ) -> Result<Vec<TimerLeaseV1>, PortError>;
+    async fn claim_due(&self, request: &TimerClaimRequest) -> Result<Vec<TimerLease>, PortError>;
 
     /// Acknowledges one exact, unexpired timer lease after inbox delivery.
-    async fn acknowledge(&self, lease: &TimerLeaseV1, now: LogicalTimeV1) -> Result<(), PortError>;
+    async fn acknowledge(&self, lease: &TimerLease, now: LogicalTime) -> Result<(), PortError>;
 }
 
 /// Injected source of fresh opaque fencing tokens for worker leases.
@@ -2408,24 +2368,21 @@ pub trait LeaseTokenSource: Send + Sync {
     /// Allocates a non-zero token for the supplied pinned process scope.
     /// Implementations must guarantee uniqueness among concurrently live
     /// leases and must never recycle a token while an old lease may exist.
-    async fn next_lease_token(
-        &self,
-        scope: &ProcessScopeV1,
-    ) -> Result<OutboxLeaseTokenV1, PortError>;
+    async fn next_lease_token(&self, scope: &ProcessScope) -> Result<OutboxLeaseToken, PortError>;
 }
 
 /// Injected wall-clock boundary for deterministic application decisions.
 #[async_trait]
 pub trait Clock: Send + Sync {
     /// Returns the current time as a typed value; pure engine code never calls it.
-    async fn now(&self) -> Result<LogicalTimeV1, PortError>;
+    async fn now(&self) -> Result<LogicalTime, PortError>;
 }
 
 /// Injected source of fresh independently idempotent action identities.
 #[async_trait]
 pub trait ActionIdSource: Send + Sync {
     /// Allocates an action identity for the supplied pinned process scope.
-    async fn next_action_id(&self, scope: &ProcessScopeV1) -> Result<ActionId, PortError>;
+    async fn next_action_id(&self, scope: &ProcessScope) -> Result<ActionId, PortError>;
 }
 
 /// Injected source of immutable outcome identities.
@@ -2436,7 +2393,7 @@ pub trait ActionIdSource: Send + Sync {
 #[async_trait]
 pub trait OutcomeIdSource: Send + Sync {
     /// Allocates an outcome identity for the supplied pinned process scope.
-    async fn next_outcome_id(&self, scope: &ProcessScopeV1) -> Result<OutcomeId, PortError>;
+    async fn next_outcome_id(&self, scope: &ProcessScope) -> Result<OutcomeId, PortError>;
 }
 
 /// Authorization boundary for mutable process operations.
@@ -2445,8 +2402,8 @@ pub trait ProcessAuthorizer: Send + Sync {
     /// Makes a fail-closed authorization decision for one typed request.
     async fn authorize(
         &self,
-        request: &ProcessAuthorizationRequestV1,
-    ) -> Result<ProcessAuthorizationDecisionV1, PortError>;
+        request: &ProcessAuthorizationRequest,
+    ) -> Result<ProcessAuthorizationDecision, PortError>;
 }
 
 /// Redacted, typed observability boundary.
@@ -2456,39 +2413,35 @@ pub trait ProcessAuthorizer: Send + Sync {
 #[async_trait]
 pub trait DiagnosticSink: Send + Sync {
     /// Records one diagnostic for its pinned process scope.
-    async fn record(&self, diagnostic: &RedactedDiagnosticV1) -> Result<(), PortError>;
+    async fn record(&self, diagnostic: &RedactedDiagnostic) -> Result<(), PortError>;
 }
 
 /// Canonical-state boundary implemented by a StateChronicle adapter.
 #[async_trait]
 pub trait CanonicalState: Send + Sync {
     /// Submits a command with the Penelope action ID as canonical idempotency ID.
-    async fn submit(
-        &self,
-        command: &CanonicalCommandDtoV1,
-    ) -> Result<CanonicalSubmitReceiptV1, PortError>;
+    async fn submit(&self, command: &CanonicalCommand)
+    -> Result<CanonicalSubmitReceipt, PortError>;
     /// Reconciles a pending action from authoritative canonical evidence.
     ///
     /// `Unknown` must be escalated or reconciled again; it is not permission to
     /// resubmit a potentially non-idempotent remote effect.
-    async fn reconcile(
-        &self,
-        action: &ProcessActionDtoV1,
-    ) -> Result<CanonicalReconciliationV1, PortError>;
+    async fn reconcile(&self, action: &ProcessAction)
+    -> Result<CanonicalReconciliation, PortError>;
 }
 
 /// Durable manual-review escalation boundary.
 #[async_trait]
 pub trait ManualReviewQueue: Send + Sync {
     /// Opens or returns the idempotent review case.
-    async fn open(&self, review: &ManualReviewDtoV1) -> Result<ManualReviewReceiptV1, PortError>;
+    async fn open(&self, review: &ManualReview) -> Result<ManualReviewReceipt, PortError>;
     /// Claims a review case without changing the process projection directly.
-    async fn claim(&self, claim: &ManualReviewClaimV1) -> Result<ManualReviewReceiptV1, PortError>;
+    async fn claim(&self, claim: &ManualReviewClaim) -> Result<ManualReviewReceipt, PortError>;
     /// Records an authorized immutable resolution for subsequent inbox delivery.
     async fn decide(
         &self,
-        decision: &ManualReviewDecisionV1,
-    ) -> Result<ManualReviewReceiptV1, PortError>;
+        decision: &ManualReviewDecision,
+    ) -> Result<ManualReviewReceipt, PortError>;
 }
 
 fn canonical_port_bytes<T: Serialize>(
@@ -2501,7 +2454,7 @@ fn canonical_port_bytes<T: Serialize>(
 macro_rules! canonical_port_impl {
     ($($ty:ty),+ $(,)?) => {
         $(
-            impl CanonicalWireBytesV1 for $ty {
+            impl CanonicalWireBytes for $ty {
                 fn canonical_wire_bytes(&self) -> Result<Vec<u8>, penelope_domain::CanonicalEncodingError> {
                     canonical_port_bytes(self)
                 }
@@ -2511,47 +2464,47 @@ macro_rules! canonical_port_impl {
 }
 
 canonical_port_impl!(
-    DefinitionLookupV1,
-    DefinitionRegistrationReceiptV1,
-    DefinitionMigrationReceiptV1,
-    InboxAcceptanceReceiptV1,
-    ActionDispatchReceiptV1,
-    CanonicalSubmitReceiptV1,
-    ManualReviewReceiptV1,
-    ManualReviewOperationV1,
-    ManualReviewAuditEntryV1,
-    OutboxLeaseTokenV1,
-    OutboxAcknowledgementV1,
-    OutboxRecordV1,
-    OutboxClaimRequestV1,
-    OutboxLeaseV1,
-    DiagnosticClassV1,
-    RedactedDiagnosticV1,
-    QuotaKindV1,
-    QuotaRequestV1,
-    CanonicalReconciliationV1,
-    CanonicalReconciliationWindowV1,
-    RecoveryDispositionV1,
-    ManualReviewResolutionV1,
-    ManualReviewControlV1,
-    ProcessAuthorizationOperationV1,
-    AuthorizationRequirementV1,
-    ProcessAuthorizationRequestV1,
-    ProcessAuthorizationDecisionV1,
-    ExternalEffectStateV1,
-    EffectDispatchRequestV1,
-    ExternalEffectEvidenceV1,
-    ExternalEffectDispositionV1,
-    TimerScheduleV1,
-    TimerClaimRequestV1,
-    TimerLeaseV1,
-    ManualReviewClaimV1,
-    ManualReviewDecisionV1,
-    AtomicProcessCommitV1,
-    OutcomeReplayRequestV1,
-    OutcomeReplayPageV1,
-    OutcomeLogV1,
-    AtomicProcessCommitReceiptV1,
+    DefinitionLookup,
+    DefinitionRegistrationReceipt,
+    DefinitionMigrationReceipt,
+    InboxAcceptanceReceipt,
+    ActionDispatchReceipt,
+    CanonicalSubmitReceipt,
+    ManualReviewReceipt,
+    ManualReviewOperation,
+    ManualReviewAuditEntry,
+    OutboxLeaseToken,
+    OutboxAcknowledgement,
+    OutboxRecord,
+    OutboxClaimRequest,
+    OutboxLease,
+    DiagnosticClass,
+    RedactedDiagnostic,
+    QuotaKind,
+    QuotaRequest,
+    CanonicalReconciliation,
+    CanonicalReconciliationWindow,
+    RecoveryDisposition,
+    ManualReviewResolution,
+    ManualReviewControl,
+    ProcessAuthorizationOperation,
+    AuthorizationRequirement,
+    ProcessAuthorizationRequest,
+    ProcessAuthorizationDecision,
+    ExternalEffectState,
+    EffectDispatchRequest,
+    ExternalEffectEvidence,
+    ExternalEffectDisposition,
+    TimerSchedule,
+    TimerClaimRequest,
+    TimerLease,
+    ManualReviewClaim,
+    ManualReviewDecision,
+    AtomicProcessCommit,
+    OutcomeReplayRequest,
+    OutcomeReplayPage,
+    OutcomeLog,
+    AtomicProcessCommitReceipt,
 );
 
 #[cfg(test)]
@@ -2559,18 +2512,18 @@ canonical_port_impl!(
 mod tests {
     use super::*;
     use penelope_domain::{
-        CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId, CausationIdV1, ContentDigest,
-        LogicalTimeV1, OperationId, OutcomeActorV1, OutcomeId, ProcessActionKindV1,
-        ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ResourceId, StepId, TenantId,
+        CanonicalCommitId, CanonicalEvent, CanonicalEventId, CausationId, ContentDigest,
+        LogicalTime, OperationId, OutcomeActor, OutcomeId, ProcessActionKind, ProcessOutcomeFact,
+        ProcessOutcomeKind, ProcessScope, ResourceId, StepId, TenantId,
     };
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
         T::try_from(value).ok().unwrap()
     }
 
-    fn outcome(sequence: u64, outcome_id: OutcomeId) -> ProcessOutcomeDtoV1 {
-        ProcessOutcomeDtoV1::new(
-            ProcessScopeV1::new(
+    fn outcome(sequence: u64, outcome_id: OutcomeId) -> ProcessOutcome {
+        ProcessOutcome::new(
+            ProcessScope::new(
                 id::<TenantId>("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -2578,20 +2531,20 @@ mod tests {
                 ContentDigest([9; 32]),
             ),
             sequence,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 outcome_id,
-                CausationIdV1::Action(id("act_cause")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(1),
-                ProcessOutcomeKindV1::ActionPlanned,
+                CausationId::Action(id("act_cause")),
+                OutcomeActor::System,
+                LogicalTime(1),
+                ProcessOutcomeKind::ActionPlanned,
                 ContentDigest([1; 32]),
             ),
         )
     }
 
-    fn action() -> ProcessActionDtoV1 {
-        ProcessActionDtoV1::new(
-            ProcessScopeV1::new(
+    fn action() -> ProcessAction {
+        ProcessAction::new(
+            ProcessScope::new(
                 id::<TenantId>("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -2601,17 +2554,17 @@ mod tests {
             id("act_dispatch"),
             id::<StepId>("stp_dispatch"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([2; 32]),
         )
     }
 
-    fn input() -> ProcessInputDtoV1 {
-        ProcessInputDtoV1::new(
+    fn input() -> ProcessInput {
+        ProcessInput::new(
             id("tnt_game"),
             id("prc_trade"),
             id("inp_event"),
-            penelope_domain::ProcessInputKindV1::CanonicalEvent,
+            penelope_domain::ProcessInputKind::CanonicalEvent,
             ContentDigest([3; 32]),
         )
     }
@@ -2619,7 +2572,7 @@ mod tests {
     #[test]
     fn atomic_commit_requires_contiguous_outcomes_in_one_scope() {
         let commit =
-            AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], vec![action()]);
+            AtomicProcessCommit::new(0, None, vec![outcome(0, id("out_event"))], vec![action()]);
         assert!(commit.is_ok());
     }
 
@@ -2627,7 +2580,7 @@ mod tests {
     fn atomic_commit_rejects_outgoing_action_from_another_process() {
         let mut wrong_action = action();
         wrong_action.process_id = id("prc_other");
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![outcome(0, id("out_event"))],
@@ -2641,7 +2594,7 @@ mod tests {
     fn atomic_commit_rejects_outgoing_action_from_another_definition() {
         let mut wrong_action = action();
         wrong_action.definition_digest = ContentDigest([8; 32]);
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![outcome(0, id("out_event"))],
@@ -2655,7 +2608,7 @@ mod tests {
     fn atomic_commit_rejects_outcomes_from_different_definitions() {
         let mut wrong_outcome = outcome(1, id("out_second"));
         wrong_outcome.definition_version = id("dfv_two");
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![outcome(0, id("out_first")), wrong_outcome],
@@ -2666,58 +2619,22 @@ mod tests {
     }
 
     #[test]
-    fn atomic_commit_rejects_an_outcome_with_another_schema() {
-        let mut wrong_outcome = outcome(0, id("out_event"));
-        wrong_outcome.schema = penelope_domain::SchemaV1::ProcessAction;
-        let error = AtomicProcessCommitV1::new(0, None, vec![wrong_outcome], vec![]).unwrap_err();
-        assert_eq!(error, CommitValidationError::InvalidOutcomeSchema);
-    }
-
-    #[test]
-    fn atomic_commit_rejects_an_action_with_another_schema() {
-        let mut wrong_action = action();
-        wrong_action.schema = penelope_domain::SchemaV1::ProcessOutcome;
-        let error = AtomicProcessCommitV1::new(
-            0,
-            None,
-            vec![outcome(0, id("out_event"))],
-            vec![wrong_action],
-        )
-        .unwrap_err();
-        assert_eq!(error, CommitValidationError::InvalidActionSchema);
-    }
-
-    #[test]
-    fn atomic_commit_rejects_an_input_with_another_schema() {
-        let mut wrong_input = input();
-        wrong_input.schema = penelope_domain::SchemaV1::ProcessAction;
-        let error = AtomicProcessCommitV1::new(
-            0,
-            Some(wrong_input),
-            vec![outcome(0, id("out_event"))],
-            vec![action()],
-        )
-        .unwrap_err();
-        assert_eq!(error, CommitValidationError::InvalidInputSchema);
-    }
-
-    #[test]
     fn authorization_decisions_fail_closed_without_message_matching() {
-        assert!(ProcessAuthorizationDecisionV1::Authorized.is_authorized());
+        assert!(ProcessAuthorizationDecision::Authorized.is_authorized());
         assert_eq!(
-            ProcessAuthorizationDecisionV1::Authorized.require_authorized(),
+            ProcessAuthorizationDecision::Authorized.require_authorized(),
             Ok(())
         );
-        assert!(!ProcessAuthorizationDecisionV1::Denied.is_authorized());
+        assert!(!ProcessAuthorizationDecision::Denied.is_authorized());
         assert_eq!(
-            ProcessAuthorizationDecisionV1::Denied.require_authorized(),
+            ProcessAuthorizationDecision::Denied.require_authorized(),
             Err(PortError::Unauthorized)
         );
     }
 
     #[test]
     fn outbox_record_requires_valid_action_and_bounded_attempt() {
-        let mut record = OutboxRecordV1::new(action());
+        let mut record = OutboxRecord::new(action());
         assert!(record.validate().is_ok());
         record = record.next_delivery_attempt().unwrap();
         assert_eq!(record.delivery_attempt, 1);
@@ -2728,7 +2645,7 @@ mod tests {
         );
         assert_eq!(
             record.clone().acknowledge().unwrap().acknowledgement,
-            OutboxAcknowledgementV1::Acknowledged
+            OutboxAcknowledgement::Acknowledged
         );
         record.delivery_attempt = MAX_OUTBOX_DELIVERY_ATTEMPTS;
         assert_eq!(record.validate(), Err(PortError::Invariant));
@@ -2736,7 +2653,7 @@ mod tests {
 
     #[test]
     fn outbox_lease_rejects_a_cross_scope_claim() {
-        let request = OutboxClaimRequestV1::new(
+        let request = OutboxClaimRequest::new(
             outcome(0, id("out_claim_scope")).scope(),
             id("pri_worker"),
             NonZeroU16::MIN,
@@ -2744,17 +2661,17 @@ mod tests {
         .unwrap();
         let mut action = action();
         action.process_id = id("prc_other");
-        let lease = OutboxLeaseV1 {
-            record: OutboxRecordV1::new(action),
+        let lease = OutboxLease {
+            record: OutboxRecord::new(action),
             owner: id("pri_worker"),
-            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
-            lease_expires_at: LogicalTimeV1(5),
+            token: OutboxLeaseToken::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTime(5),
         };
         assert_eq!(
             lease.validate_for_claim(&request),
             Err(PortError::Invariant)
         );
-        let owner_mismatch = OutboxClaimRequestV1::new(
+        let owner_mismatch = OutboxClaimRequest::new(
             outcome(0, id("out_claim_scope")).scope(),
             id("pri_other"),
             NonZeroU16::MIN,
@@ -2769,8 +2686,8 @@ mod tests {
     #[test]
     fn outbox_lease_expiry_is_checked_at_logical_boundary() {
         let action = action();
-        let request = OutboxClaimRequestV1::new(
-            ProcessScopeV1::new(
+        let request = OutboxClaimRequest::new(
+            ProcessScope::new(
                 action.tenant_id.clone(),
                 action.process_id.clone(),
                 action.definition_id.clone(),
@@ -2781,57 +2698,54 @@ mod tests {
             NonZeroU16::MIN,
         )
         .unwrap();
-        let lease = OutboxLeaseV1 {
-            record: OutboxRecordV1::new(action),
+        let lease = OutboxLease {
+            record: OutboxRecord::new(action),
             owner: id("pri_worker"),
-            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
-            lease_expires_at: LogicalTimeV1(5),
+            token: OutboxLeaseToken::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTime(5),
         };
-        assert!(!lease.is_expired_at(LogicalTimeV1(5)));
-        assert!(lease.is_expired_at(LogicalTimeV1(6)));
+        assert!(!lease.is_expired_at(LogicalTime(5)));
+        assert!(lease.is_expired_at(LogicalTime(6)));
+        assert_eq!(lease.validate_at(LogicalTime(6)), Err(PortError::TimedOut));
         assert_eq!(
-            lease.validate_at(LogicalTimeV1(6)),
-            Err(PortError::TimedOut)
-        );
-        assert_eq!(
-            lease.acknowledge_at(LogicalTimeV1(6)),
+            lease.acknowledge_at(LogicalTime(6)),
             Err(PortError::TimedOut)
         );
         assert_eq!(
             lease
-                .acknowledge_at(LogicalTimeV1(5))
+                .acknowledge_at(LogicalTime(5))
                 .unwrap()
                 .acknowledgement,
-            OutboxAcknowledgementV1::Acknowledged
+            OutboxAcknowledgement::Acknowledged
         );
         assert_eq!(
             lease
-                .renew_at(LogicalTimeV1(4), LogicalTimeV1(6))
+                .renew_at(LogicalTime(4), LogicalTime(6))
                 .unwrap()
                 .lease_expires_at,
-            LogicalTimeV1(6)
+            LogicalTime(6)
         );
         assert_eq!(
-            lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(5)),
+            lease.renew_at(LogicalTime(4), LogicalTime(5)),
             Err(PortError::Invariant)
         );
         assert!(
             lease
-                .validate_for_claim_at(&request, LogicalTimeV1(5))
+                .validate_for_claim_at(&request, LogicalTime(5))
                 .is_ok()
         );
-        let acknowledged = lease.acknowledge_at(LogicalTimeV1(5)).unwrap();
+        let acknowledged = lease.acknowledge_at(LogicalTime(5)).unwrap();
         let mut acknowledged_lease = lease;
         acknowledged_lease.record = acknowledged;
         assert_eq!(
-            acknowledged_lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(6)),
+            acknowledged_lease.renew_at(LogicalTime(4), LogicalTime(6)),
             Err(PortError::Invariant)
         );
     }
 
     #[test]
     fn outbox_claim_request_rejects_an_oversized_batch() {
-        let request = OutboxClaimRequestV1 {
+        let request = OutboxClaimRequest {
             scope: outcome(0, id("out_claim_scope")).scope(),
             owner: id("pri_worker"),
             limit: NonZeroU16::new(MAX_OUTBOX_CLAIM_BATCH.saturating_add(1)).unwrap(),
@@ -2843,15 +2757,15 @@ mod tests {
     fn canonical_source_event_key_requires_a_canonical_inbox_input() {
         let source_event_id: CanonicalEventId = id("cev_lock");
         let mut accepted_outcome = outcome(0, id("out_event"));
-        accepted_outcome.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+        accepted_outcome.causation_id = penelope_domain::CausationId::Input(id("inp_event"));
         let valid =
-            AtomicProcessCommitV1::new(0, Some(input()), vec![accepted_outcome], vec![action()])
+            AtomicProcessCommit::new(0, Some(input()), vec![accepted_outcome], vec![action()])
                 .unwrap()
                 .with_canonical_source_event(source_event_id.clone());
         assert_eq!(valid.validate(), Ok(()));
 
         let mut missing_input =
-            AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], vec![action()])
+            AtomicProcessCommit::new(0, None, vec![outcome(0, id("out_event"))], vec![action()])
                 .unwrap();
         missing_input.canonical_source_event_id = Some(source_event_id.clone());
         assert_eq!(
@@ -2859,18 +2773,18 @@ mod tests {
             Err(CommitValidationError::CanonicalSourceWithoutInput)
         );
 
-        let mut wrong_kind = AtomicProcessCommitV1::new(
+        let mut wrong_kind = AtomicProcessCommit::new(
             0,
             Some(input()),
             vec![{
                 let mut accepted = outcome(0, id("out_event"));
-                accepted.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+                accepted.causation_id = penelope_domain::CausationId::Input(id("inp_event"));
                 accepted
             }],
             vec![action()],
         )
         .unwrap();
-        wrong_kind.input.as_mut().unwrap().kind = ProcessInputKindV1::TimerFired;
+        wrong_kind.input.as_mut().unwrap().kind = ProcessInputKind::TimerFired;
         wrong_kind.canonical_source_event_id = Some(source_event_id);
         assert_eq!(
             wrong_kind.validate(),
@@ -2880,7 +2794,7 @@ mod tests {
 
     #[test]
     fn atomic_commit_requires_accepted_input_causation() {
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             Some(input()),
             vec![outcome(0, id("out_event"))],
@@ -2892,41 +2806,41 @@ mod tests {
 
     #[test]
     fn external_effect_evidence_requires_the_exact_action_and_effect_key() {
-        let request = EffectDispatchRequestV1::new(action()).with_deadline(LogicalTimeV1(10));
+        let request = EffectDispatchRequest::new(action()).with_deadline(LogicalTime(10));
         assert_eq!(request.validate(), Ok(()));
-        let evidence = ExternalEffectEvidenceV1 {
+        let evidence = ExternalEffectEvidence {
             action_id: request.action.action_id.clone(),
             effect_key: request.effect_key.clone(),
             external_reference_id: Some(id("ext_remote_effect")),
-            state: ExternalEffectStateV1::Unknown,
+            state: ExternalEffectState::Unknown,
         };
         assert_eq!(evidence.validate_for(&request), Ok(()));
         assert_eq!(
-            evidence.disposition_at(&request, LogicalTimeV1(10)),
-            Ok(ExternalEffectDispositionV1::Escalate)
+            evidence.disposition_at(&request, LogicalTime(10)),
+            Ok(ExternalEffectDisposition::Escalate)
         );
         let mut failed = evidence.clone();
-        failed.state = ExternalEffectStateV1::KnownFailure;
+        failed.state = ExternalEffectState::KnownFailure;
         assert_eq!(
-            failed.disposition_at(&request, LogicalTimeV1(10)),
-            Ok(ExternalEffectDispositionV1::Retry)
+            failed.disposition_at(&request, LogicalTime(10)),
+            Ok(ExternalEffectDisposition::Retry)
         );
         let mut succeeded = failed.clone();
-        succeeded.state = ExternalEffectStateV1::Succeeded;
+        succeeded.state = ExternalEffectState::Succeeded;
         assert_eq!(
-            succeeded.disposition_at(&request, LogicalTimeV1(10)),
-            Ok(ExternalEffectDispositionV1::Completed)
+            succeeded.disposition_at(&request, LogicalTime(10)),
+            Ok(ExternalEffectDisposition::Completed)
         );
         assert_eq!(
-            succeeded.disposition_at(&request, LogicalTimeV1(11)),
-            Ok(ExternalEffectDispositionV1::Completed)
+            succeeded.disposition_at(&request, LogicalTime(11)),
+            Ok(ExternalEffectDisposition::Completed)
         );
         assert_eq!(
-            failed.disposition_at(&request, LogicalTimeV1(11)),
-            Ok(ExternalEffectDispositionV1::Escalate)
+            failed.disposition_at(&request, LogicalTime(11)),
+            Ok(ExternalEffectDisposition::Escalate)
         );
 
-        let wrong_action = ExternalEffectEvidenceV1 {
+        let wrong_action = ExternalEffectEvidence {
             action_id: id("act_other"),
             ..evidence
         };
@@ -2945,20 +2859,20 @@ mod tests {
 
     #[test]
     fn external_effect_deadline_is_inclusive_and_fail_closed_after_expiry() {
-        let request = EffectDispatchRequestV1::new(action()).with_deadline(LogicalTimeV1(5));
-        assert!(!request.is_expired_at(LogicalTimeV1(5)));
-        assert!(request.validate_at(LogicalTimeV1(6)).is_err());
+        let request = EffectDispatchRequest::new(action()).with_deadline(LogicalTime(5));
+        assert!(!request.is_expired_at(LogicalTime(5)));
+        assert!(request.validate_at(LogicalTime(6)).is_err());
         assert_eq!(
-            request.validate_at(LogicalTimeV1(6)),
+            request.validate_at(LogicalTime(6)),
             Err(EffectReconciliationValidationError::DeadlineExceeded)
         );
     }
 
     #[test]
     fn timer_schedule_requires_a_schema_valid_timer_action() {
-        let schedule = TimerScheduleV1 {
+        let schedule = TimerSchedule {
             action: action(),
-            due_at: LogicalTimeV1(10),
+            due_at: LogicalTime(10),
         };
         assert_eq!(
             schedule.validate(),
@@ -2966,24 +2880,17 @@ mod tests {
         );
 
         let mut timer_action = action();
-        timer_action.kind = penelope_domain::ProcessActionKindV1::Timer;
-        let timer_schedule = TimerScheduleV1 {
+        timer_action.kind = penelope_domain::ProcessActionKind::Timer;
+        let timer_schedule = TimerSchedule {
             action: timer_action,
-            due_at: LogicalTimeV1(10),
+            due_at: LogicalTime(10),
         };
         assert_eq!(timer_schedule.validate(), Ok(()));
-
-        let mut malformed_timer = timer_schedule;
-        malformed_timer.action.schema = penelope_domain::SchemaV1::ProcessOutcome;
-        assert_eq!(
-            malformed_timer.validate(),
-            Err(TimerValidationError::InvalidActionSchema)
-        );
     }
 
     #[test]
     fn atomic_commit_rejects_duplicate_outcome_identity() {
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![
@@ -3000,13 +2907,13 @@ mod tests {
     fn atomic_commit_rejects_an_oversized_outcome_batch() {
         let outcomes =
             vec![outcome(0, id("out_limit")); MAX_OUTCOMES_PER_ATOMIC_COMMIT.saturating_add(1)];
-        let error = AtomicProcessCommitV1::new(0, None, outcomes, vec![]).unwrap_err();
+        let error = AtomicProcessCommit::new(0, None, outcomes, vec![]).unwrap_err();
         assert_eq!(error, CommitValidationError::OutcomeLimitExceeded);
     }
 
     #[test]
     fn atomic_commit_rejects_duplicate_action_identity() {
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![outcome(0, id("out_event"))],
@@ -3020,7 +2927,7 @@ mod tests {
     fn atomic_commit_rejects_duplicate_action_effect_key() {
         let mut second_action = action();
         second_action.action_id = id("act_other");
-        let error = AtomicProcessCommitV1::new(
+        let error = AtomicProcessCommit::new(
             0,
             None,
             vec![outcome(0, id("out_event"))],
@@ -3033,15 +2940,15 @@ mod tests {
     #[test]
     fn atomic_commit_rejects_an_oversized_action_batch() {
         let actions = vec![action(); MAX_ACTIONS_PER_ATOMIC_COMMIT.saturating_add(1)];
-        let error = AtomicProcessCommitV1::new(0, None, vec![outcome(0, id("out_event"))], actions)
+        let error = AtomicProcessCommit::new(0, None, vec![outcome(0, id("out_event"))], actions)
             .unwrap_err();
         assert_eq!(error, CommitValidationError::ActionLimitExceeded);
     }
 
     #[test]
     fn outcome_replay_pages_are_bounded_scope_pinned_and_contiguous() {
-        let page = OutcomeReplayPageV1::new(
-            ProcessScopeV1::new(
+        let page = OutcomeReplayPage::new(
+            ProcessScope::new(
                 id("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -3054,8 +2961,8 @@ mod tests {
         );
         assert!(page.is_ok());
 
-        let bad_continuation = OutcomeReplayPageV1::new(
-            ProcessScopeV1::new(
+        let bad_continuation = OutcomeReplayPage::new(
+            ProcessScope::new(
                 id("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -3072,8 +2979,8 @@ mod tests {
             OutcomePageValidationError::InvalidContinuation
         );
 
-        let empty_continuation = OutcomeReplayPageV1::new(
-            ProcessScopeV1::new(
+        let empty_continuation = OutcomeReplayPage::new(
+            ProcessScope::new(
                 id("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -3090,8 +2997,8 @@ mod tests {
             OutcomePageValidationError::InvalidContinuation
         );
 
-        let oversized_limit = OutcomeReplayRequestV1::new(
-            ProcessScopeV1::new(
+        let oversized_limit = OutcomeReplayRequest::new(
+            ProcessScope::new(
                 id("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -3107,31 +3014,30 @@ mod tests {
 
     #[test]
     fn reconciliation_window_only_allows_retry_after_horizon() {
-        let result = CanonicalReconciliationV1::NotCommitted {
+        let result = CanonicalReconciliation::NotCommitted {
             scope: action().scope(),
             action_id: action().action_id,
         };
         let window =
-            CanonicalReconciliationWindowV1::new(result, LogicalTimeV1(10), LogicalTimeV1(20))
-                .unwrap();
+            CanonicalReconciliationWindow::new(result, LogicalTime(10), LogicalTime(20)).unwrap();
         assert_eq!(
-            window.require_retry_safe_at(LogicalTimeV1(19)),
+            window.require_retry_safe_at(LogicalTime(19)),
             Err(ConsistencyWindowValidationError::WindowNotElapsed)
         );
         assert_eq!(
-            window.require_retry_safe_at(LogicalTimeV1(20)),
+            window.require_retry_safe_at(LogicalTime(20)),
             Ok(id("act_dispatch"))
         );
         assert_eq!(window.validate_for_action(&action()), Ok(()));
         assert_eq!(
-            window.disposition_at(&action(), LogicalTimeV1(19)),
-            Ok(RecoveryDispositionV1::Wait {
-                until: LogicalTimeV1(20)
+            window.disposition_at(&action(), LogicalTime(19)),
+            Ok(RecoveryDisposition::Wait {
+                until: LogicalTime(20)
             })
         );
         assert_eq!(
-            window.disposition_at(&action(), LogicalTimeV1(20)),
-            Ok(RecoveryDispositionV1::Retry {
+            window.disposition_at(&action(), LogicalTime(20)),
+            Ok(RecoveryDisposition::Retry {
                 action_id: id("act_dispatch")
             })
         );
@@ -3142,29 +3048,25 @@ mod tests {
             Err(ReconciliationValidationError::ActionMismatch)
         );
         assert_eq!(
-            CanonicalReconciliationWindowV1::new(
-                window.result,
-                LogicalTimeV1(21),
-                LogicalTimeV1(20),
-            ),
+            CanonicalReconciliationWindow::new(window.result, LogicalTime(21), LogicalTime(20),),
             Err(ConsistencyWindowValidationError::InvalidWindow)
         );
-        let committed = CanonicalReconciliationWindowV1::new(
-            CanonicalReconciliationV1::Unknown {
+        let committed = CanonicalReconciliationWindow::new(
+            CanonicalReconciliation::Unknown {
                 scope: action().scope(),
                 action_id: id("act_dispatch"),
             },
-            LogicalTimeV1(0),
-            LogicalTimeV1(0),
+            LogicalTime(0),
+            LogicalTime(0),
         )
         .unwrap();
         assert_eq!(
-            committed.require_retry_safe_at(LogicalTimeV1(0)),
+            committed.require_retry_safe_at(LogicalTime(0)),
             Err(ConsistencyWindowValidationError::NotRetrySafe)
         );
         assert_eq!(
-            committed.disposition_at(&action(), LogicalTimeV1(0)),
-            Ok(RecoveryDispositionV1::Escalate {
+            committed.disposition_at(&action(), LogicalTime(0)),
+            Ok(RecoveryDisposition::Escalate {
                 action_id: id("act_dispatch")
             })
         );
@@ -3172,7 +3074,7 @@ mod tests {
 
     #[test]
     fn reconciliation_rejects_evidence_for_another_action() {
-        let result = CanonicalReconciliationV1::Unknown {
+        let result = CanonicalReconciliation::Unknown {
             scope: action().scope(),
             action_id: id("act_other"),
         };
@@ -3184,9 +3086,9 @@ mod tests {
 
     #[test]
     fn reconciliation_rejects_committed_evidence_for_another_action() {
-        let result = CanonicalReconciliationV1::Committed {
+        let result = CanonicalReconciliation::Committed {
             scope: action().scope(),
-            event: CanonicalEventDtoV1::new(
+            event: CanonicalEvent::new(
                 id("tnt_game"),
                 id::<CanonicalEventId>("cev_source"),
                 id("act_other"),
@@ -3207,14 +3109,14 @@ mod tests {
     #[test]
     fn reconciliation_requires_the_action_scope_and_valid_committed_evidence() {
         let expected = action();
-        let valid = CanonicalReconciliationV1::NotCommitted {
+        let valid = CanonicalReconciliation::NotCommitted {
             scope: expected.scope(),
             action_id: expected.action_id.clone(),
         };
         assert_eq!(valid.validate_for_action(&expected), Ok(()));
 
-        let wrong_scope = CanonicalReconciliationV1::Unknown {
-            scope: ProcessScopeV1::new(
+        let wrong_scope = CanonicalReconciliation::Unknown {
+            scope: ProcessScope::new(
                 id("tnt_game"),
                 id("prc_other"),
                 id("def_trade"),
@@ -3231,8 +3133,8 @@ mod tests {
 
     #[test]
     fn manual_review_operations_require_the_pinned_scope_and_dual_control() {
-        let review = ManualReviewDtoV1::new(
-            ProcessScopeV1::new(
+        let review = ManualReview::new(
+            ProcessScope::new(
                 id("tnt_game"),
                 id("prc_trade"),
                 id("def_trade"),
@@ -3241,41 +3143,30 @@ mod tests {
             ),
             id("rev_trade"),
             4,
-            Some(LogicalTimeV1(10)),
+            Some(LogicalTime(10)),
             ContentDigest([6; 32]),
         );
-        let claim = ManualReviewClaimV1 {
+        let claim = ManualReviewClaim {
             scope: review.scope(),
             review_id: review.review_id.clone(),
             claimed_by: id("pri_claimant"),
-            claimed_at: LogicalTimeV1(5),
+            claimed_at: LogicalTime(5),
         };
         assert_eq!(claim.validate_for(&review), Ok(()));
 
-        let valid_decision = ManualReviewDecisionV1 {
+        let valid_decision = ManualReviewDecision {
             scope: review.scope(),
             review_id: review.review_id.clone(),
             claimed_by: claim.claimed_by.clone(),
             decided_by: id("pri_decider"),
-            decided_at: LogicalTimeV1(10),
-            resolution: ManualReviewResolutionV1::Compensate,
-            control: ManualReviewControlV1::DistinctDecider,
+            decided_at: LogicalTime(10),
+            resolution: ManualReviewResolution::Compensate,
+            control: ManualReviewControl::DistinctDecider,
             evidence_digest: ContentDigest([7; 32]),
         };
         assert_eq!(valid_decision.validate_for(&review), Ok(()));
 
-        let mut malformed_review = review.clone();
-        malformed_review.schema = penelope_domain::SchemaV1::ProcessAction;
-        assert_eq!(
-            claim.validate_for(&malformed_review),
-            Err(ManualReviewValidationError::InvalidReviewSchema)
-        );
-        assert_eq!(
-            valid_decision.validate_for(&malformed_review),
-            Err(ManualReviewValidationError::InvalidReviewSchema)
-        );
-
-        let same_operator = ManualReviewDecisionV1 {
+        let same_operator = ManualReviewDecision {
             decided_by: claim.claimed_by.clone(),
             ..valid_decision
         };
@@ -3284,8 +3175,8 @@ mod tests {
             Err(ManualReviewValidationError::DualControlViolation)
         );
 
-        let wrong_scope = ManualReviewClaimV1 {
-            scope: ProcessScopeV1::new(
+        let wrong_scope = ManualReviewClaim {
+            scope: ProcessScope::new(
                 id("tnt_game"),
                 id("prc_other"),
                 id("def_trade"),
@@ -3299,8 +3190,8 @@ mod tests {
             Err(ManualReviewValidationError::ScopeMismatch)
         );
 
-        let expired = ManualReviewDecisionV1 {
-            decided_at: LogicalTimeV1(11),
+        let expired = ManualReviewDecision {
+            decided_at: LogicalTime(11),
             ..same_operator
         };
         assert_eq!(
@@ -3314,7 +3205,7 @@ mod tests {
         let scope = outcome(0, id("out_first")).scope();
         let first = outcome(0, id("out_first"));
         let second = outcome(1, id("out_second"));
-        let mut log = OutcomeLogV1::new(scope);
+        let mut log = OutcomeLog::new(scope);
         assert_eq!(log.append(&[first, second]), Ok(()));
         assert_eq!(log.next_sequence(), 2);
 
@@ -3333,22 +3224,22 @@ mod tests {
         );
         assert_eq!(log, before_failed_append);
 
-        let other_scope = ProcessScopeV1::new(
+        let other_scope = ProcessScope::new(
             id("tnt_other"),
             id("prc_trade"),
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([9; 32]),
         );
-        let cross_scope = ProcessOutcomeDtoV1::new(
+        let cross_scope = ProcessOutcome::new(
             other_scope,
             2,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 id("out_cross"),
-                CausationIdV1::Action(id("act_cause")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(1),
-                ProcessOutcomeKindV1::ActionPlanned,
+                CausationId::Action(id("act_cause")),
+                OutcomeActor::System,
+                LogicalTime(1),
+                ProcessOutcomeKind::ActionPlanned,
                 ContentDigest([1; 32]),
             ),
         );
@@ -3359,7 +3250,7 @@ mod tests {
         assert_eq!(log, before_failed_append);
 
         let encoded = serde_json::to_vec(&log).unwrap();
-        let mut decoded: OutcomeLogV1 = serde_json::from_slice(&encoded).unwrap();
+        let mut decoded: OutcomeLog = serde_json::from_slice(&encoded).unwrap();
         assert_eq!(decoded, log);
         assert_eq!(decoded.append(&[outcome(2, id("out_third"))]), Ok(()));
     }
@@ -3367,22 +3258,22 @@ mod tests {
     #[test]
     fn redacted_diagnostics_are_bounded_and_never_require_message_matching() {
         let scope = outcome(0, id("out_diag")).scope();
-        let diagnostic = RedactedDiagnosticV1::new(
+        let diagnostic = RedactedDiagnostic::new(
             scope,
-            DiagnosticClassV1::from_port_error(PortError::Unauthorized),
+            DiagnosticClass::from_port_error(PortError::Unauthorized),
             penelope_domain::ContentDigest([8; 32]),
             MAX_REDACTED_DIAGNOSTIC_BYTES,
         )
         .unwrap();
-        assert_eq!(diagnostic.class, DiagnosticClassV1::Authorization);
+        assert_eq!(diagnostic.class, DiagnosticClass::Authorization);
         assert_eq!(
-            DiagnosticClassV1::from_port_error(PortError::Ambiguous),
-            DiagnosticClassV1::Ambiguous
+            DiagnosticClass::from_port_error(PortError::Ambiguous),
+            DiagnosticClass::Ambiguous
         );
         assert_eq!(
-            RedactedDiagnosticV1::new(
+            RedactedDiagnostic::new(
                 diagnostic.scope,
-                DiagnosticClassV1::Invariant,
+                DiagnosticClass::Invariant,
                 diagnostic.evidence_digest,
                 MAX_REDACTED_DIAGNOSTIC_BYTES.saturating_add(1),
             ),
@@ -3392,8 +3283,8 @@ mod tests {
 
     #[test]
     fn quota_requests_are_typed_bounded_and_fail_closed() {
-        let valid = QuotaRequestV1::new(
-            QuotaKindV1::OutstandingActions,
+        let valid = QuotaRequest::new(
+            QuotaKind::OutstandingActions,
             NonZeroU32::new(4).unwrap(),
             NonZeroU32::new(8).unwrap(),
         )
@@ -3401,16 +3292,16 @@ mod tests {
         assert_eq!(valid.validate(), Ok(()));
         assert!(!valid.canonical_wire_bytes().unwrap().is_empty());
         assert_eq!(
-            QuotaRequestV1::new(
-                QuotaKindV1::OutcomeWrites,
+            QuotaRequest::new(
+                QuotaKind::OutcomeWrites,
                 NonZeroU32::new(9).unwrap(),
                 NonZeroU32::new(8).unwrap(),
             ),
             Err(QuotaValidationError::RequestExceedsCapacity)
         );
         assert_eq!(
-            QuotaRequestV1::new(
-                QuotaKindV1::OpenProcesses,
+            QuotaRequest::new(
+                QuotaKind::OpenProcesses,
                 NonZeroU32::new(MAX_QUOTA_CAPACITY).unwrap(),
                 NonZeroU32::new(MAX_QUOTA_CAPACITY.saturating_add(1)).unwrap(),
             ),
@@ -3421,34 +3312,34 @@ mod tests {
     #[test]
     fn authorization_matrix_requires_distinct_principals_for_high_value_actions() {
         assert_eq!(
-            ProcessAuthorizationOperationV1::Start.minimum_requirement(),
-            AuthorizationRequirementV1::AuthenticatedPrincipal
+            ProcessAuthorizationOperation::Start.minimum_requirement(),
+            AuthorizationRequirement::AuthenticatedPrincipal
         );
         assert_eq!(
-            ProcessAuthorizationOperationV1::Retry.minimum_requirement(),
-            AuthorizationRequirementV1::AuthenticatedPrincipal
+            ProcessAuthorizationOperation::Retry.minimum_requirement(),
+            AuthorizationRequirement::AuthenticatedPrincipal
         );
         assert_eq!(
-            ProcessAuthorizationOperationV1::DecideReview.minimum_requirement(),
-            AuthorizationRequirementV1::DistinctPrincipals
+            ProcessAuthorizationOperation::DecideReview.minimum_requirement(),
+            AuthorizationRequirement::DistinctPrincipals
         );
         assert_eq!(
-            ProcessAuthorizationOperationV1::TerminalOverride.minimum_requirement(),
-            AuthorizationRequirementV1::DistinctPrincipals
+            ProcessAuthorizationOperation::TerminalOverride.minimum_requirement(),
+            AuthorizationRequirement::DistinctPrincipals
         );
     }
 
     #[test]
     fn inbox_receipt_is_bound_to_the_exact_submitted_input() {
         let submitted = input();
-        let receipt = InboxAcceptanceReceiptV1::new(
+        let receipt = InboxAcceptanceReceipt::new(
             submitted.tenant_id.clone(),
             submitted.process_id.clone(),
             submitted.input_id.clone(),
             false,
         );
         assert_eq!(receipt.validate_for(&submitted), Ok(()));
-        let wrong = ProcessInputDtoV1::new(
+        let wrong = ProcessInput::new(
             submitted.tenant_id.clone(),
             submitted.process_id.clone(),
             id("inp_other"),
@@ -3470,18 +3361,18 @@ mod tests {
     #[test]
     fn manual_review_receipt_is_bound_to_the_exact_case() {
         let review_id: ReviewId = id("rev_case");
-        let receipt = ManualReviewReceiptV1::new_for_operation(
+        let receipt = ManualReviewReceipt::new_for_operation(
             review_id.clone(),
-            ManualReviewOperationV1::Claim,
+            ManualReviewOperation::Claim,
             true,
         );
         assert_eq!(receipt.validate_for(&review_id), Ok(()));
         assert_eq!(
-            receipt.validate_for_operation(&review_id, ManualReviewOperationV1::Claim),
+            receipt.validate_for_operation(&review_id, ManualReviewOperation::Claim),
             Ok(())
         );
         assert_eq!(
-            receipt.validate_for_operation(&review_id, ManualReviewOperationV1::Decide),
+            receipt.validate_for_operation(&review_id, ManualReviewOperation::Decide),
             Err(ManualReviewReceiptValidationError::OperationMismatch)
         );
         assert_eq!(
@@ -3492,24 +3383,24 @@ mod tests {
 
     #[test]
     fn manual_review_audit_entry_is_scope_bound_and_expiry_checked() {
-        let review = ManualReviewDtoV1::new(
+        let review = ManualReview::new(
             action().scope(),
             id("rev_case"),
             0,
-            Some(LogicalTimeV1(5)),
+            Some(LogicalTime(5)),
             ContentDigest([6; 32]),
         );
-        let entry = ManualReviewAuditEntryV1 {
+        let entry = ManualReviewAuditEntry {
             scope: action().scope(),
             review_id: review.review_id.clone(),
-            operation: ManualReviewOperationV1::Decide,
+            operation: ManualReviewOperation::Decide,
             principal_id: id("pri_operator"),
-            occurred_at: LogicalTimeV1(5),
+            occurred_at: LogicalTime(5),
             evidence_digest: ContentDigest([7; 32]),
         };
         assert_eq!(entry.validate_for(&review), Ok(()));
         let mut expired = entry.clone();
-        expired.occurred_at = LogicalTimeV1(6);
+        expired.occurred_at = LogicalTime(6);
         assert_eq!(
             expired.validate_for(&review),
             Err(ManualReviewAuditValidationError::Expired)
@@ -3526,7 +3417,7 @@ mod tests {
     fn action_dispatch_receipt_is_bound_to_the_exact_action() {
         let requested = action();
         let receipt =
-            ActionDispatchReceiptV1::new(requested.scope(), requested.action_id.clone(), true);
+            ActionDispatchReceipt::new(requested.scope(), requested.action_id.clone(), true);
         assert_eq!(receipt.validate_for(&requested), Ok(()));
         let mut other = action();
         other.action_id = id("act_other");
@@ -3544,15 +3435,14 @@ mod tests {
 
     #[test]
     fn canonical_submit_receipt_is_bound_to_the_exact_command_action() {
-        let submitted = CanonicalCommandDtoV1 {
-            schema: penelope_domain::SchemaV1::CanonicalCommand,
+        let submitted = CanonicalCommand {
             tenant_id: id("tnt_game"),
             action_id: id("act_dispatch"),
             operation: id("op_trade"),
             resource_ids: vec![id("res_wallet")],
             payload_digest: ContentDigest([4; 32]),
         };
-        let receipt = CanonicalSubmitReceiptV1::new(
+        let receipt = CanonicalSubmitReceipt::new(
             submitted.tenant_id.clone(),
             submitted.action_id.clone(),
             true,
@@ -3574,21 +3464,21 @@ mod tests {
 
     #[test]
     fn definition_registration_receipt_is_bound_to_identity_version_and_digest() {
-        let definition = ProcessDefinitionDtoV1::new(
+        let definition = ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([9; 32]),
             vec![id("stp_dispatch")],
         )
         .unwrap();
-        let receipt = DefinitionRegistrationReceiptV1::new(
+        let receipt = DefinitionRegistrationReceipt::new(
             definition.definition_id.clone(),
             definition.definition_version.clone(),
             definition.definition_digest,
             false,
         );
         assert_eq!(receipt.validate_for(&definition), Ok(()));
-        let wrong = DefinitionRegistrationReceiptV1::new(
+        let wrong = DefinitionRegistrationReceipt::new(
             definition.definition_id.clone(),
             definition.definition_version.clone(),
             ContentDigest([8; 32]),
@@ -3602,7 +3492,7 @@ mod tests {
 
     #[test]
     fn migration_registration_receipt_is_bound_to_migration_identity() {
-        let migration = DefinitionMigrationV1::new(
+        let migration = DefinitionMigration::new(
             id("mig_trade"),
             id("def_trade"),
             id("dfv_one"),
@@ -3611,9 +3501,9 @@ mod tests {
             ContentDigest([8; 32]),
         )
         .unwrap();
-        let receipt = DefinitionMigrationReceiptV1::new(migration.migration_id.clone(), true);
+        let receipt = DefinitionMigrationReceipt::new(migration.migration_id.clone(), true);
         assert_eq!(receipt.validate_for(&migration), Ok(()));
-        let wrong = DefinitionMigrationReceiptV1::new(id("mig_other"), false);
+        let wrong = DefinitionMigrationReceipt::new(id("mig_other"), false);
         assert_eq!(
             wrong.validate_for(&migration),
             Err(DefinitionMigrationReceiptValidationError::MigrationMismatch)
@@ -3623,16 +3513,16 @@ mod tests {
     #[test]
     fn atomic_commit_receipt_is_bound_to_sequence_and_input_semantics() {
         let mut accepted_outcome = outcome(4, id("out_commit"));
-        accepted_outcome.causation_id = penelope_domain::CausationIdV1::Input(id("inp_event"));
+        accepted_outcome.causation_id = penelope_domain::CausationId::Input(id("inp_event"));
         let commit =
-            AtomicProcessCommitV1::new(4, Some(input()), vec![accepted_outcome], vec![action()])
+            AtomicProcessCommit::new(4, Some(input()), vec![accepted_outcome], vec![action()])
                 .unwrap();
-        let receipt = AtomicProcessCommitReceiptV1 {
+        let receipt = AtomicProcessCommitReceipt {
             committed_through_sequence: 4,
             duplicate_input: true,
         };
         assert_eq!(receipt.validate_for(&commit), Ok(()));
-        let wrong_sequence = AtomicProcessCommitReceiptV1 {
+        let wrong_sequence = AtomicProcessCommitReceipt {
             committed_through_sequence: 5,
             duplicate_input: false,
         };
@@ -3640,14 +3530,14 @@ mod tests {
             wrong_sequence.validate_for(&commit),
             Err(AtomicProcessCommitReceiptValidationError::SequenceMismatch)
         );
-        let no_input = AtomicProcessCommitV1::new(
+        let no_input = AtomicProcessCommit::new(
             4,
             None,
             vec![outcome(4, id("out_commit_no_input"))],
             vec![action()],
         )
         .unwrap();
-        let invalid_duplicate = AtomicProcessCommitReceiptV1 {
+        let invalid_duplicate = AtomicProcessCommitReceipt {
             committed_through_sequence: 4,
             duplicate_input: true,
         };
@@ -3655,7 +3545,7 @@ mod tests {
             invalid_duplicate.validate_for(&no_input),
             Err(AtomicProcessCommitReceiptValidationError::DuplicateInputWithoutInput)
         );
-        let malformed = AtomicProcessCommitV1 {
+        let malformed = AtomicProcessCommit {
             expected_sequence: 4,
             input: None,
             canonical_source_event_id: None,
@@ -3671,36 +3561,33 @@ mod tests {
     #[test]
     fn timer_claim_lease_requires_due_time_scope_owner_and_expiry() {
         let mut timer_action = action();
-        timer_action.kind = penelope_domain::ProcessActionKindV1::Timer;
-        let timer = TimerScheduleV1 {
+        timer_action.kind = penelope_domain::ProcessActionKind::Timer;
+        let timer = TimerSchedule {
             action: timer_action,
-            due_at: LogicalTimeV1(5),
+            due_at: LogicalTime(5),
         };
-        let request = TimerClaimRequestV1::new(
+        let request = TimerClaimRequest::new(
             timer.action.scope(),
             id("pri_worker"),
-            LogicalTimeV1(5),
+            LogicalTime(5),
             NonZeroU16::MIN,
         )
         .unwrap();
-        let lease = TimerLeaseV1 {
+        let lease = TimerLease {
             timer,
             owner: id("pri_worker"),
-            token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
-            lease_expires_at: LogicalTimeV1(6),
+            token: OutboxLeaseToken::new(NonZeroU64::MIN),
+            lease_expires_at: LogicalTime(6),
         };
         assert_eq!(lease.validate_for_claim(&request), Ok(()));
-        assert_eq!(lease.validate_at(LogicalTimeV1(6)), Ok(()));
+        assert_eq!(lease.validate_at(LogicalTime(6)), Ok(()));
         assert_eq!(
-            lease.acknowledge_at(LogicalTimeV1(6)),
+            lease.acknowledge_at(LogicalTime(6)),
             Ok(lease.timer.clone())
         );
+        assert_eq!(lease.validate_at(LogicalTime(7)), Err(PortError::TimedOut));
         assert_eq!(
-            lease.validate_at(LogicalTimeV1(7)),
-            Err(PortError::TimedOut)
-        );
-        assert_eq!(
-            lease.acknowledge_at(LogicalTimeV1(7)),
+            lease.acknowledge_at(LogicalTime(7)),
             Err(PortError::TimedOut)
         );
     }

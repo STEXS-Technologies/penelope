@@ -1,17 +1,17 @@
-//! Immutable v1 wire fixtures. A change here is a protocol change, not a
-//! formatting preference: add a new versioned DTO instead of reinterpreting it.
+//! Immutable wire fixtures. A change here is a protocol change, not a
+//! formatting preference: add a new typed value instead of reinterpreting it.
 
 #![allow(clippy::expect_used, clippy::needless_pass_by_value)]
 
 use core::fmt::Debug;
 
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalCommitId, CanonicalEventDtoV1, CanonicalEventId,
-    CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, DomainError, InputId,
-    LogicalTimeV1, ManualReviewDtoV1, OperationId, OutcomeActorV1, OutcomeId, ProcessActionDtoV1,
-    ProcessActionKindV1, ProcessDefinitionDtoV1, ProcessId, ProcessInputDtoV1,
-    ProcessInputEnvelopeV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessOutcomeFactV1,
-    ProcessOutcomeKindV1, ProcessScopeV1, ResourceId, ReviewId, StepId, TenantId,
+    ActionId, CanonicalCommand, CanonicalCommitId, CanonicalEvent, CanonicalEventId, CausationId,
+    ContentDigest, DefinitionId, DefinitionVersion, DomainError, InputId, LogicalTime,
+    ManualReview, OperationId, OutcomeActor, OutcomeId, ProcessAction, ProcessActionKind,
+    ProcessDefinition, ProcessId, ProcessInput, ProcessInputEnvelope, ProcessInputKind,
+    ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind, ProcessScope, ResourceId, ReviewId,
+    StepId, TenantId,
 };
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -30,7 +30,7 @@ fn assert_fixture<T>(
     T: DeserializeOwned + Serialize + PartialEq + Debug,
 {
     let decoded: T = serde_json::from_str(fixture).expect("fixture deserializes");
-    validate(&decoded).expect("fixture satisfies its schema invariant");
+    validate(&decoded).expect("fixture satisfies its typed invariants");
     assert_eq!(
         decoded, expected,
         "fixture decodes to the expected typed DTO"
@@ -40,79 +40,79 @@ fn assert_fixture<T>(
     assert_eq!(
         serde_json::to_value(&expected).expect("DTO serializes"),
         fixture_json,
-        "DTO serialization preserves the immutable v1 wire fixture"
+        "DTO serialization preserves the immutable wire fixture"
     );
 }
 
 #[test]
-fn v1_wire_fixtures_are_immutable_and_typed() {
-    let scope = ProcessScopeV1::new(
+fn wire_fixtures_are_immutable_and_typed() {
+    let scope = ProcessScope::new(
         id::<TenantId>("tnt_market"),
         id::<ProcessId>("prc_trade"),
         id::<DefinitionId>("def_trade"),
         id::<DefinitionVersion>("dfv_one"),
         ContentDigest([1; 32]),
     );
-    let input = ProcessInputDtoV1::new(
+    let input = ProcessInput::new(
         id("tnt_market"),
         id("prc_trade"),
         id::<InputId>("inp_start"),
-        ProcessInputKindV1::CanonicalEvent,
+        ProcessInputKind::CanonicalEvent,
         ContentDigest([2; 32]),
     );
 
     assert_fixture(
-        include_str!("fixtures/v1/process-definition.json"),
-        ProcessDefinitionDtoV1::new(
+        include_str!("fixtures/current/process-definition.json"),
+        ProcessDefinition::new(
             id("def_trade"),
             id("dfv_one"),
             ContentDigest([1; 32]),
             vec![id::<StepId>("stp_lock"), id("stp_settle")],
         )
         .expect("fixture definition is valid"),
-        ProcessDefinitionDtoV1::validate,
+        ProcessDefinition::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/process-input.json"),
+        include_str!("fixtures/current/process-input.json"),
         input.clone(),
-        ProcessInputDtoV1::validate,
+        ProcessInput::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/process-input-envelope.json"),
-        ProcessInputEnvelopeV1::new(input),
-        ProcessInputEnvelopeV1::validate,
+        include_str!("fixtures/current/process-input-envelope.json"),
+        ProcessInputEnvelope::new(input),
+        ProcessInputEnvelope::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/process-outcome.json"),
-        ProcessOutcomeDtoV1::new(
+        include_str!("fixtures/current/process-outcome.json"),
+        ProcessOutcome::new(
             scope.clone(),
             0,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 id::<OutcomeId>("out_started"),
-                CausationIdV1::Input(id::<InputId>("inp_start")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(7),
-                ProcessOutcomeKindV1::Started,
+                CausationId::Input(id::<InputId>("inp_start")),
+                OutcomeActor::System,
+                LogicalTime(7),
+                ProcessOutcomeKind::Started,
                 ContentDigest([3; 32]),
             ),
         ),
-        ProcessOutcomeDtoV1::validate,
+        ProcessOutcome::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/process-action.json"),
-        ProcessActionDtoV1::new(
+        include_str!("fixtures/current/process-action.json"),
+        ProcessAction::new(
             scope.clone(),
             id::<ActionId>("act_lock"),
             id::<StepId>("stp_lock"),
             0,
-            ProcessActionKindV1::CanonicalCommand,
+            ProcessActionKind::CanonicalCommand,
             ContentDigest([4; 32]),
         ),
-        ProcessActionDtoV1::validate,
+        ProcessAction::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/canonical-command.json"),
-        CanonicalCommandDtoV1::new(
+        include_str!("fixtures/current/canonical-command.json"),
+        CanonicalCommand::new(
             id("tnt_market"),
             id::<ActionId>("act_lock"),
             id::<OperationId>("op_lock"),
@@ -120,11 +120,11 @@ fn v1_wire_fixtures_are_immutable_and_typed() {
             ContentDigest([5; 32]),
         )
         .expect("fixture command is valid"),
-        CanonicalCommandDtoV1::validate,
+        CanonicalCommand::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/canonical-event.json"),
-        CanonicalEventDtoV1::new(
+        include_str!("fixtures/current/canonical-event.json"),
+        CanonicalEvent::new(
             id("tnt_market"),
             id::<CanonicalEventId>("cev_lock"),
             id::<ActionId>("act_lock"),
@@ -135,17 +135,17 @@ fn v1_wire_fixtures_are_immutable_and_typed() {
             ContentDigest([6; 32]),
         )
         .expect("fixture event is valid"),
-        CanonicalEventDtoV1::validate,
+        CanonicalEvent::validate,
     );
     assert_fixture(
-        include_str!("fixtures/v1/manual-review.json"),
-        ManualReviewDtoV1::new(
+        include_str!("fixtures/current/manual-review.json"),
+        ManualReview::new(
             scope,
             id::<ReviewId>("rev_trade"),
             10,
-            Some(LogicalTimeV1(42)),
+            Some(LogicalTime(42)),
             ContentDigest([7; 32]),
         ),
-        ManualReviewDtoV1::validate,
+        ManualReview::validate,
     );
 }

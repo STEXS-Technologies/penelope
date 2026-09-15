@@ -7,11 +7,10 @@
 use std::num::{NonZeroU32, NonZeroU64};
 
 use penelope::{
-    ActionId, ActionResultObservationV1, ContentDigest, DefinitionId, DefinitionVersion,
-    DomainError, EngineError, LinearSagaDefinitionV1, LogicalTimeV1, ProcessActionKindV1,
-    ProcessId, RetryBackoffV1, RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1,
-    SagaStatusV1, StepId, StepPlanV1, TenantId, apply_action_result, fire_retry_timer,
-    schedule_retry_timer, start,
+    ActionId, ActionResultObservation, ContentDigest, DefinitionId, DefinitionVersion, DomainError,
+    EngineError, LinearSagaDefinition, LogicalTime, ProcessActionKind, ProcessId, RetryBackoff,
+    RetryJitterSeed, RetryPolicy, RetryTimerScheduleRequest, SagaStatus, StepId, StepPlan,
+    TenantId, apply_action_result, fire_retry_timer, schedule_retry_timer, start,
 };
 use thiserror::Error;
 
@@ -34,18 +33,18 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
 }
 
 fn main() -> Result<(), ExampleError> {
-    let backoff = RetryBackoffV1::new(
+    let backoff = RetryBackoff::new(
         NonZeroU64::new(100).ok_or(ExampleError::MissingTimer)?,
         NonZeroU64::new(1_000).ok_or(ExampleError::MissingTimer)?,
     )?;
-    let definition = LinearSagaDefinitionV1::new(
+    let definition = LinearSagaDefinition::new(
         identifier::<DefinitionId>("def_trade")?,
         identifier::<DefinitionVersion>("dfv_one")?,
         ContentDigest([99; 32]),
-        vec![StepPlanV1::canonical_command(
+        vec![StepPlan::canonical_command(
             identifier::<StepId>("stp_settle")?,
             ContentDigest([1; 32]),
-            RetryPolicyV1::new(NonZeroU32::new(2).ok_or(ExampleError::MissingTimer)?)
+            RetryPolicy::new(NonZeroU32::new(2).ok_or(ExampleError::MissingTimer)?)
                 .with_backoff(backoff),
         )],
     );
@@ -67,18 +66,18 @@ fn main() -> Result<(), ExampleError> {
         &first.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &RetryTimerScheduleRequestV1::new(
-            ActionResultObservationV1::retryable_failure(first_action.action_id.clone()),
+        &RetryTimerScheduleRequest::new(
+            ActionResultObservation::retryable_failure(first_action.action_id.clone()),
             Some(identifier("act_settle_timer")?),
-            LogicalTimeV1(10_000),
-            RetryJitterSeedV1::from_digest(ContentDigest([7; 32])),
+            LogicalTime(10_000),
+            RetryJitterSeed::from_digest(ContentDigest([7; 32])),
         )
-        .with_deadline(LogicalTimeV1(10_100)),
+        .with_deadline(LogicalTime(10_100)),
     )?;
     let timer = waiting
         .retry_timer_schedule()
         .ok_or(ExampleError::MissingTimer)?;
-    if timer.action.kind != ProcessActionKindV1::Timer || timer.due_at != LogicalTimeV1(10_100) {
+    if timer.action.kind != ProcessActionKind::Timer || timer.due_at != LogicalTime(10_100) {
         return Err(ExampleError::MissingTimer);
     }
 
@@ -102,10 +101,10 @@ fn main() -> Result<(), ExampleError> {
         &retry.projection,
         tenant_id,
         process_id,
-        &ActionResultObservationV1::succeeded(retry_action.action_id.clone()),
+        &ActionResultObservation::succeeded(retry_action.action_id.clone()),
         None,
     )?;
-    if complete.projection.status == SagaStatusV1::Completed {
+    if complete.projection.status == SagaStatus::Completed {
         Ok(())
     } else {
         Err(ExampleError::NotCompleted)

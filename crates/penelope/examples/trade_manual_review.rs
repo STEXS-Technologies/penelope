@@ -4,9 +4,9 @@
 //! decision before giving this typed resolution to the pure engine.
 
 use penelope::{
-    ActionId, ActionResultObservationV1, CompensationPlanV1, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, EngineError, LinearSagaDefinitionV1, ManualReviewResolutionV1,
-    ProcessId, ProcessScopeV1, RetryPolicyV1, ReviewId, SagaStatusV1, StepId, StepPlanV1, TenantId,
+    ActionId, ActionResultObservation, CompensationPlan, ContentDigest, DefinitionId,
+    DefinitionVersion, DomainError, EngineError, LinearSagaDefinition, ManualReviewResolution,
+    ProcessId, ProcessScope, RetryPolicy, ReviewId, SagaStatus, StepId, StepPlan, TenantId,
     apply_action_result, apply_manual_resolution, start,
 };
 use thiserror::Error;
@@ -29,7 +29,7 @@ fn identifier<T: TryFrom<&'static str, Error = DomainError>>(
     T::try_from(value)
 }
 
-fn action_id(decision: &penelope::SagaDecisionV1) -> Result<ActionId, ExampleError> {
+fn action_id(decision: &penelope::SagaDecision) -> Result<ActionId, ExampleError> {
     decision
         .next_action
         .as_ref()
@@ -38,22 +38,22 @@ fn action_id(decision: &penelope::SagaDecisionV1) -> Result<ActionId, ExampleErr
 }
 
 fn main() -> Result<(), ExampleError> {
-    let policy = RetryPolicyV1::no_retry();
-    let definition = LinearSagaDefinitionV1::new(
+    let policy = RetryPolicy::no_retry();
+    let definition = LinearSagaDefinition::new(
         identifier::<DefinitionId>("def_trade")?,
         identifier::<DefinitionVersion>("dfv_one")?,
         ContentDigest([99; 32]),
         vec![
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_lock_seller")?,
                 ContentDigest([1; 32]),
                 policy,
             )
-            .with_compensation(CompensationPlanV1::canonical_command(
+            .with_compensation(CompensationPlan::canonical_command(
                 ContentDigest([9; 32]),
                 policy,
             )),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 identifier::<StepId>("stp_settle")?,
                 ContentDigest([2; 32]),
                 policy,
@@ -73,7 +73,7 @@ fn main() -> Result<(), ExampleError> {
         &lock.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::succeeded(action_id(&lock)?),
+        &ActionResultObservation::succeeded(action_id(&lock)?),
         Some(identifier("act_settle")?),
     )?;
     let escalated = apply_action_result(
@@ -81,13 +81,13 @@ fn main() -> Result<(), ExampleError> {
         &settle.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &ActionResultObservationV1::unknown(action_id(&settle)?),
+        &ActionResultObservation::unknown(action_id(&settle)?),
         None,
     )?;
-    if escalated.projection.status != SagaStatusV1::Escalated {
+    if escalated.projection.status != SagaStatus::Escalated {
         return Err(ExampleError::UnexpectedState);
     }
-    let scope = ProcessScopeV1::new(
+    let scope = ProcessScope::new(
         tenant_id.clone(),
         process_id.clone(),
         definition.definition_id.clone(),
@@ -100,7 +100,7 @@ fn main() -> Result<(), ExampleError> {
         &scope,
         identifier::<ReviewId>("rev_trade_settlement_unknown")?,
         9,
-        Some(penelope::LogicalTimeV1(10_000)),
+        Some(penelope::LogicalTime(10_000)),
         ContentDigest([77; 32]),
     )?;
     review.validate()?;
@@ -111,7 +111,7 @@ fn main() -> Result<(), ExampleError> {
         &escalated.projection,
         tenant_id.clone(),
         process_id.clone(),
-        ManualReviewResolutionV1::Compensate,
+        ManualReviewResolution::Compensate,
         Some(identifier("act_unlock_seller")?),
     )?;
     let completed = apply_action_result(
@@ -119,10 +119,10 @@ fn main() -> Result<(), ExampleError> {
         &compensation.projection,
         tenant_id,
         process_id,
-        &ActionResultObservationV1::succeeded(action_id(&compensation)?),
+        &ActionResultObservation::succeeded(action_id(&compensation)?),
         None,
     )?;
-    if completed.projection.status == SagaStatusV1::Compensated {
+    if completed.projection.status == SagaStatus::Compensated {
         Ok(())
     } else {
         Err(ExampleError::UnexpectedState)

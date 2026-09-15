@@ -11,22 +11,22 @@ use std::task::{Context, Poll, Waker};
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CausationIdV1, ContentDigest, DefinitionId,
-    DefinitionMigrationV1, DefinitionVersion, InputId, LogicalTimeV1, ManualReviewDtoV1,
-    OperationId, OutcomeActorV1, OutcomeId, PrincipalId, ProcessActionDtoV1, ProcessActionKindV1,
-    ProcessDefinitionDtoV1, ProcessId, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
-    ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
+    ActionId, CanonicalCommand, CausationId, ContentDigest, DefinitionId, DefinitionMigration,
+    DefinitionVersion, InputId, LogicalTime, ManualReview, OperationId, OutcomeActor, OutcomeId,
+    PrincipalId, ProcessAction, ProcessActionKind, ProcessDefinition, ProcessId, ProcessInput,
+    ProcessInputKind, ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind, ProcessScope,
+    ReviewId, StepId, TenantId,
 };
 use penelope_ports::{
-    ActionDispatchReceiptV1, ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1,
-    AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, CanonicalSubmitReceiptV1,
-    Clock, DefinitionLookupV1, DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1,
-    DefinitionRegistry, DiagnosticSink, EffectDispatchRequestV1, ExternalEffectEvidenceV1,
-    ExternalEffectExecutor, Inbox, InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1,
-    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1,
-    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
-    RedactedDiagnosticV1, TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1,
+    ActionDispatchReceipt, ActionDispatcher, ActionIdSource, AtomicProcessCommit,
+    AtomicProcessCommitReceipt, CanonicalReconciliation, CanonicalState, CanonicalSubmitReceipt,
+    Clock, DefinitionLookup, DefinitionMigrationReceipt, DefinitionRegistrationReceipt,
+    DefinitionRegistry, DiagnosticSink, EffectDispatchRequest, ExternalEffectEvidence,
+    ExternalEffectExecutor, Inbox, InboxAcceptanceReceipt, LeaseTokenSource, ManualReviewClaim,
+    ManualReviewDecision, ManualReviewQueue, ManualReviewReceipt, ManualReviewResolution,
+    OutboxClaimRequest, OutboxLease, OutboxRecord, OutboxStore, OutcomeIdSource, PortError,
+    ProcessAuthorizationDecision, ProcessAuthorizationRequest, ProcessAuthorizer, ProcessStore,
+    RedactedDiagnostic, TimerClaimRequest, TimerClaimStore, TimerLease, TimerSchedule,
     TimerScheduler,
 };
 
@@ -36,8 +36,8 @@ struct UnavailablePorts;
 impl LeaseTokenSource for UnavailablePorts {
     async fn next_lease_token(
         &self,
-        _: &ProcessScopeV1,
-    ) -> Result<penelope_ports::OutboxLeaseTokenV1, PortError> {
+        _: &ProcessScope,
+    ) -> Result<penelope_ports::OutboxLeaseToken, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -46,19 +46,19 @@ impl LeaseTokenSource for UnavailablePorts {
 impl DefinitionRegistry for UnavailablePorts {
     async fn register(
         &self,
-        _: &ProcessDefinitionDtoV1,
-    ) -> Result<DefinitionRegistrationReceiptV1, PortError> {
+        _: &ProcessDefinition,
+    ) -> Result<DefinitionRegistrationReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn get(&self, _: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError> {
+    async fn get(&self, _: &DefinitionLookup) -> Result<ProcessDefinition, PortError> {
         Err(PortError::Unavailable)
     }
 
     async fn register_migration(
         &self,
-        _: &DefinitionMigrationV1,
-    ) -> Result<DefinitionMigrationReceiptV1, PortError> {
+        _: &DefinitionMigration,
+    ) -> Result<DefinitionMigrationReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -67,58 +67,58 @@ impl DefinitionRegistry for UnavailablePorts {
 impl ProcessStore for UnavailablePorts {
     async fn commit(
         &self,
-        _: &AtomicProcessCommitV1,
-    ) -> Result<AtomicProcessCommitReceiptV1, PortError> {
+        _: &AtomicProcessCommit,
+    ) -> Result<AtomicProcessCommitReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 
     async fn append_outcomes(
         &self,
-        _: &ProcessScopeV1,
+        _: &ProcessScope,
         _: u64,
-        _: &[ProcessOutcomeDtoV1],
+        _: &[ProcessOutcome],
     ) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 
     async fn read_outcomes(
         &self,
-        _: &penelope_ports::OutcomeReplayRequestV1,
-    ) -> Result<penelope_ports::OutcomeReplayPageV1, PortError> {
+        _: &penelope_ports::OutcomeReplayRequest,
+    ) -> Result<penelope_ports::OutcomeReplayPage, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl OutboxStore for UnavailablePorts {
-    async fn claim(&self, _: &OutboxClaimRequestV1) -> Result<Vec<OutboxLeaseV1>, PortError> {
+    async fn claim(&self, _: &OutboxClaimRequest) -> Result<Vec<OutboxLease>, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn acknowledge(&self, _: &OutboxLeaseV1, _: LogicalTimeV1) -> Result<(), PortError> {
+    async fn acknowledge(&self, _: &OutboxLease, _: LogicalTime) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 
     async fn renew(
         &self,
-        _: &OutboxLeaseV1,
-        _: LogicalTimeV1,
-        _: LogicalTimeV1,
-    ) -> Result<OutboxLeaseV1, PortError> {
+        _: &OutboxLease,
+        _: LogicalTime,
+        _: LogicalTime,
+    ) -> Result<OutboxLease, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl Inbox for UnavailablePorts {
-    async fn accept(&self, _: &ProcessInputDtoV1) -> Result<InboxAcceptanceReceiptV1, PortError> {
+    async fn accept(&self, _: &ProcessInput) -> Result<InboxAcceptanceReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl ActionDispatcher for UnavailablePorts {
-    async fn dispatch(&self, _: &ProcessActionDtoV1) -> Result<ActionDispatchReceiptV1, PortError> {
+    async fn dispatch(&self, _: &ProcessAction) -> Result<ActionDispatchReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -127,62 +127,62 @@ impl ActionDispatcher for UnavailablePorts {
 impl ExternalEffectExecutor for UnavailablePorts {
     async fn execute(
         &self,
-        _: &EffectDispatchRequestV1,
-    ) -> Result<ExternalEffectEvidenceV1, PortError> {
+        _: &EffectDispatchRequest,
+    ) -> Result<ExternalEffectEvidence, PortError> {
         Err(PortError::Unavailable)
     }
 
     async fn reconcile(
         &self,
-        _: &EffectDispatchRequestV1,
-    ) -> Result<ExternalEffectEvidenceV1, PortError> {
+        _: &EffectDispatchRequest,
+    ) -> Result<ExternalEffectEvidence, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn cancel(&self, _: &EffectDispatchRequestV1) -> Result<(), PortError> {
+    async fn cancel(&self, _: &EffectDispatchRequest) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl TimerScheduler for UnavailablePorts {
-    async fn schedule(&self, _: &TimerScheduleV1) -> Result<(), PortError> {
+    async fn schedule(&self, _: &TimerSchedule) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn cancel(&self, _: &TimerScheduleV1) -> Result<(), PortError> {
+    async fn cancel(&self, _: &TimerSchedule) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl TimerClaimStore for UnavailablePorts {
-    async fn claim_due(&self, _: &TimerClaimRequestV1) -> Result<Vec<TimerLeaseV1>, PortError> {
+    async fn claim_due(&self, _: &TimerClaimRequest) -> Result<Vec<TimerLease>, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn acknowledge(&self, _: &TimerLeaseV1, _: LogicalTimeV1) -> Result<(), PortError> {
+    async fn acknowledge(&self, _: &TimerLease, _: LogicalTime) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl Clock for UnavailablePorts {
-    async fn now(&self) -> Result<LogicalTimeV1, PortError> {
+    async fn now(&self) -> Result<LogicalTime, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl ActionIdSource for UnavailablePorts {
-    async fn next_action_id(&self, _: &ProcessScopeV1) -> Result<ActionId, PortError> {
+    async fn next_action_id(&self, _: &ProcessScope) -> Result<ActionId, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl OutcomeIdSource for UnavailablePorts {
-    async fn next_outcome_id(&self, _: &ProcessScopeV1) -> Result<OutcomeId, PortError> {
+    async fn next_outcome_id(&self, _: &ProcessScope) -> Result<OutcomeId, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -191,47 +191,41 @@ impl OutcomeIdSource for UnavailablePorts {
 impl ProcessAuthorizer for UnavailablePorts {
     async fn authorize(
         &self,
-        _: &ProcessAuthorizationRequestV1,
-    ) -> Result<ProcessAuthorizationDecisionV1, PortError> {
-        Ok(ProcessAuthorizationDecisionV1::Denied)
+        _: &ProcessAuthorizationRequest,
+    ) -> Result<ProcessAuthorizationDecision, PortError> {
+        Ok(ProcessAuthorizationDecision::Denied)
     }
 }
 
 #[async_trait]
 impl DiagnosticSink for UnavailablePorts {
-    async fn record(&self, _: &RedactedDiagnosticV1) -> Result<(), PortError> {
+    async fn record(&self, _: &RedactedDiagnostic) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl CanonicalState for UnavailablePorts {
-    async fn submit(
-        &self,
-        _: &CanonicalCommandDtoV1,
-    ) -> Result<CanonicalSubmitReceiptV1, PortError> {
+    async fn submit(&self, _: &CanonicalCommand) -> Result<CanonicalSubmitReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn reconcile(
-        &self,
-        _: &ProcessActionDtoV1,
-    ) -> Result<CanonicalReconciliationV1, PortError> {
+    async fn reconcile(&self, _: &ProcessAction) -> Result<CanonicalReconciliation, PortError> {
         Err(PortError::Unavailable)
     }
 }
 
 #[async_trait]
 impl ManualReviewQueue for UnavailablePorts {
-    async fn open(&self, _: &ManualReviewDtoV1) -> Result<ManualReviewReceiptV1, PortError> {
+    async fn open(&self, _: &ManualReview) -> Result<ManualReviewReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn claim(&self, _: &ManualReviewClaimV1) -> Result<ManualReviewReceiptV1, PortError> {
+    async fn claim(&self, _: &ManualReviewClaim) -> Result<ManualReviewReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn decide(&self, _: &ManualReviewDecisionV1) -> Result<ManualReviewReceiptV1, PortError> {
+    async fn decide(&self, _: &ManualReviewDecision) -> Result<ManualReviewReceipt, PortError> {
         Err(PortError::Unavailable)
     }
 }
@@ -240,8 +234,8 @@ fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
     T::try_from(value).ok().unwrap()
 }
 
-fn scope() -> ProcessScopeV1 {
-    ProcessScopeV1::new(
+fn scope() -> ProcessScope {
+    ProcessScope::new(
         id::<TenantId>("tnt_game"),
         id::<ProcessId>("prc_trade"),
         id::<DefinitionId>("def_trade"),
@@ -250,44 +244,44 @@ fn scope() -> ProcessScopeV1 {
     )
 }
 
-fn action() -> ProcessActionDtoV1 {
-    ProcessActionDtoV1::new(
+fn action() -> ProcessAction {
+    ProcessAction::new(
         scope(),
         id::<ActionId>("act_dispatch"),
         id::<StepId>("stp_settle"),
         0,
-        ProcessActionKindV1::CanonicalCommand,
+        ProcessActionKind::CanonicalCommand,
         ContentDigest([2; 32]),
     )
 }
 
-fn input() -> ProcessInputDtoV1 {
-    ProcessInputDtoV1::new(
+fn input() -> ProcessInput {
+    ProcessInput::new(
         id::<TenantId>("tnt_game"),
         id::<ProcessId>("prc_trade"),
         id::<InputId>("inp_event"),
-        ProcessInputKindV1::CanonicalEvent,
+        ProcessInputKind::CanonicalEvent,
         ContentDigest([3; 32]),
     )
 }
 
-fn outcome() -> ProcessOutcomeDtoV1 {
-    ProcessOutcomeDtoV1::new(
+fn outcome() -> ProcessOutcome {
+    ProcessOutcome::new(
         scope(),
         0,
-        ProcessOutcomeFactV1::new(
+        ProcessOutcomeFact::new(
             id::<OutcomeId>("out_started"),
-            CausationIdV1::Input(id("inp_event")),
-            OutcomeActorV1::System,
-            LogicalTimeV1(1),
-            ProcessOutcomeKindV1::Started,
+            CausationId::Input(id("inp_event")),
+            OutcomeActor::System,
+            LogicalTime(1),
+            ProcessOutcomeKind::Started,
             ContentDigest([4; 32]),
         ),
     )
 }
 
-fn command() -> CanonicalCommandDtoV1 {
-    CanonicalCommandDtoV1::new(
+fn command() -> CanonicalCommand {
+    CanonicalCommand::new(
         id::<TenantId>("tnt_game"),
         id::<ActionId>("act_dispatch"),
         id::<OperationId>("op_settle"),
@@ -335,7 +329,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         ready(lease_tokens.next_lease_token(&scope())),
         Err(PortError::Unavailable)
     ));
-    let definition = ProcessDefinitionDtoV1::new(
+    let definition = ProcessDefinition::new(
         id("def_trade"),
         id("dfv_one"),
         ContentDigest([9; 32]),
@@ -344,7 +338,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     .unwrap();
     let input = input();
     let outcome = outcome();
-    let commit = AtomicProcessCommitV1::new(
+    let commit = AtomicProcessCommit::new(
         0,
         Some(input.clone()),
         vec![outcome.clone()],
@@ -352,62 +346,62 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     )
     .unwrap();
     let replay_request =
-        penelope_ports::OutcomeReplayRequestV1::new(scope(), 0, std::num::NonZeroU16::MIN).unwrap();
-    let review = ManualReviewDtoV1::new(
+        penelope_ports::OutcomeReplayRequest::new(scope(), 0, std::num::NonZeroU16::MIN).unwrap();
+    let review = ManualReview::new(
         scope(),
         id::<ReviewId>("rev_case"),
         0,
         None,
         ContentDigest([6; 32]),
     );
-    let request = ProcessAuthorizationRequestV1 {
+    let request = ProcessAuthorizationRequest {
         scope: scope(),
         principal_id: id::<PrincipalId>("pri_operator"),
-        operation: penelope_ports::ProcessAuthorizationOperationV1::Retry,
+        operation: penelope_ports::ProcessAuthorizationOperation::Retry,
     };
-    let diagnostic = RedactedDiagnosticV1::new(
+    let diagnostic = RedactedDiagnostic::new(
         scope(),
-        penelope_ports::DiagnosticClassV1::Availability,
+        penelope_ports::DiagnosticClass::Availability,
         ContentDigest([8; 32]),
         0,
     )
     .unwrap();
-    let claim = ManualReviewClaimV1 {
+    let claim = ManualReviewClaim {
         scope: scope(),
         review_id: review.review_id.clone(),
         claimed_by: id::<PrincipalId>("pri_operator"),
-        claimed_at: LogicalTimeV1(1),
+        claimed_at: LogicalTime(1),
     };
-    let decision = ManualReviewDecisionV1 {
+    let decision = ManualReviewDecision {
         scope: scope(),
         review_id: review.review_id.clone(),
         claimed_by: id::<PrincipalId>("pri_operator"),
         decided_by: id::<PrincipalId>("pri_operator"),
-        decided_at: LogicalTimeV1(2),
-        resolution: ManualReviewResolutionV1::Escalate,
-        control: penelope_ports::ManualReviewControlV1::SingleOperator,
+        decided_at: LogicalTime(2),
+        resolution: ManualReviewResolution::Escalate,
+        control: penelope_ports::ManualReviewControl::SingleOperator,
         evidence_digest: ContentDigest([7; 32]),
     };
     let mut timer_action = action.clone();
-    timer_action.kind = ProcessActionKindV1::Timer;
-    let timer = TimerScheduleV1 {
+    timer_action.kind = ProcessActionKind::Timer;
+    let timer = TimerSchedule {
         action: timer_action,
-        due_at: LogicalTimeV1(2),
+        due_at: LogicalTime(2),
     };
-    let effect_request = EffectDispatchRequestV1::new(action.clone());
+    let effect_request = EffectDispatchRequest::new(action.clone());
 
     assert!(matches!(
         ready(definitions.register(&definition)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(definitions.get(&DefinitionLookupV1::new(
+        ready(definitions.get(&DefinitionLookup::new(
             definition.definition_id.clone(),
             definition.definition_version.clone(),
         ))),
         Err(PortError::Unavailable)
     ));
-    let migration = DefinitionMigrationV1::new(
+    let migration = DefinitionMigration::new(
         id("mig_trade"),
         definition.definition_id.clone(),
         definition.definition_version.clone(),
@@ -433,23 +427,23 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     let outbox_claim =
-        OutboxClaimRequestV1::new(scope(), id("pri_worker"), std::num::NonZeroU16::MIN).unwrap();
-    let record = OutboxLeaseV1 {
-        record: OutboxRecordV1::new(action.clone()),
+        OutboxClaimRequest::new(scope(), id("pri_worker"), std::num::NonZeroU16::MIN).unwrap();
+    let record = OutboxLease {
+        record: OutboxRecord::new(action.clone()),
         owner: id("pri_worker"),
-        token: penelope_ports::OutboxLeaseTokenV1::new(std::num::NonZeroU64::MIN),
-        lease_expires_at: LogicalTimeV1(5),
+        token: penelope_ports::OutboxLeaseToken::new(std::num::NonZeroU64::MIN),
+        lease_expires_at: LogicalTime(5),
     };
     assert!(matches!(
         ready(outbox.claim(&outbox_claim)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(outbox.acknowledge(&record, LogicalTimeV1(2))),
+        ready(outbox.acknowledge(&record, LogicalTime(2))),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(outbox.renew(&record, LogicalTimeV1(2), LogicalTimeV1(6))),
+        ready(outbox.renew(&record, LogicalTime(2), LogicalTime(6))),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
@@ -480,25 +474,25 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         ready(scheduler.cancel(&timer)),
         Err(PortError::Unavailable)
     ));
-    let timer_claim = TimerClaimRequestV1::new(
+    let timer_claim = TimerClaimRequest::new(
         scope(),
         id("pri_worker"),
-        LogicalTimeV1(3),
+        LogicalTime(3),
         std::num::NonZeroU16::MIN,
     )
     .unwrap();
-    let timer_lease = TimerLeaseV1 {
+    let timer_lease = TimerLease {
         timer,
         owner: id("pri_worker"),
-        token: penelope_ports::OutboxLeaseTokenV1::new(std::num::NonZeroU64::MIN),
-        lease_expires_at: LogicalTimeV1(5),
+        token: penelope_ports::OutboxLeaseToken::new(std::num::NonZeroU64::MIN),
+        lease_expires_at: LogicalTime(5),
     };
     assert!(matches!(
         ready(timer_claims.claim_due(&timer_claim)),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
-        ready(timer_claims.acknowledge(&timer_lease, LogicalTimeV1(3))),
+        ready(timer_claims.acknowledge(&timer_lease, LogicalTime(3))),
         Err(PortError::Unavailable)
     ));
     assert!(matches!(ready(clock.now()), Err(PortError::Unavailable)));
@@ -512,7 +506,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     ));
     assert_eq!(
         ready(authorizer.authorize(&request)).unwrap(),
-        ProcessAuthorizationDecisionV1::Denied
+        ProcessAuthorizationDecision::Denied
     );
     assert!(matches!(
         ready(diagnostics.record(&diagnostic)),

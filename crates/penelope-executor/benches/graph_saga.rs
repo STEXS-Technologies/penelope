@@ -6,10 +6,9 @@ use std::{hint::black_box, time::Instant};
 
 use penelope_domain::{ActionId, ContentDigest, DomainError, InputId, ProcessId, TenantId};
 use penelope_executor::engine::{
-    GraphTransitionOutcomeV1, GraphTransitionV1, ProcessGraphDefinitionV1, RetryPolicyV1,
-    StepPlanV1,
+    GraphTransition, GraphTransitionOutcome, ProcessGraphDefinition, RetryPolicy, StepPlan,
 };
-use penelope_executor::graph::{GraphSagaInputV1, apply_graph_result, start_graph};
+use penelope_executor::graph::{GraphSagaInput, apply_graph_result, start_graph};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -31,32 +30,32 @@ fn id<T: TryFrom<&'static str, Error = DomainError>>(
 }
 
 fn main() -> Result<(), BenchmarkError> {
-    let definition = ProcessGraphDefinitionV1 {
+    let definition = ProcessGraphDefinition {
         definition_id: id("def_graph_benchmark")?,
         definition_version: id("dfv_one")?,
         definition_digest: ContentDigest([17; 32]),
         steps: vec![
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 id("stp_first")?,
                 ContentDigest([18; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
-            StepPlanV1::canonical_command(
+            StepPlan::canonical_command(
                 id("stp_second")?,
                 ContentDigest([19; 32]),
-                RetryPolicyV1::no_retry(),
+                RetryPolicy::no_retry(),
             ),
         ],
         entry_step_id: id("stp_first")?,
         transitions: vec![
-            GraphTransitionV1 {
+            GraphTransition {
                 from_step: id("stp_first")?,
-                on: GraphTransitionOutcomeV1::Succeeded,
+                on: GraphTransitionOutcome::Succeeded,
                 to_step: Some(id("stp_second")?),
             },
-            GraphTransitionV1 {
+            GraphTransition {
                 from_step: id("stp_second")?,
-                on: GraphTransitionOutcomeV1::Succeeded,
+                on: GraphTransitionOutcome::Succeeded,
                 to_step: None,
             },
         ],
@@ -71,7 +70,7 @@ fn main() -> Result<(), BenchmarkError> {
             black_box(&definition),
             tenant.clone(),
             process.clone(),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id::<InputId>("inp_graph_start")?,
                 action_id: id::<ActionId>("act_graph_first")?,
             },
@@ -83,9 +82,9 @@ fn main() -> Result<(), BenchmarkError> {
         let advanced = apply_graph_result(
             black_box(&definition),
             black_box(&started.projection),
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id::<InputId>("inp_graph_result_one")?,
-                observation: penelope_executor::engine::ActionResultObservationV1::succeeded(
+                observation: penelope_executor::engine::ActionResultObservation::succeeded(
                     first.action_id.clone(),
                 ),
                 next_action_id: Some(id::<ActionId>("act_graph_second")?),
@@ -98,9 +97,9 @@ fn main() -> Result<(), BenchmarkError> {
         let completed = apply_graph_result(
             black_box(&definition),
             black_box(&advanced.projection),
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id::<InputId>("inp_graph_result_two")?,
-                observation: penelope_executor::engine::ActionResultObservationV1::succeeded(
+                observation: penelope_executor::engine::ActionResultObservation::succeeded(
                     second.action_id.clone(),
                 ),
                 next_action_id: None,

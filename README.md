@@ -6,7 +6,7 @@ workflow decided and what its steps observed. It is not a ledger, matching
 engine, market-data system, or canonical inventory/position store.
 
 > Status: **early implementation; not production-ready.** Penelope has typed
-> versioned protocol DTOs and a tested pure linear-saga reference engine with
+> typed protocol values and a tested pure linear-saga reference engine with
 > ordered-event replay. It does not yet have an append-only outcome
 > implementation, durable adapters, complete replay/compensation semantics, or
 > a release process. The complete execution plan is [TODO.md](TODO.md).
@@ -88,6 +88,24 @@ Manual-review cases carry an optional inclusive logical expiry. Claims and
 decisions are scope-pinned and must be recorded no later than that deadline;
 dual-control decisions can require a different operator from the claimant.
 
+## Developer experience: the async loop
+
+Application code stays small and explicit:
+
+```rust
+let input = ProcessInput::new(tenant, process, input_id, kind, payload_digest);
+let decision = engine.decide(&definition, &projection, input)?;
+store.commit(/* decision.outcomes(), decision.actions() */)?;
+for action in decision.actions() { outbox.dispatch(action); }
+```
+
+On a crash, reload the ordered outcomes and call replay; the same projection
+and pending action IDs are rebuilt without re-running side effects. Duplicate
+inputs and results are rejected by typed identity/scope checks. If an external
+call timed out, reconciliation queries durable evidence by its `EffectKey` and
+only then records committed, retryable, or manual-review outcomes. Penelope
+does not guess, rewrite history, or require infrastructure dependencies.
+
 ## StateChronicle integration contract
 
 The `penelope-statechronicle` workspace crate is the dedicated future adapter
@@ -157,30 +175,29 @@ transport / database / broker / scheduler implementations (consumer-owned)
                   penelope-intent         [inbound validation]
                               |
                               v
-                  penelope-domain         [versioned DTOs]
+                  penelope-domain         [typed values]
                               |
                               v
-                   penelope-core          [schema primitives]
+                   penelope-core          [shared primitives]
 
                   penelope                [umbrella facade]
 ```
 
 | Crate | Responsibility | Current state |
 | --- | --- | --- |
-| `penelope-core` | Pure schema constants and shared protocol primitives. | Versioned schema IDs only. |
-| `penelope-domain` | Versioned public DTOs for definitions, inputs, outcomes, actions, canonical commands/events and review. | DTOs only; no workflow logic. |
+| `penelope-core` | Dependency-stable home for shared pure primitives. | Intentionally small; no I/O. |
+| `penelope-domain` | Typed public values for definitions, inputs, outcomes, actions, canonical commands/events and review. | Values only; no workflow logic. |
 | `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
 | `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine plus a separately validated bounded graph-definition contract: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces plus typed atomic inbox/outcome/action commit contract; no implementation. |
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed scope/action/operation/resource/digest verifier; intentionally no StateChronicle client or local-checkout dependency. |
 | `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
 
-All DTOs are versioned by their `V<N>` Rust type and immutable associated
-`SCHEMA` identity, such as `ProcessOutcomeDtoV1::SCHEMA`. New wire changes
-require a new DTO/schema version; no existing version may be reinterpreted.
-Checked-in v1 JSON fixtures independently lock every current public wire DTO
-and input envelope: CI must deserialize, validate, and reserialize each one
-without changing its JSON value. Every identity is a validated prefixed newtype,
+Public values have no embedded wire-version discriminator. Constructors and
+`validate()` enforce invariants, while `DefinitionVersion` remains a semantic
+pin for a running process. Consumers own transport compatibility and may add
+their own envelope/version policy at the edge. Checked-in JSON fixtures lock
+the current representation. Every identity is a validated prefixed newtype,
 every category is a typed enum, and port APIs accept typed values only—application
 code never dispatches by matching raw strings. Infrastructure implementations
 must live in a consumer composition root or a separately reviewed adapter
@@ -200,7 +217,7 @@ It requires `gitleaks` locally; CI independently performs the same category of
 scan over the complete checkout history on every push and pull request.
 
 The StateChronicle command expectation and verified-event boundary values are
-also serde-compatible `V1` protocol types, with their parser included in the
+also serde-compatible `` protocol types, with their parser included in the
 correlation fuzz target.
 
 The reference engine gives every step an explicit typed maximum attempt count.
@@ -208,9 +225,9 @@ An exhausted retryable failure escalates without producing another action;
 unknown outcomes escalate immediately. Deadline/backoff/timer policy still
 belongs to the remaining P0 implementation work.
 
-`ProcessGraphDefinitionV1` has a dedicated deterministic graph executor
+`ProcessGraphDefinition` has a dedicated deterministic graph executor
 (`start_graph`, `apply_graph_result`, `replay_graph`, and
-`replay_graph_ordered` with `GraphSagaEventEnvelopeV1`). Ordered replay rejects
+`replay_graph_ordered` with `GraphSagaEventEnvelope`). Ordered replay rejects
 sequence gaps, duplicates, and reordering before applying any event. Replay is
 bounded to `MAX_GRAPH_REPLAY_EVENTS` to prevent untrusted logs from causing
 unbounded duplicate-input tracking allocation. Graph definitions must not be
@@ -238,7 +255,7 @@ transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
 parse, DTO, or decision surfaces must add a target before they are considered
 complete.
 
-The public linear-engine `V1` definitions, projections, decisions, outcomes,
+The public linear-engine `` definitions, projections, decisions, outcomes,
 and ordered event envelopes are serde-compatible protocol values. Their schema
 evolution remains additive; durable adapter design and compatibility fixtures
 are still required before a production release.
@@ -258,26 +275,26 @@ atomically settle → compensate/unlock or escalate`.
   manual-review case; it never silently strands or releases assets.
 
 The compiling pure happy-path reference is
-[`trade_v1.rs`](crates/penelope/examples/trade_v1.rs). Run it with:
+[`trade.rs`](crates/penelope/examples/trade.rs). Run it with:
 
 ```bash
-cargo run -p penelope --example trade_v1 --locked
+cargo run -p penelope --example trade --locked
 ```
 
 The known-failure/compensation reference is
-[`trade_compensation_v1.rs`](crates/penelope/examples/trade_compensation_v1.rs):
+[`trade_compensation.rs`](crates/penelope/examples/trade_compensation.rs):
 
 ```bash
-cargo run -p penelope --example trade_compensation_v1 --locked
+cargo run -p penelope --example trade_compensation --locked
 ```
 
-[`trade_competing_lock_v1.rs`](crates/penelope/examples/trade_competing_lock_v1.rs)
+[`trade_competing_lock.rs`](crates/penelope/examples/trade_competing_lock.rs)
 drills two independent trades competing for one canonical lock. It proves the
 pure engine lets the verified winner progress toward settlement while the
 canonically rejected trade escalates without a settlement action:
 
 ```bash
-cargo run -p penelope --example trade_competing_lock_v1 --locked
+cargo run -p penelope --example trade_competing_lock --locked
 ```
 
 It demonstrates the public facade only. It is not a durable integration: a
@@ -285,9 +302,9 @@ production adapter must record outcomes and verify StateChronicle evidence as
 described above before calling the transition API.
 
 The normal construction path is fluent and typed:
-`LinearSagaDefinitionV1::new`, `StepPlanV1::canonical_command`,
-`StepPlanV1::with_compensation`, `RetryPolicyV1`, and
-`ActionResultObservationV1` constructors. Raw text is needed only at an
+`LinearSagaDefinition::new`, `StepPlan::canonical_command`,
+`StepPlan::with_compensation`, `RetryPolicy`, and
+`ActionResultObservation` constructors. Raw text is needed only at an
 explicit identifier parsing boundary.
 
 ## Verification today

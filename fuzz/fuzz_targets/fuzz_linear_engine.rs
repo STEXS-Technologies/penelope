@@ -2,22 +2,21 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    ActionId, CausationIdV1, ContentDigest, DefinitionId, DefinitionVersion, InputId,
-    LogicalTimeV1, OutcomeActorV1, OutcomeId, ProcessActionKindV1, ProcessId, ProcessOutcomeFactV1,
-    ProcessScopeV1, TenantId,
+    ActionId, CausationId, ContentDigest, DefinitionId, DefinitionVersion, InputId, LogicalTime,
+    OutcomeActor, OutcomeId, ProcessActionKind, ProcessId, ProcessOutcomeFact, ProcessScope,
+    TenantId,
 };
 use penelope_executor::engine::{
-    ActionResultObservationV1, ActionResultV1, CompensationPlanV1, LinearSagaDefinitionV1,
-    LinearSagaEventEnvelopeV1, LinearSagaEventV1, LinearSagaInputV1, ProcessGraphDefinitionV1,
-    RetryBackoffV1, RetryJitterSeedV1, RetryPolicyV1, RetryTimerScheduleRequestV1, StepPlanV1,
-    apply_action_result, apply_manual_resolution, fire_retry_timer, replay, replay_ordered,
-    schedule_retry_timer, start,
+    ActionResult, ActionResultObservation, CompensationPlan, LinearSagaDefinition, LinearSagaEvent,
+    LinearSagaEventEnvelope, LinearSagaInput, ProcessGraphDefinition, RetryBackoff,
+    RetryJitterSeed, RetryPolicy, RetryTimerScheduleRequest, StepPlan, apply_action_result,
+    apply_manual_resolution, fire_retry_timer, replay, replay_ordered, schedule_retry_timer, start,
 };
 use penelope_executor::graph::{
-    GraphSagaEventEnvelopeV1, GraphSagaInputV1, apply_graph_result, replay_graph,
-    replay_graph_ordered, start_graph,
+    GraphSagaEventEnvelope, GraphSagaInput, apply_graph_result, replay_graph, replay_graph_ordered,
+    start_graph,
 };
-use penelope_ports::ManualReviewResolutionV1;
+use penelope_ports::ManualReviewResolution;
 use std::num::{NonZeroU32, NonZeroU64};
 
 fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -28,19 +27,19 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
 }
 
 fuzz_target!(|data: &[u8]| {
-    if let Ok(envelope) = serde_json::from_slice::<LinearSagaEventEnvelopeV1>(data) {
+    if let Ok(envelope) = serde_json::from_slice::<LinearSagaEventEnvelope>(data) {
         let _ = envelope.event.observed_outcome_kinds();
     }
-    if let Ok(definition) = serde_json::from_slice::<LinearSagaDefinitionV1>(data) {
+    if let Ok(definition) = serde_json::from_slice::<LinearSagaDefinition>(data) {
         let _ = definition.validate();
     }
-    if let Ok(graph) = serde_json::from_slice::<ProcessGraphDefinitionV1>(data) {
+    if let Ok(graph) = serde_json::from_slice::<ProcessGraphDefinition>(data) {
         let _ = graph.validate();
         if let Ok(started) = start_graph(
             &graph,
             identifier::<TenantId>("tnt_graph_fuzz"),
             identifier::<ProcessId>("prc_graph_fuzz"),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: identifier::<InputId>("inp_graph_fuzz_start"),
                 action_id: identifier::<ActionId>("act_graph_fuzz_start"),
             },
@@ -55,7 +54,7 @@ fuzz_target!(|data: &[u8]| {
                 &graph,
                 &identifier::<TenantId>("tnt_graph_fuzz"),
                 &identifier::<ProcessId>("prc_graph_fuzz"),
-                &[GraphSagaEventEnvelopeV1 {
+                &[GraphSagaEventEnvelope {
                     sequence: 0,
                     event: started.event.clone(),
                 }],
@@ -64,9 +63,9 @@ fuzz_target!(|data: &[u8]| {
                 let _ = apply_graph_result(
                     &graph,
                     &started.projection,
-                    GraphSagaInputV1::ActionResult {
+                    GraphSagaInput::ActionResult {
                         input_id: identifier::<InputId>("inp_graph_fuzz_result"),
-                        observation: ActionResultObservationV1::succeeded(action.action_id),
+                        observation: ActionResultObservation::succeeded(action.action_id),
                         next_action_id: None,
                     },
                 );
@@ -74,52 +73,52 @@ fuzz_target!(|data: &[u8]| {
         }
     }
     let step_count = data.first().map_or(0, |byte| usize::from(byte % 4));
-    let definition = LinearSagaDefinitionV1 {
+    let definition = LinearSagaDefinition {
         definition_id: identifier::<DefinitionId>("def_fuzz"),
         definition_version: identifier::<DefinitionVersion>("dfv_one"),
         definition_digest: ContentDigest([99; 32]),
         steps: (0..step_count)
-            .map(|index| StepPlanV1 {
+            .map(|index| StepPlan {
                 step_id: match index {
                     0 => identifier("stp_zero"),
                     1 => identifier("stp_one"),
                     2 => identifier("stp_two"),
                     _ => identifier("stp_three"),
                 },
-                action_kind: ProcessActionKindV1::CanonicalCommand,
+                action_kind: ProcessActionKind::CanonicalCommand,
                 payload_digest: ContentDigest([index as u8; 32]),
-                retry_policy: RetryPolicyV1::no_retry(),
-                compensation: Some(CompensationPlanV1::canonical_command(
+                retry_policy: RetryPolicy::no_retry(),
+                compensation: Some(CompensationPlan::canonical_command(
                     ContentDigest([u8::MAX - index as u8; 32]),
-                    RetryPolicyV1::no_retry(),
+                    RetryPolicy::no_retry(),
                 )),
             })
             .collect(),
     };
-    if let Ok(input) = serde_json::from_slice::<LinearSagaInputV1>(data) {
+    if let Ok(input) = serde_json::from_slice::<LinearSagaInput>(data) {
         let _ = input.to_event(&definition);
     }
     let tenant_id = identifier::<TenantId>("tnt_fuzz");
     let process_id = identifier::<ProcessId>("prc_fuzz");
     let action_id = identifier::<ActionId>("act_fuzz_start");
     let replay_events = [
-        LinearSagaEventV1::started(
+        LinearSagaEvent::started(
             &definition,
             identifier::<InputId>("inp_fuzz_start"),
             action_id.clone(),
         ),
-        LinearSagaEventV1::ActionResultObserved {
+        LinearSagaEvent::ActionResultObserved {
             input_id: identifier::<InputId>("inp_fuzz_result"),
-            observation: ActionResultObservationV1::succeeded(action_id.clone()),
+            observation: ActionResultObservation::succeeded(action_id.clone()),
             next_action_id: Some(identifier("act_fuzz_next")),
         },
     ];
     let _ = replay(&definition, &tenant_id, &process_id, &replay_events);
     let duplicate_input_events = [
         replay_events[0].clone(),
-        LinearSagaEventV1::ActionResultObserved {
+        LinearSagaEvent::ActionResultObserved {
             input_id: identifier::<InputId>("inp_fuzz_start"),
-            observation: ActionResultObservationV1::succeeded(action_id.clone()),
+            observation: ActionResultObservation::succeeded(action_id.clone()),
             next_action_id: Some(identifier("act_fuzz_next")),
         },
     ];
@@ -130,11 +129,11 @@ fuzz_target!(|data: &[u8]| {
         &duplicate_input_events,
     );
     let ordered_replay_events = [
-        LinearSagaEventEnvelopeV1 {
+        LinearSagaEventEnvelope {
             sequence: 0,
             event: replay_events[0].clone(),
         },
-        LinearSagaEventEnvelopeV1 {
+        LinearSagaEventEnvelope {
             sequence: 1,
             event: replay_events[1].clone(),
         },
@@ -149,7 +148,7 @@ fuzz_target!(|data: &[u8]| {
         return;
     };
     let _ = decision.planned_outcome_kinds();
-    let start_event = LinearSagaEventV1::started(
+    let start_event = LinearSagaEvent::started(
         &definition,
         identifier::<InputId>("inp_fuzz_start"),
         action_id.clone(),
@@ -165,21 +164,21 @@ fuzz_target!(|data: &[u8]| {
         .chain(decision.planned_outcome_kinds())
         .zip(outcome_ids)
         .map(|(kind, outcome_id)| {
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 outcome_id,
-                if matches!(kind, penelope_domain::ProcessOutcomeKindV1::InputAccepted) {
-                    CausationIdV1::Input(identifier("inp_fuzz_start"))
+                if matches!(kind, penelope_domain::ProcessOutcomeKind::InputAccepted) {
+                    CausationId::Input(identifier("inp_fuzz_start"))
                 } else {
-                    CausationIdV1::Action(action_id.clone())
+                    CausationId::Action(action_id.clone())
                 },
-                OutcomeActorV1::System,
-                LogicalTimeV1(data.first().copied().map_or(0, u64::from)),
+                OutcomeActor::System,
+                LogicalTime(data.first().copied().map_or(0, u64::from)),
                 *kind,
                 ContentDigest([0; 32]),
             )
         })
         .collect::<Vec<_>>();
-    let scope = ProcessScopeV1::new(
+    let scope = ProcessScope::new(
         tenant_id.clone(),
         process_id.clone(),
         definition.definition_id.clone(),
@@ -195,21 +194,21 @@ fuzz_target!(|data: &[u8]| {
 
     for byte in data.iter().skip(1) {
         let result = match byte % 4 {
-            0 => ActionResultV1::Succeeded,
-            1 => ActionResultV1::RetryableFailure,
-            2 => ActionResultV1::TerminalFailure,
-            _ => ActionResultV1::Unknown,
+            0 => ActionResult::Succeeded,
+            1 => ActionResult::RetryableFailure,
+            2 => ActionResult::TerminalFailure,
+            _ => ActionResult::Unknown,
         };
         let next_action_id = match result {
-            ActionResultV1::Succeeded | ActionResultV1::RetryableFailure => {
+            ActionResult::Succeeded | ActionResult::RetryableFailure => {
                 Some(identifier("act_fuzz_next"))
             }
-            ActionResultV1::TerminalFailure | ActionResultV1::Unknown => None,
+            ActionResult::TerminalFailure | ActionResult::Unknown => None,
         };
         let Some(active_action) = decision.next_action.as_ref() else {
             return;
         };
-        let observation = ActionResultObservationV1 {
+        let observation = ActionResultObservation {
             action_id: active_action.action_id.clone(),
             result,
         };
@@ -227,21 +226,21 @@ fuzz_target!(|data: &[u8]| {
         let _ = decision.planned_outcome_kinds();
     }
 
-    let backoff = match RetryBackoffV1::new(
+    let backoff = match RetryBackoff::new(
         NonZeroU64::MIN,
         NonZeroU64::new(4).unwrap_or(NonZeroU64::MIN),
     ) {
         Ok(backoff) => backoff,
         Err(_) => return,
     };
-    let timer_definition = LinearSagaDefinitionV1::new(
+    let timer_definition = LinearSagaDefinition::new(
         identifier("def_timer"),
         identifier("dfv_one"),
         ContentDigest([88; 32]),
-        vec![StepPlanV1::canonical_command(
+        vec![StepPlan::canonical_command(
             identifier("stp_timer"),
             ContentDigest([7; 32]),
-            RetryPolicyV1::new(NonZeroU32::new(3).unwrap_or(NonZeroU32::MIN)).with_backoff(backoff),
+            RetryPolicy::new(NonZeroU32::new(3).unwrap_or(NonZeroU32::MIN)).with_backoff(backoff),
         )],
     );
     let Ok(started) = start(
@@ -255,17 +254,17 @@ fuzz_target!(|data: &[u8]| {
     let Some(active) = started.next_action.as_ref() else {
         return;
     };
-    let now = LogicalTimeV1(data.first().copied().map_or(0, u64::from));
+    let now = LogicalTime(data.first().copied().map_or(0, u64::from));
     let scheduled = schedule_retry_timer(
         &timer_definition,
         &started.projection,
         tenant_id.clone(),
         process_id.clone(),
-        &RetryTimerScheduleRequestV1::new(
-            ActionResultObservationV1::retryable_failure(active.action_id.clone()),
+        &RetryTimerScheduleRequest::new(
+            ActionResultObservation::retryable_failure(active.action_id.clone()),
             Some(identifier("act_timer_fire")),
             now,
-            RetryJitterSeedV1::from_digest(ContentDigest([data.first().copied().unwrap_or(0); 32])),
+            RetryJitterSeed::from_digest(ContentDigest([data.first().copied().unwrap_or(0); 32])),
         ),
     );
     if let Ok(scheduled) = scheduled
@@ -283,14 +282,14 @@ fuzz_target!(|data: &[u8]| {
         );
     }
 
-    let review_definition = LinearSagaDefinitionV1::new(
+    let review_definition = LinearSagaDefinition::new(
         identifier("def_review"),
         identifier("dfv_one"),
         ContentDigest([77; 32]),
-        vec![StepPlanV1::canonical_command(
+        vec![StepPlan::canonical_command(
             identifier("stp_review"),
             ContentDigest([6; 32]),
-            RetryPolicyV1::no_retry(),
+            RetryPolicy::no_retry(),
         )],
     );
     let Ok(review_started) = start(
@@ -309,22 +308,22 @@ fuzz_target!(|data: &[u8]| {
         &review_started.projection,
         identifier("tnt_review"),
         identifier("prc_review"),
-        &ActionResultObservationV1::unknown(review_action.action_id.clone()),
+        &ActionResultObservation::unknown(review_action.action_id.clone()),
         None,
     ) else {
         return;
     };
     let resolution = match data.first().map_or(0, |byte| byte % 4) {
-        0 => ManualReviewResolutionV1::RetryAction,
-        1 => ManualReviewResolutionV1::Compensate,
-        2 => ManualReviewResolutionV1::Cancel,
-        _ => ManualReviewResolutionV1::Escalate,
+        0 => ManualReviewResolution::RetryAction,
+        1 => ManualReviewResolution::Compensate,
+        2 => ManualReviewResolution::Cancel,
+        _ => ManualReviewResolution::Escalate,
     };
     let next_action_id = match resolution {
-        ManualReviewResolutionV1::RetryAction | ManualReviewResolutionV1::Compensate => {
+        ManualReviewResolution::RetryAction | ManualReviewResolution::Compensate => {
             Some(identifier("act_review_resolution"))
         }
-        ManualReviewResolutionV1::Cancel | ManualReviewResolutionV1::Escalate => None,
+        ManualReviewResolution::Cancel | ManualReviewResolution::Escalate => None,
     };
     let _ = apply_manual_resolution(
         &review_definition,

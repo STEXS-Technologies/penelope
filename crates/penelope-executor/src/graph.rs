@@ -1,11 +1,11 @@
 //! Deterministic execution for bounded process graphs.
 
 use crate::engine::{
-    ActionResultObservationV1, ActionResultV1, GraphTransitionOutcomeV1, ProcessGraphDefinitionV1,
-    SagaStatusV1,
+    ActionResult, ActionResultObservation, GraphTransitionOutcome, ProcessGraphDefinition,
+    SagaStatus,
 };
 use penelope_domain::{
-    ActionId, InputId, ProcessActionDtoV1, ProcessId, ProcessScopeV1, StepId, TenantId,
+    ActionId, InputId, ProcessAction, ProcessId, ProcessScope, StepId, TenantId,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -16,9 +16,9 @@ pub const MAX_GRAPH_REPLAY_EVENTS: usize = 4_096;
 
 /// Replayable projection for a graph process.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct GraphSagaProjectionV1 {
+pub struct GraphSagaProjection {
     /// Pinned process scope.
-    pub scope: ProcessScopeV1,
+    pub scope: ProcessScope,
     /// Current step awaiting an observation.
     pub current_step_id: Option<StepId>,
     /// Number of step actions issued so far.
@@ -28,12 +28,12 @@ pub struct GraphSagaProjectionV1 {
     /// Every action identity issued by this process.
     pub issued_action_ids: Vec<ActionId>,
     /// Current lifecycle status.
-    pub status: SagaStatusV1,
+    pub status: SagaStatus,
 }
 
 /// Typed graph input accepted by the deterministic executor.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum GraphSagaInputV1 {
+pub enum GraphSagaInput {
     /// Starts a graph at its declared entry step.
     Start {
         /// Immutable inbox identity.
@@ -46,7 +46,7 @@ pub enum GraphSagaInputV1 {
         /// Immutable inbox identity.
         input_id: InputId,
         /// Correlated result observation.
-        observation: ActionResultObservationV1,
+        observation: ActionResultObservation,
         /// Fresh action identity for a selected destination step.
         next_action_id: Option<ActionId>,
     },
@@ -54,7 +54,7 @@ pub enum GraphSagaInputV1 {
 
 /// Immutable graph event suitable for an append-only process log.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum GraphSagaEventV1 {
+pub enum GraphSagaEvent {
     /// Recorded process start.
     Started {
         /// Accepted input identity.
@@ -67,7 +67,7 @@ pub enum GraphSagaEventV1 {
         /// Accepted input identity.
         input_id: InputId,
         /// Correlated result.
-        observation: ActionResultObservationV1,
+        observation: ActionResultObservation,
         /// Destination action identity, when another step is selected.
         next_action_id: Option<ActionId>,
     },
@@ -75,11 +75,11 @@ pub enum GraphSagaEventV1 {
 
 /// Ordered envelope for graph events in a durable process log.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct GraphSagaEventEnvelopeV1 {
+pub struct GraphSagaEventEnvelope {
     /// Zero-based contiguous position in the process log.
     pub sequence: u64,
     /// Immutable graph event at this position.
-    pub event: GraphSagaEventV1,
+    pub event: GraphSagaEvent,
 }
 
 /// Graph execution failure.
@@ -129,28 +129,28 @@ pub enum GraphEngineError {
 
 /// Result of one pure graph decision.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct GraphSagaDecisionV1 {
+pub struct GraphSagaDecision {
     /// Projection after applying the decision.
-    pub projection: GraphSagaProjectionV1,
+    pub projection: GraphSagaProjection,
     /// Action to dispatch, if the process remains runnable.
-    pub next_action: Option<ProcessActionDtoV1>,
+    pub next_action: Option<ProcessAction>,
     /// Immutable event to append before dispatching the action.
-    pub event: GraphSagaEventV1,
+    pub event: GraphSagaEvent,
 }
 
 fn action_for(
-    definition: &ProcessGraphDefinitionV1,
-    scope: &ProcessScopeV1,
+    definition: &ProcessGraphDefinition,
+    scope: &ProcessScope,
     step_id: &StepId,
     action_id: ActionId,
     visit: u32,
-) -> Result<ProcessActionDtoV1, GraphEngineError> {
+) -> Result<ProcessAction, GraphEngineError> {
     let step = definition
         .steps
         .iter()
         .find(|step| &step.step_id == step_id)
         .ok_or(GraphEngineError::ActionIdentityMismatch)?;
-    Ok(ProcessActionDtoV1::new(
+    Ok(ProcessAction::new(
         scope.clone(),
         action_id,
         step.step_id.clone(),
@@ -160,18 +160,18 @@ fn action_for(
     ))
 }
 
-const fn transition_outcome(result: ActionResultV1) -> GraphTransitionOutcomeV1 {
+const fn transition_outcome(result: ActionResult) -> GraphTransitionOutcome {
     match result {
-        ActionResultV1::Succeeded => GraphTransitionOutcomeV1::Succeeded,
-        ActionResultV1::RetryableFailure => GraphTransitionOutcomeV1::RetryableFailure,
-        ActionResultV1::TerminalFailure | ActionResultV1::Unknown => {
-            GraphTransitionOutcomeV1::TerminalFailure
+        ActionResult::Succeeded => GraphTransitionOutcome::Succeeded,
+        ActionResult::RetryableFailure => GraphTransitionOutcome::RetryableFailure,
+        ActionResult::TerminalFailure | ActionResult::Unknown => {
+            GraphTransitionOutcome::TerminalFailure
         }
     }
 }
 
 fn ensure_new_action(
-    projection: &GraphSagaProjectionV1,
+    projection: &GraphSagaProjection,
     next_action_id: Option<&ActionId>,
 ) -> Result<ActionId, GraphEngineError> {
     let action_id = next_action_id.ok_or(GraphEngineError::ActionIdentityMismatch)?;
@@ -191,22 +191,22 @@ fn ensure_new_action(
 ///
 /// Returns a typed error when the graph or start input is invalid.
 pub fn start_graph(
-    definition: &ProcessGraphDefinitionV1,
+    definition: &ProcessGraphDefinition,
     tenant_id: TenantId,
     process_id: ProcessId,
-    input: GraphSagaInputV1,
-) -> Result<GraphSagaDecisionV1, GraphEngineError> {
+    input: GraphSagaInput,
+) -> Result<GraphSagaDecision, GraphEngineError> {
     definition
         .validate()
         .map_err(|source| GraphEngineError::InvalidDefinition { source })?;
-    let GraphSagaInputV1::Start {
+    let GraphSagaInput::Start {
         input_id,
         action_id,
     } = input
     else {
         return Err(GraphEngineError::AlreadyStarted);
     };
-    let scope = ProcessScopeV1::new(
+    let scope = ProcessScope::new(
         tenant_id,
         process_id,
         definition.definition_id.clone(),
@@ -220,18 +220,18 @@ pub fn start_graph(
         action_id.clone(),
         1,
     )?;
-    let projection = GraphSagaProjectionV1 {
+    let projection = GraphSagaProjection {
         scope,
         current_step_id: Some(definition.entry_step_id.clone()),
         step_visits: 1,
         active_action_id: Some(action_id.clone()),
         issued_action_ids: vec![action_id.clone()],
-        status: SagaStatusV1::Running,
+        status: SagaStatus::Running,
     };
-    Ok(GraphSagaDecisionV1 {
+    Ok(GraphSagaDecision {
         projection,
         next_action: Some(action),
-        event: GraphSagaEventV1::Started {
+        event: GraphSagaEvent::Started {
             input_id,
             action_id,
         },
@@ -245,14 +245,14 @@ pub fn start_graph(
 /// Returns a typed error when the definition, projection, result identity, or
 /// selected transition violates a graph invariant.
 pub fn apply_graph_result(
-    definition: &ProcessGraphDefinitionV1,
-    projection: &GraphSagaProjectionV1,
-    input: GraphSagaInputV1,
-) -> Result<GraphSagaDecisionV1, GraphEngineError> {
+    definition: &ProcessGraphDefinition,
+    projection: &GraphSagaProjection,
+    input: GraphSagaInput,
+) -> Result<GraphSagaDecision, GraphEngineError> {
     definition
         .validate()
         .map_err(|source| GraphEngineError::InvalidDefinition { source })?;
-    let GraphSagaInputV1::ActionResult {
+    let GraphSagaInput::ActionResult {
         input_id,
         observation,
         next_action_id,
@@ -260,7 +260,7 @@ pub fn apply_graph_result(
     else {
         return Err(GraphEngineError::NotRunning);
     };
-    if projection.status != SagaStatusV1::Running {
+    if projection.status != SagaStatus::Running {
         return Err(GraphEngineError::NotRunning);
     }
     if projection
@@ -274,18 +274,18 @@ pub fn apply_graph_result(
         .current_step_id
         .as_ref()
         .ok_or(GraphEngineError::NotRunning)?;
-    if observation.result == ActionResultV1::Unknown {
+    if observation.result == ActionResult::Unknown {
         if next_action_id.is_some() {
             return Err(GraphEngineError::ActionIdentityMismatch);
         }
         let mut escalated = projection.clone();
         escalated.current_step_id = None;
         escalated.active_action_id = None;
-        escalated.status = SagaStatusV1::Escalated;
-        return Ok(GraphSagaDecisionV1 {
+        escalated.status = SagaStatus::Escalated;
+        return Ok(GraphSagaDecision {
             projection: escalated,
             next_action: None,
-            event: GraphSagaEventV1::ActionResultObserved {
+            event: GraphSagaEvent::ActionResultObserved {
                 input_id,
                 observation,
                 next_action_id,
@@ -326,17 +326,17 @@ pub fn apply_graph_result(
             return Err(GraphEngineError::ActionIdentityMismatch);
         }
         next_projection.current_step_id = None;
-        next_projection.status = if observation.result == ActionResultV1::Succeeded {
-            SagaStatusV1::Completed
+        next_projection.status = if observation.result == ActionResult::Succeeded {
+            SagaStatus::Completed
         } else {
-            SagaStatusV1::Escalated
+            SagaStatus::Escalated
         };
         None
     };
-    Ok(GraphSagaDecisionV1 {
+    Ok(GraphSagaDecision {
         projection: next_projection,
         next_action,
-        event: GraphSagaEventV1::ActionResultObserved {
+        event: GraphSagaEvent::ActionResultObserved {
             input_id,
             observation,
             next_action_id,
@@ -351,11 +351,11 @@ pub fn apply_graph_result(
 /// Returns a typed error when event order, input identity, scope, or graph
 /// transition invariants fail during replay.
 pub fn replay_graph(
-    definition: &ProcessGraphDefinitionV1,
+    definition: &ProcessGraphDefinition,
     tenant_id: &TenantId,
     process_id: &ProcessId,
-    events: &[GraphSagaEventV1],
-) -> Result<GraphSagaProjectionV1, GraphEngineError> {
+    events: &[GraphSagaEvent],
+) -> Result<GraphSagaProjection, GraphEngineError> {
     if events.len() > MAX_GRAPH_REPLAY_EVENTS {
         return Err(GraphEngineError::ReplayLimitExceeded);
     }
@@ -363,8 +363,8 @@ pub fn replay_graph(
     let mut accepted_inputs = HashSet::new();
     for event in events {
         let observed_input_id = match event {
-            GraphSagaEventV1::Started { input_id, .. }
-            | GraphSagaEventV1::ActionResultObserved { input_id, .. } => input_id,
+            GraphSagaEvent::Started { input_id, .. }
+            | GraphSagaEvent::ActionResultObserved { input_id, .. } => input_id,
         };
         if !accepted_inputs.insert(observed_input_id.clone()) {
             return Err(GraphEngineError::DuplicateInput);
@@ -372,7 +372,7 @@ pub fn replay_graph(
         projection = Some(match (projection, event) {
             (
                 None,
-                GraphSagaEventV1::Started {
+                GraphSagaEvent::Started {
                     input_id: event_input_id,
                     action_id,
                 },
@@ -381,7 +381,7 @@ pub fn replay_graph(
                     definition,
                     tenant_id.clone(),
                     process_id.clone(),
-                    GraphSagaInputV1::Start {
+                    GraphSagaInput::Start {
                         input_id: event_input_id.clone(),
                         action_id: action_id.clone(),
                     },
@@ -390,7 +390,7 @@ pub fn replay_graph(
             }
             (
                 Some(current),
-                GraphSagaEventV1::ActionResultObserved {
+                GraphSagaEvent::ActionResultObserved {
                     input_id: event_input_id,
                     observation,
                     next_action_id,
@@ -399,7 +399,7 @@ pub fn replay_graph(
                 apply_graph_result(
                     definition,
                     &current,
-                    GraphSagaInputV1::ActionResult {
+                    GraphSagaInput::ActionResult {
                         input_id: event_input_id.clone(),
                         observation: observation.clone(),
                         next_action_id: next_action_id.clone(),
@@ -420,11 +420,11 @@ pub fn replay_graph(
 /// Returns [`GraphEngineError::SequenceMismatch`] for gaps, duplicates, or
 /// reordered envelopes; otherwise returns the same errors as [`replay_graph`].
 pub fn replay_graph_ordered(
-    definition: &ProcessGraphDefinitionV1,
+    definition: &ProcessGraphDefinition,
     tenant_id: &TenantId,
     process_id: &ProcessId,
-    events: &[GraphSagaEventEnvelopeV1],
-) -> Result<GraphSagaProjectionV1, GraphEngineError> {
+    events: &[GraphSagaEventEnvelope],
+) -> Result<GraphSagaProjection, GraphEngineError> {
     if events.len() > MAX_GRAPH_REPLAY_EVENTS {
         return Err(GraphEngineError::ReplayLimitExceeded);
     }
@@ -444,33 +444,33 @@ pub fn replay_graph_ordered(
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
-    use crate::engine::{GraphTransitionV1, RetryPolicyV1, StepPlanV1};
+    use crate::engine::{GraphTransition, RetryPolicy, StepPlan};
     use penelope_domain::{ContentDigest, DefinitionId, DefinitionVersion, ProcessId, TenantId};
 
     fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
         T::try_from(value).ok().unwrap()
     }
 
-    fn definition() -> ProcessGraphDefinitionV1 {
-        let policy = RetryPolicyV1::no_retry();
-        ProcessGraphDefinitionV1 {
+    fn definition() -> ProcessGraphDefinition {
+        let policy = RetryPolicy::no_retry();
+        ProcessGraphDefinition {
             definition_id: id::<DefinitionId>("def_graph_exec"),
             definition_version: id::<DefinitionVersion>("dfv_one"),
             definition_digest: ContentDigest([1; 32]),
             steps: vec![
-                StepPlanV1::canonical_command(id("stp_first"), ContentDigest([2; 32]), policy),
-                StepPlanV1::canonical_command(id("stp_second"), ContentDigest([3; 32]), policy),
+                StepPlan::canonical_command(id("stp_first"), ContentDigest([2; 32]), policy),
+                StepPlan::canonical_command(id("stp_second"), ContentDigest([3; 32]), policy),
             ],
             entry_step_id: id("stp_first"),
             transitions: vec![
-                GraphTransitionV1 {
+                GraphTransition {
                     from_step: id("stp_first"),
-                    on: GraphTransitionOutcomeV1::Succeeded,
+                    on: GraphTransitionOutcome::Succeeded,
                     to_step: Some(id("stp_second")),
                 },
-                GraphTransitionV1 {
+                GraphTransition {
                     from_step: id("stp_second"),
-                    on: GraphTransitionOutcomeV1::Succeeded,
+                    on: GraphTransitionOutcome::Succeeded,
                     to_step: None,
                 },
             ],
@@ -487,7 +487,7 @@ mod tests {
             &definition,
             tenant_id.clone(),
             process_id.clone(),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id("inp_graph_start"),
                 action_id: id("act_graph_first"),
             },
@@ -496,9 +496,9 @@ mod tests {
         let finished = apply_graph_result(
             &definition,
             &started.projection,
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id("inp_graph_first_result"),
-                observation: ActionResultObservationV1::succeeded(id("act_graph_first")),
+                observation: ActionResultObservation::succeeded(id("act_graph_first")),
                 next_action_id: Some(id("act_graph_second")),
             },
         )
@@ -506,14 +506,14 @@ mod tests {
         let completed = apply_graph_result(
             &definition,
             &finished.projection,
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id("inp_graph_second_result"),
-                observation: ActionResultObservationV1::succeeded(id("act_graph_second")),
+                observation: ActionResultObservation::succeeded(id("act_graph_second")),
                 next_action_id: None,
             },
         )
         .unwrap();
-        assert_eq!(completed.projection.status, SagaStatusV1::Completed);
+        assert_eq!(completed.projection.status, SagaStatus::Completed);
         let replayed = replay_graph(
             &definition,
             &tenant_id,
@@ -531,13 +531,13 @@ mod tests {
             &definition,
             id("tnt_graph"),
             id("prc_graph"),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id("inp_start"),
                 action_id: id("act_first"),
             },
         )
         .unwrap();
-        let events = [GraphSagaEventEnvelopeV1 {
+        let events = [GraphSagaEventEnvelope {
             sequence: 1,
             event: started.event,
         }];
@@ -554,7 +554,7 @@ mod tests {
             &definition,
             id("tnt_graph"),
             id("prc_graph"),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id("inp_start"),
                 action_id: id("act_first"),
             },
@@ -574,7 +574,7 @@ mod tests {
             &definition,
             id("tnt_graph_exec"),
             id("prc_graph_exec"),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id("inp_graph_start"),
                 action_id: id("act_graph_first"),
             },
@@ -583,9 +583,9 @@ mod tests {
         let error = apply_graph_result(
             &definition,
             &started.projection,
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id("inp_graph_wrong_result"),
-                observation: ActionResultObservationV1::succeeded(id("act_other")),
+                observation: ActionResultObservation::succeeded(id("act_other")),
                 next_action_id: Some(id("act_graph_second")),
             },
         )
@@ -600,7 +600,7 @@ mod tests {
             &definition,
             id("tnt_graph_exec"),
             id("prc_graph_exec"),
-            GraphSagaInputV1::Start {
+            GraphSagaInput::Start {
                 input_id: id("inp_graph_start"),
                 action_id: id("act_graph_first"),
             },
@@ -609,17 +609,17 @@ mod tests {
         let decision = apply_graph_result(
             &definition,
             &started.projection,
-            GraphSagaInputV1::ActionResult {
+            GraphSagaInput::ActionResult {
                 input_id: id("inp_graph_unknown"),
-                observation: ActionResultObservationV1 {
+                observation: ActionResultObservation {
                     action_id: id("act_graph_first"),
-                    result: ActionResultV1::Unknown,
+                    result: ActionResult::Unknown,
                 },
                 next_action_id: None,
             },
         )
         .unwrap();
-        assert_eq!(decision.projection.status, SagaStatusV1::Escalated);
+        assert_eq!(decision.projection.status, SagaStatus::Escalated);
         assert!(decision.next_action.is_none());
     }
 }

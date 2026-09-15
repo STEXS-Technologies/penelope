@@ -1,10 +1,10 @@
 #![allow(clippy::arithmetic_side_effects, clippy::expect_used)]
 
 use penelope_domain::{
-    CanonicalWireBytesV1, CausationIdV1, ContentDigest, LogicalTimeV1, OutcomeActorV1, OutcomeId,
-    ProcessOutcomeDtoV1, ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1,
+    CanonicalWireBytes, CausationId, ContentDigest, LogicalTime, OutcomeActor, OutcomeId,
+    ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind, ProcessScope,
 };
-use penelope_ports::OutcomeLogV1;
+use penelope_ports::OutcomeLog;
 use std::time::Instant;
 
 fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
@@ -13,8 +13,8 @@ fn id<T: TryFrom<&'static str>>(value: &'static str) -> T {
         .expect("benchmark identifier is valid")
 }
 
-fn scope() -> ProcessScopeV1 {
-    ProcessScopeV1::new(
+fn scope() -> ProcessScope {
+    ProcessScope::new(
         id("tnt_bench"),
         id("prc_bench"),
         id("def_bench"),
@@ -23,17 +23,17 @@ fn scope() -> ProcessScopeV1 {
     )
 }
 
-fn outcome(sequence: u64) -> ProcessOutcomeDtoV1 {
-    ProcessOutcomeDtoV1::new(
+fn outcome(sequence: u64) -> ProcessOutcome {
+    ProcessOutcome::new(
         scope(),
         sequence,
-        ProcessOutcomeFactV1::new(
+        ProcessOutcomeFact::new(
             OutcomeId::try_from(format!("out_bench_{sequence}"))
                 .expect("benchmark outcome identifier is valid"),
-            CausationIdV1::Action(id("act_bench")),
-            OutcomeActorV1::System,
-            LogicalTimeV1(sequence),
-            ProcessOutcomeKindV1::ActionPlanned,
+            CausationId::Action(id("act_bench")),
+            OutcomeActor::System,
+            LogicalTime(sequence),
+            ProcessOutcomeKind::ActionPlanned,
             ContentDigest([4; 32]),
         ),
     )
@@ -58,19 +58,19 @@ fn main() {
         encoding_elapsed.as_nanos() / u128::from(iterations)
     );
 
-    let mut log = OutcomeLogV1::new(scope());
+    let mut log = OutcomeLog::new(scope());
     let append_start = Instant::now();
     for sequence in 0..iterations.min(4096) {
-        let item = ProcessOutcomeDtoV1::new(
+        let item = ProcessOutcome::new(
             scope(),
             sequence,
-            ProcessOutcomeFactV1::new(
+            ProcessOutcomeFact::new(
                 OutcomeId::try_from(format!("out_bench_{sequence}"))
                     .expect("benchmark outcome identifier is valid"),
-                CausationIdV1::Action(id("act_bench")),
-                OutcomeActorV1::System,
-                LogicalTimeV1(sequence),
-                ProcessOutcomeKindV1::ActionPlanned,
+                CausationId::Action(id("act_bench")),
+                OutcomeActor::System,
+                LogicalTime(sequence),
+                ProcessOutcomeKind::ActionPlanned,
                 ContentDigest([4; 32]),
             ),
         );
