@@ -803,6 +803,18 @@ restart/timer properties and every current public-boundary fuzz target; a
 scheduled workflow runs the bounded extended drill weekly. This remains pure-library evidence, not a
 durable deployment drill.
 
+Fresh validation on 2026-09-15: `check-layer-boundaries.sh`,
+`check-no-secrets.sh` (231 reachable commits, 0 leaks), and
+`check-action-pins.sh` passed. `run_pure_chaos_drill.sh` completed three
+iterations; every executor restart/timer property and all nine malformed-input
+fuzz targets passed in each iteration with no crash artifacts or sanitizer
+markers. Workspace tests, strict Clippy, rustdoc, `cargo audit`, and
+`cargo deny` also passed. Pure benchmark observations on this host were
+approximately 152k graph ops/s, 803 ns linear operations, 2.19M isolated
+parallel graph ops/s, 16.9M isolated parallel linear ops/s, and 1.48 us replay
+operations. These figures exclude persistence, shared contention, scheduling,
+and network costs.
+
 ### P3.3 Reproducible performance evidence
 
 - [ ] Benchmark pure decisions/replay, durable append/project, inbox/outbox,
