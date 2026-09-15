@@ -1490,8 +1490,9 @@ impl ExternalEffectEvidenceV1 {
     ///
     /// # Errors
     ///
-    /// Returns a typed error when evidence is substituted or the request
-    /// deadline has elapsed.
+    /// Returns a typed error when evidence is substituted or the request is
+    /// malformed. A deadline does not prevent reading authoritative evidence;
+    /// it only changes known-failure disposition from retry to escalation.
     pub fn disposition_at(
         &self,
         request: &EffectDispatchRequestV1,
