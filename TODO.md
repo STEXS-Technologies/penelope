@@ -30,9 +30,10 @@ Open risks found by the deeper security, stability and reliability audit:
    limits and compile-time non-substitutability checks are still open. Typed
    length-prefixed canonical byte encoders now exist for process scopes and
    effect keys, and are fuzz-exercised. Definitions now have a stable SHA-256
-   digest over canonical bytes plus a fail-closed verifier; canonical encodings
-   for every DTO and a versioned digest migration policy remain open. Never use
-   display text as an idempotency key or signature input.
+   digest over canonical bytes plus a fail-closed verifier. The shared
+   `CanonicalWireBytesV1` trait now covers every current domain and port DTO;
+   the v1 digest migration policy remains open. Never use display text as an
+   idempotency key or signature input.
 3. **P1 — recovery semantics are incomplete.** Durable inbox/outcome replay,
    timer claiming, cancellation, compensation ordering and ambiguous-effect
    reconciliation lack a complete portable contract and adversarial state-machine

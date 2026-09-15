@@ -138,6 +138,25 @@ pub enum DefinitionCompatibilityError {
     DigestMismatch,
 }
 
+/// Typed failure for canonical wire encoding.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum CanonicalEncodingError {
+    /// The serializer could not encode the value under the supported schema.
+    #[error("canonical wire encoding failed")]
+    Serialization,
+}
+
+/// Canonical, deterministic bytes for a versioned public value.
+pub trait CanonicalWireBytesV1 {
+    /// Encodes the value with stable struct field order and its explicit schema
+    /// discriminator where the value defines one.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CanonicalEncodingError::Serialization`] if encoding fails.
+    fn canonical_wire_bytes(&self) -> Result<Vec<u8>, CanonicalEncodingError>;
+}
+
 fn validate_identifier(prefix: &str, value: &str) -> bool {
     value.starts_with(prefix)
         && value.len() > prefix.len()
@@ -765,6 +784,44 @@ pub struct ManualReviewDtoV1 {
     /// Redacted evidence digest.
     pub evidence_digest: ContentDigest,
 }
+
+fn canonical_serialize<T: Serialize>(value: &T) -> Result<Vec<u8>, CanonicalEncodingError> {
+    serde_json::to_vec(value).map_err(|_serialization_error| CanonicalEncodingError::Serialization)
+}
+
+macro_rules! canonical_wire_impl {
+    ($($ty:ty),+ $(,)?) => {
+        $(
+            impl CanonicalWireBytesV1 for $ty {
+                fn canonical_wire_bytes(&self) -> Result<Vec<u8>, CanonicalEncodingError> {
+                    canonical_serialize(self)
+                }
+            }
+        )+
+    };
+}
+
+canonical_wire_impl!(
+    ContentDigest,
+    LogicalTimeV1,
+    SchemaV1,
+    ProcessInputKindV1,
+    ProcessOutcomeKindV1,
+    ProcessActionKindV1,
+    CausationIdV1,
+    OutcomeActorV1,
+    ProcessOutcomeFactV1,
+    ProcessDefinitionDtoV1,
+    ProcessInputDtoV1,
+    ProcessInputEnvelopeV1,
+    ProcessOutcomeDtoV1,
+    ProcessScopeV1,
+    ProcessActionDtoV1,
+    EffectKeyV1,
+    CanonicalCommandDtoV1,
+    CanonicalEventDtoV1,
+    ManualReviewDtoV1,
+);
 
 impl ProcessDefinitionDtoV1 {
     /// Immutable schema identity for this DTO version.
@@ -1609,6 +1666,22 @@ mod tests {
             definition.require_canonical_digest(),
             Err(DefinitionCompatibilityError::DigestMismatch)
         );
+    }
+
+    #[test]
+    fn every_public_wire_value_has_deterministic_canonical_bytes() {
+        let input = ProcessInputDtoV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            id("inp_start"),
+            ProcessInputKindV1::CanonicalEvent,
+            ContentDigest([4; 32]),
+        );
+        let envelope = ProcessInputEnvelopeV1::new(input);
+        let first = envelope.canonical_wire_bytes().unwrap();
+        let second = envelope.canonical_wire_bytes().unwrap();
+        assert_eq!(first, second);
+        assert!(!first.is_empty());
     }
 
     #[test]

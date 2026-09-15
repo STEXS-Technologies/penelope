@@ -293,6 +293,7 @@ dependencies = [
  "async-trait",
  "penelope-domain",
  "serde",
+ "serde_json",
  "thiserror",
 ]
 

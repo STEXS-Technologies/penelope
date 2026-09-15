@@ -9,8 +9,8 @@
 
 use async_trait::async_trait;
 use penelope_domain::{
-    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, EffectKeyV1,
-    ExternalReferenceId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId,
+    ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, CanonicalWireBytesV1,
+    EffectKeyV1, ExternalReferenceId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId,
     ProcessActionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1, ProcessScopeV1,
     ReviewId,
 };
@@ -1607,6 +1607,55 @@ pub trait ManualReviewQueue: Send + Sync {
     async fn decide(&self, decision: &ManualReviewDecisionV1) -> Result<(), PortError>;
 }
 
+fn canonical_port_bytes<T: Serialize>(
+    value: &T,
+) -> Result<Vec<u8>, penelope_domain::CanonicalEncodingError> {
+    serde_json::to_vec(value)
+        .map_err(|_serialization_error| penelope_domain::CanonicalEncodingError::Serialization)
+}
+
+macro_rules! canonical_port_impl {
+    ($($ty:ty),+ $(,)?) => {
+        $(
+            impl CanonicalWireBytesV1 for $ty {
+                fn canonical_wire_bytes(&self) -> Result<Vec<u8>, penelope_domain::CanonicalEncodingError> {
+                    canonical_port_bytes(self)
+                }
+            }
+        )+
+    };
+}
+
+canonical_port_impl!(
+    OutboxLeaseTokenV1,
+    OutboxAcknowledgementV1,
+    OutboxRecordV1,
+    OutboxClaimRequestV1,
+    OutboxLeaseV1,
+    DiagnosticClassV1,
+    RedactedDiagnosticV1,
+    QuotaKindV1,
+    QuotaRequestV1,
+    CanonicalReconciliationV1,
+    ManualReviewResolutionV1,
+    ManualReviewControlV1,
+    ProcessAuthorizationOperationV1,
+    AuthorizationRequirementV1,
+    ProcessAuthorizationRequestV1,
+    ProcessAuthorizationDecisionV1,
+    ExternalEffectStateV1,
+    EffectDispatchRequestV1,
+    ExternalEffectEvidenceV1,
+    TimerScheduleV1,
+    ManualReviewClaimV1,
+    ManualReviewDecisionV1,
+    AtomicProcessCommitV1,
+    OutcomeReplayRequestV1,
+    OutcomeReplayPageV1,
+    OutcomeLogV1,
+    AtomicProcessCommitReceiptV1,
+);
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
@@ -2358,6 +2407,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(valid.validate(), Ok(()));
+        assert!(!valid.canonical_wire_bytes().unwrap().is_empty());
         assert_eq!(
             QuotaRequestV1::new(
                 QuotaKindV1::OutcomeWrites,
