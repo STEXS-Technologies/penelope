@@ -516,6 +516,8 @@ sequence conflicts, and a bounded outcome page replays the committed state.
 `AtomicProcessCommitReceiptV1::validate_for` now verifies that an adapter
 acknowledgement names the exact final sequence and cannot claim a duplicate
 input when no input was submitted. This closes receipt-substitution ambiguity;
+it also rejects validation against a malformed or empty commit before sequence
+arithmetic is considered.
 transactional durability and projection writes remain adapter-owned.
 No durable implementation or projection write exists yet, so this item remains
 incomplete.
