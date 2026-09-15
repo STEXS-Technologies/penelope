@@ -10,13 +10,13 @@ use penelope_ports::{
     AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, AuthorizationRequirementV1,
     CanonicalReconciliationV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
     DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, EffectDispatchRequestV1,
-    ExternalEffectEvidenceV1, ExternalEffectStateV1, ManualReviewClaimV1, ManualReviewControlV1,
-    ManualReviewDecisionV1, ManualReviewOperationV1, ManualReviewReceiptV1,
-    ManualReviewResolutionV1, OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1,
-    OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, OutcomeReplayPageV1, OutcomeReplayRequestV1,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
-    QuotaKindV1, QuotaRequestV1, RecoveryDispositionV1, RedactedDiagnosticV1, TimerClaimRequestV1,
-    TimerLeaseV1, TimerScheduleV1,
+    ExternalEffectDispositionV1, ExternalEffectEvidenceV1, ExternalEffectStateV1,
+    ManualReviewClaimV1, ManualReviewControlV1, ManualReviewDecisionV1, ManualReviewOperationV1,
+    ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxAcknowledgementV1, OutboxClaimRequestV1,
+    OutboxLeaseTokenV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, OutcomeReplayPageV1,
+    OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1,
+    ProcessAuthorizationRequestV1, QuotaKindV1, QuotaRequestV1, RecoveryDispositionV1,
+    RedactedDiagnosticV1, TimerClaimRequestV1, TimerLeaseV1, TimerScheduleV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -139,6 +139,9 @@ fuzz_target!(|data: &[u8]| {
         let _ = value.canonical_wire_bytes();
     }
     if let Ok(value) = serde_json::from_slice::<ExternalEffectStateV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<ExternalEffectDispositionV1>(data) {
         let _ = value.canonical_wire_bytes();
     }
     if let Ok(value) = serde_json::from_slice::<TimerScheduleV1>(data) {

@@ -1342,6 +1342,17 @@ pub struct ExternalEffectEvidenceV1 {
     pub state: ExternalEffectStateV1,
 }
 
+/// Safe next step derived from external-effect evidence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ExternalEffectDispositionV1 {
+    /// The effect is known to have completed; do not execute again.
+    Completed,
+    /// Authoritative known failure permits a policy-controlled retry.
+    Retry,
+    /// The effect is ambiguous and requires reconciliation or review.
+    Escalate,
+}
+
 impl EffectDispatchRequestV1 {
     /// Creates an external effect request with no application deadline.
     #[must_use]
@@ -1422,6 +1433,26 @@ impl ExternalEffectEvidenceV1 {
             return Err(EffectReconciliationValidationError::EffectKeyMismatch);
         }
         Ok(())
+    }
+
+    /// Derives a fail-closed execution disposition at a logical time.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when evidence is substituted or the request
+    /// deadline has elapsed.
+    pub fn disposition_at(
+        &self,
+        request: &EffectDispatchRequestV1,
+        now: LogicalTimeV1,
+    ) -> Result<ExternalEffectDispositionV1, EffectReconciliationValidationError> {
+        request.validate_at(now)?;
+        self.validate_for(request)?;
+        Ok(match self.state {
+            ExternalEffectStateV1::Succeeded => ExternalEffectDispositionV1::Completed,
+            ExternalEffectStateV1::KnownFailure => ExternalEffectDispositionV1::Retry,
+            ExternalEffectStateV1::Unknown => ExternalEffectDispositionV1::Escalate,
+        })
     }
 }
 
@@ -2454,6 +2485,7 @@ canonical_port_impl!(
     ExternalEffectStateV1,
     EffectDispatchRequestV1,
     ExternalEffectEvidenceV1,
+    ExternalEffectDispositionV1,
     TimerScheduleV1,
     TimerClaimRequestV1,
     TimerLeaseV1,
@@ -2813,6 +2845,22 @@ mod tests {
             state: ExternalEffectStateV1::Unknown,
         };
         assert_eq!(evidence.validate_for(&request), Ok(()));
+        assert_eq!(
+            evidence.disposition_at(&request, LogicalTimeV1(10)),
+            Ok(ExternalEffectDispositionV1::Escalate)
+        );
+        let mut failed = evidence.clone();
+        failed.state = ExternalEffectStateV1::KnownFailure;
+        assert_eq!(
+            failed.disposition_at(&request, LogicalTimeV1(10)),
+            Ok(ExternalEffectDispositionV1::Retry)
+        );
+        let mut succeeded = failed;
+        succeeded.state = ExternalEffectStateV1::Succeeded;
+        assert_eq!(
+            succeeded.disposition_at(&request, LogicalTimeV1(10)),
+            Ok(ExternalEffectDispositionV1::Completed)
+        );
 
         let wrong_action = ExternalEffectEvidenceV1 {
             action_id: id("act_other"),
