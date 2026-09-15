@@ -699,6 +699,32 @@ pub enum ProcessAuthorizationOperationV1 {
     Retry,
     /// Submit a manual-review decision.
     DecideReview,
+    /// Submit an explicit terminal override after review and evidence.
+    TerminalOverride,
+}
+
+/// Minimum control required before a mutable process operation can proceed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum AuthorizationRequirementV1 {
+    /// One authenticated principal may authorize the operation.
+    AuthenticatedPrincipal,
+    /// Two distinct authenticated principals are required.
+    DistinctPrincipals,
+}
+
+impl ProcessAuthorizationOperationV1 {
+    /// Returns the minimum control level for this high-value operation.
+    #[must_use]
+    pub const fn minimum_requirement(self) -> AuthorizationRequirementV1 {
+        match self {
+            Self::Start | Self::Cancel | Self::Retry => {
+                AuthorizationRequirementV1::AuthenticatedPrincipal
+            }
+            Self::DecideReview | Self::TerminalOverride => {
+                AuthorizationRequirementV1::DistinctPrincipals
+            }
+        }
+    }
 }
 
 /// Typed authorization request for one process operation.
@@ -2347,6 +2373,26 @@ mod tests {
                 NonZeroU32::new(MAX_QUOTA_CAPACITY.saturating_add(1)).unwrap(),
             ),
             Err(QuotaValidationError::CapacityLimitExceeded)
+        );
+    }
+
+    #[test]
+    fn authorization_matrix_requires_distinct_principals_for_high_value_actions() {
+        assert_eq!(
+            ProcessAuthorizationOperationV1::Start.minimum_requirement(),
+            AuthorizationRequirementV1::AuthenticatedPrincipal
+        );
+        assert_eq!(
+            ProcessAuthorizationOperationV1::Retry.minimum_requirement(),
+            AuthorizationRequirementV1::AuthenticatedPrincipal
+        );
+        assert_eq!(
+            ProcessAuthorizationOperationV1::DecideReview.minimum_requirement(),
+            AuthorizationRequirementV1::DistinctPrincipals
+        );
+        assert_eq!(
+            ProcessAuthorizationOperationV1::TerminalOverride.minimum_requirement(),
+            AuthorizationRequirementV1::DistinctPrincipals
         );
     }
 }

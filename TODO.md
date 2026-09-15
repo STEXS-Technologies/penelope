@@ -43,7 +43,9 @@ Open risks found by the deeper security, stability and reliability audit:
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
    helpers do not yet define a complete operation/resource matrix or durable
    quota accounting. A typed `QuotaRequestV1` now bounds typed resource classes
-   and admission units. A typed `RedactedDiagnosticV1` carries only a coarse class,
+   and admission units. `ProcessAuthorizationOperationV1` now publishes a
+   minimum control matrix, requiring distinct principals for review decisions
+   and terminal overrides. A typed `RedactedDiagnosticV1` carries only a coarse class,
    bounded metadata size and an evidence digest—never a raw message or payload—
    with tests for bounds and error classification. Consumers must deny by default
    and avoid logging raw payloads.
