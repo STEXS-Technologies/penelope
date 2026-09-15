@@ -7,8 +7,8 @@ use penelope_domain::{
     ProcessInputDtoV1, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessScopeV1,
 };
 use penelope_ports::{
-    CanonicalSubmitReceiptV1, DefinitionRegistrationReceiptV1, OutboxClaimRequestV1, OutboxLeaseV1,
-    OutboxRecordV1, OutcomeLogV1, QuotaRequestV1,
+    CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1, DefinitionRegistrationReceiptV1,
+    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, QuotaRequestV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -77,6 +77,9 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(receipt) = serde_json::from_slice::<CanonicalSubmitReceiptV1>(data) {
         let _ = receipt.canonical_wire_bytes();
+    }
+    if let Ok(window) = serde_json::from_slice::<CanonicalReconciliationWindowV1>(data) {
+        let _ = window.canonical_wire_bytes();
     }
     if let Ok(event) = serde_json::from_slice::<CanonicalEventDtoV1>(data) {
         let _ = event.validate();
