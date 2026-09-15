@@ -29,9 +29,10 @@ Open risks found by the deeper security, stability and reliability audit:
    timer and review identity coverage, canonical byte encoding, payload-size
    limits and compile-time non-substitutability checks are still open. Typed
    length-prefixed canonical byte encoders now exist for process scopes and
-   effect keys, and are fuzz-exercised, but a cryptographic digest algorithm and
-   canonical encodings for every DTO are still open. Never use display text as
-   an idempotency key or signature input.
+   effect keys, and are fuzz-exercised. Definitions now have a stable SHA-256
+   digest over canonical bytes plus a fail-closed verifier; canonical encodings
+   for every DTO and a versioned digest migration policy remain open. Never use
+   display text as an idempotency key or signature input.
 3. **P1 — recovery semantics are incomplete.** Durable inbox/outcome replay,
    timer claiming, cancellation, compensation ordering and ambiguous-effect
    reconciliation lack a complete portable contract and adversarial state-machine
@@ -48,9 +49,9 @@ Open risks found by the deeper security, stability and reliability audit:
 5. **P1 — definition evolution is incomplete.** Pinning and digest comparison
    exist, and a typed compatibility classifier now distinguishes exact,
    migration-required and incompatible definitions with a fail-closed exact
-   requirement and tests. Registration, migration rules and a canonical digest
-   algorithm remain open; changed definitions must be rejected during deployment
-   unless a consumer supplies an explicit migration policy.
+   requirement and tests. Registration and migration rules remain open; changed
+   definitions must be rejected during deployment unless a consumer supplies an
+   explicit migration policy.
 6. **P3 — performance evidence is workload-specific.** Current host runs measure
    about 0.15M graph ops/s, 13.8M linear ops/s and 1.88M isolated graph ops/s across
    32 workers. These exclude serialization, persistence, contention, scheduling

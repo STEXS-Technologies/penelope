@@ -11,6 +11,9 @@ use penelope_ports::{OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, Outcom
 fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<ProcessDefinitionDtoV1>(data) {
         let _ = definition.validate();
+        let _ = definition.canonical_bytes();
+        let _ = definition.computed_digest();
+        let _ = definition.require_canonical_digest();
     }
     if let Ok(input) = serde_json::from_slice::<ProcessInputDtoV1>(data) {
         let _ = input.validate();

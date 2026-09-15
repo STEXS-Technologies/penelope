@@ -11,6 +11,7 @@ use core::str::FromStr;
 
 use serde::de::Error as _;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use sha2::{Digest as _, Sha256};
 use thiserror::Error;
 
 /// Maximum length of a textual protocol identifier.
@@ -132,6 +133,9 @@ pub enum DefinitionCompatibilityError {
     /// Definition content changed without an explicit migration.
     #[error("definition content changed and requires an explicit migration")]
     RequiresMigration,
+    /// The stored digest does not match the canonical v1 definition bytes.
+    #[error("definition digest does not match canonical v1 encoding")]
+    DigestMismatch,
 }
 
 fn validate_identifier(prefix: &str, value: &str) -> bool {
@@ -306,6 +310,18 @@ identifier!(
 /// Fixed-size digest of canonical payload bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct ContentDigest(pub [u8; 32]);
+
+impl ContentDigest {
+    /// Computes the stable SHA-256 digest used by Penelope's v1 canonical
+    /// encoding contract.
+    #[must_use]
+    pub fn sha256(bytes: &[u8]) -> Self {
+        let digest = Sha256::digest(bytes);
+        let mut value = [0_u8; 32];
+        value.copy_from_slice(&digest);
+        Self(value)
+    }
+}
 
 /// A deterministic millisecond timestamp supplied by an injected clock.
 ///
@@ -800,6 +816,41 @@ impl ProcessDefinitionDtoV1 {
             return Err(DomainError::DuplicateStepId);
         }
         Ok(())
+    }
+
+    /// Encodes definition identity and semantics without including the stored
+    /// digest, avoiding a self-referential hash input.
+    #[must_use]
+    pub fn canonical_bytes(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        encode_identifier(&mut bytes, self.definition_id.as_str());
+        encode_identifier(&mut bytes, self.definition_version.as_str());
+        let step_count = u32::try_from(self.step_ids.len()).unwrap_or(u32::MAX);
+        bytes.extend_from_slice(&step_count.to_be_bytes());
+        for step_id in &self.step_ids {
+            encode_identifier(&mut bytes, step_id.as_str());
+        }
+        bytes
+    }
+
+    /// Computes the canonical SHA-256 definition digest for registration.
+    #[must_use]
+    pub fn computed_digest(&self) -> ContentDigest {
+        ContentDigest::sha256(&self.canonical_bytes())
+    }
+
+    /// Requires the stored digest to match the canonical v1 definition bytes.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DefinitionCompatibilityError::DigestMismatch`] when the
+    /// supplied digest is not reproducible from the definition contents.
+    pub fn require_canonical_digest(&self) -> Result<(), DefinitionCompatibilityError> {
+        if self.definition_digest == self.computed_digest() {
+            Ok(())
+        } else {
+            Err(DefinitionCompatibilityError::DigestMismatch)
+        }
     }
 
     /// Classifies whether this definition can replace a pinned definition.
@@ -1534,6 +1585,29 @@ mod tests {
         assert_eq!(
             changed_identity.require_exact_compatibility(&pinned),
             Err(DefinitionCompatibilityError::IdentityMismatch)
+        );
+    }
+
+    #[test]
+    fn canonical_definition_digest_is_reproducible_and_rejects_tampering() {
+        let mut definition = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([0; 32]),
+            vec![id("stp_lock"), id("stp_settle")],
+        )
+        .unwrap();
+        definition.definition_digest = definition.computed_digest();
+        assert_eq!(definition.require_canonical_digest(), Ok(()));
+        let encoded = definition.canonical_bytes();
+        assert_eq!(
+            ContentDigest::sha256(&encoded),
+            definition.definition_digest
+        );
+        definition.step_ids.reverse();
+        assert_eq!(
+            definition.require_canonical_digest(),
+            Err(DefinitionCompatibilityError::DigestMismatch)
         );
     }
 

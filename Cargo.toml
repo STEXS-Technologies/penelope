@@ -31,6 +31,7 @@ async-trait = "0.1"
 proptest = "1"
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
 serde_json = { version = "1.0", default-features = false, features = ["std"] }
+sha2 = { version = "0.10", default-features = false }
 thiserror = { version = "2.0.18", default-features = false }
 
 # Internal hexagonal layers. `penelope-statechronicle` is an adapter boundary,
