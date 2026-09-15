@@ -476,6 +476,10 @@ while an old lease may exist. Allocation remains infrastructure-owned.
 `ActionDispatcher::dispatch` now returns an `ActionDispatchReceiptV1` carrying
 the exact action identity and duplicate flag, with a validator that rejects
 receipt substitution. Durable dispatch ordering remains adapter-owned.
+`DiagnosticSink` now provides a typed observability boundary that accepts only
+bounded `RedactedDiagnosticV1` values; the unavailable-port conformance double
+proves it fails closed. Structured retention, access control, and sampling are
+still composition-root responsibilities.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 

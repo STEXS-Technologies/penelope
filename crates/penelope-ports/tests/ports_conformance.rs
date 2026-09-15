@@ -20,13 +20,13 @@ use penelope_domain::{
 use penelope_ports::{
     ActionDispatchReceiptV1, ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1,
     AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, CanonicalSubmitReceiptV1,
-    Clock, DefinitionLookupV1, DefinitionRegistry, EffectDispatchRequestV1,
+    Clock, DefinitionLookupV1, DefinitionRegistry, DiagnosticSink, EffectDispatchRequestV1,
     ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, InboxAcceptanceReceiptV1,
     LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue,
     ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1,
     OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
-    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerClaimRequestV1,
-    TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
+    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, RedactedDiagnosticV1,
+    TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -191,6 +191,13 @@ impl ProcessAuthorizer for UnavailablePorts {
 }
 
 #[async_trait]
+impl DiagnosticSink for UnavailablePorts {
+    async fn record(&self, _: &RedactedDiagnosticV1) -> Result<(), PortError> {
+        Err(PortError::Unavailable)
+    }
+}
+
+#[async_trait]
 impl CanonicalState for UnavailablePorts {
     async fn submit(
         &self,
@@ -312,6 +319,7 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let action_ids: &dyn ActionIdSource = &ports;
     let outcome_ids: &dyn OutcomeIdSource = &ports;
     let authorizer: &dyn ProcessAuthorizer = &ports;
+    let diagnostics: &dyn DiagnosticSink = &ports;
     let canonical: &dyn CanonicalState = &ports;
     let reviews: &dyn ManualReviewQueue = &ports;
 
@@ -350,6 +358,13 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         principal_id: id::<PrincipalId>("pri_operator"),
         operation: penelope_ports::ProcessAuthorizationOperationV1::Retry,
     };
+    let diagnostic = RedactedDiagnosticV1::new(
+        scope(),
+        penelope_ports::DiagnosticClassV1::Availability,
+        ContentDigest([8; 32]),
+        0,
+    )
+    .unwrap();
     let claim = ManualReviewClaimV1 {
         scope: scope(),
         review_id: review.review_id.clone(),
@@ -492,6 +507,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         ready(authorizer.authorize(&request)).unwrap(),
         ProcessAuthorizationDecisionV1::Denied
     );
+    assert!(matches!(
+        ready(diagnostics.record(&diagnostic)),
+        Err(PortError::Unavailable)
+    ));
     assert!(matches!(
         ready(canonical.submit(&command())),
         Err(PortError::Unavailable)

@@ -2047,6 +2047,16 @@ pub trait ProcessAuthorizer: Send + Sync {
     ) -> Result<ProcessAuthorizationDecisionV1, PortError>;
 }
 
+/// Redacted, typed observability boundary.
+///
+/// Implementations receive only bounded diagnostics; raw error messages and
+/// payloads are intentionally absent from this port.
+#[async_trait]
+pub trait DiagnosticSink: Send + Sync {
+    /// Records one diagnostic for its pinned process scope.
+    async fn record(&self, diagnostic: &RedactedDiagnosticV1) -> Result<(), PortError>;
+}
+
 /// Canonical-state boundary implemented by a StateChronicle adapter.
 #[async_trait]
 pub trait CanonicalState: Send + Sync {
