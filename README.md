@@ -250,12 +250,12 @@ For a known terminal forward failure, the reference engine plans declared
 compensations in reverse success order. An unknown forward or compensation
 result never triggers compensation automatically and escalates instead.
 
-Public parsers, every versioned DTO deserializer, and the linear engine's
+Public parsers, every typed-value deserializer, and the linear engine's
 transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
 parse, DTO, or decision surfaces must add a target before they are considered
 complete.
 
-The public linear-engine `` definitions, projections, decisions, outcomes,
+The public linear-engine definitions, projections, decisions, outcomes,
 and ordered event envelopes are serde-compatible protocol values. Their schema
 evolution remains additive; durable adapter design and compatibility fixtures
 are still required before a production release.

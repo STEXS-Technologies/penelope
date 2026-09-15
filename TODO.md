@@ -31,8 +31,8 @@ DX priorities, in execution order:
 4. **P1 — consumer adapter conformance kit.** Keep persistence/network code out
    of Penelope, but ship reusable contract tests adapters can run against their
    own transaction, inbox, outbox and lease implementations.
-5. **P2 — migration guide.** Document the breaking removal of `Schema`/`V<N>`
-   DTO names and show how to add an application-owned transport envelope when
+5. **P2 — migration guide.** Document the breaking removal of embedded wire
+   schema/version fields and show how to add an application-owned transport envelope when
    compatibility is needed.
 
 ## Deep audit snapshot (2026-09-15)
@@ -135,16 +135,16 @@ The workspace now mirrors StateChronicle's layer boundaries:
 
 | Layer | Crate | Permitted contents | Forbidden contents |
 | --- | --- | --- | --- |
-| Core | `penelope-core` | Schema constants and pure protocol primitives. | I/O, runtime, ports, adapters. |
-| Domain | `penelope-domain` | Versioned data-only DTOs. | Database/transport types and workflow side effects. |
+| Core | `penelope-core` | Dependency-stable pure primitives. | I/O, runtime, ports, adapters. |
+| Domain | `penelope-domain` | Typed data-only values. | Database/transport types and workflow side effects. |
 | Intent | `penelope-intent` | Transport-to-domain parsing and validation. | HTTP/broker/database clients. |
 | Executor | `penelope-executor` | Deterministic application decisions using injected ports. | Infrastructure implementation. |
 | Ports | `penelope-ports` | Async backend-neutral interfaces and port errors. | Storage, worker, transport or client implementation. |
 | Adapter boundary | `penelope-statechronicle` | StateChronicle mapping contract. | Local path dependency or actual StateChronicle client/database implementation. |
 | Facade | `penelope` | Curated re-exports only. | Domain or infrastructure logic. |
 
-Every public wire DTO must have both a `V<N>` Rust type and an immutable
-associated schema identifier. Every identity must be a validated newtype,
+Every public wire value must have a typed Rust representation and immutable
+associated typed invariants. Every identity must be a validated newtype,
 every protocol category must be an enum or dedicated newtype, and ports must
 never receive raw `String`/`&str` identity or category values. Compatibility is
 additive: a new semantic interpretation requires a new schema/type, while
@@ -162,7 +162,7 @@ error message string.
   an outer implementation or an adapter can silently reinterpret a DTO.
 - How: keep infrastructure crates out of this workspace; add forbidden
   dependency checks, DTO fixture/round-trip tests, and a compatibility matrix
-  for each supported schema version.
+  for current public value.
 - Evidence: CI rejects boundary violations, unknown schema versions, changed
   v1 fixtures, non-versioned public wire types, raw-string port parameters and
   missing fuzz targets. The normal workspace suite excludes `penelope-fuzz`;
@@ -172,20 +172,20 @@ Current partial evidence: `scripts/check-layer-boundaries.sh` validates the
 exact direct internal dependency graph through `cargo metadata` and rejects
 known production infrastructure clients from this ports-only workspace. CI runs
 it before compilation. `ProcessInputEnvelope` carries an explicit typed
-schema discriminator, and the intent boundary parses byte input only after
+typed invariants, and the intent boundary parses byte input only after
 validating that discriminator; both its parser and DTO boundary are fuzzed. It
 uses canonical versioned wire discriminators (for example,
 `penelope.process.input.v1`) rather than Rust enum names; fixture tests reject
 unknown and unversioned discriminators. Every current public wire DTO now
-carries and validates its immutable `Schema` discriminator, including
+carries and validates its immutable typed invariants, including
 definition, input, outcome, action, canonical command/event, and manual review;
 negative tests cover a mismatched schema for each and the versioned-DTO fuzz
 target invokes each available validator. `scripts/run_bounded_fuzz.sh` verifies
 the required target registration/source set and that every current public
-versioned DTO appears in that DTO fuzz boundary before executing the bounded
-suite. Immutable checked-in v1 JSON fixtures now cover every current public
+typed value appears in that value fuzz boundary before executing the bounded
+suite. Immutable checked-in JSON fixtures now cover every current public
 wire DTO and input envelope; typed tests deserialize, validate, compare against
-the expected newtype DTO, and reserialize each fixture. The layer-boundary gate
+the expected newtype value, and reserialize each fixture. The layer-boundary gate
 additionally rejects raw `String`/`&str` parameters in public port traits and
 fields in public protocol values, plus handwritten
 `std::error::Error` implementations, preserving validated-newtype and
@@ -398,7 +398,7 @@ start LIFO compensation, cancel, or retain escalation; direct resolution of a
 non-escalated process fails closed. An escalated pure decision can also build a
 full-definition-scope-pinned `ManualReviewDto` for the `ManualReviewQueue` port, while a
 non-escalated decision rejects the request. There is still no durable review workflow,
-so this item remains incomplete. The `trade_manual_review_v1` example drills
+so this item remains incomplete. The `trade_manual_review` example drills
 the handoff by creating and schema-validating that request before applying the
 authorized resolution.
 
@@ -446,12 +446,12 @@ single typed scope check before accepting outcomes.
   boundary, commit-before-response loss, delayed canonical event, partial
   evidence, compensation retry and operator resolution.
 
-Current partial evidence: the runnable `trade_v1`, `trade_compensation_v1`,
-`trade_retry_timer_v1`, `trade_manual_review_v1`, and
-`trade_competing_lock_v1` examples demonstrate
+Current partial evidence: the runnable `trade`, `trade_compensation`,
+`trade_retry_timer`, `trade_manual_review`, and
+`trade_competing_lock` examples demonstrate
 pinned three-step success, known settlement failure with LIFO compensation,
 persist/schedule/fire/retry timer handling, and settlement-unknown resolution
-through authorized compensation. `trade_v1` additionally builds the ordered
+through authorized compensation. `trade` additionally builds the ordered
 immutable outcome records required for every happy-path event/decision and
 validates the plan before advancing. The competing-lock drill proves a verified
 winner can advance while a separately scoped canonically rejected lock

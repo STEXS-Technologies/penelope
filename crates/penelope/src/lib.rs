@@ -8,7 +8,7 @@
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
 
-/// Pure protocol primitives and schema identifiers.
+/// Pure protocol primitives.
 pub use penelope_core as core;
 /// Versioned data-transfer objects.
 pub use penelope_domain as domain;
