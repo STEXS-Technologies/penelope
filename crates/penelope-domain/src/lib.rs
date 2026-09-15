@@ -153,6 +153,9 @@ pub enum DefinitionMigrationError {
     /// The destination definition failed its own schema or bound validation.
     #[error("definition migration destination is invalid")]
     InvalidDestination,
+    /// The pinned source definition failed schema or bound validation.
+    #[error("definition migration source is invalid")]
+    InvalidSource,
 }
 
 /// Typed failure for canonical wire encoding.
@@ -611,6 +614,30 @@ impl DefinitionMigrationV1 {
             return Err(DefinitionMigrationError::IdentityMismatch);
         }
         Ok(())
+    }
+
+    /// Validates both ends of a migration against the pinned source and
+    /// replacement definition before a running process may switch semantics.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the source identity/digest or destination
+    /// identity/version/digest does not match this migration record.
+    pub fn validate_source_and_destination(
+        &self,
+        source: &ProcessDefinitionDtoV1,
+        destination: &ProcessDefinitionDtoV1,
+    ) -> Result<(), DefinitionMigrationError> {
+        if source.validate().is_err() {
+            return Err(DefinitionMigrationError::InvalidSource);
+        }
+        if source.definition_id != self.definition_id
+            || source.definition_version != self.from_version
+            || source.definition_digest != self.from_digest
+        {
+            return Err(DefinitionMigrationError::IdentityMismatch);
+        }
+        self.validate_destination(destination)
     }
 }
 
@@ -1792,6 +1819,28 @@ mod tests {
             vec![id("stp_lock")],
         )
         .unwrap();
+        let source = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([1; 32]),
+            vec![id("stp_lock")],
+        )
+        .unwrap();
+        assert_eq!(
+            migration.validate_source_and_destination(&source, &destination),
+            Ok(())
+        );
+        let wrong_source = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([9; 32]),
+            vec![id("stp_lock")],
+        )
+        .unwrap();
+        assert_eq!(
+            migration.validate_source_and_destination(&wrong_source, &destination),
+            Err(DefinitionMigrationError::IdentityMismatch)
+        );
         assert_eq!(migration.validate_destination(&destination), Ok(()));
         let wrong = ProcessDefinitionDtoV1::new(
             id("def_other"),
