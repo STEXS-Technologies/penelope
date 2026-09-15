@@ -52,7 +52,8 @@ pub use penelope_ports as ports;
 pub use penelope_ports::{
     ActionDispatchReceiptV1, ActionReceiptValidationError, AtomicProcessCommitReceiptV1,
     AtomicProcessCommitV1, AuthorizationRequirementV1, CanonicalReconciliationV1,
-    CanonicalReconciliationWindowV1, CommitValidationError, ConsistencyWindowValidationError,
+    CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
+    CanonicalSubmitReceiptValidationError, CommitValidationError, ConsistencyWindowValidationError,
     DiagnosticClassV1, DiagnosticValidationError, EffectDispatchRequestV1,
     EffectReconciliationValidationError, ExternalEffectEvidenceV1, ExternalEffectExecutor,
     ExternalEffectStateV1, InboxAcceptanceReceiptV1, InboxReceiptValidationError, LeaseTokenSource,

@@ -549,8 +549,12 @@ duplicate flag, so redelivery can be a durable no-op without rerunning a
 
 ### P1.4 StateChronicle contract
 
-- [ ] Publish types and a guide for canonical command submission and committed
-  event correlation.
+- [ ] Publish a guide and adapter evidence for canonical command submission and
+  committed event correlation. The port now returns a typed
+  `CanonicalSubmitReceiptV1` bound to the exact command action ID, making
+  duplicate submission a durable, observable no-op; this receipt does not claim
+  canonical commit and must still be followed by verified committed-event
+  correlation.
 - Why: Penelope must coordinate process truth without inventing ledger facts.
 - How: implement `penelope-statechronicle` without a local path dependency;
   publish a versioned adapter contract. In the Penelope append transaction,
@@ -575,6 +579,9 @@ that a transport response proves a commit and does not implement a client.
 `CanonicalCommandExpectationV1::from_command` now derives the action,
 operation, and resource scope from a validated command, reducing field-copying
 confusion at the consumer composition root; its equality is unit tested.
+`CanonicalState::submit` now returns `CanonicalSubmitReceiptV1`, which binds
+the adapter acknowledgement to the exact command action ID and exposes
+duplicate submission without treating acknowledgement as commit evidence.
 `AtomicProcessCommitV1` now accepts a canonical source-event key only beside a
 canonical inbox input, requiring the store to deduplicate that key in the same
 transaction as the input, outcomes, and actions. Its fault-injection drill

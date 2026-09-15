@@ -73,6 +73,52 @@ pub struct ActionDispatchReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Receipt from idempotent canonical-command submission/enqueue.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CanonicalSubmitReceiptV1 {
+    /// Penelope action identity reused as the canonical idempotency key.
+    pub action_id: ActionId,
+    /// Whether this command identity was already durably submitted.
+    pub duplicate: bool,
+}
+
+/// Typed validation failure for a canonical-submit receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum CanonicalSubmitReceiptValidationError {
+    /// The adapter acknowledged another command identity.
+    #[error("canonical submit receipt does not match the requested command")]
+    ActionMismatch,
+}
+
+impl CanonicalSubmitReceiptV1 {
+    /// Creates a receipt for one canonical command identity.
+    #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new(action_id: ActionId, duplicate: bool) -> Self {
+        Self {
+            action_id,
+            duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact command action ID.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CanonicalSubmitReceiptValidationError::ActionMismatch`] when
+    /// the adapter acknowledges another command.
+    pub fn validate_for(
+        &self,
+        command: &CanonicalCommandDtoV1,
+    ) -> Result<(), CanonicalSubmitReceiptValidationError> {
+        if self.action_id == command.action_id {
+            Ok(())
+        } else {
+            Err(CanonicalSubmitReceiptValidationError::ActionMismatch)
+        }
+    }
+}
+
 /// Typed validation failure for an action-dispatch receipt.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum ActionReceiptValidationError {
@@ -2005,7 +2051,10 @@ pub trait ProcessAuthorizer: Send + Sync {
 #[async_trait]
 pub trait CanonicalState: Send + Sync {
     /// Submits a command with the Penelope action ID as canonical idempotency ID.
-    async fn submit(&self, command: &CanonicalCommandDtoV1) -> Result<(), PortError>;
+    async fn submit(
+        &self,
+        command: &CanonicalCommandDtoV1,
+    ) -> Result<CanonicalSubmitReceiptV1, PortError>;
     /// Reconciles a pending action from authoritative canonical evidence.
     ///
     /// `Unknown` must be escalated or reconciled again; it is not permission to
@@ -2053,6 +2102,7 @@ canonical_port_impl!(
     DefinitionLookupV1,
     InboxAcceptanceReceiptV1,
     ActionDispatchReceiptV1,
+    CanonicalSubmitReceiptV1,
     ManualReviewReceiptV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
@@ -2960,6 +3010,26 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&other),
             Err(ActionReceiptValidationError::ActionMismatch)
+        );
+    }
+
+    #[test]
+    fn canonical_submit_receipt_is_bound_to_the_exact_command_action() {
+        let submitted = CanonicalCommandDtoV1 {
+            schema: penelope_domain::SchemaV1::CanonicalCommand,
+            tenant_id: id("tnt_game"),
+            action_id: id("act_dispatch"),
+            operation: id("op_trade"),
+            resource_ids: vec![id("res_wallet")],
+            payload_digest: ContentDigest([4; 32]),
+        };
+        let receipt = CanonicalSubmitReceiptV1::new(submitted.action_id.clone(), true);
+        assert_eq!(receipt.validate_for(&submitted), Ok(()));
+        let mut other = submitted;
+        other.action_id = id("act_other");
+        assert_eq!(
+            receipt.validate_for(&other),
+            Err(CanonicalSubmitReceiptValidationError::ActionMismatch)
         );
     }
 

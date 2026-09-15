@@ -19,13 +19,14 @@ use penelope_domain::{
 };
 use penelope_ports::{
     ActionDispatchReceiptV1, ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1,
-    AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1,
-    DefinitionRegistry, EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor,
-    Inbox, InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
-    ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1,
-    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
-    TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
+    AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, CanonicalSubmitReceiptV1,
+    Clock, DefinitionLookupV1, DefinitionRegistry, EffectDispatchRequestV1,
+    ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox, InboxAcceptanceReceiptV1,
+    LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue,
+    ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1,
+    OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
+    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerClaimRequestV1,
+    TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -191,7 +192,10 @@ impl ProcessAuthorizer for UnavailablePorts {
 
 #[async_trait]
 impl CanonicalState for UnavailablePorts {
-    async fn submit(&self, _: &CanonicalCommandDtoV1) -> Result<(), PortError> {
+    async fn submit(
+        &self,
+        _: &CanonicalCommandDtoV1,
+    ) -> Result<CanonicalSubmitReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 
