@@ -27,12 +27,18 @@ Open risks found by the deeper security, stability and reliability audit:
    conformance suite before release.
 2. **P0 — identity/canonical encoding is incomplete.** Remaining correlation,
    timer and review identity coverage, canonical byte encoding, payload-size
-   limits and compile-time non-substitutability checks are still open. Never use
-   display text as an idempotency key or signature input.
+   limits and compile-time non-substitutability checks are still open. Typed
+   length-prefixed canonical byte encoders now exist for process scopes and
+   effect keys, and are fuzz-exercised, but a cryptographic digest algorithm and
+   canonical encodings for every DTO are still open. Never use display text as
+   an idempotency key or signature input.
 3. **P1 — recovery semantics are incomplete.** Durable inbox/outcome replay,
    timer claiming, cancellation, compensation ordering and ambiguous-effect
    reconciliation lack a complete portable contract and adversarial state-machine
-   tests. Only the implemented reference transitions are currently restart-safe.
+   tests. A bounded, atomic in-memory `OutcomeLogV1` validator now centralizes
+   scope/order/duplicate checks, but persistence and restart behavior remain
+   adapter responsibilities. Only the implemented reference transitions are
+   currently restart-safe.
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
    helpers do not yet define a complete operation/resource matrix, quota accounting
    or deterministic sensitive-payload redaction. Consumers must deny by default

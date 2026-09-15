@@ -54,10 +54,11 @@ pub use penelope_ports::{
     MAX_OUTBOX_CLAIM_BATCH, MAX_OUTBOX_DELIVERY_ATTEMPTS, MAX_OUTCOMES_PER_READ_PAGE,
     ManualReviewClaimV1, ManualReviewControlV1, ManualReviewDecisionV1, ManualReviewResolutionV1,
     ManualReviewValidationError, OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1,
-    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, OutcomePageValidationError,
-    OutcomeReplayPageV1, OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1,
-    ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1, ReconciliationValidationError,
-    TimerScheduleV1, TimerValidationError,
+    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, OutcomeLogV1,
+    OutcomeLogValidationError, OutcomePageValidationError, OutcomeReplayPageV1,
+    OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1,
+    ProcessAuthorizationRequestV1, ReconciliationValidationError, TimerScheduleV1,
+    TimerValidationError,
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;

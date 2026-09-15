@@ -15,6 +15,7 @@ use penelope_domain::{
     ReviewId,
 };
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::num::{NonZeroU16, NonZeroU64};
 use thiserror::Error;
 
@@ -28,6 +29,9 @@ pub const MAX_OUTCOMES_PER_READ_PAGE: u16 = 512;
 pub const MAX_OUTBOX_DELIVERY_ATTEMPTS: u32 = 64;
 /// Maximum records returned by one durable outbox claim.
 pub const MAX_OUTBOX_CLAIM_BATCH: u16 = 128;
+/// Maximum immutable outcomes retained by one in-memory replay accumulator.
+/// Durable adapters may page larger histories through [`OutcomeReplayPageV1`].
+pub const MAX_OUTCOMES_PER_REPLAY_LOG: usize = 4096;
 
 /// Opaque fencing token assigned to one outbox lease.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -446,6 +450,29 @@ pub enum TimerValidationError {
     /// A non-timer action was supplied to a timer scheduler boundary.
     #[error("timer schedule requires a timer action kind")]
     InvalidActionKind,
+}
+
+/// Validation failure while constructing an ordered outcome-log view.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum OutcomeLogValidationError {
+    /// The outcome does not belong to the accumulator's pinned scope.
+    #[error("outcome log scope does not match")]
+    ScopeMismatch,
+    /// The outcome sequence is not the next contiguous sequence.
+    #[error("outcome log sequence is not contiguous")]
+    NonContiguousSequence,
+    /// The immutable outcome identity was already observed in this log.
+    #[error("outcome log contains a duplicate outcome identity")]
+    DuplicateOutcomeId,
+    /// The bounded in-memory log limit would be exceeded.
+    #[error("outcome log exceeds the replay bound")]
+    LimitExceeded,
+    /// The DTO's versioned schema or internal validation failed.
+    #[error("outcome log contains an invalid outcome")]
+    InvalidOutcome,
+    /// Advancing the sequence would overflow.
+    #[error("outcome log sequence overflowed")]
+    SequenceOverflow,
 }
 
 /// Authoritative result of reconciling a canonical external effect.
@@ -1001,6 +1028,101 @@ impl OutcomeReplayPageV1 {
             return Err(OutcomePageValidationError::InvalidContinuation);
         }
         Ok(())
+    }
+}
+
+/// Pure bounded accumulator for an ordered immutable outcome log.
+///
+/// This type is deliberately not a store: it gives adapters and recovery
+/// code one shared validator for append order, scope pinning and idempotent
+/// outcome identities. Persistence and compare-and-append remain the adapter's
+/// responsibility.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OutcomeLogV1 {
+    /// Immutable process and definition scope of every outcome.
+    pub scope: ProcessScopeV1,
+    /// Ordered outcomes accepted so far.
+    pub outcomes: Vec<ProcessOutcomeDtoV1>,
+}
+
+impl OutcomeLogV1 {
+    /// Creates an empty log whose first accepted outcome must use sequence zero.
+    #[must_use]
+    pub const fn new(scope: ProcessScopeV1) -> Self {
+        Self {
+            scope,
+            outcomes: Vec::new(),
+        }
+    }
+
+    /// Rebuilds a bounded log from an already ordered durable slice.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the slice is malformed, out of order,
+    /// cross-scoped, duplicated, or exceeds the replay bound.
+    pub fn from_ordered(
+        scope: ProcessScopeV1,
+        outcomes: &[ProcessOutcomeDtoV1],
+    ) -> Result<Self, OutcomeLogValidationError> {
+        let mut log = Self::new(scope);
+        log.append(outcomes)?;
+        Ok(log)
+    }
+
+    /// Appends outcomes only when all invariants hold.
+    ///
+    /// Validation is performed before mutating the accumulator, so a failed
+    /// batch cannot leave a partially applied in-memory projection.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when any outcome is malformed, cross-scoped,
+    /// duplicated, out of order, or would exceed the replay bound.
+    pub fn append(
+        &mut self,
+        outcomes: &[ProcessOutcomeDtoV1],
+    ) -> Result<(), OutcomeLogValidationError> {
+        let new_len = self
+            .outcomes
+            .len()
+            .checked_add(outcomes.len())
+            .ok_or(OutcomeLogValidationError::LimitExceeded)?;
+        if new_len > MAX_OUTCOMES_PER_REPLAY_LOG {
+            return Err(OutcomeLogValidationError::LimitExceeded);
+        }
+        let mut expected = u64::try_from(self.outcomes.len())
+            .map_err(|_conversion_error| OutcomeLogValidationError::SequenceOverflow)?;
+        let mut seen = self
+            .outcomes
+            .iter()
+            .map(|outcome| outcome.outcome_id.clone())
+            .collect::<HashSet<_>>();
+        for outcome in outcomes {
+            if outcome.validate().is_err() {
+                return Err(OutcomeLogValidationError::InvalidOutcome);
+            }
+            if outcome.scope() != self.scope {
+                return Err(OutcomeLogValidationError::ScopeMismatch);
+            }
+            if outcome.sequence != expected {
+                return Err(OutcomeLogValidationError::NonContiguousSequence);
+            }
+            if !seen.insert(outcome.outcome_id.clone()) {
+                return Err(OutcomeLogValidationError::DuplicateOutcomeId);
+            }
+            expected = expected
+                .checked_add(1)
+                .ok_or(OutcomeLogValidationError::SequenceOverflow)?;
+        }
+        self.outcomes.extend_from_slice(outcomes);
+        Ok(())
+    }
+
+    /// Returns the next sequence required by [`Self::append`].
+    #[must_use]
+    pub fn next_sequence(&self) -> u64 {
+        u64::try_from(self.outcomes.len()).unwrap_or(u64::MAX)
     }
 }
 
@@ -1963,5 +2085,55 @@ mod tests {
             expired.validate_for(&review),
             Err(ManualReviewValidationError::Expired)
         );
+    }
+
+    #[test]
+    fn outcome_log_append_is_atomic_and_rejects_reorder_scope_and_duplicates() {
+        let scope = outcome(0, id("out_first")).scope();
+        let first = outcome(0, id("out_first"));
+        let second = outcome(1, id("out_second"));
+        let mut log = OutcomeLogV1::new(scope);
+        assert_eq!(log.append(&[first, second]), Ok(()));
+        assert_eq!(log.next_sequence(), 2);
+
+        let before_failed_append = log.clone();
+        let reordered = outcome(4, id("out_reordered"));
+        assert_eq!(
+            log.append(&[reordered]),
+            Err(OutcomeLogValidationError::NonContiguousSequence)
+        );
+        assert_eq!(log, before_failed_append);
+
+        let duplicate = outcome(2, id("out_second"));
+        assert_eq!(
+            log.append(&[duplicate]),
+            Err(OutcomeLogValidationError::DuplicateOutcomeId)
+        );
+        assert_eq!(log, before_failed_append);
+
+        let other_scope = ProcessScopeV1::new(
+            id("tnt_other"),
+            id("prc_trade"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([9; 32]),
+        );
+        let cross_scope = ProcessOutcomeDtoV1::new(
+            other_scope,
+            2,
+            ProcessOutcomeFactV1::new(
+                id("out_cross"),
+                CausationIdV1::Action(id("act_cause")),
+                OutcomeActorV1::System,
+                LogicalTimeV1(1),
+                ProcessOutcomeKindV1::ActionPlanned,
+                ContentDigest([1; 32]),
+            ),
+        );
+        assert_eq!(
+            log.append(&[cross_scope]),
+            Err(OutcomeLogValidationError::ScopeMismatch)
+        );
+        assert_eq!(log, before_failed_append);
     }
 }

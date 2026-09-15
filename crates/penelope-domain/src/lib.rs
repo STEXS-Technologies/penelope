@@ -120,6 +120,12 @@ fn validate_identifier(prefix: &str, value: &str) -> bool {
             .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.'))
 }
 
+fn encode_identifier(bytes: &mut Vec<u8>, value: &str) {
+    let length = u16::try_from(value.len()).unwrap_or(u16::MAX);
+    bytes.extend_from_slice(&length.to_be_bytes());
+    bytes.extend_from_slice(value.as_bytes());
+}
+
 macro_rules! identifier {
     ($name:ident, $prefix:literal, $error_variant:ident, $docs:literal) => {
         #[doc = $docs]
@@ -558,6 +564,22 @@ impl ProcessScopeV1 {
             definition_digest,
         }
     }
+
+    /// Encodes the complete pinned scope into an unambiguous, deterministic
+    /// byte sequence suitable as input to a consumer-selected cryptographic
+    /// digest. Length-prefixing prevents concatenation ambiguity; callers must
+    /// hash these bytes with a documented algorithm rather than hash display
+    /// text or serialized JSON.
+    #[must_use]
+    pub fn canonical_bytes(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        encode_identifier(&mut bytes, self.tenant_id.as_str());
+        encode_identifier(&mut bytes, self.process_id.as_str());
+        encode_identifier(&mut bytes, self.definition_id.as_str());
+        encode_identifier(&mut bytes, self.definition_version.as_str());
+        bytes.extend_from_slice(&self.definition_digest.0);
+        bytes
+    }
 }
 
 /// A durable, independently idempotent process action.
@@ -612,6 +634,32 @@ pub struct EffectKeyV1 {
     pub kind: ProcessActionKindV1,
     /// Canonical payload semantics for this effect attempt.
     pub payload_digest: ContentDigest,
+}
+
+impl EffectKeyV1 {
+    /// Encodes every semantic effect coordinate deterministically.
+    ///
+    /// The encoding is length-prefixed and includes the action kind and
+    /// attempt, so two distinct effects cannot collide by concatenation.
+    #[must_use]
+    pub fn canonical_bytes(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        encode_identifier(&mut bytes, self.tenant_id.as_str());
+        encode_identifier(&mut bytes, self.process_id.as_str());
+        encode_identifier(&mut bytes, self.definition_id.as_str());
+        encode_identifier(&mut bytes, self.definition_version.as_str());
+        bytes.extend_from_slice(&self.definition_digest.0);
+        encode_identifier(&mut bytes, self.step_id.as_str());
+        bytes.extend_from_slice(&self.attempt.to_be_bytes());
+        bytes.push(match self.kind {
+            ProcessActionKindV1::CanonicalCommand => 0,
+            ProcessActionKindV1::Timer => 1,
+            ProcessActionKindV1::ExternalEffect => 2,
+            ProcessActionKindV1::ManualReview => 3,
+        });
+        bytes.extend_from_slice(&self.payload_digest.0);
+        bytes
+    }
 }
 
 /// A canonical-state command submitted through an adapter port.
@@ -1158,6 +1206,31 @@ mod tests {
         );
         assert_ne!(action.effect_key(), retry.effect_key());
         assert_ne!(action.effect_key(), changed_payload.effect_key());
+    }
+
+    #[test]
+    fn canonical_bytes_are_deterministic_and_bind_effect_semantics() {
+        let scope = ProcessScopeV1::new(
+            id("tnt_game"),
+            id("prc_trade"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([1; 32]),
+        );
+        let action = ProcessActionDtoV1::new(
+            scope.clone(),
+            id("act_first"),
+            id("stp_settle"),
+            0,
+            ProcessActionKindV1::CanonicalCommand,
+            ContentDigest([2; 32]),
+        );
+        let same_scope = scope.clone();
+        assert_eq!(scope.canonical_bytes(), same_scope.canonical_bytes());
+        let first = action.effect_key().canonical_bytes();
+        let mut retry = action;
+        retry.attempt = 1;
+        assert_ne!(first, retry.effect_key().canonical_bytes());
     }
 
     #[test]
