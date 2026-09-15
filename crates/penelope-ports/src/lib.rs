@@ -73,6 +73,91 @@ pub enum PortError {
     Invariant,
 }
 
+/// Coarse, stable diagnostic class safe to expose without payload contents.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DiagnosticClassV1 {
+    /// Input or DTO validation failed.
+    Validation,
+    /// Authorization policy denied the operation.
+    Authorization,
+    /// Optimistic concurrency or deduplication conflict occurred.
+    Conflict,
+    /// The outer port was temporarily unavailable.
+    Availability,
+    /// A logical deadline or operation timeout was reached.
+    Timeout,
+    /// An external effect cannot yet be classified safely.
+    Ambiguous,
+    /// A caller or adapter violated a protocol invariant.
+    Invariant,
+}
+
+impl DiagnosticClassV1 {
+    /// Maps a port failure to a stable, non-sensitive class.
+    #[must_use]
+    pub const fn from_port_error(error: PortError) -> Self {
+        match error {
+            PortError::Unavailable | PortError::Cancelled => Self::Availability,
+            PortError::Conflict => Self::Conflict,
+            PortError::Unauthorized => Self::Authorization,
+            PortError::QuotaExceeded | PortError::Invariant => Self::Invariant,
+            PortError::TimedOut => Self::Timeout,
+            PortError::Ambiguous => Self::Ambiguous,
+        }
+    }
+}
+
+/// Maximum diagnostic metadata size accepted from an adapter.
+pub const MAX_REDACTED_DIAGNOSTIC_BYTES: u32 = 4096;
+
+/// Typed failure for constructing a bounded redacted diagnostic.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum DiagnosticValidationError {
+    /// Adapter supplied an unbounded metadata-size claim.
+    #[error("redacted diagnostic metadata exceeds the configured bound")]
+    MetadataLimitExceeded,
+}
+
+/// Safe diagnostic metadata that deliberately contains no raw error message
+/// or payload. `evidence_digest` refers to separately retained, access-
+/// controlled evidence and is not itself a disclosure of that evidence.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RedactedDiagnosticV1 {
+    /// Pinned process scope associated with the diagnostic.
+    pub scope: ProcessScopeV1,
+    /// Coarse stable classification.
+    pub class: DiagnosticClassV1,
+    /// Digest of access-controlled evidence, if any.
+    pub evidence_digest: penelope_domain::ContentDigest,
+    /// Bounded byte count of redacted metadata retained out of band.
+    pub metadata_bytes: u32,
+}
+
+impl RedactedDiagnosticV1 {
+    /// Creates bounded diagnostic metadata without accepting a raw message.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DiagnosticValidationError::MetadataLimitExceeded`] when the
+    /// claimed metadata size exceeds the public bound.
+    pub fn new(
+        scope: ProcessScopeV1,
+        class: DiagnosticClassV1,
+        evidence_digest: penelope_domain::ContentDigest,
+        metadata_bytes: u32,
+    ) -> Result<Self, DiagnosticValidationError> {
+        if metadata_bytes > MAX_REDACTED_DIAGNOSTIC_BYTES {
+            return Err(DiagnosticValidationError::MetadataLimitExceeded);
+        }
+        Ok(Self {
+            scope,
+            class,
+            evidence_digest,
+            metadata_bytes,
+        })
+    }
+}
+
 /// Durable acknowledgement state of an independently idempotent outbox item.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum OutboxAcknowledgementV1 {
@@ -2135,5 +2220,31 @@ mod tests {
             Err(OutcomeLogValidationError::ScopeMismatch)
         );
         assert_eq!(log, before_failed_append);
+    }
+
+    #[test]
+    fn redacted_diagnostics_are_bounded_and_never_require_message_matching() {
+        let scope = outcome(0, id("out_diag")).scope();
+        let diagnostic = RedactedDiagnosticV1::new(
+            scope,
+            DiagnosticClassV1::from_port_error(PortError::Unauthorized),
+            penelope_domain::ContentDigest([8; 32]),
+            MAX_REDACTED_DIAGNOSTIC_BYTES,
+        )
+        .unwrap();
+        assert_eq!(diagnostic.class, DiagnosticClassV1::Authorization);
+        assert_eq!(
+            DiagnosticClassV1::from_port_error(PortError::Ambiguous),
+            DiagnosticClassV1::Ambiguous
+        );
+        assert_eq!(
+            RedactedDiagnosticV1::new(
+                diagnostic.scope,
+                DiagnosticClassV1::Invariant,
+                diagnostic.evidence_digest,
+                MAX_REDACTED_DIAGNOSTIC_BYTES.saturating_add(1),
+            ),
+            Err(DiagnosticValidationError::MetadataLimitExceeded)
+        );
     }
 }

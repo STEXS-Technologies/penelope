@@ -40,8 +40,10 @@ Open risks found by the deeper security, stability and reliability audit:
    adapter responsibilities. Only the implemented reference transitions are
    currently restart-safe.
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
-   helpers do not yet define a complete operation/resource matrix, quota accounting
-   or deterministic sensitive-payload redaction. Consumers must deny by default
+   helpers do not yet define a complete operation/resource matrix or quota
+   accounting. A typed `RedactedDiagnosticV1` now carries only a coarse class,
+   bounded metadata size and an evidence digest—never a raw message or payload—
+   with tests for bounds and error classification. Consumers must deny by default
    and avoid logging raw payloads.
 5. **P1 — definition evolution is incomplete.** Pinning and digest comparison
    exist, and a typed compatibility classifier now distinguishes exact,
