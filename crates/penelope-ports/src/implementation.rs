@@ -1978,12 +1978,14 @@ impl OutcomeLog {
 
     /// Returns the number of accepted outcomes.
     #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
     pub fn len(&self) -> usize {
         self.outcomes.len()
     }
 
     /// Returns whether no outcomes have been accepted.
     #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
     pub fn is_empty(&self) -> bool {
         self.outcomes.is_empty()
     }
@@ -2174,12 +2176,13 @@ impl AtomicProcessCommit {
                 return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
-        if let Some(input) = &self.input {
-            if !self.outcomes.iter().any(|outcome| {
+        match self.input.as_ref() {
+            Some(input) if !self.outcomes.iter().any(|outcome| {
                 matches!(&outcome.causation_id, penelope_domain::CausationId::Input(input_id) if input_id == &input.input_id)
-            }) {
+            }) => {
                 return Err(CommitValidationError::InputNotCausallyRecorded);
             }
+            _ => {}
         }
         Ok(())
     }
