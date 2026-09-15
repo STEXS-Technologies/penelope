@@ -457,6 +457,8 @@ also rejects a lease whose action scope differs from the claim scope, while
 `validate_at` rejects acknowledgement after the logical expiry boundary.
 Claim requests now carry the authenticated owner principal, and lease
 validation rejects owner substitution.
+`validate_for_claim_at` combines request-bound scope/owner checks with expiry
+validation for one fail-closed adapter call.
 The `OutboxStore::acknowledge` port now requires a typed logical `now` value,
 making expiry enforcement an explicit adapter contract rather than an optional
 caller convention. `acknowledge_at` provides the pure lease-safe transition
