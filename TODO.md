@@ -479,8 +479,9 @@ with unit coverage that does not inspect error text.
 port; its contract requires uniqueness among live leases and no token recycling
 while an old lease may exist. Allocation remains infrastructure-owned.
 `ActionDispatcher::dispatch` now returns an `ActionDispatchReceiptV1` carrying
-the exact action identity and duplicate flag, with a validator that rejects
-receipt substitution. Durable dispatch ordering remains adapter-owned.
+the complete pinned action scope, exact action identity, and duplicate flag,
+with a validator that rejects cross-scope or cross-action receipt substitution.
+Durable dispatch ordering remains adapter-owned.
 `DiagnosticSink` now provides a typed observability boundary that accepts only
 bounded `RedactedDiagnosticV1` values; the unavailable-port conformance double
 proves it fails closed. Structured retention, access control, and sampling are

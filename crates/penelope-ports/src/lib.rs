@@ -189,6 +189,8 @@ pub struct ManualReviewReceiptV1 {
 /// Receipt from an idempotent action-dispatch attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionDispatchReceiptV1 {
+    /// Complete process-definition scope acknowledged by the dispatcher.
+    pub scope: ProcessScopeV1,
     /// Immutable action identity dispatched or redelivered.
     pub action_id: ActionId,
     /// Whether this action was already durably dispatched.
@@ -247,14 +249,18 @@ pub enum ActionReceiptValidationError {
     /// The adapter returned a receipt for another action.
     #[error("action dispatch receipt does not match the requested action")]
     ActionMismatch,
+    /// The adapter acknowledged an action under another pinned scope.
+    #[error("action dispatch receipt scope does not match the requested action")]
+    ScopeMismatch,
 }
 
 impl ActionDispatchReceiptV1 {
     /// Creates a receipt for one action identity.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
-    pub fn new(action_id: ActionId, duplicate: bool) -> Self {
+    pub fn new(scope: ProcessScopeV1, action_id: ActionId, duplicate: bool) -> Self {
         Self {
+            scope,
             action_id,
             duplicate,
         }
@@ -270,7 +276,9 @@ impl ActionDispatchReceiptV1 {
         &self,
         action: &ProcessActionDtoV1,
     ) -> Result<(), ActionReceiptValidationError> {
-        if self.action_id == action.action_id {
+        if self.scope != action.scope() {
+            Err(ActionReceiptValidationError::ScopeMismatch)
+        } else if self.action_id == action.action_id {
             Ok(())
         } else {
             Err(ActionReceiptValidationError::ActionMismatch)
@@ -3365,13 +3373,20 @@ mod tests {
     #[test]
     fn action_dispatch_receipt_is_bound_to_the_exact_action() {
         let requested = action();
-        let receipt = ActionDispatchReceiptV1::new(requested.action_id.clone(), true);
+        let receipt =
+            ActionDispatchReceiptV1::new(requested.scope(), requested.action_id.clone(), true);
         assert_eq!(receipt.validate_for(&requested), Ok(()));
         let mut other = action();
         other.action_id = id("act_other");
         assert_eq!(
             receipt.validate_for(&other),
             Err(ActionReceiptValidationError::ActionMismatch)
+        );
+        let mut wrong_scope = action();
+        wrong_scope.tenant_id = id("tnt_other");
+        assert_eq!(
+            receipt.validate_for(&wrong_scope),
+            Err(ActionReceiptValidationError::ScopeMismatch)
         );
     }
 
