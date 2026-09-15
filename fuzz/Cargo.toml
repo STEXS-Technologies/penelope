@@ -4,6 +4,9 @@ version = "0.0.0"
 publish = false
 edition = "2024"
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Penelope fuzz targets (not published)."
 
 [package.metadata]
 cargo-fuzz = true
@@ -13,18 +16,23 @@ libfuzzer-sys = "0.4"
 serde_json = { workspace = true }
 
 [dependencies.penelope-domain]
+version = "0.1.0"
 path = "../crates/penelope-domain"
 
 [dependencies.penelope-executor]
+version = "0.1.0"
 path = "../crates/penelope-executor"
 
 [dependencies.penelope-statechronicle]
+version = "0.1.0"
 path = "../crates/penelope-statechronicle"
 
 [dependencies.penelope-ports]
+version = "0.1.0"
 path = "../crates/penelope-ports"
 
 [dependencies.penelope-intent]
+version = "0.1.0"
 path = "../crates/penelope-intent"
 
 [[bin]]

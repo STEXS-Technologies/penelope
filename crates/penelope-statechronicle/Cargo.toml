@@ -4,6 +4,8 @@ description = "Penelope adapter boundary for idempotent StateChronicle commands 
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [dependencies]
 penelope-domain = { workspace = true }

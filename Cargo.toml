@@ -26,6 +26,9 @@ edition = "2024"
 rust-version = "1.85"
 license = "MIT OR Apache-2.0"
 description = "Penelope — process-truth engine: deterministic saga/process orchestration over an append-only outcome log."
+repository = "https://github.com/STEXS-Technologies/penelope"
+homepage = "https://github.com/STEXS-Technologies/penelope"
+documentation = "https://docs.rs/penelope"
 
 [workspace.dependencies]
 async-trait = "0.1"
@@ -37,13 +40,13 @@ thiserror = { version = "2.0.18", default-features = false }
 
 # Internal hexagonal layers. `penelope-statechronicle` is an adapter boundary,
 # not a client implementation; infrastructure belongs in a consuming platform.
-penelope-core = { path = "crates/penelope-core" }
-penelope-domain = { path = "crates/penelope-domain" }
-penelope-intent = { path = "crates/penelope-intent" }
-penelope-executor = { path = "crates/penelope-executor" }
-penelope = { path = "crates/penelope" }
-penelope-ports = { path = "crates/penelope-ports" }
-penelope-statechronicle = { path = "crates/penelope-statechronicle" }
+penelope-core = { version = "0.1.0", path = "crates/penelope-core" }
+penelope-domain = { version = "0.1.0", path = "crates/penelope-domain" }
+penelope-intent = { version = "0.1.0", path = "crates/penelope-intent" }
+penelope-executor = { version = "0.1.0", path = "crates/penelope-executor" }
+penelope = { version = "0.1.0", path = "crates/penelope" }
+penelope-ports = { version = "0.1.0", path = "crates/penelope-ports" }
+penelope-statechronicle = { version = "0.1.0", path = "crates/penelope-statechronicle" }
 
 [workspace.lints.rust]
 rust_2024_prelude_collisions = "warn"

@@ -2,14 +2,21 @@
 
 All notable changes to Penelope are documented here.
 
-## Unreleased
+## 0.1.0 - 2026-09-15
 
-- Finalized the library-only release boundary and consumer-owned adapter
-  responsibilities.
-- Removed embedded DTO wire-version and schema-discriminator fields from the
-  public protocol values.
-- Kept `DefinitionVersion` as the semantic workflow-definition pin.
-- Documented the deterministic saga/replay, outcome-log, retry, compensation,
-  reconciliation, and typed-port contracts.
-- Added the release checklist and reproducible verification commands.
-- Maintained Rust 1.85 MSRV and stable CI compatibility.
+Initial public release of Penelope, a typed foundation for reliable sagas and
+long-running asynchronous workflows.
+
+### Included
+
+- Deterministic linear and graph saga decisions with ordered replay.
+- Append-only outcome-log contracts with sequence and integrity validation.
+- Typed identities, commands, events, effects, retries, timers,
+  compensation, reconciliation, and manual review decisions.
+- Backend-neutral ports for persistence, inbox/outbox, leases, timers,
+  external effects, authorization, quotas, diagnostics, and review queues.
+- StateChronicle correlation boundary for verified canonical events.
+- No embedded DTO wire-version or schema-discriminator fields; transport
+  compatibility remains an application-edge concern.
+- Property, adversarial, fault-injection, replay, and fuzz coverage with
+  Rust 1.85 MSRV and stable CI verification.

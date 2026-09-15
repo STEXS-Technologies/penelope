@@ -4,6 +4,8 @@ description = "Penelope process engine: deterministic saga/process orchestration
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [dependencies]
 penelope-core = { workspace = true }

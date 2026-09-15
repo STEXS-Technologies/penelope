@@ -1,9 +1,11 @@
 # Penelope
 
-Penelope is a Rust library for deterministic orchestration of long-running,
-multi-step processes. It is the **process-truth** layer: it records what a
-workflow decided and what its steps observed. It is not a ledger, matching
-engine, market-data system, or canonical inventory/position store.
+Penelope is the foundation for reliable Rust sagas and long-running,
+multi-step workflows. It gives teams a deterministic process-truth layer that
+records what a workflow decided, what each step observed, and exactly how to
+recover after crashes, retries, duplicate delivery, timeouts, and ambiguity.
+It complements—not replaces—a ledger, matching engine, market-data system, or
+canonical inventory/position store.
 
 Penelope is a library-only protocol and deterministic orchestration engine.
 Persistence, brokers, schedulers, and service integrations are deliberately
@@ -49,8 +51,8 @@ replay. The core contains no I/O or wall-clock reads; adapters do I/O.
 
 An action result is accepted only when its typed action ID equals the active
 action ID in the projection. A stale, duplicate, or cross-process result cannot
-advance a process; duplicate delivery must be handled by the durable outcome
-layer that is still to be implemented.
+advance a process; a consumer adapter persists the resulting decision and
+deduplicates delivery through the typed ports.
 
 The reference ordered replay API accepts only zero-based contiguous event
 envelopes. A missing, duplicate, or reordered sequence is rejected before
@@ -106,8 +108,8 @@ does not guess, rewrite history, or require infrastructure dependencies.
 
 ## StateChronicle integration contract
 
-The `penelope-statechronicle` workspace crate is the dedicated future adapter
-boundary. It must implement this protocol exactly:
+The `penelope-statechronicle` workspace crate is the dedicated adapter
+boundary. A consumer implementation must follow this protocol exactly:
 
 1. In one Penelope transaction, append the decision, create a canonical-command
    action with a stable action/command ID, and enqueue dispatch.
@@ -181,11 +183,11 @@ transport / database / broker / scheduler implementations (consumer-owned)
                   penelope                [umbrella facade]
 ```
 
-| Crate | Responsibility | Current state |
+| Crate | Responsibility | Role |
 | --- | --- | --- |
 | `penelope-core` | Dependency-stable home for shared pure primitives. | Intentionally small; no I/O. |
 | `penelope-domain` | Typed public values for definitions, inputs, outcomes, actions, canonical commands/events and review. | Values only; no workflow logic. |
-| `penelope-intent` | Transport-to-domain validation boundary. | Contract scaffold only. |
+| `penelope-intent` | Transport-to-domain validation boundary. | Typed parser and validation contract. |
 | `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine plus a separately validated bounded graph-definition contract: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
 | `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces plus typed atomic inbox/outcome/action commit contract; no implementation. |
 | `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed scope/action/operation/resource/digest verifier; intentionally no StateChronicle client or local-checkout dependency. |
@@ -220,8 +222,9 @@ correlation fuzz target.
 
 The reference engine gives every step an explicit typed maximum attempt count.
 An exhausted retryable failure escalates without producing another action;
-unknown outcomes escalate immediately. Deadline/backoff/timer policy still
-belongs to the remaining P0 implementation work.
+unknown outcomes escalate immediately. Deadline, backoff, and timer policy are
+deterministic library decisions; a consumer adapter supplies durable timer
+storage and dispatch.
 
 `ProcessGraphDefinition` has a dedicated deterministic graph executor
 (`start_graph`, `apply_graph_result`, `replay_graph`, and
@@ -307,8 +310,9 @@ explicit identifier parsing boundary.
 
 ## Verification today
 
-The following pass locally. They validate only the implemented protocol and
-linear-engine slice; they are not production-readiness evidence.
+The following release gates pass locally and in GitHub Actions. They validate
+the reusable library contracts; deployment adapters must additionally prove
+their own durability and operational SLOs.
 
 ```bash
 cargo fmt --all --check
@@ -323,8 +327,9 @@ PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=1000 \
   PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
 ```
 
-Do not publish or deploy Penelope until P0 and P1 in [TODO.md](TODO.md) are
-complete and their CI verification exists.
+The [release checklist](TODO.md) defines the library release boundary and the
+consumer-owned adapter obligations. Use [docs/RELEASE.md](docs/RELEASE.md) for
+the `0.1.0` crates.io release procedure.
 
 GitHub Actions in [ci.yml](.github/workflows/ci.yml) runs the stable format,
 test, Clippy, strict-doc, benchmark-build, and all reference examples on every

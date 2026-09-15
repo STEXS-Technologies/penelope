@@ -1,9 +1,11 @@
 [package]
 name = "penelope-intent"
-description = "Penelope inbound DTO parsing and validation boundary."
+description = "Penelope inbound value parsing and validation boundary."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [dependencies]
 penelope-core = { workspace = true }
