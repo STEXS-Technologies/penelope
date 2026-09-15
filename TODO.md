@@ -334,7 +334,9 @@ remains incomplete.
 The timer boundary now also has a bounded `TimerClaimRequestV1` and fenced
 `TimerLeaseV1` plus a `TimerClaimStore` port. Claims require the exact scope,
 owner, due logical time and unexpired lease, preventing duplicate worker fires;
-the adapter still owns atomic claim persistence and acknowledgement.
+the adapter still owns atomic claim persistence. `TimerLeaseV1::acknowledge_at`
+now provides a pure expiry-checked acknowledgement path, preventing a worker
+from acknowledging a lease after its logical fence has elapsed.
 
 Current partial P0.5 evidence: the projection retains all action IDs issued by
 one process. A result must correlate to the active ID, and any next/retry ID
