@@ -513,6 +513,10 @@ after inbox staging, after outcome append staging, and after action enqueue
 staging. At each point it proves no input, outcome, or action becomes visible;
 recovery commits exactly once, duplicate inbox delivery is idempotent, stale
 sequence conflicts, and a bounded outcome page replays the committed state.
+`AtomicProcessCommitReceiptV1::validate_for` now verifies that an adapter
+acknowledgement names the exact final sequence and cannot claim a duplicate
+input when no input was submitted. This closes receipt-substitution ambiguity;
+transactional durability and projection writes remain adapter-owned.
 No durable implementation or projection write exists yet, so this item remains
 incomplete.
 
