@@ -686,6 +686,9 @@ redelivery idempotency explicit and validates the returned review identity; it
 now also carries the operation (`Open`, `Claim`, or `Decide`) and rejects
 cross-operation receipt substitution. Durable queue conflict handling remains
 adapter-owned.
+`ManualReviewAuditEntryV1` now provides a scope-bound, expiry-checked audit
+record with operation, principal, logical time, and redacted evidence digest;
+durable append ordering and authorization policy remain adapter-owned.
 
 ### P1.7 Security and supply chain baseline
 

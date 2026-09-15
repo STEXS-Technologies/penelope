@@ -186,6 +186,57 @@ pub struct ManualReviewReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Immutable audit entry for one manual-review mutation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ManualReviewAuditEntryV1 {
+    /// Complete process-definition scope of the review.
+    pub scope: ProcessScopeV1,
+    /// Review identity being mutated.
+    pub review_id: ReviewId,
+    /// Mutation operation represented by this entry.
+    pub operation: ManualReviewOperationV1,
+    /// Authenticated principal responsible for the mutation.
+    pub principal_id: PrincipalId,
+    /// Logical time at which the mutation was recorded.
+    pub occurred_at: LogicalTimeV1,
+    /// Digest of access-controlled evidence, never raw operator text.
+    pub evidence_digest: penelope_domain::ContentDigest,
+}
+
+/// Typed validation failure for a manual-review audit entry.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ManualReviewAuditValidationError {
+    /// The audit entry targets another review identity or scope.
+    #[error("manual-review audit entry does not match the requested review")]
+    ReviewMismatch,
+    /// The audit entry occurs after the review deadline.
+    #[error("manual-review audit entry occurs after the review deadline")]
+    Expired,
+}
+
+impl ManualReviewAuditEntryV1 {
+    /// Validates this audit entry against its durable review record.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for scope/identity substitution or expiry.
+    pub fn validate_for(
+        &self,
+        review: &ManualReviewDtoV1,
+    ) -> Result<(), ManualReviewAuditValidationError> {
+        if self.scope != review.scope() || self.review_id != review.review_id {
+            return Err(ManualReviewAuditValidationError::ReviewMismatch);
+        }
+        if review
+            .expires_at
+            .is_some_and(|expires_at| self.occurred_at > expires_at)
+        {
+            return Err(ManualReviewAuditValidationError::Expired);
+        }
+        Ok(())
+    }
+}
+
 /// Receipt from an idempotent action-dispatch attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionDispatchReceiptV1 {
@@ -2467,6 +2518,7 @@ canonical_port_impl!(
     CanonicalSubmitReceiptV1,
     ManualReviewReceiptV1,
     ManualReviewOperationV1,
+    ManualReviewAuditEntryV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
     OutboxRecordV1,
@@ -3434,6 +3486,38 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&id("rev_other")),
             Err(ManualReviewReceiptValidationError::ReviewMismatch)
+        );
+    }
+
+    #[test]
+    fn manual_review_audit_entry_is_scope_bound_and_expiry_checked() {
+        let review = ManualReviewDtoV1::new(
+            action().scope(),
+            id("rev_case"),
+            0,
+            Some(LogicalTimeV1(5)),
+            ContentDigest([6; 32]),
+        );
+        let entry = ManualReviewAuditEntryV1 {
+            scope: action().scope(),
+            review_id: review.review_id.clone(),
+            operation: ManualReviewOperationV1::Decide,
+            principal_id: id("pri_operator"),
+            occurred_at: LogicalTimeV1(5),
+            evidence_digest: ContentDigest([7; 32]),
+        };
+        assert_eq!(entry.validate_for(&review), Ok(()));
+        let mut expired = entry.clone();
+        expired.occurred_at = LogicalTimeV1(6);
+        assert_eq!(
+            expired.validate_for(&review),
+            Err(ManualReviewAuditValidationError::Expired)
+        );
+        let mut wrong_scope = entry;
+        wrong_scope.scope.tenant_id = id("tnt_other");
+        assert_eq!(
+            wrong_scope.validate_for(&review),
+            Err(ManualReviewAuditValidationError::ReviewMismatch)
         );
     }
 
