@@ -21,10 +21,10 @@ use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
     CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1, DefinitionRegistry,
     EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
-    ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue, ManualReviewResolutionV1,
-    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
-    TimerScheduleV1, TimerScheduler,
+    InboxAcceptanceReceiptV1, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue,
+    ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore,
+    OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1,
+    ProcessAuthorizer, ProcessStore, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -92,7 +92,7 @@ impl OutboxStore for UnavailablePorts {
 
 #[async_trait]
 impl Inbox for UnavailablePorts {
-    async fn accept(&self, _: &ProcessInputDtoV1) -> Result<(), PortError> {
+    async fn accept(&self, _: &ProcessInputDtoV1) -> Result<InboxAcceptanceReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 }

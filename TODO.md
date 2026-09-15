@@ -524,7 +524,11 @@ caller convention. `acknowledge_at` provides the pure lease-safe transition
 that adapters can apply before persisting the acknowledgement. `renew_at` and
 the `OutboxStore::renew` port require an unexpired lease and strictly later
 logical expiry, preventing stale or non-extending renewals. Renewal is also
-rejected after acknowledgement, preventing lease resurrection.
+rejected after acknowledgement, preventing lease resurrection. `Inbox::accept`
+now returns an `InboxAcceptanceReceiptV1` carrying the exact input identity and
+duplicate flag, so redelivery can be a durable no-op without rerunning a
+decision. Storage, acknowledgement ordering, and crash recovery remain
+adapter-owned.
 
 ### P1.4 StateChronicle contract
 

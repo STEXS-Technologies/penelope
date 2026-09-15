@@ -11,7 +11,7 @@ use async_trait::async_trait;
 use penelope_domain::{
     ActionId, CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalEventId, CanonicalWireBytesV1,
     DefinitionId, DefinitionMigrationV1, DefinitionVersion, EffectKeyV1, ExternalReferenceId,
-    LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
+    InputId, LogicalTimeV1, ManualReviewDtoV1, OutcomeId, PrincipalId, ProcessActionDtoV1,
     ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
     ProcessScopeV1, ReviewId,
 };
@@ -41,6 +41,26 @@ pub struct DefinitionLookupV1 {
     pub definition_id: DefinitionId,
     /// Exact version requested by a process start or replay.
     pub definition_version: DefinitionVersion,
+}
+
+/// Receipt from an idempotent durable inbox acceptance attempt.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct InboxAcceptanceReceiptV1 {
+    /// Immutable input identity accepted or redelivered.
+    pub input_id: InputId,
+    /// Whether this identity was already durably accepted.
+    pub duplicate: bool,
+}
+
+impl InboxAcceptanceReceiptV1 {
+    /// Creates a receipt for one input identity.
+    #[must_use]
+    pub const fn new(input_id: InputId, duplicate: bool) -> Self {
+        Self {
+            input_id,
+            duplicate,
+        }
+    }
 }
 
 impl DefinitionLookupV1 {
@@ -1541,7 +1561,12 @@ pub trait OutboxStore: Send + Sync {
 #[async_trait]
 pub trait Inbox: Send + Sync {
     /// Records an input exactly once before it is processed.
-    async fn accept(&self, input: &ProcessInputDtoV1) -> Result<(), PortError>;
+    /// The returned receipt lets callers treat a duplicate as a successful
+    /// no-op without re-running the process decision.
+    async fn accept(
+        &self,
+        input: &ProcessInputDtoV1,
+    ) -> Result<InboxAcceptanceReceiptV1, PortError>;
 }
 
 /// Durable process-action dispatch boundary.
@@ -1664,6 +1689,7 @@ macro_rules! canonical_port_impl {
 
 canonical_port_impl!(
     DefinitionLookupV1,
+    InboxAcceptanceReceiptV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
     OutboxRecordV1,
