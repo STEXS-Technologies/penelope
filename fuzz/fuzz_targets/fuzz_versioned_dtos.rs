@@ -8,8 +8,9 @@ use penelope_domain::{
 };
 use penelope_ports::{
     AtomicProcessCommitReceiptV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
-    DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, OutboxClaimRequestV1,
-    OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, QuotaRequestV1,
+    DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, ManualReviewClaimV1,
+    ManualReviewDecisionV1, OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1,
+    QuotaRequestV1, RedactedDiagnosticV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -95,5 +96,14 @@ fuzz_target!(|data: &[u8]| {
     if let Ok(review) = serde_json::from_slice::<ManualReviewDtoV1>(data) {
         let _ = review.validate();
         let _ = review.canonical_wire_bytes();
+    }
+    if let Ok(claim) = serde_json::from_slice::<ManualReviewClaimV1>(data) {
+        let _ = claim.canonical_wire_bytes();
+    }
+    if let Ok(decision) = serde_json::from_slice::<ManualReviewDecisionV1>(data) {
+        let _ = decision.canonical_wire_bytes();
+    }
+    if let Ok(diagnostic) = serde_json::from_slice::<RedactedDiagnosticV1>(data) {
+        let _ = diagnostic.canonical_wire_bytes();
     }
 });
