@@ -1446,10 +1446,13 @@ impl ExternalEffectEvidenceV1 {
         request: &EffectDispatchRequestV1,
         now: LogicalTimeV1,
     ) -> Result<ExternalEffectDispositionV1, EffectReconciliationValidationError> {
-        request.validate_at(now)?;
+        request.validate()?;
         self.validate_for(request)?;
         Ok(match self.state {
             ExternalEffectStateV1::Succeeded => ExternalEffectDispositionV1::Completed,
+            ExternalEffectStateV1::KnownFailure if request.is_expired_at(now) => {
+                ExternalEffectDispositionV1::Escalate
+            }
             ExternalEffectStateV1::KnownFailure => ExternalEffectDispositionV1::Retry,
             ExternalEffectStateV1::Unknown => ExternalEffectDispositionV1::Escalate,
         })
@@ -2855,11 +2858,19 @@ mod tests {
             failed.disposition_at(&request, LogicalTimeV1(10)),
             Ok(ExternalEffectDispositionV1::Retry)
         );
-        let mut succeeded = failed;
+        let mut succeeded = failed.clone();
         succeeded.state = ExternalEffectStateV1::Succeeded;
         assert_eq!(
             succeeded.disposition_at(&request, LogicalTimeV1(10)),
             Ok(ExternalEffectDispositionV1::Completed)
+        );
+        assert_eq!(
+            succeeded.disposition_at(&request, LogicalTimeV1(11)),
+            Ok(ExternalEffectDispositionV1::Completed)
+        );
+        assert_eq!(
+            failed.disposition_at(&request, LogicalTimeV1(11)),
+            Ok(ExternalEffectDispositionV1::Escalate)
         );
 
         let wrong_action = ExternalEffectEvidenceV1 {
