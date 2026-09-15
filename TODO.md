@@ -458,7 +458,9 @@ also rejects a lease whose action scope differs from the claim scope, while
 The `OutboxStore::acknowledge` port now requires a typed logical `now` value,
 making expiry enforcement an explicit adapter contract rather than an optional
 caller convention. `acknowledge_at` provides the pure lease-safe transition
-that adapters can apply before persisting the acknowledgement.
+that adapters can apply before persisting the acknowledgement. `renew_at` and
+the `OutboxStore::renew` port require an unexpired lease and strictly later
+logical expiry, preventing stale or non-extending renewals.
 
 ### P1.4 StateChronicle contract
 
