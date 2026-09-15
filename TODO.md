@@ -9,6 +9,45 @@ store, production adapter, or production-readiness evidence. Nothing below is
 complete unless checked off with linked tests and reproducible evidence. Do not
 call Penelope production-ready before every P0 and P1 item is complete.
 
+## Deep audit snapshot (2026-09-15)
+
+The current library-only gate passes: workspace tests, clippy with warnings
+denied, documentation generation, dependency-layer checks, and reachable-history
+secret scanning. Completed one-hour parallel fuzz campaigns also reported no
+crashes or sanitizer markers. This evidence does not prove that an external
+adapter preserves the contracts.
+
+Open risks found by the deeper security, stability and reliability audit:
+
+1. **P0/P1 — atomicity remains a consumer obligation.** `AtomicProcessStore`,
+   `OutboxStore`, inbox deduplication, sequence checks and lease fencing are
+   interfaces/validators only. A consumer adapter must use one transaction or
+   CAS for each invariant, atomically claim ownership, guarantee unique fencing
+   tokens, and reject stale acknowledgements. Add an executable adapter
+   conformance suite before release.
+2. **P0 — identity/canonical encoding is incomplete.** Remaining correlation,
+   timer and review identity coverage, canonical byte encoding, payload-size
+   limits and compile-time non-substitutability checks are still open. Never use
+   display text as an idempotency key or signature input.
+3. **P1 — recovery semantics are incomplete.** Durable inbox/outcome replay,
+   timer claiming, cancellation, compensation ordering and ambiguous-effect
+   reconciliation lack a complete portable contract and adversarial state-machine
+   tests. Only the implemented reference transitions are currently restart-safe.
+4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
+   helpers do not yet define a complete operation/resource matrix, quota accounting
+   or deterministic sensitive-payload redaction. Consumers must deny by default
+   and avoid logging raw payloads.
+5. **P1 — definition evolution is incomplete.** Pinning and digest comparison
+   exist, but registration, compatibility/migration rules and a canonical digest
+   algorithm do not. Changed definitions must be rejected during deployment.
+6. **P3 — performance evidence is workload-specific.** Current host runs measure
+   about 0.15M graph ops/s, 13.8M linear ops/s and 1.88M isolated graph ops/s across
+   32 workers. These exclude serialization, persistence, contention, scheduling
+   and network latency; they are not durable end-to-end throughput claims.
+
+Release decision: **not production-ready** until the open P0/P1 contracts have
+executable evidence in the library and consumer adapter conformance suites.
+
 ## Priority order
 
 | Priority | Outcome | Why it precedes later work |
