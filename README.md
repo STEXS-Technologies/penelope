@@ -11,6 +11,12 @@ engine, market-data system, or canonical inventory/position store.
 > implementation, durable adapters, complete replay/compensation semantics, or
 > a release process. The complete execution plan is [TODO.md](TODO.md).
 
+## Compatibility
+
+The workspace targets Rust 2024 and declares Rust 1.85 as its minimum supported
+Rust version. Locked CI tests this MSRV; consumers should use `Cargo.lock` for
+reproducible application builds.
+
 ## Boundary with StateChronicle
 
 StateChronicle owns canonical facts such as balances, reservations, positions,
