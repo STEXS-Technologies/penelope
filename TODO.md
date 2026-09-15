@@ -171,15 +171,13 @@ error message string.
 Current partial evidence: `scripts/check-layer-boundaries.sh` validates the
 exact direct internal dependency graph through `cargo metadata` and rejects
 known production infrastructure clients from this ports-only workspace. CI runs
-it before compilation. `ProcessInputEnvelope` carries an explicit typed
-typed invariants, and the intent boundary parses byte input only after
-validating that discriminator; both its parser and DTO boundary are fuzzed. It
-uses canonical versioned wire discriminators (for example,
-`penelope.process.input.v1`) rather than Rust enum names; fixture tests reject
-unknown and unversioned discriminators. Every current public wire DTO now
+it before compilation. `ProcessInputEnvelope` carries typed values, and the
+intent boundary parses bytes only after validating typed invariants; both its
+parser and value boundary are fuzzed. Fixture tests reject malformed
+documents. Every current public wire value now
 carries and validates its immutable typed invariants, including
 definition, input, outcome, action, canonical command/event, and manual review;
-negative tests cover a mismatched schema for each and the versioned-DTO fuzz
+negative tests cover malformed values and the typed-value fuzz
 target invokes each available validator. `scripts/run_bounded_fuzz.sh` verifies
 the required target registration/source set and that every current public
 typed value appears in that value fuzz boundary before executing the bounded
@@ -262,11 +260,11 @@ are unit tested and its serde boundary is exercised by `fuzz_linear_engine`.
 - Evidence: golden fixtures, schema compatibility tests, out-of-order/adversary
   tests, and `replay(log) == stored_projection` property tests.
 
-Current partial evidence: `ProcessOutcomeDto` records a pinned process and
+Current partial evidence: `ProcessOutcome` records a pinned process and
 definition scope, total sequence, causal input/action, immutable outcome ID,
-typed actor, injected logical timestamp, payload digest, and explicit schema.
-`AtomicProcessCommit` rejects non-outcome schemas before an adapter sees a
-commit; malformed versioned outcome DTOs and atomic commits are fuzzed. The
+typed actor, injected logical timestamp, and payload digest.
+`AtomicProcessCommit` rejects malformed values before an adapter sees a
+commit; malformed outcome values and atomic commits are fuzzed. The
 linear engine now derives an ordered required outcome-kind plan from each
 immutable event and pure decision (observed result plus planned action/retry,
 compensation, review resolution, or terminal state). It rejects a supplied
@@ -428,9 +426,9 @@ with an adversarial regression test and correlation fuzz coverage.
 Outcome DTOs now also expose `validate_for_scope`, and atomic commits use this
 single typed scope check before accepting outcomes.
 
-### P0.9 Build `trade.v1` as the reference saga
+### P0.9 Build `trade` as the reference saga
 
-- [ ] Implement the complete versioned reference process: validate proposal;
+- [ ] Implement the complete reference process: validate proposal;
   lock asset A; lock asset B; wait for acceptance or deadline; atomically
   settle; compensate known non-settlement by LIFO unlock; escalate unresolved
   outcomes.
@@ -693,7 +691,7 @@ failure escalates instead of retrying.
 - Evidence: concurrent operator, expired review, authorization and audit tests.
 
 Current partial evidence: `ManualReviewClaim` and `ManualReviewDecision`
-are versioned typed port DTOs. They require the exact pinned process-definition
+are typed port values. They require the exact pinned process-definition
 scope, a validated `PrincipalId`, typed resolution/control enums, immutable
 review ID, and redacted evidence digest; both validate against the durable
 review's full scope. The decision may require a distinct deciding principal
