@@ -705,8 +705,9 @@ complete checkout history on every push and pull request. Dependabot now checks
 Cargo and GitHub Actions weekly. Rust 1.85 is now the
 declared MSRV, documented in `README.md`/`SECURITY.md`, and enforced by a CI
 job. A repeatable response rehearsal is documented in
-`docs/security-response-rehearsal.md`; an executed rehearsal artifact and
-immutable action-ref pinning remain incomplete.
+`docs/security-response-rehearsal.md`; all workflow actions are now pinned to
+immutable commit SHAs with version comments. An executed rehearsal artifact
+remains incomplete.
 
 ## P2 — adapters, operations and user experience
 
