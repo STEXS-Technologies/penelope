@@ -706,8 +706,10 @@ Cargo and GitHub Actions weekly. Rust 1.85 is now the
 declared MSRV, documented in `README.md`/`SECURITY.md`, and enforced by a CI
 job. A repeatable response rehearsal is documented in
 `docs/security-response-rehearsal.md`; all workflow actions are now pinned to
-immutable commit SHAs with version comments. An executed rehearsal artifact
-remains incomplete.
+immutable commit SHAs with version comments. Evidence for the executed
+2026-09-15 rehearsal is retained in
+`docs/security-response-rehearsal-2026-09-15.md`; adapter-specific drills remain
+composition-root work.
 
 ## P2 — adapters, operations and user experience
 
