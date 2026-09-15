@@ -39,7 +39,9 @@ Open risks found by the deeper security, stability and reliability audit:
    reconciliation lack a complete portable contract and adversarial state-machine
    tests. A bounded, atomic in-memory `OutcomeLogV1` validator now centralizes
    scope/order/duplicate checks, but persistence and restart behavior remain
-   adapter responsibilities. Only the implemented reference transitions are
+   adapter responsibilities. Its mutable internals are encapsulated behind
+   read-only accessors so callers cannot desynchronize the identity index.
+   Only the implemented reference transitions are
    currently restart-safe.
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
    helpers do not yet define a complete operation/resource matrix or durable

@@ -1468,9 +1468,9 @@ impl OutcomeReplayPageV1 {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct OutcomeLogV1 {
     /// Immutable process and definition scope of every outcome.
-    pub scope: ProcessScopeV1,
+    scope: ProcessScopeV1,
     /// Ordered outcomes accepted so far.
-    pub outcomes: Vec<ProcessOutcomeDtoV1>,
+    outcomes: Vec<ProcessOutcomeDtoV1>,
     #[serde(skip)]
     seen_outcome_ids: HashSet<OutcomeId>,
 }
@@ -1496,6 +1496,30 @@ impl OutcomeLogV1 {
             outcomes: Vec::new(),
             seen_outcome_ids: HashSet::new(),
         }
+    }
+
+    /// Returns the immutable scope pinned to this log.
+    #[must_use]
+    pub const fn scope(&self) -> &ProcessScopeV1 {
+        &self.scope
+    }
+
+    /// Returns accepted outcomes in contiguous sequence order.
+    #[must_use]
+    pub fn outcomes(&self) -> &[ProcessOutcomeDtoV1] {
+        &self.outcomes
+    }
+
+    /// Returns the number of accepted outcomes.
+    #[must_use]
+    pub const fn len(&self) -> usize {
+        self.outcomes.len()
+    }
+
+    /// Returns whether no outcomes have been accepted.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.outcomes.is_empty()
     }
 
     /// Rebuilds a bounded log from an already ordered durable slice.

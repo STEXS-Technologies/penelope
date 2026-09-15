@@ -54,7 +54,7 @@ fuzz_target!(|data: &[u8]| {
         let _ = lease.canonical_wire_bytes();
     }
     if let Ok(log) = serde_json::from_slice::<OutcomeLogV1>(data) {
-        let _ = OutcomeLogV1::from_ordered(log.scope, &log.outcomes);
+        let _ = OutcomeLogV1::from_ordered(log.scope().clone(), log.outcomes());
     }
     if let Ok(quota) = serde_json::from_slice::<QuotaRequestV1>(data) {
         let _ = quota.validate();

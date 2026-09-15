@@ -79,7 +79,7 @@ fn main() {
     let append_elapsed = append_start.elapsed();
     println!(
         "bounded outcome-log append: {} operations in {append_elapsed:?} ({} ns/op)",
-        log.outcomes.len(),
-        append_elapsed.as_nanos() / u128::from(log.outcomes.len().max(1) as u64)
+        log.len(),
+        append_elapsed.as_nanos() / u128::from(log.len().max(1) as u64)
     );
 }
