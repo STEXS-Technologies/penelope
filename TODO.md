@@ -520,7 +520,9 @@ fuzzed. `ExternalEffectExecutor` additionally defines a typed remote reference,
 effect-key, optional deadline, reconciliation, and best-effort cancellation
 contract; its unknown state remains explicitly non-retryable. There is no
 executor policy, consistency-window implementation, or fault-injected adapter
-drill yet, so this item remains incomplete.
+drill yet, so this item remains incomplete. `EffectDispatchRequestV1::validate_at`
+now provides an inclusive logical deadline check, returning typed
+`DeadlineExceeded` instead of leaving expiry behavior to adapter conventions.
 
 ### P1.6 Manual review lifecycle
 
