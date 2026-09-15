@@ -674,8 +674,10 @@ have parser and engine-transition fuzz coverage through the public review
 lifecycle and linear engine targets. Authorization policy, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
    remain incomplete. `ManualReviewReceiptV1` now makes open/claim/decision
-redelivery idempotency explicit and validates the returned review identity;
-durable queue conflict handling remains adapter-owned.
+redelivery idempotency explicit and validates the returned review identity; it
+now also carries the operation (`Open`, `Claim`, or `Decide`) and rejects
+cross-operation receipt substitution. Durable queue conflict handling remains
+adapter-owned.
 
 ### P1.7 Security and supply chain baseline
 

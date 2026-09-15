@@ -11,9 +11,9 @@ use penelope_ports::{
     CanonicalReconciliationV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
     DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, EffectDispatchRequestV1,
     ExternalEffectEvidenceV1, ExternalEffectStateV1, ManualReviewClaimV1, ManualReviewControlV1,
-    ManualReviewDecisionV1, ManualReviewReceiptV1, ManualReviewResolutionV1,
-    OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1, OutboxLeaseV1,
-    OutboxRecordV1, OutcomeLogV1, OutcomeReplayPageV1, OutcomeReplayRequestV1,
+    ManualReviewDecisionV1, ManualReviewOperationV1, ManualReviewReceiptV1,
+    ManualReviewResolutionV1, OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1,
+    OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, OutcomeReplayPageV1, OutcomeReplayRequestV1,
     ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
     QuotaKindV1, QuotaRequestV1, RecoveryDispositionV1, RedactedDiagnosticV1, TimerClaimRequestV1,
     TimerLeaseV1, TimerScheduleV1,
@@ -122,6 +122,9 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(receipt) = serde_json::from_slice::<ManualReviewReceiptV1>(data) {
         let _ = receipt.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<ManualReviewOperationV1>(data) {
+        let _ = value.canonical_wire_bytes();
     }
     if let Ok(value) = serde_json::from_slice::<CanonicalReconciliationV1>(data) {
         let _ = value.canonical_wire_bytes();

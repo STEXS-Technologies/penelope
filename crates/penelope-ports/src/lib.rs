@@ -161,10 +161,23 @@ pub struct InboxAcceptanceReceiptV1 {
 }
 
 /// Receipt from an idempotent manual-review mutation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ManualReviewOperationV1 {
+    /// Opening or returning an existing review case.
+    Open,
+    /// Claiming an existing review case.
+    Claim,
+    /// Recording a review decision.
+    Decide,
+}
+
+/// Receipt from an idempotent manual-review mutation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ManualReviewReceiptV1 {
     /// Immutable review identity mutated or redelivered.
     pub review_id: ReviewId,
+    /// Mutation operation acknowledged by the queue.
+    pub operation: ManualReviewOperationV1,
     /// Whether the mutation was already durably recorded.
     pub duplicate: bool,
 }
@@ -267,6 +280,9 @@ pub enum ManualReviewReceiptValidationError {
     /// The adapter returned a receipt for another review case.
     #[error("manual-review receipt does not match the requested review")]
     ReviewMismatch,
+    /// The adapter returned a receipt for another mutation operation.
+    #[error("manual-review receipt operation does not match the requested operation")]
+    OperationMismatch,
 }
 
 impl ManualReviewReceiptV1 {
@@ -274,8 +290,20 @@ impl ManualReviewReceiptV1 {
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
     pub fn new(review_id: ReviewId, duplicate: bool) -> Self {
+        Self::new_for_operation(review_id, ManualReviewOperationV1::Open, duplicate)
+    }
+
+    /// Creates a receipt for one review identity and mutation operation.
+    #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new_for_operation(
+        review_id: ReviewId,
+        operation: ManualReviewOperationV1,
+        duplicate: bool,
+    ) -> Self {
         Self {
             review_id,
+            operation,
             duplicate,
         }
     }
@@ -294,6 +322,25 @@ impl ManualReviewReceiptV1 {
             Ok(())
         } else {
             Err(ManualReviewReceiptValidationError::ReviewMismatch)
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact review mutation.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when either the review identity or operation
+    /// differs from the requested mutation.
+    pub fn validate_for_operation(
+        &self,
+        review_id: &ReviewId,
+        operation: ManualReviewOperationV1,
+    ) -> Result<(), ManualReviewReceiptValidationError> {
+        self.validate_for(review_id)?;
+        if self.operation == operation {
+            Ok(())
+        } else {
+            Err(ManualReviewReceiptValidationError::OperationMismatch)
         }
     }
 }
@@ -2353,6 +2400,7 @@ canonical_port_impl!(
     ActionDispatchReceiptV1,
     CanonicalSubmitReceiptV1,
     ManualReviewReceiptV1,
+    ManualReviewOperationV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
     OutboxRecordV1,
@@ -3267,8 +3315,20 @@ mod tests {
     #[test]
     fn manual_review_receipt_is_bound_to_the_exact_case() {
         let review_id: ReviewId = id("rev_case");
-        let receipt = ManualReviewReceiptV1::new(review_id.clone(), true);
+        let receipt = ManualReviewReceiptV1::new_for_operation(
+            review_id.clone(),
+            ManualReviewOperationV1::Claim,
+            true,
+        );
         assert_eq!(receipt.validate_for(&review_id), Ok(()));
+        assert_eq!(
+            receipt.validate_for_operation(&review_id, ManualReviewOperationV1::Claim),
+            Ok(())
+        );
+        assert_eq!(
+            receipt.validate_for_operation(&review_id, ManualReviewOperationV1::Decide),
+            Err(ManualReviewReceiptValidationError::OperationMismatch)
+        );
         assert_eq!(
             receipt.validate_for(&id("rev_other")),
             Err(ManualReviewReceiptValidationError::ReviewMismatch)
