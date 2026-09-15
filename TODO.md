@@ -671,7 +671,9 @@ two-step pure graph start/result/result operation at approximately 985 ns/op
 network, contention, and adapter coordination; p95/p99 and regression
 thresholds remain to be established. The parallel companion benchmark measured
 3,200,000 isolated operations across 32 workers at approximately 12.25M ops/s
-on the same host; this is not shared-process or durable-store throughput.
+on the same host; this is not shared-process or durable-store throughput. Graph
+replay duplicate-input detection now uses a bounded hash set, avoiding
+quadratic scans under the 4,096-event replay cap.
 
 Current partial evidence: `cargo bench -p penelope-executor --bench
 linear_saga --locked` measures a fixed 100,000-operation pure
