@@ -1990,6 +1990,9 @@ pub struct AtomicProcessCommitReceiptV1 {
 /// Typed validation failure for an atomic commit acknowledgement.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum AtomicProcessCommitReceiptValidationError {
+    /// The submitted commit itself failed validation.
+    #[error("atomic commit receipt cannot validate an invalid commit")]
+    InvalidCommit,
     /// The acknowledgement does not identify the submitted commit's final sequence.
     #[error("atomic commit receipt sequence does not match the submitted commit")]
     SequenceMismatch,
@@ -2009,6 +2012,9 @@ impl AtomicProcessCommitReceiptV1 {
         &self,
         commit: &AtomicProcessCommitV1,
     ) -> Result<(), AtomicProcessCommitReceiptValidationError> {
+        if commit.validate().is_err() {
+            return Err(AtomicProcessCommitReceiptValidationError::InvalidCommit);
+        }
         let expected_last = commit
             .expected_sequence
             .checked_add((commit.outcomes.len().saturating_sub(1)) as u64);
@@ -3293,6 +3299,17 @@ mod tests {
         assert_eq!(
             invalid_duplicate.validate_for(&no_input),
             Err(AtomicProcessCommitReceiptValidationError::DuplicateInputWithoutInput)
+        );
+        let malformed = AtomicProcessCommitV1 {
+            expected_sequence: 4,
+            input: None,
+            canonical_source_event_id: None,
+            outcomes: Vec::new(),
+            actions: Vec::new(),
+        };
+        assert_eq!(
+            receipt.validate_for(&malformed),
+            Err(AtomicProcessCommitReceiptValidationError::InvalidCommit)
         );
     }
 
