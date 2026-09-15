@@ -1394,6 +1394,17 @@ impl TimerLeaseV1 {
             Ok(())
         }
     }
+
+    /// Produces the acknowledged timer schedule only while the lease is valid.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] after expiry or
+    /// [`PortError::Invariant`] for a malformed timer lease.
+    pub fn acknowledge_at(&self, now: LogicalTimeV1) -> Result<TimerScheduleV1, PortError> {
+        self.validate_at(now)?;
+        Ok(self.timer.clone())
+    }
 }
 
 impl TimerScheduleV1 {
@@ -3337,7 +3348,15 @@ mod tests {
         assert_eq!(lease.validate_for_claim(&request), Ok(()));
         assert_eq!(lease.validate_at(LogicalTimeV1(6)), Ok(()));
         assert_eq!(
+            lease.acknowledge_at(LogicalTimeV1(6)),
+            Ok(lease.timer.clone())
+        );
+        assert_eq!(
             lease.validate_at(LogicalTimeV1(7)),
+            Err(PortError::TimedOut)
+        );
+        assert_eq!(
+            lease.acknowledge_at(LogicalTimeV1(7)),
             Err(PortError::TimedOut)
         );
     }
