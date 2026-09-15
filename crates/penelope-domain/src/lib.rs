@@ -150,6 +150,9 @@ pub enum DefinitionMigrationError {
     /// A migration must change version or semantics.
     #[error("definition migration is a no-op")]
     NoOp,
+    /// The destination definition failed its own schema or bound validation.
+    #[error("definition migration destination is invalid")]
+    InvalidDestination,
 }
 
 /// Typed failure for canonical wire encoding.
@@ -598,6 +601,9 @@ impl DefinitionMigrationV1 {
         &self,
         candidate: &ProcessDefinitionDtoV1,
     ) -> Result<(), DefinitionMigrationError> {
+        if candidate.validate().is_err() {
+            return Err(DefinitionMigrationError::InvalidDestination);
+        }
         if candidate.definition_id != self.definition_id
             || candidate.definition_version != self.to_version
             || candidate.definition_digest != self.to_digest
@@ -1797,6 +1803,12 @@ mod tests {
         assert_eq!(
             migration.validate_destination(&wrong),
             Err(DefinitionMigrationError::IdentityMismatch)
+        );
+        let mut malformed = destination;
+        malformed.schema = SchemaV1::ProcessAction;
+        assert_eq!(
+            migration.validate_destination(&malformed),
+            Err(DefinitionMigrationError::InvalidDestination)
         );
         assert_eq!(
             DefinitionMigrationV1::new(
