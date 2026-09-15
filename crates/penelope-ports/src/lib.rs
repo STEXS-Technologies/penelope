@@ -234,6 +234,21 @@ impl OutboxLeaseV1 {
         Ok(())
     }
 
+    /// Validates scope, owner, record invariants, and lease expiry together.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] for an expired lease or
+    /// [`PortError::Invariant`] for a malformed or cross-scoped lease.
+    pub fn validate_for_claim_at(
+        &self,
+        request: &OutboxClaimRequestV1,
+        now: LogicalTimeV1,
+    ) -> Result<(), PortError> {
+        self.validate_for_claim(request)?;
+        self.validate_at(now)
+    }
+
     /// Returns whether this lease is expired at the supplied logical time.
     #[must_use]
     pub const fn is_expired_at(&self, now: LogicalTimeV1) -> bool {
@@ -1498,8 +1513,21 @@ mod tests {
 
     #[test]
     fn outbox_lease_expiry_is_checked_at_logical_boundary() {
+        let action = action();
+        let request = OutboxClaimRequestV1::new(
+            ProcessScopeV1::new(
+                action.tenant_id.clone(),
+                action.process_id.clone(),
+                action.definition_id.clone(),
+                action.definition_version.clone(),
+                action.definition_digest,
+            ),
+            id("pri_worker"),
+            NonZeroU16::MIN,
+        )
+        .unwrap();
         let lease = OutboxLeaseV1 {
-            record: OutboxRecordV1::new(action()),
+            record: OutboxRecordV1::new(action),
             owner: id("pri_worker"),
             token: OutboxLeaseTokenV1::new(NonZeroU64::MIN),
             lease_expires_at: LogicalTimeV1(5),
@@ -1531,6 +1559,11 @@ mod tests {
         assert_eq!(
             lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(5)),
             Err(PortError::Invariant)
+        );
+        assert!(
+            lease
+                .validate_for_claim_at(&request, LogicalTimeV1(5))
+                .is_ok()
         );
         let acknowledged = lease.acknowledge_at(LogicalTimeV1(5)).unwrap();
         let mut acknowledged_lease = lease;
