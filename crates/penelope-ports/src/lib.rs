@@ -402,6 +402,9 @@ pub enum EffectReconciliationValidationError {
     /// Evidence does not retain the action's exact semantic idempotency key.
     #[error("external effect evidence key does not match the request")]
     EffectKeyMismatch,
+    /// The request's inclusive logical deadline has passed.
+    #[error("external effect request deadline has passed")]
+    DeadlineExceeded,
 }
 
 /// Typed validation failure for a durable retry-timer record.
@@ -592,6 +595,33 @@ impl EffectDispatchRequestV1 {
             return Err(EffectReconciliationValidationError::EffectKeyMismatch);
         }
         Ok(())
+    }
+
+    /// Returns whether the request is past its inclusive logical deadline.
+    #[must_use]
+    pub const fn is_expired_at(&self, now: LogicalTimeV1) -> bool {
+        match self.deadline {
+            Some(deadline) => now.0 > deadline.0,
+            None => false,
+        }
+    }
+
+    /// Validates the request and rejects execution after its deadline.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`EffectReconciliationValidationError::DeadlineExceeded`] when
+    /// the logical deadline has passed.
+    pub fn validate_at(
+        &self,
+        now: LogicalTimeV1,
+    ) -> Result<(), EffectReconciliationValidationError> {
+        self.validate()?;
+        if self.is_expired_at(now) {
+            Err(EffectReconciliationValidationError::DeadlineExceeded)
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -1562,6 +1592,17 @@ mod tests {
         assert_eq!(
             mismatched_request.validate(),
             Err(EffectReconciliationValidationError::EffectKeyMismatch)
+        );
+    }
+
+    #[test]
+    fn external_effect_deadline_is_inclusive_and_fail_closed_after_expiry() {
+        let request = EffectDispatchRequestV1::new(action()).with_deadline(LogicalTimeV1(5));
+        assert!(!request.is_expired_at(LogicalTimeV1(5)));
+        assert!(request.validate_at(LogicalTimeV1(6)).is_err());
+        assert_eq!(
+            request.validate_at(LogicalTimeV1(6)),
+            Err(EffectReconciliationValidationError::DeadlineExceeded)
         );
     }
 
