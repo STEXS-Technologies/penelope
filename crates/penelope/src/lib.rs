@@ -54,6 +54,7 @@ pub use penelope_ports::{
     AtomicProcessCommitV1, AuthorizationRequirementV1, CanonicalReconciliationV1,
     CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
     CanonicalSubmitReceiptValidationError, CommitValidationError, ConsistencyWindowValidationError,
+    DefinitionRegistrationReceiptV1, DefinitionRegistrationReceiptValidationError,
     DiagnosticClassV1, DiagnosticSink, DiagnosticValidationError, EffectDispatchRequestV1,
     EffectReconciliationValidationError, ExternalEffectEvidenceV1, ExternalEffectExecutor,
     ExternalEffectStateV1, InboxAcceptanceReceiptV1, InboxReceiptValidationError, LeaseTokenSource,

@@ -480,6 +480,11 @@ receipt substitution. Durable dispatch ordering remains adapter-owned.
 bounded `RedactedDiagnosticV1` values; the unavailable-port conformance double
 proves it fails closed. Structured retention, access control, and sampling are
 still composition-root responsibilities.
+`DefinitionRegistry::register` now returns a
+`DefinitionRegistrationReceiptV1` bound to immutable identity, version, and
+digest, making duplicate publication observable without allowing a changed
+definition to masquerade as an idempotent registration. Migration execution
+and deployment policy remain outside this library.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 

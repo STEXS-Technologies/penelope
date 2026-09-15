@@ -46,6 +46,66 @@ pub struct DefinitionLookupV1 {
     pub definition_version: DefinitionVersion,
 }
 
+/// Receipt from idempotent immutable-definition registration.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DefinitionRegistrationReceiptV1 {
+    /// Registered immutable definition identity.
+    pub definition_id: DefinitionId,
+    /// Registered immutable version.
+    pub definition_version: DefinitionVersion,
+    /// Digest acknowledged by the registry.
+    pub definition_digest: penelope_domain::ContentDigest,
+    /// Whether this identity and digest were already registered.
+    pub duplicate: bool,
+}
+
+/// Typed validation failure for a definition-registration receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum DefinitionRegistrationReceiptValidationError {
+    /// The registry acknowledged another immutable identity or digest.
+    #[error("definition registration receipt does not match the requested definition")]
+    DefinitionMismatch,
+}
+
+impl DefinitionRegistrationReceiptV1 {
+    /// Creates a receipt for one immutable definition identity and digest.
+    #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new(
+        definition_id: DefinitionId,
+        definition_version: DefinitionVersion,
+        definition_digest: penelope_domain::ContentDigest,
+        duplicate: bool,
+    ) -> Self {
+        Self {
+            definition_id,
+            definition_version,
+            definition_digest,
+            duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact definition record.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DefinitionRegistrationReceiptValidationError::DefinitionMismatch`]
+    /// when identity, version, or digest differs.
+    pub fn validate_for(
+        &self,
+        definition: &ProcessDefinitionDtoV1,
+    ) -> Result<(), DefinitionRegistrationReceiptValidationError> {
+        if self.definition_id == definition.definition_id
+            && self.definition_version == definition.definition_version
+            && self.definition_digest == definition.definition_digest
+        {
+            Ok(())
+        } else {
+            Err(DefinitionRegistrationReceiptValidationError::DefinitionMismatch)
+        }
+    }
+}
+
 /// Receipt from an idempotent durable inbox acceptance attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InboxAcceptanceReceiptV1 {
@@ -1875,7 +1935,10 @@ pub trait DefinitionRegistry: Send + Sync {
     /// Registers one immutable definition after schema and bound validation.
     /// Registration must be idempotent for the same identity and digest and
     /// must reject a changed digest under an existing identity/version.
-    async fn register(&self, definition: &ProcessDefinitionDtoV1) -> Result<(), PortError>;
+    async fn register(
+        &self,
+        definition: &ProcessDefinitionDtoV1,
+    ) -> Result<DefinitionRegistrationReceiptV1, PortError>;
 
     /// Looks up the exact immutable definition requested by a process.
     async fn get(&self, lookup: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError>;
@@ -2110,6 +2173,7 @@ macro_rules! canonical_port_impl {
 
 canonical_port_impl!(
     DefinitionLookupV1,
+    DefinitionRegistrationReceiptV1,
     InboxAcceptanceReceiptV1,
     ActionDispatchReceiptV1,
     CanonicalSubmitReceiptV1,
@@ -3040,6 +3104,34 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&other),
             Err(CanonicalSubmitReceiptValidationError::ActionMismatch)
+        );
+    }
+
+    #[test]
+    fn definition_registration_receipt_is_bound_to_identity_version_and_digest() {
+        let definition = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([9; 32]),
+            vec![id("stp_dispatch")],
+        )
+        .unwrap();
+        let receipt = DefinitionRegistrationReceiptV1::new(
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+            definition.definition_digest,
+            false,
+        );
+        assert_eq!(receipt.validate_for(&definition), Ok(()));
+        let wrong = DefinitionRegistrationReceiptV1::new(
+            definition.definition_id.clone(),
+            definition.definition_version.clone(),
+            ContentDigest([8; 32]),
+            false,
+        );
+        assert_eq!(
+            wrong.validate_for(&definition),
+            Err(DefinitionRegistrationReceiptValidationError::DefinitionMismatch)
         );
     }
 
