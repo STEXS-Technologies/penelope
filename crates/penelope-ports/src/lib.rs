@@ -16,7 +16,7 @@ use penelope_domain::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::num::{NonZeroU16, NonZeroU64};
+use std::num::{NonZeroU16, NonZeroU32, NonZeroU64};
 use thiserror::Error;
 
 /// Maximum append-only outcomes accepted in one atomic process commit.
@@ -109,6 +109,81 @@ impl DiagnosticClassV1 {
 
 /// Maximum diagnostic metadata size accepted from an adapter.
 pub const MAX_REDACTED_DIAGNOSTIC_BYTES: u32 = 4096;
+/// Maximum configured quota capacity represented by one request.
+pub const MAX_QUOTA_CAPACITY: u32 = 1_000_000;
+
+/// Stable resource class for bounded admission control.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum QuotaKindV1 {
+    /// Number of concurrently open process instances.
+    OpenProcesses,
+    /// Number of outstanding actions.
+    OutstandingActions,
+    /// Number of delivery attempts in a bounded interval.
+    DeliveryAttempts,
+    /// Number of outcomes accepted in a bounded interval.
+    OutcomeWrites,
+}
+
+/// Typed quota admission request; no resource names or free-form policy text.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct QuotaRequestV1 {
+    /// Resource class being accounted.
+    pub kind: QuotaKindV1,
+    /// Units requested by the operation.
+    pub requested: NonZeroU32,
+    /// Maximum units permitted by the pinned policy.
+    pub capacity: NonZeroU32,
+}
+
+/// Typed quota validation failure.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum QuotaValidationError {
+    /// Configured capacity exceeds the global safety bound.
+    #[error("quota capacity exceeds the configured bound")]
+    CapacityLimitExceeded,
+    /// Operation requests more units than the configured capacity.
+    #[error("quota request exceeds configured capacity")]
+    RequestExceedsCapacity,
+}
+
+impl QuotaRequestV1 {
+    /// Creates and validates a bounded quota request.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when capacity or requested units exceed policy.
+    pub const fn new(
+        kind: QuotaKindV1,
+        requested: NonZeroU32,
+        capacity: NonZeroU32,
+    ) -> Result<Self, QuotaValidationError> {
+        let request = Self {
+            kind,
+            requested,
+            capacity,
+        };
+        match request.validate() {
+            Ok(()) => Ok(request),
+            Err(error) => Err(error),
+        }
+    }
+
+    /// Validates the global capacity and per-operation admission bound.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error when the request cannot be admitted safely.
+    pub const fn validate(self) -> Result<(), QuotaValidationError> {
+        if self.capacity.get() > MAX_QUOTA_CAPACITY {
+            return Err(QuotaValidationError::CapacityLimitExceeded);
+        }
+        if self.requested.get() > self.capacity.get() {
+            return Err(QuotaValidationError::RequestExceedsCapacity);
+        }
+        Ok(())
+    }
+}
 
 /// Typed failure for constructing a bounded redacted diagnostic.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
@@ -2245,6 +2320,33 @@ mod tests {
                 MAX_REDACTED_DIAGNOSTIC_BYTES.saturating_add(1),
             ),
             Err(DiagnosticValidationError::MetadataLimitExceeded)
+        );
+    }
+
+    #[test]
+    fn quota_requests_are_typed_bounded_and_fail_closed() {
+        let valid = QuotaRequestV1::new(
+            QuotaKindV1::OutstandingActions,
+            NonZeroU32::new(4).unwrap(),
+            NonZeroU32::new(8).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(valid.validate(), Ok(()));
+        assert_eq!(
+            QuotaRequestV1::new(
+                QuotaKindV1::OutcomeWrites,
+                NonZeroU32::new(9).unwrap(),
+                NonZeroU32::new(8).unwrap(),
+            ),
+            Err(QuotaValidationError::RequestExceedsCapacity)
+        );
+        assert_eq!(
+            QuotaRequestV1::new(
+                QuotaKindV1::OpenProcesses,
+                NonZeroU32::new(MAX_QUOTA_CAPACITY).unwrap(),
+                NonZeroU32::new(MAX_QUOTA_CAPACITY.saturating_add(1)).unwrap(),
+            ),
+            Err(QuotaValidationError::CapacityLimitExceeded)
         );
     }
 }

@@ -41,8 +41,9 @@ Open risks found by the deeper security, stability and reliability audit:
    adapter responsibilities. Only the implemented reference transitions are
    currently restart-safe.
 4. **P1 — authorization/redaction are incomplete.** Fail-closed authorization
-   helpers do not yet define a complete operation/resource matrix or quota
-   accounting. A typed `RedactedDiagnosticV1` now carries only a coarse class,
+   helpers do not yet define a complete operation/resource matrix or durable
+   quota accounting. A typed `QuotaRequestV1` now bounds typed resource classes
+   and admission units. A typed `RedactedDiagnosticV1` carries only a coarse class,
    bounded metadata size and an evidence digest—never a raw message or payload—
    with tests for bounds and error classification. Consumers must deny by default
    and avoid logging raw payloads.

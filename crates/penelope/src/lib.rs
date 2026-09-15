@@ -52,14 +52,14 @@ pub use penelope_ports::{
     CommitValidationError, DiagnosticClassV1, DiagnosticValidationError, EffectDispatchRequestV1,
     EffectReconciliationValidationError, ExternalEffectEvidenceV1, ExternalEffectExecutor,
     ExternalEffectStateV1, MAX_OUTBOX_CLAIM_BATCH, MAX_OUTBOX_DELIVERY_ATTEMPTS,
-    MAX_OUTCOMES_PER_READ_PAGE, MAX_REDACTED_DIAGNOSTIC_BYTES, ManualReviewClaimV1,
-    ManualReviewControlV1, ManualReviewDecisionV1, ManualReviewResolutionV1,
+    MAX_OUTCOMES_PER_READ_PAGE, MAX_QUOTA_CAPACITY, MAX_REDACTED_DIAGNOSTIC_BYTES,
+    ManualReviewClaimV1, ManualReviewControlV1, ManualReviewDecisionV1, ManualReviewResolutionV1,
     ManualReviewValidationError, OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1,
     OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, OutcomeLogV1,
     OutcomeLogValidationError, OutcomePageValidationError, OutcomeReplayPageV1,
     OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1,
-    ProcessAuthorizationRequestV1, ReconciliationValidationError, RedactedDiagnosticV1,
-    TimerScheduleV1, TimerValidationError,
+    ProcessAuthorizationRequestV1, QuotaKindV1, QuotaRequestV1, QuotaValidationError,
+    ReconciliationValidationError, RedactedDiagnosticV1, TimerScheduleV1, TimerValidationError,
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;
