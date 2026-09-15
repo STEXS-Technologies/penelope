@@ -8,6 +8,7 @@ use penelope_domain::{
     ActionId, InputId, ProcessActionDtoV1, ProcessId, ProcessScopeV1, StepId, TenantId,
 };
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use thiserror::Error;
 
 /// Maximum number of graph events accepted by one replay operation.
@@ -359,19 +360,15 @@ pub fn replay_graph(
         return Err(GraphEngineError::ReplayLimitExceeded);
     }
     let mut projection = None;
-    let mut accepted_inputs = Vec::new();
+    let mut accepted_inputs = HashSet::new();
     for event in events {
         let observed_input_id = match event {
             GraphSagaEventV1::Started { input_id, .. }
             | GraphSagaEventV1::ActionResultObserved { input_id, .. } => input_id,
         };
-        if accepted_inputs
-            .iter()
-            .any(|accepted: &InputId| accepted == observed_input_id)
-        {
+        if !accepted_inputs.insert(observed_input_id.clone()) {
             return Err(GraphEngineError::DuplicateInput);
         }
-        accepted_inputs.push(observed_input_id.clone());
         projection = Some(match (projection, event) {
             (
                 None,

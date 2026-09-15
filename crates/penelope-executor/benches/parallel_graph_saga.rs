@@ -1,5 +1,11 @@
 //! Parallel pure bounded-graph throughput benchmark for isolated processes.
 
+#![allow(
+    clippy::arithmetic_side_effects,
+    clippy::float_arithmetic,
+    clippy::map_err_ignore
+)]
+
 use std::{hint::black_box, thread, time::Instant};
 
 use penelope_domain::{ContentDigest, DomainError, ProcessId, TenantId};

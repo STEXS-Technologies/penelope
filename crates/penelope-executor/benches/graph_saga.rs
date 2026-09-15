@@ -1,5 +1,7 @@
 //! Reproducible pure bounded-graph transition benchmark.
 
+#![allow(clippy::arithmetic_side_effects, clippy::float_arithmetic)]
+
 use std::{hint::black_box, time::Instant};
 
 use penelope_domain::{ActionId, ContentDigest, DomainError, InputId, ProcessId, TenantId};
