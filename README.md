@@ -5,11 +5,9 @@ multi-step processes. It is the **process-truth** layer: it records what a
 workflow decided and what its steps observed. It is not a ledger, matching
 engine, market-data system, or canonical inventory/position store.
 
-> Status: **early implementation; not production-ready.** Penelope has typed
-> typed protocol values and a tested pure linear-saga reference engine with
-> ordered-event replay. It does not yet have an append-only outcome
-> implementation, durable adapters, complete replay/compensation semantics, or
-> a release process. The complete execution plan is [TODO.md](TODO.md).
+Penelope is a library-only protocol and deterministic orchestration engine.
+Persistence, brokers, schedulers, and service integrations are deliberately
+consumer-owned ports and adapters.
 
 ## Compatibility
 
