@@ -654,7 +654,9 @@ may retry, and unknown evidence escalates. This remains evidence classification,
 not durable transport behavior.
 `ExternalEffectEvidenceV1::disposition_at` likewise maps succeeded, known
 failure, and unknown evidence to completed, retry, and escalation outcomes
-after validating the exact effect key and logical deadline.
+after validating the exact effect key. It continues to accept authoritative
+committed evidence after an execution deadline, while post-deadline known
+failure escalates instead of retrying.
 
 ### P1.6 Manual review lifecycle
 
