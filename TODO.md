@@ -627,7 +627,9 @@ now provides an inclusive logical deadline check, returning typed
 `CanonicalReconciliationWindowV1` now binds reconciliation to an observation
 time and consistency horizon; only an authoritative `NotCommitted` result after
 that horizon can authorize retry. Committed and unknown results remain
-non-retryable. The adapter still supplies the authoritative horizon.
+non-retryable. `validate_for_action` now validates the wrapped evidence against
+the complete pinned action scope before retry policy can consume it. The adapter
+still supplies the authoritative horizon and durable evidence.
 
 ### P1.6 Manual review lifecycle
 

@@ -1002,6 +1002,19 @@ impl CanonicalReconciliationWindowV1 {
             }
         }
     }
+
+    /// Validates the wrapped evidence against the exact action being recovered.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed reconciliation error when the result is cross-scoped,
+    /// action-substituted, or contains malformed committed evidence.
+    pub fn validate_for_action(
+        &self,
+        action: &ProcessActionDtoV1,
+    ) -> Result<(), ReconciliationValidationError> {
+        self.result.validate_for_action(action)
+    }
 }
 
 /// Typed resolution selected by an authorized manual-review operator.
@@ -2753,6 +2766,13 @@ mod tests {
         assert_eq!(
             window.require_retry_safe_at(LogicalTimeV1(20)),
             Ok(id("act_dispatch"))
+        );
+        assert_eq!(window.validate_for_action(&action()), Ok(()));
+        let mut wrong_action = action();
+        wrong_action.action_id = id("act_other");
+        assert_eq!(
+            window.validate_for_action(&wrong_action),
+            Err(ReconciliationValidationError::ActionMismatch)
         );
         assert_eq!(
             CanonicalReconciliationWindowV1::new(
