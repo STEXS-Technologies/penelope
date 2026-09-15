@@ -71,6 +71,9 @@ pub enum DomainError {
     /// An external-effect reference did not have its required canonical form.
     #[error("invalid external effect reference identifier")]
     InvalidExternalReferenceId,
+    /// A migration identifier did not have its required canonical form.
+    #[error("invalid definition migration identifier")]
+    InvalidMigrationId,
     /// A process definition has no executable steps.
     #[error("process definition contains no steps")]
     EmptyDefinitionSteps,
@@ -136,6 +139,17 @@ pub enum DefinitionCompatibilityError {
     /// The stored digest does not match the canonical v1 definition bytes.
     #[error("definition digest does not match canonical v1 encoding")]
     DigestMismatch,
+}
+
+/// Typed failure for registering a definition migration.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum DefinitionMigrationError {
+    /// A migration cannot change the immutable definition identity.
+    #[error("definition migration changes the immutable definition identity")]
+    IdentityMismatch,
+    /// A migration must change version or semantics.
+    #[error("definition migration is a no-op")]
+    NoOp,
 }
 
 /// Typed failure for canonical wire encoding.
@@ -325,6 +339,12 @@ identifier!(
     InvalidExternalReferenceId,
     "External executor or remote-system reference identity."
 );
+identifier!(
+    MigrationId,
+    "mig_",
+    InvalidMigrationId,
+    "Explicit definition migration identity."
+);
 
 /// Fixed-size digest of canonical payload bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -507,6 +527,85 @@ pub struct ProcessDefinitionDtoV1 {
     pub definition_digest: ContentDigest,
     /// Ordered declared step identifiers.
     pub step_ids: Vec<StepId>,
+}
+
+/// Explicit, immutable registration record for a definition migration.
+///
+/// The executor never applies this record implicitly. A composition root must
+/// validate and authorize the migration, transform any process state under its
+/// own policy, and retain this record alongside the new definition.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DefinitionMigrationV1 {
+    /// Stable migration identity used for idempotent registration.
+    pub migration_id: MigrationId,
+    /// Definition identity shared by both versions.
+    pub definition_id: DefinitionId,
+    /// Previously pinned version.
+    pub from_version: DefinitionVersion,
+    /// Previously registered semantic digest.
+    pub from_digest: ContentDigest,
+    /// Replacement version.
+    pub to_version: DefinitionVersion,
+    /// Replacement semantic digest.
+    pub to_digest: ContentDigest,
+}
+
+impl DefinitionMigrationV1 {
+    /// Creates and validates an explicit definition migration record.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for a no-op migration or an identity change.
+    pub fn new(
+        migration_id: MigrationId,
+        definition_id: DefinitionId,
+        from_version: DefinitionVersion,
+        from_digest: ContentDigest,
+        to_version: DefinitionVersion,
+        to_digest: ContentDigest,
+    ) -> Result<Self, DefinitionMigrationError> {
+        let migration = Self {
+            migration_id,
+            definition_id,
+            from_version,
+            from_digest,
+            to_version,
+            to_digest,
+        };
+        migration.validate()?;
+        Ok(migration)
+    }
+
+    /// Validates that the record represents an actual same-definition change.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for a no-op migration.
+    pub fn validate(&self) -> Result<(), DefinitionMigrationError> {
+        if self.from_version == self.to_version && self.from_digest == self.to_digest {
+            return Err(DefinitionMigrationError::NoOp);
+        }
+        Ok(())
+    }
+
+    /// Requires a candidate definition to match the migration destination.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DefinitionMigrationError::IdentityMismatch`] when the
+    /// candidate uses another definition identity or destination version/digest.
+    pub fn validate_destination(
+        &self,
+        candidate: &ProcessDefinitionDtoV1,
+    ) -> Result<(), DefinitionMigrationError> {
+        if candidate.definition_id != self.definition_id
+            || candidate.definition_version != self.to_version
+            || candidate.definition_digest != self.to_digest
+        {
+            return Err(DefinitionMigrationError::IdentityMismatch);
+        }
+        Ok(())
+    }
 }
 
 /// A causally attributable process input.
@@ -812,6 +911,7 @@ canonical_wire_impl!(
     OutcomeActorV1,
     ProcessOutcomeFactV1,
     ProcessDefinitionDtoV1,
+    DefinitionMigrationV1,
     ProcessInputDtoV1,
     ProcessInputEnvelopeV1,
     ProcessOutcomeDtoV1,
@@ -1665,6 +1765,49 @@ mod tests {
         assert_eq!(
             definition.require_canonical_digest(),
             Err(DefinitionCompatibilityError::DigestMismatch)
+        );
+    }
+
+    #[test]
+    fn definition_migration_binds_identity_and_destination_digest() {
+        let migration = DefinitionMigrationV1::new(
+            id("mig_trade_v2"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([1; 32]),
+            id("dfv_two"),
+            ContentDigest([2; 32]),
+        )
+        .unwrap();
+        let destination = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_two"),
+            ContentDigest([2; 32]),
+            vec![id("stp_lock")],
+        )
+        .unwrap();
+        assert_eq!(migration.validate_destination(&destination), Ok(()));
+        let wrong = ProcessDefinitionDtoV1::new(
+            id("def_other"),
+            id("dfv_two"),
+            ContentDigest([2; 32]),
+            vec![id("stp_lock")],
+        )
+        .unwrap();
+        assert_eq!(
+            migration.validate_destination(&wrong),
+            Err(DefinitionMigrationError::IdentityMismatch)
+        );
+        assert_eq!(
+            DefinitionMigrationV1::new(
+                id("mig_noop"),
+                id("def_trade"),
+                id("dfv_one"),
+                ContentDigest([1; 32]),
+                id("dfv_one"),
+                ContentDigest([1; 32]),
+            ),
+            Err(DefinitionMigrationError::NoOp)
         );
     }
 

@@ -2,9 +2,9 @@
 
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
-    CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalWireBytesV1, LogicalTimeV1,
-    ManualReviewDtoV1, ProcessActionDtoV1, ProcessDefinitionDtoV1, ProcessInputDtoV1,
-    ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessScopeV1,
+    CanonicalCommandDtoV1, CanonicalEventDtoV1, CanonicalWireBytesV1, DefinitionMigrationV1,
+    LogicalTimeV1, ManualReviewDtoV1, ProcessActionDtoV1, ProcessDefinitionDtoV1,
+    ProcessInputDtoV1, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessScopeV1,
 };
 use penelope_ports::{
     OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1, QuotaRequestV1,
@@ -17,6 +17,10 @@ fuzz_target!(|data: &[u8]| {
         let _ = definition.canonical_bytes();
         let _ = definition.computed_digest();
         let _ = definition.require_canonical_digest();
+    }
+    if let Ok(migration) = serde_json::from_slice::<DefinitionMigrationV1>(data) {
+        let _ = migration.validate();
+        let _ = migration.canonical_wire_bytes();
     }
     if let Ok(input) = serde_json::from_slice::<ProcessInputDtoV1>(data) {
         let _ = input.validate();
