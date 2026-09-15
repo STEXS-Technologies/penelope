@@ -462,7 +462,8 @@ making expiry enforcement an explicit adapter contract rather than an optional
 caller convention. `acknowledge_at` provides the pure lease-safe transition
 that adapters can apply before persisting the acknowledgement. `renew_at` and
 the `OutboxStore::renew` port require an unexpired lease and strictly later
-logical expiry, preventing stale or non-extending renewals.
+logical expiry, preventing stale or non-extending renewals. Renewal is also
+rejected after acknowledgement, preventing lease resurrection.
 
 ### P1.4 StateChronicle contract
 
