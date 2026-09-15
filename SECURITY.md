@@ -4,6 +4,8 @@
 
 Penelope is pre-1.0 and not production-ready. Only the current `main` branch
 receives security fixes while the project remains in active development.
+The minimum supported Rust version is 1.85 (Rust 2024 edition); CI enforces
+this compatibility contract for the library workspace.
 
 ## Reporting a vulnerability
 

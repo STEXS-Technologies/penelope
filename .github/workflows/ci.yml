@@ -31,6 +31,15 @@ jobs:
       - run: cargo run -p penelope --example trade_manual_review_v1 --locked
       - run: cargo run -p penelope --example trade_competing_lock_v1 --locked
 
+  msrv:
+    name: Minimum supported Rust
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+
   fuzz:
     name: Bounded fuzzing
     runs-on: ubuntu-latest
