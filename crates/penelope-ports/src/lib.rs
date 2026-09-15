@@ -252,6 +252,26 @@ impl OutboxLeaseV1 {
         self.validate_at(now)?;
         self.record.clone().acknowledge()
     }
+
+    /// Produces a renewed lease only before expiry and only with a later expiry.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`PortError::TimedOut`] after expiry or
+    /// [`PortError::Invariant`] for a non-extending expiry.
+    pub fn renew_at(
+        &self,
+        now: LogicalTimeV1,
+        new_expiry: LogicalTimeV1,
+    ) -> Result<Self, PortError> {
+        self.validate_at(now)?;
+        if new_expiry.0 <= self.lease_expires_at.0 {
+            return Err(PortError::Invariant);
+        }
+        let mut renewed = self.clone();
+        renewed.lease_expires_at = new_expiry;
+        Ok(renewed)
+    }
 }
 
 /// Typed validation failure for one atomic process commit request.
@@ -1103,6 +1123,14 @@ pub trait OutboxStore: Send + Sync {
     /// before changing durable acknowledgement state.
     async fn acknowledge(&self, lease: &OutboxLeaseV1, now: LogicalTimeV1)
     -> Result<(), PortError>;
+
+    /// Renews one exact unexpired lease with a later logical expiry.
+    async fn renew(
+        &self,
+        lease: &OutboxLeaseV1,
+        now: LogicalTimeV1,
+        new_expiry: LogicalTimeV1,
+    ) -> Result<OutboxLeaseV1, PortError>;
 }
 
 /// Durable inbox that deduplicates immutable source inputs.
@@ -1434,6 +1462,17 @@ mod tests {
                 .unwrap()
                 .acknowledgement,
             OutboxAcknowledgementV1::Acknowledged
+        );
+        assert_eq!(
+            lease
+                .renew_at(LogicalTimeV1(4), LogicalTimeV1(6))
+                .unwrap()
+                .lease_expires_at,
+            LogicalTimeV1(6)
+        );
+        assert_eq!(
+            lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(5)),
+            Err(PortError::Invariant)
         );
     }
 

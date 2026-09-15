@@ -64,6 +64,15 @@ impl OutboxStore for UnavailablePorts {
     async fn acknowledge(&self, _: &OutboxLeaseV1, _: LogicalTimeV1) -> Result<(), PortError> {
         Err(PortError::Unavailable)
     }
+
+    async fn renew(
+        &self,
+        _: &OutboxLeaseV1,
+        _: LogicalTimeV1,
+        _: LogicalTimeV1,
+    ) -> Result<OutboxLeaseV1, PortError> {
+        Err(PortError::Unavailable)
+    }
 }
 
 #[async_trait]
