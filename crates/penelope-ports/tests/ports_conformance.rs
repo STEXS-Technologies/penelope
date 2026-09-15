@@ -347,6 +347,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
     assert!(matches!(
+        ready(outbox.renew(&record, LogicalTimeV1(2), LogicalTimeV1(6))),
+        Err(PortError::Unavailable)
+    ));
+    assert!(matches!(
         ready(inbox.accept(&input)),
         Err(PortError::Unavailable)
     ));
