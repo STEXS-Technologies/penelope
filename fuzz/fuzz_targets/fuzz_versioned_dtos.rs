@@ -7,13 +7,16 @@ use penelope_domain::{
     ProcessInputDtoV1, ProcessInputEnvelopeV1, ProcessOutcomeDtoV1, ProcessScopeV1,
 };
 use penelope_ports::{
-    AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, CanonicalReconciliationV1,
-    CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1, DefinitionMigrationReceiptV1,
-    DefinitionRegistrationReceiptV1, EffectDispatchRequestV1, ExternalEffectEvidenceV1,
-    ExternalEffectStateV1, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewReceiptV1,
-    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1,
-    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, QuotaRequestV1,
-    RedactedDiagnosticV1, TimerClaimRequestV1, TimerLeaseV1, TimerScheduleV1,
+    AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, AuthorizationRequirementV1,
+    CanonicalReconciliationV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
+    DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, EffectDispatchRequestV1,
+    ExternalEffectEvidenceV1, ExternalEffectStateV1, ManualReviewClaimV1, ManualReviewControlV1,
+    ManualReviewDecisionV1, ManualReviewReceiptV1, ManualReviewResolutionV1,
+    OutboxAcknowledgementV1, OutboxClaimRequestV1, OutboxLeaseTokenV1, OutboxLeaseV1,
+    OutboxRecordV1, OutcomeLogV1, OutcomeReplayPageV1, OutcomeReplayRequestV1,
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1,
+    QuotaKindV1, QuotaRequestV1, RedactedDiagnosticV1, TimerClaimRequestV1, TimerLeaseV1,
+    TimerScheduleV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -142,6 +145,33 @@ fuzz_target!(|data: &[u8]| {
         let _ = value.canonical_wire_bytes();
     }
     if let Ok(value) = serde_json::from_slice::<AtomicProcessCommitV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<OutcomeReplayRequestV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<OutcomeReplayPageV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<OutboxAcknowledgementV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<OutboxLeaseTokenV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<ManualReviewControlV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<ManualReviewResolutionV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<ProcessAuthorizationOperationV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<AuthorizationRequirementV1>(data) {
+        let _ = value.canonical_wire_bytes();
+    }
+    if let Ok(value) = serde_json::from_slice::<QuotaKindV1>(data) {
         let _ = value.canonical_wire_bytes();
     }
 });
