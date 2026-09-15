@@ -1749,6 +1749,18 @@ pub trait TimerClaimStore: Send + Sync {
     async fn acknowledge(&self, lease: &TimerLeaseV1, now: LogicalTimeV1) -> Result<(), PortError>;
 }
 
+/// Injected source of fresh opaque fencing tokens for worker leases.
+#[async_trait]
+pub trait LeaseTokenSource: Send + Sync {
+    /// Allocates a non-zero token for the supplied pinned process scope.
+    /// Implementations must guarantee uniqueness among concurrently live
+    /// leases and must never recycle a token while an old lease may exist.
+    async fn next_lease_token(
+        &self,
+        scope: &ProcessScopeV1,
+    ) -> Result<OutboxLeaseTokenV1, PortError>;
+}
+
 /// Injected wall-clock boundary for deterministic application decisions.
 #[async_trait]
 pub trait Clock: Send + Sync {

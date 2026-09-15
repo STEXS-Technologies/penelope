@@ -465,6 +465,9 @@ exercise this binding; a real adapter must enforce it transactionally.
 `ProcessAuthorizationDecisionV1::require_authorized` now provides the
 fail-closed conversion from a denied policy result to `PortError::Unauthorized`,
 with unit coverage that does not inspect error text.
+`LeaseTokenSource` now makes fresh fencing-token allocation an explicit typed
+port; its contract requires uniqueness among live leases and no token recycling
+while an old lease may exist. Allocation remains infrastructure-owned.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 

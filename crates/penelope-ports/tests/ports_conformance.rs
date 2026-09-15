@@ -21,14 +21,24 @@ use penelope_ports::{
     ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
     CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1, DefinitionRegistry,
     EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
-    InboxAcceptanceReceiptV1, ManualReviewClaimV1, ManualReviewDecisionV1, ManualReviewQueue,
-    ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore,
-    OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1,
-    ProcessAuthorizer, ProcessStore, TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1,
-    TimerScheduleV1, TimerScheduler,
+    InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
+    ManualReviewQueue, ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1,
+    OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
+    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerClaimRequestV1,
+    TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
+
+#[async_trait]
+impl LeaseTokenSource for UnavailablePorts {
+    async fn next_lease_token(
+        &self,
+        _: &ProcessScopeV1,
+    ) -> Result<penelope_ports::OutboxLeaseTokenV1, PortError> {
+        Err(PortError::Unavailable)
+    }
+}
 
 #[async_trait]
 impl DefinitionRegistry for UnavailablePorts {
@@ -285,6 +295,7 @@ const fn assert_send_sync<T: Send + Sync>() {}
 fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     assert_send_sync::<UnavailablePorts>();
     let ports = UnavailablePorts;
+    let lease_tokens: &dyn LeaseTokenSource = &ports;
     let definitions: &dyn DefinitionRegistry = &ports;
     let process_store: &dyn ProcessStore = &ports;
     let outbox: &dyn OutboxStore = &ports;
@@ -301,6 +312,10 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
     let reviews: &dyn ManualReviewQueue = &ports;
 
     let action = action();
+    assert!(matches!(
+        ready(lease_tokens.next_lease_token(&scope())),
+        Err(PortError::Unavailable)
+    ));
     let definition = ProcessDefinitionDtoV1::new(
         id("def_trade"),
         id("dfv_one"),
