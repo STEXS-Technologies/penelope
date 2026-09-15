@@ -67,8 +67,9 @@ pub use penelope_ports::{
     OutcomeIdSource, OutcomeLogV1, OutcomeLogValidationError, OutcomePageValidationError,
     OutcomeReplayPageV1, OutcomeReplayRequestV1, ProcessAuthorizationDecisionV1,
     ProcessAuthorizationOperationV1, ProcessAuthorizationRequestV1, QuotaKindV1, QuotaRequestV1,
-    QuotaValidationError, ReconciliationValidationError, RedactedDiagnosticV1, TimerClaimRequestV1,
-    TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerValidationError,
+    QuotaValidationError, ReconciliationValidationError, RecoveryDispositionV1,
+    RedactedDiagnosticV1, TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1,
+    TimerValidationError,
 };
 /// StateChronicle adapter boundary; no client implementation is included.
 pub use penelope_statechronicle as statechronicle;

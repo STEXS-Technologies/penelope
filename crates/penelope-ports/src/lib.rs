@@ -1004,6 +1004,31 @@ pub struct CanonicalReconciliationWindowV1 {
     pub consistency_until: LogicalTimeV1,
 }
 
+/// Safe next step derived from authoritative reconciliation evidence.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RecoveryDispositionV1 {
+    /// The effect is committed and must not be retried.
+    Committed {
+        /// Verified canonical event proving commitment.
+        event: CanonicalEventDtoV1,
+    },
+    /// Authoritative absence is not yet safe to use before the horizon.
+    Wait {
+        /// Earliest logical time at which retry may be reconsidered.
+        until: LogicalTimeV1,
+    },
+    /// The action is safe to retry after authoritative absence and horizon.
+    Retry {
+        /// Exact action identity eligible for retry.
+        action_id: ActionId,
+    },
+    /// Evidence is ambiguous and requires escalation/reconciliation.
+    Escalate {
+        /// Exact action identity requiring operator or later evidence.
+        action_id: ActionId,
+    },
+}
+
 impl CanonicalReconciliationWindowV1 {
     /// Creates and validates a consistency-window result.
     ///
@@ -1059,6 +1084,42 @@ impl CanonicalReconciliationWindowV1 {
         action: &ProcessActionDtoV1,
     ) -> Result<(), ReconciliationValidationError> {
         self.result.validate_for_action(action)
+    }
+
+    /// Derives a fail-closed recovery disposition for an exact action.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed reconciliation error when the evidence is not bound to
+    /// the requested action.
+    pub fn disposition_at(
+        &self,
+        action: &ProcessActionDtoV1,
+        now: LogicalTimeV1,
+    ) -> Result<RecoveryDispositionV1, ReconciliationValidationError> {
+        self.validate_for_action(action)?;
+        Ok(match &self.result {
+            CanonicalReconciliationV1::Committed { event, .. } => {
+                RecoveryDispositionV1::Committed {
+                    event: event.clone(),
+                }
+            }
+            CanonicalReconciliationV1::NotCommitted { .. } if now.0 < self.consistency_until.0 => {
+                RecoveryDispositionV1::Wait {
+                    until: self.consistency_until,
+                }
+            }
+            CanonicalReconciliationV1::NotCommitted { action_id, .. } => {
+                RecoveryDispositionV1::Retry {
+                    action_id: action_id.clone(),
+                }
+            }
+            CanonicalReconciliationV1::Unknown { action_id, .. } => {
+                RecoveryDispositionV1::Escalate {
+                    action_id: action_id.clone(),
+                }
+            }
+        })
     }
 }
 
@@ -2303,6 +2364,7 @@ canonical_port_impl!(
     QuotaRequestV1,
     CanonicalReconciliationV1,
     CanonicalReconciliationWindowV1,
+    RecoveryDispositionV1,
     ManualReviewResolutionV1,
     ManualReviewControlV1,
     ProcessAuthorizationOperationV1,
@@ -2869,6 +2931,18 @@ mod tests {
             Ok(id("act_dispatch"))
         );
         assert_eq!(window.validate_for_action(&action()), Ok(()));
+        assert_eq!(
+            window.disposition_at(&action(), LogicalTimeV1(19)),
+            Ok(RecoveryDispositionV1::Wait {
+                until: LogicalTimeV1(20)
+            })
+        );
+        assert_eq!(
+            window.disposition_at(&action(), LogicalTimeV1(20)),
+            Ok(RecoveryDispositionV1::Retry {
+                action_id: id("act_dispatch")
+            })
+        );
         let mut wrong_action = action();
         wrong_action.action_id = id("act_other");
         assert_eq!(
@@ -2895,6 +2969,12 @@ mod tests {
         assert_eq!(
             committed.require_retry_safe_at(LogicalTimeV1(0)),
             Err(ConsistencyWindowValidationError::NotRetrySafe)
+        );
+        assert_eq!(
+            committed.disposition_at(&action(), LogicalTimeV1(0)),
+            Ok(RecoveryDispositionV1::Escalate {
+                action_id: id("act_dispatch")
+            })
         );
     }
 

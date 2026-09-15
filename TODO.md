@@ -645,6 +645,10 @@ that horizon can authorize retry. Committed and unknown results remain
 non-retryable. `validate_for_action` now validates the wrapped evidence against
 the complete pinned action scope before retry policy can consume it. The adapter
 still supplies the authoritative horizon and durable evidence.
+`RecoveryDispositionV1::disposition_at` now centralizes the safe next step:
+committed evidence is terminal, pre-horizon absence waits, post-horizon absence
+may retry, and unknown evidence escalates. This remains evidence classification,
+not durable transport behavior.
 
 ### P1.6 Manual review lifecycle
 
