@@ -55,6 +55,52 @@ pub struct InboxAcceptanceReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Receipt from an idempotent manual-review mutation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ManualReviewReceiptV1 {
+    /// Immutable review identity mutated or redelivered.
+    pub review_id: ReviewId,
+    /// Whether the mutation was already durably recorded.
+    pub duplicate: bool,
+}
+
+/// Typed validation failure for a manual-review receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ManualReviewReceiptValidationError {
+    /// The adapter returned a receipt for another review case.
+    #[error("manual-review receipt does not match the requested review")]
+    ReviewMismatch,
+}
+
+impl ManualReviewReceiptV1 {
+    /// Creates a receipt for one review identity.
+    #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new(review_id: ReviewId, duplicate: bool) -> Self {
+        Self {
+            review_id,
+            duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact review identity.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ManualReviewReceiptValidationError::ReviewMismatch`] when
+    /// the adapter acknowledges another case.
+    pub fn validate_for(
+        &self,
+        review_id: &ReviewId,
+    ) -> Result<(), ManualReviewReceiptValidationError> {
+        if &self.review_id == review_id {
+            Ok(())
+        } else {
+            Err(ManualReviewReceiptValidationError::ReviewMismatch)
+        }
+    }
+}
+
 /// Typed validation failure for an inbox acceptance receipt.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum InboxReceiptValidationError {
@@ -1925,11 +1971,14 @@ pub trait CanonicalState: Send + Sync {
 #[async_trait]
 pub trait ManualReviewQueue: Send + Sync {
     /// Opens or returns the idempotent review case.
-    async fn open(&self, review: &ManualReviewDtoV1) -> Result<(), PortError>;
+    async fn open(&self, review: &ManualReviewDtoV1) -> Result<ManualReviewReceiptV1, PortError>;
     /// Claims a review case without changing the process projection directly.
-    async fn claim(&self, claim: &ManualReviewClaimV1) -> Result<(), PortError>;
+    async fn claim(&self, claim: &ManualReviewClaimV1) -> Result<ManualReviewReceiptV1, PortError>;
     /// Records an authorized immutable resolution for subsequent inbox delivery.
-    async fn decide(&self, decision: &ManualReviewDecisionV1) -> Result<(), PortError>;
+    async fn decide(
+        &self,
+        decision: &ManualReviewDecisionV1,
+    ) -> Result<ManualReviewReceiptV1, PortError>;
 }
 
 fn canonical_port_bytes<T: Serialize>(
@@ -1954,6 +2003,7 @@ macro_rules! canonical_port_impl {
 canonical_port_impl!(
     DefinitionLookupV1,
     InboxAcceptanceReceiptV1,
+    ManualReviewReceiptV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
     OutboxRecordV1,
@@ -2836,6 +2886,17 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&wrong),
             Err(InboxReceiptValidationError::InputMismatch)
+        );
+    }
+
+    #[test]
+    fn manual_review_receipt_is_bound_to_the_exact_case() {
+        let review_id: ReviewId = id("rev_case");
+        let receipt = ManualReviewReceiptV1::new(review_id.clone(), true);
+        assert_eq!(receipt.validate_for(&review_id), Ok(()));
+        assert_eq!(
+            receipt.validate_for(&id("rev_other")),
+            Err(ManualReviewReceiptValidationError::ReviewMismatch)
         );
     }
 

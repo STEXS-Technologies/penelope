@@ -633,7 +633,9 @@ explicit replayable engine input rather than a direct projection mutation. They
 have parser and engine-transition fuzz coverage through the public review
 lifecycle and linear engine targets. Authorization policy, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
-remain incomplete.
+remain incomplete. `ManualReviewReceiptV1` now makes open/claim/decision
+redelivery idempotency explicit and validates the returned review identity;
+durable queue conflict handling remains adapter-owned.
 
 ### P1.7 Security and supply chain baseline
 

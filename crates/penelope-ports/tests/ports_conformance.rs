@@ -22,10 +22,10 @@ use penelope_ports::{
     CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1, DefinitionRegistry,
     EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
     InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
-    ManualReviewQueue, ManualReviewResolutionV1, OutboxClaimRequestV1, OutboxLeaseV1,
-    OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError, ProcessAuthorizationDecisionV1,
-    ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore, TimerClaimRequestV1,
-    TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
+    ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1,
+    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
+    ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
+    TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1, TimerScheduler,
 };
 
 struct UnavailablePorts;
@@ -205,15 +205,15 @@ impl CanonicalState for UnavailablePorts {
 
 #[async_trait]
 impl ManualReviewQueue for UnavailablePorts {
-    async fn open(&self, _: &ManualReviewDtoV1) -> Result<(), PortError> {
+    async fn open(&self, _: &ManualReviewDtoV1) -> Result<ManualReviewReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn claim(&self, _: &ManualReviewClaimV1) -> Result<(), PortError> {
+    async fn claim(&self, _: &ManualReviewClaimV1) -> Result<ManualReviewReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 
-    async fn decide(&self, _: &ManualReviewDecisionV1) -> Result<(), PortError> {
+    async fn decide(&self, _: &ManualReviewDecisionV1) -> Result<ManualReviewReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 }
