@@ -44,8 +44,11 @@ Open risks found by the deeper security, stability and reliability audit:
    or deterministic sensitive-payload redaction. Consumers must deny by default
    and avoid logging raw payloads.
 5. **P1 — definition evolution is incomplete.** Pinning and digest comparison
-   exist, but registration, compatibility/migration rules and a canonical digest
-   algorithm do not. Changed definitions must be rejected during deployment.
+   exist, and a typed compatibility classifier now distinguishes exact,
+   migration-required and incompatible definitions with a fail-closed exact
+   requirement and tests. Registration, migration rules and a canonical digest
+   algorithm remain open; changed definitions must be rejected during deployment
+   unless a consumer supplies an explicit migration policy.
 6. **P3 — performance evidence is workload-specific.** Current host runs measure
    about 0.15M graph ops/s, 13.8M linear ops/s and 1.88M isolated graph ops/s across
    32 workers. These exclude serialization, persistence, contention, scheduling

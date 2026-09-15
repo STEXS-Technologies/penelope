@@ -111,6 +111,29 @@ pub enum DomainError {
     InvalidManualReviewSchema,
 }
 
+/// Result of comparing a candidate definition with an already pinned one.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DefinitionCompatibilityV1 {
+    /// The candidate is byte-for-byte equivalent under the pinned identity.
+    Exact,
+    /// The candidate keeps the definition identity but changes semantics and
+    /// therefore requires an explicit migration before it can run.
+    RequiresMigration,
+    /// The candidate cannot be used for the pinned process at all.
+    Incompatible,
+}
+
+/// Typed failure when a definition is not safe to use for a pinned process.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum DefinitionCompatibilityError {
+    /// Definition identity or version changed.
+    #[error("definition identity or version is incompatible with the pinned process")]
+    IdentityMismatch,
+    /// Definition content changed without an explicit migration.
+    #[error("definition content changed and requires an explicit migration")]
+    RequiresMigration,
+}
+
 fn validate_identifier(prefix: &str, value: &str) -> bool {
     value.starts_with(prefix)
         && value.len() > prefix.len()
@@ -778,6 +801,45 @@ impl ProcessDefinitionDtoV1 {
         }
         Ok(())
     }
+
+    /// Classifies whether this definition can replace a pinned definition.
+    #[must_use]
+    pub fn compatibility_with(&self, pinned: &Self) -> DefinitionCompatibilityV1 {
+        if self.definition_id != pinned.definition_id
+            || self.definition_version != pinned.definition_version
+        {
+            DefinitionCompatibilityV1::Incompatible
+        } else if self.definition_digest != pinned.definition_digest
+            || self.step_ids != pinned.step_ids
+        {
+            DefinitionCompatibilityV1::RequiresMigration
+        } else {
+            DefinitionCompatibilityV1::Exact
+        }
+    }
+
+    /// Fails closed unless this definition is exactly the pinned definition.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DefinitionCompatibilityError::IdentityMismatch`] when the
+    /// definition identity/version differs, or
+    /// [`DefinitionCompatibilityError::RequiresMigration`] when semantics
+    /// changed under the same identity.
+    pub fn require_exact_compatibility(
+        &self,
+        pinned: &Self,
+    ) -> Result<(), DefinitionCompatibilityError> {
+        match self.compatibility_with(pinned) {
+            DefinitionCompatibilityV1::Exact => Ok(()),
+            DefinitionCompatibilityV1::RequiresMigration => {
+                Err(DefinitionCompatibilityError::RequiresMigration)
+            }
+            DefinitionCompatibilityV1::Incompatible => {
+                Err(DefinitionCompatibilityError::IdentityMismatch)
+            }
+        }
+    }
 }
 
 impl ProcessInputDtoV1 {
@@ -1426,6 +1488,53 @@ mod tests {
             vec![id("stp_lock"), id("stp_lock")],
         );
         assert_eq!(duplicate.unwrap_err(), DomainError::DuplicateStepId);
+    }
+
+    #[test]
+    fn definition_compatibility_fails_closed_on_identity_and_semantic_changes() {
+        let pinned = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([1; 32]),
+            vec![id("stp_lock"), id("stp_settle")],
+        )
+        .unwrap();
+        assert_eq!(
+            pinned.compatibility_with(&pinned),
+            DefinitionCompatibilityV1::Exact
+        );
+
+        let changed_content = ProcessDefinitionDtoV1::new(
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([2; 32]),
+            vec![id("stp_lock"), id("stp_settle")],
+        )
+        .unwrap();
+        assert_eq!(
+            changed_content.compatibility_with(&pinned),
+            DefinitionCompatibilityV1::RequiresMigration
+        );
+        assert_eq!(
+            changed_content.require_exact_compatibility(&pinned),
+            Err(DefinitionCompatibilityError::RequiresMigration)
+        );
+
+        let changed_identity = ProcessDefinitionDtoV1::new(
+            id("def_other"),
+            id("dfv_one"),
+            ContentDigest([1; 32]),
+            vec![id("stp_lock"), id("stp_settle")],
+        )
+        .unwrap();
+        assert_eq!(
+            changed_identity.compatibility_with(&pinned),
+            DefinitionCompatibilityV1::Incompatible
+        );
+        assert_eq!(
+            changed_identity.require_exact_compatibility(&pinned),
+            Err(DefinitionCompatibilityError::IdentityMismatch)
+        );
     }
 
     #[test]
