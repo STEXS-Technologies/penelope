@@ -815,6 +815,11 @@ parallel graph ops/s, 16.9M isolated parallel linear ops/s, and 1.48 us replay
 operations. These figures exclude persistence, shared contention, scheduling,
 and network costs.
 
+The ports contract benchmark was also rerun on the same host: canonical DTO
+encoding measured 370 ns/op over 100,000 operations and bounded outcome-log
+append measured 484 ns/op over 4,096 operations. These are pure contract costs,
+not durable latency percentiles.
+
 The full command-by-command six-point report is retained in
 [`docs/audit-six-point-validation-2026-09-15.md`](docs/audit-six-point-validation-2026-09-15.md).
 
