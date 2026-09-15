@@ -278,7 +278,9 @@ impl OutboxLeaseV1 {
         new_expiry: LogicalTimeV1,
     ) -> Result<Self, PortError> {
         self.validate_at(now)?;
-        if new_expiry.0 <= self.lease_expires_at.0 {
+        if self.record.acknowledgement != OutboxAcknowledgementV1::Pending
+            || new_expiry.0 <= self.lease_expires_at.0
+        {
             return Err(PortError::Invariant);
         }
         let mut renewed = self.clone();
@@ -1528,6 +1530,13 @@ mod tests {
         );
         assert_eq!(
             lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(5)),
+            Err(PortError::Invariant)
+        );
+        let acknowledged = lease.acknowledge_at(LogicalTimeV1(5)).unwrap();
+        let mut acknowledged_lease = lease;
+        acknowledged_lease.record = acknowledged;
+        assert_eq!(
+            acknowledged_lease.renew_at(LogicalTimeV1(4), LogicalTimeV1(6)),
             Err(PortError::Invariant)
         );
     }
