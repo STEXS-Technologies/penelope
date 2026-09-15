@@ -815,6 +815,9 @@ parallel graph ops/s, 16.9M isolated parallel linear ops/s, and 1.48 us replay
 operations. These figures exclude persistence, shared contention, scheduling,
 and network costs.
 
+The full command-by-command six-point report is retained in
+[`docs/audit-six-point-validation-2026-09-15.md`](docs/audit-six-point-validation-2026-09-15.md).
+
 ### P3.3 Reproducible performance evidence
 
 - [ ] Benchmark pure decisions/replay, durable append/project, inbox/outbox,
