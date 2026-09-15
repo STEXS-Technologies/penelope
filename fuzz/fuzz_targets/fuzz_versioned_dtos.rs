@@ -9,8 +9,9 @@ use penelope_domain::{
 use penelope_ports::{
     AtomicProcessCommitReceiptV1, CanonicalReconciliationWindowV1, CanonicalSubmitReceiptV1,
     DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1, ManualReviewClaimV1,
-    ManualReviewDecisionV1, OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutcomeLogV1,
-    QuotaRequestV1, RedactedDiagnosticV1,
+    ManualReviewDecisionV1, ManualReviewReceiptV1, OutboxClaimRequestV1, OutboxLeaseV1,
+    OutboxRecordV1, OutcomeLogV1, QuotaRequestV1, RedactedDiagnosticV1, TimerClaimRequestV1,
+    TimerLeaseV1,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -105,5 +106,16 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(diagnostic) = serde_json::from_slice::<RedactedDiagnosticV1>(data) {
         let _ = diagnostic.canonical_wire_bytes();
+    }
+    if let Ok(request) = serde_json::from_slice::<TimerClaimRequestV1>(data) {
+        let _ = request.validate();
+        let _ = request.canonical_wire_bytes();
+    }
+    if let Ok(lease) = serde_json::from_slice::<TimerLeaseV1>(data) {
+        let _ = lease.validate_at(LogicalTimeV1(0));
+        let _ = lease.canonical_wire_bytes();
+    }
+    if let Ok(receipt) = serde_json::from_slice::<ManualReviewReceiptV1>(data) {
+        let _ = receipt.canonical_wire_bytes();
     }
 });
