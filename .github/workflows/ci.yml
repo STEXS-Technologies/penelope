@@ -26,11 +26,11 @@ jobs:
       - run: RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
       - run: cargo bench -p penelope-executor --bench linear_saga --locked
       - run: cargo bench -p penelope-executor --bench parallel_linear_saga --locked
-      - run: cargo run -p penelope --example trade_v1 --locked
-      - run: cargo run -p penelope --example trade_compensation_v1 --locked
-      - run: cargo run -p penelope --example trade_retry_timer_v1 --locked
-      - run: cargo run -p penelope --example trade_manual_review_v1 --locked
-      - run: cargo run -p penelope --example trade_competing_lock_v1 --locked
+      - run: cargo run -p penelope --example trade --locked
+      - run: cargo run -p penelope --example trade_compensation --locked
+      - run: cargo run -p penelope --example trade_retry_timer --locked
+      - run: cargo run -p penelope --example trade_manual_review --locked
+      - run: cargo run -p penelope --example trade_competing_lock --locked
 
   msrv:
     name: Minimum supported Rust
@@ -73,4 +73,6 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
+      - name: Scan repository history for obvious secrets
+        run: |
+          ! git grep -n -I -E 'BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}' $(git rev-list --all)

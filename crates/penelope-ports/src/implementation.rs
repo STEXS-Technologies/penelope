@@ -1978,13 +1978,13 @@ impl OutcomeLog {
 
     /// Returns the number of accepted outcomes.
     #[must_use]
-    pub const fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.outcomes.len()
     }
 
     /// Returns whether no outcomes have been accepted.
     #[must_use]
-    pub const fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.outcomes.is_empty()
     }
 
@@ -2174,12 +2174,12 @@ impl AtomicProcessCommit {
                 return Err(CommitValidationError::CanonicalSourceWithWrongInputKind);
             }
         }
-        if let Some(input) = &self.input
-            && !self.outcomes.iter().any(|outcome| {
+        if let Some(input) = &self.input {
+            if !self.outcomes.iter().any(|outcome| {
                 matches!(&outcome.causation_id, penelope_domain::CausationId::Input(input_id) if input_id == &input.input_id)
-            })
-        {
-            return Err(CommitValidationError::InputNotCausallyRecorded);
+            }) {
+                return Err(CommitValidationError::InputNotCausallyRecorded);
+            }
         }
         Ok(())
     }

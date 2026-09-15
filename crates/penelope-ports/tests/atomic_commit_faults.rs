@@ -91,13 +91,13 @@ impl ProcessStore for FaultInjectingStore {
     ) -> Result<AtomicProcessCommitReceipt, PortError> {
         commit.validate().map_err(|_error| PortError::Invariant)?;
         let mut current = self.lock();
-        if let Some(input) = &commit.input
-            && current.inputs.iter().any(|seen| seen == &input.input_id)
-        {
-            return Ok(AtomicProcessCommitReceipt {
-                committed_through_sequence: current.next_sequence.saturating_sub(1),
-                duplicate_input: true,
-            });
+        if let Some(input) = &commit.input {
+            if current.inputs.iter().any(|seen| seen == &input.input_id) {
+                return Ok(AtomicProcessCommitReceipt {
+                    committed_through_sequence: current.next_sequence.saturating_sub(1),
+                    duplicate_input: true,
+                });
+            }
         }
         if commit
             .canonical_source_event_id

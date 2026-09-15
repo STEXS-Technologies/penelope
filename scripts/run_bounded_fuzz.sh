@@ -39,7 +39,7 @@ dtos=(
 )
 
 for fuzz_target in "${fuzz_targets[@]}"; do
-  if ! rg -Fq "name = \"${fuzz_target}\"" fuzz/Cargo.toml; then
+  if ! grep -Fq "name = \"${fuzz_target}\"" fuzz/Cargo.toml; then
     printf 'missing required fuzz target registration: %s\n' "${fuzz_target}" >&2
     exit 1
   fi
@@ -50,7 +50,7 @@ for fuzz_target in "${fuzz_targets[@]}"; do
 done
 
 for dto in "${dtos[@]}"; do
-  if ! rg -Fwq "${dto}" fuzz/fuzz_targets/fuzz_dtos.rs; then
+  if ! grep -Fwq "${dto}" fuzz/fuzz_targets/fuzz_dtos.rs; then
     printf 'missing typed protocol value fuzz coverage: %s\n' "${dto}" >&2
     exit 1
   fi

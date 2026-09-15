@@ -17,7 +17,7 @@ printf '%s\n' "$scan_output"
 
 # Older gitleaks releases report findings successfully at process level; make
 # the no-findings assertion explicit so local and CI evidence fail closed.
-if ! rg -q '0 leaks detected\.' <<<"$scan_output"; then
+if ! grep -q '0 leaks detected\.' <<<"$scan_output"; then
     printf '%s\n' 'secret scan found one or more potential leaks' >&2
     exit 1
 fi

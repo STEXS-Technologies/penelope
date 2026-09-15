@@ -46,7 +46,7 @@ fi
 
 # Port contracts are the infrastructure-facing API. Identity and category text
 # must be admitted through validated DTO parsing, never passed as raw text.
-if awk '/^pub trait /,/^}/' crates/penelope-ports/src/lib.rs | rg -n '\bString\b|&str' >/dev/null; then
+if awk '/^pub trait /,/^}/' crates/penelope-ports/src/implementation.rs | grep -En '\bString\b|&str' >/dev/null; then
     printf '%s\n' 'layer violation: a Penelope port accepts raw text; use a validated newtype or DTO' >&2
     exit 1
 fi
@@ -54,15 +54,15 @@ fi
 # Versioned protocol records must not expose raw textual state. The explicit
 # identifier parsing constructors in the domain crate are the sole text entry
 # boundary; once parsed, public fields and tuple payloads remain typed values.
-if rg -n '^\s*pub\s+[[:alnum:]_]+\s*:\s*(?:String|&str)\b|^\s*pub\s+struct\s+[[:alnum:]_]+[^\{]*\(\s*pub\s+(?:String|&str)\b' \
-    crates --glob '*.rs' >/dev/null; then
+if grep -REn '^\s*pub\s+[[:alnum:]_]+\s*:\s*(String|&str)\b|^\s*pub\s+struct\s+[[:alnum:]_]+[^\{]*\(\s*pub\s+(String|&str)\b' \
+    crates --include='*.rs' >/dev/null; then
     printf '%s\n' 'layer violation: a public Penelope protocol value exposes raw text; use a validated newtype or enum' >&2
     exit 1
 fi
 
 # Library failures are typed `thiserror` enums. Handwritten Error impls make
 # error taxonomy audits and source chaining inconsistent across crates.
-if rg -n 'impl\s+(?:std::error::)?Error\s+for' crates --glob '*.rs' >/dev/null; then
+if grep -REn 'impl\s+(std::error::)?Error\s+for' crates --include='*.rs' >/dev/null; then
     printf '%s\n' 'layer violation: handwritten Error implementation found; derive thiserror::Error instead' >&2
     exit 1
 fi
@@ -72,7 +72,7 @@ fi
 # text, while still catching a newly added hand-rolled error enum in any crate,
 # example, or benchmark.
 missing_thiserror_derive="$(
-    rg --files crates --glob '*.rs' | while IFS= read -r source; do
+    find crates -type f -name '*.rs' -print | while IFS= read -r source; do
         awk '
             /^#\[derive\(/ {
                 derive = $0
