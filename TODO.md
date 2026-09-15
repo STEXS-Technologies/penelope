@@ -57,7 +57,10 @@ Open risks found by the deeper security, stability and reliability audit:
    migration-required and incompatible definitions with a fail-closed exact
    requirement and tests. `DefinitionMigrationV1` now binds a same-definition
    source/destination version and digest and rejects no-op or cross-identity
-   migrations. Registration and migration execution rules remain open; changed
+   migrations. Registration now returns an identity-bound receipt, and
+   `validate_source_and_destination` rejects applying a migration to a
+   substituted source or destination. Migration execution rules remain open;
+   changed
    definitions must be rejected during deployment unless a consumer supplies an
    explicit migration policy.
 6. **P3 — performance evidence is workload-specific.** Current host runs measure
