@@ -485,6 +485,10 @@ still composition-root responsibilities.
 digest, making duplicate publication observable without allowing a changed
 definition to masquerade as an idempotent registration. Migration execution
 and deployment policy remain outside this library.
+`register_migration` likewise returns a `DefinitionMigrationReceiptV1` bound to
+the immutable migration ID, and its DTO boundary is fuzzed. The receipt only
+proves idempotent registration; it does not authorize applying a migration to
+running instances.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 

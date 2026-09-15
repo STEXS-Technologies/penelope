@@ -59,6 +59,51 @@ pub struct DefinitionRegistrationReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Receipt from idempotent definition-migration registration.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DefinitionMigrationReceiptV1 {
+    /// Immutable migration identity acknowledged by the registry.
+    pub migration_id: penelope_domain::MigrationId,
+    /// Whether this migration identity was already registered.
+    pub duplicate: bool,
+}
+
+/// Typed validation failure for a migration-registration receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum DefinitionMigrationReceiptValidationError {
+    /// The registry acknowledged another migration identity.
+    #[error("definition migration receipt does not match the requested migration")]
+    MigrationMismatch,
+}
+
+impl DefinitionMigrationReceiptV1 {
+    /// Creates a receipt for one immutable migration identity.
+    #[must_use]
+    pub const fn new(migration_id: penelope_domain::MigrationId, duplicate: bool) -> Self {
+        Self {
+            migration_id,
+            duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact migration.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DefinitionMigrationReceiptValidationError::MigrationMismatch`]
+    /// when the migration identity differs.
+    pub fn validate_for(
+        &self,
+        migration: &DefinitionMigrationV1,
+    ) -> Result<(), DefinitionMigrationReceiptValidationError> {
+        if self.migration_id == migration.migration_id {
+            Ok(())
+        } else {
+            Err(DefinitionMigrationReceiptValidationError::MigrationMismatch)
+        }
+    }
+}
+
 /// Typed validation failure for a definition-registration receipt.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum DefinitionRegistrationReceiptValidationError {
@@ -1957,7 +2002,10 @@ pub trait DefinitionRegistry: Send + Sync {
     async fn get(&self, lookup: &DefinitionLookupV1) -> Result<ProcessDefinitionDtoV1, PortError>;
 
     /// Registers an explicit version migration after validating its binding.
-    async fn register_migration(&self, migration: &DefinitionMigrationV1) -> Result<(), PortError>;
+    async fn register_migration(
+        &self,
+        migration: &DefinitionMigrationV1,
+    ) -> Result<DefinitionMigrationReceiptV1, PortError>;
 }
 
 /// Durable append-only process outcome store.
@@ -2187,6 +2235,7 @@ macro_rules! canonical_port_impl {
 canonical_port_impl!(
     DefinitionLookupV1,
     DefinitionRegistrationReceiptV1,
+    DefinitionMigrationReceiptV1,
     InboxAcceptanceReceiptV1,
     ActionDispatchReceiptV1,
     CanonicalSubmitReceiptV1,
@@ -3152,6 +3201,26 @@ mod tests {
         assert_eq!(
             wrong.validate_for(&definition),
             Err(DefinitionRegistrationReceiptValidationError::DefinitionMismatch)
+        );
+    }
+
+    #[test]
+    fn migration_registration_receipt_is_bound_to_migration_identity() {
+        let migration = DefinitionMigrationV1::new(
+            id("mig_trade"),
+            id("def_trade"),
+            id("dfv_one"),
+            ContentDigest([9; 32]),
+            id("dfv_two"),
+            ContentDigest([8; 32]),
+        )
+        .unwrap();
+        let receipt = DefinitionMigrationReceiptV1::new(migration.migration_id.clone(), true);
+        assert_eq!(receipt.validate_for(&migration), Ok(()));
+        let wrong = DefinitionMigrationReceiptV1::new(id("mig_other"), false);
+        assert_eq!(
+            wrong.validate_for(&migration),
+            Err(DefinitionMigrationReceiptValidationError::MigrationMismatch)
         );
     }
 

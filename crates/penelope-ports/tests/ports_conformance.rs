@@ -20,11 +20,11 @@ use penelope_domain::{
 use penelope_ports::{
     ActionDispatchReceiptV1, ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1,
     AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, CanonicalSubmitReceiptV1,
-    Clock, DefinitionLookupV1, DefinitionRegistrationReceiptV1, DefinitionRegistry, DiagnosticSink,
-    EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
-    InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
-    ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1,
-    OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
+    Clock, DefinitionLookupV1, DefinitionMigrationReceiptV1, DefinitionRegistrationReceiptV1,
+    DefinitionRegistry, DiagnosticSink, EffectDispatchRequestV1, ExternalEffectEvidenceV1,
+    ExternalEffectExecutor, Inbox, InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1,
+    ManualReviewDecisionV1, ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1,
+    OutboxClaimRequestV1, OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
     ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
     RedactedDiagnosticV1, TimerClaimRequestV1, TimerClaimStore, TimerLeaseV1, TimerScheduleV1,
     TimerScheduler,
@@ -55,7 +55,10 @@ impl DefinitionRegistry for UnavailablePorts {
         Err(PortError::Unavailable)
     }
 
-    async fn register_migration(&self, _: &DefinitionMigrationV1) -> Result<(), PortError> {
+    async fn register_migration(
+        &self,
+        _: &DefinitionMigrationV1,
+    ) -> Result<DefinitionMigrationReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 }
