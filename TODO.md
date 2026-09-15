@@ -455,6 +455,8 @@ fencing token, owner, and expiry for stale-worker protection; adapters still
 own token allocation and expiry enforcement. `OutboxLeaseV1::validate_for_claim`
 also rejects a lease whose action scope differs from the claim scope, while
 `validate_at` rejects acknowledgement after the logical expiry boundary.
+Claim requests now carry the authenticated owner principal, and lease
+validation rejects owner substitution.
 The `OutboxStore::acknowledge` port now requires a typed logical `now` value,
 making expiry enforcement an explicit adapter contract rather than an optional
 caller convention. `acknowledge_at` provides the pure lease-safe transition
