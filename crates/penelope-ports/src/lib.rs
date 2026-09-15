@@ -52,6 +52,14 @@ pub struct InboxAcceptanceReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Typed validation failure for an inbox acceptance receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum InboxReceiptValidationError {
+    /// The adapter acknowledged a different immutable input identity.
+    #[error("inbox acceptance receipt input does not match the submitted input")]
+    InputMismatch,
+}
+
 impl InboxAcceptanceReceiptV1 {
     /// Creates a receipt for one input identity.
     #[must_use]
@@ -59,6 +67,23 @@ impl InboxAcceptanceReceiptV1 {
         Self {
             input_id,
             duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact submitted input.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`InboxReceiptValidationError::InputMismatch`] when an adapter
+    /// returns a receipt for another input identity.
+    pub fn validate_for(
+        &self,
+        input: &ProcessInputDtoV1,
+    ) -> Result<(), InboxReceiptValidationError> {
+        if self.input_id == input.input_id {
+            Ok(())
+        } else {
+            Err(InboxReceiptValidationError::InputMismatch)
         }
     }
 }
@@ -2506,6 +2531,24 @@ mod tests {
         assert_eq!(
             ProcessAuthorizationOperationV1::TerminalOverride.minimum_requirement(),
             AuthorizationRequirementV1::DistinctPrincipals
+        );
+    }
+
+    #[test]
+    fn inbox_receipt_is_bound_to_the_exact_submitted_input() {
+        let submitted = input();
+        let receipt = InboxAcceptanceReceiptV1::new(submitted.input_id.clone(), false);
+        assert_eq!(receipt.validate_for(&submitted), Ok(()));
+        let wrong = ProcessInputDtoV1::new(
+            submitted.tenant_id.clone(),
+            submitted.process_id.clone(),
+            id("inp_other"),
+            submitted.kind,
+            submitted.payload_digest,
+        );
+        assert_eq!(
+            receipt.validate_for(&wrong),
+            Err(InboxReceiptValidationError::InputMismatch)
         );
     }
 }

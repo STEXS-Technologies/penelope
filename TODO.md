@@ -527,8 +527,9 @@ logical expiry, preventing stale or non-extending renewals. Renewal is also
 rejected after acknowledgement, preventing lease resurrection. `Inbox::accept`
 now returns an `InboxAcceptanceReceiptV1` carrying the exact input identity and
 duplicate flag, so redelivery can be a durable no-op without rerunning a
-decision. Storage, acknowledgement ordering, and crash recovery remain
-adapter-owned.
+   decision. `InboxAcceptanceReceiptV1::validate_for` now rejects an adapter
+   receipt bound to another input identity. Storage, acknowledgement ordering,
+   and crash recovery remain adapter-owned.
 
 ### P1.4 StateChronicle contract
 
