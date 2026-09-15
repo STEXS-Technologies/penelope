@@ -60,8 +60,11 @@ Open risks found by the deeper security, stability and reliability audit:
    explicit migration policy.
 6. **P3 — performance evidence is workload-specific.** Current host runs measure
    about 0.15M graph ops/s, 13.8M linear ops/s and 1.88M isolated graph ops/s across
-   32 workers. These exclude serialization, persistence, contention, scheduling
-   and network latency; they are not durable end-to-end throughput claims.
+   32 workers. A ports contract benchmark now measures ~382 ns per canonical DTO
+   encoding and ~489 ns per bounded outcome-log append after replacing repeated
+   hash-set rebuilds with a maintained identity index. These exclude persistence,
+   contention, scheduling and network latency; they are not durable end-to-end
+   throughput claims.
 
 Release decision: **not production-ready** until the open P0/P1 contracts have
 executable evidence in the library and consumer adapter conformance suites.

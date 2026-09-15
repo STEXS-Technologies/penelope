@@ -14,3 +14,7 @@ thiserror = { workspace = true }
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "contract_throughput"
+harness = false

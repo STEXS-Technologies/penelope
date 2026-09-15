@@ -15,7 +15,8 @@ use penelope_domain::{
     ProcessDefinitionDtoV1, ProcessInputDtoV1, ProcessInputKindV1, ProcessOutcomeDtoV1,
     ProcessScopeV1, ReviewId,
 };
-use serde::{Deserialize, Serialize};
+use serde::de::Error as _;
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashSet;
 use std::num::{NonZeroU16, NonZeroU32, NonZeroU64};
 use thiserror::Error;
@@ -1393,21 +1394,36 @@ impl OutcomeReplayPageV1 {
 /// code one shared validator for append order, scope pinning and idempotent
 /// outcome identities. Persistence and compare-and-append remain the adapter's
 /// responsibility.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct OutcomeLogV1 {
     /// Immutable process and definition scope of every outcome.
     pub scope: ProcessScopeV1,
     /// Ordered outcomes accepted so far.
     pub outcomes: Vec<ProcessOutcomeDtoV1>,
+    #[serde(skip)]
+    seen_outcome_ids: HashSet<OutcomeId>,
+}
+
+impl<'de> Deserialize<'de> for OutcomeLogV1 {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(Deserialize)]
+        struct Wire {
+            scope: ProcessScopeV1,
+            outcomes: Vec<ProcessOutcomeDtoV1>,
+        }
+        let wire = Wire::deserialize(deserializer)?;
+        Self::from_ordered(wire.scope, &wire.outcomes).map_err(D::Error::custom)
+    }
 }
 
 impl OutcomeLogV1 {
     /// Creates an empty log whose first accepted outcome must use sequence zero.
     #[must_use]
-    pub const fn new(scope: ProcessScopeV1) -> Self {
+    pub fn new(scope: ProcessScopeV1) -> Self {
         Self {
             scope,
             outcomes: Vec::new(),
+            seen_outcome_ids: HashSet::new(),
         }
     }
 
@@ -1449,11 +1465,7 @@ impl OutcomeLogV1 {
         }
         let mut expected = u64::try_from(self.outcomes.len())
             .map_err(|_conversion_error| OutcomeLogValidationError::SequenceOverflow)?;
-        let mut seen = self
-            .outcomes
-            .iter()
-            .map(|outcome| outcome.outcome_id.clone())
-            .collect::<HashSet<_>>();
+        let mut new_ids = HashSet::with_capacity(outcomes.len());
         for outcome in outcomes {
             if outcome.validate().is_err() {
                 return Err(OutcomeLogValidationError::InvalidOutcome);
@@ -1464,7 +1476,9 @@ impl OutcomeLogV1 {
             if outcome.sequence != expected {
                 return Err(OutcomeLogValidationError::NonContiguousSequence);
             }
-            if !seen.insert(outcome.outcome_id.clone()) {
+            if self.seen_outcome_ids.contains(&outcome.outcome_id)
+                || !new_ids.insert(outcome.outcome_id.clone())
+            {
                 return Err(OutcomeLogValidationError::DuplicateOutcomeId);
             }
             expected = expected
@@ -1472,6 +1486,7 @@ impl OutcomeLogV1 {
                 .ok_or(OutcomeLogValidationError::SequenceOverflow)?;
         }
         self.outcomes.extend_from_slice(outcomes);
+        self.seen_outcome_ids.extend(new_ids);
         Ok(())
     }
 
@@ -2589,6 +2604,11 @@ mod tests {
             Err(OutcomeLogValidationError::ScopeMismatch)
         );
         assert_eq!(log, before_failed_append);
+
+        let encoded = serde_json::to_vec(&log).unwrap();
+        let mut decoded: OutcomeLogV1 = serde_json::from_slice(&encoded).unwrap();
+        assert_eq!(decoded, log);
+        assert_eq!(decoded.append(&[outcome(2, id("out_third"))]), Ok(()));
     }
 
     #[test]
