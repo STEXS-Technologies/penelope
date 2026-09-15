@@ -1,353 +1,77 @@
 # Penelope
 
-Penelope is the foundation for reliable Rust sagas and long-running,
-multi-step workflows. It gives teams a deterministic process-truth layer that
-records what a workflow decided, what each step observed, and exactly how to
-recover after crashes, retries, duplicate delivery, timeouts, and ambiguity.
-It complements a ledger, matching engine, market-data system, or canonical
-inventory and position store. It does not replace those systems.
+Penelope is the foundation for reliable Rust sagas. It coordinates long-running
+and asynchronous workflows that must survive crashes, retries, duplicate
+delivery, timeouts, and uncertain external results.
 
-Penelope is a library-only protocol and deterministic orchestration engine.
-Persistence, brokers, schedulers, and service integrations are deliberately
-consumer-owned ports and adapters.
+Use it for settlement, trading, approvals, inventory, marketplace orders,
+payments, provisioning, refunds, and other multi-step processes where “run it
+again” is not a safe recovery strategy.
 
-## Compatibility
+## What Penelope gives you
 
-The workspace targets Rust 2024 and declares Rust 1.85 as its minimum supported
-Rust version. Locked CI tests this MSRV; consumers should use `Cargo.lock` for
-reproducible application builds.
+- Deterministic linear and graph saga decisions.
+- Append-only outcome contracts and ordered replay after restart.
+- Typed identities and scopes that prevent cross-process or stale results.
+- Bounded retries, backoff, jitter, deadlines, and timer decisions.
+- LIFO compensation, cancellation, reconciliation, and manual review.
+- Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
+  operator workflows.
 
-## Boundary with StateChronicle
+The engine is pure and deterministic. Your application supplies the durable
+adapters and workers through the ports. Penelope never guesses whether an
+ambiguous payment, trade, or canonical mutation succeeded.
 
-StateChronicle owns canonical facts such as balances, reservations, positions,
-inventory, ownership and settlement. Penelope coordinates the workflow around
-those facts: approvals, timers, retries, external side effects, correlation,
-compensation and operator escalation.
-
-```text
-event / timer / operator input
-             |
-             v
- Penelope decision (pure and deterministic)
-             |
-             +--> append outcome + update process projection
-             +--> durable actions: execute | schedule | publish | escalate
-             +--> idempotent canonical command to StateChronicle
-                                                        |
-                                                        v
-                                               committed canonical event
-                                                        |
-                                                        +--> Penelope inbox
-```
-
-The core invariant is:
-
-```text
-projection = apply(definition_version, ordered_outcome_log)
-```
-
-An effect result is recorded as an outcome and is never recreated merely by
-replay. The core contains no I/O or wall-clock reads; adapters do I/O.
-
-An action result is accepted only when its typed action ID equals the active
-action ID in the projection. A stale, duplicate, or cross-process result cannot
-advance a process; a consumer adapter persists the resulting decision and
-deduplicates delivery through the typed ports.
-
-The reference ordered replay API accepts only zero-based contiguous event
-envelopes. A missing, duplicate, or reordered sequence is rejected before
-event semantics are applied.
-
-## Reliability model: record, recover, reconcile, repair
-
-Penelope is designed to make asynchronous sagas recoverable, not magical.
-Before an effect is attempted, it durably records the planned action and its
-stable action ID. Every input, decision, timer, attempt, response, observed
-canonical event, retry, compensation, review, and terminal state is appended
-to the process outcome log. A restart replays that log and resumes only actions
-whose record proves they remain pending.
-
-There are three different operations that must never be conflated:
-
-| Operation | What may change | What must never happen |
-| --- | --- | --- |
-| Replay / rewind | Rebuild Penelope's derived process projection from its immutable outcome log. | Reissue an old effect merely because it was replayed. |
-| Reconciliation / self-healing | Resume a known safe retry or query durable evidence for an ambiguous action. | Guess that an unknown payment, trade, or settlement failed. |
-| Repair / compensation | Append a new authorized process decision and submit a new canonical compensating command. | Rewrite or delete StateChronicle history or directly overwrite canonical state. |
-
-Unknown external outcomes are not retryable by default. Penelope must first
-reconcile the action ID with the external system and, for canonical mutations,
-with StateChronicle's committed history. If evidence remains ambiguous, it
-opens manual review with the complete process evidence.
-
-Canonical reconciliation evidence is bound to the same complete pinned process
-and definition scope as the pending action. A committed result is also rejected
-unless its canonical event is valid and from that action's tenant.
-
-Manual-review cases carry an optional inclusive logical expiry. Claims and
-decisions are scope-pinned and must be recorded no later than that deadline;
-dual-control decisions can require a different operator from the claimant.
-
-## Developer experience: the async loop
-
-Application code stays small and explicit:
+## The programming model
 
 ```rust
-let input = ProcessInput::new(tenant, process, input_id, kind, payload_digest);
 let decision = engine.decide(&definition, &projection, input)?;
-store.commit(/* decision.outcomes(), decision.actions() */)?;
-for action in decision.actions() { outbox.dispatch(action); }
+store.commit(decision.outcomes(), decision.actions())?;
+for action in decision.actions() {
+    outbox.dispatch(action)?;
+}
 ```
 
-On a crash, reload the ordered outcomes and call replay; the same projection
-and pending action IDs are rebuilt without re-running side effects. Duplicate
-inputs and results are rejected by typed identity/scope checks. If an external
-call timed out, reconciliation queries durable evidence by its `EffectKey` and
-only then records committed, retryable, or manual-review outcomes. Penelope
-does not guess, rewrite history, or require infrastructure dependencies.
+After a crash, load the ordered outcome log and replay it. Duplicate inputs are
+deduplicated, stale results are rejected, and unknown effects wait for
+reconciliation instead of triggering blind retries.
 
-## StateChronicle integration contract
+## StateChronicle boundary
 
-The `penelope-statechronicle` workspace crate is the dedicated adapter
-boundary. A consumer implementation must follow this protocol exactly:
+`penelope-statechronicle` provides the typed contract for canonical commands
+and verified committed events. StateChronicle remains the source of truth for
+balances, positions, inventory, ownership, and settlement. Penelope advances a
+saga only after the matching committed event is correlated by tenant, action,
+operation, resource scope, and result evidence.
 
-1. In one Penelope transaction, append the decision, create a canonical-command
-   action with a stable action/command ID, and enqueue dispatch.
-2. Submit that command through a verified StateChronicle durable API with the
-   exact same idempotency ID. A network response alone is not success.
-3. Consume the StateChronicle transactional-outbox notification through a
-   durable Penelope inbox keyed by its immutable delivery/event identity.
-4. Verify the notification is a committed canonical result for the pinned
-   Penelope process/definition scope, tenant, command/action ID, operation,
-   exact resource scope, and expected redacted result digest. Only then append
-   the Penelope `CommandCommitted` outcome and advance the saga.
-5. On restart, replay the Penelope log. Pending commands are reconciled by ID;
-   no action is resubmitted until its current StateChronicle result is known.
+Penelope and StateChronicle can use separate datastores. Correctness comes from
+durable local records, at-least-once delivery, idempotency, and reconciliation.
 
-Penelope and StateChronicle may use separate datastores. They therefore do not
-form a distributed transaction: correctness comes from durable local records,
-at-least-once delivery, idempotency, committed-event correlation, and explicit
-reconciliation. Penelope must use a narrowly authorized service principal and
-may issue only the operations declared by the pinned process definition.
+## Start building
 
-## Intended capabilities
+Add the facade crate to your application:
 
-- Immutable, versioned definitions pinned when an instance starts.
-- Append-only outcome log and deterministic replayable projection.
-- Idempotent effects keyed by tenant, instance, step and attempt.
-- Durable inbox deduplication, outbox publication and timer scheduling.
-- Bounded retries, deadlines, error classification and cancellation.
-- LIFO, exactly-once compensation plus audited manual review.
-- Tenant isolation, authorization context, quotas, redaction and telemetry.
-
-## Appropriate economic and trading workflows
-
-Penelope may coordinate multi-party settlement, venue-order lifecycle, risk
-approval, margin-call/liquidation, reconciliation, corporate actions, game
-market listing/purchase/delivery/refund, and exception handling. It must not
-make a canonical mutation itself: every balance, position, inventory, or order
-state change is an independently idempotent StateChronicle command. The
-workflow advances only after the matching committed event is received.
-
-It cannot provide exactly-once network delivery. Its safety model is
-at-least-once delivery plus durable outcomes, idempotency keys, reconciliation
-of ambiguous external effects, and manual escalation when ambiguity remains.
-
-## Workspace
-
-Penelope follows StateChronicle's workspace-first hexagonal layout. Dependency
-arrows point inward only; a pure inner crate cannot depend on a port, adapter,
-database, broker, clock, transport, or local checkout.
-
-```text
-transport / database / broker / scheduler implementations (consumer-owned)
-                              |
-                              v
-                 penelope-statechronicle  [adapter boundary only]
-                              |
-                              v
-                   penelope-ports         [interfaces]
-                              |
-                              v
-                 penelope-executor        [application]
-                              |
-                              v
-                  penelope-intent         [inbound validation]
-                              |
-                              v
-                  penelope-domain         [typed values]
-                              |
-                              v
-                   penelope-core          [shared primitives]
-
-                  penelope                [umbrella facade]
+```toml
+[dependencies]
+penelope = "0.1.0"
 ```
 
-| Crate | Responsibility | Role |
-| --- | --- | --- |
-| `penelope-core` | Dependency-stable home for shared pure primitives. | Intentionally small; no I/O. |
-| `penelope-domain` | Typed public values for definitions, inputs, outcomes, actions, canonical commands/events and review. | Values only; no workflow logic. |
-| `penelope-intent` | Transport-to-domain validation boundary. | Typed parser and validation contract. |
-| `penelope-executor` | Application-layer deterministic decision/replay composition over injected ports. | Pure linear-saga reference engine plus a separately validated bounded graph-definition contract: ordered steps, typed event replay, replayable projection, typed retry attempts, completion and safe escalation on unknown outcomes. |
-| `penelope-ports` | Backend-neutral process store, inbox, action, timer, canonical-state and review interfaces. | Interfaces plus typed atomic inbox/outcome/action commit contract; no implementation. |
-| `penelope-statechronicle` | Outer adapter boundary for verified durable commands and committed-event correlation. | Typed scope/action/operation/resource/digest verifier; intentionally no StateChronicle client or local-checkout dependency. |
-| `penelope` | Consumer umbrella facade re-exporting all architectural layers. | Facade only. |
-
-Public values have no embedded wire-version discriminator. Constructors and
-`validate()` enforce invariants, while `DefinitionVersion` remains a semantic
-pin for a running process. Consumers own transport compatibility and may add
-their own envelope/version policy at the edge. Checked-in JSON fixtures lock
-the current representation. Every identity is a validated prefixed newtype,
-every category is a typed enum, and port APIs accept typed values only.
-Application code never dispatches by matching raw strings. Infrastructure implementations
-must live in a consumer composition root or a separately reviewed adapter
-repository; this workspace deliberately ships none.
-
-Errors are typed `thiserror` enums. Error variants communicate a stable failure
-class; they do not expose handwritten `Display`/`Error` implementations or use
-raw text as a programmatic error discriminator.
-
-Security verification includes a fail-closed reachable-history secret scan:
-
-```bash
-./scripts/check-no-secrets.sh
-```
-
-It requires `gitleaks` locally; CI independently performs the same category of
-scan over the complete checkout history on every push and pull request.
-
-The StateChronicle command expectation and verified-event boundary values are
-also serde-compatible `` protocol types, with their parser included in the
-correlation fuzz target.
-
-The reference engine gives every step an explicit typed maximum attempt count.
-An exhausted retryable failure escalates without producing another action;
-unknown outcomes escalate immediately. Deadline, backoff, and timer policy are
-deterministic library decisions; a consumer adapter supplies durable timer
-storage and dispatch.
-
-`ProcessGraphDefinition` has a dedicated deterministic graph executor
-(`start_graph`, `apply_graph_result`, `replay_graph`, and
-`replay_graph_ordered` with `GraphSagaEventEnvelope`). Ordered replay rejects
-sequence gaps, duplicates, and reordering before applying any event. Replay is
-bounded to `MAX_GRAPH_REPLAY_EVENTS` to prevent untrusted logs from causing
-unbounded duplicate-input tracking allocation. Graph definitions must not be
-passed to the linear executor or implicitly interpreted as vector order. Unknown
-external outcomes always escalate, and every selected action identity is
-checked against the process's issued-action set and visit bound.
-
-Retry backoff can include bounded deterministic jitter. Its typed seed is
-explicit input to the timer-scheduling event, and is retained in the replay
-log: the engine never samples random state or wall-clock time while calculating
-the due time. A schedule may also carry an inclusive logical deadline; a retry
-whose calculated due time would pass it is not scheduled and instead follows
-the normal safe compensation-or-escalation path.
-
-Every planned action ID is retained in the replayable process projection. A
-transition that tries to reuse any previously issued ID is rejected as a typed
-engine error; retries require a fresh action identity.
-
-For a known terminal forward failure, the reference engine plans declared
-compensations in reverse success order. An unknown forward or compensation
-result never triggers compensation automatically and escalates instead.
-
-Public parsers, every typed-value deserializer, and the linear engine's
-transition surface are covered by cargo-fuzz targets in `fuzz/`. New public
-parse, DTO, or decision surfaces must add a target before they are considered
-complete.
-
-The public linear-engine definitions, projections, decisions, outcomes,
-and ordered event envelopes are serde-compatible protocol values. Their schema
-evolution remains additive; durable adapter design and compatibility fixtures
-are still required before a production release.
-
-## First reference saga: `trade.v1`
-
-The first implementation is a reference for the pattern, not special ledger
-logic: `validate proposal → freeze A → freeze B → await acceptance/deadline →
-atomically settle → compensate/unlock or escalate`.
-
-- Every `trade.lock`, `trade.settle`, and `trade.unlock` is a separate durable
-  Penelope action with its own stable idempotency key.
-- Settlement is one StateChronicle atomic batch. Penelope only compensates by
-  unlock after evidence proves settlement did **not** commit.
-- A timeout or lost response during settlement is `reconcile`, never `unlock`.
-- A terminal failure, inconsistency, or unresolved outcome produces an audited
-  manual-review case; it never silently strands or releases assets.
-
-The compiling pure happy-path reference is
-[`trade.rs`](crates/penelope/examples/trade.rs). Run it with:
+Run the included workflows to see the public API:
 
 ```bash
 cargo run -p penelope --example trade --locked
-```
-
-The known-failure/compensation reference is
-[`trade_compensation.rs`](crates/penelope/examples/trade_compensation.rs):
-
-```bash
 cargo run -p penelope --example trade_compensation --locked
-```
-
-[`trade_competing_lock.rs`](crates/penelope/examples/trade_competing_lock.rs)
-drills two independent trades competing for one canonical lock. It proves the
-pure engine lets the verified winner progress toward settlement while the
-canonically rejected trade escalates without a settlement action:
-
-```bash
+cargo run -p penelope --example trade_retry_timer --locked
+cargo run -p penelope --example trade_manual_review --locked
 cargo run -p penelope --example trade_competing_lock --locked
 ```
 
-It demonstrates the public facade only. It is not a durable integration: a
-production adapter must record outcomes and verify StateChronicle evidence as
-described above before calling the transition API.
+## Scope and release
 
-The normal construction path is fluent and typed:
-`LinearSagaDefinition::new`, `StepPlan::canonical_command`,
-`StepPlan::with_compensation`, `RetryPolicy`, and
-`ActionResultObservation` constructors. Raw text is needed only at an
-explicit identifier parsing boundary.
+Penelope is a reusable library, not a database, broker, scheduler, or hosted
+service. Implement those adapters in your composition root or a separately
+reviewed integration crate. See [TODO.md](TODO.md) for the library boundary and
+[docs/RELEASE.md](docs/RELEASE.md) for the `0.1.0` release procedure.
 
-## Verification today
-
-The following release gates pass locally and in GitHub Actions. They validate
-the reusable library contracts; deployment adapters must additionally prove
-their own durability and operational SLOs.
-
-```bash
-cargo fmt --all --check
-./scripts/check-layer-boundaries.sh
-cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
-cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
-RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked
-PENELOPE_FUZZ_RUNS=100 ./scripts/run_bounded_fuzz.sh
-cargo bench -p penelope-executor --bench linear_saga --locked
-cargo bench -p penelope-executor --bench parallel_linear_saga --locked
-PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=1000 \
-  PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
-```
-
-The [release checklist](TODO.md) defines the library release boundary and the
-consumer-owned adapter obligations. Use [docs/RELEASE.md](docs/RELEASE.md) for
-the `0.1.0` crates.io release procedure.
-
-GitHub Actions in [ci.yml](.github/workflows/ci.yml) runs the stable format,
-test, Clippy, strict-doc, benchmark-build, and all reference examples on every
-push and pull request. A separate bounded nightly job validates the required
-target/DTO coverage manifest and runs every fuzz target for 1,000 inputs. The scheduled
-[pure-chaos workflow](.github/workflows/pure-chaos.yml) repeatedly runs the
-restart/replay, timer-fault, and linear-engine fuzz drill. These are
-library-only checks, not evidence for a durable adapter deployment.
-
-## Non-goals
-
-- Canonical financial, game, inventory or position state.
-- A distributed transaction across services.
-- Unbounded user-supplied workflow code running in-process.
-- Replacement for authorization, risk, accounting, reconciliation, or market
-  surveillance systems.
-
-## License
-
-Penelope is dual-licensed under [MIT](LICENSE-MIT) or
-[Apache-2.0](LICENSE-APACHE), at your option.
+The project is dual-licensed under [MIT](LICENSE-MIT) or
+[Apache 2.0](LICENSE-APACHE).
