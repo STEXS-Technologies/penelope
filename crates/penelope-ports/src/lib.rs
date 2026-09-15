@@ -735,6 +735,77 @@ pub enum CanonicalReconciliationV1 {
     },
 }
 
+/// Typed failure for reconciliation consistency-window handling.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ConsistencyWindowValidationError {
+    /// The adapter supplied a window whose end precedes its observation time.
+    #[error("reconciliation consistency window is invalid")]
+    InvalidWindow,
+    /// Retry was requested before authoritative absence could be established.
+    #[error("reconciliation consistency window has not elapsed")]
+    WindowNotElapsed,
+    /// An unknown or committed effect cannot be treated as retry-safe.
+    #[error("reconciliation result is not retry-safe")]
+    NotRetrySafe,
+}
+
+/// Reconciliation result paired with the adapter's authoritative observation
+/// time and consistency horizon.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CanonicalReconciliationWindowV1 {
+    /// Typed reconciliation result.
+    pub result: CanonicalReconciliationV1,
+    /// Logical time at which the authoritative source was checked.
+    pub checked_at: LogicalTimeV1,
+    /// Earliest logical time at which `NotCommitted` may authorize retry.
+    pub consistency_until: LogicalTimeV1,
+}
+
+impl CanonicalReconciliationWindowV1 {
+    /// Creates and validates a consistency-window result.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConsistencyWindowValidationError::InvalidWindow`] when the
+    /// horizon precedes the observation time.
+    pub fn new(
+        result: CanonicalReconciliationV1,
+        checked_at: LogicalTimeV1,
+        consistency_until: LogicalTimeV1,
+    ) -> Result<Self, ConsistencyWindowValidationError> {
+        if consistency_until.0 < checked_at.0 {
+            return Err(ConsistencyWindowValidationError::InvalidWindow);
+        }
+        Ok(Self {
+            result,
+            checked_at,
+            consistency_until,
+        })
+    }
+
+    /// Validates whether this result authorizes a retry at `now`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error until the horizon elapses, or for committed/
+    /// unknown results that are never retry permission.
+    pub fn require_retry_safe_at(
+        &self,
+        now: LogicalTimeV1,
+    ) -> Result<ActionId, ConsistencyWindowValidationError> {
+        if now.0 < self.consistency_until.0 {
+            return Err(ConsistencyWindowValidationError::WindowNotElapsed);
+        }
+        match &self.result {
+            CanonicalReconciliationV1::NotCommitted { action_id, .. } => Ok(action_id.clone()),
+            CanonicalReconciliationV1::Committed { .. }
+            | CanonicalReconciliationV1::Unknown { .. } => {
+                Err(ConsistencyWindowValidationError::NotRetrySafe)
+            }
+        }
+    }
+}
+
 /// Typed resolution selected by an authorized manual-review operator.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ManualReviewResolutionV1 {
@@ -1869,6 +1940,7 @@ canonical_port_impl!(
     QuotaKindV1,
     QuotaRequestV1,
     CanonicalReconciliationV1,
+    CanonicalReconciliationWindowV1,
     ManualReviewResolutionV1,
     ManualReviewControlV1,
     ProcessAuthorizationOperationV1,
@@ -2415,6 +2487,46 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(oversized_limit, OutcomePageValidationError::LimitExceeded);
+    }
+
+    #[test]
+    fn reconciliation_window_only_allows_retry_after_horizon() {
+        let result = CanonicalReconciliationV1::NotCommitted {
+            scope: action().scope(),
+            action_id: action().action_id,
+        };
+        let window =
+            CanonicalReconciliationWindowV1::new(result, LogicalTimeV1(10), LogicalTimeV1(20))
+                .unwrap();
+        assert_eq!(
+            window.require_retry_safe_at(LogicalTimeV1(19)),
+            Err(ConsistencyWindowValidationError::WindowNotElapsed)
+        );
+        assert_eq!(
+            window.require_retry_safe_at(LogicalTimeV1(20)),
+            Ok(id("act_dispatch"))
+        );
+        assert_eq!(
+            CanonicalReconciliationWindowV1::new(
+                window.result,
+                LogicalTimeV1(21),
+                LogicalTimeV1(20),
+            ),
+            Err(ConsistencyWindowValidationError::InvalidWindow)
+        );
+        let committed = CanonicalReconciliationWindowV1::new(
+            CanonicalReconciliationV1::Unknown {
+                scope: action().scope(),
+                action_id: id("act_dispatch"),
+            },
+            LogicalTimeV1(0),
+            LogicalTimeV1(0),
+        )
+        .unwrap();
+        assert_eq!(
+            committed.require_retry_safe_at(LogicalTimeV1(0)),
+            Err(ConsistencyWindowValidationError::NotRetrySafe)
+        );
     }
 
     #[test]

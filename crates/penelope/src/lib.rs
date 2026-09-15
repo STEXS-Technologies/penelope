@@ -51,7 +51,8 @@ pub use penelope_ports as ports;
 /// Frequently used typed process-control port contracts.
 pub use penelope_ports::{
     AtomicProcessCommitReceiptV1, AtomicProcessCommitV1, AuthorizationRequirementV1,
-    CanonicalReconciliationV1, CommitValidationError, DiagnosticClassV1, DiagnosticValidationError,
+    CanonicalReconciliationV1, CanonicalReconciliationWindowV1, CommitValidationError,
+    ConsistencyWindowValidationError, DiagnosticClassV1, DiagnosticValidationError,
     EffectDispatchRequestV1, EffectReconciliationValidationError, ExternalEffectEvidenceV1,
     ExternalEffectExecutor, ExternalEffectStateV1, InboxAcceptanceReceiptV1,
     InboxReceiptValidationError, LeaseTokenSource, MAX_OUTBOX_CLAIM_BATCH,

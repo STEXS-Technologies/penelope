@@ -603,6 +603,10 @@ executor policy, consistency-window implementation, or fault-injected adapter
 drill yet, so this item remains incomplete. `EffectDispatchRequestV1::validate_at`
 now provides an inclusive logical deadline check, returning typed
 `DeadlineExceeded` instead of leaving expiry behavior to adapter conventions.
+`CanonicalReconciliationWindowV1` now binds reconciliation to an observation
+time and consistency horizon; only an authoritative `NotCommitted` result after
+that horizon can authorize retry. Committed and unknown results remain
+non-retryable. The adapter still supplies the authoritative horizon.
 
 ### P1.6 Manual review lifecycle
 
