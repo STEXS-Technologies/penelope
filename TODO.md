@@ -5,7 +5,7 @@ library. Penelope is deliberately library-only: databases, brokers, schedulers,
 workers, HTTP/RPC transports, deployment manifests, and StateChronicle
 implementations belong to the consuming application.
 
-## Library work — complete
+## Completed library work
 
 The following items are implemented and covered by tests, examples, or CI
 checks. They are retained here as an auditable definition of done.
@@ -42,7 +42,7 @@ checks. They are retained here as an auditable definition of done.
 - [x] MIT/Apache licensing, security policy, lockfile, changelog, contribution
   guidance, and reproducible release commands.
 
-## Consumer-owned work — intentionally outside this repository
+## Consumer-owned work, intentionally outside this repository
 
 These are required of each deployment, but implementing them here would turn
 Penelope into infrastructure and couple it to a storage or transport vendor.

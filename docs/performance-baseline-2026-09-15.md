@@ -1,4 +1,4 @@
-# Library performance baseline — 2026-09-15
+# Library performance baseline: 2026-09-15
 
 Revision: `a8a42a6`  
 Command: `cargo bench -p penelope-ports --bench contract_throughput -- --noplot`

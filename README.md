@@ -4,8 +4,8 @@ Penelope is the foundation for reliable Rust sagas and long-running,
 multi-step workflows. It gives teams a deterministic process-truth layer that
 records what a workflow decided, what each step observed, and exactly how to
 recover after crashes, retries, duplicate delivery, timeouts, and ambiguity.
-It complements—not replaces—a ledger, matching engine, market-data system, or
-canonical inventory/position store.
+It complements a ledger, matching engine, market-data system, or canonical
+inventory and position store. It does not replace those systems.
 
 Penelope is a library-only protocol and deterministic orchestration engine.
 Persistence, brokers, schedulers, and service integrations are deliberately
@@ -198,8 +198,8 @@ Public values have no embedded wire-version discriminator. Constructors and
 pin for a running process. Consumers own transport compatibility and may add
 their own envelope/version policy at the edge. Checked-in JSON fixtures lock
 the current representation. Every identity is a validated prefixed newtype,
-every category is a typed enum, and port APIs accept typed values only—application
-code never dispatches by matching raw strings. Infrastructure implementations
+every category is a typed enum, and port APIs accept typed values only.
+Application code never dispatches by matching raw strings. Infrastructure implementations
 must live in a consumer composition root or a separately reviewed adapter
 repository; this workspace deliberately ships none.
 

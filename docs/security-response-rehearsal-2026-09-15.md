@@ -1,4 +1,4 @@
-# Security response rehearsal evidence — 2026-09-15
+# Security response rehearsal evidence: 2026-09-15
 
 ## Scope
 
