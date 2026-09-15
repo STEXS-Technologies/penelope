@@ -154,6 +154,10 @@ impl DefinitionRegistrationReceiptV1 {
 /// Receipt from an idempotent durable inbox acceptance attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InboxAcceptanceReceiptV1 {
+    /// Tenant scope of the accepted input.
+    pub tenant_id: penelope_domain::TenantId,
+    /// Process scope of the accepted input.
+    pub process_id: penelope_domain::ProcessId,
     /// Immutable input identity accepted or redelivered.
     pub input_id: InputId,
     /// Whether this identity was already durably accepted.
@@ -351,13 +355,23 @@ pub enum InboxReceiptValidationError {
     /// The adapter acknowledged a different immutable input identity.
     #[error("inbox acceptance receipt input does not match the submitted input")]
     InputMismatch,
+    /// The adapter acknowledged another tenant or process.
+    #[error("inbox acceptance receipt scope does not match the submitted input")]
+    ScopeMismatch,
 }
 
 impl InboxAcceptanceReceiptV1 {
     /// Creates a receipt for one input identity.
     #[must_use]
-    pub const fn new(input_id: InputId, duplicate: bool) -> Self {
+    pub const fn new(
+        tenant_id: penelope_domain::TenantId,
+        process_id: penelope_domain::ProcessId,
+        input_id: InputId,
+        duplicate: bool,
+    ) -> Self {
         Self {
+            tenant_id,
+            process_id,
             input_id,
             duplicate,
         }
@@ -373,7 +387,9 @@ impl InboxAcceptanceReceiptV1 {
         &self,
         input: &ProcessInputDtoV1,
     ) -> Result<(), InboxReceiptValidationError> {
-        if self.input_id == input.input_id {
+        if self.tenant_id != input.tenant_id || self.process_id != input.process_id {
+            Err(InboxReceiptValidationError::ScopeMismatch)
+        } else if self.input_id == input.input_id {
             Ok(())
         } else {
             Err(InboxReceiptValidationError::InputMismatch)
@@ -3297,7 +3313,12 @@ mod tests {
     #[test]
     fn inbox_receipt_is_bound_to_the_exact_submitted_input() {
         let submitted = input();
-        let receipt = InboxAcceptanceReceiptV1::new(submitted.input_id.clone(), false);
+        let receipt = InboxAcceptanceReceiptV1::new(
+            submitted.tenant_id.clone(),
+            submitted.process_id.clone(),
+            submitted.input_id.clone(),
+            false,
+        );
         assert_eq!(receipt.validate_for(&submitted), Ok(()));
         let wrong = ProcessInputDtoV1::new(
             submitted.tenant_id.clone(),
@@ -3309,6 +3330,12 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&wrong),
             Err(InboxReceiptValidationError::InputMismatch)
+        );
+        let mut wrong_scope = wrong;
+        wrong_scope.tenant_id = id("tnt_other");
+        assert_eq!(
+            receipt.validate_for(&wrong_scope),
+            Err(InboxReceiptValidationError::ScopeMismatch)
         );
     }
 
