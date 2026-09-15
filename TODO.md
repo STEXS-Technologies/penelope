@@ -473,6 +473,9 @@ with unit coverage that does not inspect error text.
 `LeaseTokenSource` now makes fresh fencing-token allocation an explicit typed
 port; its contract requires uniqueness among live leases and no token recycling
 while an old lease may exist. Allocation remains infrastructure-owned.
+`ActionDispatcher::dispatch` now returns an `ActionDispatchReceiptV1` carrying
+the exact action identity and duplicate flag, with a validator that rejects
+receipt substitution. Durable dispatch ordering remains adapter-owned.
 
 ### P1.2 Atomic append/project/inbox/outbox boundary
 
@@ -506,7 +509,7 @@ incomplete.
   outbox records with schema, action ID, payload digest, attempts and ack.
 - Why: brokers provide at-least-once delivery, not business exactly-once.
 - How: acknowledge an input only after commit; publish at least once; every
-  consumer idempotently handles its action ID.
+   consumer idempotently handles its action ID.
 - Evidence: duplicate/reordered/redelivered messages, crash-before-ack and
   crash-after-publish drills.
 
@@ -633,7 +636,7 @@ explicit replayable engine input rather than a direct projection mutation. They
 have parser and engine-transition fuzz coverage through the public review
 lifecycle and linear engine targets. Authorization policy, persistence,
 delivery as an inbox input, conflict behavior, and adversarial operator drills
-remain incomplete. `ManualReviewReceiptV1` now makes open/claim/decision
+   remain incomplete. `ManualReviewReceiptV1` now makes open/claim/decision
 redelivery idempotency explicit and validates the returned review identity;
 durable queue conflict handling remains adapter-owned.
 

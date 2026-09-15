@@ -18,10 +18,10 @@ use penelope_domain::{
     ProcessOutcomeFactV1, ProcessOutcomeKindV1, ProcessScopeV1, ReviewId, StepId, TenantId,
 };
 use penelope_ports::{
-    ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1, AtomicProcessCommitV1,
-    CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1, DefinitionRegistry,
-    EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor, Inbox,
-    InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
+    ActionDispatchReceiptV1, ActionDispatcher, ActionIdSource, AtomicProcessCommitReceiptV1,
+    AtomicProcessCommitV1, CanonicalReconciliationV1, CanonicalState, Clock, DefinitionLookupV1,
+    DefinitionRegistry, EffectDispatchRequestV1, ExternalEffectEvidenceV1, ExternalEffectExecutor,
+    Inbox, InboxAcceptanceReceiptV1, LeaseTokenSource, ManualReviewClaimV1, ManualReviewDecisionV1,
     ManualReviewQueue, ManualReviewReceiptV1, ManualReviewResolutionV1, OutboxClaimRequestV1,
     OutboxLeaseV1, OutboxRecordV1, OutboxStore, OutcomeIdSource, PortError,
     ProcessAuthorizationDecisionV1, ProcessAuthorizationRequestV1, ProcessAuthorizer, ProcessStore,
@@ -110,7 +110,7 @@ impl Inbox for UnavailablePorts {
 
 #[async_trait]
 impl ActionDispatcher for UnavailablePorts {
-    async fn dispatch(&self, _: &ProcessActionDtoV1) -> Result<(), PortError> {
+    async fn dispatch(&self, _: &ProcessActionDtoV1) -> Result<ActionDispatchReceiptV1, PortError> {
         Err(PortError::Unavailable)
     }
 }

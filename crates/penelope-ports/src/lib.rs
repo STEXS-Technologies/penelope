@@ -64,6 +64,52 @@ pub struct ManualReviewReceiptV1 {
     pub duplicate: bool,
 }
 
+/// Receipt from an idempotent action-dispatch attempt.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ActionDispatchReceiptV1 {
+    /// Immutable action identity dispatched or redelivered.
+    pub action_id: ActionId,
+    /// Whether this action was already durably dispatched.
+    pub duplicate: bool,
+}
+
+/// Typed validation failure for an action-dispatch receipt.
+#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+pub enum ActionReceiptValidationError {
+    /// The adapter returned a receipt for another action.
+    #[error("action dispatch receipt does not match the requested action")]
+    ActionMismatch,
+}
+
+impl ActionDispatchReceiptV1 {
+    /// Creates a receipt for one action identity.
+    #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new(action_id: ActionId, duplicate: bool) -> Self {
+        Self {
+            action_id,
+            duplicate,
+        }
+    }
+
+    /// Requires this receipt to acknowledge the exact action identity.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ActionReceiptValidationError::ActionMismatch`] when the
+    /// adapter acknowledges another action.
+    pub fn validate_for(
+        &self,
+        action: &ProcessActionDtoV1,
+    ) -> Result<(), ActionReceiptValidationError> {
+        if self.action_id == action.action_id {
+            Ok(())
+        } else {
+            Err(ActionReceiptValidationError::ActionMismatch)
+        }
+    }
+}
+
 /// Typed validation failure for a manual-review receipt.
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum ManualReviewReceiptValidationError {
@@ -1858,7 +1904,10 @@ pub trait Inbox: Send + Sync {
 #[async_trait]
 pub trait ActionDispatcher: Send + Sync {
     /// Dispatches one action using its stable action identity as idempotency key.
-    async fn dispatch(&self, action: &ProcessActionDtoV1) -> Result<(), PortError>;
+    async fn dispatch(
+        &self,
+        action: &ProcessActionDtoV1,
+    ) -> Result<ActionDispatchReceiptV1, PortError>;
 }
 
 /// External-effect execution boundary with explicit reconciliation and cancellation.
@@ -2003,6 +2052,7 @@ macro_rules! canonical_port_impl {
 canonical_port_impl!(
     DefinitionLookupV1,
     InboxAcceptanceReceiptV1,
+    ActionDispatchReceiptV1,
     ManualReviewReceiptV1,
     OutboxLeaseTokenV1,
     OutboxAcknowledgementV1,
@@ -2897,6 +2947,19 @@ mod tests {
         assert_eq!(
             receipt.validate_for(&id("rev_other")),
             Err(ManualReviewReceiptValidationError::ReviewMismatch)
+        );
+    }
+
+    #[test]
+    fn action_dispatch_receipt_is_bound_to_the_exact_action() {
+        let requested = action();
+        let receipt = ActionDispatchReceiptV1::new(requested.action_id.clone(), true);
+        assert_eq!(receipt.validate_for(&requested), Ok(()));
+        let mut other = action();
+        other.action_id = id("act_other");
+        assert_eq!(
+            receipt.validate_for(&other),
+            Err(ActionReceiptValidationError::ActionMismatch)
         );
     }
 
