@@ -652,6 +652,9 @@ still supplies the authoritative horizon and durable evidence.
 committed evidence is terminal, pre-horizon absence waits, post-horizon absence
 may retry, and unknown evidence escalates. This remains evidence classification,
 not durable transport behavior.
+`ExternalEffectEvidenceV1::disposition_at` likewise maps succeeded, known
+failure, and unknown evidence to completed, retry, and escalation outcomes
+after validating the exact effect key and logical deadline.
 
 ### P1.6 Manual review lifecycle
 
