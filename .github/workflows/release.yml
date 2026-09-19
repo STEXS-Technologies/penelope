@@ -58,6 +58,8 @@ jobs:
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
       - run: cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings
       - run: RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
+      - name: Install supply-chain tools
+        run: cargo install cargo-audit cargo-deny --locked
       - run: cargo audit
       - run: cargo deny check
       - run: ./scripts/publish-crates.sh
