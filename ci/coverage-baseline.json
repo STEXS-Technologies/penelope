@@ -1,0 +1,4 @@
+{
+  "line_coverage_percent": 94.0759,
+  "source": "cargo llvm-cov --workspace --all-features --locked --exclude penelope-fuzz"
+}
