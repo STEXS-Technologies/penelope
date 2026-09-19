@@ -20,6 +20,7 @@ jobs:
       - uses: Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c # v2
       - run: ./scripts/check-action-pins.sh
       - run: ./scripts/check-layer-boundaries.sh
+      - run: python3 scripts/publish-order.py --emit
       - run: cargo fmt --all --check
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
       - run: cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings

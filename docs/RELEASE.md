@@ -29,21 +29,21 @@ git push origin v0.1.0
 
 ## Publish order
 
-Publish dependency-first with the checked-in script. Its default mode packages
-every tarball locally (a first release cannot resolve dependent crates from
-crates.io before they are published) and uploads only with an explicit flag:
+Publish dependency-first with the checked-in script. It derives the exact order
+from Cargo metadata, including normal, build, and dev path dependencies, rather
+than maintaining a hand-written list. Its default mode packages every tarball
+locally (a first release cannot resolve dependent crates from crates.io before
+they are published) and uploads only with an explicit flag:
 
 ```bash
 ./scripts/publish-crates.sh
 ./scripts/publish-crates.sh --publish
 ```
 
-The order is `penelope-core`, `penelope-domain`, `penelope-intent`,
-`penelope-ports`, `penelope-executor`, `penelope-statechronicle`, and finally
-the umbrella `penelope` crate. Wait for each crate to become available on
-crates.io before the next dependent publish. If a publish is interrupted,
-verify the exact version on crates.io and resume at the first unpublished
-crate; already published crates cannot be replaced.
+The script waits for each exact version to enter the crates.io sparse index
+before publishing its dependents, skips versions already published, and verifies
+every expected crate/version after completing. It is therefore safe to rerun
+after an interrupted release.
 
 ## Credentials and ownership
 
