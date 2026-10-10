@@ -98,7 +98,12 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// # Errors
     /// Returns invalid input/policy or storage failures; never starts on error.
     pub fn submit(&mut self, input: &[u8], schema: u32, tick: u64) -> Result<(), SupervisorError> {
-        let blob = blob_ref(input, schema)?;
+        self.ensure_healthy()?;
+        let blob = blob_ref(
+            input,
+            schema,
+            self.projection.definition().budget.max_input_bytes,
+        )?;
         let record = self.projection.propose(
             TaskExecutionEvent::IntentCommitted {
                 definition: self.projection.definition(),
@@ -171,6 +176,9 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// Rejects stale observations and fails closed on ambiguous runtime/storage.
     pub fn poll(&mut self, tick: u64) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
+        if tick < self.projection.last_tick() {
+            return Err(TaskError::InvalidOrder.into());
+        }
         if self.projection.status() != TaskStatus::Running {
             return Err(TaskError::InvalidTransition.into());
         }
@@ -223,7 +231,13 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 let length =
                     usize::try_from(bytes).map_err(|_overflow| TaskError::QuotaExhausted)?;
                 let data = buffer.get(..length).ok_or(TaskError::CorruptBlob)?;
-                let reference = blob_ref(data, schema)?;
+                let definition = self.projection.definition();
+                let limit = if matches!(observation.progress, RuntimeProgress::Checkpoint { .. }) {
+                    definition.recovery.max_checkpoint_bytes
+                } else {
+                    definition.budget.max_output_bytes
+                };
+                let reference = blob_ref(data, schema, limit)?;
                 let event = if matches!(observation.progress, RuntimeProgress::Checkpoint { .. }) {
                     TaskExecutionEvent::CheckpointCommitted {
                         checkpoint: reference,
@@ -274,10 +288,16 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         if scope != self.projection.scope() {
             return Err(TaskError::ScopeMismatch.into());
         }
+        if generation != self.projection.generation() {
+            return Err(TaskError::StaleGeneration.into());
+        }
         if let Reconciliation::Completed {
             output: reference, ..
         } = result
         {
+            if reference.bytes > self.projection.definition().budget.max_output_bytes {
+                return Err(TaskError::QuotaExhausted.into());
+            }
             reference.verify(output.ok_or(TaskError::CorruptBlob)?, reference.schema)?;
         } else if output.is_some() {
             return Err(TaskError::CorruptBlob.into());
@@ -301,7 +321,13 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         authorization: Digest,
         tick: u64,
     ) -> Result<(), SupervisorError> {
-        let checkpoint = blob_ref(bytes, self.projection.definition().checkpoint_schema)?;
+        self.ensure_healthy()?;
+        let definition = self.projection.definition();
+        let checkpoint = blob_ref(
+            bytes,
+            definition.checkpoint_schema,
+            definition.recovery.max_checkpoint_bytes,
+        )?;
         let record = self.projection.propose(
             TaskExecutionEvent::CheckpointMigrated {
                 source,
@@ -348,10 +374,14 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     }
 }
 
-fn blob_ref(bytes: &[u8], schema: u32) -> Result<BlobRef, TaskError> {
+fn blob_ref(bytes: &[u8], schema: u32, limit: u32) -> Result<BlobRef, TaskError> {
+    let length = u32::try_from(bytes.len()).map_err(|_overflow| TaskError::QuotaExhausted)?;
+    if length > limit || schema == 0 {
+        return Err(TaskError::QuotaExhausted);
+    }
     Ok(BlobRef {
         digest: Digest::of(bytes),
-        bytes: u32::try_from(bytes.len()).map_err(|_overflow| TaskError::QuotaExhausted)?,
+        bytes: length,
         schema,
     })
 }

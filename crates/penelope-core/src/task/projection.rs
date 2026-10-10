@@ -196,8 +196,7 @@ impl TaskProjection {
                 }
                 self.execution_deadline = r
                     .tick
-                    .checked_add(self.definition.recovery.timeout_ticks)
-                    .ok_or(TaskError::DeadlineExpired)?
+                    .saturating_add(self.definition.recovery.timeout_ticks)
                     .min(self.definition.budget.deadline_tick);
                 self.generation = r.generation;
                 self.status = TaskStatus::Running;
@@ -230,8 +229,7 @@ impl TaskProjection {
                 }
                 self.restart_at = r
                     .tick
-                    .checked_add(self.definition.recovery.restart_delay_ticks)
-                    .ok_or(TaskError::DeadlineExpired)?;
+                    .saturating_add(self.definition.recovery.restart_delay_ticks);
                 self.status = TaskStatus::Faulted;
             }
             TaskExecutionEvent::ReconciliationRequired => {

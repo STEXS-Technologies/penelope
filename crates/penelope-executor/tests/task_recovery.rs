@@ -358,6 +358,75 @@ fn failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkp
 }
 
 #[test]
+fn regressed_clock_is_rejected_before_runtime_poll_consumes_progress() {
+    let mut supervisor = running(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    supervisor.poll(2).unwrap();
+    let before = *supervisor.projection();
+    assert_eq!(
+        supervisor.poll(1),
+        Err(SupervisorError::Decision(TaskError::InvalidOrder))
+    );
+    assert_eq!(*supervisor.projection(), before);
+    assert!(supervisor.poll(3).unwrap());
+    assert_eq!(
+        finish(supervisor, 3).projection().status(),
+        TaskStatus::Completed
+    );
+}
+
+#[test]
+fn oversized_input_migration_and_reconciled_output_are_rejected_before_commit() {
+    let mut supervisor = fresh(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    assert_eq!(
+        supervisor.submit(&[1; 65], 1, 0),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(supervisor.projection().next_sequence(), 0);
+    supervisor.submit(&INPUT, 1, 0).unwrap();
+    let source = TaskScope {
+        definition: Digest([9; 32]),
+        ..supervisor.projection().scope()
+    };
+    let previous = BlobRef {
+        digest: Digest([8; 32]),
+        bytes: 12,
+        schema: 1,
+    };
+    assert_eq!(
+        supervisor.import_checkpoint(source, previous, &[0; 65], Digest([7; 32]), 1),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(supervisor.projection().next_sequence(), 1);
+    let mut external = reconstruct(
+        running(
+            RecoveryMode::ReconcileBeforeRestart,
+            EffectContract::ReconcileRequired,
+        ),
+        2,
+    );
+    external.advance(3).unwrap();
+    let output = BlobRef {
+        digest: Digest::of(&[1; 65]),
+        bytes: 65,
+        schema: 1,
+    };
+    assert_eq!(
+        external.reconcile(
+            external.projection().scope(),
+            1,
+            Reconciliation::Completed {
+                output,
+                evidence: Digest([5; 32])
+            },
+            Some(&[1; 65]),
+            4
+        ),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(external.projection().status(), TaskStatus::Reconciling);
+}
+
+#[test]
 fn timeout_late_results_and_fence_failure_do_not_claim_success() {
     let mut supervisor = running(RecoveryMode::NeverRestart, EffectContract::Pure);
     assert!(matches!(

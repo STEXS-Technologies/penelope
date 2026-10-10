@@ -155,3 +155,46 @@ fn task_wire_v1_fixture_is_immutable() {
             .unwrap()
     );
 }
+
+#[test]
+fn time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed() {
+    let mut projection = pending();
+    let mut definition = projection.definition();
+    definition.recovery.timeout_ticks = u64::MAX;
+    definition.recovery.restart_delay_ticks = u64::MAX;
+    definition.budget.deadline_tick = u64::MAX;
+    let scope = projection.scope();
+    projection = TaskProjection::new(scope, definition).unwrap();
+    let intent = projection
+        .propose(
+            TaskExecutionEvent::IntentCommitted {
+                definition,
+                input: BlobRef {
+                    digest: scope.input,
+                    bytes: 64,
+                    schema: 1,
+                },
+            },
+            0,
+            u64::MAX - 10,
+        )
+        .unwrap();
+    projection.apply(&intent).unwrap();
+    let start = projection.next(u64::MAX - 9).unwrap().unwrap();
+    projection.apply(&start).unwrap();
+    assert_eq!(projection.execution_deadline(), u64::MAX);
+    let fault = projection
+        .propose(
+            TaskExecutionEvent::FaultObserved {
+                fault: TaskFault::Crash,
+            },
+            1,
+            u64::MAX - 8,
+        )
+        .unwrap();
+    projection.apply(&fault).unwrap();
+    assert_eq!(projection.status(), TaskStatus::Faulted);
+    let exhausted = projection.next(u64::MAX - 7).unwrap().unwrap();
+    projection.apply(&exhausted).unwrap();
+    assert_eq!(projection.status(), TaskStatus::Exhausted);
+}
