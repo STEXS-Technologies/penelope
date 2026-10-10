@@ -1,4 +1,5 @@
 # .gitignore
+/TODO.md
 .slim/deepwork/
 target/
 coverage/

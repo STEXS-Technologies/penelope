@@ -64,7 +64,7 @@ PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=2000 PENELOPE_CHAOS_FU
 Task histories have their own version discriminator, independent of saga v1.
 Checkpoint schema/code changes require an explicit application transformation
 into a newly pinned history; old bytes are never silently reinterpreted.
-See [the architecture and release gates](TODO.md#recoverable-execution-020).
+See [the architecture and release gates](docs/RELEASE.md).
 
 ## StateChronicle boundary
 
@@ -100,9 +100,9 @@ cargo run -p penelope --example trade_competing_lock --locked
 
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
-reviewed integration crate. See [TODO.md](TODO.md) for the library boundary and
-[docs/RELEASE.md](docs/RELEASE.md) for the `0.2.0` release procedure and protocol
-review. This branch prepares 0.2.0; registry availability follows publication.
+reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
+boundary, `0.2.0` release procedure and protocol review. This branch prepares
+0.2.0; registry availability follows publication.
 
 The project is dual-licensed under [MIT](LICENSE-MIT) or
 [Apache 2.0](LICENSE-APACHE).

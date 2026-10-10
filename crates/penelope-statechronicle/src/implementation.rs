@@ -7,7 +7,7 @@
 //! an HTTP response, or permit replay to issue a second canonical command.
 //!
 //! No client implementation exists here. The contract and implementation order
-//! are in the repository README and TODO.
+//! are in the repository README and docs/RELEASE.md.
 
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]

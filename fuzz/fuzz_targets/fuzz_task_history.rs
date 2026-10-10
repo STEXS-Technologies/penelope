@@ -135,5 +135,23 @@ fuzz_target!(|data: &[u8]| {
             Err(_) => assert_eq!(projection, before),
         }
         assert!(projection.generation() <= definition.recovery.max_attempts);
+        // Independently exercise the safety boundary of every accepted live
+        // state: it must still be possible to durably stop this generation.
+        if projection.status() == TaskStatus::Running {
+            let stop = projection
+                .propose(
+                    TaskExecutionEvent::FaultObserved {
+                        fault: TaskFault::Timeout,
+                    },
+                    projection.generation(),
+                    projection.execution_deadline(),
+                )
+                .expect("accepted live state must retain capacity to record timeout");
+            let mut stopped = projection;
+            stopped.apply(&stop).unwrap();
+            assert_eq!(stopped.status(), TaskStatus::Faulted);
+            assert_eq!(stopped.generation(), projection.generation());
+            assert!(stopped.output().is_none());
+        }
     }
 });
