@@ -11,6 +11,44 @@ The source review covers public contracts, deterministic replay, supervision,
 effect bridging, optional checkpoint evidence, and hostile input boundaries.
 It is a repository engineering review, not an external security certification.
 
+### Second deep audit, 2026-10-10
+
+The audit of candidate `8c6153a` reproduced two medium-severity lifecycle gaps
+and two low-severity contract/gate defects. All are fixed with regressions:
+
+1. **History capacity could be exhausted while execution remained live.** A
+   restart or acknowledged checkpoint could consume the final record slot,
+   leaving no room to record the generation's fault or completion. Starts and
+   checkpoints now reserve a terminal slot. A rejected live quota proposal
+   fences execution and poisons supervision until reconstruction; the rejected
+   checkpoint is never acknowledged. Fencing failures remain explicit and
+   poisoned, with no unsupported claim of termination.
+2. **Forwarded Pending observations bypassed deadline enforcement.** The public
+   observation path returned without the timeout handling performed by poll.
+   Late non-fault observations now fence and commit timeout before returning
+   DeadlineExpired. Foreign/stale observations reject before any fencing.
+3. **The dependency gate missed AWS SDK package families.** Its anchored
+   expression matched the literal prefix rather than actual package names.
+   A black-box metadata test now checks rejection of aws-sdk-s3, aws-sdk-kms
+   and sqlx, and runs in CI.
+4. **Dispatch dropped persisted input-schema metadata.** The start request now
+   carries the committed input codec version, allowing the runtime to reject
+   unsupported schemas before decoding or computation. This adds no task/saga
+   history fields or definition fingerprint changes. Codec validity remains an
+   application responsibility; the regression runtime rejects an unsupported
+   input schema without executing the task.
+
+Real-thread interleavings additionally test competing intent CAS and dispatch
+delayed beyond reconstruction/fencing and a newer generation's start. Runtime
+contracts explicitly require persistent fence tombstones, rejection of delayed
+starts and preservation of newer generations. These tests use shared model
+adapters; deployed adapter conformance remains application-owned. Existing
+saga records/decisions and the task definition fingerprint remain unchanged.
+
+This audit supersedes the earlier completion assessment: passing the previous
+campaign did not establish the two missing lifecycle invariants. Updated
+campaign evidence identifies the corrected source revision.
+
 | Boundary | Review conclusion and evidence |
 | --- | --- |
 | Definition identity | Scope binds the whole definition fingerprint, including every permission and budget. A frozen fixture and mutations of all fourteen fields protect the encoding. |

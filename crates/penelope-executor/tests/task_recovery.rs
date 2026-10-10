@@ -444,7 +444,7 @@ fn timeout_late_results_and_fence_failure_do_not_claim_success() {
         ),
         Err(SupervisorError::Decision(TaskError::DeadlineExpired))
     ));
-    supervisor.poll(51).unwrap();
+    assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
     supervisor.advance(52).unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Exhausted);
     let supervisor = running(RecoveryMode::RestartFromBeginning, EffectContract::Pure);

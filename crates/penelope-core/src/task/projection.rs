@@ -123,6 +123,18 @@ impl TaskProjection {
         if r.sequence >= self.definition.budget.max_history_records {
             return Err(TaskError::QuotaExhausted);
         }
+        // A live generation must retain a slot for its fault/completion fact.
+        // Acknowledging the final checkpoint would otherwise let execution
+        // continue after the journal can no longer record its outcome.
+        if matches!(
+            r.event,
+            TaskExecutionEvent::Started
+                | TaskExecutionEvent::Restarted
+                | TaskExecutionEvent::CheckpointCommitted { .. }
+        ) && r.sequence.saturating_add(1) >= self.definition.budget.max_history_records
+        {
+            return Err(TaskError::QuotaExhausted);
+        }
         let starts = matches!(
             r.event,
             TaskExecutionEvent::Started | TaskExecutionEvent::Restarted

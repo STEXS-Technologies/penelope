@@ -189,6 +189,9 @@ pub struct SumRuntime {
 
 impl TaskRuntime for SumRuntime {
     fn start(&mut self, request: TaskStart<'_>) -> Result<(), TaskPortError> {
+        if request.input_schema != 1 {
+            return Err(TaskPortError::Corrupt);
+        }
         if self.active {
             return Err(TaskPortError::Conflict);
         }

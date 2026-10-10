@@ -97,13 +97,18 @@ for the portable profile. No durable write or hash is required per control tick.
 - [x] Workspace version/dependency bump and release notes for 0.2.0.
 - [x] Final candidate package verification and repeated security campaign.
 
-Final source revision `907f340` passes 135 workspace tests on Rust 1.99.0 and
+The first final source revision `907f340` passes 135 workspace tests on Rust 1.99.0 and
 1.85, 3.3 million sanitizer fuzz runs across eleven targets, three seeded chaos
 iterations with 10,000 property cases per test, and actual process-kill tests.
 Line coverage is 94.3223%, above the unchanged 94.0759% minimum. All seven
 0.2.0 archives pass Cargo verification using its temporary registry.
 Dependency, secret, layer, no_std, Clippy and rustdoc checks pass. Seeds and
 machine-readable results are retained in the linked campaign artifact.
+
+The second deep audit adds terminal history-slot reservation, fail-closed live
+quota handling, forwarded-observation timeout enforcement and persistent
+runtime fencing requirements. Its full results supersede that earlier snapshot;
+see the release guide and updated machine-readable campaign artifact.
 
 Process-kill tests exercise actual host process interruption with fsync/rename.
 They do not certify power-loss behavior, a database implementation, storage

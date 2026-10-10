@@ -63,6 +63,9 @@ pub struct TaskStart<'bytes> {
     pub generation: u32,
     pub definition: TaskDefinition,
     pub execution_deadline: u64,
+    /// Persisted input codec version. The adapter must reject schemas unsupported
+    /// by the pinned code before decoding or executing application work.
+    pub input_schema: u32,
     pub input: &'bytes [u8],
     pub checkpoint: Option<&'bytes [u8]>,
 }
@@ -90,6 +93,10 @@ pub struct TaskObservation {
 /// independent reconciliation and cannot be retracted by a runtime fence.
 /// OS watchdog and immediate physical safety responses remain independent.
 /// Checkpoint-producing workers pause until acknowledgement or fencing.
+/// Fencing is persistent: a delayed/repeated start of the fenced generation
+/// must be rejected, even if it has not started yet. Fence tombstones survive
+/// adapter reconstruction, and fencing an older generation cannot stop a newer
+/// generation. Concurrent supervisors also require journal CAS arbitration.
 pub trait TaskRuntime {
     /// Starts/resumes only the exact durably authorized generation.
     /// # Errors

@@ -165,6 +165,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
             generation: self.projection.generation(),
             definition: self.projection.definition(),
             execution_deadline: self.projection.execution_deadline(),
+            input_schema: input_ref.schema,
             input: input_bytes,
             checkpoint: resume,
         })?;
@@ -203,7 +204,10 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// Admits a trusted, scoped observation (including forwarded kernel faults).
     /// Checkpoint bytes must be a valid effect boundary under the application contract.
     /// # Errors
-    /// Rejects stale/foreign proposals, bad bytes and late results.
+    /// Rejects stale/foreign proposals and bad bytes. A late non-fault proposal
+    /// fences execution and records timeout before returning `DeadlineExpired`.
+    /// A running generation exceeding admission quotas is fenced and requires
+    /// reconstruction; rejected checkpoints are never acknowledged.
     pub fn observe(
         &mut self,
         observation: TaskObservation,
@@ -223,6 +227,12 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         if self.projection.status() != TaskStatus::Running {
             return Err(TaskError::InvalidTransition.into());
         }
+        if tick >= self.projection.execution_deadline()
+            && !matches!(observation.progress, RuntimeProgress::Fault(_))
+        {
+            self.advance(tick)?;
+            return Err(TaskError::DeadlineExpired.into());
+        }
         let (event, blob) = match observation.progress {
             RuntimeProgress::Pending => return Ok(false),
             RuntimeProgress::Fault(fault) => (TaskExecutionEvent::FaultObserved { fault }, None),
@@ -237,7 +247,10 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 } else {
                     definition.budget.max_output_bytes
                 };
-                let reference = blob_ref(data, schema, limit)?;
+                let reference = match blob_ref(data, schema, limit) {
+                    Ok(reference) => reference,
+                    Err(error) => return Err(self.reject_live_proposal(error)),
+                };
                 let event = if matches!(observation.progress, RuntimeProgress::Checkpoint { .. }) {
                     TaskExecutionEvent::CheckpointCommitted {
                         checkpoint: reference,
@@ -248,9 +261,10 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 (event, Some(data))
             }
         };
-        let record = self
-            .projection
-            .propose(event, observation.generation, tick)?;
+        let record = match self.projection.propose(event, observation.generation, tick) {
+            Ok(record) => record,
+            Err(error) => return Err(self.reject_live_proposal(error)),
+        };
         if matches!(
             event,
             TaskExecutionEvent::FaultObserved { .. } | TaskExecutionEvent::Completed { .. }
@@ -349,6 +363,17 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 Err(error.into())
             }
         }
+    }
+
+    fn reject_live_proposal(&mut self, error: TaskError) -> SupervisorError {
+        if error == TaskError::QuotaExhausted {
+            let fenced = self.fence(self.projection.scope(), self.projection.generation());
+            self.poisoned = true;
+            if let Err(failure) = fenced {
+                return failure;
+            }
+        }
+        error.into()
     }
 
     const fn ensure_healthy(&self) -> Result<(), SupervisorError> {
