@@ -1,8 +1,9 @@
 # Penelope
 
-Penelope is the foundation for reliable Rust sagas. It coordinates long-running
-and asynchronous workflows that must survive crashes, retries, duplicate
-delivery, timeouts, and uncertain external results.
+Penelope provides deterministic saga orchestration and recoverable task
+execution for Rust. It coordinates workflows and declared computations that
+must survive crashes, retries, duplicate delivery, timeouts and uncertain
+external results.
 
 Use it for settlement, trading, approvals, inventory, marketplace orders,
 payments, provisioning, refunds, and other multi-step processes where “run it
@@ -36,7 +37,7 @@ After a crash, load the ordered outcome log and replay it. Duplicate inputs are
 deduplicated, stale results are rejected, and unknown effects wait for
 reconciliation instead of triggering blind retries.
 
-## Recoverable task execution (0.2.0 development)
+## Recoverable task execution (0.2.0)
 
 The existing saga APIs and v1 records retain their meaning. Alongside them,
 `penelope::task` provides explicit recovery permissions, immutable input,
@@ -82,7 +83,7 @@ Add the facade crate to your application:
 
 ```toml
 [dependencies]
-penelope = "0.1.0"
+penelope = "0.2.0"
 ```
 
 Run the included workflows to see the public API:
@@ -100,7 +101,8 @@ cargo run -p penelope --example trade_competing_lock --locked
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [TODO.md](TODO.md) for the library boundary and
-[docs/RELEASE.md](docs/RELEASE.md) for the `0.1.0` release procedure.
+[docs/RELEASE.md](docs/RELEASE.md) for the `0.2.0` release procedure and protocol
+review. This branch prepares 0.2.0; registry availability follows publication.
 
 The project is dual-licensed under [MIT](LICENSE-MIT) or
 [Apache 2.0](LICENSE-APACHE).

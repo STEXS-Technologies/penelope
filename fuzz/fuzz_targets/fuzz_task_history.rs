@@ -12,17 +12,22 @@ fuzz_target!(|data: &[u8]| {
             EffectContract::Pure
         },
         recovery: TaskRecoveryPolicy {
-            mode: RecoveryMode::RestartFromCheckpoint,
-            max_attempts: 8,
-            timeout_ticks: 10,
+            mode: match data.first().copied().unwrap_or(0) >> 1 & 3 {
+                0 => RecoveryMode::RestartFromBeginning,
+                1 => RecoveryMode::RestartFromCheckpoint,
+                2 => RecoveryMode::ReconcileBeforeRestart,
+                _ => RecoveryMode::NeverRestart,
+            },
+            max_attempts: u32::from(data.last().copied().unwrap_or(0) % 8) + 1,
+            timeout_ticks: u64::from(data.first().copied().unwrap_or(0) % 15) + 1,
             restart_delay_ticks: 1,
             max_checkpoint_bytes: 64,
         },
         budget: ExecutionBudget {
             max_input_bytes: 64,
             max_output_bytes: 64,
-            max_history_records: 128,
-            max_checkpoint_commits: 16,
+            max_history_records: u32::from(data.last().copied().unwrap_or(0) % 32).max(4),
+            max_checkpoint_commits: u32::from(data.last().copied().unwrap_or(0) % 8),
             cpu_ticks: 10,
             deadline_tick: 1000,
         },
@@ -30,7 +35,7 @@ fuzz_target!(|data: &[u8]| {
     let scope = TaskScope {
         tenant: Digest([1; 32]),
         task: Digest([2; 32]),
-        definition: definition.code,
+        definition: definition.fingerprint(),
         input: Digest([4; 32]),
     };
     let mut projection = TaskProjection::new(scope, definition).unwrap();
@@ -63,7 +68,7 @@ fuzz_target!(|data: &[u8]| {
         let checkpoint = BlobRef {
             digest: Digest([byte(2); 32]),
             bytes: u32::from(byte(3)),
-            schema: u32::from(byte(2)),
+            schema: u32::from(byte(2) % 3),
         };
         let event = match byte(0) % 12 {
             0 => TaskExecutionEvent::Started,

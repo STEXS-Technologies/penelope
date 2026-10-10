@@ -17,9 +17,9 @@ if [[ "${#crates[@]}" -eq 0 ]]; then
 fi
 
 if [[ "$mode" == "dry-run" ]]; then
-  # A first release cannot resolve dependent crates from crates.io until the
-  # preceding crates exist. Package the complete local workspace first.
-  cargo package --workspace --locked --allow-dirty --no-verify
+  # Cargo stages workspace dependencies in a temporary registry and verifies
+  # each unpacked archive without uploading anything.
+  cargo package --workspace --locked --allow-dirty
 else
   if [[ -z "${CARGO_REGISTRY_TOKEN:-}" ]]; then
     echo "CARGO_REGISTRY_TOKEN is required to publish crates" >&2

@@ -24,6 +24,9 @@ pub enum TaskPortError {
 /// with the record, and returns the exact record as acknowledgement. A conflict
 /// changes nothing. Ambiguous errors require reconstruction, never blind dispatch.
 /// Retain input/output/checkpoints until their history is safely retired.
+/// Reads verify the deployment's record-integrity protection and return
+/// `Corrupt` on failure. Semantic replay is not record authentication; a digest
+/// or checksum alone does not protect against an attacker rewriting the journal.
 pub trait TaskJournal {
     /// Reads one record; `None` means the authoritative end, not a read failure.
     /// # Errors
@@ -82,7 +85,9 @@ pub struct TaskObservation {
 }
 
 /// Runtime owns scheduling/protection; Penelope authorizes recovery. `fence`
-/// must stop the generation and prevent later effects before acknowledging.
+/// must stop the generation and prevent further execution/effect issuance before
+/// acknowledging. Already-issued effects can still complete; they require
+/// independent reconciliation and cannot be retracted by a runtime fence.
 /// OS watchdog and immediate physical safety responses remain independent.
 /// Checkpoint-producing workers pause until acknowledgement or fencing.
 pub trait TaskRuntime {
@@ -90,7 +95,9 @@ pub trait TaskRuntime {
     /// # Errors
     /// Returns execution or fence failure; an error can be an ambiguous start.
     fn start(&mut self, request: TaskStart<'_>) -> Result<(), TaskPortError>;
-    /// Polls proposals without allocating. Caller persists before acknowledgement.
+    /// Polls proposals without allocating or blocking on task execution. The
+    /// adapter enforces execution deadlines/CPU limits and returns trusted facts.
+    /// Caller persists before acknowledgement.
     /// # Errors
     /// Returns runtime failures; buffer exhaustion must never truncate a proposal.
     fn poll(

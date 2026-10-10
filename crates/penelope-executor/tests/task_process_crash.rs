@@ -28,6 +28,14 @@ struct DiskJournal {
     root: PathBuf,
     pause: Option<&'static str>,
 }
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct DiskRecord {
+    record: TaskRecord,
+    // Test adapter protection against accidental corruption, not authentication.
+    checksum: Digest,
+}
 impl DiskJournal {
     fn record_path(&self, sequence: u32) -> PathBuf {
         self.root.join(format!("record-{sequence}.json"))
@@ -65,8 +73,13 @@ impl TaskJournal for DiskJournal {
     ) -> Result<Option<TaskRecord>, TaskPortError> {
         match fs::read(self.record_path(sequence)) {
             Ok(bytes) => {
-                let record: TaskRecord =
+                let stored: DiskRecord =
                     serde_json::from_slice(&bytes).map_err(|_| TaskPortError::Corrupt)?;
+                let record = stored.record;
+                let encoded = serde_json::to_vec(&record).map_err(|_| TaskPortError::Corrupt)?;
+                if Digest::of(&encoded) != stored.checksum {
+                    return Err(TaskPortError::Corrupt);
+                }
                 if record.scope != scope {
                     return Err(TaskPortError::Conflict);
                 }
@@ -94,7 +107,13 @@ impl TaskJournal for DiskJournal {
         self.pause_at("after-blob");
         self.durable_write(
             self.record_path(record.sequence),
-            &serde_json::to_vec(record).map_err(|_| TaskPortError::Corrupt)?,
+            &serde_json::to_vec(&DiskRecord {
+                record: *record,
+                checksum: Digest::of(
+                    &serde_json::to_vec(record).map_err(|_| TaskPortError::Corrupt)?,
+                ),
+            })
+            .map_err(|_| TaskPortError::Corrupt)?,
         )?;
         self.pause_at("after-record");
         Ok(*record)
@@ -112,6 +131,34 @@ impl TaskJournal for DiskJournal {
             .copy_from_slice(&bytes);
         Ok(bytes.len())
     }
+}
+
+#[test]
+fn valid_json_corruption_is_rejected_by_journal_integrity_before_replay() {
+    let root =
+        std::env::temp_dir().join(format!("penelope-record-integrity-{}", std::process::id()));
+    fs::create_dir_all(&root).unwrap();
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let scope = scope(definition, &[1; 64]);
+    let mut supervisor = TaskSupervisor::<_, _, 64>::restore(
+        DiskJournal {
+            root: root.clone(),
+            pause: None,
+        },
+        SumRuntime::default(),
+        scope,
+        definition,
+        0,
+    )
+    .unwrap();
+    supervisor.submit(&[1; 64], 1, 0).unwrap();
+    let (mut journal, _runtime) = supervisor.into_parts();
+    let path = journal.record_path(0);
+    let mut stored: DiskRecord = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    stored.record.tick = 9; // Still valid typed JSON and potentially plausible history.
+    fs::write(path, serde_json::to_vec(&stored).unwrap()).unwrap();
+    assert_eq!(journal.read(scope, 0), Err(TaskPortError::Corrupt));
+    fs::remove_dir_all(root).unwrap();
 }
 
 #[test]

@@ -87,11 +87,15 @@ for the portable profile. No durable write or hash is required per control tick.
 
 ### Before tagging 0.2.0
 
-- [ ] Independent review of the public task protocol, effect-boundary and adapter contracts.
-- [ ] Extended fuzz/chaos release campaign with retained artifacts and coverage review.
-- [ ] Consumer adapter conformance: transactions/CAS, durable retention, idempotent
-      start, old-generation fencing and independently verified effect evidence.
-- [ ] Workspace version/dependency bump, release notes and package validation.
+- [x] Documented public protocol, effect-boundary and adapter security review;
+      frozen full-definition fingerprint and strict task wire decoding.
+- [x] Extended fuzz/chaos release campaign with retained summary/seed artifacts
+      and coverage review; see `ci/recoverable-execution-campaign.json`.
+- [x] Specify consumer adapter conformance: transactions/CAS, durable retention,
+      idempotent start, old-generation fencing and independent effect evidence.
+      Production adapter certification remains deployment-owned.
+- [x] Workspace version/dependency bump and release notes for 0.2.0.
+- [ ] Final candidate package verification and repeated security campaign.
 
 Process-kill tests exercise actual host process interruption with fsync/rename.
 They do not certify power-loss behavior, a database implementation, storage
@@ -109,8 +113,22 @@ responsibilities. No 0.2.0 tag is implied by the completed library gates above.
 - no_std cross-check on `riscv32imafc-unknown-none-elf`, with and without Serde.
 - Runnable example: generation 2 completes from record-offset checkpoint 8.
 
-These are development checks. The extended release campaign and independent
-adapter/protocol review above remain required before the version/tag changes.
+Final candidate validation supersedes the initial development campaign.
+Exact revision, reproducible commands, seeds, execution counts and coverage
+are retained in [the campaign artifact](ci/recoverable-execution-campaign.json).
+The public protocol/effect-boundary review is documented in
+[the release guide](docs/RELEASE.md#task-protocol-and-security-review).
+
+The review closes scope binding, early quota admission, regressed clocks and
+time-overflow gaps with regression tests. Full-definition fingerprints pin all
+permissions and quotas; strict new wire decoding rejects unrecognized fields.
+Journal record integrity is explicit, with valid-JSON corruption rejection
+tested separately from blob integrity. No external audit is claimed.
+
+All requested library capability areas have implementation and test evidence.
+Durability, isolation, CPU enforcement and authoritative external evidence
+remain consumer-owned. The portable allocation-free profile is the task
+decision core. No tag/publication was performed.
 
 ## Completed library work (0.1.0)
 

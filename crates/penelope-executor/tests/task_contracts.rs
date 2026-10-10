@@ -79,7 +79,7 @@ fn checkpoint_upgrade_requires_explicit_application_authorized_import() {
     upgraded.checkpoint_schema = 2;
     assert!(replay(old.scope(), upgraded, []).is_err());
     let new_scope = TaskScope {
-        definition: upgraded.code,
+        definition: upgraded.fingerprint(),
         ..old.scope()
     };
     let mut supervisor = TaskSupervisor::<_, _, 64>::restore(
@@ -163,7 +163,7 @@ fn time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed() {
     definition.recovery.timeout_ticks = u64::MAX;
     definition.recovery.restart_delay_ticks = u64::MAX;
     definition.budget.deadline_tick = u64::MAX;
-    let scope = projection.scope();
+    let scope = support::scope(definition, &[1; 64]);
     projection = TaskProjection::new(scope, definition).unwrap();
     let intent = projection
         .propose(

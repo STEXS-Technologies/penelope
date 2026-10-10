@@ -28,23 +28,23 @@ test = false
 doc = false
 
 [dependencies.penelope-domain]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-domain"
 
 [dependencies.penelope-executor]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-executor"
 
 [dependencies.penelope-statechronicle]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-statechronicle"
 
 [dependencies.penelope-ports]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-ports"
 
 [dependencies.penelope-intent]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-intent"
 
 [[bin]]

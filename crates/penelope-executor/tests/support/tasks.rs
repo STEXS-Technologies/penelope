@@ -41,7 +41,7 @@ pub fn scope(definition: TaskDefinition, input: &[u8]) -> TaskScope {
     TaskScope {
         tenant: Digest([1; 32]),
         task: Digest([2; 32]),
-        definition: definition.code,
+        definition: definition.fingerprint(),
         input: Digest::of(input),
     }
 }

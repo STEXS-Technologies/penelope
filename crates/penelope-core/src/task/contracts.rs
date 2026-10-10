@@ -43,6 +43,7 @@ pub enum EffectContract {
 /// Explicit recovery limits. Attempts include the initial generation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct TaskRecoveryPolicy {
     pub mode: RecoveryMode,
     pub max_attempts: u32,
@@ -54,6 +55,7 @@ pub struct TaskRecoveryPolicy {
 /// Deployment quotas, measured by the trusted runtime/storage adapter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct ExecutionBudget {
     pub max_input_bytes: u32,
     pub max_output_bytes: u32,
@@ -68,6 +70,7 @@ pub struct ExecutionBudget {
 /// Pinned task code/checkpoint schema and permission contract.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct TaskDefinition {
     pub code: Digest,
     pub checkpoint_schema: u32,
@@ -77,6 +80,37 @@ pub struct TaskDefinition {
 }
 
 impl TaskDefinition {
+    /// Stable protocol-v1 fingerprint of code, schema, effect permissions and
+    /// every policy/budget field. Numeric values are encoded big-endian; enum
+    /// tags are explicit and independent of Serde's representation.
+    pub fn fingerprint(&self) -> Digest {
+        let mut hash = Sha256::new();
+        hash.update(b"penelope.task-definition.v1\0");
+        hash.update(self.code.0);
+        hash.update(self.checkpoint_schema.to_be_bytes());
+        hash.update([match self.effects {
+            EffectContract::Pure => 0,
+            EffectContract::ReconcileRequired => 1,
+        }]);
+        hash.update([match self.recovery.mode {
+            RecoveryMode::RestartFromBeginning => 0,
+            RecoveryMode::RestartFromCheckpoint => 1,
+            RecoveryMode::ReconcileBeforeRestart => 2,
+            RecoveryMode::NeverRestart => 3,
+        }]);
+        hash.update(self.recovery.max_attempts.to_be_bytes());
+        hash.update(self.recovery.timeout_ticks.to_be_bytes());
+        hash.update(self.recovery.restart_delay_ticks.to_be_bytes());
+        hash.update(self.recovery.max_checkpoint_bytes.to_be_bytes());
+        hash.update(self.budget.max_input_bytes.to_be_bytes());
+        hash.update(self.budget.max_output_bytes.to_be_bytes());
+        hash.update(self.budget.max_history_records.to_be_bytes());
+        hash.update(self.budget.max_checkpoint_commits.to_be_bytes());
+        hash.update(self.budget.cpu_ticks.to_be_bytes());
+        hash.update(self.budget.deadline_tick.to_be_bytes());
+        Digest(hash.finalize().into())
+    }
+
     /// Checks nonzero bounds and valid checkpoint schema.
     /// # Errors
     /// Returns `InvalidDefinition` for unusable limits.
@@ -98,9 +132,11 @@ impl TaskDefinition {
 /// it must never change between generations. New definitions need new histories.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct TaskScope {
     pub tenant: Digest,
     pub task: Digest,
+    /// Fingerprint of the entire pinned definition, not just its code digest.
     pub definition: Digest,
     pub input: Digest,
 }
@@ -108,6 +144,7 @@ pub struct TaskScope {
 /// Reference to bytes durably stored before the referencing history commit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct BlobRef {
     pub digest: Digest,
     pub bytes: u32,
@@ -147,6 +184,7 @@ pub enum TaskFault {
 /// Independently obtained external effect evidence, scoped by the envelope.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub enum Reconciliation {
     /// Authoritative output is durably available. Never derive from task exit alone.
     Completed { output: BlobRef, evidence: Digest },
@@ -159,6 +197,7 @@ pub enum Reconciliation {
 /// Task history protocol v1. This does not extend any saga protocol enum.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub enum TaskExecutionEvent {
     IntentCommitted {
         definition: TaskDefinition,
@@ -197,6 +236,7 @@ pub enum TaskExecutionEvent {
 /// initial intent has generation zero, first execution has generation one.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct TaskRecord {
     pub version: u16,
     pub scope: TaskScope,
@@ -245,8 +285,8 @@ pub enum TaskError {
     DeadlineExpired,
 }
 
-/// Cooperative application computation. This interface cannot contain unsafe
-/// code or preempt an uncooperative task; runtime isolation is a separate port.
+/// Cooperative application computation. Implementations own their correctness
+/// and safety; this interface does not preempt code or isolate memory.
 pub trait RecoverableTask {
     type Input;
     type Checkpoint;

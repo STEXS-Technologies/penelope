@@ -25,7 +25,7 @@ pub fn task_scope_for_effect(
     Ok(TaskScope {
         tenant: Digest::of(request.action.tenant_id.as_str().as_bytes()),
         task: Digest::of(&request.effect_key.canonical_bytes()),
-        definition: definition.code,
+        definition: definition.fingerprint(),
         input: Digest(request.action.payload_digest.0),
     })
 }

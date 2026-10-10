@@ -2,8 +2,8 @@
 
 ## Supported versions
 
-Penelope is a pre-1.0 library release. The `0.1.0` API and safety contracts are
-supported on the `main` branch while the project evolves. The minimum
+Penelope is a pre-1.0 library. This branch prepares the `0.2.0` release while
+preserving the `0.1.0` saga protocol and behavior. The minimum
 supported Rust version is 1.85 (Rust 2024 edition); CI enforces this
 compatibility contract for the library workspace.
 
@@ -31,3 +31,11 @@ system. Deployments must enforce tenant isolation, authorize every command,
 store outcomes durably, and verify StateChronicle committed-event evidence
 before advancing a saga. An unknown external result must be reconciled or
 escalated, never blindly retried.
+
+Task execution trusts journal and runtime adapters to supply authentic,
+durable records, bounded polling, generation fencing, CPU enforcement and
+independent reconciliation evidence. SHA-256 references identify bytes; they
+do not authenticate a journal or prove application correctness. The portable
+core checks lifecycle transitions and quotas without providing isolation or
+preemption. See [the protocol review](docs/RELEASE.md#task-protocol-and-security-review)
+for tested threats and explicit deployment responsibilities.

@@ -27,7 +27,7 @@ impl TaskProjection {
     /// Returns definition validation failures.
     pub fn new(scope: TaskScope, definition: TaskDefinition) -> Result<Self, TaskError> {
         definition.validate()?;
-        if scope.definition != definition.code {
+        if scope.definition != definition.fingerprint() {
             return Err(TaskError::ScopeMismatch);
         }
         Ok(Self {
