@@ -103,6 +103,14 @@ Task checkpoint-state verification is optional: evidence binds the exact task
 scope, generation and checkpoint identity, and the adapter verifies the proof.
 Recoverable execution also works with an independent journal.
 
+Custom StateChronicle domains require explicit schema migration and do not
+automatically provide transactions across resources. Existing history encodings
+and exhaustive Rust enum matches have distinct compatibility requirements.
+See the [integration boundaries](docs/RELEASE.md#integration-boundaries) for
+durability, task safety and portable-versus-hosted responsibilities. The SQLite
+recovery fixture is a dev-dependency used only by Penelope's own tests; it does
+not enter consumer debug or release builds.
+
 ## Start building
 
 Add the facade crate to your application:

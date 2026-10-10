@@ -30,4 +30,24 @@ PY
     exit 1
   fi
 done
-printf '%s\n' 'Layer gate rejects infrastructure clients, including AWS SDK families'
+for dependency_kind in dev normal build; do
+  python3 - "$gate_test_dir" "$dependency_kind" <<'PY_KIND'
+import json, sys
+from pathlib import Path
+directory, kind = Path(sys.argv[1]), sys.argv[2]
+metadata = json.loads((directory / 'baseline.json').read_text())
+package = next(p for p in metadata['packages'] if p['name'] == 'penelope-executor')
+package['dependencies'].append({'name': 'rusqlite', 'kind': None if kind == 'normal' else kind})
+(directory / 'metadata.json').write_text(json.dumps(metadata))
+PY_KIND
+  if [[ "$dependency_kind" == dev ]]; then
+    ./scripts/check-layer-boundaries.sh
+  elif ./scripts/check-layer-boundaries.sh > "$gate_test_dir/result.txt" 2>&1; then
+    printf 'gate incorrectly admitted %s infrastructure dependency\n' "$dependency_kind" >&2
+    exit 1
+  elif ! grep -Fq 'production infrastructure dependency found' "$gate_test_dir/result.txt"; then
+    cat "$gate_test_dir/result.txt" >&2
+    exit 1
+  fi
+done
+printf '%s\n' 'Layer gate permits test-only infrastructure and rejects normal/build clients'
