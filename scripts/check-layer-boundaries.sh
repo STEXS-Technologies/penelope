@@ -37,7 +37,9 @@ forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-.*|axum|deadpool
 if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
     .packages[]
     | select(.name | startswith("penelope-"))
-    | .dependencies[].name
+    | .dependencies[]
+    | select(.kind != "dev")
+    | .name
     | select(test($pattern))
 ' <<<"$metadata" >/dev/null; then
     printf '%s\n' 'layer violation: production infrastructure dependency found in Penelope workspace' >&2

@@ -27,6 +27,10 @@ Prepared release; tagging and registry publication are separate actions.
 - Real process-kill persistence/effect tests, seeded recovery chaos, task wire
   fixture, and task history/checkpoint/supervisor fuzzers, including ambiguous
   persistence acknowledgements and storage faults.
+- Test-only SQLite checkpoint transactions with subprocess termination before
+  and after commit, independent-connection CAS and corruption rejection.
+- Explicit integration boundaries for journal durability, runtime enforcement,
+  task safety and optional StateChronicle compatibility and schema migration.
 - Concurrent supervisor arbitration under 32-contender thread stress and
   reproducible property/fuzz campaign seeds verified by runner tests.
 - Timed per-property stress campaigns with rotating seeds and measured

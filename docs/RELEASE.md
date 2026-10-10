@@ -71,6 +71,30 @@ journal durability and authentication, runtime fencing and CPU enforcement,
 and authoritative external-effect evidence. Recovery does not provide
 instruction-level continuation or guarantee arbitrary program correctness.
 
+## Integration boundaries
+
+| Area | Consumer responsibility and limit |
+| --- | --- |
+| StateChronicle compatibility | Existing profile history encodings remain protected by StateChronicle's compatibility contract. Its new custom-domain enum variants can require source updates to exhaustive Rust matches; old readers must upgrade before reading custom histories. |
+| StateChronicle custom domains | Custom transitions do not imply transactions across multiple resources. Schema upgrades require explicit versioning and application-defined migration; existing state must not be reinterpreted silently. |
+| StateChronicle portability | Its portable components support `no_std`; the hosted executor and services remain hosted. Optional checkpoint evidence does not turn either library into an embedded runtime. |
+| Journal durability | Real adapters must provide atomic blob/history commit, integrity, linearizable sequence/generation arbitration and retention. Runtime adapters must persist fencing across reconstruction. |
+| Task safety | Restarting computation cannot establish its logical correctness or make physical side effects safe. Applications define valid checkpoints and independently reconcile ambiguous effects. |
+| Execution environment | Task isolation, CPU-budget enforcement and immediate safety responses require a trusted execution adapter. Penelope authorizes recovery independently of any operating system or hardware protection mechanism. |
+
+StateChronicle's custom-domain recovery suite exercises explicit schema migration,
+versioned resource transitions, rollback, lost commit acknowledgements, concurrent reordered
+delivery and reconstruction. That suite belongs to StateChronicle and is
+independent of Penelope's optional evidence-correlation contract.
+
+Penelope's SQLite integration fixture commits blobs and history in one
+transaction, kills a separate process before and after commit, and reopens the
+database to recover and complete the task. Independent connections also test
+CAS arbitration and corruption rejection. SQLite is a test-only dependency:
+consumer debug and release builds do not compile it through Penelope.
+This fixture supplements the filesystem and simulated journals; it is not a
+shipped storage adapter or a certification of power-loss behavior.
+
 ## Validation
 
 The test suite includes saga compatibility fixtures, task protocol fixtures,
