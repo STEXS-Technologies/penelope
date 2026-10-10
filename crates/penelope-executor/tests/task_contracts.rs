@@ -19,13 +19,13 @@ fn pending() -> TaskProjection {
             TaskExecutionEvent::IntentCommitted {
                 definition,
                 input: BlobRef {
-                    digest: scope.input,
+                    digest: (scope.input).digest(),
                     bytes: 64,
                     schema: 1,
                 },
             },
-            0,
-            0,
+            TaskGeneration::new(0),
+            TaskTick::new(0),
         )
         .unwrap();
     projection.apply(&record).unwrap();
@@ -35,16 +35,16 @@ fn pending() -> TaskProjection {
 #[test]
 fn malformed_history_is_rejected_without_mutating_projection() {
     let pending = pending();
-    let start = pending.next(1).unwrap().unwrap();
+    let start = pending.next(TaskTick::new(1)).unwrap().unwrap();
     for mut record in [start; 5]
         .into_iter()
         .enumerate()
         .map(|(index, mut record)| {
             match index {
                 0 => record.version = 2,
-                1 => record.sequence = 9,
-                2 => record.scope.task = Digest([9; 32]),
-                3 => record.generation = 0,
+                1 => record.sequence = TaskSequence::new(9),
+                2 => record.scope.task = TaskId::from_digest(Digest([9; 32])),
+                3 => record.generation = TaskGeneration::new(0),
                 _ => record.event = TaskExecutionEvent::RecoveryExhausted,
             }
             record
@@ -53,20 +53,27 @@ fn malformed_history_is_rejected_without_mutating_projection() {
         let mut projection = pending;
         assert!(projection.apply(&record).is_err());
         assert_eq!(projection, pending);
-        record.tick = u64::MAX;
+        record.tick = TaskTick::new(u64::MAX);
         assert!(projection.apply(&record).is_err());
         assert_eq!(projection, pending);
     }
     let mut projection = pending;
     projection.apply(&start).unwrap();
-    assert_eq!(projection.next(0), Err(TaskError::InvalidOrder));
+    assert_eq!(
+        projection.next(TaskTick::new(0)),
+        Err(TaskError::InvalidOrder)
+    );
     let checkpoint = BlobRef {
         digest: Digest([7; 32]),
         bytes: 12,
         schema: 2,
     };
     assert_eq!(
-        projection.propose(TaskExecutionEvent::CheckpointCommitted { checkpoint }, 1, 2),
+        projection.propose(
+            TaskExecutionEvent::CheckpointCommitted { checkpoint },
+            TaskGeneration::new(1),
+            TaskTick::new(2)
+        ),
         Err(TaskError::SchemaMismatch)
     );
 }
@@ -87,10 +94,10 @@ fn checkpoint_upgrade_requires_explicit_application_authorized_import() {
         SumRuntime::default(),
         new_scope,
         upgraded,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&[1; 64], 1, 0).unwrap();
+    supervisor.submit(&[1; 64], 1, TaskTick::new(0)).unwrap();
     let previous = BlobRef {
         digest: Digest([8; 32]),
         bytes: 12,
@@ -98,10 +105,16 @@ fn checkpoint_upgrade_requires_explicit_application_authorized_import() {
     };
     let transformed = [8, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0];
     supervisor
-        .import_checkpoint(old.scope(), previous, &transformed, Digest([5; 32]), 1)
+        .import_checkpoint(
+            old.scope(),
+            previous,
+            &transformed,
+            Digest([5; 32]),
+            TaskTick::new(1),
+        )
         .unwrap();
     assert_eq!(supervisor.projection().checkpoint().unwrap().schema, 2);
-    supervisor.advance(2).unwrap();
+    supervisor.advance(TaskTick::new(2)).unwrap();
     assert_eq!(supervisor.into_parts().1.resumed, [8]);
 }
 
@@ -115,12 +128,12 @@ fn quotas_and_deadline_are_checked_before_new_execution() {
         SumRuntime::default(),
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&[1; 64], 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
-    assert!(supervisor.poll(2).is_err());
+    supervisor.submit(&[1; 64], 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    assert!(supervisor.poll(TaskTick::new(2)).is_err());
     let mut projection = pending();
     let terminal = projection
         .next(projection.definition().budget.deadline_tick)
@@ -135,7 +148,7 @@ fn quotas_and_deadline_are_checked_before_new_execution() {
             SumRuntime::default(),
             scope,
             definition,
-            0
+            TaskTick::new(0)
         )
         .is_err()
     );
@@ -146,8 +159,8 @@ fn task_wire_v1_fixture_is_immutable() {
     let record: TaskRecord =
         serde_json::from_str(include_str!("fixtures/task-start-v1.json")).unwrap();
     assert_eq!(record.version, 1);
-    assert_eq!(record.sequence, 1);
-    assert_eq!(record.generation, 1);
+    assert_eq!(record.sequence, TaskSequence::new(1));
+    assert_eq!(record.generation, TaskGeneration::new(1));
     assert_eq!(record.event, TaskExecutionEvent::Started);
     assert_eq!(
         serde_json::to_value(record).unwrap(),
@@ -162,7 +175,7 @@ fn time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed() {
     let mut definition = projection.definition();
     definition.recovery.timeout_ticks = u64::MAX;
     definition.recovery.restart_delay_ticks = u64::MAX;
-    definition.budget.deadline_tick = u64::MAX;
+    definition.budget.deadline_tick = TaskTick::new(u64::MAX);
     let scope = support::scope(definition, &[1; 64]);
     projection = TaskProjection::new(scope, definition).unwrap();
     let intent = projection
@@ -170,31 +183,37 @@ fn time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed() {
             TaskExecutionEvent::IntentCommitted {
                 definition,
                 input: BlobRef {
-                    digest: scope.input,
+                    digest: (scope.input).digest(),
                     bytes: 64,
                     schema: 1,
                 },
             },
-            0,
-            u64::MAX - 10,
+            TaskGeneration::new(0),
+            TaskTick::new(u64::MAX - 10),
         )
         .unwrap();
     projection.apply(&intent).unwrap();
-    let start = projection.next(u64::MAX - 9).unwrap().unwrap();
+    let start = projection
+        .next(TaskTick::new(u64::MAX - 9))
+        .unwrap()
+        .unwrap();
     projection.apply(&start).unwrap();
-    assert_eq!(projection.execution_deadline(), u64::MAX);
+    assert_eq!(projection.execution_deadline(), TaskTick::new(u64::MAX));
     let fault = projection
         .propose(
             TaskExecutionEvent::FaultObserved {
                 fault: TaskFault::Crash,
             },
-            1,
-            u64::MAX - 8,
+            TaskGeneration::new(1),
+            TaskTick::new(u64::MAX - 8),
         )
         .unwrap();
     projection.apply(&fault).unwrap();
     assert_eq!(projection.status(), TaskStatus::Faulted);
-    let exhausted = projection.next(u64::MAX - 7).unwrap().unwrap();
+    let exhausted = projection
+        .next(TaskTick::new(u64::MAX - 7))
+        .unwrap()
+        .unwrap();
     projection.apply(&exhausted).unwrap();
     assert_eq!(projection.status(), TaskStatus::Exhausted);
 }

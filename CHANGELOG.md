@@ -24,6 +24,9 @@ Prepared release; tagging and registry publication are separate actions.
 - Allocation-free no_std core with optional no_std Serde and cross-target CI.
 - Real process-kill persistence/effect tests, seeded recovery chaos, task wire
   fixture, and task history/checkpoint fuzzers.
+- Distinct task identity, generation, sequence and timestamp newtypes with
+  transparent wire encodings, direct newtype fuzzing and AST-based architecture
+  checks for fuzz coverage and declaration-only module entry files.
 
 ### Security
 

@@ -1,7 +1,10 @@
 //! Synchronous, allocation-free runtime adapter contracts. Implementations must
 //! enforce isolation, CPU budgets and fencing outside the decision engine.
 
-use super::{BlobRef, TaskDefinition, TaskFault, TaskRecord, TaskScope};
+use super::{
+    BlobRef, TaskDefinition, TaskFault, TaskGeneration, TaskRecord, TaskScope, TaskSequence,
+    TaskTick,
+};
 
 /// Durable journal failure. Ambiguous commits must be resolved by replay;
 /// callers must never dispatch on an error, including a lost acknowledgement.
@@ -34,7 +37,7 @@ pub trait TaskJournal {
     fn read(
         &mut self,
         scope: TaskScope,
-        sequence: u32,
+        sequence: TaskSequence,
     ) -> Result<Option<TaskRecord>, TaskPortError>;
     /// Atomically persists bytes and their referring event; verifies digest/size.
     /// # Errors
@@ -60,9 +63,9 @@ pub trait TaskJournal {
 #[derive(Debug, Clone, Copy)]
 pub struct TaskStart<'bytes> {
     pub scope: TaskScope,
-    pub generation: u32,
+    pub generation: TaskGeneration,
     pub definition: TaskDefinition,
-    pub execution_deadline: u64,
+    pub execution_deadline: TaskTick,
     /// Persisted input codec version. The adapter must reject schemas unsupported
     /// by the pinned code before decoding or executing application work.
     pub input_schema: u32,
@@ -83,7 +86,7 @@ pub enum RuntimeProgress {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TaskObservation {
     pub scope: TaskScope,
-    pub generation: u32,
+    pub generation: TaskGeneration,
     pub progress: RuntimeProgress,
 }
 
@@ -110,7 +113,7 @@ pub trait TaskRuntime {
     fn poll(
         &mut self,
         scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         buffer: &mut [u8],
     ) -> Result<TaskObservation, TaskPortError>;
     /// Acknowledges the exact checkpoint after its durable commit.
@@ -119,16 +122,16 @@ pub trait TaskRuntime {
     fn acknowledge_checkpoint(
         &mut self,
         scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         checkpoint: BlobRef,
     ) -> Result<(), TaskPortError>;
     /// Stops and fences a generation. Never restart if fencing cannot be proven.
     /// # Errors
     /// Returns `Conflict` or a runtime failure when termination is unconfirmed.
-    fn fence(&mut self, scope: TaskScope, generation: u32) -> Result<(), TaskPortError>;
+    fn fence(&mut self, scope: TaskScope, generation: TaskGeneration) -> Result<(), TaskPortError>;
 }
 
 /// Monotonic clock comes from the platform, never wall-clock timestamps.
 pub trait TaskClock {
-    fn now(&self) -> u64;
+    fn now(&self) -> TaskTick;
 }

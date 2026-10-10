@@ -10,22 +10,22 @@ fn verified_checkpoint_state_cannot_be_reused_across_generation_or_scope() {
         schema: 1,
     };
     let scope = TaskScope {
-        tenant: Digest([1; 32]),
-        task: Digest([2; 32]),
-        definition: Digest([3; 32]),
-        input: Digest([5; 32]),
+        tenant: TaskTenantId::from_digest(Digest([1; 32])),
+        task: TaskId::from_digest(Digest([2; 32])),
+        definition: TaskDefinitionFingerprint::from_digest(Digest([3; 32])),
+        input: TaskInputDigest::from_digest(Digest([5; 32])),
     };
     let record = TaskRecord {
         version: 1,
         scope,
-        sequence: 4,
-        generation: 2,
-        tick: 10,
+        sequence: TaskSequence::new(4),
+        generation: TaskGeneration::new(2),
+        tick: TaskTick::new(10),
         event: TaskExecutionEvent::CheckpointCommitted { checkpoint },
     };
     let evidence = CheckpointStateEvidence {
         scope,
-        generation: 2,
+        generation: TaskGeneration::new(2),
         checkpoint,
         state_version: 7,
         state_digest: Digest([8; 32]),
@@ -33,7 +33,7 @@ fn verified_checkpoint_state_cannot_be_reused_across_generation_or_scope() {
     };
     assert_eq!(bind_checkpoint_state(&record, evidence).unwrap(), evidence);
     let stale = CheckpointStateEvidence {
-        generation: 1,
+        generation: TaskGeneration::new(1),
         ..evidence
     };
     assert_eq!(
@@ -42,7 +42,7 @@ fn verified_checkpoint_state_cannot_be_reused_across_generation_or_scope() {
     );
     let foreign = CheckpointStateEvidence {
         scope: TaskScope {
-            tenant: Digest([6; 32]),
+            tenant: TaskTenantId::from_digest(Digest([6; 32])),
             ..scope
         },
         ..evidence

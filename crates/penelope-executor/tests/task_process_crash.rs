@@ -37,8 +37,8 @@ struct DiskRecord {
     checksum: Digest,
 }
 impl DiskJournal {
-    fn record_path(&self, sequence: u32) -> PathBuf {
-        self.root.join(format!("record-{sequence}.json"))
+    fn record_path(&self, sequence: TaskSequence) -> PathBuf {
+        self.root.join(format!("record-{}.json", sequence.get()))
     }
     fn blob_path(&self, digest: Digest) -> PathBuf {
         let hex: String = digest.0.iter().map(|byte| format!("{byte:02x}")).collect();
@@ -69,7 +69,7 @@ impl TaskJournal for DiskJournal {
     fn read(
         &mut self,
         scope: TaskScope,
-        sequence: u32,
+        sequence: TaskSequence,
     ) -> Result<Option<TaskRecord>, TaskPortError> {
         match fs::read(self.record_path(sequence)) {
             Ok(bytes) => {
@@ -94,10 +94,15 @@ impl TaskJournal for DiskJournal {
         record: &TaskRecord,
         blob: Option<&[u8]>,
     ) -> Result<TaskRecord, TaskPortError> {
-        if self.record_path(record.sequence).exists() {
+        if self
+            .record_path(TaskSequence::new((record.sequence).get()))
+            .exists()
+        {
             return Err(TaskPortError::Conflict);
         }
-        if record.sequence > 0 && !self.record_path(record.sequence - 1).exists() {
+        if record.sequence > TaskSequence::new(0)
+            && !self.record_path(record.sequence.saturating_sub(1)).exists()
+        {
             return Err(TaskPortError::Conflict);
         }
         self.pause_at("before-blob");
@@ -106,7 +111,7 @@ impl TaskJournal for DiskJournal {
         }
         self.pause_at("after-blob");
         self.durable_write(
-            self.record_path(record.sequence),
+            self.record_path(TaskSequence::new((record.sequence).get())),
             &serde_json::to_vec(&DiskRecord {
                 record: *record,
                 checksum: Digest::of(
@@ -148,16 +153,19 @@ fn valid_json_corruption_is_rejected_by_journal_integrity_before_replay() {
         SumRuntime::default(),
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&[1; 64], 1, 0).unwrap();
+    supervisor.submit(&[1; 64], 1, TaskTick::new(0)).unwrap();
     let (mut journal, _runtime) = supervisor.into_parts();
-    let path = journal.record_path(0);
+    let path = journal.record_path(TaskSequence::new(0));
     let mut stored: DiskRecord = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
-    stored.record.tick = 9; // Still valid typed JSON and potentially plausible history.
+    stored.record.tick = TaskTick::new(9); // Still valid typed JSON and potentially plausible history.
     fs::write(path, serde_json::to_vec(&stored).unwrap()).unwrap();
-    assert_eq!(journal.read(scope, 0), Err(TaskPortError::Corrupt));
+    assert_eq!(
+        journal.read(scope, TaskSequence::new(0)),
+        Err(TaskPortError::Corrupt)
+    );
     fs::remove_dir_all(root).unwrap();
 }
 
@@ -193,11 +201,11 @@ fn crash_worker() {
         SumRuntime::default(),
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&[1; 64], 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&[1; 64], 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     let (mut journal, runtime) = supervisor.into_parts();
     journal.pause = Some(boundary);
     if boundary == "after-effect" {
@@ -211,8 +219,8 @@ fn crash_worker() {
         scope,
         definition,
         [
-            journal.read(scope, 0).unwrap().unwrap(),
-            journal.read(scope, 1).unwrap().unwrap(),
+            journal.read(scope, TaskSequence::new(0)).unwrap().unwrap(),
+            journal.read(scope, TaskSequence::new(1)).unwrap().unwrap(),
         ],
     )
     .unwrap();
@@ -226,8 +234,8 @@ fn crash_worker() {
                     schema: 1,
                 },
             },
-            1,
-            2,
+            TaskGeneration::new(1),
+            TaskTick::new(2),
         )
         .unwrap();
     let _runtime = runtime;
@@ -285,7 +293,7 @@ fn killed_process_recovers_only_committed_checkpoint() {
             SumRuntime::default(),
             scope,
             definition,
-            3,
+            TaskTick::new(3),
         )
         .unwrap();
         assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
@@ -294,9 +302,9 @@ fn killed_process_recovers_only_committed_checkpoint() {
             boundary == "after-record"
         );
         if boundary == "after-effect" {
-            supervisor.advance(4).unwrap();
+            supervisor.advance(TaskTick::new(4)).unwrap();
             assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
-            assert!(!supervisor.advance(5).unwrap());
+            assert!(!supervisor.advance(TaskTick::new(5)).unwrap());
             // Reconcile from actual independently persisted effect evidence.
             let evidence = fs::read(root.join("external-effect")).unwrap();
             assert_eq!(evidence, 1_u64.to_le_bytes());
@@ -308,13 +316,13 @@ fn killed_process_recovers_only_committed_checkpoint() {
             supervisor
                 .reconcile(
                     scope,
-                    1,
+                    TaskGeneration::new(1),
                     Reconciliation::Completed {
                         output,
                         evidence: Digest::of(&evidence),
                     },
                     Some(&evidence),
-                    6,
+                    TaskTick::new(6),
                 )
                 .unwrap();
             assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
@@ -328,9 +336,9 @@ fn killed_process_recovers_only_committed_checkpoint() {
                 break;
             }
             if supervisor.projection().status() == TaskStatus::Running {
-                supervisor.poll(tick).unwrap();
+                supervisor.poll(TaskTick::new(tick)).unwrap();
             } else {
-                supervisor.advance(tick).unwrap();
+                supervisor.advance(TaskTick::new(tick)).unwrap();
             }
         }
         assert_eq!(supervisor.projection().status(), TaskStatus::Completed);

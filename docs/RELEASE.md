@@ -32,6 +32,11 @@ decisions without executing task code or repeating effects.
 
 ## Execution contracts
 
+Task tenant, task, definition and input identities have distinct fixed-size
+newtypes. Execution generations, history sequences and monotonic timestamps
+also have distinct types, preventing accidental substitution at runtime and
+journal boundaries. Their transparent encodings preserve the task v1 wire format.
+
 | Boundary | Contract |
 | --- | --- |
 | Definition identity | Execution scope binds the complete definition fingerprint, including recovery permissions and resource budgets. |
@@ -72,9 +77,13 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Eleven sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Twelve sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
+The newtype target directly exercises every public newtype's accepted values,
+wire decoding and serialization, including malformed input and arithmetic
+boundaries. AST-based tests enforce explicit newtype fuzz invocations and keep
+all library `lib.rs` and `mod.rs` files limited to declarations and exports.
 
 The Rust toolchain is pinned to 1.99.0, with a supported minimum of 1.85.
 Run from the repository root:
@@ -82,6 +91,7 @@ Run from the repository root:
 ```bash
 cargo fmt --all -- --check
 cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz
 cargo +1.85.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz

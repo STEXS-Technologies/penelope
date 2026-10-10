@@ -5,6 +5,10 @@
 //! supervisor after it fences/stops the previous execution domain. A digest
 //! proves byte identity, not application correctness or external effect success.
 
+use super::{
+    TaskDefinitionFingerprint, TaskGeneration, TaskId, TaskInputDigest, TaskSequence, TaskTenantId,
+    TaskTick,
+};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
 
@@ -64,7 +68,7 @@ pub struct ExecutionBudget {
     /// Per-generation CPU allowance; a kernel/runtime must enforce it.
     pub cpu_ticks: u64,
     /// Absolute monotonic deadline, independent of restarts.
-    pub deadline_tick: u64,
+    pub deadline_tick: TaskTick,
 }
 
 /// Pinned task code/checkpoint schema and permission contract.
@@ -83,7 +87,7 @@ impl TaskDefinition {
     /// Stable protocol-v1 fingerprint of code, schema, effect permissions and
     /// every policy/budget field. Numeric values are encoded big-endian; enum
     /// tags are explicit and independent of Serde's representation.
-    pub fn fingerprint(&self) -> Digest {
+    pub fn fingerprint(&self) -> TaskDefinitionFingerprint {
         let mut hash = Sha256::new();
         hash.update(b"penelope.task-definition.v1\0");
         hash.update(self.code.0);
@@ -107,8 +111,8 @@ impl TaskDefinition {
         hash.update(self.budget.max_history_records.to_be_bytes());
         hash.update(self.budget.max_checkpoint_commits.to_be_bytes());
         hash.update(self.budget.cpu_ticks.to_be_bytes());
-        hash.update(self.budget.deadline_tick.to_be_bytes());
-        Digest(hash.finalize().into())
+        hash.update(self.budget.deadline_tick.get().to_be_bytes());
+        TaskDefinitionFingerprint::from_digest(Digest(hash.finalize().into()))
     }
 
     /// Checks nonzero bounds and valid checkpoint schema.
@@ -119,7 +123,7 @@ impl TaskDefinition {
             || self.recovery.timeout_ticks == 0
             || self.budget.cpu_ticks == 0
             || self.budget.max_history_records < 4
-            || self.budget.deadline_tick == 0
+            || self.budget.deadline_tick.get() == 0
             || self.checkpoint_schema == 0
         {
             return Err(TaskError::InvalidDefinition);
@@ -134,11 +138,11 @@ impl TaskDefinition {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(deny_unknown_fields))]
 pub struct TaskScope {
-    pub tenant: Digest,
-    pub task: Digest,
+    pub tenant: TaskTenantId,
+    pub task: TaskId,
     /// Fingerprint of the entire pinned definition, not just its code digest.
-    pub definition: Digest,
-    pub input: Digest,
+    pub definition: TaskDefinitionFingerprint,
+    pub input: TaskInputDigest,
 }
 
 /// Reference to bytes durably stored before the referencing history commit.
@@ -240,9 +244,9 @@ pub enum TaskExecutionEvent {
 pub struct TaskRecord {
     pub version: u16,
     pub scope: TaskScope,
-    pub sequence: u32,
-    pub generation: u32,
-    pub tick: u64,
+    pub sequence: TaskSequence,
+    pub generation: TaskGeneration,
+    pub tick: TaskTick,
     pub event: TaskExecutionEvent,
 }
 

@@ -1,7 +1,8 @@
 //! Deterministic, bounded task history validation and recovery decisions.
 use super::{
     BlobRef, EffectContract, Reconciliation, RecoveryMode, TaskDefinition, TaskError,
-    TaskExecutionEvent, TaskFault, TaskRecord, TaskScope, TaskStatus,
+    TaskExecutionEvent, TaskFault, TaskGeneration, TaskRecord, TaskScope, TaskSequence, TaskStatus,
+    TaskTick,
 };
 
 /// Fixed-size projection. Only validated records can change it.
@@ -10,11 +11,11 @@ pub struct TaskProjection {
     scope: TaskScope,
     definition: TaskDefinition,
     status: TaskStatus,
-    next_sequence: u32,
-    generation: u32,
-    tick: u64,
-    execution_deadline: u64,
-    restart_at: u64,
+    next_sequence: TaskSequence,
+    generation: TaskGeneration,
+    tick: TaskTick,
+    execution_deadline: TaskTick,
+    restart_at: TaskTick,
     checkpoint_commits: u32,
     checkpoint: Option<BlobRef>,
     input: Option<BlobRef>,
@@ -34,11 +35,11 @@ impl TaskProjection {
             scope,
             definition,
             status: TaskStatus::Empty,
-            next_sequence: 0,
-            generation: 0,
-            tick: 0,
-            execution_deadline: 0,
-            restart_at: 0,
+            next_sequence: TaskSequence::ZERO,
+            generation: TaskGeneration::ZERO,
+            tick: TaskTick::ZERO,
+            execution_deadline: TaskTick::ZERO,
+            restart_at: TaskTick::ZERO,
             checkpoint_commits: 0,
             checkpoint: None,
             input: None,
@@ -49,10 +50,10 @@ impl TaskProjection {
     pub const fn status(&self) -> TaskStatus {
         self.status
     }
-    pub const fn generation(&self) -> u32 {
+    pub const fn generation(&self) -> TaskGeneration {
         self.generation
     }
-    pub const fn next_sequence(&self) -> u32 {
+    pub const fn next_sequence(&self) -> TaskSequence {
         self.next_sequence
     }
     pub const fn scope(&self) -> TaskScope {
@@ -70,10 +71,10 @@ impl TaskProjection {
     pub const fn output(&self) -> Option<BlobRef> {
         self.output
     }
-    pub const fn last_tick(&self) -> u64 {
+    pub const fn last_tick(&self) -> TaskTick {
         self.tick
     }
-    pub const fn execution_deadline(&self) -> u64 {
+    pub const fn execution_deadline(&self) -> TaskTick {
         self.execution_deadline
     }
 
@@ -84,8 +85,8 @@ impl TaskProjection {
     pub fn propose(
         &self,
         event: TaskExecutionEvent,
-        generation: u32,
-        tick: u64,
+        generation: TaskGeneration,
+        tick: TaskTick,
     ) -> Result<TaskRecord, TaskError> {
         let record = TaskRecord {
             version: 1,
@@ -120,7 +121,7 @@ impl TaskProjection {
         if r.sequence != self.next_sequence || r.tick < self.tick {
             return Err(TaskError::InvalidOrder);
         }
-        if r.sequence >= self.definition.budget.max_history_records {
+        if r.sequence.get() >= self.definition.budget.max_history_records {
             return Err(TaskError::QuotaExhausted);
         }
         // A live generation must retain a slot for its fault/completion fact.
@@ -131,7 +132,7 @@ impl TaskProjection {
             TaskExecutionEvent::Started
                 | TaskExecutionEvent::Restarted
                 | TaskExecutionEvent::CheckpointCommitted { .. }
-        ) && r.sequence.saturating_add(1) >= self.definition.budget.max_history_records
+        ) && r.sequence.saturating_add(1).get() >= self.definition.budget.max_history_records
         {
             return Err(TaskError::QuotaExhausted);
         }
@@ -152,7 +153,7 @@ impl TaskProjection {
         match r.event {
             TaskExecutionEvent::IntentCommitted { definition, input } => {
                 self.require(TaskStatus::Empty)?;
-                if definition != self.definition || input.digest != self.scope.input {
+                if definition != self.definition || input.digest != self.scope.input.digest() {
                     return Err(TaskError::ScopeMismatch);
                 }
                 if input.bytes > definition.budget.max_input_bytes || input.schema == 0 {
@@ -197,7 +198,7 @@ impl TaskProjection {
                 } else {
                     TaskStatus::Ready
                 })?;
-                if r.generation > self.definition.recovery.max_attempts {
+                if r.generation.get() > self.definition.recovery.max_attempts {
                     return Err(TaskError::QuotaExhausted);
                 }
                 if r.tick >= self.definition.budget.deadline_tick {
@@ -333,11 +334,11 @@ impl TaskProjection {
             )
     }
 
-    const fn can_recover(&self, tick: u64) -> bool {
+    const fn can_recover(&self, tick: TaskTick) -> bool {
         !matches!(self.definition.recovery.mode, RecoveryMode::NeverRestart)
-            && self.generation < self.definition.recovery.max_attempts
-            && tick < self.definition.budget.deadline_tick
-            && self.restart_at < self.definition.budget.deadline_tick
+            && self.generation.get() < self.definition.recovery.max_attempts
+            && tick.get() < self.definition.budget.deadline_tick.get()
+            && self.restart_at.get() < self.definition.budget.deadline_tick.get()
     }
 
     fn require(&self, status: TaskStatus) -> Result<(), TaskError> {
@@ -347,7 +348,7 @@ impl TaskProjection {
         Ok(())
     }
 
-    fn require_live(&self, tick: u64) -> Result<(), TaskError> {
+    fn require_live(&self, tick: TaskTick) -> Result<(), TaskError> {
         self.require(TaskStatus::Running)?;
         if tick >= self.execution_deadline {
             return Err(TaskError::DeadlineExpired);
@@ -366,7 +367,7 @@ impl TaskProjection {
     /// restored running tasks must first be fenced and reported interrupted.
     /// # Errors
     /// Returns policy/order failures; `None` means wait for an observation.
-    pub fn next(&self, tick: u64) -> Result<Option<TaskRecord>, TaskError> {
+    pub fn next(&self, tick: TaskTick) -> Result<Option<TaskRecord>, TaskError> {
         if tick < self.tick {
             return Err(TaskError::InvalidOrder);
         }

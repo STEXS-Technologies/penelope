@@ -1,7 +1,9 @@
 //! Optional checkpoint-state verification boundary. Penelope's journal remains
 //! independent. Cryptographic proof verification belongs in the implementing
 //! StateChronicle adapter, before it returns this scoped evidence.
-use penelope_ports::task::{BlobRef, Digest, TaskExecutionEvent, TaskRecord, TaskScope};
+use penelope_ports::task::{
+    BlobRef, Digest, TaskExecutionEvent, TaskGeneration, TaskRecord, TaskScope,
+};
 use thiserror::Error;
 
 /// Independently verified state evidence. Digests alone are not proof; adapters
@@ -9,7 +11,7 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CheckpointStateEvidence {
     pub scope: TaskScope,
-    pub generation: u32,
+    pub generation: TaskGeneration,
     pub checkpoint: BlobRef,
     pub state_version: u64,
     pub state_digest: Digest,

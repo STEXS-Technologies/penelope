@@ -29,27 +29,27 @@ fuzz_target!(|data: &[u8]| {
             max_history_records: u32::from(data.last().copied().unwrap_or(0) % 32).max(4),
             max_checkpoint_commits: u32::from(data.last().copied().unwrap_or(0) % 8),
             cpu_ticks: 10,
-            deadline_tick: 1000,
+            deadline_tick: TaskTick::new(1000),
         },
     };
     let scope = TaskScope {
-        tenant: Digest([1; 32]),
-        task: Digest([2; 32]),
+        tenant: TaskTenantId::from_digest(Digest([1; 32])),
+        task: TaskId::from_digest(Digest([2; 32])),
         definition: definition.fingerprint(),
-        input: Digest([4; 32]),
+        input: TaskInputDigest::from_digest(Digest([4; 32])),
     };
     let mut projection = TaskProjection::new(scope, definition).unwrap();
     let mut accepted = Vec::new();
     let input = BlobRef {
-        digest: scope.input,
+        digest: scope.input.digest(),
         bytes: 1,
         schema: 1,
     };
     let intent = projection
         .propose(
             TaskExecutionEvent::IntentCommitted { definition, input },
-            0,
-            0,
+            TaskGeneration::ZERO,
+            TaskTick::ZERO,
         )
         .unwrap();
     projection.apply(&intent).unwrap();
@@ -64,7 +64,7 @@ fuzz_target!(|data: &[u8]| {
     }
     for (index, chunk) in data.chunks(4).take(100).enumerate() {
         let byte = |position: usize| chunk.get(position).copied().unwrap_or(0);
-        let tick = index as u64 + 1;
+        let tick = TaskTick::new(index as u64 + 1);
         let checkpoint = BlobRef {
             digest: Digest([byte(2); 32]),
             bytes: u32::from(byte(3)),
@@ -134,7 +134,7 @@ fuzz_target!(|data: &[u8]| {
             }
             Err(_) => assert_eq!(projection, before),
         }
-        assert!(projection.generation() <= definition.recovery.max_attempts);
+        assert!(projection.generation().get() <= definition.recovery.max_attempts);
         // Independently exercise the safety boundary of every accepted live
         // state: it must still be possible to durably stop this generation.
         if projection.status() == TaskStatus::Running {

@@ -16,6 +16,7 @@ if ! [[ "${fuzz_runs}" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 fuzz_targets=(
+  fuzz_newtypes
   fuzz_identifiers
   fuzz_dtos
   fuzz_linear_engine

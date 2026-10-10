@@ -4,7 +4,7 @@
 
 use penelope_core::task::{
     BlobRef, Digest, Reconciliation, TaskDefinition, TaskError, TaskExecutionEvent, TaskFault,
-    TaskProjection, TaskRecord, TaskScope, TaskStatus,
+    TaskGeneration, TaskProjection, TaskRecord, TaskScope, TaskStatus, TaskTick,
     runtime::{
         RuntimeProgress, TaskJournal, TaskObservation, TaskPortError, TaskRuntime, TaskStart,
     },
@@ -41,7 +41,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         mut runtime: R,
         scope: TaskScope,
         definition: TaskDefinition,
-        tick: u64,
+        tick: TaskTick,
     ) -> Result<Self, SupervisorError> {
         let mut projection = TaskProjection::new(scope, definition)?;
         if usize::try_from(definition.budget.max_input_bytes)
@@ -97,7 +97,12 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// Commits immutable input together with the pinned definition intent.
     /// # Errors
     /// Returns invalid input/policy or storage failures; never starts on error.
-    pub fn submit(&mut self, input: &[u8], schema: u32, tick: u64) -> Result<(), SupervisorError> {
+    pub fn submit(
+        &mut self,
+        input: &[u8],
+        schema: u32,
+        tick: TaskTick,
+    ) -> Result<(), SupervisorError> {
         self.ensure_healthy()?;
         let blob = blob_ref(
             input,
@@ -109,7 +114,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 definition: self.projection.definition(),
                 input: blob,
             },
-            0,
+            TaskGeneration::ZERO,
             tick,
         )?;
         self.commit(&record, Some(input))
@@ -119,7 +124,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// its record commits; fault recovery occurs only after runtime fencing.
     /// # Errors
     /// Returns clock/policy, storage, integrity or execution adapter failures.
-    pub fn advance(&mut self, tick: u64) -> Result<bool, SupervisorError> {
+    pub fn advance(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         let Some(record) = self.projection.next(tick)? else {
             return Ok(false);
@@ -175,7 +180,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// Polls a running generation. Timeout wins over late completion/checkpoint.
     /// # Errors
     /// Rejects stale observations and fails closed on ambiguous runtime/storage.
-    pub fn poll(&mut self, tick: u64) -> Result<bool, SupervisorError> {
+    pub fn poll(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         if tick < self.projection.last_tick() {
             return Err(TaskError::InvalidOrder.into());
@@ -212,7 +217,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         &mut self,
         observation: TaskObservation,
         buffer: &[u8],
-        tick: u64,
+        tick: TaskTick,
     ) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         if tick < self.projection.last_tick() {
@@ -293,10 +298,10 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     pub fn reconcile(
         &mut self,
         scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         result: Reconciliation,
         output: Option<&[u8]>,
-        tick: u64,
+        tick: TaskTick,
     ) -> Result<(), SupervisorError> {
         self.ensure_healthy()?;
         if scope != self.projection.scope() {
@@ -333,7 +338,7 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         previous: BlobRef,
         bytes: &[u8],
         authorization: Digest,
-        tick: u64,
+        tick: TaskTick,
     ) -> Result<(), SupervisorError> {
         self.ensure_healthy()?;
         let definition = self.projection.definition();
@@ -349,13 +354,17 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
                 checkpoint,
                 authorization,
             },
-            0,
+            TaskGeneration::ZERO,
             tick,
         )?;
         self.commit(&record, Some(bytes))
     }
 
-    fn fence(&mut self, scope: TaskScope, generation: u32) -> Result<(), SupervisorError> {
+    fn fence(
+        &mut self,
+        scope: TaskScope,
+        generation: TaskGeneration,
+    ) -> Result<(), SupervisorError> {
         match self.runtime.fence(scope, generation) {
             Ok(()) => Ok(()),
             Err(error) => {

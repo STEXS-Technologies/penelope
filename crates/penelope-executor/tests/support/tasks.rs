@@ -32,17 +32,17 @@ pub fn definition(mode: RecoveryMode, effects: EffectContract) -> TaskDefinition
             max_history_records: 512,
             max_checkpoint_commits: 64,
             cpu_ticks: 10,
-            deadline_tick: 10000,
+            deadline_tick: TaskTick::new(10000),
         },
     }
 }
 
 pub fn scope(definition: TaskDefinition, input: &[u8]) -> TaskScope {
     TaskScope {
-        tenant: Digest([1; 32]),
-        task: Digest([2; 32]),
+        tenant: TaskTenantId::from_digest(Digest([1; 32])),
+        task: TaskId::from_digest(Digest([2; 32])),
         definition: definition.fingerprint(),
-        input: Digest::of(input),
+        input: TaskInputDigest::from_digest(Digest::of(input)),
     }
 }
 
@@ -66,9 +66,9 @@ impl TaskJournal for MemoryJournal {
     fn read(
         &mut self,
         scope: TaskScope,
-        sequence: u32,
+        sequence: TaskSequence,
     ) -> Result<Option<TaskRecord>, TaskPortError> {
-        let result = self.records.get(sequence as usize).copied();
+        let result = self.records.get(sequence.get() as usize).copied();
         if result.is_some_and(|record| record.scope != scope) {
             return Err(TaskPortError::Conflict);
         }
@@ -86,7 +86,7 @@ impl TaskJournal for MemoryJournal {
         if cut == Cut::StorageFull {
             return Err(TaskPortError::Exhausted);
         }
-        if record.sequence as usize != self.records.len() {
+        if record.sequence.get() as usize != self.records.len() {
             return Err(TaskPortError::Conflict);
         }
         let references = match record.event {
@@ -121,7 +121,7 @@ impl TaskJournal for MemoryJournal {
         }
         let mut receipt = *record;
         if cut == Cut::WrongReceipt {
-            receipt.generation += 1;
+            receipt.generation = receipt.generation.saturating_add(1);
         }
         Ok(receipt)
     }
@@ -227,7 +227,7 @@ impl TaskRuntime for SumRuntime {
     fn poll(
         &mut self,
         scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         buffer: &mut [u8],
     ) -> Result<TaskObservation, TaskPortError> {
         if !self.active || self.paused {
@@ -271,7 +271,7 @@ impl TaskRuntime for SumRuntime {
     fn acknowledge_checkpoint(
         &mut self,
         _scope: TaskScope,
-        _generation: u32,
+        _generation: TaskGeneration,
         _checkpoint: BlobRef,
     ) -> Result<(), TaskPortError> {
         if self.acknowledge_failure {
@@ -280,7 +280,11 @@ impl TaskRuntime for SumRuntime {
         self.paused = false;
         Ok(())
     }
-    fn fence(&mut self, _scope: TaskScope, _generation: u32) -> Result<(), TaskPortError> {
+    fn fence(
+        &mut self,
+        _scope: TaskScope,
+        _generation: TaskGeneration,
+    ) -> Result<(), TaskPortError> {
         if self.fence_failure {
             return Err(TaskPortError::Conflict);
         }

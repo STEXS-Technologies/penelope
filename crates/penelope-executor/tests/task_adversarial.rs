@@ -24,20 +24,20 @@ fn intent(definition: TaskDefinition) -> TaskRecord {
             TaskExecutionEvent::IntentCommitted {
                 definition,
                 input: BlobRef {
-                    digest: scope.input,
+                    digest: (scope.input).digest(),
                     bytes: 64,
                     schema: 1,
                 },
             },
-            0,
-            0,
+            TaskGeneration::new(0),
+            TaskTick::new(0),
         )
         .unwrap()
 }
 fn running(definition: TaskDefinition) -> TaskProjection {
     let initial = intent(definition);
     let mut projection = replay(initial.scope, definition, [initial]).unwrap();
-    let start = projection.next(1).unwrap().unwrap();
+    let start = projection.next(TaskTick::new(1)).unwrap().unwrap();
     projection.apply(&start).unwrap();
     projection
 }
@@ -52,7 +52,7 @@ fn invalid_definitions_and_incompatible_intents_never_become_pending() {
             1 => bad.recovery.timeout_ticks = 0,
             2 => bad.budget.cpu_ticks = 0,
             3 => bad.budget.max_history_records = 3,
-            4 => bad.budget.deadline_tick = 0,
+            4 => bad.budget.deadline_tick = TaskTick::new(0),
             _ => bad.checkpoint_schema = 0,
         }
         assert_eq!(bad.validate(), Err(TaskError::InvalidDefinition));
@@ -108,7 +108,9 @@ fn valid_replay_survives_every_prefix_and_corrupt_history_is_rejected() {
                 resume: live.checkpoint(),
             },
         };
-        let record = live.propose(event, 1, tick).unwrap();
+        let record = live
+            .propose(event, TaskGeneration::new(1), TaskTick::new(tick))
+            .unwrap();
         live.apply(&record).unwrap();
         records.push(record);
         assert_eq!(
@@ -117,7 +119,7 @@ fn valid_replay_survives_every_prefix_and_corrupt_history_is_rejected() {
         );
     }
     let mut bad_history = records;
-    bad_history.last_mut().unwrap().sequence = 90;
+    bad_history.last_mut().unwrap().sequence = TaskSequence::new(90);
     assert_eq!(
         replay(initial.scope, definition, bad_history),
         Err(TaskError::InvalidOrder)
@@ -129,19 +131,23 @@ fn cooldown_cannot_be_bypassed_and_checkpoint_substitution_cannot_authorize_rest
     let mut definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
     definition.recovery.restart_delay_ticks = 10;
     let mut projection = running(definition);
-    assert_eq!(projection.next(2).unwrap(), None);
+    assert_eq!(projection.next(TaskTick::new(2)).unwrap(), None);
     let fault = projection
         .propose(
             TaskExecutionEvent::FaultObserved {
                 fault: TaskFault::Crash,
             },
-            1,
-            3,
+            TaskGeneration::new(1),
+            TaskTick::new(3),
         )
         .unwrap();
     projection.apply(&fault).unwrap();
     assert_eq!(
-        projection.propose(TaskExecutionEvent::RecoveryExhausted, 1, 4),
+        projection.propose(
+            TaskExecutionEvent::RecoveryExhausted,
+            TaskGeneration::new(1),
+            TaskTick::new(4)
+        ),
         Err(TaskError::InvalidTransition)
     );
     assert_eq!(
@@ -153,21 +159,25 @@ fn cooldown_cannot_be_bypassed_and_checkpoint_substitution_cannot_authorize_rest
                     schema: 1
                 })
             },
-            1,
-            4
+            TaskGeneration::new(1),
+            TaskTick::new(4)
         ),
         Err(TaskError::CorruptBlob)
     );
-    let planned = projection.next(4).unwrap().unwrap();
+    let planned = projection.next(TaskTick::new(4)).unwrap().unwrap();
     projection.apply(&planned).unwrap();
-    assert_eq!(projection.next(5).unwrap(), None);
+    assert_eq!(projection.next(TaskTick::new(5)).unwrap(), None);
     assert_eq!(
-        projection.propose(TaskExecutionEvent::Restarted, 2, 5),
+        projection.propose(
+            TaskExecutionEvent::Restarted,
+            TaskGeneration::new(2),
+            TaskTick::new(5)
+        ),
         Err(TaskError::InvalidTransition)
     );
-    let restart = projection.next(13).unwrap().unwrap();
+    let restart = projection.next(TaskTick::new(13)).unwrap().unwrap();
     projection.apply(&restart).unwrap();
-    assert_eq!(projection.generation(), 2);
+    assert_eq!(projection.generation(), TaskGeneration::new(2));
 }
 
 #[test]
@@ -184,8 +194,8 @@ fn history_and_attempt_quotas_fail_closed_before_new_authorization() {
                     schema: 1,
                 },
             },
-            1,
-            2,
+            TaskGeneration::new(1),
+            TaskTick::new(2),
         )
         .unwrap();
     projection.apply(&checkpoint).unwrap();
@@ -194,12 +204,15 @@ fn history_and_attempt_quotas_fail_closed_before_new_authorization() {
             TaskExecutionEvent::FaultObserved {
                 fault: TaskFault::Crash,
             },
-            1,
-            3,
+            TaskGeneration::new(1),
+            TaskTick::new(3),
         )
         .unwrap();
     projection.apply(&fault).unwrap();
-    assert_eq!(projection.next(4), Err(TaskError::QuotaExhausted));
+    assert_eq!(
+        projection.next(TaskTick::new(4)),
+        Err(TaskError::QuotaExhausted)
+    );
     assert_eq!(projection.status(), TaskStatus::Faulted);
     definition.budget.max_history_records = 50;
     definition.recovery.max_attempts = 1;
@@ -209,13 +222,17 @@ fn history_and_attempt_quotas_fail_closed_before_new_authorization() {
             TaskExecutionEvent::FaultObserved {
                 fault: TaskFault::Crash,
             },
-            1,
-            2,
+            TaskGeneration::new(1),
+            TaskTick::new(2),
         )
         .unwrap();
     projection.apply(&fault).unwrap();
     assert_eq!(
-        projection.propose(TaskExecutionEvent::RecoveryPlanned { resume: None }, 1, 3),
+        projection.propose(
+            TaskExecutionEvent::RecoveryPlanned { resume: None },
+            TaskGeneration::new(1),
+            TaskTick::new(3)
+        ),
         Err(TaskError::QuotaExhausted)
     );
 }
@@ -228,12 +245,20 @@ fn premature_faults_completion_and_reconciliation_are_rejected() {
     ));
     for fault in [TaskFault::Timeout, TaskFault::DeadlineViolation] {
         assert_eq!(
-            projection.propose(TaskExecutionEvent::FaultObserved { fault }, 1, 2),
+            projection.propose(
+                TaskExecutionEvent::FaultObserved { fault },
+                TaskGeneration::new(1),
+                TaskTick::new(2)
+            ),
             Err(TaskError::InvalidTransition)
         );
     }
     assert_eq!(
-        projection.propose(TaskExecutionEvent::RecoveryExhausted, 1, 2),
+        projection.propose(
+            TaskExecutionEvent::RecoveryExhausted,
+            TaskGeneration::new(1),
+            TaskTick::new(2)
+        ),
         Err(TaskError::InvalidTransition)
     );
     assert_eq!(
@@ -245,8 +270,8 @@ fn premature_faults_completion_and_reconciliation_are_rejected() {
                     schema: 1
                 }
             },
-            1,
-            2
+            TaskGeneration::new(1),
+            TaskTick::new(2)
         ),
         Err(TaskError::QuotaExhausted)
     );
@@ -256,13 +281,17 @@ fn premature_faults_completion_and_reconciliation_are_rejected() {
             TaskExecutionEvent::FaultObserved {
                 fault: TaskFault::Crash,
             },
-            1,
-            2,
+            TaskGeneration::new(1),
+            TaskTick::new(2),
         )
         .unwrap();
     faulted.apply(&fault).unwrap();
     assert_eq!(
-        faulted.propose(TaskExecutionEvent::ReconciliationRequired, 1, 3),
+        faulted.propose(
+            TaskExecutionEvent::ReconciliationRequired,
+            TaskGeneration::new(1),
+            TaskTick::new(3)
+        ),
         Err(TaskError::InvalidTransition)
     );
 }
@@ -279,12 +308,12 @@ fn migration_rejects_foreign_task_wrong_schema_and_oversized_checkpoint() {
     };
     for index in 0..3 {
         let mut source = TaskScope {
-            definition: Digest([8; 32]),
+            definition: TaskDefinitionFingerprint::from_digest(Digest([8; 32])),
             ..projection.scope()
         };
         let mut checkpoint = previous;
         match index {
-            0 => source.task = Digest([9; 32]),
+            0 => source.task = TaskId::from_digest(Digest([9; 32])),
             1 => checkpoint.schema = 2,
             _ => checkpoint.bytes = 65,
         }
@@ -297,8 +326,8 @@ fn migration_rejects_foreign_task_wrong_schema_and_oversized_checkpoint() {
                         checkpoint,
                         authorization: Digest([5; 32])
                     },
-                    0,
-                    1
+                    TaskGeneration::new(0),
+                    TaskTick::new(1)
                 )
                 .is_err()
         );
@@ -315,26 +344,47 @@ fn poisoned_restore_corrupt_journal_and_runtime_failure_never_claim_completion()
         SumRuntime::default(),
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     let (journal, runtime) = supervisor.into_parts();
     assert!(matches!(
-        Supervisor::restore(journal.clone(), runtime.clone(), scope, definition, 0),
+        Supervisor::restore(
+            journal.clone(),
+            runtime.clone(),
+            scope,
+            definition,
+            TaskTick::new(0)
+        ),
         Err(SupervisorError::Decision(TaskError::InvalidOrder))
     ));
     let mut corrupt = journal.clone();
     corrupt.records[0].version = 9;
     assert!(matches!(
-        Supervisor::restore(corrupt, runtime.clone(), scope, definition, 2),
+        Supervisor::restore(
+            corrupt,
+            runtime.clone(),
+            scope,
+            definition,
+            TaskTick::new(2)
+        ),
         Err(SupervisorError::Decision(TaskError::UnsupportedVersion))
     ));
     for cut in [Cut::BeforeCommit, Cut::WrongReceipt] {
         let mut injected = journal.clone();
         injected.cut = Some(cut);
-        assert!(Supervisor::restore(injected, runtime.clone(), scope, definition, 2).is_err());
+        assert!(
+            Supervisor::restore(
+                injected,
+                runtime.clone(),
+                scope,
+                definition,
+                TaskTick::new(2)
+            )
+            .is_err()
+        );
     }
     let mut failed_runtime = SumRuntime::default();
     failed_runtime.fence_failure = true;
@@ -344,16 +394,16 @@ fn poisoned_restore_corrupt_journal_and_runtime_failure_never_claim_completion()
         failed_runtime,
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    valid.submit(&INPUT, 1, 0).unwrap();
-    valid.advance(1).unwrap();
-    valid.advance(51).unwrap_err();
+    valid.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    valid.advance(TaskTick::new(1)).unwrap();
+    valid.advance(TaskTick::new(51)).unwrap_err();
     assert_eq!(valid.projection().status(), TaskStatus::Running);
-    assert_eq!(valid.projection().next_sequence(), 2);
+    assert_eq!(valid.projection().next_sequence(), TaskSequence::new(2));
     assert_eq!(
-        valid.advance(52),
+        valid.advance(TaskTick::new(52)),
         Err(SupervisorError::ReconstructionRequired)
     );
 }
@@ -370,22 +420,22 @@ fn pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history
         SumRuntime::default(),
         scope,
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    assert!(supervisor.poll(0).is_err());
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    assert!(supervisor.poll(TaskTick::new(0)).is_err());
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     assert!(
         !supervisor
             .observe(
                 TaskObservation {
                     scope,
-                    generation: 1,
+                    generation: TaskGeneration::new(1),
                     progress: RuntimeProgress::Pending
                 },
                 &[],
-                2
+                TaskTick::new(2)
             )
             .unwrap()
     );
@@ -393,31 +443,49 @@ fn pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history
         .observe(
             TaskObservation {
                 scope,
-                generation: 1,
+                generation: TaskGeneration::new(1),
                 progress: RuntimeProgress::Fault(TaskFault::Crash),
             },
             &[],
-            2,
+            TaskTick::new(2),
         )
         .unwrap();
-    supervisor.advance(3).unwrap();
+    supervisor.advance(TaskTick::new(3)).unwrap();
     let evidence = Reconciliation::RestartAuthorized {
         evidence: Digest([7; 32]),
     };
     let foreign = TaskScope {
-        task: Digest([9; 32]),
+        task: TaskId::from_digest(Digest([9; 32])),
         ..scope
     };
     assert_eq!(
-        supervisor.reconcile(foreign, 1, evidence, None, 4),
+        supervisor.reconcile(
+            foreign,
+            TaskGeneration::new(1),
+            evidence,
+            None,
+            TaskTick::new(4)
+        ),
         Err(SupervisorError::Decision(TaskError::ScopeMismatch))
     );
     assert_eq!(
-        supervisor.reconcile(scope, 0, evidence, None, 4),
+        supervisor.reconcile(
+            scope,
+            TaskGeneration::new(0),
+            evidence,
+            None,
+            TaskTick::new(4)
+        ),
         Err(SupervisorError::Decision(TaskError::StaleGeneration))
     );
     assert_eq!(
-        supervisor.reconcile(scope, 1, evidence, Some(&[]), 4),
+        supervisor.reconcile(
+            scope,
+            TaskGeneration::new(1),
+            evidence,
+            Some(&[]),
+            TaskTick::new(4)
+        ),
         Err(SupervisorError::Decision(TaskError::CorruptBlob))
     );
     assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
@@ -426,11 +494,11 @@ fn pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history
             .observe(
                 TaskObservation {
                     scope,
-                    generation: 1,
+                    generation: TaskGeneration::new(1),
                     progress: RuntimeProgress::Pending
                 },
                 &[],
-                4
+                TaskTick::new(4)
             )
             .is_err()
     );

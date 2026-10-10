@@ -10,7 +10,11 @@ use support::*;
 #[derive(Clone, Default)]
 struct SharedJournal(Arc<Mutex<MemoryJournal>>);
 impl TaskJournal for SharedJournal {
-    fn read(&mut self, scope: TaskScope, seq: u32) -> Result<Option<TaskRecord>, TaskPortError> {
+    fn read(
+        &mut self,
+        scope: TaskScope,
+        seq: TaskSequence,
+    ) -> Result<Option<TaskRecord>, TaskPortError> {
         self.0
             .lock()
             .map_err(|_poisoned| TaskPortError::Corrupt)?
@@ -41,8 +45,8 @@ impl TaskJournal for SharedJournal {
 
 #[derive(Default)]
 struct RuntimeState {
-    fenced_through: u32,
-    live: Option<u32>,
+    fenced_through: TaskGeneration,
+    live: Option<TaskGeneration>,
 }
 #[derive(Clone, Default)]
 struct SharedRuntime {
@@ -59,18 +63,18 @@ impl TaskRuntime for SharedRuntime {
             .state
             .lock()
             .map_err(|_poisoned| TaskPortError::Corrupt)?;
-        if request.generation <= state.fenced_through
+        if request.generation <= TaskGeneration::new((state.fenced_through).get())
             || state.live.is_some_and(|live| live != request.generation)
         {
             return Err(TaskPortError::Conflict);
         }
-        state.live = Some(request.generation);
+        state.live = Some(TaskGeneration::new((request.generation).get()));
         Ok(())
     }
     fn poll(
         &mut self,
         scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         _buffer: &mut [u8],
     ) -> Result<TaskObservation, TaskPortError> {
         if self
@@ -91,7 +95,7 @@ impl TaskRuntime for SharedRuntime {
     fn acknowledge_checkpoint(
         &mut self,
         _scope: TaskScope,
-        generation: u32,
+        generation: TaskGeneration,
         _checkpoint: BlobRef,
     ) -> Result<(), TaskPortError> {
         if self
@@ -105,7 +109,11 @@ impl TaskRuntime for SharedRuntime {
         }
         Ok(())
     }
-    fn fence(&mut self, _scope: TaskScope, generation: u32) -> Result<(), TaskPortError> {
+    fn fence(
+        &mut self,
+        _scope: TaskScope,
+        generation: TaskGeneration,
+    ) -> Result<(), TaskPortError> {
         let mut state = self
             .state
             .lock()
@@ -126,23 +134,38 @@ fn competing_intents_cannot_dispatch_after_a_cas_conflict() {
     let scope = scope(definition, &input);
     let journal = SharedJournal::default();
     let runtime = SharedRuntime::default();
-    let mut first =
-        Supervisor::restore(journal.clone(), runtime.clone(), scope, definition, 0).unwrap();
-    let mut second =
-        Supervisor::restore(journal.clone(), runtime.clone(), scope, definition, 0).unwrap();
-    first.submit(&input, 1, 0).unwrap();
+    let mut first = Supervisor::restore(
+        journal.clone(),
+        runtime.clone(),
+        scope,
+        definition,
+        TaskTick::new(0),
+    )
+    .unwrap();
+    let mut second = Supervisor::restore(
+        journal.clone(),
+        runtime.clone(),
+        scope,
+        definition,
+        TaskTick::new(0),
+    )
+    .unwrap();
+    first.submit(&input, 1, TaskTick::new(0)).unwrap();
     assert_eq!(
-        second.submit(&input, 1, 0),
+        second.submit(&input, 1, TaskTick::new(0)),
         Err(SupervisorError::Port(TaskPortError::Conflict))
     );
     assert_eq!(
-        second.advance(1),
+        second.advance(TaskTick::new(1)),
         Err(SupervisorError::ReconstructionRequired)
     );
     assert_eq!(journal.0.lock().unwrap().records.len(), 1);
     assert_eq!(runtime.state.lock().unwrap().live, None);
-    first.advance(1).unwrap();
-    assert_eq!(runtime.state.lock().unwrap().live, Some(1));
+    first.advance(TaskTick::new(1)).unwrap();
+    assert_eq!(
+        runtime.state.lock().unwrap().live,
+        Some(TaskGeneration::new(1))
+    );
 }
 
 #[test]
@@ -158,28 +181,50 @@ fn delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction() {
         delay_start: Some((authorized.clone(), resume.clone())),
         ..runtime.clone()
     };
-    let mut first = Supervisor::restore(journal.clone(), delayed, scope, definition, 0).unwrap();
-    first.submit(&input, 1, 0).unwrap();
+    let mut first = Supervisor::restore(
+        journal.clone(),
+        delayed,
+        scope,
+        definition,
+        TaskTick::new(0),
+    )
+    .unwrap();
+    first.submit(&input, 1, TaskTick::new(0)).unwrap();
     let worker = std::thread::spawn(move || {
         assert_eq!(
-            first.advance(1),
+            first.advance(TaskTick::new(1)),
             Err(SupervisorError::Port(TaskPortError::Conflict))
         );
         assert_eq!(
-            first.advance(4),
+            first.advance(TaskTick::new(4)),
             Err(SupervisorError::ReconstructionRequired)
         );
     });
     authorized.wait(); // Started is durable, but runtime dispatch has not occurred.
-    let mut recovered =
-        Supervisor::restore(journal.clone(), runtime.clone(), scope, definition, 2).unwrap();
+    let mut recovered = Supervisor::restore(
+        journal.clone(),
+        runtime.clone(),
+        scope,
+        definition,
+        TaskTick::new(2),
+    )
+    .unwrap();
     assert_eq!(recovered.projection().status(), TaskStatus::Faulted);
-    recovered.advance(3).unwrap();
-    recovered.advance(4).unwrap();
-    assert_eq!(runtime.state.lock().unwrap().live, Some(2));
+    recovered.advance(TaskTick::new(3)).unwrap();
+    recovered.advance(TaskTick::new(4)).unwrap();
+    assert_eq!(
+        runtime.state.lock().unwrap().live,
+        Some(TaskGeneration::new(2))
+    );
     resume.wait(); // The old request reaches the runtime after generation 2 starts.
     worker.join().unwrap();
-    assert_eq!(runtime.state.lock().unwrap().live, Some(2));
-    assert_eq!(runtime.state.lock().unwrap().fenced_through, 1);
+    assert_eq!(
+        runtime.state.lock().unwrap().live,
+        Some(TaskGeneration::new(2))
+    );
+    assert_eq!(
+        runtime.state.lock().unwrap().fenced_through,
+        TaskGeneration::new(1)
+    );
     assert_eq!(journal.0.lock().unwrap().records.len(), 5);
 }

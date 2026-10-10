@@ -17,34 +17,38 @@ fn start(history: u32) -> Supervisor {
         SumRuntime::default(),
         scope(definition, &INPUT),
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     supervisor
 }
 
 #[test]
 fn last_history_slot_is_reserved_for_stopping_the_generation() {
     let mut supervisor = start(4);
-    supervisor.poll(2).unwrap();
+    supervisor.poll(TaskTick::new(2)).unwrap();
     assert_eq!(
-        supervisor.poll(3),
+        supervisor.poll(TaskTick::new(3)),
         Err(SupervisorError::Decision(TaskError::QuotaExhausted))
     );
-    assert_eq!(supervisor.projection().next_sequence(), 3);
     assert_eq!(
-        supervisor.poll(4),
+        supervisor.projection().next_sequence(),
+        TaskSequence::new(3)
+    );
+    assert_eq!(
+        supervisor.poll(TaskTick::new(4)),
         Err(SupervisorError::ReconstructionRequired)
     );
     let definition = supervisor.projection().definition();
     let scope = supervisor.projection().scope();
     let (journal, runtime) = supervisor.into_parts();
     assert_eq!(runtime.fences, 1);
-    let recovered = Supervisor::restore(journal, runtime, scope, definition, 4).unwrap();
+    let recovered =
+        Supervisor::restore(journal, runtime, scope, definition, TaskTick::new(4)).unwrap();
     assert_eq!(recovered.projection().status(), TaskStatus::Faulted);
-    assert_eq!(recovered.projection().next_sequence(), 4);
+    assert_eq!(recovered.projection().next_sequence(), TaskSequence::new(4));
     assert!(recovered.projection().output().is_none());
 }
 
@@ -55,21 +59,21 @@ fn restart_without_a_terminal_history_slot_never_dispatches() {
         .observe(
             TaskObservation {
                 scope: supervisor.projection().scope(),
-                generation: 1,
+                generation: TaskGeneration::new(1),
                 progress: RuntimeProgress::Fault(TaskFault::Crash),
             },
             &[],
-            2,
+            TaskTick::new(2),
         )
         .unwrap();
-    supervisor.advance(3).unwrap();
+    supervisor.advance(TaskTick::new(3)).unwrap();
     assert_eq!(
-        supervisor.advance(4),
+        supervisor.advance(TaskTick::new(4)),
         Err(SupervisorError::Decision(TaskError::QuotaExhausted))
     );
     assert_eq!(supervisor.projection().status(), TaskStatus::Ready);
-    assert_eq!(supervisor.projection().generation(), 1);
-    supervisor.advance(10000).unwrap();
+    assert_eq!(supervisor.projection().generation(), TaskGeneration::new(1));
+    supervisor.advance(TaskTick::new(10000)).unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Exhausted);
     assert_eq!(supervisor.into_parts().1.starts, 1);
 }
@@ -82,11 +86,11 @@ fn forwarded_pending_observation_at_timeout_stops_execution() {
         supervisor.observe(
             TaskObservation {
                 scope,
-                generation: 1,
+                generation: TaskGeneration::new(1),
                 progress: RuntimeProgress::Pending,
             },
             &[],
-            51
+            TaskTick::new(51)
         ),
         Err(SupervisorError::Decision(TaskError::DeadlineExpired))
     );
@@ -107,20 +111,23 @@ fn quota_fence_failure_poisoning_never_acknowledges_a_checkpoint() {
         runtime,
         scope(definition, &INPUT),
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     assert_eq!(
-        supervisor.poll(2),
+        supervisor.poll(TaskTick::new(2)),
         Err(SupervisorError::Port(TaskPortError::Conflict))
     );
     assert_eq!(
-        supervisor.poll(3),
+        supervisor.poll(TaskTick::new(3)),
         Err(SupervisorError::ReconstructionRequired)
     );
-    assert_eq!(supervisor.projection().next_sequence(), 2);
+    assert_eq!(
+        supervisor.projection().next_sequence(),
+        TaskSequence::new(2)
+    );
     assert!(supervisor.projection().checkpoint().is_none());
 }
 
@@ -128,7 +135,7 @@ fn quota_fence_failure_poisoning_never_acknowledges_a_checkpoint() {
 fn foreign_or_stale_late_observations_cannot_fence_the_current_generation() {
     let mut supervisor = start(20);
     let mut foreign = supervisor.projection().scope();
-    foreign.task = Digest([9; 32]);
+    foreign.task = TaskId::from_digest(Digest([9; 32]));
     for (scope, generation, expected) in [
         (foreign, 1, TaskError::ScopeMismatch),
         (
@@ -141,11 +148,11 @@ fn foreign_or_stale_late_observations_cannot_fence_the_current_generation() {
             supervisor.observe(
                 TaskObservation {
                     scope,
-                    generation,
+                    generation: TaskGeneration::new(generation),
                     progress: RuntimeProgress::Pending,
                 },
                 &[],
-                51
+                TaskTick::new(51)
             ),
             Err(SupervisorError::Decision(expected))
         );
@@ -162,16 +169,16 @@ fn persisted_input_schema_reaches_the_runtime_before_computation() {
         SumRuntime::default(),
         scope(definition, &INPUT),
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&INPUT, 2, 0).unwrap();
+    supervisor.submit(&INPUT, 2, TaskTick::new(0)).unwrap();
     assert_eq!(
-        supervisor.advance(1),
+        supervisor.advance(TaskTick::new(1)),
         Err(SupervisorError::Port(TaskPortError::Corrupt))
     );
     assert_eq!(
-        supervisor.advance(2),
+        supervisor.advance(TaskTick::new(2)),
         Err(SupervisorError::ReconstructionRequired)
     );
     assert!(supervisor.projection().output().is_none());

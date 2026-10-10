@@ -28,14 +28,14 @@ fn fresh(mode: RecoveryMode, effects: EffectContract) -> Supervisor {
         SumRuntime::default(),
         scope(definition, &INPUT),
         definition,
-        0,
+        TaskTick::new(0),
     )
     .unwrap()
 }
 fn running(mode: RecoveryMode, effects: EffectContract) -> Supervisor {
     let mut supervisor = fresh(mode, effects);
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     supervisor
 }
 fn reconstruct(supervisor: Supervisor, tick: u64) -> Supervisor {
@@ -46,7 +46,7 @@ fn reconstruct(supervisor: Supervisor, tick: u64) -> Supervisor {
         runtime,
         projection.scope(),
         projection.definition(),
-        tick,
+        TaskTick::new(tick),
     )
     .unwrap()
 }
@@ -60,9 +60,9 @@ fn finish(mut supervisor: Supervisor, mut tick: u64) -> Supervisor {
         }
         tick += 1;
         if supervisor.projection().status() == TaskStatus::Running {
-            supervisor.poll(tick).unwrap();
+            supervisor.poll(TaskTick::new(tick)).unwrap();
         } else {
-            supervisor.advance(tick).unwrap();
+            supervisor.advance(TaskTick::new(tick)).unwrap();
         }
     }
     panic!("bounded task did not terminate")
@@ -71,7 +71,7 @@ fn finish(mut supervisor: Supervisor, mut tick: u64) -> Supervisor {
 #[test]
 fn committed_checkpoint_resumes_computation_after_supervisor_crash() {
     let mut supervisor = running(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
-    supervisor.poll(2).unwrap();
+    supervisor.poll(TaskTick::new(2)).unwrap();
     let supervisor = reconstruct(supervisor, 3);
     assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
     let supervisor = finish(supervisor, 3);
@@ -100,12 +100,12 @@ fn no_commit_or_lost_acknowledgement_never_dispatches() {
             SumRuntime::default(),
             scope(definition, &INPUT),
             definition,
-            0,
+            TaskTick::new(0),
         )
         .unwrap();
-        assert!(supervisor.submit(&INPUT, 1, 0).is_err());
+        assert!(supervisor.submit(&INPUT, 1, TaskTick::new(0)).is_err());
         assert_eq!(
-            supervisor.advance(1),
+            supervisor.advance(TaskTick::new(1)),
             Err(SupervisorError::ReconstructionRequired)
         );
         let (journal, runtime) = supervisor.into_parts();
@@ -120,7 +120,7 @@ fn no_commit_or_lost_acknowledgement_never_dispatches() {
 #[test]
 fn crash_after_start_commit_before_dispatch_is_reconstructed_without_success() {
     let mut supervisor = fresh(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
-    supervisor.submit(&INPUT, 1, 0).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
     let projection = *supervisor.projection();
     let (mut journal, runtime) = supervisor.into_parts();
     journal.cut = Some(Cut::AfterCommit);
@@ -129,10 +129,10 @@ fn crash_after_start_commit_before_dispatch_is_reconstructed_without_success() {
         runtime,
         projection.scope(),
         projection.definition(),
-        1,
+        TaskTick::new(1),
     )
     .unwrap();
-    assert!(supervisor.advance(1).is_err());
+    assert!(supervisor.advance(TaskTick::new(1)).is_err());
     let (journal, runtime) = supervisor.into_parts();
     assert_eq!(runtime.starts, 0);
     let supervisor = Supervisor::restore(
@@ -140,12 +140,15 @@ fn crash_after_start_commit_before_dispatch_is_reconstructed_without_success() {
         runtime,
         projection.scope(),
         projection.definition(),
-        2,
+        TaskTick::new(2),
     )
     .unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
     assert!(supervisor.projection().output().is_none());
-    assert_eq!(finish(supervisor, 2).projection().generation(), 2);
+    assert_eq!(
+        finish(supervisor, 2).projection().generation(),
+        TaskGeneration::new(2)
+    );
 }
 
 #[test]
@@ -155,22 +158,22 @@ fn effect_interruption_requires_evidence_and_unknown_never_restarts() {
         EffectContract::ReconcileRequired,
     );
     let mut supervisor = reconstruct(supervisor, 2);
-    supervisor.advance(3).unwrap();
+    supervisor.advance(TaskTick::new(3)).unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
     let scope = supervisor.projection().scope();
     supervisor
         .reconcile(
             scope,
-            1,
+            TaskGeneration::new(1),
             Reconciliation::Unknown {
                 evidence: Digest([5; 32]),
             },
             None,
-            4,
+            TaskTick::new(4),
         )
         .unwrap();
     for tick in 5..20 {
-        assert!(!supervisor.advance(tick).unwrap());
+        assert!(!supervisor.advance(TaskTick::new(tick)).unwrap());
     }
     let (journal, runtime) = supervisor.into_parts();
     assert_eq!(runtime.starts, 1);
@@ -182,18 +185,18 @@ fn effect_interruption_requires_evidence_and_unknown_never_restarts() {
             RecoveryMode::RestartFromCheckpoint,
             EffectContract::ReconcileRequired,
         ),
-        20,
+        TaskTick::new(20),
     )
     .unwrap();
     supervisor
         .reconcile(
             scope,
-            1,
+            TaskGeneration::new(1),
             Reconciliation::RestartAuthorized {
                 evidence: Digest([6; 32]),
             },
             None,
-            21,
+            TaskTick::new(21),
         )
         .unwrap();
     assert_eq!(
@@ -209,7 +212,7 @@ fn independent_completion_evidence_commits_bytes_without_reexecution() {
         EffectContract::ReconcileRequired,
     );
     let mut supervisor = reconstruct(supervisor, 2);
-    supervisor.advance(3).unwrap();
+    supervisor.advance(TaskTick::new(3)).unwrap();
     let output = 999_u64.to_le_bytes();
     let result = Reconciliation::Completed {
         output: BlobRef {
@@ -220,7 +223,13 @@ fn independent_completion_evidence_commits_bytes_without_reexecution() {
         evidence: Digest([8; 32]),
     };
     supervisor
-        .reconcile(supervisor.projection().scope(), 1, result, Some(&output), 4)
+        .reconcile(
+            supervisor.projection().scope(),
+            TaskGeneration::new(1),
+            result,
+            Some(&output),
+            TaskTick::new(4),
+        )
         .unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
     assert_eq!(supervisor.into_parts().1.starts, 1);
@@ -229,7 +238,7 @@ fn independent_completion_evidence_commits_bytes_without_reexecution() {
 #[test]
 fn corrupt_checkpoint_fails_closed_before_task_code_runs() {
     let mut supervisor = running(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
-    supervisor.poll(2).unwrap();
+    supervisor.poll(TaskTick::new(2)).unwrap();
     let projection = *supervisor.projection();
     let (mut journal, runtime) = supervisor.into_parts();
     journal
@@ -241,16 +250,16 @@ fn corrupt_checkpoint_fails_closed_before_task_code_runs() {
         runtime,
         projection.scope(),
         projection.definition(),
-        3,
+        TaskTick::new(3),
     )
     .unwrap();
-    supervisor.advance(4).unwrap();
+    supervisor.advance(TaskTick::new(4)).unwrap();
     assert!(matches!(
-        supervisor.advance(5),
+        supervisor.advance(TaskTick::new(5)),
         Err(SupervisorError::Decision(TaskError::CorruptBlob))
     ));
     assert_eq!(
-        supervisor.advance(6),
+        supervisor.advance(TaskTick::new(6)),
         Err(SupervisorError::ReconstructionRequired)
     );
     assert_eq!(supervisor.into_parts().1.starts, 1);
@@ -260,25 +269,25 @@ fn corrupt_checkpoint_fails_closed_before_task_code_runs() {
 fn stale_generation_and_foreign_scope_leave_state_unchanged() {
     let supervisor = running(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
     let mut supervisor = reconstruct(supervisor, 2);
-    supervisor.advance(3).unwrap();
-    supervisor.advance(4).unwrap();
+    supervisor.advance(TaskTick::new(3)).unwrap();
+    supervisor.advance(TaskTick::new(4)).unwrap();
     let projection = *supervisor.projection();
     let mut observation = TaskObservation {
         scope: projection.scope(),
-        generation: 1,
+        generation: TaskGeneration::new(1),
         progress: RuntimeProgress::Complete {
             bytes: 8,
             schema: 1,
         },
     };
     assert!(matches!(
-        supervisor.observe(observation, &[0; 8], 5),
+        supervisor.observe(observation, &[0; 8], TaskTick::new(5)),
         Err(SupervisorError::Decision(TaskError::StaleGeneration))
     ));
-    observation.generation = 2;
-    observation.scope.tenant = Digest([9; 32]);
+    observation.generation = TaskGeneration::new(2);
+    observation.scope.tenant = TaskTenantId::from_digest(Digest([9; 32]));
     assert!(matches!(
-        supervisor.observe(observation, &[0; 8], 5),
+        supervisor.observe(observation, &[0; 8], TaskTick::new(5)),
         Err(SupervisorError::Decision(TaskError::ScopeMismatch))
     ));
     assert_eq!(*supervisor.projection(), projection);
@@ -299,8 +308,8 @@ fn checkpoint_commit_ack_loss_is_recovered_from_committed_boundary() {
                     schema: 1,
                 },
             },
-            1,
-            2,
+            TaskGeneration::new(1),
+            TaskTick::new(2),
         )
         .unwrap();
     journal.cut = Some(Cut::AfterCommit);
@@ -313,7 +322,7 @@ fn checkpoint_commit_ack_loss_is_recovered_from_committed_boundary() {
         runtime,
         projection.scope(),
         projection.definition(),
-        3,
+        TaskTick::new(3),
     )
     .unwrap();
     assert_eq!(finish(supervisor, 3).into_parts().1.resumed, [0, 8]);
@@ -330,18 +339,18 @@ fn failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkp
         runtime,
         projection.scope(),
         projection.definition(),
-        0,
+        TaskTick::new(0),
     )
     .unwrap();
-    supervisor.submit(&INPUT, 1, 0).unwrap();
-    supervisor.advance(1).unwrap();
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
+    supervisor.advance(TaskTick::new(1)).unwrap();
     assert!(matches!(
-        supervisor.poll(2),
+        supervisor.poll(TaskTick::new(2)),
         Err(SupervisorError::Port(TaskPortError::Runtime))
     ));
     assert!(supervisor.projection().checkpoint().is_some());
     assert_eq!(
-        supervisor.poll(3),
+        supervisor.poll(TaskTick::new(3)),
         Err(SupervisorError::ReconstructionRequired)
     );
     let (journal, mut runtime) = supervisor.into_parts();
@@ -351,7 +360,7 @@ fn failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkp
         runtime,
         projection.scope(),
         projection.definition(),
-        3,
+        TaskTick::new(3),
     )
     .unwrap();
     assert_eq!(finish(recovered, 3).into_parts().1.resumed, [0, 8]);
@@ -360,14 +369,14 @@ fn failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkp
 #[test]
 fn regressed_clock_is_rejected_before_runtime_poll_consumes_progress() {
     let mut supervisor = running(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
-    supervisor.poll(2).unwrap();
+    supervisor.poll(TaskTick::new(2)).unwrap();
     let before = *supervisor.projection();
     assert_eq!(
-        supervisor.poll(1),
+        supervisor.poll(TaskTick::new(1)),
         Err(SupervisorError::Decision(TaskError::InvalidOrder))
     );
     assert_eq!(*supervisor.projection(), before);
-    assert!(supervisor.poll(3).unwrap());
+    assert!(supervisor.poll(TaskTick::new(3)).unwrap());
     assert_eq!(
         finish(supervisor, 3).projection().status(),
         TaskStatus::Completed
@@ -378,13 +387,16 @@ fn regressed_clock_is_rejected_before_runtime_poll_consumes_progress() {
 fn oversized_input_migration_and_reconciled_output_are_rejected_before_commit() {
     let mut supervisor = fresh(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
     assert_eq!(
-        supervisor.submit(&[1; 65], 1, 0),
+        supervisor.submit(&[1; 65], 1, TaskTick::new(0)),
         Err(SupervisorError::Decision(TaskError::QuotaExhausted))
     );
-    assert_eq!(supervisor.projection().next_sequence(), 0);
-    supervisor.submit(&INPUT, 1, 0).unwrap();
+    assert_eq!(
+        supervisor.projection().next_sequence(),
+        TaskSequence::new(0)
+    );
+    supervisor.submit(&INPUT, 1, TaskTick::new(0)).unwrap();
     let source = TaskScope {
-        definition: Digest([9; 32]),
+        definition: TaskDefinitionFingerprint::from_digest(Digest([9; 32])),
         ..supervisor.projection().scope()
     };
     let previous = BlobRef {
@@ -393,10 +405,19 @@ fn oversized_input_migration_and_reconciled_output_are_rejected_before_commit() 
         schema: 1,
     };
     assert_eq!(
-        supervisor.import_checkpoint(source, previous, &[0; 65], Digest([7; 32]), 1),
+        supervisor.import_checkpoint(
+            source,
+            previous,
+            &[0; 65],
+            Digest([7; 32]),
+            TaskTick::new(1)
+        ),
         Err(SupervisorError::Decision(TaskError::QuotaExhausted))
     );
-    assert_eq!(supervisor.projection().next_sequence(), 1);
+    assert_eq!(
+        supervisor.projection().next_sequence(),
+        TaskSequence::new(1)
+    );
     let mut external = reconstruct(
         running(
             RecoveryMode::ReconcileBeforeRestart,
@@ -404,7 +425,7 @@ fn oversized_input_migration_and_reconciled_output_are_rejected_before_commit() 
         ),
         2,
     );
-    external.advance(3).unwrap();
+    external.advance(TaskTick::new(3)).unwrap();
     let output = BlobRef {
         digest: Digest::of(&[1; 65]),
         bytes: 65,
@@ -413,13 +434,13 @@ fn oversized_input_migration_and_reconciled_output_are_rejected_before_commit() 
     assert_eq!(
         external.reconcile(
             external.projection().scope(),
-            1,
+            TaskGeneration::new(1),
             Reconciliation::Completed {
                 output,
                 evidence: Digest([5; 32])
             },
             Some(&[1; 65]),
-            4
+            TaskTick::new(4)
         ),
         Err(SupervisorError::Decision(TaskError::QuotaExhausted))
     );
@@ -433,19 +454,19 @@ fn timeout_late_results_and_fence_failure_do_not_claim_success() {
         supervisor.observe(
             TaskObservation {
                 scope: supervisor.projection().scope(),
-                generation: 1,
+                generation: TaskGeneration::new(1),
                 progress: RuntimeProgress::Complete {
                     bytes: 8,
                     schema: 1
                 }
             },
             &[0; 8],
-            51
+            TaskTick::new(51)
         ),
         Err(SupervisorError::Decision(TaskError::DeadlineExpired))
     ));
     assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
-    supervisor.advance(52).unwrap();
+    supervisor.advance(TaskTick::new(52)).unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Exhausted);
     let supervisor = running(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
     let projection = *supervisor.projection();
@@ -457,7 +478,7 @@ fn timeout_late_results_and_fence_failure_do_not_claim_success() {
             runtime,
             projection.scope(),
             projection.definition(),
-            2
+            TaskTick::new(2)
         ),
         Err(SupervisorError::Port(TaskPortError::Conflict))
     ));
@@ -473,18 +494,18 @@ fn repeated_faults_are_bounded_by_generation_quota() {
             .observe(
                 TaskObservation {
                     scope: supervisor.projection().scope(),
-                    generation,
+                    generation: TaskGeneration::new(generation),
                     progress: RuntimeProgress::Fault(TaskFault::Crash),
                 },
                 &[],
-                tick,
+                TaskTick::new(tick),
             )
             .unwrap();
         tick += 1;
-        supervisor.advance(tick).unwrap();
+        supervisor.advance(TaskTick::new(tick)).unwrap();
         if generation < 32 {
             tick += 1;
-            supervisor.advance(tick).unwrap();
+            supervisor.advance(TaskTick::new(tick)).unwrap();
         }
     }
     assert_eq!(supervisor.projection().status(), TaskStatus::Exhausted);
@@ -504,9 +525,9 @@ proptest! {
             // Reconstruct with interruption acknowledgement uninjected, then
             // inject the cut into the checkpoint/next transition itself.
             let injected = journal.cut.take();
-            supervisor = Supervisor::restore(journal, runtime, projection.scope(), projection.definition(), tick).unwrap();
-            tick += 1; supervisor.advance(tick).unwrap();
-            tick += 1; supervisor.advance(tick).unwrap();
+            supervisor = Supervisor::restore(journal, runtime, projection.scope(), projection.definition(), TaskTick::new(tick)).unwrap();
+            tick += 1; supervisor.advance(TaskTick::new(tick)).unwrap();
+            tick += 1; supervisor.advance(TaskTick::new(tick)).unwrap();
             let projection = *supervisor.projection();
             let (mut journal, runtime_adapter) = supervisor.into_parts();
             runtime = runtime_adapter;
@@ -526,10 +547,10 @@ proptest! {
                 RuntimeProgress::Pending | RuntimeProgress::Fault(_) => unreachable!(),
             };
             tick += 1;
-            let record = projection.propose(event, projection.generation(), tick).unwrap();
+            let record = projection.propose(event, projection.generation(), TaskTick::new(tick)).unwrap();
             let _commit = journal.commit(&record, Some(&buffer[..reference.bytes as usize]));
             tick += 1;
-            supervisor = Supervisor::restore(journal, runtime, projection.scope(), projection.definition(), tick).unwrap();
+            supervisor = Supervisor::restore(journal, runtime, projection.scope(), projection.definition(), TaskTick::new(tick)).unwrap();
             if supervisor.projection().status() == TaskStatus::Completed { break; }
         }
         let supervisor = finish(supervisor, tick);

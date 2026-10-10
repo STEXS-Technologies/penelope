@@ -14,7 +14,10 @@ fn definition_fingerprint_pins_every_permission_and_budget_field() {
     let baseline = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
     let expected: Digest =
         serde_json::from_str(include_str!("fixtures/task-definition-fingerprint-v1.json")).unwrap();
-    assert_eq!(baseline.fingerprint(), expected);
+    assert_eq!(
+        baseline.fingerprint(),
+        TaskDefinitionFingerprint::from_digest(expected)
+    );
     let fixture: TaskDefinition =
         serde_json::from_str(include_str!("fixtures/task-definition-v1.json")).unwrap();
     assert_eq!(baseline, fixture);
@@ -40,7 +43,7 @@ fn definition_fingerprint_pins_every_permission_and_budget_field() {
             10 => changed.budget.max_history_records += 1,
             11 => changed.budget.max_checkpoint_commits += 1,
             12 => changed.budget.cpu_ticks += 1,
-            _ => changed.budget.deadline_tick += 1,
+            _ => changed.budget.deadline_tick = changed.budget.deadline_tick.saturating_add(1),
         }
         assert_ne!(changed.fingerprint(), baseline.fingerprint());
         assert_eq!(
@@ -98,36 +101,40 @@ fn all_recovery_modes_preserve_ambiguity_for_interrupted_effects() {
         let scope = scope(definition, &[1; 64]);
         let mut projection = TaskProjection::new(scope, definition).unwrap();
         let input = BlobRef {
-            digest: scope.input,
+            digest: (scope.input).digest(),
             bytes: 64,
             schema: 1,
         };
         let intent = projection
             .propose(
                 TaskExecutionEvent::IntentCommitted { definition, input },
-                0,
-                0,
+                TaskGeneration::new(0),
+                TaskTick::new(0),
             )
             .unwrap();
         projection.apply(&intent).unwrap();
-        let start = projection.next(1).unwrap().unwrap();
+        let start = projection.next(TaskTick::new(1)).unwrap().unwrap();
         projection.apply(&start).unwrap();
         let fault = projection
             .propose(
                 TaskExecutionEvent::FaultObserved {
                     fault: TaskFault::SupervisorInterrupted,
                 },
-                1,
-                2,
+                TaskGeneration::new(1),
+                TaskTick::new(2),
             )
             .unwrap();
         projection.apply(&fault).unwrap();
         assert!(
             projection
-                .propose(TaskExecutionEvent::RecoveryPlanned { resume: None }, 1, 3)
+                .propose(
+                    TaskExecutionEvent::RecoveryPlanned { resume: None },
+                    TaskGeneration::new(1),
+                    TaskTick::new(3)
+                )
                 .is_err()
         );
-        let reconcile = projection.next(3).unwrap().unwrap();
+        let reconcile = projection.next(TaskTick::new(3)).unwrap().unwrap();
         projection.apply(&reconcile).unwrap();
         let unknown = projection
             .propose(
@@ -136,14 +143,18 @@ fn all_recovery_modes_preserve_ambiguity_for_interrupted_effects() {
                         evidence: Digest([7; 32]),
                     },
                 },
-                1,
-                4,
+                TaskGeneration::new(1),
+                TaskTick::new(4),
             )
             .unwrap();
         projection.apply(&unknown).unwrap();
         assert!(
             projection
-                .propose(TaskExecutionEvent::Restarted, 2, 5)
+                .propose(
+                    TaskExecutionEvent::Restarted,
+                    TaskGeneration::new(2),
+                    TaskTick::new(5)
+                )
                 .is_err()
         );
         assert!(projection.output().is_none());

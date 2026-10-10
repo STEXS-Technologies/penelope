@@ -2,7 +2,10 @@
 //! synchronous `task::runtime` traits. Both obey the same atomic commit contract.
 
 use crate::task::{BlobRef, TaskRecord, TaskScope, runtime::TaskPortError};
-use crate::task::{Digest, EffectContract, TaskDefinition, TaskError, TaskProjection, TaskStatus};
+use crate::task::{
+    Digest, EffectContract, TaskDefinition, TaskError, TaskId, TaskInputDigest, TaskProjection,
+    TaskSequence, TaskStatus, TaskTenantId,
+};
 use crate::{EffectDispatchRequest, ExternalEffectEvidence, ExternalEffectState};
 use async_trait::async_trait;
 
@@ -23,10 +26,10 @@ pub fn task_scope_for_effect(
         return Err(TaskError::ScopeMismatch);
     }
     Ok(TaskScope {
-        tenant: Digest::of(request.action.tenant_id.as_str().as_bytes()),
-        task: Digest::of(&request.effect_key.canonical_bytes()),
+        tenant: TaskTenantId::from_digest(Digest::of(request.action.tenant_id.as_str().as_bytes())),
+        task: TaskId::from_digest(Digest::of(&request.effect_key.canonical_bytes())),
         definition: definition.fingerprint(),
-        input: Digest(request.action.payload_digest.0),
+        input: TaskInputDigest::from_digest(Digest(request.action.payload_digest.0)),
     })
 }
 
@@ -71,7 +74,7 @@ pub trait AsyncTaskJournal: Send + Sync {
     async fn read(
         &self,
         scope: TaskScope,
-        sequence: u32,
+        sequence: TaskSequence,
     ) -> Result<Option<TaskRecord>, TaskPortError>;
     /// Atomically commits a CAS-checked record and optional immutable bytes.
     async fn commit(
