@@ -5,3 +5,6 @@
 mod entry;
 
 pub use entry::*;
+
+/// Optional independently verified task checkpoint-state correlation.
+pub mod task;

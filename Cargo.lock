@@ -224,7 +224,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "penelope"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -237,11 +237,16 @@ dependencies = [
 
 [[package]]
 name = "penelope-core"
-version = "0.1.0"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "sha2",
+ "thiserror",
+]
 
 [[package]]
 name = "penelope-domain"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "penelope-core",
  "serde",
@@ -252,7 +257,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-executor"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -260,6 +265,8 @@ dependencies = [
  "penelope-ports",
  "proptest",
  "serde",
+ "serde_json",
+ "syn 2.0.119",
  "thiserror",
 ]
 
@@ -268,17 +275,19 @@ name = "penelope-fuzz"
 version = "0.0.0"
 dependencies = [
  "libfuzzer-sys",
+ "penelope-core",
  "penelope-domain",
  "penelope-executor",
  "penelope-intent",
  "penelope-ports",
  "penelope-statechronicle",
+ "serde",
  "serde_json",
 ]
 
 [[package]]
 name = "penelope-intent"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -288,9 +297,10 @@ dependencies = [
 
 [[package]]
 name = "penelope-ports"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
+ "penelope-core",
  "penelope-domain",
  "serde",
  "serde_json",
@@ -299,7 +309,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-statechronicle"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "penelope-domain",
  "penelope-ports",

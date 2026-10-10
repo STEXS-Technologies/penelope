@@ -21,14 +21,24 @@ for value_name in iterations proptest_cases fuzz_runs; do
   fi
 done
 
+if [[ -n "${PENELOPE_CHAOS_SEED:-}" ]]; then
+  if ! [[ "${PENELOPE_CHAOS_SEED}" =~ ^[1-9][0-9]{0,9}$ ]] \
+    || (( PENELOPE_CHAOS_SEED > 2147483647 )); then
+    printf '%s\n' 'PENELOPE_CHAOS_SEED must be an integer in 1..2147483647' >&2
+    exit 2
+  fi
+fi
+
 for iteration in $(seq 1 "${iterations}"); do
+  campaign_seed="${PENELOPE_CHAOS_SEED:-$iteration}"
   printf '[%s/%s] pure transition/restart/timer drill\n' "${iteration}" "${iterations}"
-  PROPTEST_CASES="${proptest_cases}" \
+  PROPTEST_CASES="${proptest_cases}" PROPTEST_RNG_SEED="${campaign_seed}" \
     cargo test -p penelope-executor --all-targets --all-features --locked
 
   printf '[%s/%s] public-boundary malformed-input drill\n' \
     "${iteration}" "${iterations}"
-  PENELOPE_FUZZ_RUNS="${fuzz_runs}" ./scripts/run_bounded_fuzz.sh
+  PENELOPE_FUZZ_RUNS="${fuzz_runs}" PENELOPE_FUZZ_SEED="${campaign_seed}" \
+    ./scripts/run_bounded_fuzz.sh
 done
 
 printf 'pure chaos drill passed (%s repeated iterations)\n' "${iterations}"

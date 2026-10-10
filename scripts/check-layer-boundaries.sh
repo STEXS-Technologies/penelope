@@ -28,12 +28,12 @@ require_internal_dependencies() {
 require_internal_dependencies penelope-core ''
 require_internal_dependencies penelope-domain 'penelope-core'
 require_internal_dependencies penelope-intent 'penelope-core penelope-domain'
-require_internal_dependencies penelope-ports 'penelope-domain'
+require_internal_dependencies penelope-ports 'penelope-core penelope-domain'
 require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-intent penelope-ports'
 require_internal_dependencies penelope-statechronicle 'penelope-domain penelope-ports'
 require_internal_dependencies penelope 'penelope-core penelope-domain penelope-executor penelope-intent penelope-ports penelope-statechronicle'
 
-forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-|axum|deadpool|diesel|lapin|mongodb|postgres|rdkafka|redis|reqwest|rusqlite|sea-orm|sqlx|surrealdb|tokio-postgres)$'
+forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-.*|axum|deadpool|diesel|lapin|mongodb|postgres|rdkafka|redis|reqwest|rusqlite|sea-orm|sqlx|surrealdb|tokio-postgres)$'
 if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
     .packages[]
     | select(.name | startswith("penelope-"))

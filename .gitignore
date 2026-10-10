@@ -1,7 +1,9 @@
 # .gitignore
+/TODO.md
 .slim/deepwork/
 target/
 coverage/
+__pycache__/
 fuzz/artifacts/
 fuzz/corpus/
 .env

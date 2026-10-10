@@ -10,6 +10,8 @@ permissions:
 jobs:
   verify:
     name: Stable verification
+    env:
+      RUSTUP_TOOLCHAIN: stable
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -20,9 +22,14 @@ jobs:
       - uses: Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c # v2
       - run: ./scripts/check-action-pins.sh
       - run: ./scripts/check-layer-boundaries.sh
+      - run: ./scripts/test-layer-boundaries.sh
+      - run: ./scripts/test-chaos-runners.sh
+      - run: python3 -m unittest discover -s scripts/tests
       - run: python3 scripts/publish-order.py --emit
       - run: cargo fmt --all --check
+      - run: cargo check -p penelope-core --no-default-features --locked
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+      - run: cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz
       - run: cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings
       - run: RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
       - run: cargo bench -p penelope-executor --bench linear_saga --locked
@@ -32,18 +39,39 @@ jobs:
       - run: cargo run -p penelope --example trade_retry_timer --locked
       - run: cargo run -p penelope --example trade_manual_review --locked
       - run: cargo run -p penelope --example trade_competing_lock --locked
+      - run: cargo run -p penelope-executor --example recoverable_task --locked
 
   msrv:
     name: Minimum supported Rust
+    env:
+      RUSTUP_TOOLCHAIN: 1.85.0
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: dtolnay/rust-toolchain@3230091d7ef9483f601620abacc570c22cf44d22 # 1.85.0
+      - run: rustc --version
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+
+  no-std:
+    name: Allocation-free portable core
+    env:
+      RUSTUP_TOOLCHAIN: stable
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          targets: riscv32imafc-unknown-none-elf
+      - run: rustc --version
+      - run: cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
+      - run: cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none-elf --locked
 
   fuzz:
     name: Bounded fuzzing
+    env:
+      RUSTUP_TOOLCHAIN: nightly
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -55,6 +83,8 @@ jobs:
 
   supply-chain:
     name: Supply-chain verification
+    env:
+      RUSTUP_TOOLCHAIN: stable
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

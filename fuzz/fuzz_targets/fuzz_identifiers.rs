@@ -5,8 +5,8 @@ use std::str::FromStr;
 use libfuzzer_sys::fuzz_target;
 use penelope_domain::{
     ActionId, CanonicalCommitId, CanonicalEventId, DefinitionId, DefinitionVersion,
-    ExternalReferenceId, InputId, OperationId, OutcomeId, PrincipalId, ProcessId, ResourceId,
-    ReviewId, StepId, TenantId,
+    ExternalReferenceId, InputId, MigrationId, OperationId, OutcomeId, PrincipalId, ProcessId,
+    ResourceId, ReviewId, StepId, TenantId,
 };
 
 fuzz_target!(|data: &[u8]| {
@@ -28,4 +28,5 @@ fuzz_target!(|data: &[u8]| {
     let _ = ResourceId::from_str(text);
     let _ = OperationId::from_str(text);
     let _ = ExternalReferenceId::from_str(text);
+    let _ = MigrationId::from_str(text);
 });

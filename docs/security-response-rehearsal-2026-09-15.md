@@ -1,5 +1,10 @@
 # Security response rehearsal evidence: 2026-09-15
 
+Historical evidence for the 0.1.0 saga foundation at the revision below.
+For the current saga and task procedure, see
+[security-response-rehearsal.md](security-response-rehearsal.md), and consult
+[RELEASE.md](RELEASE.md) for 0.2.0 execution contracts and validation.
+
 ## Scope
 
 Repository: Penelope library workspace  

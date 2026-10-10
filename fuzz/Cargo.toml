@@ -14,25 +14,54 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 serde_json = { workspace = true }
+serde = { workspace = true }
+
+[[bin]]
+name = "fuzz_newtypes"
+path = "fuzz_targets/fuzz_newtypes.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_task_supervisor"
+path = "fuzz_targets/fuzz_task_supervisor.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_task_history"
+path = "fuzz_targets/fuzz_task_history.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_task_checkpoint"
+path = "fuzz_targets/fuzz_task_checkpoint.rs"
+test = false
+doc = false
 
 [dependencies.penelope-domain]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-domain"
 
+[dependencies.penelope-core]
+version = "0.2.0"
+path = "../crates/penelope-core"
+
 [dependencies.penelope-executor]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-executor"
 
 [dependencies.penelope-statechronicle]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-statechronicle"
 
 [dependencies.penelope-ports]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-ports"
 
 [dependencies.penelope-intent]
-version = "0.1.0"
+version = "0.2.0"
 path = "../crates/penelope-intent"
 
 [[bin]]

@@ -12,7 +12,7 @@
 pub use penelope_core as core;
 /// Versioned data-transfer objects.
 pub use penelope_domain as domain;
-/// Frequently used typed protocol values and typed protocol values.
+/// Frequently used typed protocol values.
 pub use penelope_domain::{
     ActionId, CanonicalCommand, CanonicalCommitId, CanonicalEncodingError, CanonicalEvent,
     CanonicalEventId, CanonicalWireBytes, CausationId, ContentDigest, DefinitionCompatibility,
@@ -77,3 +77,8 @@ pub use penelope_statechronicle::{
     CanonicalCommandExpectation, CanonicalCommitBindingError, CorrelationError,
     VerifiedCanonicalEvent, bind_verified_event_to_commit, verify_committed_event,
 };
+
+/// Allocation-free recoverable task contracts and deterministic decisions.
+pub use penelope_core::task;
+/// Bounded supervisor using injected journal and protected runtime adapters.
+pub use penelope_executor::task::TaskSupervisor;

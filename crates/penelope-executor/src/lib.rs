@@ -5,3 +5,6 @@
 mod entry;
 
 pub use entry::*;
+
+/// Recoverable task supervision, independent of the saga engines.
+pub mod task;

@@ -1,5 +1,8 @@
 # Library performance baseline: 2026-09-15
 
+Historical measurements of the 0.1.0 saga foundation, not a 0.2.0 task
+execution benchmark. See [RELEASE.md](RELEASE.md) for current validation.
+
 Revision: `a8a42a6`  
 Command: `cargo bench -p penelope-ports --bench contract_throughput -- --noplot`
 
@@ -10,7 +13,7 @@ The optimized Cargo bench profile measured:
 | Canonical DTO encoding | 100,000 operations | 743 ns/op |
 | Bounded outcome-log append | 4,096 operations | 861 ns/op |
 
-These are pure in-process contract costs on the current host. They exclude
+These are pure in-process contract costs on the measurement host. They exclude
 storage, network, scheduling, lock contention, serialization outside the tested
 path, and adapter retries. They must not be interpreted as durable or
 end-to-end throughput guarantees. Re-run on the target deployment hardware

@@ -11,6 +11,8 @@ permissions:
 jobs:
   pure-chaos:
     name: Restart and timer chaos drill
+    env:
+      RUSTUP_TOOLCHAIN: nightly
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
