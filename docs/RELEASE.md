@@ -1,96 +1,50 @@
-# Penelope 0.2.0 release
+# Penelope 0.2.0 — Recoverable Task Execution
 
-Penelope 0.2.0 adds recoverable task execution alongside the preserved saga
-engine. Seven library crates share version `0.2.0`; internal path dependencies
-carry the same registry requirements. The fuzz crate is never published.
-This branch is a prepared candidate; no tag or registry upload is implied.
+Penelope 0.2.0 provides deterministic, runtime-independent task recovery
+alongside its saga engine. Applications declare recovery permissions, supply
+journal and runtime adapters, and define valid checkpoints and effect evidence.
 
-## Task protocol and security review
+The seven library crates share version `0.2.0`. The release preserves saga v1
+records, linear and graph decisions, retries, compensation and reconciliation.
+This branch is a release candidate; tagging and registry publication are
+separate steps.
 
-The source review covers public contracts, deterministic replay, supervision,
-effect bridging, optional checkpoint evidence, and hostile input boundaries.
-It is a repository engineering review, not an external security certification.
+## Recoverable execution
 
-### Third audit and repository hygiene, 2026-10-10
+Task definitions specify code identity, checkpoint schema, effect contract,
+recovery mode and execution budgets. Four recovery modes are available:
 
-The review of corrected candidate `3b43746` found no additional confirmed
-library recovery defect. It rechecked history capacity, timeout admission,
-checkpoint persistence, stale generations, concurrent dispatch/fencing,
-effect reconciliation, migration and the release-tool boundaries. The history
-fuzzer now independently checks that every accepted running projection can
-still record a timeout without inventing a result or advancing its generation.
-Runtime and journal conformance remain the consuming application's responsibility.
+- `RestartFromBeginning` restarts from committed input.
+- `RestartFromCheckpoint` resumes from a committed application checkpoint,
+  or starts from input when no checkpoint exists.
+- `ReconcileBeforeRestart` requires independent effect evidence before recovery.
+- `NeverRestart` prohibits automatic restart.
 
-`TODO.md` was tracked. It is now removed from the index and ignored at the
-repository root, while the local file is retained. Public documentation points
-to this release guide instead. Earlier Git commits still contain the file;
-history was not rewritten. All seven verified crate archives exclude it.
+A task with the `ReconcileRequired` effect contract requires reconciliation
+after interruption in every recovery mode. Unknown evidence keeps recovery
+blocked. Completion requires a committed result or independent reconciliation
+evidence; a crash, timeout or transport acknowledgement cannot prove success.
 
-Fresh validation of `0d1962b` passed 143 tests on Rust 1.99 and 1.85, the real
-subprocess-kill and thread-interleaving tests, both portable-core cross builds,
-Clippy/rustdoc warning gates, dependency/security checks, architecture gate
-regressions and verification of all seven packaged libraries. The follow-up
-campaign uses 10,000 cases per property test and 100,000 runs for each of the
-eleven fuzz targets. Exact counts, seeds and log hashes are retained separately
-as `third_audit` in the campaign artifact; the preceding campaign evidence
-keeps its original revision and counts.
+`TaskProjection` validates history and selects deterministic transitions.
+`TaskSupervisor` coordinates persistence, execution, checkpoint acknowledgement,
+fencing and recovery through application-supplied ports. Replay reconstructs
+decisions without executing task code or repeating effects.
 
-### Second deep audit, 2026-10-10
+## Execution contracts
 
-The audit of candidate `8c6153a` reproduced two medium-severity lifecycle gaps
-and two low-severity contract/gate defects. All are fixed with regressions.
-The package-verification rerun also exposed a release-tool cache defect:
-
-1. **History capacity could be exhausted while execution remained live.** A
-   restart or acknowledged checkpoint could consume the final record slot,
-   leaving no room to record the generation's fault or completion. Starts and
-   checkpoints now reserve a terminal slot. A rejected live quota proposal
-   fences execution and poisons supervision until reconstruction; the rejected
-   checkpoint is never acknowledged. Fencing failures remain explicit and
-   poisoned, with no unsupported claim of termination.
-2. **Forwarded Pending observations bypassed deadline enforcement.** The public
-   observation path returned without the timeout handling performed by poll.
-   Late non-fault observations now fence and commit timeout before returning
-   DeadlineExpired. Foreign/stale observations reject before any fencing.
-3. **The dependency gate missed AWS SDK package families.** Its anchored
-   expression matched the literal prefix rather than actual package names.
-   A black-box metadata test now checks rejection of aws-sdk-s3, aws-sdk-kms
-   and sqlx, and runs in CI.
-4. **Dispatch dropped persisted input-schema metadata.** The start request now
-   carries the committed input codec version, allowing the runtime to reject
-   unsupported schemas before decoding or computation. This adds no task/saga
-   history fields or definition fingerprint changes. Codec validity remains an
-   application responsibility; the regression runtime rejects an unsupported
-   input schema without executing the task.
-5. **Repeated candidate packaging reused stale same-version dependencies.**
-   Cargo's reused temporary-registry URL retained an older core source during
-   archive verification. The dry-run script now uses a fresh target/registry
-   directory for each run, explicitly excludes the fuzz crate, and preserves
-   the seven verified library archives in the normal package directory.
-
-Real-thread interleavings additionally test competing intent CAS and dispatch
-delayed beyond reconstruction/fencing and a newer generation's start. Runtime
-contracts explicitly require persistent fence tombstones, rejection of delayed
-starts and preservation of newer generations. These tests use shared model
-adapters; deployed adapter conformance remains application-owned. Existing
-saga records/decisions and the task definition fingerprint remain unchanged.
-
-This audit supersedes the earlier completion assessment: passing the previous
-campaign did not establish the two missing lifecycle invariants. Updated
-campaign evidence identifies the corrected source revision.
-
-| Boundary | Review conclusion and evidence |
+| Boundary | Contract |
 | --- | --- |
-| Definition identity | Scope binds the whole definition fingerprint, including every permission and budget. A frozen fixture and mutations of all fourteen fields protect the encoding. |
-| History | Independent task version 1 leaves saga v1 unchanged. Strict new Serde representations reject unknown/duplicate fields. Replay checks scope, generation, sequence, monotonic time and legal transitions atomically. |
-| Commit and dispatch | Input and generation authorization commit before execution. Checkpoints/results become facts only after atomic blob/history commit. Lost or mismatched receipts poison the supervisor until reconstruction. |
-| Interruption | Restoring a running history fences the old generation and records interruption. Stale/cross-scope observations never advance current state. Fencing cannot undo an already-issued remote effect. |
-| External effects | Every recovery mode preserves ambiguous effects. Independent evidence authorizes completion or restart; unknown remains blocked. Task exit, checksum and transport acknowledgement cannot prove success. |
-| Checkpoints and upgrades | Size/schema/content checks precede use. Corruption rejects recovery. Application-authorized migration records old/new references in a newly pinned history; the library never transforms bytes. |
-| Resources and clocks | Admission checks precede hashing/polling. Attempts, history, checkpoint count and blob sizes are bounded. Saturating time arithmetic preserves timeout enforcement near overflow. Runtime adapters enforce CPU allowance and bounded polling. |
-| Storage integrity | Journals must reject corrupt records before replay. Host tests detect valid-JSON corruption using a checksum. Content hashes and semantic replay do not authenticate maliciously rewritten history; deployment integrity/authentication is adapter-owned. |
-| StateChronicle | Optional independently verified state evidence is correlated by scope, generation and checkpoint identity. The boundary does not implement proof verification or require StateChronicle. |
-| Portability | Allocation-free `penelope-core` contracts, projection and synchronous ports build without std, including optional Serde. The supervisor's owning crate and existing saga facade remain hosted. |
+| Definition identity | Execution scope binds the complete definition fingerprint, including recovery permissions and resource budgets. |
+| History | Task records have an independent version discriminator. Replay validates scope, generation, sequence, monotonic time and legal transitions atomically. Task wire decoding rejects unknown and duplicate fields. |
+| Commit and dispatch | Immutable input and generation authorization commit before execution. Checkpoints and results commit atomically with their history records. Ambiguous or mismatched receipts require reconstruction before further dispatch. |
+| Generations | Restoring a running history fences the previous generation before recording interruption. Persistent fencing rejects delayed starts and stale results while preserving newer generations. Concurrent supervisors require journal CAS arbitration. |
+| Checkpoints | Size, schema and content identity are validated before use. Workers pause until durable checkpoint acknowledgement or fencing. Applications define valid computation and effect boundaries. |
+| Upgrades | Checkpoint migration requires application-authorized state transformation into a newly pinned history. Penelope records source and destination references without interpreting application state layouts. |
+| Resources | Attempts, history, checkpoint count and blob sizes are bounded. Live generations retain history capacity for a fault or completion. Rejected live quota proposals fence execution and require reconstruction. |
+| Time | Monotonic clocks govern deadlines and restart delays. Late non-fault observations trigger timeout handling. Saturating arithmetic preserves deadline enforcement near tick overflow. Runtime adapters enforce CPU budgets and bounded polling. |
+| Storage | Journals provide atomic blob/history commit, scoped linearizable reads, integrity checking and durable retention. Content hashes identify bytes; they do not authenticate rewritten history. |
+| Effects | Already-issued external effects may complete after fencing. Independent reconciliation determines whether recovery or completion is authorized. |
+| StateChronicle | Optional verified checkpoint-state evidence is correlated by scope, generation and checkpoint identity. Proof verification belongs to the implementing adapter; StateChronicle is not required. |
 
 The definition fingerprint is SHA-256 over `penelope.task-definition.v1\0`,
 code bytes, checkpoint schema (u32), effect tag (u8), recovery tag (u8),
@@ -100,25 +54,29 @@ input/output/history/checkpoint-count limits (four u32 values), CPU allowance
 Effect tags are Pure=0 and ReconcileRequired=1; recovery tags are Beginning=0,
 Checkpoint=1, Reconcile=2, Never=3. This encoding is independent of Serde.
 
-Security regression suites cover malformed wire values, substituted policies,
-forged scope/generation, reordered/corrupt history, checkpoint substitution,
-premature fault claims, repeated crashes, quota exhaustion, regressed clocks,
-tick overflow, failed fencing, lost receipts, and poisoned reconstruction.
-Real subprocess-kill tests exercise four fsync/rename persistence/effect
-boundaries. Eleven fuzz targets run with sanitizer instrumentation, alongside
-seeded property/chaos tests. Saga compatibility fixtures remain active.
+## Portable core and application integration
 
-Fault detection depends on trusted runtime observations. Recovery depends on
-declared contracts. Task logic, checkpoint meaning, migration authorization,
-durability, authentication, CPU enforcement, isolation and authoritative external
-evidence remain application responsibilities. No RTOS, MPU/PMP, scheduler or
-hardware integration is part of this release.
+`penelope-core` provides allocation-free task contracts, projection and
+synchronous ports without `std` or `alloc`, including optional Serde support.
+The supervisor's owning crate, saga facade and asynchronous ports remain hosted.
 
-## Release validation
+Penelope is agnostic to runtime, operating system and storage backend.
+Applications own task correctness, checkpoint meaning, migration authorization,
+journal durability and authentication, runtime fencing and CPU enforcement,
+and authoritative external-effect evidence. Recovery does not provide
+instruction-level continuation or guarantee arbitrary program correctness.
 
-Exact source revision, seeds, counts, coverage and check results are retained
-in [the campaign artifact](../ci/recoverable-execution-campaign.json).
-The Rust toolchain is pinned to 1.99.0; the library retains its tested 1.85 MSRV.
+## Validation
+
+The test suite includes saga compatibility fixtures, task protocol fixtures,
+property tests, real-thread CAS/fencing interleavings, and subprocess kills at
+four persistence/effect boundaries: before checkpoint persistence, after blob
+persistence, after history commit, and after an external effect before
+acknowledgement. Eleven sanitizer-instrumented fuzz targets exercise protocol
+and recovery boundaries. The task history fuzzer checks that every accepted
+running state can still record a timeout.
+
+The Rust toolchain is pinned to 1.99.0, with a supported minimum of 1.85.
 Run from the repository root:
 
 ```bash
@@ -136,27 +94,27 @@ cargo audit
 cargo deny check
 ./scripts/check-action-pins.sh
 ./scripts/check-layer-boundaries.sh
+./scripts/test-layer-boundaries.sh
 ./scripts/check-no-secrets.sh
 ./scripts/publish-crates.sh
 git diff --check
 ```
 
-The default packaging script verifies unpacked archives using Cargo's temporary
-workspace registry in a fresh target directory, without uploading them. This
-checks packaged sources and internal dependency resolution before publication,
-including repeated candidates at the same version. Verified archives are
-retained under the configured Cargo target directory's package directory.
+Deployment adapters need their own conformance checks for transactional
+commit/CAS, durable retention, idempotent starts, persistent fencing and
+independently verified effect evidence. Host process-kill tests do not certify
+power-loss behavior or production adapter implementations.
 
-## Tagging and publication
+## Packaging and publication
 
-After explicitly authorizing release publication, review the clean revision,
-changelog and campaign evidence, then create an annotated `v0.2.0` tag.
-Publish dependency-first with `./scripts/publish-crates.sh --publish`.
-The script derives order from Cargo metadata, waits for exact versions to
-enter the crates.io index, skips already-published versions and verifies all
-expected versions. Credentials remain outside the repository.
+`./scripts/publish-crates.sh` verifies the seven unpacked library archives
+using a fresh Cargo temporary registry for each run. It excludes the fuzz
+crate and retains verified archives under the configured Cargo target
+directory's `package` directory.
 
-Consumer adapter conformance must be assessed per deployment: transactional
-commit/CAS, durable retention, idempotent starts, old-generation fencing and
-independently verified effect evidence. Process-kill simulation does not certify
-power-loss behavior or a production storage/runtime implementation.
+For an authorized release, validate the release revision and changelog, create
+an annotated `v0.2.0` tag, then publish dependency-first with
+`./scripts/publish-crates.sh --publish`. The script derives dependency order
+from Cargo metadata, waits for exact versions in the crates.io index, skips
+already-published versions and verifies all expected versions. Credentials
+remain outside the repository.

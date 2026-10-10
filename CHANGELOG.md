@@ -30,16 +30,16 @@ Prepared release; tagging and registry publication are separate actions.
 - Reserve history capacity for live-generation termination; fence and require
   reconstruction after rejected live quota proposals without checkpoint ack.
 - Enforce deadlines on forwarded observations and document persistent fencing
-  against delayed dispatch, with real-thread CAS/fencing regression tests.
+  against delayed dispatch, with real-thread CAS/fencing contract tests.
 - Reject AWS SDK package families in the architecture dependency gate, with a
-  black-box regression check in CI.
+  black-box dependency check in CI.
 - Forward persisted input codec versions to runtime admission so unsupported
   schemas can reject before computation.
 
 ### Changed
 
-- Isolate each package-verification registry to avoid stale same-version
-  candidates, explicitly exclude fuzz packaging, and retain verified archives.
+- Verify library packages in isolated temporary registries, exclude the fuzz
+  crate from packaging, and retain verified archives.
 - Domain-separated definition fingerprints bind all recovery permissions and
   quotas to execution scope; golden fixtures freeze their canonical encoding.
 - Strict new task wire decoding rejects unknown and duplicate fields without

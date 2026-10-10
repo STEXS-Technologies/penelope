@@ -37,5 +37,5 @@ durable records, bounded polling, generation fencing, CPU enforcement and
 independent reconciliation evidence. SHA-256 references identify bytes; they
 do not authenticate a journal or prove application correctness. The portable
 core checks lifecycle transitions and quotas without providing isolation or
-preemption. See [the protocol review](docs/RELEASE.md#task-protocol-and-security-review)
+preemption. See [the execution contracts](docs/RELEASE.md#execution-contracts)
 for tested threats and explicit deployment responsibilities.
