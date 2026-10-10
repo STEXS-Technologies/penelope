@@ -23,7 +23,7 @@ done
 
 for iteration in $(seq 1 "${iterations}"); do
   printf '[%s/%s] pure transition/restart/timer drill\n' "${iteration}" "${iterations}"
-  PROPTEST_CASES="${proptest_cases}" \
+  PROPTEST_CASES="${proptest_cases}" PROPTEST_RNG_SEED="${PENELOPE_CHAOS_SEED:-$iteration}" \
     cargo test -p penelope-executor --all-targets --all-features --locked
 
   printf '[%s/%s] public-boundary malformed-input drill\n' \

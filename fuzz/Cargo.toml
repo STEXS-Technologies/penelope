@@ -15,6 +15,18 @@ cargo-fuzz = true
 libfuzzer-sys = "0.4"
 serde_json = { workspace = true }
 
+[[bin]]
+name = "fuzz_task_history"
+path = "fuzz_targets/fuzz_task_history.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_task_checkpoint"
+path = "fuzz_targets/fuzz_task_checkpoint.rs"
+test = false
+doc = false
+
 [dependencies.penelope-domain]
 version = "0.1.0"
 path = "../crates/penelope-domain"

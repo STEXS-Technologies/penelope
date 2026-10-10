@@ -36,6 +36,35 @@ After a crash, load the ordered outcome log and replay it. Duplicate inputs are
 deduplicated, stale results are rejected, and unknown effects wait for
 reconciliation instead of triggering blind retries.
 
+## Recoverable task execution (0.2.0 development)
+
+The existing saga APIs and v1 records retain their meaning. Alongside them,
+`penelope::task` provides explicit recovery permissions, immutable input,
+committed checkpoint references, ordered task history, typed faults, bounded
+recovery attempts and generation fencing. `TaskSupervisor` coordinates those
+decisions with application-supplied journal and runtime ports.
+
+Penelope never infers completion from a crash or timeout. Interrupted operations
+with external effects require independent reconciliation; unknown evidence does
+not authorize a restart. Application logic defines valid checkpoints, effect
+boundaries and result correctness. There is no instruction-level continuation,
+scheduler, OS integration or storage implementation in the library.
+
+The `penelope-core` task contracts, projection and synchronous ports compile
+without `std` or `alloc`. Select that crate directly for the portable decision
+profile; the existing facade, saga crates and async ports remain hosted.
+
+```bash
+cargo run -p penelope-executor --example recoverable_task --locked
+cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
+PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=2000 PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
+```
+
+Task histories have their own version discriminator, independent of saga v1.
+Checkpoint schema/code changes require an explicit application transformation
+into a newly pinned history; old bytes are never silently reinterpreted.
+See [the architecture and release gates](TODO.md#recoverable-execution-020).
+
 ## StateChronicle boundary
 
 `penelope-statechronicle` provides the typed contract for canonical commands

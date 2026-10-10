@@ -8,6 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 
 [dependencies]
+penelope-core = { workspace = true, features = ["serde"] }
 penelope-domain = { workspace = true }
 async-trait = { workspace = true }
 serde = { workspace = true }

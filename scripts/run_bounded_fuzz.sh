@@ -25,6 +25,8 @@ fuzz_targets=(
   fuzz_manual_review_lifecycle
   fuzz_process_input_parse
   fuzz_process_control_ports
+  fuzz_task_history
+  fuzz_task_checkpoint
 )
 
 dtos=(

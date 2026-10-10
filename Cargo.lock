@@ -238,6 +238,11 @@ dependencies = [
 [[package]]
 name = "penelope-core"
 version = "0.1.0"
+dependencies = [
+ "serde",
+ "sha2",
+ "thiserror",
+]
 
 [[package]]
 name = "penelope-domain"
@@ -260,6 +265,7 @@ dependencies = [
  "penelope-ports",
  "proptest",
  "serde",
+ "serde_json",
  "thiserror",
 ]
 
@@ -291,6 +297,7 @@ name = "penelope-ports"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "penelope-core",
  "penelope-domain",
  "serde",
  "serde_json",

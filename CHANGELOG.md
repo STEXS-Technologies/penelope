@@ -7,6 +7,20 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Independent recoverable-task contracts and bounded deterministic task history
+  replay, without changing the saga v1 protocol or decision engines.
+- Explicit restart modes, immutable input/results, committed checkpoints,
+  task generations, typed faults, deadlines, delays and resource quotas.
+- Injected journal/runtime ports and a fail-closed supervisor that commits
+  before dispatching and reconstructs after ambiguous acknowledgements.
+- Explicit checkpoint migration and independent external-effect reconciliation.
+- Optional StateChronicle checkpoint-state correlation and saga effect bridge.
+- Allocation-free no_std core with optional no_std Serde and cross-target CI.
+- Real process-kill persistence/effect tests, seeded recovery chaos, task wire
+  fixture, and task history/checkpoint fuzzers.
+
 ## [0.1.0] - 2026-09-15
 
 Initial release of Penelope, a foundation for reliable sagas and long-running

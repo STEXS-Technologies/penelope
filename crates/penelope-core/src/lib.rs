@@ -1,3 +1,4 @@
+#![no_std]
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
 
@@ -6,3 +7,6 @@ mod entry;
 
 #[allow(unused_imports)]
 pub use entry::*;
+
+/// Allocation-free, versioned recoverable execution contracts and decisions.
+pub mod task;
