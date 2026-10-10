@@ -16,7 +16,7 @@ security-advisory reporting channel, including:
 
 - affected revision and build command;
 - a minimal reproduction or proof of concept;
-- impact, tenant/process scope, and prerequisites; and
+- impact, tenant/process or task scope, generation and prerequisites; and
 - any mitigation or disclosure deadline you propose.
 
 Maintainers will acknowledge a report within seven calendar days, assess the

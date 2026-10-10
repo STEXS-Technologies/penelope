@@ -8,6 +8,9 @@ external results.
 Use it for settlement, trading, approvals, inventory, marketplace orders,
 payments, provisioning, refunds, and other multi-step processes where “run it
 again” is not a safe recovery strategy.
+Recoverable tasks also support structured computations such as data ingestion,
+index construction, code analysis and batch processing, with application-defined
+checkpoints and explicit recovery permissions.
 
 ## What Penelope gives you
 
@@ -16,6 +19,9 @@ again” is not a safe recovery strategy.
 - Typed identities and scopes that prevent cross-process or stale results.
 - Bounded retries, backoff, jitter, deadlines, and timer decisions.
 - LIFO compensation, cancellation, reconciliation, and manual review.
+- Recoverable task supervision, committed checkpoints, generation fencing and
+  bounded execution budgets through injected journal/runtime ports.
+- An allocation-free `no_std` decision core with optional Serde support.
 - Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
   operator workflows.
 
@@ -25,13 +31,25 @@ ambiguous payment, trade, or canonical mutation succeeded.
 
 ## The programming model
 
+Given a saga definition, replayed projection and typed input, ask the pure engine
+for its next decision:
+
 ```rust
-let decision = engine.decide(&definition, &projection, input)?;
-store.commit(decision.outcomes(), decision.actions())?;
-for action in decision.actions() {
-    outbox.dispatch(action)?;
-}
+let decision = penelope::decide(
+    &definition,
+    projection.as_ref(),
+    tenant_id,
+    process_id,
+    &input,
+)?;
 ```
+
+Build an `AtomicProcessCommit` containing the accepted input, ordered outcome
+plan and pending actions, and persist it through your `ProcessStore` adapter.
+Dispatch only after a validated commit receipt. Route timer and manual-review
+decisions through their corresponding ports. The
+[trade example](crates/penelope/examples/trade.rs) demonstrates decision and
+outcome planning; application adapters provide durable commit and dispatch.
 
 After a crash, load the ordered outcome log and replay it. Duplicate inputs are
 deduplicated, stale results are rejected, and unknown effects wait for
@@ -81,6 +99,9 @@ operation, resource scope, and result evidence.
 
 Penelope and StateChronicle can use separate datastores. Correctness comes from
 durable local records, at-least-once delivery, idempotency, and reconciliation.
+Task checkpoint-state verification is optional: evidence binds the exact task
+scope, generation and checkpoint identity, and the adapter verifies the proof.
+Recoverable execution also works with an independent journal.
 
 ## Start building
 
@@ -108,6 +129,9 @@ service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
 boundary, `0.2.0` release procedure and protocol review. This branch prepares
 0.2.0; registry availability follows publication.
+
+Use the [pull request template](.github/pull_request_template.md) when proposing
+changes, and follow the [validation commands](docs/RELEASE.md#validation).
 
 The project is dual-licensed under [MIT](LICENSE-MIT) or
 [Apache 2.0](LICENSE-APACHE).

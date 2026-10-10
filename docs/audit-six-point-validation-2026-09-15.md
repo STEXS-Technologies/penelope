@@ -1,5 +1,9 @@
 # Penelope six-point library validation
 
+Historical evidence for the 0.1.0 saga foundation, recorded on 2026-09-15.
+The commands, counts and measurements below describe that campaign. Current
+0.2.0 execution contracts and validation are in [RELEASE.md](RELEASE.md).
+
 This report covers only the reusable Penelope library. It does not claim that
 an external database, broker, scheduler, KMS, worker pool, or StateChronicle
 adapter is production-ready.
@@ -82,7 +86,8 @@ without crashes or sanitizer markers. Pure host-local measurements were about
 graph operations/s, 16.9M isolated parallel linear operations/s, and 1.48 us
 replay operations.
 
-**Command:** `./scripts/run_pure_chaos_drill.sh` (includes release benchmarks).
+**Commands:** `./scripts/run_pure_chaos_drill.sh` for recovery/fuzz checks;
+`cargo bench -p penelope-executor --locked` for the separate benchmark suite.
 
 **Boundary:** these are not shared-state, durable, network, or end-to-end
 throughput figures. Storage contention, queue latency, worker scheduling,

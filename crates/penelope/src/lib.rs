@@ -12,7 +12,7 @@
 pub use penelope_core as core;
 /// Versioned data-transfer objects.
 pub use penelope_domain as domain;
-/// Frequently used typed protocol values and typed protocol values.
+/// Frequently used typed protocol values.
 pub use penelope_domain::{
     ActionId, CanonicalCommand, CanonicalCommitId, CanonicalEncodingError, CanonicalEvent,
     CanonicalEventId, CanonicalWireBytes, CausationId, ContentDigest, DefinitionCompatibility,

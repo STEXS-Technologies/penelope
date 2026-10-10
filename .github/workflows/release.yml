@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: "Publish the 0.1.0 crates to crates.io"
+        description: "Publish the workspace crates to crates.io"
         required: true
         default: "false"
         type: choice

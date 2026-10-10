@@ -93,6 +93,10 @@ boundaries. AST-based tests enforce explicit newtype fuzz invocations and keep
 all library `lib.rs` and `mod.rs` files limited to declarations and exports.
 
 The Rust toolchain is pinned to 1.99.0, with a supported minimum of 1.85.
+The full campaign also requires Python 3.11 or newer, the RISC-V target,
+nightly Rust with `cargo-fuzz`, `cargo-llvm-cov` with `llvm-tools-preview`,
+`cargo-audit`, `cargo-deny`, and `gitleaks`. Install the target with
+`rustup target add riscv32imafc-unknown-none-elf` before cross-target checks.
 Run from the repository root:
 
 ```bash

@@ -13,6 +13,8 @@ Prepared release; tagging and registry publication are separate actions.
 
 ### Added
 
+- Pull request template with crate/API impact, compatibility, documentation
+  and validation checks for saga and recoverable task changes.
 - Independent recoverable-task contracts and bounded deterministic task history
   replay, without changing the saga v1 protocol or decision engines.
 - Explicit restart modes, immutable input/results, committed checkpoints,
