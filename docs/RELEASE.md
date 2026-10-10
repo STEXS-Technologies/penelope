@@ -6,8 +6,8 @@ journal and runtime adapters, and define valid checkpoints and effect evidence.
 
 The seven library crates share version `0.2.0`. The release preserves saga v1
 records, linear and graph decisions, retries, compensation and reconciliation.
-This branch is a release candidate; tagging and registry publication are
-separate steps.
+Tagging and registry publication run through the release workflow after its
+verification gates pass.
 
 ## Recoverable execution
 
@@ -166,9 +166,15 @@ using a fresh Cargo temporary registry for each run. It excludes the fuzz
 crate and retains verified archives under the configured Cargo target
 directory's `package` directory.
 
-For an authorized release, validate the release revision and changelog, create
-an annotated `v0.2.0` tag, then publish dependency-first with
-`./scripts/publish-crates.sh --publish`. The script derives dependency order
+For an authorized release, validate the latest `main` revision and its dated
+changelog entry, then create and push an annotated `v0.2.0` tag. The release
+workflow verifies the tagged revision and package version, publishes the crates
+dependency-first, and creates a GitHub release from the matching changelog
+section. Missing, empty or duplicate version entries stop release verification.
+Manual verification does not create a GitHub release; manual registry publishing
+requires a release tag and the explicit publishing input.
+
+The underlying `./scripts/publish-crates.sh --publish` derives dependency order
 from Cargo metadata, waits for exact versions in the crates.io index, skips
 already-published versions and verifies all expected versions. Credentials
 remain outside the repository.
