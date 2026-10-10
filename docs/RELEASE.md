@@ -11,6 +11,30 @@ The source review covers public contracts, deterministic replay, supervision,
 effect bridging, optional checkpoint evidence, and hostile input boundaries.
 It is a repository engineering review, not an external security certification.
 
+### Third audit and repository hygiene, 2026-10-10
+
+The review of corrected candidate `3b43746` found no additional confirmed
+library recovery defect. It rechecked history capacity, timeout admission,
+checkpoint persistence, stale generations, concurrent dispatch/fencing,
+effect reconciliation, migration and the release-tool boundaries. The history
+fuzzer now independently checks that every accepted running projection can
+still record a timeout without inventing a result or advancing its generation.
+Runtime and journal conformance remain the consuming application's responsibility.
+
+`TODO.md` was tracked. It is now removed from the index and ignored at the
+repository root, while the local file is retained. Public documentation points
+to this release guide instead. Earlier Git commits still contain the file;
+history was not rewritten. All seven verified crate archives exclude it.
+
+Fresh validation of `0d1962b` passed 143 tests on Rust 1.99 and 1.85, the real
+subprocess-kill and thread-interleaving tests, both portable-core cross builds,
+Clippy/rustdoc warning gates, dependency/security checks, architecture gate
+regressions and verification of all seven packaged libraries. The follow-up
+campaign uses 10,000 cases per property test and 100,000 runs for each of the
+eleven fuzz targets. Exact counts, seeds and log hashes are retained separately
+as `third_audit` in the campaign artifact; the preceding campaign evidence
+keeps its original revision and counts.
+
 ### Second deep audit, 2026-10-10
 
 The audit of candidate `8c6153a` reproduced two medium-severity lifecycle gaps

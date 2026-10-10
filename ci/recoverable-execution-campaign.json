@@ -1,5 +1,166 @@
 {
   "schema_version": 1,
+  "third_audit": {
+    "date": "2026-10-10",
+    "source_commit": "0d1962b380aa3eaa85da34e6634ed6a70144b568",
+    "status": "passed",
+    "new_confirmed_library_findings": [],
+    "reviewed_boundaries": [
+      "terminal history capacity",
+      "timeout observation admission",
+      "checkpoint persistence",
+      "generation fencing and concurrent delayed dispatch",
+      "effect reconciliation",
+      "checkpoint migration",
+      "package verification and tracked repository hygiene"
+    ],
+    "hygiene": {
+      "local_todo_retained": true,
+      "todo_tracked": false,
+      "todo_ignored": true,
+      "historical_todo_retained": true,
+      "verified_archives_exclude_todo": true,
+      "preexisting_untracked_paths": [
+        ".codex/",
+        ".opencode/",
+        "AGENTS.md",
+        "graphify-out/"
+      ]
+    },
+    "new_fuzz_oracle": "Every accepted Running state admits a timeout fact without advancing the generation or inventing output",
+    "workspace_tests": {
+      "1.99.0": 143,
+      "1.85.0": 143
+    },
+    "campaign": {
+      "iterations": 1,
+      "property_cases_per_test": 10000,
+      "property_rng_seeds": [
+        1
+      ],
+      "total_fuzz_runs": 1100000,
+      "runs": [
+        {
+          "target": "fuzz_identifiers",
+          "seed": 3112014726,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_dtos",
+          "seed": 2462212983,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_linear_engine",
+          "seed": 614633265,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_statechronicle_correlation",
+          "seed": 2077868804,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_atomic_process_commit",
+          "seed": 3419610221,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_canonical_reconciliation",
+          "seed": 359891943,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_manual_review_lifecycle",
+          "seed": 3960916400,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_process_input_parse",
+          "seed": 2523864836,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_process_control_ports",
+          "seed": 2320543129,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_task_history",
+          "seed": 1818767845,
+          "runs": 100000
+        },
+        {
+          "target": "fuzz_task_checkpoint",
+          "seed": 4140391553,
+          "runs": 100000
+        }
+      ]
+    },
+    "checks_passed": [
+      "fmt",
+      "clippy -D warnings",
+      "rustdoc -D warnings",
+      "no_std RISC-V without default features",
+      "no_std RISC-V with serde",
+      "cargo audit",
+      "cargo deny check",
+      "black-box architecture gate",
+      "action pins",
+      "secret scan",
+      "seven unpacked library package verifications",
+      "process kill tests",
+      "real thread interleavings"
+    ],
+    "log_sha256": {
+      "tests": "e7c0854efac8f355b7de843fde88aeb4edcde89c3c0b030eddf8aad5698bc8fd",
+      "msrv": "2635cd9a69dc385dc0bac97de298c29b683e195d4aabd28046c8198c9fb7c92a",
+      "clippy": "dafd34ea81a4857dd2aaeb6323249642d422061e39aadcd22b1e436fa6d874de",
+      "rustdoc": "e38a420fb2326927ebff666ab41bfee8d96a597f3d425868eca9c0dd5d59f436",
+      "no-std": "75b5fda76503143a7c531f3a1501ebae90797463dbe77f689d764ef271da123c",
+      "deps": "a5f58f00c65f47d67cfab89ede6fe7fef2f6976165bfa97c57c411bbb911fb1d",
+      "layers": "1f40dd80c70192061b7b0422814a6c19106721ee283b63616139b43c194087ba",
+      "pins": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "secrets": "858f2e8060d6f1e8aa6813ec372d1f9180143ffc4e942f30ed1f2deb739fdec9",
+      "package": "1458a4a16b9d3e161631e0d9415d3403338a016f54565f2fe85552437e1c787b",
+      "chaos": "c61bb9f9c9b05401e2b06671d3266660e29d67a1ca3bab309d99e115f40d8e1e"
+    },
+    "archives": [
+      {
+        "file": "penelope-0.2.0.crate",
+        "sha256": "f439e2b1ee9e8106758087bb5493df0c7a01a284bc80cd3dfe73dd26f2ab4b9d"
+      },
+      {
+        "file": "penelope-core-0.2.0.crate",
+        "sha256": "6bd9ce557a2adaff9dfe285128361bc838053fecd3f8d8cc1f5c7e28bdefbd09"
+      },
+      {
+        "file": "penelope-domain-0.2.0.crate",
+        "sha256": "81506a6504b82558546f8ea5b93b5fbe242efec7945ddc890c8b5fb51d5a9849"
+      },
+      {
+        "file": "penelope-executor-0.2.0.crate",
+        "sha256": "4478eae4e2a1936b578c10d0b045f9d67c6c0d73211a3094a3b72de05d2f0b79"
+      },
+      {
+        "file": "penelope-intent-0.2.0.crate",
+        "sha256": "9e1f6c1f7675f633c59b6b3654dd82f857791e22138cccb6e48b4133db72bde9"
+      },
+      {
+        "file": "penelope-ports-0.2.0.crate",
+        "sha256": "a0f6fcf2987a0bcb2a28bf591fdd8ea8c15063be80e70166eda3a5a33691ce06"
+      },
+      {
+        "file": "penelope-statechronicle-0.2.0.crate",
+        "sha256": "956a2162d3fab93f53bc7d250fb5d3ef7c6fe35b195ccfe67be5cd063826bc90"
+      }
+    ],
+    "commands": [
+      "PENELOPE_CHAOS_ITERATIONS=1 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh",
+      "./scripts/publish-crates.sh"
+    ],
+    "external_certification": false
+  },
   "date": "2026-10-10",
   "source_commit": "37009cf1d37e4172840048afa5327a080d249ea9",
   "branch": "feature/recoverable-task-execution",
