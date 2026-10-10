@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "source_commit": "907f34050fe35ceeac84aac60923a9062972b2e2",
+  "branch": "feature/recoverable-task-execution",
+  "stable_rust": "1.99.0",
+  "fuzz_rust": "1.99.0-nightly (7608eb7b0 2026-08-05)",
+  "campaign": {
+    "iterations": 3,
+    "property_cases_per_test_per_iteration": 10000,
+    "property_rng_seeds": [
+      1,
+      2,
+      3
+    ],
+    "configured_fuzz_runs_per_target_per_iteration": 100000,
+    "total_fuzz_runs": 3300000,
+    "status": "passed",
+    "runs": [
+      {
+        "iteration": 1,
+        "target": "fuzz_identifiers",
+        "seed": 4052607323,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_dtos",
+        "seed": 1915507540,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_linear_engine",
+        "seed": 2536784431,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_statechronicle_correlation",
+        "seed": 2418533630,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_atomic_process_commit",
+        "seed": 1363241708,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_canonical_reconciliation",
+        "seed": 10814223,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_manual_review_lifecycle",
+        "seed": 2116364839,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_process_input_parse",
+        "seed": 3540488362,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_process_control_ports",
+        "seed": 1345865275,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_task_history",
+        "seed": 650479590,
+        "runs": 100000
+      },
+      {
+        "iteration": 1,
+        "target": "fuzz_task_checkpoint",
+        "seed": 2598426637,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_identifiers",
+        "seed": 2078733401,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_dtos",
+        "seed": 2581957988,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_linear_engine",
+        "seed": 441292045,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_statechronicle_correlation",
+        "seed": 4047813062,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_atomic_process_commit",
+        "seed": 1283756548,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_canonical_reconciliation",
+        "seed": 3358658515,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_manual_review_lifecycle",
+        "seed": 414236266,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_process_input_parse",
+        "seed": 1703276550,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_process_control_ports",
+        "seed": 2624033223,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_task_history",
+        "seed": 570491533,
+        "runs": 100000
+      },
+      {
+        "iteration": 2,
+        "target": "fuzz_task_checkpoint",
+        "seed": 2225533395,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_identifiers",
+        "seed": 1644269486,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_dtos",
+        "seed": 2153567712,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_linear_engine",
+        "seed": 209366363,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_statechronicle_correlation",
+        "seed": 3722371389,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_atomic_process_commit",
+        "seed": 1049476028,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_canonical_reconciliation",
+        "seed": 3086329056,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_manual_review_lifecycle",
+        "seed": 124797603,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_process_input_parse",
+        "seed": 1415062716,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_process_control_ports",
+        "seed": 2396414152,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_task_history",
+        "seed": 393064947,
+        "runs": 100000
+      },
+      {
+        "iteration": 3,
+        "target": "fuzz_task_checkpoint",
+        "seed": 2061776455,
+        "runs": 100000
+      }
+    ]
+  },
+  "workspace_tests": {
+    "1.99.0": {
+      "passed": 135,
+      "failed": 0
+    },
+    "1.85.0": {
+      "passed": 135,
+      "failed": 0
+    }
+  },
+  "coverage": {
+    "percent": 94.32231261900641,
+    "required_percent": 94.0759,
+    "covered_lines": 5449,
+    "total_lines": 5777,
+    "task_modules": [
+      {
+        "file": "crates/penelope-core/src/task/contracts.rs",
+        "lines": {
+          "count": 48,
+          "covered": 48,
+          "percent": 100
+        }
+      },
+      {
+        "file": "crates/penelope-core/src/task/projection.rs",
+        "lines": {
+          "count": 309,
+          "covered": 304,
+          "percent": 98.38187702265373
+        }
+      },
+      {
+        "file": "crates/penelope-executor/src/task.rs",
+        "lines": {
+          "count": 286,
+          "covered": 269,
+          "percent": 94.05594405594405
+        }
+      },
+      {
+        "file": "crates/penelope-ports/src/tasks.rs",
+        "lines": {
+          "count": 37,
+          "covered": 33,
+          "percent": 89.1891891891892
+        }
+      },
+      {
+        "file": "crates/penelope-statechronicle/src/task.rs",
+        "lines": {
+          "count": 16,
+          "covered": 15,
+          "percent": 93.75
+        }
+      }
+    ]
+  },
+  "checks_passed": [
+    "clippy -D warnings",
+    "rustdoc -D warnings",
+    "fmt",
+    "no_std RISC-V without default features",
+    "no_std RISC-V with serde",
+    "cargo audit",
+    "cargo deny check",
+    "layer boundaries",
+    "GitHub Action pins",
+    "secret scan",
+    "package verification of all seven unpacked 0.2.0 archives using Cargo temporary registry"
+  ],
+  "process_kill_boundaries": [
+    "before checkpoint blob persistence",
+    "after checkpoint blob persistence before history commit",
+    "after checkpoint history commit before acknowledgement",
+    "after external effect before acknowledgement"
+  ],
+  "campaign_log_sha256": "052c89e4ce6333913d03f349c7b63112de29fe207a34d0e236d66617651623ee",
+  "commands": [
+    "PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh",
+    "cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+    "cargo +1.85.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+    "./scripts/run_coverage_json.sh",
+    "./scripts/check_coverage_ratchet.sh"
+  ],
+  "release_status": "0.2.0 library candidate validated; not tagged or published",
+  "remaining_release_work": [],
+  "consumer_owned": [
+    "journal durability/CAS/retention adapter conformance",
+    "runtime fencing and CPU enforcement",
+    "independent external effect evidence",
+    "application checkpoint correctness and migration authorization"
+  ],
+  "portable_profile": "penelope-core; existing facade and saga crates remain hosted",
+  "version": "0.2.0",
+  "package_verification": {
+    "command": "cargo package --workspace --locked --allow-dirty --exclude penelope-fuzz",
+    "verified_packages": 7,
+    "version": "0.2.0",
+    "log_sha256": "42bf07f6b2b062b00ee2f98c40d4adc8a7f660cf4147a543ac244022b803a86c"
+  },
+  "protocol_review": {
+    "status": "completed repository engineering review",
+    "external_certification": false,
+    "document": "docs/RELEASE.md#task-protocol-and-security-review",
+    "closed_findings": [
+      "full definition fingerprint binding",
+      "strict new task wire decoding",
+      "early quota admission",
+      "regressed-clock rejection before polling",
+      "saturating timeout arithmetic",
+      "explicit journal integrity and remote-effect fencing boundaries"
+    ],
+    "security_tests": [
+      "task_security",
+      "task_adversarial",
+      "task_contracts",
+      "task_recovery",
+      "task_process_crash",
+      "task_effect_bridge",
+      "optional StateChronicle task evidence"
+    ],
+    "valid_json_journal_corruption": "rejected before replay"
+  },
+  "publication": "Tagging and crates.io publication require a separate release action; none performed.",
+  "previous_campaign": {
+    "source_commit": "ed059dd9bef6b3681242d29843a7ee0bb5a3c00a",
+    "total_fuzz_runs": 3300000,
+    "status": "passed; superseded by final 0.2.0 source campaign"
+  }
+}
