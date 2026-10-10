@@ -17,9 +17,17 @@ if [[ "${#crates[@]}" -eq 0 ]]; then
 fi
 
 if [[ "$mode" == "dry-run" ]]; then
-  # Cargo stages workspace dependencies in a temporary registry and verifies
-  # each unpacked archive without uploading anything.
-  cargo package --workspace --locked --allow-dirty
+  # Isolate Cargo's temporary registry for each candidate. Reusing its source
+  # URL can otherwise reuse cached dependencies from an older same-version
+  # candidate. Preserve the verified archives in the normal package directory.
+  package_output_dir="$(cargo metadata --format-version=1 --no-deps | python3 -c 'import json, sys; print(json.load(sys.stdin)["target_directory"] + "/package")')"
+  mkdir -p "$package_output_dir"
+  package_verify_dir="$(mktemp -d "$package_output_dir/verify.XXXXXXXX")"
+  trap 'rm -rf "$package_verify_dir"' EXIT
+  cargo package --workspace --locked --allow-dirty --exclude penelope-fuzz \
+    --target-dir "$package_verify_dir"
+  cp "$package_verify_dir/package/"*.crate "$package_output_dir/"
+  printf 'Verified library archives retained in %s\n' "$package_output_dir"
 else
   if [[ -z "${CARGO_REGISTRY_TOKEN:-}" ]]; then
     echo "CARGO_REGISTRY_TOKEN is required to publish crates" >&2

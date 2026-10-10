@@ -14,7 +14,8 @@ It is a repository engineering review, not an external security certification.
 ### Second deep audit, 2026-10-10
 
 The audit of candidate `8c6153a` reproduced two medium-severity lifecycle gaps
-and two low-severity contract/gate defects. All are fixed with regressions:
+and two low-severity contract/gate defects. All are fixed with regressions.
+The package-verification rerun also exposed a release-tool cache defect:
 
 1. **History capacity could be exhausted while execution remained live.** A
    restart or acknowledged checkpoint could consume the final record slot,
@@ -37,6 +38,11 @@ and two low-severity contract/gate defects. All are fixed with regressions:
    history fields or definition fingerprint changes. Codec validity remains an
    application responsibility; the regression runtime rejects an unsupported
    input schema without executing the task.
+5. **Repeated candidate packaging reused stale same-version dependencies.**
+   Cargo's reused temporary-registry URL retained an older core source during
+   archive verification. The dry-run script now uses a fresh target/registry
+   directory for each run, explicitly excludes the fuzz crate, and preserves
+   the seven verified library archives in the normal package directory.
 
 Real-thread interleavings additionally test competing intent CAS and dispatch
 delayed beyond reconstruction/fencing and a newer generation's start. Runtime
@@ -112,8 +118,10 @@ git diff --check
 ```
 
 The default packaging script verifies unpacked archives using Cargo's temporary
-workspace registry, without uploading them. This checks packaged sources and
-internal dependency resolution before any publication.
+workspace registry in a fresh target directory, without uploading them. This
+checks packaged sources and internal dependency resolution before publication,
+including repeated candidates at the same version. Verified archives are
+retained under the configured Cargo target directory's package directory.
 
 ## Tagging and publication
 

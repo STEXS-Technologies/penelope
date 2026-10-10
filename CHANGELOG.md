@@ -35,6 +35,11 @@ Prepared release; tagging and registry publication are separate actions.
   black-box regression check in CI.
 - Forward persisted input codec versions to runtime admission so unsupported
   schemas can reject before computation.
+
+### Changed
+
+- Isolate each package-verification registry to avoid stale same-version
+  candidates, explicitly exclude fuzz packaging, and retain verified archives.
 - Domain-separated definition fingerprints bind all recovery permissions and
   quotas to execution scope; golden fixtures freeze their canonical encoding.
 - Strict new task wire decoding rejects unknown and duplicate fields without
