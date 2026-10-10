@@ -50,4 +50,4 @@ PY_KIND
     exit 1
   fi
 done
-printf '%s\n' 'Layer gate permits test-only infrastructure and rejects normal/build clients' 
+printf '%s\n' 'Layer gate permits test-only infrastructure and rejects normal/build clients'
