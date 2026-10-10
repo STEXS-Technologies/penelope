@@ -110,6 +110,16 @@ quota handling, forwarded-observation timeout enforcement and persistent
 runtime fencing requirements. Its full results supersede that earlier snapshot;
 see the release guide and updated machine-readable campaign artifact.
 
+Second-audit validation: 143 workspace tests pass on Rust 1.99.0 and 1.85;
+3.3 million sanitizer fuzz runs and three extended chaos/property iterations
+pass on implementation `70ccd98`. Coverage is 94.2586%, above the unchanged
+ratchet. Release-tool revision `37009cf` passes two complete seven-library
+archive verification runs in isolated registries. Only release documentation
+and packaging tools changed between these revisions; Rust sources are identical.
+The audit closes two medium lifecycle findings, two low contract/gate findings
+and the packaging-cache defect. No additional confirmed finding remains open
+within this library review. Deployment adapter guarantees remain consumer-owned.
+
 Process-kill tests exercise actual host process interruption with fsync/rename.
 They do not certify power-loss behavior, a database implementation, storage
 media, isolation, or domain correctness. These remain consuming applications'

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "date": "2026-10-10",
-  "source_commit": "907f34050fe35ceeac84aac60923a9062972b2e2",
+  "source_commit": "37009cf1d37e4172840048afa5327a080d249ea9",
   "branch": "feature/recoverable-task-execution",
   "stable_rust": "1.99.0",
   "fuzz_rust": "1.99.0-nightly (7608eb7b0 2026-08-05)",
@@ -20,218 +20,221 @@
       {
         "iteration": 1,
         "target": "fuzz_identifiers",
-        "seed": 4052607323,
+        "seed": 961109258,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_dtos",
-        "seed": 1915507540,
+        "seed": 3048737334,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_linear_engine",
-        "seed": 2536784431,
+        "seed": 3915514225,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_statechronicle_correlation",
-        "seed": 2418533630,
+        "seed": 200868944,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_atomic_process_commit",
-        "seed": 1363241708,
+        "seed": 3647528359,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_canonical_reconciliation",
-        "seed": 10814223,
+        "seed": 2623834490,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_manual_review_lifecycle",
-        "seed": 2116364839,
+        "seed": 580632299,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_process_input_parse",
-        "seed": 3540488362,
+        "seed": 2067274127,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_process_control_ports",
-        "seed": 1345865275,
+        "seed": 4277110146,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_task_history",
-        "seed": 650479590,
+        "seed": 3772690708,
         "runs": 100000
       },
       {
         "iteration": 1,
         "target": "fuzz_task_checkpoint",
-        "seed": 2598426637,
+        "seed": 1587360784,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_identifiers",
-        "seed": 2078733401,
+        "seed": 1271918065,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_dtos",
-        "seed": 2581957988,
+        "seed": 1781017711,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_linear_engine",
-        "seed": 441292045,
+        "seed": 2329382395,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_statechronicle_correlation",
-        "seed": 4047813062,
+        "seed": 2468918624,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_atomic_process_commit",
-        "seed": 1283756548,
+        "seed": 1248440997,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_canonical_reconciliation",
-        "seed": 3358658515,
+        "seed": 1032696335,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_manual_review_lifecycle",
-        "seed": 414236266,
+        "seed": 3453434584,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_process_input_parse",
-        "seed": 1703276550,
+        "seed": 1702424907,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_process_control_ports",
-        "seed": 2624033223,
+        "seed": 3479893925,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_task_history",
-        "seed": 570491533,
+        "seed": 3624611154,
         "runs": 100000
       },
       {
         "iteration": 2,
         "target": "fuzz_task_checkpoint",
-        "seed": 2225533395,
+        "seed": 2502993584,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_identifiers",
-        "seed": 1644269486,
+        "seed": 3580536281,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_dtos",
-        "seed": 2153567712,
+        "seed": 271926818,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_linear_engine",
-        "seed": 209366363,
+        "seed": 1622806567,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_statechronicle_correlation",
-        "seed": 3722371389,
+        "seed": 2147428863,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_atomic_process_commit",
-        "seed": 1049476028,
+        "seed": 3792116381,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_canonical_reconciliation",
-        "seed": 3086329056,
+        "seed": 1925740387,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_manual_review_lifecycle",
-        "seed": 124797603,
+        "seed": 3318133244,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_process_input_parse",
-        "seed": 1415062716,
+        "seed": 433394710,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_process_control_ports",
-        "seed": 2396414152,
+        "seed": 1754696503,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_task_history",
-        "seed": 393064947,
+        "seed": 4074325290,
         "runs": 100000
       },
       {
         "iteration": 3,
         "target": "fuzz_task_checkpoint",
-        "seed": 2061776455,
+        "seed": 1555574078,
         "runs": 100000
       }
-    ]
+    ],
+    "source_commit": "70ccd982ea1ea410cbfc62d38013eb0b5bb1186e"
   },
   "workspace_tests": {
     "1.99.0": {
-      "passed": 135,
-      "failed": 0
+      "passed": 143,
+      "failed": 0,
+      "source_commit": "70ccd982ea1ea410cbfc62d38013eb0b5bb1186e"
     },
     "1.85.0": {
-      "passed": 135,
-      "failed": 0
+      "passed": 143,
+      "failed": 0,
+      "source_commit": "70ccd982ea1ea410cbfc62d38013eb0b5bb1186e"
     }
   },
   "coverage": {
-    "percent": 94.32231261900641,
+    "percent": 94.25862068965517,
     "required_percent": 94.0759,
-    "covered_lines": 5449,
-    "total_lines": 5777,
+    "covered_lines": 5467,
+    "total_lines": 5800,
     "task_modules": [
       {
         "file": "crates/penelope-core/src/task/contracts.rs",
@@ -244,17 +247,17 @@
       {
         "file": "crates/penelope-core/src/task/projection.rs",
         "lines": {
-          "count": 309,
-          "covered": 304,
-          "percent": 98.38187702265373
+          "count": 314,
+          "covered": 308,
+          "percent": 98.08917197452229
         }
       },
       {
         "file": "crates/penelope-executor/src/task.rs",
         "lines": {
-          "count": 286,
-          "covered": 269,
-          "percent": 94.05594405594405
+          "count": 304,
+          "covered": 283,
+          "percent": 93.0921052631579
         }
       },
       {
@@ -273,7 +276,8 @@
           "percent": 93.75
         }
       }
-    ]
+    ],
+    "source_commit": "70ccd982ea1ea410cbfc62d38013eb0b5bb1186e"
   },
   "checks_passed": [
     "clippy -D warnings",
@@ -286,7 +290,9 @@
     "layer boundaries",
     "GitHub Action pins",
     "secret scan",
-    "package verification of all seven unpacked 0.2.0 archives using Cargo temporary registry"
+    "package verification of all seven unpacked 0.2.0 archives using Cargo temporary registry",
+    "black-box architecture gate regressions",
+    "repeat package verification with isolated temporary registries"
   ],
   "process_kill_boundaries": [
     "before checkpoint blob persistence",
@@ -294,7 +300,7 @@
     "after checkpoint history commit before acknowledgement",
     "after external effect before acknowledgement"
   ],
-  "campaign_log_sha256": "052c89e4ce6333913d03f349c7b63112de29fe207a34d0e236d66617651623ee",
+  "campaign_log_sha256": "a9a4fb36b95b54d74fddc5dedc4518848b9724184fe6e88850381514d8e9c55a",
   "commands": [
     "PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh",
     "cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
@@ -313,10 +319,54 @@
   "portable_profile": "penelope-core; existing facade and saga crates remain hosted",
   "version": "0.2.0",
   "package_verification": {
-    "command": "cargo package --workspace --locked --allow-dirty --exclude penelope-fuzz",
-    "verified_packages": 7,
+    "command": "./scripts/publish-crates.sh",
     "version": "0.2.0",
-    "log_sha256": "42bf07f6b2b062b00ee2f98c40d4adc8a7f660cf4147a543ac244022b803a86c"
+    "verified_packages": 7,
+    "repeat_runs": [
+      {
+        "run": "isolated",
+        "verified_packages": 7,
+        "log_sha256": "7beeca41b3bc21ca1d67384a404dfd1d8cc0961846f8aec8d071d1f097d3c429"
+      },
+      {
+        "run": "repeat",
+        "verified_packages": 7,
+        "log_sha256": "d8acf54c6207bc8d4130b871f1015ff5b311ceb9c2bf5c79e52b0ee74c190b1b"
+      }
+    ],
+    "source_commit": "37009cf1d37e4172840048afa5327a080d249ea9",
+    "archives": [
+      {
+        "file": "penelope-0.2.0.crate",
+        "sha256": "d82dc8480da49efaf153f9922d71d8cca3f3eb1fd7a400003227d10a1de8ab26"
+      },
+      {
+        "file": "penelope-core-0.2.0.crate",
+        "sha256": "f97d4ec1fcde2827d1a5da87d1bceb32b4558780999b155c02a6f70d717af7f1"
+      },
+      {
+        "file": "penelope-domain-0.2.0.crate",
+        "sha256": "d87a53dd183921ae017f5d58cc74e9e5d299e6f19334c97f56b68d5186d35399"
+      },
+      {
+        "file": "penelope-executor-0.2.0.crate",
+        "sha256": "f1c916db850b1497446b245071767726a011115d333c95a6a7921df5dc61b423"
+      },
+      {
+        "file": "penelope-intent-0.2.0.crate",
+        "sha256": "ba3bdd92f495379bdd4b2838af598bc23fc0a13f0056d02f50e082946eb6e8fc"
+      },
+      {
+        "file": "penelope-ports-0.2.0.crate",
+        "sha256": "6ba91a32936da96cde5cd3262c4fecbe283601c79b097d11772c050a2fc8ee68"
+      },
+      {
+        "file": "penelope-statechronicle-0.2.0.crate",
+        "sha256": "930a0b8fd7334f464c6233ef7e91411e48343fb60cbc84a95743c834db148c68"
+      }
+    ],
+    "fuzz_excluded": true,
+    "isolated_registry_per_run": true
   },
   "protocol_review": {
     "status": "completed repository engineering review",
@@ -328,7 +378,11 @@
       "early quota admission",
       "regressed-clock rejection before polling",
       "saturating timeout arithmetic",
-      "explicit journal integrity and remote-effect fencing boundaries"
+      "explicit journal integrity and remote-effect fencing boundaries",
+      "terminal history-slot reservation",
+      "live quota rejection fences and poisons",
+      "forwarded-observation timeout enforcement",
+      "persisted input schema forwarding"
     ],
     "security_tests": [
       "task_security",
@@ -337,14 +391,83 @@
       "task_recovery",
       "task_process_crash",
       "task_effect_bridge",
-      "optional StateChronicle task evidence"
+      "optional StateChronicle task evidence",
+      "task_audit",
+      "task_concurrency"
     ],
     "valid_json_journal_corruption": "rejected before replay"
   },
   "publication": "Tagging and crates.io publication require a separate release action; none performed.",
   "previous_campaign": {
-    "source_commit": "ed059dd9bef6b3681242d29843a7ee0bb5a3c00a",
+    "source_commit": "907f34050fe35ceeac84aac60923a9062972b2e2",
     "total_fuzz_runs": 3300000,
-    "status": "passed; superseded by final 0.2.0 source campaign"
+    "status": "passed; superseded by the second deep audit"
+  },
+  "validation_scope": {
+    "rust_implementation_commit": "70ccd982ea1ea410cbfc62d38013eb0b5bb1186e",
+    "release_tool_commit": "37009cf1d37e4172840048afa5327a080d249ea9",
+    "rust_sources_unchanged_between_revisions": true,
+    "excluded_changes_between_revisions": [
+      "CHANGELOG.md",
+      "docs/RELEASE.md",
+      "scripts/publish-crates.sh"
+    ]
+  },
+  "deep_audit": {
+    "baseline": "8c6153a17aad94d71037e4a19f0a83eb9372c91b",
+    "document": "docs/RELEASE.md#second-deep-audit-2026-10-10",
+    "findings": [
+      {
+        "severity": "medium",
+        "issue": "Live generation could consume the final history slot",
+        "status": "fixed",
+        "regressions": [
+          "last_history_slot_is_reserved_for_stopping_the_generation",
+          "restart_without_a_terminal_history_slot_never_dispatches",
+          "quota_fence_failure_poisoning_never_acknowledges_a_checkpoint"
+        ]
+      },
+      {
+        "severity": "medium",
+        "issue": "Forwarded Pending observation bypassed timeout handling",
+        "status": "fixed",
+        "regressions": [
+          "forwarded_pending_observation_at_timeout_stops_execution",
+          "foreign_or_stale_late_observations_cannot_fence_the_current_generation"
+        ]
+      },
+      {
+        "severity": "low",
+        "issue": "Architecture gate missed AWS SDK package families",
+        "status": "fixed",
+        "regressions": [
+          "scripts/test-layer-boundaries.sh; aws-sdk-s3, aws-sdk-kms, sqlx"
+        ]
+      },
+      {
+        "severity": "low",
+        "issue": "Persisted input codec version was omitted from dispatch",
+        "status": "fixed",
+        "regressions": [
+          "persisted_input_schema_reaches_the_runtime_before_computation"
+        ]
+      },
+      {
+        "severity": "release-tool defect",
+        "issue": "Repeated same-version package verification reused stale registry dependencies and included fuzz packaging",
+        "status": "fixed",
+        "regressions": [
+          "two complete seven-library verification runs with isolated registry URLs"
+        ]
+      }
+    ],
+    "contract_clarification": "Persistent fence tombstones reject delayed starts, survive adapter reconstruction and preserve newer generations",
+    "concurrency_tests": [
+      "competing_intents_cannot_dispatch_after_a_cas_conflict",
+      "delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction"
+    ],
+    "before_fix_regressions_failed": 3,
+    "remaining_confirmed_findings": [],
+    "external_certification": false
   }
 }
