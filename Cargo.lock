@@ -275,6 +275,7 @@ name = "penelope-fuzz"
 version = "0.0.0"
 dependencies = [
  "libfuzzer-sys",
+ "penelope-core",
  "penelope-domain",
  "penelope-executor",
  "penelope-intent",

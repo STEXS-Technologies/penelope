@@ -44,6 +44,8 @@ The existing saga APIs and v1 records retain their meaning. Alongside them,
 committed checkpoint references, ordered task history, typed faults, bounded
 recovery attempts and generation fencing. `TaskSupervisor` coordinates those
 decisions with application-supplied journal and runtime ports.
+Task identities, generations, history sequences and monotonic timestamps use
+distinct newtypes, preventing accidental substitution across these boundaries.
 
 Penelope never infers completion from a crash or timeout. Interrupted operations
 with external effects require independent reconciliation; unknown evidence does
@@ -59,12 +61,15 @@ profile; the existing facade, saga crates and async ports remain hosted.
 cargo run -p penelope-executor --example recoverable_task --locked
 cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=2000 PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
+python3 scripts/run_property_stress.py --seconds 300 --cases 10000 --jobs 3
 ```
 
 Task histories have their own version discriminator, independent of saga v1.
 Checkpoint schema/code changes require an explicit application transformation
 into a newly pinned history; old bytes are never silently reinterpreted.
 See [the architecture and release gates](docs/RELEASE.md).
+Validation includes process-kill fault injection, concurrent supervisor
+arbitration, stateful supervisor fuzzing and reproducible chaos campaigns.
 
 ## StateChronicle boundary
 

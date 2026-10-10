@@ -3,6 +3,7 @@
 .slim/deepwork/
 target/
 coverage/
+__pycache__/
 fuzz/artifacts/
 fuzz/corpus/
 .env

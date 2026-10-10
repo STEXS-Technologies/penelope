@@ -228,3 +228,83 @@ fn delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction() {
     );
     assert_eq!(journal.0.lock().unwrap().records.len(), 5);
 }
+
+#[test]
+// Spawn every participant before joining; a lazy iterator would deadlock at
+// the barrier while the other participants have not yet been spawned.
+#[allow(clippy::needless_collect)]
+fn many_competing_supervisors_commit_and_dispatch_exactly_one_execution() {
+    const CONTENDERS: usize = 32;
+    // Each round creates fresh state and lets the OS choose a different winner.
+    for _round in 0..16 {
+        let definition = definition(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
+        let input = [1; 64];
+        let scope = scope(definition, &input);
+        let journal = SharedJournal::default();
+        let runtime = SharedRuntime::default();
+        let ready = Arc::new(Barrier::new(CONTENDERS));
+        let workers: Vec<_> = (0..CONTENDERS)
+            .map(|_| {
+                let journal = journal.clone();
+                let runtime = runtime.clone();
+                let ready = ready.clone();
+                std::thread::spawn(move || {
+                    let mut supervisor =
+                        Supervisor::restore(journal, runtime, scope, definition, TaskTick::ZERO)
+                            .unwrap();
+                    ready.wait(); // All projections saw the same empty history.
+                    match supervisor.submit(&input, 1, TaskTick::ZERO) {
+                        Ok(()) => Some(supervisor),
+                        Err(error) => {
+                            assert_eq!(error, SupervisorError::Port(TaskPortError::Conflict));
+                            assert_eq!(
+                                supervisor.advance(TaskTick::new(1)),
+                                Err(SupervisorError::ReconstructionRequired)
+                            );
+                            None
+                        }
+                    }
+                })
+            })
+            .collect();
+        let mut winners: Vec<_> = workers
+            .into_iter()
+            .filter_map(|worker| worker.join().unwrap())
+            .collect();
+        assert_eq!(winners.len(), 1);
+        assert_eq!(journal.0.lock().unwrap().records.len(), 1);
+        assert_eq!(runtime.state.lock().unwrap().live, None);
+        let mut winner = winners.pop().unwrap();
+        winner.advance(TaskTick::new(1)).unwrap();
+        assert_eq!(
+            runtime.state.lock().unwrap().live,
+            Some(TaskGeneration::new(1))
+        );
+        winner
+            .observe(
+                TaskObservation {
+                    scope,
+                    generation: TaskGeneration::new(1),
+                    progress: RuntimeProgress::Complete {
+                        bytes: 8,
+                        schema: 1,
+                    },
+                },
+                &64_u64.to_le_bytes(),
+                TaskTick::new(2),
+            )
+            .unwrap();
+        let committed = journal.0.lock().unwrap().records.clone();
+        assert_eq!(committed.len(), 3);
+        assert_eq!(
+            replay(scope, definition, committed).unwrap(),
+            *winner.projection()
+        );
+        assert_eq!(winner.projection().status(), TaskStatus::Completed);
+        assert_eq!(runtime.state.lock().unwrap().live, None);
+        assert_eq!(
+            runtime.state.lock().unwrap().fenced_through,
+            TaskGeneration::new(1)
+        );
+    }
+}

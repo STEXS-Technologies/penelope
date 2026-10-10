@@ -184,3 +184,50 @@ fn persisted_input_schema_reaches_the_runtime_before_computation() {
     assert!(supervisor.projection().output().is_none());
     assert_eq!(supervisor.into_parts().1.starts, 0);
 }
+
+#[test]
+fn oversized_reports_stop_execution_even_when_the_buffer_is_truncated() {
+    for bytes in [65, u32::MAX] {
+        for progress in [
+            RuntimeProgress::Checkpoint { bytes, schema: 1 },
+            RuntimeProgress::Complete { bytes, schema: 1 },
+        ] {
+            for buffer in [&[][..], &INPUT[..]] {
+                let mut supervisor = start(20);
+                let before = *supervisor.projection();
+                assert_eq!(
+                    supervisor.observe(
+                        TaskObservation {
+                            scope: before.scope(),
+                            generation: before.generation(),
+                            progress,
+                        },
+                        buffer,
+                        TaskTick::new(2),
+                    ),
+                    Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+                );
+                assert_eq!(*supervisor.projection(), before);
+                assert_eq!(
+                    supervisor.poll(TaskTick::new(3)),
+                    Err(SupervisorError::ReconstructionRequired)
+                );
+                let (journal, runtime) = supervisor.into_parts();
+                assert_eq!(journal.records.len(), 2);
+                assert_eq!(journal.blobs.len(), 1); // Only immutable input committed.
+                assert_eq!(runtime.fences, 1);
+                let recovered = Supervisor::restore(
+                    journal,
+                    runtime,
+                    before.scope(),
+                    before.definition(),
+                    TaskTick::new(3),
+                )
+                .unwrap();
+                assert_eq!(recovered.projection().status(), TaskStatus::Faulted);
+                assert!(recovered.projection().checkpoint().is_none());
+                assert!(recovered.projection().output().is_none());
+            }
+        }
+    }
+}

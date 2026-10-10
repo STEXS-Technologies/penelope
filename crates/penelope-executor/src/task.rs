@@ -243,15 +243,25 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
             RuntimeProgress::Fault(fault) => (TaskExecutionEvent::FaultObserved { fault }, None),
             RuntimeProgress::Checkpoint { bytes, schema }
             | RuntimeProgress::Complete { bytes, schema } => {
-                let length =
-                    usize::try_from(bytes).map_err(|_overflow| TaskError::QuotaExhausted)?;
-                let data = buffer.get(..length).ok_or(TaskError::CorruptBlob)?;
                 let definition = self.projection.definition();
                 let limit = if matches!(observation.progress, RuntimeProgress::Checkpoint { .. }) {
                     definition.recovery.max_checkpoint_bytes
                 } else {
                     definition.budget.max_output_bytes
                 };
+                // Enforce the declared size before inspecting the supplied
+                // buffer. An oversized report must stop execution even when
+                // the adapter could not supply bytes beyond its own capacity.
+                if bytes > limit {
+                    return Err(self.reject_live_proposal(TaskError::QuotaExhausted));
+                }
+                let length = match usize::try_from(bytes) {
+                    Ok(length) => length,
+                    Err(_overflow) => {
+                        return Err(self.reject_live_proposal(TaskError::QuotaExhausted));
+                    }
+                };
+                let data = buffer.get(..length).ok_or(TaskError::CorruptBlob)?;
                 let reference = match blob_ref(data, schema, limit) {
                     Ok(reference) => reference,
                     Err(error) => return Err(self.reject_live_proposal(error)),

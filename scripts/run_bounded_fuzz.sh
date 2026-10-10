@@ -15,6 +15,18 @@ if ! [[ "${fuzz_runs}" =~ ^[1-9][0-9]*$ ]]; then
   exit 2
 fi
 
+# Optional explicit seeds make repeated campaigns reproducible. With no seed,
+# libFuzzer retains its normal randomized selection.
+fuzz_options=(-runs="${fuzz_runs}")
+if [[ -n "${PENELOPE_FUZZ_SEED:-}" ]]; then
+  if ! [[ "${PENELOPE_FUZZ_SEED}" =~ ^[1-9][0-9]{0,9}$ ]] \
+    || (( PENELOPE_FUZZ_SEED > 2147483647 )); then
+    printf '%s\n' 'PENELOPE_FUZZ_SEED must be an integer in 1..2147483647' >&2
+    exit 2
+  fi
+  fuzz_options+=(-seed="${PENELOPE_FUZZ_SEED}")
+fi
+
 fuzz_targets=(
   fuzz_newtypes
   fuzz_identifiers
@@ -27,6 +39,7 @@ fuzz_targets=(
   fuzz_process_input_parse
   fuzz_process_control_ports
   fuzz_task_history
+  fuzz_task_supervisor
   fuzz_task_checkpoint
 )
 
@@ -61,5 +74,5 @@ done
 
 for fuzz_target in "${fuzz_targets[@]}"; do
   printf '%s malformed-input drill (%s runs)\n' "${fuzz_target}" "${fuzz_runs}"
-  cargo +nightly fuzz run "${fuzz_target}" -- -runs="${fuzz_runs}"
+  cargo +nightly fuzz run "${fuzz_target}" -- "${fuzz_options[@]}"
 done

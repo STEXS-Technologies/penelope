@@ -23,7 +23,12 @@ Prepared release; tagging and registry publication are separate actions.
 - Optional StateChronicle checkpoint-state correlation and saga effect bridge.
 - Allocation-free no_std core with optional no_std Serde and cross-target CI.
 - Real process-kill persistence/effect tests, seeded recovery chaos, task wire
-  fixture, and task history/checkpoint fuzzers.
+  fixture, and task history/checkpoint/supervisor fuzzers, including ambiguous
+  persistence acknowledgements and storage faults.
+- Concurrent supervisor arbitration under 32-contender thread stress and
+  reproducible property/fuzz campaign seeds verified by runner tests.
+- Timed per-property stress campaigns with rotating seeds and measured
+  duration, batch counts and case counts saved outside the repository.
 - Distinct task identity, generation, sequence and timestamp newtypes with
   transparent wire encodings, direct newtype fuzzing and AST-based architecture
   checks for fuzz coverage and declaration-only module entry files.
@@ -31,7 +36,8 @@ Prepared release; tagging and registry publication are separate actions.
 ### Security
 
 - Reserve history capacity for live-generation termination; fence and require
-  reconstruction after rejected live quota proposals without checkpoint ack.
+  reconstruction after rejected live quota proposals without checkpoint ack,
+  including oversized reports with truncated buffers.
 - Enforce deadlines on forwarded observations and document persistent fencing
   against delayed dispatch, with real-thread CAS/fencing contract tests.
 - Reject AWS SDK package families in the architecture dependency gate, with a

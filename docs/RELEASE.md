@@ -77,9 +77,16 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Twelve sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Thirteen sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
+The supervisor fuzzer combines runtime proposals with lost acknowledgements,
+wrong receipts, storage exhaustion and reconstruction, checking durable replay
+and rejection invariants after each operation. A 32-contender thread test checks
+that journal arbitration permits one execution. Campaign iterations pass the
+same explicit seed to property tests and every fuzz target for reproducibility.
+The timed property runner gives each registered property its own duration,
+rotates seeds between batches and saves per-test elapsed time and case counts.
 The newtype target directly exercises every public newtype's accepted values,
 wire decoding and serialization, including malformed input and arithmetic
 boundaries. AST-based tests enforce explicit newtype fuzz invocations and keep
@@ -100,11 +107,14 @@ cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none
 ./scripts/run_coverage_json.sh
 ./scripts/check_coverage_ratchet.sh
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh
+python3 scripts/run_property_stress.py --seconds 300 --cases 10000 --jobs 3
 cargo audit
 cargo deny check
 ./scripts/check-action-pins.sh
 ./scripts/check-layer-boundaries.sh
 ./scripts/test-layer-boundaries.sh
+./scripts/test-chaos-runners.sh
+python3 -m unittest discover -s scripts/tests
 ./scripts/check-no-secrets.sh
 ./scripts/publish-crates.sh
 git diff --check

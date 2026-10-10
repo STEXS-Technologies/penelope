@@ -23,6 +23,12 @@ test = false
 doc = false
 
 [[bin]]
+name = "fuzz_task_supervisor"
+path = "fuzz_targets/fuzz_task_supervisor.rs"
+test = false
+doc = false
+
+[[bin]]
 name = "fuzz_task_history"
 path = "fuzz_targets/fuzz_task_history.rs"
 test = false
@@ -37,6 +43,10 @@ doc = false
 [dependencies.penelope-domain]
 version = "0.2.0"
 path = "../crates/penelope-domain"
+
+[dependencies.penelope-core]
+version = "0.2.0"
+path = "../crates/penelope-core"
 
 [dependencies.penelope-executor]
 version = "0.2.0"
