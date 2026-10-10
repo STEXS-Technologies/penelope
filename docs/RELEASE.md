@@ -93,10 +93,13 @@ boundaries. AST-based tests enforce explicit newtype fuzz invocations and keep
 all library `lib.rs` and `mod.rs` files limited to declarations and exports.
 
 The Rust toolchain is pinned to 1.99.0, with a supported minimum of 1.85.
-The full campaign also requires Python 3.11 or newer, the RISC-V target,
-nightly Rust with `cargo-fuzz`, `cargo-llvm-cov` with `llvm-tools-preview`,
-`cargo-audit`, `cargo-deny`, and `gitleaks`. Install the target with
-`rustup target add riscv32imafc-unknown-none-elf` before cross-target checks.
+The full campaign also requires Python 3.11 or newer, nightly Rust with
+`cargo-fuzz`, `cargo-llvm-cov` with `llvm-tools-preview`, `cargo-audit`,
+`cargo-deny`, and `gitleaks`. RISC-V is the bare-metal target selected for
+the cross-target `no_std` checks below; Penelope has no RISC-V requirement.
+Install it with `rustup target add riscv32imafc-unknown-none-elf` only when
+running those checks. Other suitable bare-metal targets can validate the
+same portable-core contract.
 Run from the repository root:
 
 ```bash
