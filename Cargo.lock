@@ -339,7 +339,7 @@ dependencies = [
  "rusqlite",
  "serde",
  "serde_json",
- "syn 2.0.119",
+ "syn 3.0.5",
  "thiserror",
 ]
 
