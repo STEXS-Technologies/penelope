@@ -92,6 +92,13 @@ arbitrate the commit. A timer delivery ACK still leaves its input discoverable
 until the saga decision commits. Retrying discovery after a read error must not
 turn missing or corrupt evidence into an empty inbox.
 
+The `discovered_timer_commits_one_retry_task_and_replays_terminal_saga` runtime
+integration test follows this complete linear-saga path with shared and separate
+SQLite databases. It reopens after timer acceptance, consumes the discovered input
+through the engine's outcome plan, executes the retry in a protected worker,
+relays the verified result, and checks that repeating the timer commit leaves
+no action available for redispatch.
+
 ## Executor composition example
 
 Run `./scripts/run-executor-saga-example.sh`, or keep its state directory with:
