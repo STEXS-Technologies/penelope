@@ -210,6 +210,8 @@ remain outside the repository.
 The optional SQLite adapter has a [current store baseline](performance-sqlite-2026-10-30.md)
 with raw pinned-CPU measurements. Its report lists performance qualification that
 remains incomplete; the historical core baseline does not cover this adapter.
+The Linux runtime also has a [real-worker dispatch/host-ACK baseline](performance-worker-dispatch-2026-10-30.md)
+with fresh and reused store/runtime profiles, raw samples and disclosed limits.
 
 Optional upstream signed-event conformance runs in its own pinned temporary
 workspace through `scripts/run-statechronicle-conformance.py`. It includes
