@@ -49,3 +49,7 @@ workspace = true
 [[bench]]
 name = "application_overhead"
 harness = false
+
+[[bench]]
+name = "definition_validation"
+harness = false
