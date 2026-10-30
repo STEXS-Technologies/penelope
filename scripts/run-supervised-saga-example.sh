@@ -7,7 +7,6 @@ if [[ "$(uname -s)" != Linux || "$(uname -m)" != x86_64 ]]; then
   exit 1
 fi
 command -v cc >/dev/null
-command -v rg >/dev/null
 example_dir="$(mktemp -d)"
 trap 'rm -rf "$example_dir"' EXIT
 
@@ -17,7 +16,7 @@ cc -nostdlib -static -fno-builtin -fno-stack-protector -fno-pie -no-pie \
   -o "$example_dir/worker" crates/penelope-process-runtime/tests/fixtures/worker.c
 cargo run -p penelope-process-runtime --example saga_recoverable_task --locked -- \
   "$example_dir/state" "$example_dir/worker" | tee "$example_dir/first.log"
-rg -q '^Verified sum: 6; saga completed in separate durable stores$' "$example_dir/first.log"
+grep -Fqx 'Verified sum: 6; saga completed in separate durable stores' "$example_dir/first.log"
 cargo run -p penelope-process-runtime --example saga_recoverable_task --locked -- \
   "$example_dir/state" "$example_dir/worker" | tee "$example_dir/replayed.log"
-rg -q '^Saga already completed; no task dispatched$' "$example_dir/replayed.log"
+grep -Fqx 'Saga already completed; no task dispatched' "$example_dir/replayed.log"
