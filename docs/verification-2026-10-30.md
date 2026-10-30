@@ -1,5 +1,14 @@
 # Reliable execution verification — 2026-10-30
 
+Current production sources through `50fec4e` pass all seven remote CI jobs;
+remote line coverage is **94.3494%** against the unchanged **94.0759%** ratchet.
+A separate three-iteration extended-chaos run and verification-only release
+workflow passed at their pinned earlier revisions. [Retained remote evidence](verification-data/2026-10-30-remote-qualification/metadata.json)
+records the exact revisions and scopes. The larger local 100,000-input campaign,
+final performance review and final candidate checks remain open. Workspace
+versions remain `0.2.0`; these results do not declare a qualified 0.3.0 release.
+The following sections retain the individual development evidence snapshots.
+
 The Rust sources at `2223a31` passed the checks below on the local Linux host.
 This records current development evidence, not a completed 0.3.0 qualification.
 The subsequent `0350d87` change updates documentation and a shell comment only.
@@ -223,3 +232,23 @@ on the local temporary filesystem. Final core/saga measurements are queued
 strictly after its recorded successful completion, without concurrent local
 fault testing. No 0.3.0 release acceptance, version bump, tag or publication
 is claimed by these updates.
+
+Remote extended chaos at `c1279f3` completed three iterations, each with 2,000
+property cases and 10,000 fuzz inputs per registered target. The final log records
+`pure chaos drill passed (3 repeated iterations)`. This is independent evidence
+for that library-model workload; the larger local campaign still must finish.
+Remote coverage at the executable-boundary correction `50fec4e` covered
+8,933 of 9,468 library lines (94.3494%). The unchanged ratchet passed again when
+checked locally against the downloaded report. The verification-only release
+workflow at `c95a803` built and verified all nine development package archives;
+its crates.io publication and GitHub release jobs were explicitly skipped.
+
+An additional real-kernel startup test admits a structurally recognizable static
+ELF with no loadable segment, then confirms that kernel execution rejection
+returns a runtime error. The supervisor refuses subsequent advance until
+reconstruction. Reopening the journal/runtime fences generation one and records
+`SupervisorInterrupted`, with no completion or additional generation. The test
+passes on stable and MSRV, with strict runtime all-target Clippy. This supplements
+the [executable-boundary regression](worker-executable-boundary-2026-10-30.md)
+with proof that a failed bootstrap cannot manufacture successful execution.
+The test diff and raw local/remote outputs are retained in the linked evidence.
