@@ -1,13 +1,16 @@
-# Penelope 0.2.0 — Recoverable Task Execution
+# Penelope release contract — reliable execution development
 
 Penelope 0.2.0 provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
-The seven library crates share version `0.2.0`. The release preserves saga v1
-records, linear and graph decisions, retries, compensation and reconciliation.
-Tagging and registry publication run through the release workflow after its
-verification gates pass.
+This branch develops 0.3.0 on the released 0.2.0 contract. All nine library
+crates retain workspace version `0.2.0` while qualification is in progress; the
+two optional adapter packages are development additions. Saga v1 records, linear
+and graph decisions, retries, compensation and reconciliation remain compatible.
+The unreleased changes are listed in [the changelog](../CHANGELOG.md#unreleased).
+A version bump, dated release entry and completed qualification must precede a
+0.3.0 tag or publication.
 
 ## Recoverable execution
 
@@ -63,7 +66,9 @@ Checkpoint=1, Reconcile=2, Never=3. This encoding is independent of Serde.
 
 `penelope-core` provides allocation-free task contracts, projection and
 synchronous ports without `std` or `alloc`, including optional Serde support.
-The supervisor's owning crate, saga facade and asynchronous ports remain hosted.
+`TaskControl` uses caller-owned `TaskWorkspace` buffers and shares its transition
+and commit policy with the hosted `TaskSupervisor` wrapper. The owning wrapper,
+saga facade and asynchronous ports remain hosted.
 
 Penelope is agnostic to runtime, operating system and storage backend.
 Applications own task correctness, checkpoint meaning, migration authorization,
@@ -87,13 +92,16 @@ versioned resource transitions, rollback, lost commit acknowledgements, concurre
 delivery and reconstruction. That suite belongs to StateChronicle and is
 independent of Penelope's optional evidence-correlation contract.
 
-Penelope's SQLite integration fixture commits blobs and history in one
+The original 0.2.0 SQLite integration fixture commits blobs and history in one
 transaction, kills a separate process before and after commit, and reopens the
 database to recover and complete the task. Independent connections also test
-CAS arbitration and corruption rejection. SQLite is a test-only dependency:
-consumer debug and release builds do not compile it through Penelope.
-This fixture supplements the filesystem and simulated journals; it is not a
-shipped storage adapter or a certification of power-loss behavior.
+CAS arbitration and corruption rejection. That fixture is distinct from the
+new optional [`penelope-sqlite`](../crates/penelope-sqlite/README.md) package,
+which provides task and process persistence. The optional
+[`penelope-process-runtime`](../crates/penelope-process-runtime/README.md) package
+provides the declared Linux worker profile. Neither is a dependency of the
+default facade. Their deployment contracts and qualification limits apply;
+process-kill evidence does not certify power-loss behavior.
 
 ## Validation
 
@@ -189,14 +197,15 @@ unresolved; it does not close the performance release gate.
 
 ## Packaging and publication
 
-`./scripts/publish-crates.sh` verifies the seven unpacked library archives
+`./scripts/publish-crates.sh` verifies the nine unpacked library archives
 using a fresh Cargo temporary registry for each run. It excludes the fuzz
 crate and retains verified archives under the configured Cargo target
 directory's `package` directory.
 
 For an authorized release, validate the latest `main` revision and its dated
-changelog entry, then create and push an annotated `v0.2.0` tag. The release
-workflow verifies the tagged revision and package version, publishes the crates
+changelog entry, then create and push an annotated tag matching the qualified
+workspace version (for this development series, `v0.3.0` after qualification).
+The release workflow verifies the tagged revision and package version, publishes the crates
 dependency-first, and creates a GitHub release from the matching changelog
 section. Missing, empty or duplicate version entries stop release verification.
 Manual verification does not create a GitHub release; manual registry publishing

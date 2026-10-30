@@ -109,9 +109,9 @@ Custom StateChronicle domains require explicit schema migration and do not
 automatically provide transactions across resources. Existing history encodings
 and exhaustive Rust enum matches have distinct compatibility requirements.
 See the [integration boundaries](docs/RELEASE.md#integration-boundaries) for
-durability, task safety and portable-versus-hosted responsibilities. The SQLite
-recovery fixture is a dev-dependency used only by Penelope's own tests; it does
-not enter consumer debug or release builds.
+durability, task safety and portable-versus-hosted responsibilities. The original
+SQLite recovery fixture remains test-only. The separate optional SQLite adapter
+is compiled when an application selects it.
 
 ## Start building
 
@@ -137,8 +137,10 @@ cargo run -p penelope --example trade_competing_lock --locked
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
-boundary, `0.2.0` release procedure and protocol review. This branch prepares
-0.2.0; registry availability follows publication.
+boundary, release procedure and protocol review. This branch develops 0.3.0;
+workspace versions remain at 0.2.0 until qualification is complete. The optional
+SQLite and [Linux process runtime](crates/penelope-process-runtime/README.md)
+packages are development additions, and their release qualification is ongoing.
 
 Use the [pull request template](.github/pull_request_template.md) when proposing
 changes, and follow the [validation commands](docs/RELEASE.md#validation).
