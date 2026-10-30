@@ -45,3 +45,7 @@ harness = false
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "application_overhead"
+harness = false
