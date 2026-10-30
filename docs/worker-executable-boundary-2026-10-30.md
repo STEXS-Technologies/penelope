@@ -42,4 +42,6 @@ one generation and confirmed fencing before recovery records an interruption.
 An immediate runtime error must also poison further advance. The test does not
 interpret successful launch admission as successful application execution.
 [Retained failure and corrected local checks](verification-data/2026-10-30-bootstrap-timing/metadata.json)
-record the platform-dependent observation; the corrected remote check is pending.
+record the platform-dependent observation. The
+[corrected remote check](https://github.com/STEXS-Technologies/penelope/actions/runs/41077837306)
+passes all seven CI jobs, including stable and MSRV.
