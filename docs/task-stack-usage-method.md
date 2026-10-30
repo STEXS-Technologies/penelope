@@ -37,3 +37,7 @@ This inventory supports further call-chain analysis; it leaves the worst-case
 qualification item open. The [portable samples](performance-portable-memory-2026-10-30.md)
 and [hosted samples](performance-hosted-borrowed-restore-2026-10-30.md) remain
 observational evidence with their original compiler/profile scope.
+
+The subsequent [freestanding RISC-V reference analysis](portable-task-stack-bound-2026-10-30.md)
+resolves a complete call graph and sums its frames for one explicit fixed-port
+profile. The native frame inventory above retains its original, narrower scope.
