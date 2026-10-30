@@ -326,3 +326,5 @@ use runtime_fixture::{Runtime, Supervisor, config, definition};
 #[path = "support/sagas.rs"]
 mod sagas;
 mod task_sagas;
+
+mod checkpoint_proof;

@@ -218,6 +218,8 @@ workspace through `scripts/run-statechronicle-conformance.py`. It includes
 signed canonical triggers through full linear/graph real-worker sagas in both
 store layouts and both effect modes, plus 136 actual SIGKILL/recovery cases
 including the canonical source transaction and binding boundaries. The effect
-reconciliation authority remains
-a trusted fixture; upstream execution and checkpoint proofs are still outside
-this evidence. See [the integration contract and limits](INTEGRATION.md#optional-signed-canonical-event-conformance).
+reconciliation authority remains a trusted fixture. The same optional suite
+also gates a real worker checkpoint through actual upstream signed sparse-Merkle
+state proof verification, with fixture publication and pinned signer/head trust.
+Production upstream execution, head discovery and external-effect proofs remain
+outside this evidence. See [the integration contract and limits](INTEGRATION.md#optional-signed-canonical-event-conformance).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run optional signed-event conformance against a pinned installed checkout."""
+"""Run optional signed-event and checkpoint-state proof conformance against a pinned checkout."""
 import argparse
 import json
 import os
@@ -33,13 +33,14 @@ def main():
         (project / "tests").mkdir()
         shutil.copyfile(root / "scripts/conformance/statechronicle.rs", project / "tests/signed_source.rs")
         shutil.copyfile(root / "scripts/conformance/task_sagas.rs", project / "tests/task_sagas.rs")
+        shutil.copyfile(root / "scripts/conformance/checkpoint_proof.rs", project / "tests/checkpoint_proof.rs")
         runtime_tests = root / "crates/penelope-process-runtime/tests"
         shutil.copytree(runtime_tests / "support", project / "tests/support")
         shutil.copytree(runtime_tests / "fixtures", project / "tests/fixtures")
         manifest = ['[package]', 'name = "penelope-statechronicle-conformance"', 'version = "0.0.0"', 'edition = "2024"', 'publish = false', '[workspace]', '[dependencies]', 'async-trait = "0.1"', 'libc = "0.2"', 'serde = { version = "1", features = ["derive"] }', 'chrono = "0.4"', 'ed25519-dalek = "2"', 'serde_json = "1"', 'tempfile = "3"', 'rusqlite = { version = "0.40.2", features = ["bundled"] }']
         for name in ["penelope-core", "penelope-domain", "penelope-ports", "penelope-executor", "penelope-process-runtime", "penelope-statechronicle", "penelope-sqlite"]:
             manifest.append(f'{name} = {{ path = {json.dumps(str(root / "crates" / name))} }}')
-        for name in ["statechronicle-core", "statechronicle-domain", "statechronicle-commit"]:
+        for name in ["statechronicle-core", "statechronicle-domain", "statechronicle-commit", "statechronicle-accumulator", "statechronicle-proof"]:
             manifest.append(f'{name} = {{ path = {json.dumps(str(upstream / "crates" / name))} }}')
         (project / "Cargo.toml").write_text("\n".join(manifest) + "\n")
         lockfile = root / "scripts/conformance/Cargo.lock"
@@ -61,6 +62,8 @@ def main():
             "task_sagas::signed_source_drives_reconciled_linear_and_graph_sagas_in_both_store_layouts",
             "task_sagas::signed_source_pure_sagas_recover_after_sigkill",
             "task_sagas::signed_source_effectful_sagas_recover_after_sigkill",
+            "checkpoint_proof::signed_checkpoint_proof_rejects_substitution_and_stale_authority",
+            "checkpoint_proof::signed_checkpoint_proof_gates_real_worker_commit_ack_and_restore",
         }
         discovered = {line.removesuffix(": test") for line in listing.stdout.splitlines() if line.endswith(": test")}
         if discovered != expected_tests:
