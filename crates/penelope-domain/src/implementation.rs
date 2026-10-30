@@ -360,10 +360,10 @@ pub enum ProcessInputKind {
     CanonicalEvent,
     /// A durable timer firing.
     TimerFired,
-    /// A verified recoverable-task result delivered through the saga inbox.
-    TaskEffectResult,
     /// An authorized manual-review decision.
     ManualResolution,
+    /// A verified recoverable-task result delivered through the saga inbox.
+    TaskEffectResult,
 }
 
 /// Typed append-only process outcome category.

@@ -198,6 +198,27 @@ records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
 revision, with raw samples and RSS/wall evidence. Its slower saga medians remain
 unresolved; it does not close the performance release gate.
 
+## Source compatibility review
+
+The planned pre-1.0 transition to 0.3.0 intentionally extends two exhaustive
+public enums. `ProcessInputKind` adds `TaskEffectResult`;
+`ProcessAuthorizationOperation` adds `Dispatch`, `DriveTask`, `ReconcileEffect`,
+`DeliverTimer` and `RelayTaskResult`. Consumers must update exhaustive matches
+and authorization policies. Existing variant numeric values are pinned by
+regression tests; new variants are appended. Serialized legacy variant names
+and v1 record formats remain unchanged. This is not a patch-compatible API
+extension, and the unchanged development version is not publication-ready.
+
+A strict patch-level `cargo-semver-checks 0.51.0` comparison against the pinned
+0.2.0 baseline identified these additions and reported the moved
+`penelope_executor::task::SupervisorError` enum as missing. The hosted path is
+still a public re-export. An external integration-test crate explicitly imports
+its type and variants, exhaustively matches it, checks its original traits and
+uses both error conversions on stable and MSRV. This compiler evidence resolves
+the path-removal report for that usage; the raw checker report remains a failing
+patch-level check. The deliberate enum additions still require the planned
+pre-1.0 breaking release. No checker finding is silently suppressed.
+
 ## Packaging and publication
 
 `./scripts/publish-crates.sh` verifies the nine unpacked library archives

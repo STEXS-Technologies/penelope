@@ -29,6 +29,17 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Adapter tests for transaction-boundary process death, competing connections,
   lost acknowledgements, corruption, migration and stale leases.
 
+### Compatibility
+
+- The planned 0.3.0 release adds `ProcessInputKind::TaskEffectResult` and five
+  `ProcessAuthorizationOperation` variants (`Dispatch`, `DriveTask`,
+  `ReconcileEffect`, `DeliverTimer`, `RelayTaskResult`). Consumers with exhaustive
+  matches must handle these variants when upgrading. Existing variant names,
+  numeric discriminants and saga/task v1 record encodings are preserved.
+- `penelope_executor::task::SupervisorError` remains available, including variant
+  imports, exhaustive matches and error conversions, through a re-export of the
+  shared core controller error.
+
 ### Changed
 
 - Infrastructure dependency checks allow `rusqlite` only in the dedicated

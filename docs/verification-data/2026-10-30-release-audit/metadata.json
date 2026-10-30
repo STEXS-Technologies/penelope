@@ -143,6 +143,61 @@
       "file": "runtime-with-concurrency.log.gz",
       "uncompressed_sha256": "96e82e8260128213e17c32920fd1b77275908a8d0cf25ee976554bd40a39b75d",
       "compressed_sha256": "1758d467fc72258879c9cc100e9c92aec87052eb57a825bd92c24b5b3c8d8a68"
+    },
+    "semver-baseline": {
+      "file": "semver-baseline.log.gz",
+      "uncompressed_sha256": "849c1da8a6f64e722d274b857661de18663a1a7add9b052c64b5f126b1114b27",
+      "compressed_sha256": "f349756c16897cc143b50d2d0a3142256127e946ad4d8b1d6cab9b8fd41c6802"
+    },
+    "semver-after-discriminants": {
+      "file": "semver-after-discriminants.log.gz",
+      "uncompressed_sha256": "971b083172bf88dfa9cf73f980a31b67bf184f5b2e3197c2d0882d2452465146",
+      "compressed_sha256": "32e93b1cd4015e5c93d207cb18709286bb8ca0fadc834dc454228948b18ed27a"
+    },
+    "domain-discriminants": {
+      "file": "domain-discriminants.log.gz",
+      "uncompressed_sha256": "832e119198238307cdd778a645d01ee0e1f69e0b7f8ec105005fc85862050462",
+      "compressed_sha256": "d93352f4359152e194a9dc9f93b94a17cf6abae50dc3cd545e80bbadf1be3b0d"
+    },
+    "domain-discriminants-msrv": {
+      "file": "domain-discriminants-msrv.log.gz",
+      "uncompressed_sha256": "b8d0329ea5b5f7aa3a06b429c9b78f936e63f5c3ae25a7b32abb5f903fbcc936",
+      "compressed_sha256": "f9870ea34e7dbdd1d57391b2a37a92639b836713b74d0d4e1bb4d6faf80b0bb5"
+    },
+    "ports-discriminants": {
+      "file": "ports-discriminants.log.gz",
+      "uncompressed_sha256": "08511536f13ce1ca40bdd9cfb8e112d52aecd6105b7a52892cfd6469781d156e",
+      "compressed_sha256": "65ac6a325a1d8b7a5e5ea928d24d9bb8e2a199f31e29cbc5fa21e22ca54183d8"
+    },
+    "ports-discriminants-msrv": {
+      "file": "ports-discriminants-msrv.log.gz",
+      "uncompressed_sha256": "37cef73f4e217ebfe407c398f6902e37c4355398013c94003ca14816ef6dc3c9",
+      "compressed_sha256": "5f02ec85e7aa11cd7241690e612c05f43a22f98a34697593dcdadb1b5377ab4a"
+    },
+    "workspace-discriminants": {
+      "file": "workspace-discriminants.log.gz",
+      "uncompressed_sha256": "ce8b1b74cfc4f20bf87b31905ee89d40864b7feecf0b0443e16129dcd6ab658d",
+      "compressed_sha256": "14df09e52f88eb3aabd284549e453c0eb4e3eda29f045cb4180de453348030c6"
+    },
+    "clippy-discriminants": {
+      "file": "clippy-discriminants.log.gz",
+      "uncompressed_sha256": "44a0542b730dc19a22c04b84753edf6c7741cef0720b264d5ea880686490b53c",
+      "compressed_sha256": "45fc3abc908e85cc1ee98f093426385908e2e2e83c9715a57f0551225843c4d6"
+    },
+    "supervisor-error-compat": {
+      "file": "supervisor-error-compat.log.gz",
+      "uncompressed_sha256": "e3e9d21e8d336f8979032782846b064424e90d34f594f9e74924f99ee62f3390",
+      "compressed_sha256": "e077d29893a73a4a8390ebedd33d20a3e6678edac7b19e7f7cdb95398766056d"
+    },
+    "supervisor-error-compat-msrv": {
+      "file": "supervisor-error-compat-msrv.log.gz",
+      "uncompressed_sha256": "181d28b054e99449aeffda7c9b74599a57830dc39b32c248b44864a8fdba8541",
+      "compressed_sha256": "9db980d25b8b3a739d0d5a1893cc52a835b9f747b9f920dae30091bc8e78b806"
+    },
+    "supervisor-error-compat-clippy": {
+      "file": "supervisor-error-compat-clippy.log.gz",
+      "uncompressed_sha256": "6e451ebed7cbe327c3a7ec7c1c173cc3bc6cd2ebb728f21d98cf8e532345dd36",
+      "compressed_sha256": "a634ee68427930ff15b3a184e1c9d9e85d050155b0c89f9fc622444c62a4c326"
     }
   },
   "campaigns_pending": [
@@ -171,5 +226,20 @@
       "1.85.0"
     ],
     "validation": "runtime all-targets and strict all-target Clippy passed; production Rust sources unchanged"
+  },
+  "source_compatibility": {
+    "checker": "cargo-semver-checks 0.51.0",
+    "baseline": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+    "release_type": "patch",
+    "features": "all",
+    "scope": "seven original packages; new adapter packages and fuzz excluded",
+    "before": "failed: shifted legacy discriminants, exhaustive enum additions, shared error re-export",
+    "after": "failed: exhaustive enum additions and shared error re-export; no shifted discriminants",
+    "disposition": "preserve legacy variant values; document planned pre-1.0 breaking enum extensions; compile original hosted error imports/matches/conversions independently",
+    "source_sha256": {
+      "crates/penelope-domain/src/implementation.rs": "0c5410c79c994d7eaf8b5ddf40f9d657954a3cf57d6ee84ec822148aea94fca1",
+      "crates/penelope-ports/src/implementation.rs": "30c8791d85adf3b8914c5282fa96da90c4cbd73f28141b644ab2fcdbf0f6f5d8",
+      "crates/penelope-executor/tests/supervisor_error_compat.rs": "52fed46e009469dc9ffcb657442a9aa42f522f3fd5fcc752e4059692f13a1380"
+    }
   }
 }

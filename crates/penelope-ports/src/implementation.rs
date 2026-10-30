@@ -1262,6 +1262,14 @@ pub enum ManualReviewControl {
 pub enum ProcessAuthorizationOperation {
     /// Start a new process instance.
     Start,
+    /// Request process cancellation.
+    Cancel,
+    /// Request an explicit retry.
+    Retry,
+    /// Submit a manual-review decision.
+    DecideReview,
+    /// Submit an explicit terminal override after review and evidence.
+    TerminalOverride,
     /// Claim and dispatch already committed outgoing actions.
     Dispatch,
     /// Drive a durably accepted recoverable task.
@@ -1272,14 +1280,6 @@ pub enum ProcessAuthorizationOperation {
     DeliverTimer,
     /// Relay a verified task result into a process commit.
     RelayTaskResult,
-    /// Request process cancellation.
-    Cancel,
-    /// Request an explicit retry.
-    Retry,
-    /// Submit a manual-review decision.
-    DecideReview,
-    /// Submit an explicit terminal override after review and evidence.
-    TerminalOverride,
 }
 
 /// Minimum control required before a mutable process operation can proceed.

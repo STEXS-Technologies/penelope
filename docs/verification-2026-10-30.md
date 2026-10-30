@@ -68,3 +68,16 @@ directory on the local filesystem is pending. The chaos campaign has not passed.
 Existing [saga performance concerns](performance-parallel-followup-2026-10-30.md)
 and [worst-case memory/stack qualification](performance-portable-memory-2026-10-30.md)
 remain open. No coverage, correctness or package check closes those requirements.
+
+A strict patch-level API comparison of all seven original packages against
+`edcc5b4` found shifted legacy enum discriminants. New variants were moved to the
+end of `ProcessInputKind` and `ProcessAuthorizationOperation`, and regression
+tests now pin every original numeric value. Domain/ports tests passed on stable
+and MSRV, and the workspace all-target suite and strict Clippy passed. The
+follow-up API report no longer reports shifted discriminants. It still fails a
+patch-level policy for the deliberate exhaustive-enum extensions and reports
+the shared error re-export as missing. The original hosted error imports,
+variant imports, exhaustive match, traits and conversions compile in an
+external test crate on stable and MSRV. See the [source compatibility
+review](RELEASE.md#source-compatibility-review). The failing raw API reports are
+retained; they are not represented as a green compatibility gate.
