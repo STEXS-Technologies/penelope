@@ -186,7 +186,9 @@ mod tests {
                 panic!("injected executor wake panic");
             }
         }
-        for close_admission in [false, true] {
+        for (close_admission, cancel_first) in
+            [(false, false), (true, false), (false, true), (true, true)]
+        {
             let initial_connection = Connection::open_in_memory().unwrap();
             initial_connection
                 .execute_batch("CREATE TABLE writes(value INTEGER)")
@@ -228,9 +230,19 @@ mod tests {
             } else {
                 Some(worker)
             };
+            // A dropped future can retain its registered executor waker until
+            // the already accepted operation publishes its result.
+            let retained_response = if cancel_first {
+                drop(first);
+                None
+            } else {
+                Some(first)
+            };
             release.send(()).unwrap();
             assert_eq!(wait(queued), Ok(2));
-            assert_eq!(wait(*Pin::into_inner(first)), Ok(1));
+            if let Some(response) = retained_response {
+                assert_eq!(wait(*Pin::into_inner(response)), Ok(1));
+            }
             if let Some(remaining_worker) = open_worker {
                 assert_eq!(
                     wait(remaining_worker.run(|_connection| Ok(3)).unwrap()),
