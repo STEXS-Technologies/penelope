@@ -28,15 +28,19 @@ pub struct WorkerRequest {
 }
 
 pub(crate) fn scope_digest(scope: TaskScope) -> Digest {
-    let mut bytes = Vec::with_capacity(160);
-    bytes.extend_from_slice(b"penelope.linux-worker.scope.v1\0");
-    for digest in [
+    const PREFIX: &[u8] = b"penelope.linux-worker.scope.v1\0";
+    // Four fixed-width digests follow a fixed prefix. Both slices and every
+    // 32-byte copy are bounded by the array's construction, without heap use.
+    let mut bytes = [0; PREFIX.len().saturating_add(128)];
+    let (prefix, fields) = bytes.split_at_mut(PREFIX.len());
+    prefix.copy_from_slice(PREFIX);
+    for (destination, digest) in fields.chunks_exact_mut(32).zip([
         scope.tenant.digest(),
         scope.task.digest(),
         scope.definition.digest(),
         scope.input.digest(),
-    ] {
-        bytes.extend_from_slice(&digest.0);
+    ]) {
+        destination.copy_from_slice(&digest.0);
     }
     Digest::of(&bytes)
 }
@@ -96,12 +100,16 @@ pub fn read_request(
         .definition
         .validate()
         .map_err(|_invalid| TaskPortError::Corrupt)?;
-    let input = read(reader, input_len)?;
-    if Digest::of(&input) != metadata.scope.input.digest()
-        || input_len > metadata.definition.budget.max_input_bytes
+    // The caller's transport cap can be looser than the pinned definition.
+    // Reject tighter task bounds and invalid schema before payload allocation/I/O.
+    if input_len > metadata.definition.budget.max_input_bytes
         || checkpoint_len > metadata.definition.recovery.max_checkpoint_bytes
         || metadata.input_schema == 0
     {
+        return Err(TaskPortError::Corrupt);
+    }
+    let input = read(reader, input_len)?;
+    if Digest::of(&input) != metadata.scope.input.digest() {
         return Err(TaskPortError::Corrupt);
     }
     let checkpoint = if has_checkpoint == 1 {

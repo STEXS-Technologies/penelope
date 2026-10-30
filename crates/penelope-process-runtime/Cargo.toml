@@ -38,3 +38,7 @@ harness = false
 [[bench]]
 name = "worker_protocol"
 harness = false
+
+[[test]]
+name = "worker_protocol_allocations"
+harness = false

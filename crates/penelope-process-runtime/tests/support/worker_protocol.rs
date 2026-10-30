@@ -209,3 +209,63 @@ fn checkpoint_ack_requires_exact_magic_digest_and_complete_frame() {
         );
     }
 }
+
+#[test]
+fn task_limits_and_schema_are_rejected_before_any_payload_read() {
+    struct Guard {
+        bytes: Cursor<Vec<u8>>,
+        payload_at: u64,
+        payload_touched: bool,
+    }
+    impl io::Read for Guard {
+        fn read(&mut self, destination: &mut [u8]) -> io::Result<usize> {
+            if self.bytes.position() >= self.payload_at {
+                self.payload_touched = true;
+                return Err(io::ErrorKind::PermissionDenied.into());
+            }
+            io::Read::read(&mut self.bytes, destination)
+        }
+    }
+    for case in 0..3 {
+        let mut metadata = metadata(b"input");
+        match case {
+            0 => metadata.definition.budget.max_input_bytes = 4,
+            1 => metadata.definition.recovery.max_checkpoint_bytes = 2,
+            _ => metadata.input_schema = 0,
+        }
+        metadata.scope.definition = metadata.definition.fingerprint();
+        let bytes = packet(&metadata, b"input", Some(b"checkpoint"));
+        let payload_at = 60 + u64::from(u32::from_be_bytes(bytes[44..48].try_into().unwrap()));
+        let mut reader = Guard {
+            bytes: Cursor::new(bytes),
+            payload_at,
+            payload_touched: false,
+        };
+        assert_eq!(
+            read_request(&mut reader, 64, 64).err(),
+            Some(TaskPortError::Corrupt)
+        );
+        assert!(!reader.payload_touched);
+        assert_eq!(reader.bytes.position(), payload_at);
+    }
+}
+
+#[test]
+fn scope_hash_matches_legacy_wire_encoding_for_varied_scopes() {
+    use penelope_core::task::{TaskDefinitionFingerprint, TaskId, TaskInputDigest, TaskTenantId};
+    let mut metadata = metadata(b"input");
+    for index in 0..10_000_u32 {
+        let field = |tag: u8| {
+            let mut bytes = index.to_be_bytes().to_vec();
+            bytes.push(tag);
+            Digest::of(&bytes)
+        };
+        metadata.scope.tenant = TaskTenantId::from_digest(field(0));
+        metadata.scope.task = TaskId::from_digest(field(1));
+        metadata.scope.definition = TaskDefinitionFingerprint::from_digest(field(2));
+        metadata.scope.input = TaskInputDigest::from_digest(field(3));
+        let mut bytes = Vec::new();
+        write_proposal(&mut bytes, &metadata, false, 1, b"result").unwrap();
+        assert_eq!(&bytes[8..40], &digest(&metadata).0);
+    }
+}
