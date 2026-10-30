@@ -114,3 +114,14 @@ The [buffer performance follow-up](performance-hosted-buffer-followup-2026-10-30
 uses one million native lifecycles per invocation. Sampled stack decreased from
 the previous candidate, but still exceeds baseline, and native wall time remains
 higher. Memory/performance qualification stays open.
+
+The lazy dispatch workspace candidate `b5cd836` passed full stable workspace
+all-target tests, focused parity/failure tests on stable and MSRV, strict
+core/executor all-target Clippy, strict core/executor rustdoc, both MSRV RISC-V
+core profiles, and release portable allocation assertions. Coverage passed at
+94.1070% against the unchanged 94.0759% gate. The new provider test verifies no
+buffer request for empty/running waits, timeout faults or recovery planning;
+undersized start storage leaves the projection unchanged and permits retry.
+[Raw logs and totals](verification-data/2026-10-30-lazy-workspace/) retain the
+scope of these checks. Performance comparison and the full final-candidate
+qualification remain pending.
