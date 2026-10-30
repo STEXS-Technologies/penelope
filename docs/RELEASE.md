@@ -185,6 +185,9 @@ python3 -m unittest discover -s scripts/tests
 git diff --check
 ```
 
+The [2026-10-30 verification record](verification-2026-10-30.md) retains current
+workspace/MSRV, package, supply-chain and coverage evidence with its limits.
+
 Deployment adapters need their own conformance checks for transactional
 commit/CAS, durable retention, idempotent starts, persistent fencing and
 independently verified effect evidence. Host process-kill tests do not certify
