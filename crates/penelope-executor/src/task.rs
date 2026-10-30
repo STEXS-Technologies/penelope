@@ -4,7 +4,7 @@ pub use penelope_core::task::control::SupervisorError;
 use penelope_core::task::{
     BlobRef, Digest, Reconciliation, TaskDefinition, TaskError, TaskGeneration, TaskProjection,
     TaskScope, TaskTick,
-    control::{TaskControl, TaskWorkspace},
+    control::TaskControl,
     runtime::{TaskJournal, TaskObservation, TaskRuntime},
 };
 
@@ -61,38 +61,22 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         self.control.submit(input, schema, tick)
     }
 
-    /// Advances one transition using the shared portable controller.
+    /// Advances one transition using two dispatch buffers and shared policy.
     /// # Errors
     /// Returns policy, storage, integrity or runtime failures.
     pub fn advance(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
         let mut input = [0; N];
-        let mut output = [0; N];
         let mut checkpoint = [0; N];
-        self.control.advance(
-            tick,
-            &mut TaskWorkspace {
-                input: &mut input,
-                output: &mut output,
-                checkpoint: &mut checkpoint,
-            },
-        )
+        self.control
+            .advance_with_buffers(tick, &mut input, &mut checkpoint)
     }
 
-    /// Polls one scoped runtime observation; timeout wins over completion.
+    /// Polls with one proposal buffer; timeout wins over completion.
     /// # Errors
     /// Returns stale observations or ambiguous runtime/storage failures.
     pub fn poll(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
-        let mut input = [0; N];
         let mut output = [0; N];
-        let mut checkpoint = [0; N];
-        self.control.poll(
-            tick,
-            &mut TaskWorkspace {
-                input: &mut input,
-                output: &mut output,
-                checkpoint: &mut checkpoint,
-            },
-        )
+        self.control.poll_with_buffer(tick, &mut output)
     }
 
     /// Admits a trusted scoped observation and commits before acknowledgement.

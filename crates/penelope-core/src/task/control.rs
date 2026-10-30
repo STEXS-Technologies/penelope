@@ -35,20 +35,33 @@ impl TaskWorkspace<'_> {
     /// # Errors
     /// Returns quota exhaustion without consuming runtime progress or committing.
     pub fn validate(&self, definition: TaskDefinition) -> Result<(), TaskError> {
-        for (required, available) in [
-            (definition.budget.max_input_bytes, self.input.len()),
-            (definition.budget.max_output_bytes, self.output.len()),
-            (
-                definition.recovery.max_checkpoint_bytes,
-                self.checkpoint.len(),
-            ),
-        ] {
-            if usize::try_from(required).ok().is_none_or(|n| n > available) {
-                return Err(TaskError::QuotaExhausted);
-            }
-        }
-        Ok(())
+        validate_capacity(definition.budget.max_input_bytes, self.input.len())?;
+        validate_poll_capacity(definition, self.output.len())?;
+        validate_capacity(
+            definition.recovery.max_checkpoint_bytes,
+            self.checkpoint.len(),
+        )
     }
+}
+
+fn validate_capacity(required: u32, available: usize) -> Result<(), TaskError> {
+    if usize::try_from(required)
+        .ok()
+        .is_none_or(|bytes| bytes > available)
+    {
+        return Err(TaskError::QuotaExhausted);
+    }
+    Ok(())
+}
+
+fn validate_poll_capacity(definition: TaskDefinition, available: usize) -> Result<(), TaskError> {
+    validate_capacity(
+        definition
+            .budget
+            .max_output_bytes
+            .max(definition.recovery.max_checkpoint_bytes),
+        available,
+    )
 }
 
 /// Portable supervisor sharing the v1 projection and owning no byte workspace.
@@ -145,25 +158,59 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
         tick: TaskTick,
         workspace: &mut TaskWorkspace<'_>,
     ) -> Result<bool, SupervisorError> {
+        self.advance_inner(
+            tick,
+            Some((&mut *workspace.input, &mut *workspace.checkpoint)),
+            Some(workspace.output.len()),
+        )
+    }
+
+    /// Advances using only dispatch input/checkpoint storage. No poll buffer is
+    /// borrowed or initialized by this call. A later `poll_with_buffer` validates
+    /// its actual buffer before consuming runtime progress. Use `advance` with a
+    /// full workspace when all three capacities must be admitted before launch.
+    /// # Errors
+    /// Returns clock/policy, storage, integrity or execution adapter failures.
+    pub fn advance_with_buffers(
+        &mut self,
+        tick: TaskTick,
+        input: &mut [u8],
+        checkpoint: &mut [u8],
+    ) -> Result<bool, SupervisorError> {
+        self.advance_inner(tick, Some((input, checkpoint)), None)
+    }
+
+    fn advance_inner(
+        &mut self,
+        tick: TaskTick,
+        buffers: Option<(&mut [u8], &mut [u8])>,
+        poll_capacity: Option<usize>,
+    ) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         let Some(record) = self.projection.next(tick)? else {
             return Ok(false);
         };
-        if matches!(
+        let dispatch = if matches!(
             record.event,
             TaskExecutionEvent::Started | TaskExecutionEvent::Restarted
         ) {
-            workspace.validate(self.projection.definition())?;
-        }
+            let (input, checkpoint) = buffers.ok_or(TaskError::InvalidTransition)?;
+            let definition = self.projection.definition();
+            validate_capacity(definition.budget.max_input_bytes, input.len())?;
+            validate_capacity(definition.recovery.max_checkpoint_bytes, checkpoint.len())?;
+            if let Some(capacity) = poll_capacity {
+                validate_poll_capacity(definition, capacity)?;
+            }
+            Some((input, checkpoint))
+        } else {
+            None
+        };
         if matches!(record.event, TaskExecutionEvent::FaultObserved { .. }) {
             self.fence(record.scope, record.generation)?;
         }
         self.commit(&record, None)?;
-        if matches!(
-            record.event,
-            TaskExecutionEvent::Started | TaskExecutionEvent::Restarted
-        ) {
-            let result = self.dispatch(workspace);
+        if let Some((input, checkpoint)) = dispatch {
+            let result = self.dispatch(input, checkpoint);
             if result.is_err() {
                 self.poisoned = true;
             }
@@ -172,9 +219,7 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
         Ok(true)
     }
 
-    fn dispatch(&mut self, workspace: &mut TaskWorkspace<'_>) -> Result<(), SupervisorError> {
-        let input = &mut *workspace.input;
-        let checkpoint = &mut *workspace.checkpoint;
+    fn dispatch(&mut self, input: &mut [u8], checkpoint: &mut [u8]) -> Result<(), SupervisorError> {
         let scope = self.projection.scope();
         let input_ref = self
             .projection
@@ -211,6 +256,33 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
         tick: TaskTick,
         workspace: &mut TaskWorkspace<'_>,
     ) -> Result<bool, SupervisorError> {
+        self.poll_inner(
+            tick,
+            workspace.output,
+            Some((workspace.input.len(), workspace.checkpoint.len())),
+        )
+    }
+
+    /// Polls using one buffer sized for both checkpoint and completion proposals.
+    /// Input and resume-checkpoint storage are not needed while polling. Timeout
+    /// advances the same shared policy without allocating dispatch storage.
+    /// # Errors
+    /// Rejects insufficient capacity before consuming runtime progress; other
+    /// policy, observation and ambiguity errors match `poll`.
+    pub fn poll_with_buffer(
+        &mut self,
+        tick: TaskTick,
+        buffer: &mut [u8],
+    ) -> Result<bool, SupervisorError> {
+        self.poll_inner(tick, buffer, None)
+    }
+
+    fn poll_inner(
+        &mut self,
+        tick: TaskTick,
+        buffer: &mut [u8],
+        dispatch_capacities: Option<(usize, usize)>,
+    ) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         if tick < self.projection.last_tick() {
             return Err(TaskError::InvalidOrder.into());
@@ -219,10 +291,17 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
             return Err(TaskError::InvalidTransition.into());
         }
         if tick >= self.projection.execution_deadline() {
-            return self.advance(tick, workspace);
+            return self.advance_inner(tick, None, None);
         }
-        workspace.validate(self.projection.definition())?;
-        let buffer = &mut *workspace.output;
+        let definition = self.projection.definition();
+        if let Some((input_capacity, checkpoint_capacity)) = dispatch_capacities {
+            validate_capacity(definition.budget.max_input_bytes, input_capacity)?;
+            validate_capacity(
+                definition.recovery.max_checkpoint_bytes,
+                checkpoint_capacity,
+            )?;
+        }
+        validate_poll_capacity(definition, buffer.len())?;
         let observation = match self.runtime.poll(
             self.projection.scope(),
             self.projection.generation(),

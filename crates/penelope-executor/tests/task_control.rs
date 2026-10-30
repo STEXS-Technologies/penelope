@@ -245,3 +245,145 @@ fn reconstruction_and_restart_match_hosted_profile() {
     assert_eq!(resumed_runtime.resumed, [0, 8]);
     assert_eq!(left.records, hosted.into_parts().0.records);
 }
+
+#[test]
+fn checkpoint_proposals_require_poll_storage_larger_than_final_output() {
+    let mut definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    definition.budget.max_output_bytes = 8;
+    let scope = scope(definition, &[1; 64]);
+    let mut control = TaskControl::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    control.submit(&[1; 64], 1, TaskTick::ZERO).unwrap();
+    let mut input = [0; 64];
+    let mut checkpoint = [0; 64];
+    let before = *control.projection();
+    // A full workspace must reserve enough poll storage for a checkpoint too.
+    assert_eq!(
+        control.advance(
+            TaskTick::new(1),
+            &mut TaskWorkspace {
+                input: &mut input,
+                output: &mut [0; 8],
+                checkpoint: &mut checkpoint,
+            }
+        ),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(control.projection(), &before);
+    for (input_capacity, checkpoint_capacity) in [(63, 64), (64, 63)] {
+        assert_eq!(
+            control.advance_with_buffers(
+                TaskTick::new(1),
+                &mut input[..input_capacity],
+                &mut checkpoint[..checkpoint_capacity]
+            ),
+            Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+        );
+        assert_eq!(control.projection(), &before);
+    }
+    // Dispatch-only callers supply poll storage on the later poll call.
+    assert_eq!(
+        control.advance_with_buffers(TaskTick::new(1), &mut input, &mut checkpoint),
+        Ok(true)
+    );
+    let running = *control.projection();
+    assert_eq!(
+        control.poll_with_buffer(TaskTick::new(2), &mut [0; 8]),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(control.projection(), &running);
+    let mut output = [0; 64];
+    for (input_capacity, checkpoint_capacity) in [(63, 64), (64, 63)] {
+        assert_eq!(
+            control.poll(
+                TaskTick::new(2),
+                &mut TaskWorkspace {
+                    input: &mut input[..input_capacity],
+                    output: &mut output,
+                    checkpoint: &mut checkpoint[..checkpoint_capacity],
+                }
+            ),
+            Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+        );
+        assert_eq!(control.projection(), &running);
+    }
+    assert_eq!(
+        control.poll_with_buffer(TaskTick::new(2), &mut output),
+        Ok(true)
+    );
+    assert_eq!(control.projection().checkpoint().unwrap().bytes, 12);
+    let (journal, runtime) = control.into_parts();
+    assert_eq!(journal.records.len(), 3);
+    assert_eq!(runtime.starts, 1);
+}
+
+#[test]
+fn single_buffer_poll_records_timeout_without_dispatch_or_poll_storage() {
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let scope = scope(definition, &[1]);
+    let mut initial_runtime = SumRuntime::default();
+    initial_runtime.fault = Some(TaskFault::Crash);
+    let mut control = TaskControl::restore(
+        MemoryJournal::default(),
+        initial_runtime,
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    control.submit(&[1], 1, TaskTick::ZERO).unwrap();
+    control
+        .advance_with_buffers(TaskTick::new(1), &mut [0; 64], &mut [0; 64])
+        .unwrap();
+    let deadline = control.projection().execution_deadline();
+    assert_eq!(control.poll_with_buffer(deadline, &mut []), Ok(true));
+    assert_eq!(control.projection().status(), TaskStatus::Faulted);
+    let (journal, runtime) = control.into_parts();
+    assert_eq!(journal.records.len(), 3);
+    assert_eq!(runtime.starts, 1);
+    assert_eq!(runtime.fences, 1);
+    assert_eq!(runtime.fault, Some(TaskFault::Crash));
+}
+
+#[test]
+fn standalone_workspace_validation_admits_the_largest_declared_proposal() {
+    let mut definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    definition.budget.max_input_bytes = 4;
+    definition.budget.max_output_bytes = 16;
+    definition.recovery.max_checkpoint_bytes = 12;
+    let (mut input, mut output, mut checkpoint) = ([0; 4], [0; 16], [0; 12]);
+    for (input_capacity, poll_capacity, checkpoint_capacity, expected) in [
+        (4, 16, 12, Ok(())),
+        (3, 16, 12, Err(TaskError::QuotaExhausted)),
+        (4, 15, 12, Err(TaskError::QuotaExhausted)),
+        (4, 16, 11, Err(TaskError::QuotaExhausted)),
+    ] {
+        assert_eq!(
+            TaskWorkspace {
+                input: &mut input[..input_capacity],
+                output: &mut output[..poll_capacity],
+                checkpoint: &mut checkpoint[..checkpoint_capacity],
+            }
+            .validate(definition),
+            expected
+        );
+    }
+    definition.budget.max_output_bytes = 8;
+    for (capacity, expected) in [(12, Ok(())), (11, Err(TaskError::QuotaExhausted))] {
+        assert_eq!(
+            TaskWorkspace {
+                input: &mut input,
+                output: &mut output[..capacity],
+                checkpoint: &mut checkpoint,
+            }
+            .validate(definition),
+            expected
+        );
+    }
+}
