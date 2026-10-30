@@ -396,6 +396,7 @@ dependencies = [
  "penelope-executor",
  "penelope-ports",
  "penelope-sqlite",
+ "penelope-statechronicle",
  "rustix",
  "seccompiler",
  "serde",

@@ -26,6 +26,7 @@ penelope-sqlite = { version = "0.2.0", path = "../penelope-sqlite" }
 penelope-executor.workspace = true
 penelope-domain.workspace = true
 penelope-ports.workspace = true
+penelope-statechronicle.workspace = true
 
 [lints]
 workspace = true

@@ -90,6 +90,12 @@ there is no transaction spanning StateChronicle and the task journal. The existi
 `bind_checkpoint_state` remains available for applications that already invoked
 their verifier. Pure task durability does not require either integration path.
 
+The protected-worker integration test in
+`crates/penelope-process-runtime/tests/support/checkpoint_state.rs` demonstrates
+this decorator with SQLite: rejected verification or substituted evidence leaves
+the worker paused without an ACK, and reconstruction fences that generation. Its
+trusted verifier is a fixture; applications must supply actual proof verification.
+
 ## Discovering accepted inputs after restart
 
 `penelope_ports::inbox::PendingInbox` exposes read-only, bounded discovery of
