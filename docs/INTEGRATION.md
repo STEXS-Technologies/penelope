@@ -99,6 +99,13 @@ through the engine's outcome plan, executes the retry in a protected worker,
 relays the verified result, and checks that repeating the timer commit leaves
 no action available for redispatch.
 
+The companion `discovered_graph_timer_selects_one_retry_task_and_replays_terminal_state`
+test uses an explicit graph timer step between failure and retry. Its application
+payload pins the timer's due time; the host verifies that payload, complete scope,
+active action and accepted delivery before submitting the normal graph result.
+Both database layouts reconstruct the graph and complete the verified retry task
+without adding new graph inputs or action kinds.
+
 ## Executor composition example
 
 Run `./scripts/run-executor-saga-example.sh`, or keep its state directory with:

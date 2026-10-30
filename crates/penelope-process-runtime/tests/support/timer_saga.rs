@@ -88,7 +88,7 @@ fn commit_decision(
     (decision, commit)
 }
 
-fn acknowledge_dispatch(stores: &Stores, expected: &ProcessAction) {
+pub(super) fn acknowledge_dispatch(stores: &Stores, expected: &ProcessAction) {
     let request = OutboxClaimRequest::new(
         stores.scope.clone(),
         id("pri_timer_host"),
