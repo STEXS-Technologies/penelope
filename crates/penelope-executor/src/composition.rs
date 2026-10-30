@@ -216,6 +216,12 @@ impl TaskResultRelay {
         Ok(Self { outcome, input })
     }
 
+    /// Exact task/action join used for boundary authorization.
+    #[must_use]
+    pub const fn binding(&self) -> &TaskEffectBinding {
+        self.outcome.binding()
+    }
+
     #[must_use]
     pub const fn input(&self) -> &penelope_domain::ProcessInput {
         &self.input
