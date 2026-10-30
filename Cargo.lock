@@ -353,6 +353,7 @@ dependencies = [
  "penelope-executor",
  "penelope-intent",
  "penelope-ports",
+ "penelope-process-runtime",
  "penelope-statechronicle",
  "serde",
  "serde_json",
