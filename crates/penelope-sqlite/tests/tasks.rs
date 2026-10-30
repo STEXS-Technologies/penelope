@@ -679,3 +679,25 @@ fn failed_schema_upgrade_rolls_back_schema_and_version() {
         .unwrap();
     assert!(!retired_table);
 }
+
+#[test]
+fn structural_integrity_check_reports_constraint_corruption_and_recovery() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("integrity.db");
+    let journal = open(&path);
+    journal.check_integrity().unwrap();
+    let connection = Connection::open(&path).unwrap();
+    connection
+        .execute_batch("PRAGMA ignore_check_constraints=ON; UPDATE lease_counter SET next_token=0")
+        .unwrap();
+    assert_eq!(journal.check_integrity(), Err(TaskPortError::Corrupt));
+    // Test-fixture repair is explicit; check_integrity must never repair state.
+    let counter: i64 = connection
+        .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(counter, 0);
+    connection
+        .execute("UPDATE lease_counter SET next_token=1", [])
+        .unwrap();
+    journal.check_integrity().unwrap();
+}

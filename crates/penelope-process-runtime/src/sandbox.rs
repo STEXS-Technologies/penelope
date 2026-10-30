@@ -148,6 +148,64 @@ pub(crate) fn parse_identity(pid: u32, stat: &[u8]) -> io::Result<ProcessIdentit
     Ok(ProcessIdentity { pid, start_ticks })
 }
 
+// Kept separate so the irreversible child-only setup can be qualified in an
+// isolated process before exec discards LLVM counters. Do not add allocations,
+// locks, environment access or callbacks: this also runs after fork.
+fn prepare_child(
+    parent: rustix::process::Pid,
+    manifest: &File,
+    cpu_seconds: u64,
+    address_space: u64,
+) -> io::Result<()> {
+    set_parent_process_death_signal(Some(Signal::KILL)).map_err(syscall_error)?;
+    if getppid() != Some(parent) {
+        return Err(io::Error::from_raw_os_error(libc::ECHILD));
+    }
+    let identity = self_identity()?;
+    let mut bytes = [0; 12];
+    bytes
+        .get_mut(..4)
+        .ok_or_else(|| io::Error::from_raw_os_error(libc::EIO))?
+        .copy_from_slice(&identity.pid.to_be_bytes());
+    bytes
+        .get_mut(4..)
+        .ok_or_else(|| io::Error::from_raw_os_error(libc::EIO))?
+        .copy_from_slice(&identity.start_ticks.to_be_bytes());
+    if rustix::io::pwrite(manifest, &bytes, IDENTITY_OFFSET).map_err(syscall_error)? != bytes.len()
+    {
+        return Err(io::Error::from_raw_os_error(libc::EIO));
+    }
+    rustix::fs::fsync(manifest).map_err(syscall_error)?;
+    for (resource, limit) in [
+        (Resource::Cpu, cpu_seconds),
+        (Resource::As, address_space),
+        (Resource::Core, 0),
+    ] {
+        setrlimit(
+            resource,
+            Rlimit {
+                current: Some(limit),
+                maximum: Some(limit),
+            },
+        )
+        .map_err(syscall_error)?;
+    }
+    // SAFETY: close_range with CLOEXEC marks inherited descriptors for
+    // closing on successful exec without closing Rust's exec-error pipe.
+    if unsafe {
+        libc::syscall(
+            libc::SYS_close_range,
+            3_u32,
+            u32::MAX,
+            libc::CLOSE_RANGE_CLOEXEC,
+        )
+    } != 0
+    {
+        return Err(io::Error::last_os_error());
+    }
+    Ok(())
+}
+
 pub(crate) fn spawn(
     command: &mut Command,
     program: BpfProgram,
@@ -167,51 +225,7 @@ pub(crate) fn spawn(
     // exit, so reconstruction cannot race a child still in this setup boundary.
     unsafe {
         command.pre_exec(move || {
-            set_parent_process_death_signal(Some(Signal::KILL)).map_err(syscall_error)?;
-            if getppid() != Some(parent) {
-                return Err(io::Error::from_raw_os_error(libc::ECHILD));
-            }
-            let identity = self_identity()?;
-            let mut bytes = [0; 12];
-            bytes
-                .get_mut(..4)
-                .ok_or_else(|| io::Error::from_raw_os_error(libc::EIO))?
-                .copy_from_slice(&identity.pid.to_be_bytes());
-            bytes
-                .get_mut(4..)
-                .ok_or_else(|| io::Error::from_raw_os_error(libc::EIO))?
-                .copy_from_slice(&identity.start_ticks.to_be_bytes());
-            if rustix::io::pwrite(&manifest, &bytes, IDENTITY_OFFSET).map_err(syscall_error)?
-                != bytes.len()
-            {
-                return Err(io::Error::from_raw_os_error(libc::EIO));
-            }
-            rustix::fs::fsync(&manifest).map_err(syscall_error)?;
-            for (resource, limit) in [
-                (Resource::Cpu, cpu_seconds),
-                (Resource::As, address_space),
-                (Resource::Core, 0),
-            ] {
-                setrlimit(
-                    resource,
-                    Rlimit {
-                        current: Some(limit),
-                        maximum: Some(limit),
-                    },
-                )
-                .map_err(syscall_error)?;
-            }
-            // SAFETY: close_range with CLOEXEC marks inherited descriptors for
-            // closing on successful exec without closing Rust's exec-error pipe.
-            if libc::syscall(
-                libc::SYS_close_range,
-                3_u32,
-                u32::MAX,
-                libc::CLOSE_RANGE_CLOEXEC,
-            ) != 0
-            {
-                return Err(io::Error::last_os_error());
-            }
+            prepare_child(parent, &manifest, cpu_seconds, address_space)?;
             seccompiler::apply_filter(&program)
                 .map_err(|_filter| io::Error::from_raw_os_error(libc::EPERM))?;
             Ok(())
@@ -219,3 +233,7 @@ pub(crate) fn spawn(
     }
     command.spawn().map_err(|_spawn| TaskPortError::Runtime)
 }
+
+#[cfg(test)]
+#[path = "sandbox_tests.rs"]
+mod tests;

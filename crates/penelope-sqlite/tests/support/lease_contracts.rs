@@ -564,3 +564,79 @@ fn ignored_acknowledgement_is_not_reported_as_durable_success() {
         assert_eq!(acknowledged, 1);
     }
 }
+
+#[test]
+fn exhausted_or_corrupt_lease_counters_and_clock_overflow_preserve_pending_work() {
+    for timer_mode in [false, true] {
+        for (next_token, now, expected) in [
+            (0_i64, 100, PortError::Invariant),
+            (-1, 100, PortError::Invariant),
+            (i64::MAX, 100, PortError::QuotaExceeded),
+            (1, u64::MAX, PortError::QuotaExceeded),
+            (1, i64::MAX as u64, PortError::QuotaExceeded),
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("leases.db");
+            let clock = clock();
+            let adapter = store(&path, clock.clone());
+            let commit = commit(timer_mode);
+            block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+            if timer_mode {
+                block_on(adapter.schedule(&TimerSchedule {
+                    action: commit.actions[0].clone(),
+                    due_at: LogicalTime(100),
+                }))
+                .unwrap();
+            }
+            let connection = Connection::open(&path).unwrap();
+            // Deliberately damaged storage must fail closed even if an external
+            // writer bypassed CHECK constraints; the adapter never does this.
+            connection
+                .execute_batch("PRAGMA ignore_check_constraints=ON")
+                .unwrap();
+            connection
+                .execute("UPDATE lease_counter SET next_token=?1", [next_token])
+                .unwrap();
+            clock.now.store(now, Ordering::SeqCst);
+            let error = if timer_mode {
+                block_on(adapter.claim_due(&timer_claim(now))).unwrap_err()
+            } else {
+                block_on(adapter.claim(&claim())).unwrap_err()
+            };
+            assert_eq!(error, expected);
+            let table = if timer_mode {
+                "process_timers"
+            } else {
+                "process_actions"
+            };
+            let stored: (i64, bool, bool) = connection
+                .query_row(
+                    &format!("SELECT attempt,lease IS NULL,expires_at IS NULL FROM {table}"),
+                    [],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                )
+                .unwrap();
+            assert_eq!(stored, (0, true, true));
+            let counter: i64 = connection
+                .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(counter, next_token);
+            connection
+                .execute("UPDATE lease_counter SET next_token=1", [])
+                .unwrap();
+            clock.now.store(100, Ordering::SeqCst);
+            if timer_mode {
+                assert_eq!(
+                    block_on(adapter.claim_due(&timer_claim(100)))
+                        .unwrap()
+                        .len(),
+                    1
+                );
+            } else {
+                let leases = block_on(adapter.claim(&claim())).unwrap();
+                assert_eq!(leases.len(), 1);
+                assert_eq!(leases[0].record.delivery_attempt, 0);
+            }
+        }
+    }
+}
