@@ -125,3 +125,12 @@ undersized start storage leaves the projection unchanged and permits retry.
 [Raw logs and totals](verification-data/2026-10-30-lazy-workspace/) retain the
 scope of these checks. Performance comparison and the full final-candidate
 qualification remain pending.
+
+The borrowed-adapter reconstruction candidate `7d2a2b9` passed stable workspace
+all-target tests, MSRV executor all-target tests, strict workspace Clippy,
+release portable allocator tests and coverage (94.1133%, unchanged 94.0759%
+ratchet). Replay/fence/receipt validation now runs through borrowed journal and
+runtime ports before constructing the owning control. [Raw logs](verification-data/2026-10-30-borrowed-restore/)
+retain the checks; final candidate performance and full chaos qualification are
+still pending. The preceding [scoped-buffer comparison](performance-hosted-scoped-frames-2026-10-30.md)
+removed the 64 KiB sampled stack regression but retained a 4 KiB regression.
