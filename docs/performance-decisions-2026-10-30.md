@@ -92,3 +92,7 @@ python3 scripts/benchmark-decision-comparison.py target/decision-comparison \
   --after 1aedbaeadf2a9a8f1f657a05b97d06921206c30d \
   --cpu 0 --parallel-cpus 0,1,2,3 --runs 10 --toolchain 1.99.0
 ```
+
+The [parallel follow-up](performance-parallel-followup-2026-10-30.md) adds a
+same-revision control, hardware counters and paired uncertainty analysis. It
+does not resolve the performance concern or replace these original samples.

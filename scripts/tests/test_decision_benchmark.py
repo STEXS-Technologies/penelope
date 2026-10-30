@@ -1,5 +1,6 @@
 """Benchmark evidence must reject output it cannot interpret reliably."""
 import importlib.util
+import json
 from pathlib import Path
 import unittest
 
@@ -34,6 +35,34 @@ class BenchmarkObservations(unittest.TestCase):
                        "test: 10 operations in 5days", "test: 10 operations in NaNs"]:
             with self.subTest(output=output), self.assertRaises(ValueError):
                 MODULE.observations(output)
+
+
+class PerformanceCounters(unittest.TestCase):
+    def records(self):
+        return [{"event": event, "counter-value": "0.000000", "pcnt-running": 100}
+                for event in MODULE.PERF_EVENTS]
+
+    def test_exact_complete_counters_preserve_zero_values(self):
+        records = self.records()
+        wire = "\n".join(json.dumps(item) for item in records)
+        self.assertEqual(MODULE.performance_counters(wire), records)
+
+    def test_missing_duplicate_and_unavailable_counters_fail(self):
+        invalid = [self.records()[:-1], self.records() + self.records()[:1]]
+        duplicated = self.records()
+        duplicated[-1]["event"] = duplicated[0]["event"]
+        invalid.append(duplicated)
+        for value in ["<not supported>", "nan", "inf", "-1"]:
+            records = self.records()
+            records[0]["counter-value"] = value
+            invalid.append(records)
+        for value in [0, -1, 101]:
+            records = self.records()
+            records[0]["pcnt-running"] = value
+            invalid.append(records)
+        for records in invalid:
+            with self.subTest(records=records), self.assertRaises(ValueError):
+                MODULE.performance_counters("\n".join(json.dumps(item) for item in records))
 
 
 if __name__ == "__main__":

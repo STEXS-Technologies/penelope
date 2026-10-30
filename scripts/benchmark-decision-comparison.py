@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import io
+import math
 import json
 import os
 from pathlib import Path
@@ -18,6 +19,8 @@ BENCHMARKS = {
                           "parallel_linear_saga", "parallel_graph_saga"],
     "penelope-ports": ["contract_throughput"],
 }
+
+PERF_EVENTS = ["task-clock", "instructions", "cycles", "context-switches", "cpu-migrations"]
 
 
 def command(*args, **kwargs):
@@ -56,25 +59,40 @@ def observations(stdout):
     return result
 
 
-def build(root, toolchain):
+def performance_counters(stdout):
+    counters = [json.loads(line) for line in stdout.splitlines() if line.strip()]
+    if len(counters) != len(PERF_EVENTS) or {item["event"] for item in counters} != set(PERF_EVENTS):
+        raise ValueError("perf must report each expected counter exactly once")
+    for item in counters:
+        value = float(item["counter-value"])
+        if not math.isfinite(value) or value < 0 or not 0 < float(item["pcnt-running"]) <= 100:
+            raise ValueError("perf counter must be finite, nonnegative and enabled")
+    return counters
+
+
+def build(root, toolchain, selection):
     binaries = {}
     for package, names in BENCHMARKS.items():
+        selected = [name for name in names if name in selection]
+        if not selected:
+            continue
+        arguments = [argument for name in selected for argument in ["--bench", name]]
         built = command("cargo", f"+{toolchain}", "bench", "-p", package,
-                        "--benches", "--no-run", "--locked", "--message-format=json",
+                        *arguments, "--no-run", "--locked", "--message-format=json",
                         "--target-dir", str(root / "target"),
                         cwd=root, capture_output=True)
         for line in built.stdout.splitlines():
             entry = json.loads(line)
             name = entry.get("target", {}).get("name")
-            if (entry.get("reason") == "compiler-artifact" and name in names
+            if (entry.get("reason") == "compiler-artifact" and name in selected
                     and entry.get("executable")):
                 if name in binaries:
                     raise ValueError(f"duplicate binary for {name}")
                 binaries[name] = Path(entry["executable"])
-    expected = {name for names in BENCHMARKS.values() for name in names}
+    expected = set(selection)
     if set(binaries) != expected:
         raise ValueError(f"benchmark binaries do not match expected set: {binaries}")
-    return {name: binaries[name] for names in BENCHMARKS.values() for name in names}
+    return {name: binaries[name] for names in BENCHMARKS.values() for name in names if name in selection}
 
 
 def main():
@@ -86,7 +104,10 @@ def main():
     parser.add_argument("--parallel-cpus", required=True, help="comma-separated pinned CPUs")
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--toolchain", default="1.99.0")
+    parser.add_argument("--benchmark", action="append", choices=[name for names in BENCHMARKS.values() for name in names], help="repeat to select binaries; default is all six")
+    parser.add_argument("--perf", action="store_true", help="record Linux perf counters for each measured process")
     args = parser.parse_args()
+    selection = args.benchmark or [name for names in BENCHMARKS.values() for name in names]
     try:
         parallel = cpu_list(args.parallel_cpus)
         cpu_list(str(args.cpu))
@@ -105,6 +126,10 @@ def main():
         "schema": 1, "measured_at": datetime.now(timezone.utc).isoformat(),
         "revisions": revisions, "serial_cpu": args.cpu, "parallel_cpus": parallel,
         "runs": args.runs, "warmup_processes_per_binary": 1,
+        "benchmarks": selection,
+        "perf": {"version": command("perf", "version", capture_output=True).stdout.strip(),
+                 "events": PERF_EVENTS,
+                 "scope": "GNU time wrapper and benchmark, including all child threads"} if args.perf else None,
         "runner_sha256": digest(Path(__file__)),
         "build_target_policy": "separate explicit target directory in each archived snapshot",
         "order": "alternating before/after by round; fixed benchmark order within each revision",
@@ -144,7 +169,7 @@ def main():
             metadata["locks"][label] = digest(snapshot / "Cargo.lock")
         if metadata["sources"]["before"] != metadata["sources"]["after"]:
             raise ValueError("benchmark source/datasets differ between revisions")
-        binaries = {label: build(snapshot, args.toolchain) for label, snapshot in snapshots.items()}
+        binaries = {label: build(snapshot, args.toolchain, selection) for label, snapshot in snapshots.items()}
         metadata["binaries"] = {label: {name: digest(binary) for name, binary in built.items()}
                                 for label, built in binaries.items()}
         (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
@@ -154,14 +179,20 @@ def main():
                 for name, binary in binaries[label].items():
                     affinity = parallel if name.startswith("parallel_") else [args.cpu]
                     resource_path = Path(temporary) / "resources.json"
-                    measured = command("/usr/bin/time", "-f",
-                                       '{"wall_seconds":%e,"user_seconds":%U,"system_seconds":%S,"peak_rss_kib":%M}',
-                                       "-o", str(resource_path), "taskset", "-c",
-                                       ",".join(map(str, affinity)), str(binary), capture_output=True)
+                    measured_command = ["/usr/bin/time", "-f",
+                        '{"wall_seconds":%e,"user_seconds":%U,"system_seconds":%S,"peak_rss_kib":%M}',
+                        "-o", str(resource_path), str(binary)]
+                    perf_path = Path(temporary) / "perf.jsonl"
+                    if args.perf:
+                        measured_command = ["perf", "stat", "-j", "-e", ",".join(PERF_EVENTS),
+                                            "-o", str(perf_path), "--", *measured_command]
+                    measured = command("taskset", "-c", ",".join(map(str, affinity)),
+                                       *measured_command, capture_output=True)
                     record = {"benchmark": name, "revision": revisions[label], "cpus": affinity,
                               "stdout": measured.stdout, "stderr": measured.stderr,
                               "resources": json.loads(resource_path.read_text()),
-                              "observations": observations(measured.stdout)}
+                              "observations": observations(measured.stdout),
+                              "perf": performance_counters(perf_path.read_text()) if args.perf else None}
                     if index:
                         (output / f"run-{index}-{label}-{name}.json").write_text(
                             json.dumps(record, indent=2) + "\n")
