@@ -52,6 +52,26 @@ PY_KIND
 done
 printf '%s\n' 'Layer gate permits test-only infrastructure and rejects normal/build clients'
 
+for dependency_kind in normal build; do
+  python3 - "$gate_test_dir" "$dependency_kind" <<'PY_SQLITE_KIND'
+import json, sys
+from pathlib import Path
+directory, kind = Path(sys.argv[1]), sys.argv[2]
+metadata = json.loads((directory / 'baseline.json').read_text())
+package = next(p for p in metadata['packages'] if p['name'] == 'penelope-executor')
+dependency = next(d for d in package['dependencies'] if d['name'] == 'penelope-sqlite')
+dependency['kind'] = None if kind == 'normal' else kind
+(directory / 'metadata.json').write_text(json.dumps(metadata))
+PY_SQLITE_KIND
+  if ./scripts/check-layer-boundaries.sh > "$gate_test_dir/result.txt" 2>&1; then
+    printf 'gate incorrectly admitted executor %s SQLite adapter dependency\n' "$dependency_kind" >&2
+    exit 1
+  elif ! grep -Fq 'SQLite adapter dependency must remain dev-only' "$gate_test_dir/result.txt"; then
+    cat "$gate_test_dir/result.txt" >&2
+    exit 1
+  fi
+done
+
 # Dedicated adapters receive dependency-specific exceptions, not a blanket
 # infrastructure exemption. Unknown packages remain infrastructure-free.
 for adapter_case in sqlite-rusqlite sqlite-sqlx unknown-rusqlite; do

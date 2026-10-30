@@ -16,6 +16,8 @@ serde = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
+async-trait.workspace = true
+penelope-sqlite = { version = "0.2.0", path = "../penelope-sqlite" }
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 syn = { version = "2", features = ["full", "visit"] }
 proptest = { workspace = true }

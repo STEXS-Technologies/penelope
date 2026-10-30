@@ -29,11 +29,21 @@ require_internal_dependencies penelope-core ''
 require_internal_dependencies penelope-domain 'penelope-core'
 require_internal_dependencies penelope-intent 'penelope-core penelope-domain'
 require_internal_dependencies penelope-ports 'penelope-core penelope-domain'
-require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-intent penelope-ports'
+# SQLite is a dev-only dependency for the executable composition example.
+require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-intent penelope-ports penelope-sqlite'
 require_internal_dependencies penelope-process-runtime 'penelope-core penelope-domain penelope-executor penelope-ports penelope-sqlite'
 require_internal_dependencies penelope-sqlite 'penelope-core penelope-domain penelope-ports'
 require_internal_dependencies penelope-statechronicle 'penelope-domain penelope-ports'
 require_internal_dependencies penelope 'penelope-core penelope-domain penelope-executor penelope-intent penelope-ports penelope-statechronicle'
+
+if jq -e '
+    .packages[] | select(.name == "penelope-executor")
+    | .dependencies[]
+    | select(.name == "penelope-sqlite" and .kind != "dev")
+' <<<"$metadata" >/dev/null; then
+    printf '%s\n' 'layer violation: executor SQLite adapter dependency must remain dev-only' >&2
+    exit 1
+fi
 
 forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-.*|axum|deadpool|diesel|lapin|mongodb|postgres|rdkafka|redis|reqwest|rusqlite|sea-orm|sqlx|surrealdb|tokio-postgres)$'
 if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
