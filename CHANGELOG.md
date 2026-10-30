@@ -61,7 +61,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   plus real adapter crash/concurrency suites and stable/MSRV verification.
 - Recorded SQLite, worker, hosted-memory and RISC-V stack evidence. The final
   performance review explicitly accepts a measured graph-saga median regression
-  of 3.10% (29.90 ns per benchmark operation) on the reference host; timing parity
+  of 2.95–3.10% (28.53–29.90 ns per benchmark operation) across the two reference
+  campaigns; timing parity
   and universal latency bounds are not claimed. See
   [the qualification report](docs/verification-2026-10-30.md).
 

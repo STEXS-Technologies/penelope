@@ -1,7 +1,8 @@
 # penelope-sqlite
 
 Optional SQLite persistence for Penelope tasks and sagas. The default Penelope
-facade does not depend on this package. Release qualification is still ongoing.
+facade does not depend on this package. The [0.3.0 qualification report](../../docs/qualification-0.3.0.md)
+records the verified profile, evidence and limits.
 
 `SqliteTaskJournal` implements synchronous `TaskJournal` and
 `TaskGenerationAuthority` for one pinned task definition. `SqliteProcessStore`

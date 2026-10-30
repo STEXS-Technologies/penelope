@@ -1,23 +1,35 @@
 # Reliable execution verification — 2026-10-30
 
-Candidate `0f4080b` passed the full final local check sequence: stable and MSRV
-workspace/all-target tests, doctests, strict Clippy/rustdoc, both RISC-V profiles,
-layer and negative checks, runner/Python/action-pin checks, audit/deny, all nine
-package archives, secrets and whitespace. Coverage is **94.3494%**, above the
-unchanged **94.0759%** ratchet. The three-iteration extended campaign completed
-all **48 target runs of 100,000 inputs** and exited zero. Its revision scope and
-separate actual-process-kill test scope are retained in the
-[final gate metadata](verification-data/2026-10-30-final-development-gates/metadata.json).
+The **0.3.0 candidate** `16e3e1e` passed release qualification for the documented
+reference profiles, with the explicit measured performance exceptions recorded
+in the [requirement audit](qualification-0.3.0.md). All nine library crates and
+internal dependency requirements use `0.3.0`. No tag or publication was created.
 
-The [final performance review](performance-final-2026-10-30.md) records all six
-benchmarks, the parallel self-control, sealed-worker dispatch and explicit
-measured regression exceptions. Earlier open campaign/performance dispositions
-below are historical snapshots superseded by these results. Prior remote CI,
-coverage, extended-chaos and verification-only release workflow results retain
-their exact revisions in [remote metadata](verification-data/2026-10-30-remote-qualification/metadata.json).
-Workspace metadata now declares the `0.3.0` candidate. Versioned package/workflow
-verification and the final requirement audit are still pending. These results alone
-do not declare a qualified 0.3.0 release.
+The versioned local sequence passed stable/MSRV workspace all-target tests,
+doctests, strict Clippy/rustdoc, portable checks including MSRV RISC-V with and
+without Serde, layer/negative checks, runner/Python/action-pin checks, audit/deny,
+all nine package archives, secrets and whitespace. Coverage is **94.3494%**,
+above the unchanged **94.0759%** ratchet. The optional upstream suite passed
+seven tests, including signed-source crash cases and checkpoint proofs.
+[Versioned logs and package hashes](verification-data/2026-10-30-versioned-qualification/metadata.json)
+retain the exact candidate and the corrected first version-metadata failure.
+
+The three-iteration extended campaign completed all **48 target runs of 100,000
+inputs** and exited zero. [Campaign metadata](verification-data/2026-10-30-final-development-gates/metadata.json)
+records the changing revision scope and separates fuzzing from actual adapter
+process-kill suites. Versioned remote bounded fuzzing also passed.
+
+The [final performance review](performance-final-2026-10-30.md) retains both
+six-benchmark campaigns, self-control, sealed-worker dispatch and the versioned
+RISC-V analysis. It explicitly accepts a graph-saga marginal median regression
+of **2.95–3.10%**, **28.53–29.90 ns** per benchmark operation, plus smaller
+recorded positive medians. No timing-parity or universal-bound claim follows.
+
+All seven [versioned CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41113165133)
+and the [versioned verification-only release workflow](https://github.com/STEXS-Technologies/penelope/actions/runs/41113175257)
+passed; both publication jobs were skipped. The dated changelog extraction
+passed locally. Earlier open dispositions below are historical snapshots and
+are superseded only by the completed checks and explicit exceptions above.
 
 The Rust sources at `2223a31` passed the checks below on the local Linux host.
 This records current development evidence, not a completed 0.3.0 qualification.
