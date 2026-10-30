@@ -42,12 +42,22 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   imports, exhaustive matches and error conversions, through a re-export of the
   shared core controller error.
 
+### Fixed
+
+- Linux worker polling drains observations to EOF before classifying child exit,
+  preventing a queued valid completion from being reported as a task fault.
+
 ### Changed
+
+- Canonical DTO encoding reserves per-type initial buffer capacity, and Serde
+  identifier decoding admits borrowed text without a temporary String. Measured
+  encoding and short/escaped-ID decoding improve; long-ID decoding has a retained
+  4.03% timing regression. Wire bytes and typed admission remain compatible.
 
 - Short hosted protocol identifiers store text inline; long values retain owned
   heap storage. Text admission, wire bytes, formatting, ordering and hashing stay
   compatible. The direct-task engine floor is about 51% lower in the measured
-  short-ID fixture; standalone DTO encoding is 6.29% slower. Detailed profiles
+  short-ID fixture; its initial standalone DTO encoding comparison was 6.29% slower. Detailed profiles
   and the long-ID control are retained in the inline-identifier report.
 
 - Linear saga completion clones only retained projection fields; action-history

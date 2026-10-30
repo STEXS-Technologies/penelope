@@ -18,6 +18,13 @@ Its contract/allocation tests preserve v1 wire and public textual semantics. A
 separate test-only deadline fix at `69a749f` retains the worker-service assertions
 and passes repeated stable/MSRV runs plus both full real-runtime suites.
 
+The [2026-10-31 encoding/polling follow-up](performance-encoding-2026-10-31.md)
+at `53734a1` passes stable/MSRV workspace checks and seven-job code CI. It reduces
+encoding and common identifier decode time with a retained long-ID tradeoff.
+The Linux poll fix prevents exit classification before queued observation bytes
+have been consumed; its failed-CI evidence, EOF regression cases and repeated
+real-worker tests are retained separately from earlier release qualification.
+
 The versioned local sequence passed stable/MSRV workspace all-target tests,
 doctests, strict Clippy/rustdoc, portable checks including MSRV RISC-V with and
 without Serde, layer/negative checks, runner/Python/action-pin checks, audit/deny,

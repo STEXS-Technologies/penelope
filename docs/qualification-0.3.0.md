@@ -26,6 +26,16 @@ long-ID control shows a smaller benefit. These scoped results exclude durability
 and isolated workers. The follow-up also retains the prior CI worker-test failure
 and the test-only bounded-deadline correction at `69a749f`.
 
+The [encoding and polling follow-up](performance-encoding-2026-10-31.md) at
+`53734a1` reduces current-branch DTO encoding by 4.16% and short-ID JSON decoding
+by 9.47%; long-ID decoding measures 4.03% slower. The older-source timing control
+is too variable to establish exact parity. More importantly, a real queued-frame/
+child-exit race found through the preceding CI failure is fixed by requiring EOF
+before exit-based fault classification. New deterministic and real-worker tests,
+200 repeated worker test invocations, stable/MSRV workspace suites and both
+seven-job CI runs pass. Historical full-campaign/package records retain their
+original revision scope; this is separately retained follow-up evidence.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |
