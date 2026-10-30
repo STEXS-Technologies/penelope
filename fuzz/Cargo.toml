@@ -140,3 +140,9 @@ name = "fuzz_process_control_ports"
 path = "fuzz_targets/fuzz_process_control_ports.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_sqlite_process"
+path = "fuzz_targets/fuzz_sqlite_process.rs"
+test = false
+doc = false

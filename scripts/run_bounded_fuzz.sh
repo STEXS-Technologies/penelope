@@ -2,7 +2,7 @@
 # Runs and structurally verifies the complete bounded public-boundary fuzz set.
 #
 # This is intentionally library-only: it checks parsers, DTO contracts, pure
-# decisions, ports, and bounded SQLite authority operation sequences. SQLite
+# decisions, ports, and bounded SQLite authority/process operation sequences. SQLite
 # runs use private temporary local files; this is not deployment chaos coverage.
 set -euo pipefail
 
@@ -43,6 +43,7 @@ fuzz_targets=(
   fuzz_task_checkpoint
   fuzz_worker_protocol
   fuzz_sqlite_task_authority
+  fuzz_sqlite_process
 )
 
 dtos=(
