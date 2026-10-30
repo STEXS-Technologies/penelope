@@ -1,5 +1,9 @@
 # Inline identifier optimization and application overhead — 2026-10-30
 
+A [later encoding and worker-polling follow-up](performance-encoding-2026-10-31.md)
+reduces current-branch encoding time and fixes a queued-completion/exit race.
+The initial identifier-stage results below remain pinned historical measurements.
+
 The one-step in-memory engine's empty-task paired added-time median drops from
 **245.29 ns to 119.17 ns**, a **51.42% reduction** versus the previous
 optimized branch. For the same ~3.8 µs CPU task, measured overhead drops from
