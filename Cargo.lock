@@ -331,10 +331,12 @@ dependencies = [
 name = "penelope-executor"
 version = "0.2.0"
 dependencies = [
+ "async-trait",
  "penelope-core",
  "penelope-domain",
  "penelope-intent",
  "penelope-ports",
+ "penelope-sqlite",
  "proptest",
  "rusqlite",
  "serde",

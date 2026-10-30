@@ -71,6 +71,27 @@ come from the host authentication boundary; code/content digests and fencing
 tokens do not authenticate a caller. Low-level ports and composition functions
 are protocol building blocks and require authorization in their outer boundary.
 
+## Executor composition example
+
+Run `./scripts/run-executor-saga-example.sh`, or keep its state directory with:
+
+```sh
+cargo run -p penelope-executor --example saga_recoverable_task -- STATE_DIRECTORY
+```
+
+This example uses separate SQLite process/task stores and a simulated in-process
+runtime. It commits the saga action before task acceptance, interrupts the
+coordinator after a durable checkpoint, reconstructs and resumes that checkpoint,
+verifies the output, and commits the stable result through the authorized relay.
+The next invocation replays completion without dispatching another task.
+
+The simulation provides no OS isolation or independent budget enforcement. Its
+fixed demo principal illustrates scoped authorization; hosted applications must
+inject an authenticated principal and policy. SQLite and the example's policy
+helper are development dependencies of the executor, so normal executor users
+do not acquire a storage backend. Use the Linux reference below for protected
+worker execution.
+
 ## Executable Linux reference
 
 Run `./scripts/run-supervised-saga-example.sh` on the supported Linux x86-64
