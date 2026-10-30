@@ -287,3 +287,6 @@ fn discovered_timer_commits_one_retry_task_and_replays_terminal_saga() {
         );
     }
 }
+
+#[path = "timer_crash.rs"]
+pub(super) mod timer_crash;

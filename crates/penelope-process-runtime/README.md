@@ -73,4 +73,10 @@ Full linear and graph
 sagas replay persisted event bytes with shared and separate databases. A process
 kill matrix interrupts their coordinator at ten durable boundaries, including
 worker start, task completion and result commit, then reconstructs both logs.
+A separate timer matrix kills the coordinator after claim, payload persistence,
+inbox acceptance, delivery ACK, and saga decision commit: 20 cases across linear
+and graph engines with shared and separate databases. Recovery checks the pending
+inbox before redelivery, exact timer bytes, duplicate acceptance after a lost ACK,
+and a single committed retry action. These cases stop at retry dispatch; the
+orderly timer workflows separately execute the real worker and relay its result.
 Broader adversarial release qualification remains in progress.
