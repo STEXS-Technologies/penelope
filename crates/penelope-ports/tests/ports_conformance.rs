@@ -533,3 +533,18 @@ fn every_port_is_object_safe_send_sync_callable_and_fail_closed() {
         Err(PortError::Unavailable)
     ));
 }
+
+#[test]
+fn authorization_operation_discriminants_preserve_existing_variants() {
+    use penelope_ports::ProcessAuthorizationOperation as Operation;
+    assert_eq!(Operation::Start as u8, 0);
+    assert_eq!(Operation::Cancel as u8, 1);
+    assert_eq!(Operation::Retry as u8, 2);
+    assert_eq!(Operation::DecideReview as u8, 3);
+    assert_eq!(Operation::TerminalOverride as u8, 4);
+    assert_eq!(Operation::Dispatch as u8, 5);
+    assert_eq!(Operation::DriveTask as u8, 6);
+    assert_eq!(Operation::ReconcileEffect as u8, 7);
+    assert_eq!(Operation::DeliverTimer as u8, 8);
+    assert_eq!(Operation::RelayTaskResult as u8, 9);
+}

@@ -149,3 +149,12 @@ fn wire_fixtures_are_immutable_and_typed() {
         ManualReview::validate,
     );
 }
+
+#[test]
+fn process_input_category_discriminants_preserve_existing_variants() {
+    // Numeric casts and serializers using enum indices retain their v1 values.
+    assert_eq!(ProcessInputKind::CanonicalEvent as u8, 0);
+    assert_eq!(ProcessInputKind::TimerFired as u8, 1);
+    assert_eq!(ProcessInputKind::ManualResolution as u8, 2);
+    assert_eq!(ProcessInputKind::TaskEffectResult as u8, 3);
+}
