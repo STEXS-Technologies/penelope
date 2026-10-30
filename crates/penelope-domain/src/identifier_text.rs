@@ -20,6 +20,7 @@ pub(super) enum IdentifierText {
 }
 
 impl IdentifierText {
+    #[inline]
     fn as_bytes(&self) -> &[u8] {
         match self {
             Self::Inline { bytes, length } => bytes.get(..usize::from(*length)).unwrap_or_default(),
@@ -27,6 +28,7 @@ impl IdentifierText {
         }
     }
 
+    #[inline]
     pub(super) fn as_str(&self) -> &str {
         match self {
             Self::Inline { bytes, length } => {
