@@ -546,9 +546,11 @@ dependencies = [
  "rusqlite",
  "serde",
  "serde_json",
+ "statechronicle-accumulator",
  "statechronicle-commit",
  "statechronicle-core",
  "statechronicle-domain",
+ "statechronicle-proof",
  "tempfile",
 ]
 
@@ -859,6 +861,41 @@ dependencies = [
  "statechronicle-domain",
  "thiserror",
  "trait-variant",
+]
+
+[[package]]
+name = "statechronicle-profile"
+version = "0.2.0"
+
+[[package]]
+name = "statechronicle-profiles"
+version = "0.2.0"
+dependencies = [
+ "bcs",
+ "serde",
+ "serde_json",
+ "statechronicle-accumulator",
+ "statechronicle-core",
+ "statechronicle-domain",
+ "statechronicle-profile",
+ "thiserror",
+]
+
+[[package]]
+name = "statechronicle-proof"
+version = "0.2.0"
+dependencies = [
+ "bcs",
+ "chrono",
+ "ed25519-dalek",
+ "serde",
+ "serde_json",
+ "statechronicle-accumulator",
+ "statechronicle-core",
+ "statechronicle-domain",
+ "statechronicle-ports",
+ "statechronicle-profiles",
+ "thiserror",
 ]
 
 [[package]]

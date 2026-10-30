@@ -115,7 +115,7 @@ used for saga replay. The shared contract then reconstructs lost acknowledgement
 runs the protected Linux worker through checkpoint/completion, persists the result,
 and replays the terminal saga. Effectful cases also interrupt a real worker,
 remain blocked on Unknown across reconstruction, and require independent result
-evidence. The runner checks that all five intended signed-source tests are
+evidence. The runner checks that all seven intended signed-source/proof tests are
 discovered before executing them; the shared fixture tests run separately in the
 normal workspace suite.
 
@@ -135,8 +135,9 @@ worker performed the source transfer. Restart authorization and final external
 effect evidence in the effectful saga contract remain explicit trusted fixtures.
 This conformance uses a test signing authority and local source transaction; it
 is not a production StateChronicle client or execution pipeline. It does not
-prove StateChronicle state-transition authorization, full chain/state-root
-validation or checkpoint proofs.
+prove StateChronicle state-transition authorization or full canonical-chain
+validation. The checkpoint-state proof path below verifies a state root against
+an explicitly trusted test head.
 Applications must configure those trust and durability policies independently.
 
 ## Optional checkpoint state evidence
@@ -163,6 +164,36 @@ The protected-worker integration test in
 this decorator with SQLite: rejected verification or substituted evidence leaves
 the worker paused without an ACK, and reconstruction fences that generation. Its
 trusted verifier is a fixture; applications must supply actual proof verification.
+
+The optional pinned-upstream suite additionally runs
+`scripts/conformance/checkpoint_proof.rs`. Its fixture authority puts a canonical
+BCS payload containing the exact task checkpoint record and state version into a
+consumer-domain state leaf. The actual upstream accumulator builds a sparse
+Merkle inclusion proof; the actual upstream proof verifier checks the signed
+commit, path and claimed state. The application policy pins the signer/key ID,
+executor, tenant, resource, profile and authoritative commit-body digest, checks
+the consumer domain/schema, and compares the complete record payload (including
+scope, generation, checkpoint digest/size/schema, sequence and tick). State version
+is included in the authenticated leaf, rather than inferred from unsigned proof
+metadata. Signed proof bytes are loaded from a committed transaction in a separate
+canonical database before checkpoint acceptance.
+
+Negative cases include an uncommitted proof row, forged signer, wrong configured
+key/head/version, substituted task coordinates/bytes/tick, corrupted claimed
+payload, malformed Merkle path, and foreign tenant/resource. Cryptographically
+valid proofs with incompatible consumer domain/schema are rejected too. A real
+protected-worker test applies this verifier in a journal decorator: rejection
+produces zero ACK attempts and no checkpoint record/blob; reconstruction fences
+the worker. Acceptance produces exactly one ACK, durable checkpoint/completion
+and successful restoration.
+
+This verifies the actual cryptographic proof lane with fixture publication and
+signer/head trust. It is not a production StateChronicle execution/proof service,
+full chain/freshness discovery, upstream snapshot/checkpoint-chain protocol, or
+external-effect success proof. A production adapter must authenticate and persist
+its head/version policy and establish publication authorization. No StateChronicle
+dependency is added to Penelope's normal workspace, and the two databases do not
+share a transaction.
 
 The full linear and graph saga fixtures in
 `crates/penelope-process-runtime/tests/support/sagas.rs` also exercise
