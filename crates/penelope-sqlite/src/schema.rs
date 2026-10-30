@@ -92,9 +92,13 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     if u64::from(actual_pages) > pages {
         return Err(TaskPortError::Exhausted);
     }
+    #[cfg(all(test, unix))]
+    tests::cut("before-transaction");
     let transaction = connection
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|error| sql_error(&error))?;
+    #[cfg(all(test, unix))]
+    tests::cut("after-begin");
     let version: u32 = transaction
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
@@ -134,6 +138,8 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
             )
             .map_err(|error| sql_error(&error))?;
     }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v2");
     if version < 3 {
         transaction.execute_batch("CREATE TABLE process_usage (
             process_key BLOB PRIMARY KEY, bytes_used INTEGER NOT NULL CHECK(bytes_used>=0));
@@ -174,6 +180,8 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
           INSERT INTO lease_counter VALUES (1,1);
           PRAGMA user_version=3;").map_err(|error| sql_error(&error))?;
     }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v3");
     if version < 4 {
         transaction
             .execute_batch(
@@ -184,6 +192,16 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
             )
             .map_err(|error| sql_error(&error))?;
     }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v4");
+    #[cfg(all(test, unix))]
+    tests::cut("before-commit");
     transaction.commit().map_err(|error| sql_error(&error))?;
+    #[cfg(all(test, unix))]
+    tests::cut("after-commit");
     Ok(connection)
 }
+
+#[cfg(all(test, unix))]
+#[path = "schema_tests.rs"]
+mod tests;
