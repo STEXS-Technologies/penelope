@@ -72,6 +72,8 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     /// Polls with one proposal buffer; timeout wins over completion.
     /// # Errors
     /// Returns stale observations or ambiguous runtime/storage failures.
+    // Keep the capacity-sized array out of callers' long-lived stack frames.
+    #[inline(never)]
     pub fn poll(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
         let mut output = [0; N];
         self.control.poll_with_buffer(tick, &mut output)
@@ -123,6 +125,8 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
 struct FixedDispatchWorkspace<const N: usize>;
 
 impl<const N: usize> TaskDispatchWorkspace for FixedDispatchWorkspace<N> {
+    // Keep dispatch storage scoped to this call rather than its caller.
+    #[inline(never)]
     fn with_buffers<T>(&mut self, operation: impl FnOnce(&mut [u8], &mut [u8]) -> T) -> T {
         let mut input = [0; N];
         let mut checkpoint = [0; N];
