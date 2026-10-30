@@ -34,3 +34,7 @@ workspace = true
 [[bench]]
 name = "dispatch"
 harness = false
+
+[[bench]]
+name = "worker_protocol"
+harness = false
