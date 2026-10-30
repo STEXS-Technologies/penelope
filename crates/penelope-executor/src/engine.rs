@@ -344,20 +344,25 @@ impl ProcessGraphDefinition {
         if self.transitions.len() > MAX_GRAPH_TRANSITIONS {
             return Err(GraphDefinitionError::TransitionLimitExceeded);
         }
-        let step_ids: BTreeSet<&StepId> = self.steps.iter().map(|step| &step.step_id).collect();
-        if step_ids.len() != self.steps.len() {
+        let mut step_ids: Vec<&StepId> = self.steps.iter().map(|step| &step.step_id).collect();
+        step_ids.sort_unstable();
+        if step_ids
+            .iter()
+            .zip(step_ids.iter().skip(1))
+            .any(|(left, right)| left == right)
+        {
             return Err(GraphDefinitionError::DuplicateStep);
         }
-        if !step_ids.contains(&self.entry_step_id) {
-            return Err(GraphDefinitionError::UnknownEntryStep);
-        }
+        let entry_index = step_ids
+            .binary_search(&&self.entry_step_id)
+            .map_err(|_missing| GraphDefinitionError::UnknownEntryStep)?;
         let mut transition_keys = BTreeSet::new();
         for transition in &self.transitions {
-            if !step_ids.contains(&transition.from_step) {
+            if step_ids.binary_search(&&transition.from_step).is_err() {
                 return Err(GraphDefinitionError::UnknownSourceStep);
             }
             if let Some(to_step) = &transition.to_step {
-                if !step_ids.contains(to_step) {
+                if step_ids.binary_search(&to_step).is_err() {
                     return Err(GraphDefinitionError::UnknownDestinationStep);
                 }
             } else if transition.on == GraphTransitionOutcome::RetryableFailure {
@@ -367,23 +372,39 @@ impl ProcessGraphDefinition {
                 return Err(GraphDefinitionError::DuplicateTransition);
             }
         }
-        let mut reachable = BTreeSet::new();
-        let mut pending = vec![&self.entry_step_id];
-        while let Some(step_id) = pending.pop() {
-            if !reachable.insert(step_id) {
-                continue;
-            }
+        let mut reachable = [false; MAX_DEFINITION_STEPS];
+        *reachable
+            .get_mut(entry_index)
+            .ok_or(GraphDefinitionError::UnknownEntryStep)? = true;
+        let mut pending = vec![entry_index];
+        while let Some(step_index) = pending.pop() {
+            let step_id = *step_ids
+                .get(step_index)
+                .ok_or(GraphDefinitionError::UnknownSourceStep)?;
             for transition in self
                 .transitions
                 .iter()
                 .filter(|edge| &edge.from_step == step_id)
             {
                 if let Some(next) = &transition.to_step {
-                    pending.push(next);
+                    let next_index = step_ids
+                        .binary_search(&next)
+                        .map_err(|_missing| GraphDefinitionError::UnknownDestinationStep)?;
+                    let reached = reachable
+                        .get_mut(next_index)
+                        .ok_or(GraphDefinitionError::UnknownDestinationStep)?;
+                    if !*reached {
+                        *reached = true;
+                        pending.push(next_index);
+                    }
                 }
             }
         }
-        if step_ids.iter().any(|step_id| !reachable.contains(step_id)) {
+        if reachable
+            .iter()
+            .take(step_ids.len())
+            .any(|reached| !reached)
+        {
             return Err(GraphDefinitionError::UnreachableStep);
         }
         Ok(())
