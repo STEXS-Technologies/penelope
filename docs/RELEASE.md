@@ -182,6 +182,11 @@ commit/CAS, durable retention, idempotent starts, persistent fencing and
 independently verified effect evidence. Host process-kill tests do not certify
 power-loss behavior or production adapter implementations.
 
+The [pinned saga/contract comparison](performance-decisions-2026-10-30.md)
+records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
+revision, with raw samples and RSS/wall evidence. Its slower saga medians remain
+unresolved; it does not close the performance release gate.
+
 ## Packaging and publication
 
 `./scripts/publish-crates.sh` verifies the seven unpacked library archives
