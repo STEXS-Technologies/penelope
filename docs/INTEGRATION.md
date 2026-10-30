@@ -71,6 +71,25 @@ come from the host authentication boundary; code/content digests and fencing
 tokens do not authenticate a caller. Low-level ports and composition functions
 are protocol building blocks and require authorization in their outer boundary.
 
+## Optional checkpoint state evidence
+
+Applications using StateChronicle can inject a
+`penelope_statechronicle::task::CheckpointStateVerifier` and call
+`verify_checkpoint_state(record, verifier)`. The combined path rejects unsupported
+or non-checkpoint records, invokes the verifier, then binds its returned evidence
+to every task-scope coordinate, generation and checkpoint digest/length/schema.
+It propagates verification failure and rejects substituted evidence. The verifier
+must establish proof authenticity, trusted key policy and the authoritative state
+version; Penelope's correlation checks do not establish those facts themselves.
+
+If independent evidence must gate checkpoint acceptance, place this call in the
+application's journal/commit decorator before returning a successful commit
+receipt to the task controller. A later audit check does not retroactively gate
+the worker's checkpoint ACK. Persist and retry immutable evidence independently;
+there is no transaction spanning StateChronicle and the task journal. The existing
+`bind_checkpoint_state` remains available for applications that already invoked
+their verifier. Pure task durability does not require either integration path.
+
 ## Discovering accepted inputs after restart
 
 `penelope_ports::inbox::PendingInbox` exposes read-only, bounded discovery of
