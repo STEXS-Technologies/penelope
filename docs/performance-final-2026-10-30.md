@@ -1,5 +1,10 @@
 # Final development performance review — 2026-10-30
 
+The [graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+supersedes this report's graph slowdown disposition: the optimized workload
+measures 15.24% lower median time than the original baseline. This report retains
+the historical measurements and other evidence at their pinned source revisions.
+
 Baseline `edcc5b423e4919f51e4aa2cb820d9de68a684145` was compared with production
 candidate `50fec4ee9dd58733199d48ba36f7075c056e06ea`. Later changes through
 `0f4080b` add runtime tests and documentation. These measurements preceded the

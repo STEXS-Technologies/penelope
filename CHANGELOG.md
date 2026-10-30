@@ -59,11 +59,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Full three-iteration public-boundary campaign: 48 runs of 100,000 inputs,
   plus real adapter crash/concurrency suites and stable/MSRV verification.
-- Recorded SQLite, worker, hosted-memory and RISC-V stack evidence. The final
-  performance review explicitly accepts a measured graph-saga median regression
-  of 2.95–3.10% (28.53–29.90 ns per benchmark operation) across the two reference
-  campaigns; timing parity
-  and universal latency bounds are not claimed. See
+- Recorded SQLite, worker, hosted-memory and RISC-V stack evidence. Graph result
+  cloning and definition-validation optimizations remove the original slowdown:
+  a forty-pair comparison measures 15.24% lower graph median time than 0.2.0 and
+  17.73% fewer instructions. Host-load limits and all other benchmark results
+  remain disclosed; universal timing parity is not claimed. See
   [the qualification report](docs/verification-2026-10-30.md).
 
 ### Security

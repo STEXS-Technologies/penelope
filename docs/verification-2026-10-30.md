@@ -1,35 +1,44 @@
 # Reliable execution verification — 2026-10-30
 
-The **0.3.0 candidate** `16e3e1e` passed release qualification for the documented
-reference profiles, with the explicit measured performance exceptions recorded
-in the [requirement audit](qualification-0.3.0.md). All nine library crates and
+The **0.3.0 candidate** `495451f` passed release qualification for the documented
+reference profiles, with the graph slowdown removed. Scoped performance results
+are recorded in the [requirement audit](qualification-0.3.0.md). All nine library crates and
 internal dependency requirements use `0.3.0`. No tag or publication was created.
 
 The versioned local sequence passed stable/MSRV workspace all-target tests,
 doctests, strict Clippy/rustdoc, portable checks including MSRV RISC-V with and
 without Serde, layer/negative checks, runner/Python/action-pin checks, audit/deny,
-all nine package archives, secrets and whitespace. Coverage is **94.3494%**,
+all nine package archives, secrets and whitespace. Post-optimization coverage
+is **94.4655%**,
 above the unchanged **94.0759%** ratchet. The optional upstream suite passed
 seven tests, including signed-source crash cases and checkpoint proofs.
-[Versioned logs and package hashes](verification-data/2026-10-30-versioned-qualification/metadata.json)
-retain the exact candidate and the corrected first version-metadata failure.
+[Earlier versioned logs and package hashes](verification-data/2026-10-30-versioned-qualification/metadata.json)
+retain the pre-optimization candidate and corrected first version-metadata failure.
 
 The three-iteration extended campaign completed all **48 target runs of 100,000
 inputs** and exited zero. [Campaign metadata](verification-data/2026-10-30-final-development-gates/metadata.json)
 records the changing revision scope and separates fuzzing from actual adapter
 process-kill suites. Versioned remote bounded fuzzing also passed.
 
-The [final performance review](performance-final-2026-10-30.md) retains both
-six-benchmark campaigns, self-control, sealed-worker dispatch and the versioned
-RISC-V analysis. It explicitly accepts a graph-saga marginal median regression
-of **2.95–3.10%**, **28.53–29.90 ns** per benchmark operation, plus smaller
-recorded positive medians. No timing-parity or universal-bound claim follows.
+The [graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+records a fixed 40-pair comparison: graph median time **15.24% lower** than the
+original 0.2.0 baseline and **17.73% fewer instructions**. The former graph
+slowdown exception is removed. Other benchmark medians, host-load limitations
+and exact evidence scopes remain disclosed. The original durable-store, worker
+and portable-memory evidence is retained in the [earlier review](performance-final-2026-10-30.md).
 
-All seven [versioned CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41113165133)
-and the [versioned verification-only release workflow](https://github.com/STEXS-Technologies/penelope/actions/runs/41113175257)
-passed; both publication jobs were skipped. The dated changelog extraction
-passed locally. Earlier open dispositions below are historical snapshots and
-are superseded only by the completed checks and explicit exceptions above.
+[Optimization logs and package hashes](verification-data/2026-10-30-graph-optimization/metadata.json)
+retain full local revalidation, oracle parity properties, three additional
+100,000-input graph/linear fuzz runs and the corrected test-marker race exposed
+by CI. The affected real two-process arbitration/reopen test passed 100 stress
+repetitions on each of stable and MSRV; its CAS assertions are unchanged.
+
+All seven [optimization CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41120267832)
+passed at `495451f`. The [verification-only release workflow](https://github.com/STEXS-Technologies/penelope/actions/runs/41119542159)
+passed at measured candidate `edf1194`; both publication jobs were skipped.
+The intervening commit changes only test-marker publication. The dated changelog
+extraction passed locally. Earlier open dispositions below are historical
+snapshots, superseded only by completed checks and explicit dispositions above.
 
 The Rust sources at `2223a31` passed the checks below on the local Linux host.
 This records current development evidence, not a completed 0.3.0 qualification.
