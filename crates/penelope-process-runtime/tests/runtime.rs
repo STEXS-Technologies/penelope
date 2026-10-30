@@ -239,3 +239,152 @@ fn exit_zero_without_result_is_not_completion() {
     wait(&mut supervisor).unwrap();
     assert_eq!(supervisor.projection().status(), TaskStatus::Faulted);
 }
+
+// Invoked as an isolated supervisor so the parent can SIGKILL it without
+// terminating the test runner or relying on orderly destructors.
+#[test]
+fn supervisor_crash_helper() {
+    let Some(directory) = std::env::var_os("PENELOPE_RUNTIME_CRASH_DIRECTORY") else {
+        return;
+    };
+    let directory = PathBuf::from(directory);
+    let mut supervisor = fresh(&directory, &[9], 2);
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    std::fs::write(directory.join("started"), b"ready").unwrap();
+    loop {
+        std::thread::sleep(Duration::from_millis(50));
+    }
+}
+
+#[test]
+fn killed_supervisor_reconstructs_and_fences_without_clean_shutdown() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "supervisor_crash_helper", "--nocapture"])
+        .env("PENELOPE_RUNTIME_CRASH_DIRECTORY", directory.path())
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !directory.path().join("started").exists() {
+        if child.try_wait().unwrap().is_some() || Instant::now() >= deadline {
+            let _kill_result = child.kill();
+            let _wait_result = child.wait();
+            panic!("isolated supervisor did not start its worker");
+        }
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    child.kill().unwrap();
+    assert!(!child.wait().unwrap().success());
+    let definition = definition(2);
+    let path = directory.path().join("tasks.db");
+    let journal = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let authority = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let runtime = Runtime::new(authority, config(directory.path())).unwrap();
+    let recovered = Supervisor::restore(
+        journal,
+        runtime,
+        scope(definition, &[9]),
+        definition,
+        TaskTick::new(3),
+    )
+    .unwrap();
+    assert_eq!(recovered.projection().status(), TaskStatus::Faulted);
+    // A second reconstruction must retain the acknowledged termination.
+    let (recovered_journal, recovered_runtime) = recovered.into_parts();
+    let twice_recovered = Supervisor::restore(
+        recovered_journal,
+        recovered_runtime,
+        scope(definition, &[9]),
+        definition,
+        TaskTick::new(4),
+    )
+    .unwrap();
+    assert_eq!(twice_recovered.projection().status(), TaskStatus::Faulted);
+}
+
+#[test]
+fn corrupt_registry_blocks_fence_until_evidence_is_restored() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut supervisor = fresh(directory.path(), &[9], 2);
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    let projection = *supervisor.projection();
+    let (_journal, mut runtime) = supervisor.into_parts();
+    let manifest = std::fs::read_dir(directory.path().join("registry"))
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .find(|path| path.file_name().unwrap() != "registry.lock")
+        .unwrap();
+    let saved = std::fs::read(&manifest).unwrap();
+    std::fs::write(&manifest, b"truncated").unwrap();
+    assert_eq!(
+        runtime.fence(projection.scope(), projection.generation()),
+        Err(TaskPortError::Corrupt)
+    );
+    // A tombstoned launch cannot resume even while termination is unconfirmed.
+    assert_eq!(
+        runtime.start(TaskStart {
+            scope: projection.scope(),
+            generation: projection.generation(),
+            definition: projection.definition(),
+            execution_deadline: projection.execution_deadline(),
+            input_schema: 1,
+            input: &[9],
+            checkpoint: None,
+        }),
+        Err(TaskPortError::Conflict)
+    );
+    std::fs::write(manifest, saved).unwrap();
+    runtime
+        .fence(projection.scope(), projection.generation())
+        .unwrap();
+    runtime
+        .fence(projection.scope(), projection.generation())
+        .unwrap();
+}
+
+#[test]
+fn unacknowledged_checkpoint_cannot_advance_worker() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut supervisor = fresh(directory.path(), &[5, 4, 5], 2);
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    let projection = *supervisor.projection();
+    let (_journal, mut runtime) = supervisor.into_parts();
+    let mut buffer = [0; 64];
+    let deadline = Instant::now() + Duration::from_secs(5);
+    loop {
+        let observation = runtime
+            .poll(projection.scope(), projection.generation(), &mut buffer)
+            .unwrap();
+        if matches!(observation.progress, RuntimeProgress::Checkpoint { .. }) {
+            break;
+        }
+        assert_eq!(observation.progress, RuntimeProgress::Pending);
+        assert!(Instant::now() < deadline);
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    assert_eq!(
+        runtime.acknowledge_checkpoint(
+            projection.scope(),
+            projection.generation(),
+            BlobRef {
+                digest: Digest([0; 32]),
+                bytes: 8,
+                schema: 1
+            }
+        ),
+        Err(TaskPortError::Conflict)
+    );
+    for _ in 0..20 {
+        std::thread::sleep(Duration::from_millis(2));
+        assert_eq!(
+            runtime
+                .poll(projection.scope(), projection.generation(), &mut buffer)
+                .unwrap()
+                .progress,
+            RuntimeProgress::Pending
+        );
+    }
+    runtime
+        .fence(projection.scope(), projection.generation())
+        .unwrap();
+}
