@@ -449,15 +449,17 @@ fn sqlite_process_worker() {
     let ready = std::env::var("PENELOPE_SQLITE_TEST_READY").unwrap();
     let gate = std::env::var("PENELOPE_SQLITE_TEST_GATE").unwrap();
     let mut journal = open(std::path::Path::new(&path));
-    std::fs::write(&ready, b"ready").unwrap();
+    publish_marker(std::path::Path::new(&ready), b"ready");
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
     while !std::path::Path::new(&gate).exists() {
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
     match journal.commit(&intent(), Some(b"input")) {
-        Ok(_) => std::fs::write(&ready, b"committed").unwrap(),
-        Err(TaskPortError::Conflict) => std::fs::write(&ready, b"conflict").unwrap(),
+        Ok(_) => publish_marker(std::path::Path::new(&ready), b"committed"),
+        Err(TaskPortError::Conflict) => {
+            publish_marker(std::path::Path::new(&ready), b"conflict");
+        }
         result => panic!("unexpected arbitration result: {result:?}"),
     }
     if std::env::var("PENELOPE_SQLITE_TEST_CRASH").is_ok() {
@@ -465,6 +467,14 @@ fn sqlite_process_worker() {
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
     }
+}
+
+fn publish_marker(path: &std::path::Path, state: &[u8]) {
+    // Readers must see the old state or the complete new state, never the
+    // transient empty/partial file produced by overwriting a live marker.
+    let temporary = path.with_extension("next");
+    std::fs::write(&temporary, state).unwrap();
+    std::fs::rename(temporary, path).unwrap();
 }
 
 fn wait_marker(path: &std::path::Path, expected: &[u8]) {
