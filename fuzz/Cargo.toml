@@ -68,6 +68,19 @@ path = "../crates/penelope-intent"
 version = "0.2.0"
 path = "../crates/penelope-process-runtime"
 
+[dependencies.penelope-sqlite]
+version = "0.2.0"
+path = "../crates/penelope-sqlite"
+
+[dependencies.tempfile]
+version = "3"
+
+[[bin]]
+name = "fuzz_sqlite_task_authority"
+path = "fuzz_targets/fuzz_sqlite_task_authority.rs"
+test = false
+doc = false
+
 [[bin]]
 name = "fuzz_worker_protocol"
 path = "fuzz_targets/fuzz_worker_protocol.rs"

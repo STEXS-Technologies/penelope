@@ -354,9 +354,11 @@ dependencies = [
  "penelope-intent",
  "penelope-ports",
  "penelope-process-runtime",
+ "penelope-sqlite",
  "penelope-statechronicle",
  "serde",
  "serde_json",
+ "tempfile",
 ]
 
 [[package]]
