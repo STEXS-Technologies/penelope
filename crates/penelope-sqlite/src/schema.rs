@@ -98,7 +98,7 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     let version: u32 = transaction
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
-    if version > 3 {
+    if version > 4 {
         return Err(TaskPortError::Corrupt);
     }
     if version == 0 {
@@ -173,6 +173,16 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
           CREATE TABLE lease_counter (singleton INTEGER PRIMARY KEY CHECK(singleton=1), next_token INTEGER NOT NULL CHECK(next_token>0));
           INSERT INTO lease_counter VALUES (1,1);
           PRAGMA user_version=3;").map_err(|error| sql_error(&error))?;
+    }
+    if version < 4 {
+        transaction
+            .execute_batch(
+                "CREATE TABLE process_payloads (
+            scope BLOB NOT NULL, digest BLOB NOT NULL CHECK(length(digest)=32),
+            bytes BLOB NOT NULL, PRIMARY KEY(scope,digest));
+            PRAGMA user_version=4;",
+            )
+            .map_err(|error| sql_error(&error))?;
     }
     transaction.commit().map_err(|error| sql_error(&error))?;
     Ok(connection)
