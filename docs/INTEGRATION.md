@@ -71,6 +71,44 @@ come from the host authentication boundary; code/content digests and fencing
 tokens do not authenticate a caller. Low-level ports and composition functions
 are protocol building blocks and require authorization in their outer boundary.
 
+## Optional signed canonical-event conformance
+
+With StateChronicle installed, run:
+
+```bash
+python3 scripts/run-statechronicle-conformance.py /path/to/statechronicle
+```
+
+The runner requires the clean tracked sources of upstream revision
+`ae3d94bc22c7835eaa3fdcd766e3c117929c12bb`, Rust 1.99.0, and the checked-in
+`scripts/conformance/Cargo.lock`. It creates a temporary, nonpublishable workspace;
+StateChronicle is not added to Penelope's normal dependency graph. CI checks out
+the same upstream revision and runs this conformance separately. Updating the
+pinned upstream revision or using `--refresh-lock` requires reviewing the changed
+API and dependency lockfile.
+
+`scripts/conformance/statechronicle.rs` uses actual upstream canonical encoding,
+event Merkle-root computation and strict Ed25519 verification. Its application
+fixture trusts one tenant, executor and key, and maps one persisted action/intent,
+operation and resource. It reads a signed event batch from a committed SQLite row
+in a separate canonical database. An uncommitted row, wrong key, modified signed
+body, substituted event bytes, foreign signed tenant or foreign signed intent
+cannot produce accepted evidence. The fixture's command mapping must become an
+authenticated, persisted mapping in a production adapter; it is not inferred from
+worker output or supplied by a transport caller.
+
+The verified event then passes through `verify_committed_event` and
+`bind_verified_event_to_commit`. Canonical evidence bytes are stored before the
+normal SQLite process commit. Reopening and retrying reconstructs the exact
+receipt, while a second input carrying the same canonical source is rejected.
+No transaction spans the canonical and process databases.
+
+This is a conformance source with a test signing authority and local transaction,
+not a production StateChronicle client or execution pipeline. It does not prove
+StateChronicle state-transition authorization, full chain/state-root validation,
+checkpoint proofs, or the complete task/saga integration matrix with StateChronicle.
+Applications must configure those trust and durability policies independently.
+
 ## Optional checkpoint state evidence
 
 Applications using StateChronicle can inject a
