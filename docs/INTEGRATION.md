@@ -70,3 +70,44 @@ adapter must fail closed for permissions it has not configured. A principal must
 come from the host authentication boundary; code/content digests and fencing
 tokens do not authenticate a caller. Low-level ports and composition functions
 are protocol building blocks and require authorization in their outer boundary.
+
+## Executable Linux reference
+
+Run `./scripts/run-supervised-saga-example.sh` on the supported Linux x86-64
+profile. It compiles a freestanding static test worker with `cc`, runs the
+`saga_recoverable_task` example with separate task/process SQLite databases,
+and runs it again to verify terminal replay without another dispatch. It
+requires `cc`, `rg` and the runtime kernel facilities documented in
+[the runtime profile](../crates/penelope-process-runtime/README.md).
+
+For retained state, compile the fixture as shown in that script, then run:
+
+```sh
+cargo run -p penelope-process-runtime --example saga_recoverable_task --locked -- STATE_DIRECTORY STATIC_WORKER
+```
+
+The state directory must belong to the current OS user. The CLI maps that
+kernel-authenticated UID to a local principal and allows only this example's
+scope and required operations. This is a local demonstration policy, not an
+HTTP authentication service or a general tenant authorization policy.
+
+The example writes event payloads before outcome commits, validates commit and
+lease receipts, accepts/reconstructs durable task intent, drives the real Linux
+runtime, classifies the exact sum output, commits the stable result inbox input
+and replays the saga from its stored event bytes. The worker executable is
+independently sealed/pinned by the runtime. Changed worker code or output cannot
+silently resume the old binding.
+
+Keep both databases and the registry when interrupted. A live old generation
+must be fenced before restart. If a crash leaves an unexpired claim before any
+task intent was accepted, the immediate rerun fails closed; retry after lease
+expiry instead of deleting evidence. Already accepted tasks can recover even
+when their outbox delivery was acknowledged. Unknown/blocked states require
+independent evidence or operator handling.
+
+Task ticks in this example use an injected monotonic millisecond clock whose
+new origin starts beyond the persisted task frontier. Saga leases use a separate
+host wall-clock basis. Production deployments must choose and document their
+trusted clock/reset policy; neither task ticks nor this CLI imply a game-frame
+or calendar deadline. The example's worker-driving loop is bounded, and runtime
+CPU enforcement remains independent of polling.
