@@ -99,3 +99,18 @@ Coverage remained above the unchanged ratchet at 8,815/9,370 lines (94.0768%).
 The [hosted comparison](performance-hosted-memory-2026-10-30.md) records zero
 allocation fixture paths but a stack regression at both 4 KiB and 64 KiB wrapper
 capacities. This is an open qualification issue, not an accepted exception.
+
+The per-call dispatch/poll buffer change at `24c02fa` passed stable and MSRV
+workspace all-target tests, strict workspace Clippy and rustdoc, portable core
+checks with/without Serde, the RISC-V target checks, release allocator tests,
+and actual upstream conformance (seven tests including 136 process-kill cases).
+New buffer admission, deadline ordering and foreign-input rejection tests passed
+on both toolchains. Coverage passed at 8,856/9,413 lines (94.0827%) against the
+unchanged 94.0759% ratchet. [Retained logs](verification-data/2026-10-30-task-buffers/)
+record these checks. These checks do not replace the outstanding full chaos
+campaign or final candidate audit.
+
+The [buffer performance follow-up](performance-hosted-buffer-followup-2026-10-30.md)
+uses one million native lifecycles per invocation. Sampled stack decreased from
+the previous candidate, but still exceeds baseline, and native wall time remains
+higher. Memory/performance qualification stays open.
