@@ -36,6 +36,22 @@ before exit-based fault classification. New deterministic and real-worker tests,
 seven-job CI runs pass. Historical full-campaign/package records retain their
 original revision scope; this is separately retained follow-up evidence.
 
+The [worker-protocol follow-up](performance-worker-protocol-2026-10-31.md) at
+`2e3a768` removes the scope-hash allocation and enforces pinned payload limits
+before payload access. Isolated allocation checks pass on stable/MSRV, 10,000
+scopes retain legacy wire digests, and 100,000 targeted fuzz iterations pass.
+The 20-pair protocol comparison has sub-1% proposal-time gains; request timing
+intervals include no change. It does not revise application-overhead figures.
+
+The subsequent [lease-counter audit](verification-data/2026-10-31-lease-counter/metadata.json)
+at `1dd288b` rejects an ignored durable token-counter update before granting an
+outbox or timer lease. The fault-injection test reproduces false success on the
+preceding source, then proves rollback and recovery with the fix. All 56 SQLite
+tests pass on stable and Rust 1.85, and strict workspace Clippy passes. This
+requires no schema change or extra database operation. A 10,000-iteration SQLite
+process fuzz run (seed 7) and [all seven source CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41143329178)
+pass.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |

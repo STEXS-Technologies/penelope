@@ -1,0 +1,78 @@
+{
+  "benchmark": "worker_protocol",
+  "revision": "2e3a768372d39955843cbd0b279e1c436a6439cc",
+  "cpus": [
+    0
+  ],
+  "stdout": "worker proposal checkpoint=false: 100000 operations in 11.096449ms (110 ns/op)\nworker proposal checkpoint=true: 100000 operations in 11.032816ms (110 ns/op)\nworker request valid=true: 10000 operations in 20.067529ms (2006 ns/op)\nworker request valid=false: 10000 operations in 19.100982ms (1910 ns/op)\n",
+  "stderr": "",
+  "resources": {
+    "wall_seconds": 0.06,
+    "user_seconds": 0.06,
+    "system_seconds": 0.0,
+    "peak_rss_kib": 2256
+  },
+  "observations": [
+    {
+      "operation": "worker proposal checkpoint=false",
+      "operations": 100000,
+      "elapsed_ns": 11096449.0,
+      "ns_per_operation": 110.96449
+    },
+    {
+      "operation": "worker proposal checkpoint=true",
+      "operations": 100000,
+      "elapsed_ns": 11032816.0,
+      "ns_per_operation": 110.32816
+    },
+    {
+      "operation": "worker request valid=true",
+      "operations": 10000,
+      "elapsed_ns": 20067529.0,
+      "ns_per_operation": 2006.7529
+    },
+    {
+      "operation": "worker request valid=false",
+      "operations": 10000,
+      "elapsed_ns": 19100982.0,
+      "ns_per_operation": 1910.0982
+    }
+  ],
+  "perf": [
+    {
+      "counter-value": "62.624604",
+      "unit": "msec",
+      "event": "task-clock",
+      "event-runtime": 62624604,
+      "pcnt-running": 100.0
+    },
+    {
+      "counter-value": "996039274.000000",
+      "unit": "",
+      "event": "instructions",
+      "event-runtime": 62624604,
+      "pcnt-running": 100.0
+    },
+    {
+      "counter-value": "326837229.000000",
+      "unit": "",
+      "event": "cycles",
+      "event-runtime": 62624604,
+      "pcnt-running": 100.0
+    },
+    {
+      "counter-value": "1.000000",
+      "unit": "",
+      "event": "context-switches",
+      "event-runtime": 62624604,
+      "pcnt-running": 100.0
+    },
+    {
+      "counter-value": "0.000000",
+      "unit": "",
+      "event": "cpu-migrations",
+      "event-runtime": 62624604,
+      "pcnt-running": 100.0
+    }
+  ]
+}

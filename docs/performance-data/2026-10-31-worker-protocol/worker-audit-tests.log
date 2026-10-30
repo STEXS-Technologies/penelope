@@ -1,0 +1,276 @@
+   Compiling penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running unittests src/lib.rs (target/debug/deps/penelope_process_runtime-7dde0702e57bd989)
+
+running 12 tests
+test runtime::fence_tests::impossible_saved_pids_are_corruption_without_signaling ... ok
+test runtime::fence_tests::kernel_identity_parser_preserves_command_delimiters_and_rejects_bad_start_times ... ok
+test runtime::io_tests::bounded_send_rejects_zero_permanent_error_and_expired_retry ... ok
+test runtime::io_tests::eof_without_a_complete_frame_preserves_terminal_fault_classification ... ok
+test runtime::io_tests::frame_number_rejects_truncation_and_offset_overflow ... ok
+test runtime::io_tests::exit_between_empty_read_and_status_check_cannot_discard_queued_completion ... ok
+test sandbox::tests::isolated_child_setup_helper ... ok
+test sandbox::tests::invalid_spawn_budgets_do_not_execute_a_command_or_mutate_manifest ... ok
+test runtime::fence_tests::unrepresentable_fence_deadline_preserves_error_after_signaling_owned_child ... ok
+test runtime::fence_tests::stale_start_time_cannot_signal_a_reused_pid ... ok
+test runtime::io_tests::bounded_send_retries_transient_errors_without_duplicate_or_missing_bytes ... ok
+test sandbox::tests::isolated_setup_persists_kernel_identity_and_bounds_and_rejects_invalid_parent_or_file ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-f8d8979fbc3814d8)
+
+running 52 tests
+test concurrency::competing_supervisor_helper ... ok
+
+running 1 test
+test sagas::services::denied_dispatch_cannot_claim_work_and_allowed_claim_is_exactly_scoped ... ok
+test sagas::services::reconciliation_preserves_unknown_and_never_executes_an_effect ... ok
+test sagas::services::authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input ... ok
+test sagas::services::outbox_driver_rejects_forged_receipt_and_recovers_after_expired_ack ... ok
+test killed_supervisor_reconstructs_and_fences_without_clean_shutdown ... ok
+
+running 1 test
+
+running 1 test
+test kernel_address_space_limit_allows_small_and_rejects_large_allocations ... ok
+test exit_zero_without_result_is_not_completion ... ok
+test launch_contracts::sealed_worker_survives_replacement_of_its_source_file ... ok
+test checkpoint_requires_exact_commit_ack_before_completion ... ok
+test supervisor_crash_helper ... ok
+test corrupt_registry_blocks_fence_until_evidence_is_restored ... ok
+test launch_contracts::live_capacity_does_not_reject_the_exact_reserved_start_retry ... ok
+test worker_protocol::advertised_lengths_are_rejected_before_reading_or_allocating_payloads ... ok
+test worker_protocol::checkpoint_ack_requires_exact_magic_digest_and_complete_frame ... ok
+test worker_protocol::metadata_definition_schema_input_and_definition_limits_are_enforced ... ok
+test worker_protocol::proposals_bind_kind_scope_generation_schema_and_bytes_and_surface_pipe_errors ... ok
+test restored_runtime_fences_live_generation_and_rejects_delayed_start ... ok
+test worker_protocol::start_packet_preserves_full_metadata_input_and_optional_checkpoint ... ok
+test worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read ... ok
+test sagas::services::graph_timer::timer_delivery_reconstruction_consumes_one_input ... ok
+test worker_protocol::truncated_packets_and_substituted_envelopes_fail_closed ... ok
+test concurrency::competing_supervisor_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.03s
+
+test launch_contracts::wrong_architecture_truncated_and_dynamic_images_are_rejected ... ok
+test concurrency::competing_supervisor_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.04s
+
+test concurrency::two_supervisor_processes_admit_one_real_worker_and_replay_one_completion ... ok
+test launch_contracts::invalid_runtime_limits_are_rejected_before_any_worker_can_start ... ok
+test sagas::services::task_driver_authorizes_before_starting_or_polling_worker ... ok
+test corrupt_scope_and_oversized_frames_cannot_complete ... ok
+test fragmented_completion_survives_exit_and_truncated_completion_faults ... ok
+test static_worker_completes_only_after_durable_input_and_start ... ok
+test sagas::services::service_faults::malformed_timer_batches_never_write_payloads_accept_inputs_or_acknowledge ... ok
+test sagas::services::service_faults::ambiguous_timer_payload_and_inbox_receipts_recover_without_a_second_identity ... ok
+test unacknowledged_checkpoint_cannot_advance_worker ... ok
+test fence_contracts::registry_symlink_is_not_followed_and_lock_timeout_does_not_confirm_termination ... ok
+test unloadable_bootstrap_cannot_complete_and_reconstruction_fences_its_generation ... ok
+test sagas::services::service_faults::malformed_outbox_batches_never_dispatch_or_acknowledge ... ok
+test committed_dispatch_recovers_task_intent_in_shared_and_separate_databases ... ok
+test sagas::full_graph_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::full_linear_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::services::timer_saga::timer_crash::timer_delivery_reconstruction_consumes_one_input ... ok
+test sagas::cancellation::completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process ... ok
+test sagas::reconciled_graph_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test sagas::services::graph_timer::discovered_graph_timer_selects_one_retry_task_and_replays_terminal_state ... ok
+test sagas::reconciled_linear_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test checkpoint_state::independent_checkpoint_gate_controls_real_worker_ack_and_reconstruction ... ok
+test sagas::services::timer_saga::discovered_timer_commits_one_retry_task_and_replays_terminal_saga ... ok
+test fence_contracts::each_registry_binding_and_partial_identity_blocks_fence_until_repaired ... ok
+test worker_protocol::scope_hash_matches_legacy_wire_encoding_for_varied_scopes ... ok
+test kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls ... ok
+test sagas::services::timer_saga::timer_crash::killed_timer_coordinators_recover_delivery_and_decision ... ok
+test cpu_budget_is_enforced_by_kernel_without_supervisor_polling ... ok
+test sagas::killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries ... ok
+test sagas::killed_coordinators_recover_effectful_sagas_at_reconciliation_boundaries ... ok
+
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.13s
+
+     Running tests/worker_protocol_allocations.rs (target/debug/deps/worker_protocol_allocations-20019377ff7d3c3a)
+Protocol allocations: proposal=0, valid request=2, pinned-bound rejection=1
+     Running benches/dispatch.rs (target/debug/deps/dispatch-6b5ac4a468ad8d43)
+{
+  "ack_endpoint": "successful host checkpoint ACK write, not a worker/application receipt",
+  "cache": "OS cache uncontrolled; fresh profile is not page-cache-cold",
+  "journal_mode": "WAL",
+  "polling": "yield_now between pending polls; monotonic whole-second task ticks",
+  "profiles": [
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 3888356,
+          "p95_ns": 3916310,
+          "p99_ns": 3916310,
+          "samples": 2
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 6896781,
+          "p95_ns": 6933993,
+          "p99_ns": 6933993,
+          "samples": 2
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 4662542,
+          "p95_ns": 4708862,
+          "p99_ns": 4708862,
+          "samples": 2
+        },
+        "intent_commit_ns": {
+          "p50_ns": 738076,
+          "p95_ns": 752113,
+          "p99_ns": 752113,
+          "samples": 2
+        },
+        "setup_ns": {
+          "p50_ns": 4881486,
+          "p95_ns": 5646836,
+          "p99_ns": 5646836,
+          "samples": 2
+        }
+      },
+      "profile": "fresh_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 3916310,
+          "dispatch_to_durable_completion_and_fence_ns": 6933993,
+          "dispatch_to_host_checkpoint_ack_ns": 4662542,
+          "index": 0,
+          "intent_commit_ns": 752113,
+          "setup_ns": 5646836,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3888356,
+          "dispatch_to_durable_completion_and_fence_ns": 6896781,
+          "dispatch_to_host_checkpoint_ack_ns": 4708862,
+          "index": 1,
+          "intent_commit_ns": 738076,
+          "setup_ns": 4881486,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 3293847,
+          "p95_ns": 3895029,
+          "p99_ns": 3895029,
+          "samples": 2
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 6649123,
+          "p95_ns": 6845983,
+          "p99_ns": 6845983,
+          "samples": 2
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 4126857,
+          "p95_ns": 4638036,
+          "p99_ns": 4638036,
+          "samples": 2
+        },
+        "intent_commit_ns": {
+          "p50_ns": 752735,
+          "p95_ns": 781841,
+          "p99_ns": 781841,
+          "samples": 2
+        },
+        "setup_ns": {
+          "p50_ns": 941,
+          "p95_ns": 1072,
+          "p99_ns": 1072,
+          "samples": 2
+        }
+      },
+      "profile": "reused_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 3869650,
+          "dispatch_to_durable_completion_and_fence_ns": 6906650,
+          "dispatch_to_host_checkpoint_ack_ns": 4664726,
+          "index": 0,
+          "intent_commit_ns": 745451,
+          "setup_ns": 4829515,
+          "warmup": true
+        },
+        {
+          "dispatch_start_return_ns": 3293847,
+          "dispatch_to_durable_completion_and_fence_ns": 6649123,
+          "dispatch_to_host_checkpoint_ack_ns": 4126857,
+          "index": 1,
+          "intent_commit_ns": 781841,
+          "setup_ns": 1072,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3895029,
+          "dispatch_to_durable_completion_and_fence_ns": 6845983,
+          "dispatch_to_host_checkpoint_ack_ns": 4638036,
+          "index": 2,
+          "intent_commit_ns": 752735,
+          "setup_ns": 941,
+          "warmup": false
+        }
+      ]
+    }
+  ],
+  "schema": 1,
+  "synchronous": "FULL",
+  "worker_code_sha256": [
+    253,
+    230,
+    30,
+    130,
+    159,
+    4,
+    193,
+    33,
+    161,
+    50,
+    230,
+    247,
+    33,
+    171,
+    137,
+    226,
+    5,
+    15,
+    211,
+    3,
+    242,
+    160,
+    90,
+    105,
+    125,
+    43,
+    63,
+    109,
+    224,
+    66,
+    206,
+    156
+  ],
+  "worker_input": [
+    5,
+    1,
+    2,
+    3
+  ],
+  "worker_output_u64": 6
+}
+     Running benches/worker_protocol.rs (target/debug/deps/worker_protocol-c1abb38702a234c0)
+worker proposal checkpoint=false: 100000 operations in 539.181308ms (5391 ns/op)
+worker proposal checkpoint=true: 100000 operations in 536.907553ms (5369 ns/op)
+worker request valid=true: 10000 operations in 381.441182ms (38144 ns/op)
+worker request valid=false: 10000 operations in 352.931404ms (35293 ns/op)
+     Running unittests examples/saga_recoverable_task.rs (target/debug/examples/saga_recoverable_task-9ff4e060b453682c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

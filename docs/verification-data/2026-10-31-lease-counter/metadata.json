@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "source": "1dd288b9deea9d1e6a21510f605e212e362e41a7",
+  "problem": "Ignored lease-counter UPDATE previously returned authority without advancing the durable token counter.",
+  "change": "Require exactly one changed row for counter advancement inside the existing immediate claim transaction; otherwise return Invariant and roll back.",
+  "regression": "RAISE(IGNORE) trigger reproduces old false success. Tests cover both outbox and timer claims; attempt, lease and counter remain unchanged after rejection; removing trigger permits the first token to be claimed.",
+  "local_checks": {
+    "stable": "56 SQLite tests plus all-target benchmark executions; strict full-workspace Clippy",
+    "msrv": "56 SQLite tests plus all-target benchmark executions on Rust 1.85",
+    "fuzz": "10000 iterations seed 7 completed successfully in 232 seconds; earlier 100000-iteration attempt deliberately interrupted with status 72 after reducing run budget, retained separately"
+  },
+  "ci": {
+    "run": 41143329178,
+    "status": "success; all seven jobs"
+  },
+  "limits": "No schema/API change, new SQL operation or claim about arbitrary external database tampering; no full historical release campaign rerun."
+}
