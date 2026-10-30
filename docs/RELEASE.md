@@ -101,7 +101,7 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Fifteen sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Sixteen sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
 The worker protocol target checks bounded start-packet decoding, full scope and
@@ -114,6 +114,13 @@ connections. It checks schema substitutions, conflicting identities, duplicate
 commits, reopen behavior, immutable input bytes and exact journal replay after
 each operation. Its bounded operation sequences complement the subprocess crash
 tests; they do not simulate power loss.
+The SQLite process target checks a real bounded WAL/FULL database against a
+separate model of input acceptance/consumption, committed outcomes, delivery
+attempts, inclusive lease expiry and acknowledgement. It also checks immutable
+commit retries, conflicting retries, forged owners, scoped pending-input
+visibility, payload digest admission and database reopen behavior. Every input
+runs a fixed operation suffix as well as its mutated sequence; this target does
+not simulate coordinator crashes or power loss.
 The supervisor fuzzer combines runtime proposals with lost acknowledgements,
 wrong receipts, storage exhaustion and reconstruction, checking durable replay
 and rejection invariants after each operation. A 32-contender thread test checks
