@@ -134,3 +134,13 @@ runtime ports before constructing the owning control. [Raw logs](verification-da
 retain the checks; final candidate performance and full chaos qualification are
 still pending. The preceding [scoped-buffer comparison](performance-hosted-scoped-frames-2026-10-30.md)
 removed the 64 KiB sampled stack regression but retained a 4 KiB regression.
+
+The completed [borrowed-adapter comparison](performance-hosted-borrowed-restore-2026-10-30.md)
+records sampled lifecycle stack below the baseline at both tested capacities:
+66,064 versus 85,056 bytes at 4 KiB, and 188,944 versus 202,304 at 64 KiB.
+Native marginal medians are lower, with substantial 64 KiB variation. All paths
+retain zero measured allocation and expected recovery/ACK assertions. This
+removes the previously observed hosted sampled-stack regression for this fixture;
+it does not establish static worst-case bounds or universal timing parity.
+The full three-iteration chaos campaign has restarted on this production code,
+with the temporary directory explicitly on the local filesystem.
