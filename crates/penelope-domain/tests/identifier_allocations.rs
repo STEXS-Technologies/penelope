@@ -1,0 +1,64 @@
+//! Isolated executable: verify short identity parsing/cloning has no allocation.
+#![allow(clippy::unwrap_used)]
+use penelope_domain::*;
+use std::{
+    alloc::{GlobalAlloc, Layout, System},
+    hint::black_box,
+    sync::atomic::{AtomicUsize, Ordering},
+};
+
+struct Allocator;
+static ALLOCATIONS: AtomicUsize = AtomicUsize::new(0);
+#[global_allocator]
+static ALLOCATOR: Allocator = Allocator;
+// SAFETY: pointers/layouts pass unchanged to System; the counter cannot allocate.
+unsafe impl GlobalAlloc for Allocator {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        ALLOCATIONS.fetch_add(1, Ordering::Relaxed);
+        // SAFETY: the caller's valid layout is forwarded unchanged.
+        unsafe { System.alloc(layout) }
+    }
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        // SAFETY: the pointer and its original layout are forwarded unchanged.
+        unsafe { System.dealloc(ptr, layout) }
+    }
+}
+fn count<T>(operation: impl FnOnce() -> T) -> usize {
+    let before = ALLOCATIONS.load(Ordering::Relaxed);
+    drop(black_box(operation()));
+    ALLOCATIONS.load(Ordering::Relaxed).saturating_sub(before)
+}
+fn main() {
+    macro_rules! check {
+        ($kind:ty, $text:literal) => {{
+            let value: $kind = $text.parse().unwrap();
+            assert_eq!(count(|| <$kind>::try_from(black_box($text)).unwrap()), 0);
+            assert_eq!(count(|| black_box(&value).clone()), 0);
+            let long = format!("{}{}", $text, "x".repeat(64));
+            let value: $kind = long.parse().unwrap();
+            assert_eq!(count(|| long.parse::<$kind>().unwrap()), 1);
+            assert_eq!(count(|| black_box(&value).clone()), 1);
+            // Inline capacity follows pointer width rather than growing 32-bit values.
+            assert_eq!(size_of::<$kind>(), size_of::<String>());
+        }};
+    }
+    check!(TenantId, "tnt_a");
+    check!(ProcessId, "prc_a");
+    check!(DefinitionId, "def_a");
+    check!(DefinitionVersion, "dfv_a");
+    check!(StepId, "stp_a");
+    check!(InputId, "inp_a");
+    check!(OutcomeId, "out_a");
+    check!(ActionId, "act_a");
+    check!(ReviewId, "rev_a");
+    check!(PrincipalId, "pri_a");
+    check!(CanonicalEventId, "cev_a");
+    check!(CanonicalCommitId, "cmt_a");
+    check!(ResourceId, "res_a");
+    check!(OperationId, "op_a");
+    check!(ExternalReferenceId, "ext_a");
+    check!(MigrationId, "mig_a");
+    println!(
+        "All 16 identifier types: short parse/clone zero allocations; long parse/clone one allocation; unchanged value size"
+    );
+}
