@@ -1119,6 +1119,24 @@ pub enum EngineError {
     ManualResolutionRequiresEscalation,
 }
 
+// Keep the larger scratch frame out of the common small-definition path.
+#[inline(never)]
+fn large_linear_steps_have_duplicate_ids(steps: &[StepPlan]) -> Result<bool, EngineError> {
+    let first = steps.first().ok_or(EngineError::EmptyDefinition)?;
+    let mut storage = [&first.step_id; MAX_DEFINITION_STEPS];
+    let ids = storage
+        .get_mut(..steps.len())
+        .ok_or(EngineError::DefinitionStepLimitExceeded)?;
+    for (id, step) in ids.iter_mut().zip(steps) {
+        *id = &step.step_id;
+    }
+    ids.sort_unstable();
+    Ok(ids
+        .iter()
+        .zip(ids.iter().skip(1))
+        .any(|(left, right)| left == right))
+}
+
 impl LinearSagaDefinition {
     /// Validates the definition's minimum executable invariant.
     ///
@@ -1132,12 +1150,17 @@ impl LinearSagaDefinition {
         if self.steps.len() > MAX_DEFINITION_STEPS {
             return Err(EngineError::DefinitionStepLimitExceeded);
         }
-        if self.steps.iter().enumerate().any(|(index, step)| {
-            self.steps
-                .iter()
-                .skip(index.saturating_add(1))
-                .any(|other_step| other_step.step_id == step.step_id)
-        }) {
+        let duplicate = if self.steps.len() > 16 {
+            large_linear_steps_have_duplicate_ids(&self.steps)?
+        } else {
+            self.steps.iter().enumerate().any(|(index, step)| {
+                self.steps
+                    .iter()
+                    .skip(index.saturating_add(1))
+                    .any(|other_step| other_step.step_id == step.step_id)
+            })
+        };
+        if duplicate {
             return Err(EngineError::DuplicateStepId);
         }
         if self.steps.iter().any(|step| {
