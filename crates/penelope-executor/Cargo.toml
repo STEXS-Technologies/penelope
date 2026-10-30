@@ -53,3 +53,7 @@ harness = false
 [[bench]]
 name = "definition_validation"
 harness = false
+
+[[test]]
+name = "definition_allocations"
+harness = false
