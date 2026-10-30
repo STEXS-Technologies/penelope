@@ -649,3 +649,6 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
 
 #[path = "support/sagas.rs"]
 mod sagas;
+
+#[path = "support/worker_protocol.rs"]
+mod worker_protocol;
