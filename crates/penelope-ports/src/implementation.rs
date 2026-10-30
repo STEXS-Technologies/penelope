@@ -1262,6 +1262,16 @@ pub enum ManualReviewControl {
 pub enum ProcessAuthorizationOperation {
     /// Start a new process instance.
     Start,
+    /// Claim and dispatch already committed outgoing actions.
+    Dispatch,
+    /// Drive a durably accepted recoverable task.
+    DriveTask,
+    /// Reconcile independently issued external effects.
+    ReconcileEffect,
+    /// Deliver durable due-timer inputs.
+    DeliverTimer,
+    /// Relay a verified task result into a process commit.
+    RelayTaskResult,
     /// Request process cancellation.
     Cancel,
     /// Request an explicit retry.
@@ -1286,9 +1296,14 @@ impl ProcessAuthorizationOperation {
     #[must_use]
     pub const fn minimum_requirement(self) -> AuthorizationRequirement {
         match self {
-            Self::Start | Self::Cancel | Self::Retry => {
-                AuthorizationRequirement::AuthenticatedPrincipal
-            }
+            Self::Start
+            | Self::Cancel
+            | Self::Retry
+            | Self::Dispatch
+            | Self::DriveTask
+            | Self::ReconcileEffect
+            | Self::DeliverTimer
+            | Self::RelayTaskResult => AuthorizationRequirement::AuthenticatedPrincipal,
             Self::DecideReview | Self::TerminalOverride => {
                 AuthorizationRequirement::DistinctPrincipals
             }
