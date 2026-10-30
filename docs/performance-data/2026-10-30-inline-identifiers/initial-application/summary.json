@@ -1,0 +1,190 @@
+{
+  "short": {
+    "before": {
+      "0": {
+        "pairs": 160,
+        "direct_ns": 0.932205,
+        "penelope_ns": 246.186595,
+        "paired_added_ns": 245.22869,
+        "paired_overhead_percent": 25938.435524415363,
+        "paired_overhead_range": [
+          23931.308098609126,
+          27522.4568369787
+        ]
+      },
+      "64": {
+        "pairs": 160,
+        "direct_ns": 42.734305,
+        "penelope_ns": 280.20590500000003,
+        "paired_added_ns": 237.278425,
+        "paired_overhead_percent": 555.74517806631,
+        "paired_overhead_range": [
+          526.3037533044438,
+          601.1522110017216
+        ]
+      },
+      "4096": {
+        "pairs": 160,
+        "direct_ns": 3762.49575,
+        "penelope_ns": 3991.61625,
+        "paired_added_ns": 235.738,
+        "paired_overhead_percent": 6.333174518236085,
+        "paired_overhead_range": [
+          3.44369672284468,
+          9.477939474110265
+        ]
+      },
+      "65536": {
+        "pairs": 160,
+        "direct_ns": 59851.08984375,
+        "penelope_ns": 60096.4453125,
+        "paired_added_ns": 243.05078125,
+        "paired_overhead_percent": 0.4047648724772035,
+        "paired_overhead_range": [
+          -1.6005148476113784,
+          3.4264264300848835
+        ]
+      }
+    },
+    "after": {
+      "0": {
+        "pairs": 160,
+        "direct_ns": 0.9588,
+        "penelope_ns": 107.38382999999999,
+        "paired_added_ns": 106.29171,
+        "paired_overhead_percent": 11064.87102769463,
+        "paired_overhead_range": [
+          9161.707474056375,
+          12845.959579558124
+        ]
+      },
+      "64": {
+        "pairs": 160,
+        "direct_ns": 43.44889,
+        "penelope_ns": 151.147725,
+        "paired_added_ns": 107.65596,
+        "paired_overhead_percent": 248.93411543922008,
+        "paired_overhead_range": [
+          237.52377354199643,
+          284.694900889928
+        ]
+      },
+      "4096": {
+        "pairs": 160,
+        "direct_ns": 3777.9855,
+        "penelope_ns": 3885.982,
+        "paired_added_ns": 111.46074999999999,
+        "paired_overhead_percent": 2.975506940900452,
+        "paired_overhead_range": [
+          -0.7937229627148046,
+          5.737523540489642
+        ]
+      },
+      "65536": {
+        "pairs": 160,
+        "direct_ns": 60599.09375,
+        "penelope_ns": 60778.11328125,
+        "paired_added_ns": 108.4921875,
+        "paired_overhead_percent": 0.1793006998244584,
+        "paired_overhead_range": [
+          -13.402085161338363,
+          1.9538191673041938
+        ]
+      }
+    }
+  },
+  "long": {
+    "before": {
+      "0": {
+        "pairs": 160,
+        "direct_ns": 0.93221,
+        "penelope_ns": 245.722595,
+        "paired_added_ns": 244.782725,
+        "paired_overhead_percent": 25927.948522233273,
+        "paired_overhead_range": [
+          23084.029821463606,
+          34361.134401707095
+        ]
+      },
+      "64": {
+        "pairs": 160,
+        "direct_ns": 42.834554999999995,
+        "penelope_ns": 284.34872,
+        "paired_added_ns": 241.354455,
+        "paired_overhead_percent": 563.1152651565951,
+        "paired_overhead_range": [
+          471.2355873814917,
+          594.02838524973
+        ]
+      },
+      "4096": {
+        "pairs": 160,
+        "direct_ns": 3734.37125,
+        "penelope_ns": 3974.06725,
+        "paired_added_ns": 237.67925,
+        "paired_overhead_percent": 6.2571023057522375,
+        "paired_overhead_range": [
+          4.094928318835689,
+          10.172367615761168
+        ]
+      },
+      "65536": {
+        "pairs": 160,
+        "direct_ns": 59913.98046875,
+        "penelope_ns": 60126.85546875,
+        "paired_added_ns": 254.59765625,
+        "paired_overhead_percent": 0.422280264211361,
+        "paired_overhead_range": [
+          -1.8017501990546192,
+          1.7907293986268558
+        ]
+      }
+    },
+    "after": {
+      "0": {
+        "pairs": 160,
+        "direct_ns": 1.0557400000000001,
+        "penelope_ns": 219.721685,
+        "paired_added_ns": 218.700165,
+        "paired_overhead_percent": 20736.79720810191,
+        "paired_overhead_range": [
+          18235.410042896798,
+          23867.302081098478
+        ]
+      },
+      "64": {
+        "pairs": 160,
+        "direct_ns": 43.867495,
+        "penelope_ns": 259.52032499999996,
+        "paired_added_ns": 215.94099,
+        "paired_overhead_percent": 494.7516263300672,
+        "paired_overhead_range": [
+          483.71105322754636,
+          546.6307991763648
+        ]
+      },
+      "4096": {
+        "pairs": 160,
+        "direct_ns": 3793.45825,
+        "penelope_ns": 4012.0005,
+        "paired_added_ns": 216.62849999999997,
+        "paired_overhead_percent": 5.700589375969168,
+        "paired_overhead_range": [
+          3.8751122017087303,
+          8.719729271580267
+        ]
+      },
+      "65536": {
+        "pairs": 160,
+        "direct_ns": 60824.3359375,
+        "penelope_ns": 61062.37109375,
+        "paired_added_ns": 233.62109375,
+        "paired_overhead_percent": 0.38248244753696925,
+        "paired_overhead_range": [
+          -1.6985178910339904,
+          1.10534173735235
+        ]
+      }
+    }
+  }
+}

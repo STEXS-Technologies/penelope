@@ -44,6 +44,12 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Short hosted protocol identifiers store text inline; long values retain owned
+  heap storage. Text admission, wire bytes, formatting, ordering and hashing stay
+  compatible. The direct-task engine floor is about 51% lower in the measured
+  short-ID fixture; standalone DTO encoding is 6.29% slower. Detailed profiles
+  and the long-ID control are retained in the inline-identifier report.
+
 - Linear saga completion clones only retained projection fields; action-history
   extension reserves capacity for the next identity. The direct-task benchmark
   measures an approximately 9% reduction in empty-task added engine time, with

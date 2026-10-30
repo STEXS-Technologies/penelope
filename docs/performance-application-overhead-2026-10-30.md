@@ -1,5 +1,9 @@
 # Direct task execution versus in-memory saga overhead — 2026-10-30
 
+A [subsequent identifier-storage optimization](performance-inline-identifiers-2026-10-30.md)
+further reduces the engine cost. The figures below are retained as the earlier
+linear-clone stage, not the latest branch measurements.
+
 Penelope's one-step in-memory linear engine adds approximately **0.24–0.26 µs**
 in this synthetic CPU-task fixture after the optimization. The empty-task paired
 median added time fell from **270.02 ns** to
