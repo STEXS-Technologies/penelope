@@ -96,6 +96,7 @@ fn scheduled(stores: &Stores) -> TimerSchedule {
 }
 #[test]
 fn authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input() {
+    use penelope_ports::inbox::PendingInbox;
     use penelope_ports::payloads::ProcessPayloadStore;
     let stores = Stores::new(true, scope());
     let timer = scheduled(&stores);
@@ -138,6 +139,14 @@ fn authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input() {
     assert_eq!(first.stage, TimerDrainStage::Acknowledge);
     assert_eq!(first.report.claimed, 1);
     assert_eq!(first.report.acknowledged, 0);
+    let pending = run(stores.store.pending_inputs(
+        &stores.scope.tenant_id,
+        &stores.scope.process_id,
+        NonZeroU16::new(2).unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(pending.len(), 1);
+    assert_eq!(pending.first().unwrap().kind, ProcessInputKind::TimerFired);
     // The caller's forged future `request.now` was replaced by the trusted clock.
     let held = run(drain_timers(
         &policy,
@@ -159,6 +168,17 @@ fn authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input() {
     .unwrap();
     assert_eq!(recovered.acknowledged, 1);
     assert_eq!(recovered.duplicate_inputs, 1);
+    // Timer delivery ACK is not saga consumption. The host can rediscover the
+    // same durable input after either a lost ACK or successful redelivery.
+    assert_eq!(
+        run(stores.store.pending_inputs(
+            &stores.scope.tenant_id,
+            &stores.scope.process_id,
+            NonZeroU16::new(2).unwrap(),
+        ))
+        .unwrap(),
+        pending
+    );
     let bytes = timer.canonical_wire_bytes().unwrap();
     assert_eq!(
         run(stores

@@ -24,6 +24,9 @@ use std::{
 #[path = "support/lease_contracts.rs"]
 mod lease_contracts;
 
+#[path = "support/pending_inbox.rs"]
+mod pending_inbox;
+
 struct ThreadWake(std::thread::Thread);
 impl Wake for ThreadWake {
     fn wake(self: Arc<Self>) {

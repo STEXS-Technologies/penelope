@@ -71,6 +71,27 @@ come from the host authentication boundary; code/content digests and fencing
 tokens do not authenticate a caller. Low-level ports and composition functions
 are protocol building blocks and require authorization in their outer boundary.
 
+## Discovering accepted inputs after restart
+
+`penelope_ports::inbox::PendingInbox` exposes read-only, bounded discovery of
+inputs accepted by `Inbox` but not consumed by `AtomicProcessCommit`. SQLite
+implements it on the same blocking-isolation worker as the other process ports.
+Call `pending_inputs(tenant, process, limit)` with a nonzero limit up to 64.
+Results are ordered by input ID; this ordering does not establish causality or
+FIFO delivery. Reads do not acquire leases, acknowledge timers, or consume inputs.
+
+The host authorizes access, selects its pinned definition, reads the immutable
+payload through `ProcessPayloadStore`, and validates its complete scope before
+mapping it to a saga input. In particular, a `TimerFired` input's timer payload
+must match the expected action, attempt and due time; tenant/process discovery
+alone does not establish that definition binding. Replay the authoritative saga,
+decide, persist event bytes, then commit that exact accepted input with the
+engine's outcomes/actions. Only the successful atomic commit consumes it.
+Concurrent hosts may discover the same input; CAS and immutable input deduplication
+arbitrate the commit. A timer delivery ACK still leaves its input discoverable
+until the saga decision commits. Retrying discovery after a read error must not
+turn missing or corrupt evidence into an empty inbox.
+
 ## Executor composition example
 
 Run `./scripts/run-executor-saga-example.sh`, or keep its state directory with:
