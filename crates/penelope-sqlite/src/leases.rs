@@ -35,36 +35,47 @@ fn expiry(now: LogicalTime, millis: u64) -> Result<LogicalTime, PortError> {
     Ok(LogicalTime(value))
 }
 fn outbox_lease(connection: &Connection, lease: &OutboxLease, limit: u32) -> Result<(), PortError> {
-    let stored: Option<Vec<u8>> = connection
+    let Some((stored, bytes, checksum, key, expires, attempt)) = connection
         .query_row(
-            "SELECT lease FROM process_actions WHERE scope=?1 AND action_id=?2",
-            params![
-                lease.record.action.scope().canonical_bytes(),
-                lease.record.action.action_id.as_str()
-            ],
-            |row| copy_column(row, 0, limit),
+            "SELECT lease,action,checksum,effect_key,expires_at,attempt FROM process_actions WHERE scope=?1 AND action_id=?2",
+            params![lease.record.action.scope().canonical_bytes(), lease.record.action.action_id.as_str()],
+            |row| Ok((copy_column(row, 0, limit)?, copy_column(row, 1, limit)?, copy_column(row, 2, 32)?, copy_column(row, 3, limit)?, row.get::<_, i64>(4)?, row.get::<_, i64>(5)?)),
         )
         .optional()
-        .map_err(|error| db_error(&error))?;
-    if stored.as_deref() != Some(encode(lease, limit)?.as_slice()) {
+        .map_err(|error| db_error(&error))?
+    else { return Err(PortError::Conflict); };
+    if stored != encode(lease, limit)? {
         return Err(PortError::Conflict);
+    }
+    // A matching lease alone cannot authorize mutation of a damaged action.
+    if decode::<ProcessAction>(&bytes, &checksum)? != lease.record.action
+        || key != lease.record.action.effect_key().canonical_bytes()
+        || expires != integer(lease.lease_expires_at.0)?
+        || attempt != integer(u64::from(lease.record.delivery_attempt).saturating_add(1))?
+    {
+        return Err(PortError::Invariant);
     }
     Ok(())
 }
 fn timer_lease(connection: &Connection, lease: &TimerLease, limit: u32) -> Result<(), PortError> {
-    let stored: Option<Vec<u8>> = connection
+    let Some((stored, bytes, checksum, due, expires, attempt)) = connection
         .query_row(
-            "SELECT lease FROM process_timers WHERE scope=?1 AND action_id=?2 AND state IN (0,1)",
-            params![
-                lease.timer.action.scope().canonical_bytes(),
-                lease.timer.action.action_id.as_str()
-            ],
-            |row| copy_column(row, 0, limit),
+            "SELECT lease,timer,checksum,due_at,expires_at,attempt FROM process_timers WHERE scope=?1 AND action_id=?2 AND state IN (0,1)",
+            params![lease.timer.action.scope().canonical_bytes(), lease.timer.action.action_id.as_str()],
+            |row| Ok((copy_column(row, 0, limit)?, copy_column(row, 1, limit)?, copy_column(row, 2, 32)?, row.get::<_, i64>(3)?, row.get::<_, i64>(4)?, row.get::<_, i64>(5)?)),
         )
         .optional()
-        .map_err(|error| db_error(&error))?;
-    if stored.as_deref() != Some(encode(lease, limit)?.as_slice()) {
+        .map_err(|error| db_error(&error))?
+    else { return Err(PortError::Conflict); };
+    if stored != encode(lease, limit)? {
         return Err(PortError::Conflict);
+    }
+    if decode::<TimerSchedule>(&bytes, &checksum)? != lease.timer
+        || due != integer(lease.timer.due_at.0)?
+        || expires != integer(lease.lease_expires_at.0)?
+        || !(1..=i64::from(MAX_OUTBOX_DELIVERY_ATTEMPTS)).contains(&attempt)
+    {
+        return Err(PortError::Invariant);
     }
     Ok(())
 }
@@ -122,7 +133,7 @@ impl OutboxStore for SqliteProcessStore {
                     .transaction_with_behavior(TransactionBehavior::Immediate)
                     .map_err(|error| db_error(&error))?;
                 outbox_lease(&transaction, &lease, limits.max_record_bytes)?;
-                transaction
+                let changed = transaction
                     .execute(
                         "UPDATE process_actions SET acknowledged=1 WHERE scope=?1 AND action_id=?2",
                         params![
@@ -131,6 +142,9 @@ impl OutboxStore for SqliteProcessStore {
                         ],
                     )
                     .map_err(|error| db_error(&error))?;
+                if changed != 1 {
+                    return Err(PortError::Invariant);
+                }
                 transaction.commit().map_err(|error| db_error(&error))
             })?
             .await
@@ -268,7 +282,7 @@ impl TimerClaimStore for SqliteProcessStore {
                     .transaction_with_behavior(TransactionBehavior::Immediate)
                     .map_err(|error| db_error(&error))?;
                 timer_lease(&transaction, &lease, limits.max_record_bytes)?;
-                transaction
+                let changed = transaction
                     .execute(
                         "UPDATE process_timers SET state=1 WHERE scope=?1 AND action_id=?2",
                         params![
@@ -277,6 +291,9 @@ impl TimerClaimStore for SqliteProcessStore {
                         ],
                     )
                     .map_err(|error| db_error(&error))?;
+                if changed != 1 {
+                    return Err(PortError::Invariant);
+                }
                 transaction.commit().map_err(|error| db_error(&error))
             })?
             .await

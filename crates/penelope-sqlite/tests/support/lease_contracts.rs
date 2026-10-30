@@ -357,3 +357,210 @@ fn ignored_lease_update_rolls_back_tokens_and_returns_no_authority() {
         );
     }
 }
+
+#[test]
+fn lease_completion_rejects_damaged_durable_evidence() {
+    for timer in [false, true] {
+        for field in [
+            "checksum",
+            "payload",
+            "expiry",
+            "missing-expiry",
+            "identity",
+            "attempt",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("ack-evidence.db");
+            let adapter = store(&path, clock());
+            let commit = commit(timer);
+            block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+            let schedule = TimerSchedule {
+                action: commit.actions[0].clone(),
+                due_at: LogicalTime(100),
+            };
+            if timer {
+                block_on(adapter.schedule(&schedule)).unwrap();
+            }
+            let outbox = if timer {
+                None
+            } else {
+                Some(block_on(adapter.claim(&claim())).unwrap().remove(0))
+            };
+            let timer_lease = if timer {
+                Some(
+                    block_on(adapter.claim_due(&timer_claim(100)))
+                        .unwrap()
+                        .remove(0),
+                )
+            } else {
+                None
+            };
+            let table = if timer {
+                "process_timers"
+            } else {
+                "process_actions"
+            };
+            let connection = Connection::open(&path).unwrap();
+            match field {
+                "checksum" => {
+                    connection
+                        .execute(&format!("UPDATE {table} SET checksum=zeroblob(32)"), [])
+                        .unwrap();
+                }
+                "payload" => {
+                    let (column, bytes) = if timer {
+                        let mut other = schedule.clone();
+                        other.action.payload_digest = ContentDigest([7; 32]);
+                        ("timer", serde_json::to_vec(&other).unwrap())
+                    } else {
+                        let mut other = commit.actions[0].clone();
+                        other.payload_digest = ContentDigest([7; 32]);
+                        ("action", serde_json::to_vec(&other).unwrap())
+                    };
+                    connection
+                        .execute(
+                            &format!("UPDATE {table} SET {column}=?1,checksum=?2"),
+                            rusqlite::params![bytes, ContentDigest::sha256(&bytes).0.as_slice()],
+                        )
+                        .unwrap();
+                }
+                "expiry" => {
+                    connection
+                        .execute(&format!("UPDATE {table} SET expires_at=109"), [])
+                        .unwrap();
+                }
+                "missing-expiry" => {
+                    connection
+                        .execute(&format!("UPDATE {table} SET expires_at=NULL"), [])
+                        .unwrap();
+                }
+                "identity" if timer => {
+                    connection
+                        .execute("UPDATE process_timers SET due_at=99", [])
+                        .unwrap();
+                }
+                "identity" => {
+                    connection
+                        .execute("UPDATE process_actions SET effect_key=zeroblob(32)", [])
+                        .unwrap();
+                }
+                _ => {
+                    connection
+                        .execute(&format!("UPDATE {table} SET attempt=0"), [])
+                        .unwrap();
+                }
+            }
+            if let Some(lease) = timer_lease {
+                assert_eq!(
+                    block_on(TimerClaimStore::acknowledge(
+                        &adapter,
+                        &lease,
+                        LogicalTime(100)
+                    )),
+                    Err(PortError::Invariant),
+                    "{table}/{field}"
+                );
+            }
+            if let Some(lease) = outbox {
+                assert_eq!(
+                    block_on(OutboxStore::acknowledge(&adapter, &lease, LogicalTime(100))),
+                    Err(PortError::Invariant),
+                    "{table}/{field}"
+                );
+                assert_eq!(
+                    block_on(adapter.renew(&lease, LogicalTime(100), LogicalTime(150))),
+                    Err(PortError::Invariant),
+                    "{table}/{field}/renew"
+                );
+            }
+            let terminal: u32 = connection
+                .query_row(
+                    &format!(
+                        "SELECT {} FROM {table}",
+                        if timer { "state" } else { "acknowledged" }
+                    ),
+                    [],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(terminal, 0);
+        }
+    }
+}
+
+#[test]
+fn ignored_acknowledgement_is_not_reported_as_durable_success() {
+    for timer in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("ignored-ack.db");
+        let adapter = store(&path, clock());
+        let commit = commit(timer);
+        block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+        let table = if timer {
+            "process_timers"
+        } else {
+            "process_actions"
+        };
+        let column = if timer { "state" } else { "acknowledged" };
+        let connection = Connection::open(&path).unwrap();
+        if timer {
+            block_on(adapter.schedule(&TimerSchedule {
+                action: commit.actions[0].clone(),
+                due_at: LogicalTime(100),
+            }))
+            .unwrap();
+        }
+        let outbox = if timer {
+            None
+        } else {
+            Some(block_on(adapter.claim(&claim())).unwrap().remove(0))
+        };
+        let timer_lease = if timer {
+            Some(
+                block_on(adapter.claim_due(&timer_claim(100)))
+                    .unwrap()
+                    .remove(0),
+            )
+        } else {
+            None
+        };
+        connection.execute_batch(&format!("CREATE TRIGGER ignore_ack BEFORE UPDATE OF {column} ON {table} BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
+        let acknowledge = || {
+            timer_lease.as_ref().map_or_else(
+                || {
+                    block_on(OutboxStore::acknowledge(
+                        &adapter,
+                        outbox.as_ref().unwrap(),
+                        LogicalTime(100),
+                    ))
+                },
+                |lease| {
+                    block_on(TimerClaimStore::acknowledge(
+                        &adapter,
+                        lease,
+                        LogicalTime(100),
+                    ))
+                },
+            )
+        };
+        assert_eq!(acknowledge(), Err(PortError::Invariant));
+        let terminal: u32 = connection
+            .query_row(&format!("SELECT {column} FROM {table}"), [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        assert_eq!(terminal, 0);
+        connection
+            .execute_batch("DROP TRIGGER ignore_ack;")
+            .unwrap();
+        acknowledge().unwrap();
+        // A valid repeated ACK remains idempotent after the first durable write.
+        acknowledge().unwrap();
+        let acknowledged: u32 = connection
+            .query_row(&format!("SELECT {column} FROM {table}"), [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        assert_eq!(acknowledged, 1);
+    }
+}
