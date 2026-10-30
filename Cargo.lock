@@ -384,6 +384,7 @@ dependencies = [
 name = "penelope-process-runtime"
 version = "0.2.0"
 dependencies = [
+ "async-trait",
  "libc",
  "penelope-core",
  "penelope-domain",

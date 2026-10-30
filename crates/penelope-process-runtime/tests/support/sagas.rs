@@ -634,3 +634,6 @@ fn killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries() {
         }
     }
 }
+
+#[path = "services.rs"]
+mod services;
