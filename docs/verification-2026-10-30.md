@@ -5,6 +5,12 @@ reference profiles, with the graph slowdown removed. Scoped performance results
 are recorded in the [requirement audit](qualification-0.3.0.md). All nine library crates and
 internal dependency requirements use `0.3.0`. No tag or publication was created.
 
+A subsequent linear-engine optimization at `8a9e298` has separately retained
+[direct-task overhead measurements and scoped checks](performance-application-overhead-2026-10-30.md).
+The empty-task added-time median falls from 270.02 ns to 245.75 ns. This comparison
+includes the same CPU work with and without the in-memory engine; it excludes
+persistence and isolated workers and does not establish a universal slowdown.
+
 The versioned local sequence passed stable/MSRV workspace all-target tests,
 doctests, strict Clippy/rustdoc, portable checks including MSRV RISC-V with and
 without Serde, layer/negative checks, runner/Python/action-pin checks, audit/deny,
