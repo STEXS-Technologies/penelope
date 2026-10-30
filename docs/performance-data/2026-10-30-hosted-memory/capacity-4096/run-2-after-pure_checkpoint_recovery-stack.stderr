@@ -1,6 +1,0 @@
-==3109157== Massif, a heap profiler
-==3109157== Copyright (C) 2003-2025, and GNU GPL'd, by Nicholas Nethercote et al.
-==3109157== Using Valgrind-3.27.1 and LibVEX; rerun with -h for copyright info
-==3109157== Command: /home/ac/projects/penelope/target/hosted-memory-m3uv4pko/after/target/release/examples/hosted_task_memory pure_checkpoint_recovery 1
-==3109157== 
-==3109157== 
