@@ -39,3 +39,6 @@ supply trusted migration/reconciliation evidence and do not establish its
 cryptographic validity. This check does not measure serialization, hosted
 adapters, SQLite, Linux workers, stack high-water use, peak resident memory,
 or worst-case control memory. Those require separate qualification.
+
+[Companion stack and type-size observations](performance-portable-memory-2026-10-30.md)
+measure the same fixture paths separately.

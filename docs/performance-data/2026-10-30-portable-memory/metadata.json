@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-30T11:25:05.532015+00:00",
+  "revision": "aae51bb3c63b3df95bec10cab59877dbb5d1efd8",
+  "tracked_diff": "diff --git a/crates/penelope-core/tests/task_allocations.rs b/crates/penelope-core/tests/task_allocations.rs\nindex e762325..5071e05 100644\n--- a/crates/penelope-core/tests/task_allocations.rs\n+++ b/crates/penelope-core/tests/task_allocations.rs\n@@ -497,7 +497,43 @@ fn independent_completion() {\n     assert_eq!(bytes, [9; 8]);\n     assert_eq!(runtime.starts, 1);\n }\n+#[inline(never)]\n+// black_box is not const on the Rust 1.85 MSRV.\n+#[allow(clippy::missing_const_for_fn)]\n+fn stack_positive_control() {\n+    let mut bytes = [0_u8; 65_536];\n+    black_box(&mut bytes);\n+}\n fn main() {\n+    let arguments: Vec<String> = std::env::args().skip(1).collect();\n+    let selected = match arguments.as_slice() {\n+        [] => None,\n+        [flag, path] if flag == \"--path\" => Some(path.as_str()),\n+        [flag] if flag == \"--stack-positive-control\" => {\n+            stack_positive_control();\n+            return;\n+        }\n+        [flag] if flag == \"--stack-baseline\" => return,\n+        [flag] if flag == \"--layout\" => {\n+            println!(\n+                \"{{\\\"control_with_fixtures\\\":{},\\\"journal_fixture\\\":{},\\\"runtime_fixture\\\":{},\\\"control_with_unit_ports\\\":{},\\\"projection\\\":{},\\\"workspace_descriptor\\\":{},\\\"record\\\":{},\\\"definition\\\":{},\\\"workspace_bytes\\\":20}}\",\n+                size_of::<Control>(),\n+                size_of::<Journal>(),\n+                size_of::<Runtime>(),\n+                size_of::<TaskControl<(), ()>>(),\n+                size_of::<TaskProjection>(),\n+                size_of::<TaskWorkspace<'_>>(),\n+                size_of::<TaskRecord>(),\n+                size_of::<TaskDefinition>(),\n+            );\n+            return;\n+        }\n+        _ => {\n+            eprintln!(\"expected --path NAME, --layout or a stack calibration mode\");\n+            std::process::exit(2);\n+        }\n+    };\n+    let mut matched = false;\n     // Exercise every instrumented allocator entry point before trusting zeros.\n     let small = Layout::from_size_align(8, 8).unwrap();\n     let large = Layout::from_size_align(16, 8).unwrap();\n@@ -530,6 +566,10 @@ fn main() {\n         (\"checkpoint_migration\", migration as fn()),\n         (\"independent_completion\", independent_completion as fn()),\n     ] {\n+        if selected.is_some_and(|path| path != name) {\n+            continue;\n+        }\n+        matched = true;\n         start_counting();\n         black_box(exercise)();\n         let counts = stop_counting();\n@@ -546,6 +586,7 @@ fn main() {\n             \"{{\\\"path\\\":\\\"{name}\\\",\\\"allocations\\\":0,\\\"reallocations\\\":0,\\\"deallocations\\\":0,\\\"requested_bytes\\\":0}}\"\n         );\n     }\n+    assert!(matched, \"unknown task path\");\n }\n fn lifecycle_pure() {\n     lifecycle(EffectContract::Pure);\n",
+  "runner_sha256": "a8d04080d547aaf0809cf274ced4c3e360204027b80651303b42d01a2424f1cb",
+  "fixture_sha256": "1a66e841ad936f70750b006fade65edbf51e6c68e65dd9a617b82dd25301577a",
+  "binary_sha256": "324c5a614be843ce9ae0301ed7efe724b586e98d5c34df1f86f73ae083de3be8",
+  "cargo_lock_sha256": "461abc6e2125e821baa67d260648f85ff332c674e75db3d3fdf4d084e6b303eb",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "valgrind": "valgrind-3.27.1",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": 0,
+  "runs": 3,
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null
+  },
+  "scope": "whole single-threaded test process including startup, fixtures, assertions and printing",
+  "limitation": "maximum retained Massif stack sample; not a static worst-case bound or adapter qualification",
+  "layout_bytes": {
+    "control_with_fixtures": 13656,
+    "journal_fixture": 13224,
+    "runtime_fixture": 16,
+    "control_with_unit_ports": 416,
+    "projection": 408,
+    "workspace_descriptor": 48,
+    "record": 400,
+    "definition": 104,
+    "workspace_bytes": 20
+  }
+}

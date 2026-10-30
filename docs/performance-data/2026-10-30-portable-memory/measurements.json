@@ -1,0 +1,149 @@
+[
+  {
+    "run": 1,
+    "case": "stack_baseline",
+    "maximum_sampled_stack_bytes": 7728,
+    "snapshots": 911,
+    "massif_sha256": "74d4f07b7e491dfe1464c6e01a36d7e180638f435e865b454c5ead41204a0eb3"
+  },
+  {
+    "run": 1,
+    "case": "stack_positive_control",
+    "maximum_sampled_stack_bytes": 66456,
+    "snapshots": 927,
+    "massif_sha256": "b05c29fbda3392e27d1b09878a548d57cb2009bfdac2b353d2650bc0b51c215a"
+  },
+  {
+    "run": 1,
+    "case": "pure_checkpoint_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 538,
+    "massif_sha256": "e4bc087610828bb29baf9512edae1ee05adfeed8be3b6367dd1290c56f81c906"
+  },
+  {
+    "run": 1,
+    "case": "effect_reconciliation_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 581,
+    "massif_sha256": "989dc934cb28fbbeaed27cafe0b786155f8efc3272b936814edd2f1f38c35411"
+  },
+  {
+    "run": 1,
+    "case": "undersized_workspace",
+    "maximum_sampled_stack_bytes": 44928,
+    "snapshots": 502,
+    "massif_sha256": "ad1a81809bef37b58cf81c25961c7c869eda425902d7887ff1f12919fadd122f"
+  },
+  {
+    "run": 1,
+    "case": "checkpoint_migration",
+    "maximum_sampled_stack_bytes": 71888,
+    "snapshots": 528,
+    "massif_sha256": "01fcc43e8e8671d6ff20fd730a7f62d00834d669f1bc2422ed61695ecbc77662"
+  },
+  {
+    "run": 1,
+    "case": "independent_completion",
+    "maximum_sampled_stack_bytes": 44976,
+    "snapshots": 518,
+    "massif_sha256": "0b98e202d96b3d6ed4bfe3548a0d80671f50c9ec5fa00e692c41e290ed52b844"
+  },
+  {
+    "run": 2,
+    "case": "stack_baseline",
+    "maximum_sampled_stack_bytes": 7728,
+    "snapshots": 911,
+    "massif_sha256": "b7596b8fb1d872704aabe83f54df54d5390a5c207c0791bbe2cc7072c47e264e"
+  },
+  {
+    "run": 2,
+    "case": "stack_positive_control",
+    "maximum_sampled_stack_bytes": 66456,
+    "snapshots": 927,
+    "massif_sha256": "f5a37e17e292ec094277e0b1f014bf91a62e92623ae474fc3f5f8e835e451bd1"
+  },
+  {
+    "run": 2,
+    "case": "pure_checkpoint_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 538,
+    "massif_sha256": "85a2a1fc6a14ef1f71bbffd5047ff09022cdbca41ce922a946e1e955631e2762"
+  },
+  {
+    "run": 2,
+    "case": "effect_reconciliation_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 581,
+    "massif_sha256": "80b371053b47b97ab2d8ec60126df2826f4aee90b85845e6ce67da3693eebf26"
+  },
+  {
+    "run": 2,
+    "case": "undersized_workspace",
+    "maximum_sampled_stack_bytes": 44928,
+    "snapshots": 502,
+    "massif_sha256": "f392634924ecc5e4e73d4d2c5f6c6bb6cab83737907bd5b2d15218f72e91baf9"
+  },
+  {
+    "run": 2,
+    "case": "checkpoint_migration",
+    "maximum_sampled_stack_bytes": 71888,
+    "snapshots": 528,
+    "massif_sha256": "70264278f315fdcd2731573ea844a4d15dd3c7d60b4ba13e5ba492f51ef0966e"
+  },
+  {
+    "run": 2,
+    "case": "independent_completion",
+    "maximum_sampled_stack_bytes": 44976,
+    "snapshots": 518,
+    "massif_sha256": "34c646a2ef9af2543986a6c73b72157df90166ba050e7875a53208c73b8a75a0"
+  },
+  {
+    "run": 3,
+    "case": "stack_baseline",
+    "maximum_sampled_stack_bytes": 7728,
+    "snapshots": 911,
+    "massif_sha256": "3736355c8eaf1b1fb8f6bb4831c711dfa06d86db4fee2077be5dc393ddd75a75"
+  },
+  {
+    "run": 3,
+    "case": "stack_positive_control",
+    "maximum_sampled_stack_bytes": 66456,
+    "snapshots": 927,
+    "massif_sha256": "47992d0bc5cb088bebb87b3e0793de6c00bd12c758162d459edec1e1ddf11944"
+  },
+  {
+    "run": 3,
+    "case": "pure_checkpoint_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 538,
+    "massif_sha256": "d3a4ad606be503e89853ff2b0df1175a482a62740d8ebf10bb1d5ae75b949b23"
+  },
+  {
+    "run": 3,
+    "case": "effect_reconciliation_recovery",
+    "maximum_sampled_stack_bytes": 85792,
+    "snapshots": 581,
+    "massif_sha256": "f4576d3b740c8a052e15769b0725ed73134c5c21d864fb1a237854bde56d753f"
+  },
+  {
+    "run": 3,
+    "case": "undersized_workspace",
+    "maximum_sampled_stack_bytes": 44928,
+    "snapshots": 502,
+    "massif_sha256": "4ddf04c0f1f3b797b5a34eff7a7d58017612ed69de1b91a3ca623d7da0afedd3"
+  },
+  {
+    "run": 3,
+    "case": "checkpoint_migration",
+    "maximum_sampled_stack_bytes": 71888,
+    "snapshots": 528,
+    "massif_sha256": "c079fa559178444a7e9cc26d21e681e900b6d91f68b76357e4797de24e889308"
+  },
+  {
+    "run": 3,
+    "case": "independent_completion",
+    "maximum_sampled_stack_bytes": 44976,
+    "snapshots": 518,
+    "massif_sha256": "bed04d7e7f0e4357a13043e5febe26a6411b9b5c090ef852c65cd89851afd8b5"
+  }
+]

@@ -1,0 +1,6 @@
+==2483514== Massif, a heap profiler
+==2483514== Copyright (C) 2003-2025, and GNU GPL'd, by Nicholas Nethercote et al.
+==2483514== Using Valgrind-3.27.1 and LibVEX; rerun with -h for copyright info
+==2483514== Command: /home/ac/projects/penelope/target/release/deps/task_allocations-4a9f295e26b07ce7 --stack-baseline
+==2483514== 
+==2483514== 
