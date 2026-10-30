@@ -173,3 +173,154 @@ pub trait AsyncTaskJournal: Send + Sync {
         buffer: &mut [u8],
     ) -> Result<usize, TaskPortError>;
 }
+
+/// Application-owned, versioned interpretation of exact durable task output.
+/// Implementations must reject unsupported schemas and invalid application data.
+pub trait TaskOutputClassifier {
+    /// Immutable identity of the classification policy/version.
+    fn identity(&self) -> Digest;
+    /// Classifies application meaning, independently of execution completion.
+    /// # Errors
+    /// Rejects unsupported schemas, partial output or invalid application data.
+    fn classify(
+        &self,
+        binding: &TaskEffectBinding,
+        output: BlobRef,
+        bytes: &[u8],
+    ) -> Result<ExternalEffectState, TaskEffectVerificationError>;
+}
+
+/// Trusted adapter for independent evidence of an external effect.
+/// A worker's own success assertion is insufficient evidence. Implementations
+/// must query/verify the authoritative external system for the exact binding.
+pub trait TaskEffectEvidenceVerifier {
+    /// Verifies independently obtained evidence for this exact completed output.
+    /// # Errors
+    /// Returns unavailable, ambiguous, invalid or mismatched evidence as an error.
+    fn verify(
+        &self,
+        binding: &TaskEffectBinding,
+        generation: crate::task::TaskGeneration,
+        output: BlobRef,
+        bytes: &[u8],
+    ) -> Result<ExternalEffectEvidence, TaskEffectVerificationError>;
+}
+
+/// Verification failure never authorizes saga success or a blind effect retry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+pub enum TaskEffectVerificationError {
+    #[error("task scope, definition, generation or effect binding differs")]
+    BindingMismatch,
+    #[error("task does not have an authoritative completed output")]
+    NotCompleted,
+    #[error("task output bytes differ from their durable reference")]
+    CorruptOutput,
+    #[error("application output schema or meaning is invalid")]
+    InvalidOutput,
+    #[error("application or external effect outcome remains unresolved")]
+    Unresolved,
+    #[error("independent external effect evidence is required")]
+    MissingEvidence,
+    #[error("independent evidence differs from the binding or application outcome")]
+    EvidenceMismatch,
+}
+
+/// Verified application result for one immutable task/effect join. This value
+/// has no deserialization or public constructor that bypasses verification.
+/// It proves validation under injected trusted policies, not store provenance:
+/// supply a projection reconstructed from the authoritative task journal.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VerifiedTaskEffectOutcome {
+    binding: TaskEffectBinding,
+    generation: crate::task::TaskGeneration,
+    output: BlobRef,
+    classifier: Digest,
+    evidence: ExternalEffectEvidence,
+}
+
+impl VerifiedTaskEffectOutcome {
+    /// Checks exact bytes, schema/application meaning and required remote proof.
+    /// `generation` is the expected generation from the authoritative relay read.
+    /// # Errors
+    /// Any incomplete, stale, corrupt, ambiguous or mismatched result is rejected.
+    pub fn verify(
+        binding: &TaskEffectBinding,
+        projection: &TaskProjection,
+        generation: crate::task::TaskGeneration,
+        bytes: &[u8],
+        classifier: &impl TaskOutputClassifier,
+        verifier: Option<&dyn TaskEffectEvidenceVerifier>,
+    ) -> Result<Self, TaskEffectVerificationError> {
+        use TaskEffectVerificationError as Error;
+        if projection.scope() != binding.scope()
+            || projection.definition() != binding.definition()
+            || projection.generation() != generation
+        {
+            return Err(Error::BindingMismatch);
+        }
+        if projection.status() != TaskStatus::Completed {
+            return Err(Error::NotCompleted);
+        }
+        let output = projection.output().ok_or(Error::NotCompleted)?;
+        if usize::try_from(output.bytes).ok() != Some(bytes.len())
+            || Digest::of(bytes) != output.digest
+        {
+            return Err(Error::CorruptOutput);
+        }
+        let state = classifier.classify(binding, output, bytes)?;
+        if state == ExternalEffectState::Unknown {
+            return Err(Error::Unresolved);
+        }
+        let evidence = if binding.definition().effects == EffectContract::Pure {
+            ExternalEffectEvidence {
+                action_id: binding.request().action.action_id.clone(),
+                effect_key: binding.request().effect_key.clone(),
+                external_reference_id: None,
+                state,
+            }
+        } else {
+            let verified = verifier
+                .ok_or(Error::MissingEvidence)?
+                .verify(binding, generation, output, bytes)?;
+            verified
+                .validate_for(binding.request())
+                .map_err(|_invalid| Error::EvidenceMismatch)?;
+            if verified.state == ExternalEffectState::Unknown {
+                return Err(Error::Unresolved);
+            }
+            if verified.state != state {
+                return Err(Error::EvidenceMismatch);
+            }
+            verified
+        };
+        Ok(Self {
+            binding: binding.clone(),
+            generation,
+            output,
+            classifier: classifier.identity(),
+            evidence,
+        })
+    }
+
+    #[must_use]
+    pub const fn binding(&self) -> &TaskEffectBinding {
+        &self.binding
+    }
+    #[must_use]
+    pub const fn generation(&self) -> crate::task::TaskGeneration {
+        self.generation
+    }
+    #[must_use]
+    pub const fn output(&self) -> BlobRef {
+        self.output
+    }
+    #[must_use]
+    pub const fn classifier(&self) -> Digest {
+        self.classifier
+    }
+    /// Validated evidence may feed the existing saga action-result mapping.
+    #[must_use]
+    pub const fn evidence(&self) -> &ExternalEffectEvidence {
+        &self.evidence
+    }
+}
