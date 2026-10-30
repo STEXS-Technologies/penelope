@@ -22,7 +22,7 @@ seccompiler = "0.4"
 [dev-dependencies]
 async-trait.workspace = true
 tempfile = "3"
-penelope-sqlite = { version = "0.2.0", path = "../penelope-sqlite" }
+penelope-sqlite = { version = "0.3.0", path = "../penelope-sqlite" }
 penelope-executor.workspace = true
 penelope-domain.workspace = true
 penelope-ports.workspace = true

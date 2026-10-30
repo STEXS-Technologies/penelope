@@ -7,6 +7,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-30
+
 ### Added
 
 - Typed saga/task bindings, verified application output and independent effect
@@ -16,7 +18,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Optional Linux static single-process worker runtime with sealed executable
   identity, bounded IPC, seccomp restrictions, kernel CPU limits and durable
-  generation fencing; release qualification remains in progress.
+  generation fencing for the documented single-host deployment profile.
 
 - Shared allocation-free task supervision through `TaskControl` and explicit
   caller-owned `TaskWorkspace`, with the existing hosted supervisor preserved.
@@ -31,7 +33,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Compatibility
 
-- The planned 0.3.0 release adds `ProcessInputKind::TaskEffectResult` and five
+- The 0.3.0 release adds `ProcessInputKind::TaskEffectResult` and five
   `ProcessAuthorizationOperation` variants (`Dispatch`, `DriveTask`,
   `ReconcileEffect`, `DeliverTimer`, `RelayTaskResult`). Consumers with exhaustive
   matches must handle these variants when upgrading. Existing variant names,
@@ -52,6 +54,16 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Infrastructure dependency checks allow `rusqlite` only in the dedicated
   SQLite adapter; core, ports, executor and the facade remain independent.
+
+### Qualification
+
+- Full three-iteration public-boundary campaign: 48 runs of 100,000 inputs,
+  plus real adapter crash/concurrency suites and stable/MSRV verification.
+- Recorded SQLite, worker, hosted-memory and RISC-V stack evidence. The final
+  performance review explicitly accepts a measured graph-saga median regression
+  of 3.10% (29.90 ns per benchmark operation) on the reference host; timing parity
+  and universal latency bounds are not claimed. See
+  [the qualification report](docs/verification-2026-10-30.md).
 
 ### Security
 

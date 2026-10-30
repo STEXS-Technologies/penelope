@@ -1,16 +1,16 @@
-# Penelope release contract — reliable execution development
+# Penelope release contract — 0.3.0 candidate
 
 Penelope 0.2.0 provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
-This branch develops 0.3.0 on the released 0.2.0 contract. All nine library
-crates retain workspace version `0.2.0` while qualification is in progress; the
-two optional adapter packages are development additions. Saga v1 records, linear
-and graph decisions, retries, compensation and reconciliation remain compatible.
-The unreleased changes are listed in [the changelog](../CHANGELOG.md#unreleased).
-A version bump, dated release entry and completed qualification must precede a
-0.3.0 tag or publication.
+The 0.3.0 candidate adds optional SQLite persistence and a protected Linux
+single-process runtime. All nine library crates use version `0.3.0`. Saga v1
+records, linear/graph decisions, task history v1 and fingerprints retain their
+existing formats. The [dated changelog](../CHANGELOG.md#030---2026-10-30) records
+source-compatibility changes. [Qualification evidence](verification-2026-10-30.md)
+includes measured performance exceptions and deployment limits. Versioned
+package/workflow verification must pass before tagging or publishing.
 
 ## Recoverable execution
 
@@ -215,14 +215,14 @@ and limitations are separate from the unresolved saga timing qualification.
 
 ## Source compatibility review
 
-The planned pre-1.0 transition to 0.3.0 intentionally extends two exhaustive
+The pre-1.0 transition to 0.3.0 intentionally extends two exhaustive
 public enums. `ProcessInputKind` adds `TaskEffectResult`;
 `ProcessAuthorizationOperation` adds `Dispatch`, `DriveTask`, `ReconcileEffect`,
 `DeliverTimer` and `RelayTaskResult`. Consumers must update exhaustive matches
 and authorization policies. Existing variant numeric values are pinned by
 regression tests; new variants are appended. Serialized legacy variant names
 and v1 record formats remain unchanged. This is not a patch-compatible API
-extension, and the unchanged development version is not publication-ready.
+extension; consumers must review the documented 0.3.0 source changes.
 
 A strict patch-level `cargo-semver-checks 0.51.0` comparison against the pinned
 0.2.0 baseline identified these additions and reported the moved
@@ -279,3 +279,8 @@ outside this evidence. See [the integration contract and limits](INTEGRATION.md#
 Deployment lifecycle procedures are in the [reliable execution runbook](reliable-execution-operations.md), including restart, unknown effects, leases, backup/restore and fence failures.
 
 For verified database file-page cold/warm replay, see the [SQLite cache measurement method](performance-sqlite-cache-method.md). Reopened connections alone do not establish cold caches.
+
+The [final development performance review](performance-final-2026-10-30.md)
+supersedes earlier open timing dispositions, retaining measured regressions and
+the explicit reference-profile qualification decision. Historical reports retain
+their original source revisions and do not imply universal performance bounds.
