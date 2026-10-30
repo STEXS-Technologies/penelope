@@ -43,6 +43,21 @@ jobs:
       - run: ./scripts/run-executor-saga-example.sh
       - run: ./scripts/run-supervised-saga-example.sh
 
+  statechronicle-conformance:
+    name: Optional StateChronicle signed-event conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: STEXS-Technologies/statechronicle
+          ref: ae3d94bc22c7835eaa3fdcd766e3c117929c12bb
+          path: target/statechronicle-upstream
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+      - run: rustup toolchain install 1.99.0 --profile minimal
+      - run: python3 scripts/run-statechronicle-conformance.py target/statechronicle-upstream
+
   msrv:
     name: Minimum supported Rust
     env:
