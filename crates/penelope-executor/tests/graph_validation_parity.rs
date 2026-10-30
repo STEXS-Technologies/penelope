@@ -200,3 +200,37 @@ fn maximum_size_branching_graph_preserves_reachability_through_cycles() {
     assert_eq!(reference(&graph), Ok(()));
     assert_eq!(graph.validate(), Ok(()));
 }
+
+#[test]
+fn every_bounded_source_and_outcome_key_rejects_duplicates_with_original_precedence() {
+    let count = u16::try_from(MAX_DEFINITION_STEPS).unwrap();
+    let keys: Vec<_> = (0..count).rev().collect();
+    let edges: Vec<_> = (0..count)
+        .flat_map(|from| {
+            let successor = from.checked_add(1).unwrap();
+            let next = if successor == count { 0 } else { successor };
+            [(from, 0, Some(next)), (from, 1, Some(0)), (from, 2, None)]
+        })
+        .collect();
+    let base = definition(&keys, 0, &edges);
+    assert_eq!(base.validate(), Ok(()));
+    for (source, outcome, destination) in edges {
+        let mut graph = base.clone();
+        let duplicate = definition(&[source], source, &[(source, outcome, destination)])
+            .transitions
+            .remove(0);
+        graph.transitions.push(duplicate);
+        assert_eq!(
+            reference(&graph),
+            Err(GraphDefinitionError::DuplicateTransition)
+        );
+        assert_eq!(graph.validate(), reference(&graph));
+        // Destination validation still precedes duplicate-key classification.
+        graph.transitions.last_mut().unwrap().to_step = Some(step(count));
+        assert_eq!(
+            reference(&graph),
+            Err(GraphDefinitionError::UnknownDestinationStep)
+        );
+        assert_eq!(graph.validate(), reference(&graph));
+    }
+}

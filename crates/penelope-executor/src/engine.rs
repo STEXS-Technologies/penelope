@@ -356,11 +356,13 @@ impl ProcessGraphDefinition {
         let entry_index = step_ids
             .binary_search(&&self.entry_step_id)
             .map_err(|_missing| GraphDefinitionError::UnknownEntryStep)?;
-        let mut transition_keys = BTreeSet::new();
+        // Each bounded source step has exactly three possible outcome keys.
+        // Track them directly rather than allocating a tree of borrowed IDs.
+        let mut transition_keys = [0_u8; MAX_DEFINITION_STEPS];
         for transition in &self.transitions {
-            if step_ids.binary_search(&&transition.from_step).is_err() {
-                return Err(GraphDefinitionError::UnknownSourceStep);
-            }
+            let source_index = step_ids
+                .binary_search(&&transition.from_step)
+                .map_err(|_missing| GraphDefinitionError::UnknownSourceStep)?;
             if let Some(to_step) = &transition.to_step {
                 if step_ids.binary_search(&to_step).is_err() {
                     return Err(GraphDefinitionError::UnknownDestinationStep);
@@ -368,9 +370,18 @@ impl ProcessGraphDefinition {
             } else if transition.on == GraphTransitionOutcome::RetryableFailure {
                 return Err(GraphDefinitionError::MissingDestination);
             }
-            if !transition_keys.insert((&transition.from_step, transition.on)) {
+            let mask = match transition.on {
+                GraphTransitionOutcome::Succeeded => 1,
+                GraphTransitionOutcome::RetryableFailure => 2,
+                GraphTransitionOutcome::TerminalFailure => 4,
+            };
+            let seen = transition_keys
+                .get_mut(source_index)
+                .ok_or(GraphDefinitionError::UnknownSourceStep)?;
+            if *seen & mask != 0 {
                 return Err(GraphDefinitionError::DuplicateTransition);
             }
+            *seen |= mask;
         }
         let mut reachable = [false; MAX_DEFINITION_STEPS];
         *reachable
