@@ -188,3 +188,38 @@ are not complete call-chain bounds: precompiled runtime functions, ABI costs,
 callbacks and possible recursion still require accounting. Worst-case stack
 qualification stays open; this inventory does not silently substitute samples
 or a maximum individual frame for that requirement.
+
+The fixed-port freestanding RISC-V profile now has a complete conservative
+[115,056-byte stack bound](portable-task-stack-bound-2026-10-30.md), including
+all 42 reachable functions. Its scope is that exact linked reference binary,
+not arbitrary adapters or hosted builds. Five paired SQLite replay runs also
+completed with [verified cold/warm database file pages](performance-sqlite-cache-2026-10-30.md).
+These close the corresponding reference-profile evidence gaps; they do not
+close the parallel-saga performance concern or full adversarial campaign.
+
+Remote CI at `2ed17b3` exposed clean-runner failures despite the local checks:
+example scripts required unavailable ripgrep, and a nested StateChronicle
+checkout caused Cargo workspace metadata inheritance to resolve against the
+parent project. `c1279f3` uses standard grep for exact example-output assertions
+and sibling checkout directories for the independent workspaces. The action-pin
+check also uses standard grep and now rejects scan errors; tests verify that a
+missing scanner input cannot silently pass. Both examples, all 52 Python tests
+and all seven signed upstream conformance tests passed locally.
+
+The [corrected remote CI run](https://github.com/STEXS-Technologies/penelope/actions/runs/41071761603)
+passed all seven jobs: stable workspace/docs/Clippy/examples, MSRV, portable
+core, actual pinned StateChronicle conformance, bounded fuzzing, supply-chain
+verification and secret scanning. The failed run and corrected job snapshot
+are retained with [local verification logs](verification-data/2026-10-30-ci-portability/metadata.json).
+Remote bounded fuzzing uses 1,000 inputs per registered target and does not
+replace the full local three-iteration campaign. Separate remote coverage and
+extended-chaos runs were requested; their final results are not asserted here.
+
+The local campaign previously observed live at session 12430 later stopped
+without a recorded final status. Its retained partial log cannot count as a
+pass. A new detached campaign records its exit status explicitly and uses the
+same three iterations, 10,000 property cases and 100,000 fuzz inputs per target
+on the local temporary filesystem. Final core/saga measurements are queued
+strictly after its recorded successful completion, without concurrent local
+fault testing. No 0.3.0 release acceptance, version bump, tag or publication
+is claimed by these updates.
