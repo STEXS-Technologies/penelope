@@ -546,3 +546,35 @@ fn zero_schema_live_output_is_fenced_without_commit_or_acknowledgement() {
         assert_eq!(journal.state.borrow().blobs.len(), 1);
     }
 }
+
+#[test]
+fn foreign_input_admission_leaves_no_durable_mutation_and_allows_correct_retry() {
+    let initial = fresh(EffectContract::Pure);
+    let before = *initial.projection();
+    let (journal, runtime) = initial.into_parts();
+    let mut control = Control::restore(
+        journal.clone(),
+        runtime.clone(),
+        before.scope(),
+        before.definition(),
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    assert_eq!(
+        control.submit(&[2; 8], 1, TaskTick::ZERO),
+        Err(SupervisorError::Decision(TaskError::ScopeMismatch))
+    );
+    assert_eq!(*control.projection(), before);
+    assert!(journal.state.borrow().records.is_empty());
+    assert!(journal.state.borrow().blobs.is_empty());
+    assert_eq!(runtime.0.borrow().starts, 0);
+    assert_eq!(runtime.0.borrow().fences, 0);
+    control.submit(&INPUT, 1, TaskTick::ZERO).unwrap();
+    assert_eq!(
+        control.advance_with_buffers(TaskTick::new(1), &mut [0; 64], &mut [0; 64]),
+        Ok(true)
+    );
+    assert_eq!(journal.state.borrow().records.len(), 2);
+    assert_eq!(journal.state.borrow().blobs.len(), 1);
+    assert_eq!(runtime.0.borrow().starts, 1);
+}

@@ -76,6 +76,10 @@ integrations live in optional adapter packages.
 The `penelope-core` task contracts, projection and synchronous ports compile
 without `std` or `alloc`. Select that crate directly for the portable decision
 profile; the existing facade, saga crates and async ports remain hosted.
+`TaskControl` accepts a complete caller-owned `TaskWorkspace`, or dispatch-only
+buffers through `advance_with_buffers` and a later `poll_with_buffer`. Poll
+storage must fit the larger of the declared checkpoint and output sizes; a full
+workspace validates all capacities before dispatch.
 
 ```bash
 cargo run -p penelope-executor --example recoverable_task --locked

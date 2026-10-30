@@ -42,6 +42,12 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Hosted task advance supplies two dispatch buffers and polling supplies one
+  proposal buffer to the same core controller. Operation-specific portable calls
+  avoid borrowing unused buffers while preserving full-workspace admission.
+- Portable workspace validation requires poll capacity for both checkpoint and
+  completion proposals, including when checkpoint limits exceed output limits.
+
 - Infrastructure dependency checks allow `rusqlite` only in the dedicated
   SQLite adapter; core, ports, executor and the facade remain independent.
 

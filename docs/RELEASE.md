@@ -67,7 +67,13 @@ Checkpoint=1, Reconcile=2, Never=3. This encoding is independent of Serde.
 `penelope-core` provides allocation-free task contracts, projection and
 synchronous ports without `std` or `alloc`, including optional Serde support.
 `TaskControl` uses caller-owned `TaskWorkspace` buffers and shares its transition
-and commit policy with the hosted `TaskSupervisor` wrapper. The owning wrapper,
+and commit policy with the hosted `TaskSupervisor` wrapper. Operation-specific
+`advance_with_buffers` and `poll_with_buffer` calls borrow dispatch and proposal
+storage separately. The full-workspace calls retain admission of all capacities
+before launch; poll storage must fit the larger checkpoint/output declaration.
+The hosted wrapper validates its const capacity during restore and supplies two
+arrays for advance and one for poll. Actual stack frames remain compiler- and
+adapter-dependent. The owning wrapper,
 saga facade and asynchronous ports remain hosted.
 
 Penelope is agnostic to runtime, operating system and storage backend.
