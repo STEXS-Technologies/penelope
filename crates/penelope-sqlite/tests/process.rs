@@ -21,6 +21,9 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[path = "support/lease_contracts.rs"]
+mod lease_contracts;
+
 struct ThreadWake(std::thread::Thread);
 impl Wake for ThreadWake {
     fn wake(self: Arc<Self>) {
