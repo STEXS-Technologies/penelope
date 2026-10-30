@@ -8,3 +8,6 @@ pub use entry::*;
 
 /// Recoverable task supervision, independent of the saga engines.
 pub mod task;
+
+/// Durable saga-to-task dispatch composition through injected ports.
+pub mod composition;

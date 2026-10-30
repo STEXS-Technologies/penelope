@@ -386,7 +386,9 @@ version = "0.2.0"
 dependencies = [
  "libc",
  "penelope-core",
+ "penelope-domain",
  "penelope-executor",
+ "penelope-ports",
  "penelope-sqlite",
  "rustix",
  "seccompiler",

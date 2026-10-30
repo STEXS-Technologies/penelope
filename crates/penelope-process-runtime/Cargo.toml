@@ -23,6 +23,8 @@ seccompiler = "0.4"
 tempfile = "3"
 penelope-sqlite = { version = "0.2.0", path = "../penelope-sqlite" }
 penelope-executor.workspace = true
+penelope-domain.workspace = true
+penelope-ports.workspace = true
 
 [lints]
 workspace = true

@@ -388,3 +388,161 @@ fn unacknowledged_checkpoint_cannot_advance_worker() {
         .fence(projection.scope(), projection.generation())
         .unwrap();
 }
+
+#[test]
+fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
+    use penelope_domain::*;
+    use penelope_executor::composition::commit_task_effect;
+    use penelope_ports::{tasks::TaskEffectBinding, *};
+    use penelope_sqlite::{SqliteLeaseClock, SqliteProcessStore};
+    use std::{
+        future::Future,
+        num::NonZeroU16,
+        sync::Arc,
+        task::{Context, Poll, Wake, Waker},
+    };
+    struct Clock;
+    impl SqliteLeaseClock for Clock {
+        fn now(&self) -> Result<LogicalTime, PortError> {
+            Ok(LogicalTime(1))
+        }
+    }
+    struct Notify(std::thread::Thread);
+    impl Wake for Notify {
+        fn wake(self: Arc<Self>) {
+            self.0.unpark();
+        }
+    }
+    fn run<T>(future: impl Future<Output = T>) -> T {
+        let mut future = Box::pin(future);
+        let waker = Waker::from(Arc::new(Notify(std::thread::current())));
+        let mut context = Context::from_waker(&waker);
+        let deadline = Instant::now() + Duration::from_secs(10);
+        loop {
+            if let Poll::Ready(value) = future.as_mut().poll(&mut context) {
+                return value;
+            }
+            assert!(Instant::now() < deadline);
+            std::thread::park_timeout(Duration::from_millis(2));
+        }
+    }
+    for separate in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let task_path = directory.path().join("tasks.db");
+        let process_path = if separate {
+            directory.path().join("process.db")
+        } else {
+            task_path.clone()
+        };
+        let store = SqliteProcessStore::open(
+            &process_path,
+            SqliteLimits::default(),
+            Arc::new(Clock),
+            100,
+            8,
+        )
+        .unwrap();
+        let process_scope = ProcessScope::new(
+            "tnt_demo".try_into().unwrap(),
+            "prc_demo".try_into().unwrap(),
+            "def_demo".try_into().unwrap(),
+            "dfv_one".try_into().unwrap(),
+            ContentDigest([1; 32]),
+        );
+        let input = [0, 1, 2, 3];
+        let action = ProcessAction::new(
+            process_scope.clone(),
+            "act_work".try_into().unwrap(),
+            "stp_work".try_into().unwrap(),
+            0,
+            ProcessActionKind::ExternalEffect,
+            ContentDigest::sha256(&input),
+        );
+        let outcome = ProcessOutcome::new(
+            process_scope.clone(),
+            0,
+            ProcessOutcomeFact::new(
+                "out_start".try_into().unwrap(),
+                CausationId::Input("inp_start".try_into().unwrap()),
+                OutcomeActor::System,
+                LogicalTime(0),
+                ProcessOutcomeKind::Started,
+                ContentDigest([2; 32]),
+            ),
+        );
+        let process_input = ProcessInput::new(
+            process_scope.tenant_id.clone(),
+            process_scope.process_id.clone(),
+            "inp_start".try_into().unwrap(),
+            ProcessInputKind::CanonicalEvent,
+            ContentDigest([3; 32]),
+        );
+        let commit =
+            AtomicProcessCommit::new(0, Some(process_input), vec![outcome], vec![action.clone()])
+                .unwrap();
+        // Simulate a process commit whose acknowledgement was lost.
+        run(store.commit(&commit)).unwrap();
+        let task_definition = definition(2);
+        let binding =
+            TaskEffectBinding::new(EffectDispatchRequest::new(action), task_definition).unwrap();
+        let committed = run(commit_task_effect(&store, &commit, binding.clone())).unwrap();
+        assert_eq!(committed.binding(), &binding);
+        let claim = OutboxClaimRequest::new(
+            process_scope,
+            "pri_worker".try_into().unwrap(),
+            NonZeroU16::new(1).unwrap(),
+        )
+        .unwrap();
+        let lease = run(store.claim(&claim)).unwrap().pop().unwrap();
+        // Simulate durable task acceptance before the saga outbox ACK was sent.
+        let journal =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let authority =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let runtime = Runtime::new(authority, config(directory.path())).unwrap();
+        let mut accepted = Supervisor::restore(
+            journal,
+            runtime,
+            binding.scope(),
+            task_definition,
+            TaskTick::ZERO,
+        )
+        .unwrap();
+        accepted.submit(&input, 1, TaskTick::ZERO).unwrap();
+        let (accepted_journal, accepted_runtime) = accepted.into_parts();
+        let rejected: Result<Supervisor, _> = run(committed.accept(
+            &store,
+            &claim,
+            &lease,
+            LogicalTime(1),
+            accepted_journal,
+            accepted_runtime,
+            &input,
+            2,
+            TaskTick::ZERO,
+        ));
+        assert!(rejected.is_err());
+        let reopened_journal =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let reopened_authority =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let reopened_runtime = Runtime::new(reopened_authority, config(directory.path())).unwrap();
+        let mut recovered: Supervisor = run(committed.accept(
+            &store,
+            &claim,
+            &lease,
+            LogicalTime(1),
+            reopened_journal,
+            reopened_runtime,
+            &input,
+            1,
+            TaskTick::ZERO,
+        ))
+        .unwrap();
+        assert_eq!(recovered.projection().next_sequence(), TaskSequence::new(1));
+        assert!(run(store.claim(&claim)).unwrap().is_empty());
+        recovered.advance(TaskTick::new(1)).unwrap();
+        wait(&mut recovered).unwrap();
+        assert_eq!(recovered.projection().status(), TaskStatus::Completed);
+    }
+}
