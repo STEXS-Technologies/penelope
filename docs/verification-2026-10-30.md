@@ -42,6 +42,15 @@ is outside that coverage run. The layer gate and its negative tests, action-pin
 check, chaos-runner registration checks, 28 Python tests and secret scan passed.
 The default facade's normal dependency tree excludes both optional adapters.
 
+An additional real-runtime concurrency test restores two independent supervisor
+processes from the same committed intent, then releases a dispatch barrier. One
+commits Started(1), runs the protected worker and commits completion. The other
+receives a journal CAS conflict and remains poisoned. Durable replay contains
+exactly intent/start/completion at generation one and the expected result bytes;
+restoration preserves that terminal projection. This passed on Rust 1.99.0 and
+1.85.0, along with the full runtime all-target suite and strict Clippy. Retained
+logs and the added test source hash are in the metadata.
+
 The three timed properties subsequently passed, each for at least 300 seconds
 with 10,000 cases per batch and rotating seeds. The retained summary records
 1,387 retry-policy batches, 945 replay-convergence batches and 75 seeded
