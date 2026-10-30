@@ -30,3 +30,7 @@ penelope-statechronicle.workspace = true
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "dispatch"
+harness = false
