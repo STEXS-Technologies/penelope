@@ -62,6 +62,7 @@ supervisor memory. Native timings and instrumented stack runs are separate.
 [Raw records](performance-data/2026-10-30-hosted-memory/) retain both capacities,
 48 Massif profiles including calibration cases, fixture/build output, raw native
 time/RSS records, allocation assertion output, lock/binary/runner hashes and
-machine/tool metadata. The runner also retains warmup output. No failing or
+machine/tool metadata. Valgrind stderr is gzip-compressed without changing its
+bytes; the archive encoding manifest records original and compressed hashes. The runner also retains warmup output. No failing or
 slower result was removed. Reproduction uses the commands in the method report,
 with `--after 683b90e`, both capacities, three runs and 10,000 repetitions.

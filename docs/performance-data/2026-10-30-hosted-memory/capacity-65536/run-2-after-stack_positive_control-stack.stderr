@@ -1,6 +1,0 @@
-==3113365== Massif, a heap profiler
-==3113365== Copyright (C) 2003-2025, and GNU GPL'd, by Nicholas Nethercote et al.
-==3113365== Using Valgrind-3.27.1 and LibVEX; rerun with -h for copyright info
-==3113365== Command: /home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/target/release/examples/hosted_task_memory stack_positive_control 1
-==3113365== 
-==3113365== 
