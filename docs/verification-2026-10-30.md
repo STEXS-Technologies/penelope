@@ -243,12 +243,16 @@ checked locally against the downloaded report. The verification-only release
 workflow at `c95a803` built and verified all nine development package archives;
 its crates.io publication and GitHub release jobs were explicitly skipped.
 
-An additional real-kernel startup test admits a structurally recognizable static
-ELF with no loadable segment, then confirms that kernel execution rejection
-returns a runtime error. The supervisor refuses subsequent advance until
-reconstruction. Reopening the journal/runtime fences generation one and records
-`SupervisorInterrupted`, with no completion or additional generation. The test
-passes on stable and MSRV, with strict runtime all-target Clippy. This supplements
-the [executable-boundary regression](worker-executable-boundary-2026-10-30.md)
-with proof that a failed bootstrap cannot manufacture successful execution.
-The test diff and raw local/remote outputs are retained in the linked evidence.
+An additional real-kernel startup test uses a recognizable static ELF with no
+loadable segment. The initial local test assumed this always produced an
+immediate startup error; CI on another kernel instead accepted the exec handoff
+and faulted afterward. The corrected test covers both outcomes and two recovery
+schedules. An immediate runtime error requires reconstruction; an accepted
+handoff must fault if polled. Recovery without polling fences generation one
+and records `SupervisorInterrupted`. Either path leaves exactly a fault after
+intent/start, no completed output and no successor generation. Stable/MSRV and
+strict Clippy checks pass locally; the corrected remote result must be inspected
+separately. The original failing CI and corrected test diff are retained with the
+[bootstrap timing evidence](verification-data/2026-10-30-bootstrap-timing/metadata.json).
+This supplements the [executable-boundary regression](worker-executable-boundary-2026-10-30.md)
+without equating launch admission with successful application execution.
