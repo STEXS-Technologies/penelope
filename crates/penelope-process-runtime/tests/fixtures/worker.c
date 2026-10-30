@@ -52,6 +52,8 @@ void _start(void) {
   u64 sum=0;for(u64 i=1;i<length;i++)sum+=input[i];for(u64 i=0;i<8;i++)frame[53+i]=(sum>>(8*i))&255;
   if(mode==6)frame[8]^=1;
   if(mode==12){frame[48]=65;write_all(frame,53);pause_forever();}
+  if(mode==22){write_all(frame,20);write_all(frame+20,41);finish(0);}
+  if(mode==23){write_all(frame,54);finish(0);} /* incomplete payload at EOF */
   write_all(frame,61);
   if(mode==5){unsigned char ack[40];read_all(ack,40);if(ack[0]!='P'||ack[3]!='A')finish(9);frame[44]=1;write_all(frame,61);}
   finish(0);

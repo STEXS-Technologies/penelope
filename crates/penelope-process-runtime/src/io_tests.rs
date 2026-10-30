@@ -74,3 +74,40 @@ fn frame_number_rejects_truncation_and_offset_overflow() {
         );
     }
 }
+
+#[test]
+fn exit_between_empty_read_and_status_check_cannot_discard_queued_completion() {
+    // At WouldBlock or after a partial frame, even an exited child does not
+    // prove the pipe is drained. Its final write may follow the earlier read.
+    let checked = std::cell::Cell::new(false);
+    let progress = progress_after_read(false, || {
+        checked.set(true);
+        Ok(Some(ExitStatus::from_raw(0)))
+    })
+    .unwrap();
+    assert_eq!(progress, RuntimeProgress::Pending);
+    assert!(!checked.get());
+}
+
+#[test]
+fn eof_without_a_complete_frame_preserves_terminal_fault_classification() {
+    for (status, expected) in [
+        (0, TaskFault::ApplicationFailure),
+        (libc::SIGSYS, TaskFault::ProtectionViolation),
+        (libc::SIGXCPU, TaskFault::CpuBudgetExceeded),
+        (libc::SIGKILL, TaskFault::Crash),
+    ] {
+        assert_eq!(
+            progress_after_read(true, || Ok(Some(ExitStatus::from_raw(status)))).unwrap(),
+            RuntimeProgress::Fault(expected)
+        );
+    }
+    assert_eq!(
+        progress_after_read(true, || Ok(None)).unwrap(),
+        RuntimeProgress::Pending
+    );
+    assert_eq!(
+        progress_after_read(true, || Err(io::Error::from(ErrorKind::Other))),
+        Err(TaskPortError::Runtime)
+    );
+}
