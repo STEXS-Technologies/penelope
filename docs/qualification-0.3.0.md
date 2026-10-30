@@ -52,6 +52,28 @@ requires no schema change or extra database operation. A 10,000-iteration SQLite
 process fuzz run (seed 7) and [all seven source CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41143329178)
 pass.
 
+The [SQLite wake-callback audit](verification-data/2026-10-31-sqlite-wake/metadata.json)
+at `751a010` contains notification unwinding after result publication, preventing
+a panicking executor waker from terminating the database thread and stranding
+already accepted requests. The old-source reproduction times out; the fix keeps
+committed results and drains queued writes. The expanded regression at `99d9a3d`
+covers retained/canceled responses with admission open/closed. It passes 100 times
+on each of stable and MSRV (800 worker scenarios), alongside full local workspace
+checks and 57 SQLite tests per toolchain. This is an unwinding-notification
+reliability change; no new timing or full-release qualification claim is made.
+Both [production CI](https://github.com/STEXS-Technologies/penelope/actions/runs/41144251403)
+and [expanded-regression CI](https://github.com/STEXS-Technologies/penelope/actions/runs/41144326670)
+pass all seven jobs.
+
+The [graph transition-key follow-up](performance-graph-keys-2026-10-31.md) at
+`005ea60` replaces tree storage with bounded per-source outcome bits. It preserves
+validation errors in 40,000 generated reference comparisons and exhaustive
+source/outcome-key tests. Stable/MSRV workspace suites, 100,000 targeted fuzz
+iterations and all seven source CI jobs pass. The fixed 40-pair confirmation
+measures 11.9% fewer graph instructions and 13.68%/16.49% lower serial/parallel
+graph time. The initial unfavorable controls and identical-source timing
+variation are retained; this does not revise application-wide overhead figures.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |

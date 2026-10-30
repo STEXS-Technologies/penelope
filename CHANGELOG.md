@@ -44,6 +44,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- SQLite executor wake callbacks cannot terminate the database worker through
+  unwinding, preserving committed results and draining other accepted requests
+  after response cancellation or admission closure.
+
 - SQLite outbox/timer claims fail and roll back if the durable lease-token
   counter update is ignored, preserving pending work and token allocation.
 
@@ -54,6 +58,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   preventing a queued valid completion from being reported as a task fault.
 
 ### Changed
+
+- Bounded graph validation tracks transition keys with per-step outcome bits
+  instead of a heap tree. Fixed confirmation measures about 11.9% fewer graph
+  instructions, with timing variability and unchanged controls retained.
 
 - Worker scope hashing uses a fixed stack buffer, removing its temporary heap
   allocation while preserving protocol bytes. The measured proposal-time gain

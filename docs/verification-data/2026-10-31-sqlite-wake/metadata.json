@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "baseline": "95b8cf54e39a4efa4258eba5544e5e2ac69c970d",
+  "production_source": "751a010ad3033927aad18bfd465687f371692a4e",
+  "expanded_test_source": "99d9a3d2154f31d8064afdf8557b7c7dd78e03eb",
+  "problem": "An executor Waker::wake panic escaped the database worker operation boundary, terminating its thread and leaving unrelated already accepted Response futures pending indefinitely.",
+  "fix": "Catch unwinding wake notifications after publishing the completed result and releasing its mutex. Keep draining the bounded queue using the existing connection.",
+  "reproduction": "Blocked first operation guarantees a panicking waker is registered before publication; second queued operation times out on old production source. The failure log records the wake panic and TimedOut instead of Ok(2).",
+  "regression_cases": [
+    "Retained first response, open admission: first result and queued SQL commit survive; a later request succeeds.",
+    "Retained first response, closed admission: accepted operations drain; first result is preserved.",
+    "Canceled first response, open admission: accepted first SQL operation still commits; queued and later operations succeed.",
+    "Canceled first response, closed admission: dropping the store and future cannot strand already accepted SQL work."
+  ],
+  "stress": {
+    "test_invocations_per_toolchain": 100,
+    "toolchains": [
+      "1.99.0",
+      "1.85.0"
+    ],
+    "worker_scenarios_per_invocation": 4,
+    "total_scenarios": 800,
+    "result": "pass"
+  },
+  "local_checks": {
+    "workspace": "all targets/all features excluding penelope-fuzz; passed at production source before test-only expansion",
+    "sqlite": "57 tests plus all-target benches on stable and MSRV before test-only expansion; final four-case regression passed 100 times per toolchain",
+    "other": "strict workspace Clippy, warning-denied documentation, doctests, formatting, layer boundaries and graph update passed"
+  },
+  "scope": "Recoverable unwinding notifications. No API/schema/durability change, new SQL operation, application-speed claim or full historical release-campaign requalification. The fuzz targets do not model application wakers; deterministic callback/lifecycle tests provide this evidence.",
+  "ci": {
+    "production": 41144251403,
+    "expanded_tests": 41144326670,
+    "status": "both successful; all seven jobs each"
+  },
+  "logs": [
+    {
+      "file": "sqlite-wake-old-regression.log.gz",
+      "original_sha256": "576506fcf85de47851847df910bbda7919baaf4622706f8e798c116e46943753",
+      "archive_sha256": "20c060dfa8ec4ba2369e01c39655190ae73d5581fe64442be3cdb715099ec733"
+    },
+    {
+      "file": "sqlite-wake-tests.log.gz",
+      "original_sha256": "8533fdd5dc375f22561a7f38b807836e75af64c833b31e7ba3e7ddbbad0fad53",
+      "archive_sha256": "a980ae14dff548697f54d09bb5a76592b21a4bd781529776ffb7b84c125a5259"
+    },
+    {
+      "file": "sqlite-wake-msrv.log.gz",
+      "original_sha256": "df3fa3afb671db20fbb3d423c4a3aef04a72b4cafe848cb7745d5f822cf38d4c",
+      "archive_sha256": "eaca2274bb7710f92779024090c4e52e726d0a3e67d58e00bfbce0edb8e18f44"
+    },
+    {
+      "file": "sqlite-wake-clippy.log.gz",
+      "original_sha256": "23c8a6f94c3d028cb03334068bc1aaa975b95009c7b6d0433ed7191730920089",
+      "archive_sha256": "9a33ff819e5e6918502c1adef6d0fa7d40d7b1d7346c9920f07da05e717994f5"
+    },
+    {
+      "file": "sqlite-wake-workspace.log.gz",
+      "original_sha256": "2fe9407066a318a5f64fc038569a935f0f93a3e5446f809efe464b3326aaa637",
+      "archive_sha256": "b6ac670367f2588360932563eeaf875aad3ad564165e369d09fab062640de364"
+    },
+    {
+      "file": "sqlite-wake-doc.log.gz",
+      "original_sha256": "1019dc08eac1189b17c610295e5e0b3db186ced8267c96634caa775d8dc3ceaf",
+      "archive_sha256": "54d2ecc1b8e566699d425662c105466f819fe6763f3e560315085f5659256195"
+    },
+    {
+      "file": "sqlite-wake-doctests.log.gz",
+      "original_sha256": "db2d0282dc5f53c91cb233f3e2d15acccede58622d99bd47db7a62e600b5e182",
+      "archive_sha256": "42693ac2c6f33b33646ee9fce096154025f35f02ac674d1e10792c3f9ca5fb3c"
+    },
+    {
+      "file": "sqlite-wake-graph.log.gz",
+      "original_sha256": "c59bb95f10e627bc2c0b8ac255902f2a916503035cb5e7914ddd50320e2c2c95",
+      "archive_sha256": "9ae06b554d2ccea91f5bfef6d58d04ce4944deda33c4fe45123fb953b19d6ff0"
+    },
+    {
+      "file": "sqlite-wake-stress.log.gz",
+      "original_sha256": "a79127b6454c2f0ad4fc2da3f6b6c6516b99170e2f49dece285d542f30b39fcb",
+      "archive_sha256": "828478b73b5ea6552d35e3bc316bae99e5a40036ca22458340fd502239bdfb37"
+    },
+    {
+      "file": "sqlite-wake-stress-1.99.0.log.gz",
+      "original_sha256": "90eb97a89a12c25d57e1303f63345a22ff577a41e4ffdf1955596b5e8cdd27f5",
+      "archive_sha256": "f610c56cb6ab978ba0148152203e5eed561aacce8b896f01f00399a4b13eb7f4"
+    },
+    {
+      "file": "sqlite-wake-stress-1.85.0.log.gz",
+      "original_sha256": "49f7f9c658671f801decc2f9ee4604fb4844b76d174a3a5b007cf603b7399c0e",
+      "archive_sha256": "48df39f319c2a7460511df117ae7ec19a7e34f20ba620112eaf2cd18c9491b50"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "expanded-tests-ci.json": "c8562a2cd90602c223f345ce20f210ee96cb09d7b37ec2a2ddf45b941e2fe638",
+  "metadata.json": "97b500272c3fb281e13d86f9969773d5f518274d6c480264ad8414e27f207565",
+  "production-ci.json": "36f59fd90901588d4c38186dfc832ab8e2b23a1f5204641e8eca9d1dbdb7f9ab",
+  "sqlite-wake-clippy.log.gz": "9a33ff819e5e6918502c1adef6d0fa7d40d7b1d7346c9920f07da05e717994f5",
+  "sqlite-wake-doc.log.gz": "54d2ecc1b8e566699d425662c105466f819fe6763f3e560315085f5659256195",
+  "sqlite-wake-doctests.log.gz": "42693ac2c6f33b33646ee9fce096154025f35f02ac674d1e10792c3f9ca5fb3c",
+  "sqlite-wake-graph.log.gz": "9ae06b554d2ccea91f5bfef6d58d04ce4944deda33c4fe45123fb953b19d6ff0",
+  "sqlite-wake-msrv.log.gz": "eaca2274bb7710f92779024090c4e52e726d0a3e67d58e00bfbce0edb8e18f44",
+  "sqlite-wake-old-regression.log.gz": "20c060dfa8ec4ba2369e01c39655190ae73d5581fe64442be3cdb715099ec733",
+  "sqlite-wake-stress-1.85.0.log.gz": "48df39f319c2a7460511df117ae7ec19a7e34f20ba620112eaf2cd18c9491b50",
+  "sqlite-wake-stress-1.99.0.log.gz": "f610c56cb6ab978ba0148152203e5eed561aacce8b896f01f00399a4b13eb7f4",
+  "sqlite-wake-stress.log.gz": "828478b73b5ea6552d35e3bc316bae99e5a40036ca22458340fd502239bdfb37",
+  "sqlite-wake-tests.log.gz": "a980ae14dff548697f54d09bb5a76592b21a4bd781529776ffb7b84c125a5259",
+  "sqlite-wake-workspace.log.gz": "b6ac670367f2588360932563eeaf875aad3ad564165e369d09fab062640de364",
+  "stress-sqlite-wake.py": "32cbcfd5a74200791544221e82e07a3bb616b7093d0af955bf848b28e9d08c82"
+}
