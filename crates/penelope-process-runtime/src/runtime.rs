@@ -484,3 +484,7 @@ fn stop_identity(
         std::thread::sleep(Duration::from_millis(1));
     }
 }
+
+#[cfg(test)]
+#[path = "fence_tests.rs"]
+mod fence_tests;

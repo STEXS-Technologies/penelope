@@ -658,3 +658,6 @@ mod launch_contracts;
 
 #[path = "support/checkpoint_state.rs"]
 mod checkpoint_state;
+
+#[path = "support/fence_contracts.rs"]
+mod fence_contracts;
