@@ -652,3 +652,6 @@ mod sagas;
 
 #[path = "support/worker_protocol.rs"]
 mod worker_protocol;
+
+#[path = "support/launch_contracts.rs"]
+mod launch_contracts;

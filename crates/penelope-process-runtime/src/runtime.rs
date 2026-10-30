@@ -156,7 +156,8 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
             || request.definition.budget.max_input_bytes > self.config.max_frame_bytes
             || request.definition.budget.max_output_bytes > self.config.max_frame_bytes
             || request.definition.recovery.max_checkpoint_bytes > self.config.max_frame_bytes
-            || self.active.len() >= usize::from(self.config.max_live)
+            || (self.active.len() >= usize::from(self.config.max_live)
+                && self.index(request.scope, request.generation).is_err())
         {
             return Err(TaskPortError::Exhausted);
         }
