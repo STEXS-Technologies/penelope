@@ -11,6 +11,13 @@ The empty-task added-time median falls from 270.02 ns to 245.75 ns. This compari
 includes the same CPU work with and without the in-memory engine; it excludes
 persistence and isolated workers and does not establish a universal slowdown.
 
+The later [inline identifier follow-up](performance-inline-identifiers-2026-10-30.md)
+records further engine/graph/replay/parallel improvements at `aa2a557`, the remaining
+6.29% DTO encoding regression, long-ID controls and all seven passing code CI jobs.
+Its contract/allocation tests preserve v1 wire and public textual semantics. A
+separate test-only deadline fix at `69a749f` retains the worker-service assertions
+and passes repeated stable/MSRV runs plus both full real-runtime suites.
+
 The versioned local sequence passed stable/MSRV workspace all-target tests,
 doctests, strict Clippy/rustdoc, portable checks including MSRV RISC-V with and
 without Serde, layer/negative checks, runner/Python/action-pin checks, audit/deny,

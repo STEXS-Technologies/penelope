@@ -18,6 +18,14 @@ stable/MSRV tests, equivalence properties and targeted fuzzing separately.
 [All seven code CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41132374645)
 also pass on `8a9e298`.
 
+A further [identifier-storage optimization](performance-inline-identifiers-2026-10-30.md)
+at `aa2a557` has its own fixed comparisons and seven-job CI. The short-ID empty-task
+added-time median drops from 245.29 ns to 119.17 ns; the ~3.8 µs task's overhead
+falls from 6.34% to 2.87%. Standalone DTO encoding remains 6.29% slower, and the
+long-ID control shows a smaller benefit. These scoped results exclude durability
+and isolated workers. The follow-up also retains the prior CI worker-test failure
+and the test-only bounded-deadline correction at `69a749f`.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |
