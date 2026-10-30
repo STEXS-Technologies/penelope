@@ -31,9 +31,15 @@ measurement must include this changed startup path. The library state-machine
 fuzz campaign continues independently; final workspace checks and runtime
 measurements remain required before release qualification.
 
-The follow-up kernel-rejected-bootstrap test uses a static ELF header with no
-loadable segment. Startup returns a runtime error and poisons the supervisor;
-authoritative reconstruction fences generation one and appends only its
-interruption. Durable history contains no completion or successor. Stable,
-MSRV and strict Clippy logs are retained with the
-[remote qualification evidence](verification-data/2026-10-30-remote-qualification/metadata.json).
+The follow-up unloadable-bootstrap test uses a static ELF header with no
+loadable segment. The first version assumed synchronous rejection; the
+[remote run](https://github.com/STEXS-Technologies/penelope/actions/runs/41076659647)
+failed that assumption because its kernel accepted the handoff before the
+process faulted. The corrected test covers both immediate runtime errors and
+asynchronous process faults, with polling before recovery or recovery directly
+from the persisted running generation. It requires no completed output, exactly
+one generation and confirmed fencing before recovery records an interruption.
+An immediate runtime error must also poison further advance. The test does not
+interpret successful launch admission as successful application execution.
+[Retained failure and corrected local checks](verification-data/2026-10-30-bootstrap-timing/metadata.json)
+record the platform-dependent observation; the corrected remote check is pending.
