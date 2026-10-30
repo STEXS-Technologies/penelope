@@ -256,62 +256,88 @@ impl Stores {
                 .unwrap()
         };
         cut("outbox-ack");
+        if self.effectful {
+            let expected = match std::env::var("PENELOPE_SAGA_EXPECT_REPLAY").ok().as_deref() {
+                Some("reconciliation-required" | "reconciliation-unknown") => {
+                    Some(TaskStatus::Reconciling)
+                }
+                Some("restart-authorized") => Some(TaskStatus::Reconciled),
+                _ => None,
+            };
+            if let Some(expected) = expected {
+                assert_eq!(supervisor.projection().status(), expected);
+                assert_eq!(
+                    supervisor.projection().generation(),
+                    penelope_core::task::TaskGeneration::new(1)
+                );
+                assert_eq!(supervisor.projection().output(), None);
+            }
+        }
         let first_offset = if self.effectful {
             use penelope_core::task::Reconciliation;
-            supervisor.advance(TaskTick::new(tick + 1)).unwrap();
-            assert_eq!(supervisor.projection().status(), TaskStatus::Running);
-            let (interrupted_journal, interrupted_runtime) = supervisor.into_parts();
-            supervisor = Supervisor::restore(
-                interrupted_journal,
-                interrupted_runtime,
-                binding.scope(),
-                binding.definition(),
-                TaskTick::new(tick + 2),
-            )
-            .unwrap();
-            supervisor.advance(TaskTick::new(tick + 3)).unwrap();
-            assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
-            let generation = supervisor.projection().generation();
-            supervisor
-                .reconcile(
+            if supervisor.projection().status() == TaskStatus::Pending {
+                supervisor.advance(TaskTick::new(tick + 1)).unwrap();
+                assert_eq!(supervisor.projection().status(), TaskStatus::Running);
+                cut("initial-worker-start");
+                let (interrupted_journal, interrupted_runtime) = supervisor.into_parts();
+                supervisor = Supervisor::restore(
+                    interrupted_journal,
+                    interrupted_runtime,
                     binding.scope(),
-                    generation,
-                    Reconciliation::Unknown {
-                        evidence: Digest([3; 32]),
-                    },
-                    None,
-                    TaskTick::new(tick + 3),
+                    binding.definition(),
+                    TaskTick::new(tick + 2),
                 )
                 .unwrap();
-            for offset in 4..7 {
-                assert!(!supervisor.advance(TaskTick::new(tick + offset)).unwrap());
-                assert_eq!(supervisor.projection().generation(), generation);
-                assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
             }
-            let (blocked_journal, blocked_runtime) = supervisor.into_parts();
-            supervisor = Supervisor::restore(
-                blocked_journal,
-                blocked_runtime,
-                binding.scope(),
-                binding.definition(),
-                TaskTick::new(tick + 7),
-            )
-            .unwrap();
-            assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
-            assert_eq!(supervisor.projection().generation(), generation);
-            // Trusted fixture policy authorizes retry independently of worker output.
-            // These evidence digests identify the fixture; they are not cryptographic proof.
-            supervisor
-                .reconcile(
+            if supervisor.projection().status() == TaskStatus::Faulted {
+                supervisor.advance(TaskTick::new(tick + 3)).unwrap();
+            }
+            if supervisor.projection().status() == TaskStatus::Reconciling {
+                cut("reconciliation-required");
+                let generation = supervisor.projection().generation();
+                supervisor
+                    .reconcile(
+                        binding.scope(),
+                        generation,
+                        Reconciliation::Unknown {
+                            evidence: Digest([3; 32]),
+                        },
+                        None,
+                        TaskTick::new(tick + 3),
+                    )
+                    .unwrap();
+                cut("reconciliation-unknown");
+                for offset in 4..7 {
+                    assert!(!supervisor.advance(TaskTick::new(tick + offset)).unwrap());
+                    assert_eq!(supervisor.projection().generation(), generation);
+                    assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
+                }
+                let (blocked_journal, blocked_runtime) = supervisor.into_parts();
+                supervisor = Supervisor::restore(
+                    blocked_journal,
+                    blocked_runtime,
                     binding.scope(),
-                    generation,
-                    Reconciliation::RestartAuthorized {
-                        evidence: Digest([4; 32]),
-                    },
-                    None,
+                    binding.definition(),
                     TaskTick::new(tick + 7),
                 )
                 .unwrap();
+                assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
+                assert_eq!(supervisor.projection().generation(), generation);
+                // Trusted fixture policy authorizes retry independently of worker output.
+                // These evidence digests identify the fixture; they are not cryptographic proof.
+                supervisor
+                    .reconcile(
+                        binding.scope(),
+                        generation,
+                        Reconciliation::RestartAuthorized {
+                            evidence: Digest([4; 32]),
+                        },
+                        None,
+                        TaskTick::new(tick + 7),
+                    )
+                    .unwrap();
+                cut("restart-authorized");
+            }
             8
         } else {
             1
@@ -784,24 +810,46 @@ fn cut(point: &str) {
 
 #[test]
 fn killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries() {
+    crash_matrix(false);
+}
+#[test]
+fn killed_coordinators_recover_effectful_sagas_at_reconciliation_boundaries() {
+    crash_matrix(true);
+}
+fn crash_matrix(effectful: bool) {
     use std::process::{Command, Stdio};
     for engine in ["linear", "graph"] {
-        let test = format!(
-            "sagas::full_{engine}_saga_replays_real_task_result_from_shared_and_separate_stores"
-        );
+        let test = if effectful {
+            format!(
+                "sagas::reconciled_{engine}_saga_blocks_unknown_then_requires_independent_result_evidence"
+            )
+        } else {
+            format!(
+                "sagas::full_{engine}_saga_replays_real_task_result_from_shared_and_separate_stores"
+            )
+        };
+        let mut points = vec![
+            "start-payload",
+            "process-commit",
+            "outbox-claim",
+            "task-intent",
+            "outbox-ack",
+            "worker-start",
+            "task-complete",
+            "result-verified",
+            "result-payload",
+            "result-commit",
+        ];
+        if effectful {
+            points.extend([
+                "initial-worker-start",
+                "reconciliation-required",
+                "reconciliation-unknown",
+                "restart-authorized",
+            ]);
+        }
         for separate in ["0", "1"] {
-            for point in [
-                "start-payload",
-                "process-commit",
-                "outbox-claim",
-                "task-intent",
-                "outbox-ack",
-                "worker-start",
-                "task-complete",
-                "result-verified",
-                "result-payload",
-                "result-commit",
-            ] {
+            for point in &points {
                 let directory = tempfile::tempdir().unwrap();
                 let mut child = Command::new(std::env::current_exe().unwrap())
                     .args(["--exact", &test, "--nocapture"])
@@ -829,6 +877,7 @@ fn killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries() {
                     .env("PENELOPE_SAGA_CRASH_DIR", directory.path())
                     .env("PENELOPE_SAGA_SEPARATE", separate)
                     .env("PENELOPE_SAGA_RECOVER", "1")
+                    .env("PENELOPE_SAGA_EXPECT_REPLAY", point)
                     .stdout(Stdio::null())
                     .spawn()
                     .unwrap();
