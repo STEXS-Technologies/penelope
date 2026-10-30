@@ -1,0 +1,24 @@
+   Compiling penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.52s
+     Running tests/runtime.rs (target/debug/deps/runtime-f8d8979fbc3814d8)
+
+running 1 test
+test worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read ... FAILED
+
+failures:
+
+---- worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read stdout ----
+
+thread 'worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read' (3377468) panicked at crates/penelope-process-runtime/tests/support/worker_protocol.rs:244:9:
+assertion `left == right` failed
+  left: Some(Runtime)
+ right: Some(Corrupt)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p penelope-process-runtime --test runtime`

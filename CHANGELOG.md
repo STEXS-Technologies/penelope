@@ -44,10 +44,20 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- SQLite outbox/timer claims fail and roll back if the durable lease-token
+  counter update is ignored, preserving pending work and token allocation.
+
+- Worker requests reject pinned payload bounds and schema zero before payload
+  allocation or I/O, including when transport limits are looser.
+
 - Linux worker polling drains observations to EOF before classifying child exit,
   preventing a queued valid completion from being reported as a task fault.
 
 ### Changed
+
+- Worker scope hashing uses a fixed stack buffer, removing its temporary heap
+  allocation while preserving protocol bytes. The measured proposal-time gain
+  is below 1%; detailed scope and counters are retained in the worker report.
 
 - Canonical DTO encoding reserves per-type initial buffer capacity, and Serde
   identifier decoding admits borrowed text without a temporary String. Measured
