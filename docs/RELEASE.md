@@ -269,3 +269,5 @@ also gates a real worker checkpoint through actual upstream signed sparse-Merkle
 state proof verification, with fixture publication and pinned signer/head trust.
 Production upstream execution, head discovery and external-effect proofs remain
 outside this evidence. See [the integration contract and limits](INTEGRATION.md#optional-signed-canonical-event-conformance).
+
+Deployment lifecycle procedures are in the [reliable execution runbook](reliable-execution-operations.md), including restart, unknown effects, leases, backup/restore and fence failures.
