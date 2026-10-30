@@ -121,6 +121,12 @@ commit retries, conflicting retries, forged owners, scoped pending-input
 visibility, payload digest admission and database reopen behavior. Every input
 runs a fixed operation suffix as well as its mutated sequence; this target does
 not simulate coordinator crashes or power loss.
+Portable controller failure tests retain independent access to the test journal
+and runtime. They check interruption receipt ambiguity, read failures and clock
+regression before mutation, invalid input/checkpoint reads before dispatch,
+rejected reconciliation evidence, unknown results across replay, and unconfirmed
+quota fences. These are injected adapter-contract tests, complementing the actual
+SQLite and process-runtime suites.
 The supervisor fuzzer combines runtime proposals with lost acknowledgements,
 wrong receipts, storage exhaustion and reconstruction, checking durable replay
 and rejection invariants after each operation. A 32-contender thread test checks
