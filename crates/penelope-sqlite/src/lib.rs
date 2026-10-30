@@ -6,6 +6,7 @@
 mod authority;
 mod leases;
 mod lifecycle;
+mod payloads;
 mod process;
 mod schema;
 mod tasks;

@@ -452,3 +452,153 @@ fn inbox_and_atomic_commit_share_bounded_usage_and_exact_payload_identity() {
         Err(PortError::QuotaExceeded)
     );
 }
+
+#[test]
+fn replay_payloads_survive_reopen_are_scoped_and_detect_corruption() {
+    use penelope_ports::payloads::ProcessPayloadStore;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("process.db");
+    let store = store(&path, clock());
+    let bytes = b"immutable saga event bytes";
+    let digest = ContentDigest::sha256(bytes);
+    assert_eq!(
+        block_on(store.put_payload(&scope(), digest, bytes)).unwrap(),
+        digest
+    );
+    // Repeat after losing an acknowledgement: no duplicate allocation/charge.
+    assert_eq!(
+        block_on(store.put_payload(&scope(), digest, bytes)).unwrap(),
+        digest
+    );
+    assert_eq!(
+        block_on(store.read_payload(&scope(), digest)).unwrap(),
+        bytes
+    );
+    let mut other = scope();
+    other.definition_digest = ContentDigest([7; 32]);
+    assert_eq!(
+        block_on(store.read_payload(&other, digest)),
+        Err(PortError::Invariant)
+    );
+    assert_eq!(
+        block_on(store.put_payload(&scope(), digest, b"changed")),
+        Err(PortError::Invariant)
+    );
+    let reopened =
+        SqliteProcessStore::open(&path, SqliteLimits::default(), clock(), 10, 8).unwrap();
+    assert_eq!(
+        block_on(reopened.read_payload(&scope(), digest)).unwrap(),
+        bytes
+    );
+    let connection = Connection::open(&path).unwrap();
+    let count: u32 = connection
+        .query_row("SELECT count(*) FROM process_payloads", [], |row| {
+            row.get(0)
+        })
+        .unwrap();
+    assert_eq!(count, 1);
+    connection
+        .execute(
+            "UPDATE process_payloads SET bytes=?1",
+            [b"corrupt".as_slice()],
+        )
+        .unwrap();
+    assert_eq!(
+        block_on(reopened.read_payload(&scope(), digest)),
+        Err(PortError::Invariant)
+    );
+    assert_eq!(
+        block_on(reopened.put_payload(&scope(), digest, bytes)),
+        Err(PortError::Invariant)
+    );
+    connection
+        .execute("DELETE FROM process_payloads", [])
+        .unwrap();
+    assert_eq!(
+        block_on(reopened.read_payload(&scope(), digest)),
+        Err(PortError::Invariant)
+    );
+}
+
+#[test]
+fn replay_payload_limits_are_atomic_and_checked_before_stored_copy() {
+    use penelope_ports::payloads::ProcessPayloadStore;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("process.db");
+    let limits = SqliteLimits {
+        max_blob_bytes: 16,
+        max_scope_bytes: 256,
+        ..SqliteLimits::default()
+    };
+    let store = SqliteProcessStore::open(&path, limits, clock(), 10, 8).unwrap();
+    let bytes = [1; 16];
+    let digest = ContentDigest::sha256(&bytes);
+    block_on(store.put_payload(&scope(), digest, &bytes)).unwrap();
+    let connection = Connection::open(&path).unwrap();
+    let used: i64 = connection
+        .query_row("SELECT bytes_used FROM process_usage", [], |row| row.get(0))
+        .unwrap();
+    block_on(store.put_payload(&scope(), digest, &bytes)).unwrap();
+    let repeated_used: i64 = connection
+        .query_row("SELECT bytes_used FROM process_usage", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(used, repeated_used);
+    let second = [3; 16];
+    assert_eq!(
+        block_on(store.put_payload(&scope(), ContentDigest::sha256(&second), &second)),
+        Err(PortError::QuotaExceeded)
+    );
+    let over = [2; 17];
+    assert_eq!(
+        block_on(store.put_payload(&scope(), ContentDigest::sha256(&over), &over)),
+        Err(PortError::QuotaExceeded)
+    );
+    // The row exists under the right key, but its length must be rejected before
+    // allocating/copying stored bytes, even when an external writer changed it.
+    connection
+        .execute("UPDATE process_payloads SET bytes=zeroblob(1000000)", [])
+        .unwrap();
+    assert_eq!(
+        block_on(store.read_payload(&scope(), digest)),
+        Err(PortError::Invariant)
+    );
+    let count: u32 = connection
+        .query_row("SELECT count(*) FROM process_payloads", [], |row| {
+            row.get(0)
+        })
+        .unwrap();
+    assert_eq!(count, 1);
+}
+
+#[test]
+fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
+    use penelope_ports::payloads::ProcessPayloadStore;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("process.db");
+    let store = store(&path, clock());
+    let batch = commit(false);
+    block_on(ProcessStore::commit(&store, &batch)).unwrap();
+    let connection = Connection::open(&path).unwrap();
+    connection
+        .execute_batch("DROP TABLE process_payloads; PRAGMA user_version=3;")
+        .unwrap();
+    let reopened =
+        SqliteProcessStore::open(&path, SqliteLimits::default(), clock(), 10, 8).unwrap();
+    assert_eq!(
+        block_on(reopened.read_outcomes(&replay()))
+            .unwrap()
+            .outcomes,
+        batch.outcomes
+    );
+    let bytes = b"event";
+    let digest = ContentDigest::sha256(bytes);
+    block_on(reopened.put_payload(&scope(), digest, bytes)).unwrap();
+    assert_eq!(
+        block_on(reopened.read_payload(&scope(), digest)).unwrap(),
+        bytes
+    );
+    let version: u32 = connection
+        .query_row("PRAGMA user_version", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(version, 4);
+}

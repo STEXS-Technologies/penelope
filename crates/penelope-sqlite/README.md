@@ -6,7 +6,8 @@ facade does not depend on this package. Release qualification is still ongoing.
 `SqliteTaskJournal` implements synchronous `TaskJournal` and
 `TaskGenerationAuthority` for one pinned task definition. `SqliteProcessStore`
 implements the async `ProcessStore`, `Inbox`, `OutboxStore`, `TimerScheduler` and
-`TimerClaimStore` ports through a bounded dedicated database worker. Construct
+`TimerClaimStore` ports through a bounded dedicated database worker.
+`ProcessPayloadStore` retains scoped immutable event/evidence bytes for replay. Construct
 these adapters explicitly; the library does not create application services.
 
 ## Storage profile
@@ -29,6 +30,23 @@ continue consuming scope quota so deleting bytes cannot allow resurrection.
 Task hot appends reuse a validated projection while the observed head remains
 unchanged. First use, switching scopes or observing another writer triggers
 bounded replay. Read failures and missing committed records fail closed.
+
+## Replay payloads
+
+Write event bytes through `ProcessPayloadStore::put_payload` before committing
+outcomes that reference their digest. Validate the returned digest before the
+process commit. The write and outcome commit may use separate stores; a crash
+between them leaves unreferenced bytes, never permission to infer a committed
+event. Repeat the exact write after an ambiguous acknowledgement. Reconstruct
+only from authoritative outcome references, then read and decode their payloads.
+Missing, oversized or corrupt referenced bytes block replay.
+
+Payloads bind the complete process definition scope and consume the shared
+process storage quota, with per-payload and retained-count bounds. Schema version
+4 adds this table transactionally without changing existing outcome bytes.
+Payloads and unreferenced writes are retained; automatic payload garbage
+collection is not implemented. Account for failed/orphan writes when sizing
+retention. Content digests detect corruption and do not establish authenticity.
 
 ## Recovery and fencing
 
