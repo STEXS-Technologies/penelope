@@ -497,7 +497,43 @@ fn independent_completion() {
     assert_eq!(bytes, [9; 8]);
     assert_eq!(runtime.starts, 1);
 }
+#[inline(never)]
+// black_box is not const on the Rust 1.85 MSRV.
+#[allow(clippy::missing_const_for_fn)]
+fn stack_positive_control() {
+    let mut bytes = [0_u8; 65_536];
+    black_box(&mut bytes);
+}
 fn main() {
+    let arguments: Vec<String> = std::env::args().skip(1).collect();
+    let selected = match arguments.as_slice() {
+        [] => None,
+        [flag, path] if flag == "--path" => Some(path.as_str()),
+        [flag] if flag == "--stack-positive-control" => {
+            stack_positive_control();
+            return;
+        }
+        [flag] if flag == "--stack-baseline" => return,
+        [flag] if flag == "--layout" => {
+            println!(
+                "{{\"control_with_fixtures\":{},\"journal_fixture\":{},\"runtime_fixture\":{},\"control_with_unit_ports\":{},\"projection\":{},\"workspace_descriptor\":{},\"record\":{},\"definition\":{},\"workspace_bytes\":20}}",
+                size_of::<Control>(),
+                size_of::<Journal>(),
+                size_of::<Runtime>(),
+                size_of::<TaskControl<(), ()>>(),
+                size_of::<TaskProjection>(),
+                size_of::<TaskWorkspace<'_>>(),
+                size_of::<TaskRecord>(),
+                size_of::<TaskDefinition>(),
+            );
+            return;
+        }
+        _ => {
+            eprintln!("expected --path NAME, --layout or a stack calibration mode");
+            std::process::exit(2);
+        }
+    };
+    let mut matched = false;
     // Exercise every instrumented allocator entry point before trusting zeros.
     let small = Layout::from_size_align(8, 8).unwrap();
     let large = Layout::from_size_align(16, 8).unwrap();
@@ -530,6 +566,10 @@ fn main() {
         ("checkpoint_migration", migration as fn()),
         ("independent_completion", independent_completion as fn()),
     ] {
+        if selected.is_some_and(|path| path != name) {
+            continue;
+        }
+        matched = true;
         start_counting();
         black_box(exercise)();
         let counts = stop_counting();
@@ -546,6 +586,7 @@ fn main() {
             "{{\"path\":\"{name}\",\"allocations\":0,\"reallocations\":0,\"deallocations\":0,\"requested_bytes\":0}}"
         );
     }
+    assert!(matched, "unknown task path");
 }
 fn lifecycle_pure() {
     lifecycle(EffectContract::Pure);
