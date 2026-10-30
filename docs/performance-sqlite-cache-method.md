@@ -51,5 +51,5 @@ source diff is retained if measured before commit. Run labels alone are not
 evidence: inspect every recorded residency check and dataset hash.
 
 The development smoke run may overlap fault testing and is not qualification
-latency evidence. A serialized measurement report is still required before this
-method closes the cold/warm evidence item.
+latency evidence. The [serialized five-pair report](performance-sqlite-cache-2026-10-30.md)
+records qualified file-page observations for the current adapter.
