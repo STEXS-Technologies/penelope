@@ -13,3 +13,6 @@ pub mod tasks;
 
 /// Scoped durable bytes for process replay and evidence.
 pub mod payloads;
+
+/// Bounded discovery of durably accepted, unconsumed process inputs.
+pub mod inbox;

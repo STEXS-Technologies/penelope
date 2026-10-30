@@ -4,6 +4,7 @@
 //! from async reactor threads in the consuming application.
 #![deny(unsafe_code)]
 mod authority;
+mod inbox;
 mod leases;
 mod lifecycle;
 mod payloads;
