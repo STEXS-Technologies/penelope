@@ -96,6 +96,7 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
     /// supervisor-interruption fact is committed; it is never redispatched.
     /// # Errors
     /// Returns malformed history, unavailable storage or unconfirmed fencing.
+    #[inline]
     pub fn restore(
         mut journal: J,
         mut runtime: R,
@@ -103,28 +104,7 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
         definition: TaskDefinition,
         tick: TaskTick,
     ) -> Result<Self, SupervisorError> {
-        let mut projection = TaskProjection::new(scope, definition)?;
-        while let Some(record) = journal.read(scope, projection.next_sequence())? {
-            projection.apply(&record)?;
-        }
-        if tick < projection.last_tick() {
-            return Err(TaskError::InvalidOrder.into());
-        }
-        if projection.status() == TaskStatus::Running {
-            runtime.fence(scope, projection.generation())?;
-            let record = projection.propose(
-                TaskExecutionEvent::FaultObserved {
-                    fault: TaskFault::SupervisorInterrupted,
-                },
-                projection.generation(),
-                tick,
-            )?;
-            let receipt = journal.commit(&record, None)?;
-            if receipt != record {
-                return Err(TaskPortError::Corrupt.into());
-            }
-            projection.apply(&record)?;
-        }
+        let projection = restore_projection(&mut journal, &mut runtime, scope, definition, tick)?;
         Ok(Self {
             journal,
             runtime,
@@ -583,4 +563,39 @@ fn blob_ref(bytes: &[u8], schema: u32, limit: u32) -> Result<BlobRef, TaskError>
         bytes: length,
         schema,
     })
+}
+
+// Replay borrows adapters so large caller-owned ports need no replay-local move.
+// Keep this boundary separate from the small owning constructor.
+#[inline(never)]
+fn restore_projection<J: TaskJournal, R: TaskRuntime>(
+    journal: &mut J,
+    runtime: &mut R,
+    scope: TaskScope,
+    definition: TaskDefinition,
+    tick: TaskTick,
+) -> Result<TaskProjection, SupervisorError> {
+    let mut projection = TaskProjection::new(scope, definition)?;
+    while let Some(record) = journal.read(scope, projection.next_sequence())? {
+        projection.apply(&record)?;
+    }
+    if tick < projection.last_tick() {
+        return Err(TaskError::InvalidOrder.into());
+    }
+    if projection.status() == TaskStatus::Running {
+        runtime.fence(scope, projection.generation())?;
+        let record = projection.propose(
+            TaskExecutionEvent::FaultObserved {
+                fault: TaskFault::SupervisorInterrupted,
+            },
+            projection.generation(),
+            tick,
+        )?;
+        let receipt = journal.commit(&record, None)?;
+        if receipt != record {
+            return Err(TaskPortError::Corrupt.into());
+        }
+        projection.apply(&record)?;
+    }
+    Ok(projection)
 }
