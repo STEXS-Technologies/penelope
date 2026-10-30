@@ -84,7 +84,13 @@ impl DatabaseWorker {
                     },
                 );
                 if let Some(waker) = waker {
-                    waker.wake();
+                    // Executor callbacks are application code. The result is already
+                    // published and unlocked; an unwinding notification must not
+                    // kill the worker and strand unrelated accepted requests.
+                    let _wake_result =
+                        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                            waker.wake();
+                        }));
                 }
             }))
             .map_err(|error| match error {
@@ -171,5 +177,66 @@ mod tests {
             Err(PortError::Unavailable)
         );
         assert_eq!(wait(worker.run(|_connection| Ok(7)).unwrap()).unwrap(), 7);
+    }
+    #[test]
+    fn panicking_waker_cannot_strand_accepted_work_or_discard_committed_result() {
+        struct PanicWake;
+        impl Wake for PanicWake {
+            fn wake(self: Arc<Self>) {
+                panic!("injected executor wake panic");
+            }
+        }
+        for close_admission in [false, true] {
+            let initial_connection = Connection::open_in_memory().unwrap();
+            initial_connection
+                .execute_batch("CREATE TABLE writes(value INTEGER)")
+                .unwrap();
+            let worker = DatabaseWorker::new(initial_connection, 1).unwrap();
+            let (entered, started) = std::sync::mpsc::channel();
+            let (release, resume) = std::sync::mpsc::channel();
+            let mut first = Box::pin(
+                worker
+                    .run(move |connection| {
+                        entered.send(()).unwrap();
+                        resume.recv_timeout(Duration::from_secs(5)).unwrap();
+                        connection
+                            .execute("INSERT INTO writes VALUES (1)", [])
+                            .map_err(|_database| PortError::Unavailable)?;
+                        Ok(1)
+                    })
+                    .unwrap(),
+            );
+            started.recv_timeout(Duration::from_secs(5)).unwrap();
+            let waker = Waker::from(Arc::new(PanicWake));
+            let mut context = Context::from_waker(&waker);
+            assert!(first.as_mut().poll(&mut context).is_pending());
+            let queued = worker
+                .run(|connection| {
+                    connection
+                        .execute("INSERT INTO writes VALUES (2)", [])
+                        .map_err(|_database| PortError::Unavailable)?;
+                    connection
+                        .query_row("SELECT count(*) FROM writes", [], |row| {
+                            row.get::<_, u32>(0)
+                        })
+                        .map_err(|_database| PortError::Unavailable)
+                })
+                .unwrap();
+            let open_worker = if close_admission {
+                drop(worker);
+                None
+            } else {
+                Some(worker)
+            };
+            release.send(()).unwrap();
+            assert_eq!(wait(queued), Ok(2));
+            assert_eq!(wait(*Pin::into_inner(first)), Ok(1));
+            if let Some(remaining_worker) = open_worker {
+                assert_eq!(
+                    wait(remaining_worker.run(|_connection| Ok(3)).unwrap()),
+                    Ok(3)
+                );
+            }
+        }
     }
 }
