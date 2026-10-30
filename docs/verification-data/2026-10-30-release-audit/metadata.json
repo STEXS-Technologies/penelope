@@ -1,0 +1,97 @@
+{
+  "recorded_utc": "2026-10-30T12:01:42.242881+00:00",
+  "tested_rust_revision": "2223a31457c3561b0f393fd88a3c93cf253a5b5c",
+  "documentation_revision": "0350d877aafd38dc5062daf323fede6407b15e2b",
+  "scope": "Current source checks; not a tagged release or complete 0.3.0 qualification. Documentation and a shell comment changed during checks; Rust sources and lockfiles stayed unchanged.",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7",
+  "advisory_db_revision": "2295466c4e9df26647fd67d8fa1c705ac2fc7f81",
+  "publish_order": [
+    "penelope-core",
+    "penelope-domain",
+    "penelope-intent",
+    "penelope-ports",
+    "penelope-sqlite",
+    "penelope-executor",
+    "penelope-statechronicle",
+    "penelope",
+    "penelope-process-runtime"
+  ],
+  "archives_sha256": {
+    "penelope-0.2.0.crate": "8c11f5655c5f88b4deba488dbfa75e797f426c446a1bf85e783881d65c26e3cd",
+    "penelope-core-0.2.0.crate": "916cdb9bb1d8c5a13d894fdb7c6717be5132afc6cf4e5dd603d2b0563774eaea",
+    "penelope-domain-0.2.0.crate": "bc684746301df15f0931a0e845387037f26bf4819ed04eb4abaa2d3a44977a78",
+    "penelope-executor-0.2.0.crate": "73ab4fbbc1f1d9b5a8eebc0ef679c5bf028d161649297d0a4f80b19126400721",
+    "penelope-intent-0.2.0.crate": "929cdf6b1c3b226b6b9599154839e4d2d8f5496b0216d10e191b412253d49711",
+    "penelope-ports-0.2.0.crate": "a778f5e183071abc73143867cda0cb0eb3a087673b7c354472fd25abafa6bbee",
+    "penelope-process-runtime-0.2.0.crate": "d61dad358b16fd5a5e261c56e194933fb035273280e31d2258e408dcb6bc1166",
+    "penelope-sqlite-0.2.0.crate": "2e125611259af53d9f2eb1f60f7abab766fae6fb35da58952d54f4e32500627a",
+    "penelope-statechronicle-0.2.0.crate": "8f1d9dc6378b2bd7fe302eff607a8df78d412f7dfa5e89d55ea7f9a8a5d0586b"
+  },
+  "logs": {
+    "workspace-all-targets": {
+      "file": "workspace-all-targets.log.gz",
+      "uncompressed_sha256": "b72f064ecc84d82c8f0324104c3fea44e4f97cc7f5b60d7f304b21f7ecf5d997",
+      "compressed_sha256": "7fe3043f65921180c1ee3e25d638b143a10de0e2180a804c184ebbb84b167a96"
+    },
+    "msrv-all-targets": {
+      "file": "msrv-all-targets.log.gz",
+      "uncompressed_sha256": "3937ff2df1659e76069bf1d81a03894e5f36900af7fff11f4bbb41fa168c05ff",
+      "compressed_sha256": "c35219dc7adc7f4d436c6dd5f25d84a020cfac5e23d99b4a9a6d681d600023e0"
+    },
+    "doctests": {
+      "file": "doctests.log.gz",
+      "uncompressed_sha256": "f65f8dc297bfd4de3bb310aaea90dc2981aecef2a746c6910d834e8874cbd2e5",
+      "compressed_sha256": "27ef419eb5980b29c47d6b327a727cbacac2495ac892f39bc97a0e33acf14641"
+    },
+    "clippy": {
+      "file": "clippy.log.gz",
+      "uncompressed_sha256": "48c5cf18e0abefd5326a4cfd6fbb20d01ce2983020ec31b04eedc242460021f8",
+      "compressed_sha256": "1de64696ff9f18204e97f400262dd48c7256ed1fd20c60a1f0a3f188b94cd6d7"
+    },
+    "rustdoc": {
+      "file": "rustdoc.log.gz",
+      "uncompressed_sha256": "c01c4fa4347abd079c4ccaf78fd35898824ea8c985ace9ab68652fa85a62276b",
+      "compressed_sha256": "39704ba81be7d47e0a4a6adfd9a2b1d07de8e0ff0181910481c79bd0b61f061a"
+    },
+    "riscv": {
+      "file": "riscv.log.gz",
+      "uncompressed_sha256": "75b5fda76503143a7c531f3a1501ebae90797463dbe77f689d764ef271da123c",
+      "compressed_sha256": "d7f99bea8ad7b68498d7210661c890b24e79600f9b05c083ae35332947475647"
+    },
+    "portable": {
+      "file": "portable.log.gz",
+      "uncompressed_sha256": "de31ff093ac5c2c3bd2226eb8aab9d45f44120b3054dce9fdf10ccc84df9c6e6",
+      "compressed_sha256": "f2293d86bae1bd7bcdb82fc4d21c2a133a8f87a6e7a84727fbb25b2c3738804d"
+    },
+    "audit": {
+      "file": "audit.log.gz",
+      "uncompressed_sha256": "3004077a93a3df63d2aed74d4b3ff3670dc47777f2e450dfe4464eb783b61f9b",
+      "compressed_sha256": "0ed744f458f9b87c4ac440352a8db07c3ecd467d7694c2aaba200f84d506238e"
+    },
+    "deny": {
+      "file": "deny.log.gz",
+      "uncompressed_sha256": "4608112b22f103f40a662a33e6ab5f74c447b5b7c3018bda195d74fe23319ea2",
+      "compressed_sha256": "56953c48dea557c7117fccf7ce066a36051e060f9ff32dbf3613c2da169fdfd5"
+    },
+    "packages": {
+      "file": "packages.log.gz",
+      "uncompressed_sha256": "4b62cc2f220de8220da727088e373c094beb7fce8a2e8269b8256fc768ee6dda",
+      "compressed_sha256": "59ace7ba00ef7b4596474a5f0c3acbe30bb8832acd6728a0b783e696675109ee"
+    },
+    "coverage": {
+      "file": "coverage.log.gz",
+      "uncompressed_sha256": "6410d4943e8c8b50e239bc5466578daad3ae4dabd832322f7df8fc94935d586c",
+      "compressed_sha256": "f22610ad0ad694b8e879bb9016d87efef7328ce99fb062ef755d472f3f41759d"
+    },
+    "upstream-conformance": {
+      "file": "upstream-conformance.log.gz",
+      "uncompressed_sha256": "d9bc9d706222998735a07b4cd1cf8b6eddcf8fd4504a5dd0e7cc12ca3a5a52a5",
+      "compressed_sha256": "952697356f92dbe01e39cb58a54bcfb5a10a08d408de8d6fe1ff5a397756f586"
+    }
+  },
+  "campaigns_pending": [
+    "Three 300-second properties with 10000 cases per batch",
+    "Three chaos iterations, 10000 property cases and 100000 fuzz runs per registered target per iteration"
+  ]
+}
