@@ -23,3 +23,7 @@ tempfile = "3"
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "durable_store"
+harness = false

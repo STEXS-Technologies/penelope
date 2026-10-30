@@ -195,3 +195,7 @@ The underlying `./scripts/publish-crates.sh --publish` derives dependency order
 from Cargo metadata, waits for exact versions in the crates.io index, skips
 already-published versions and verifies all expected versions. Credentials
 remain outside the repository.
+
+The optional SQLite adapter has a [current store baseline](performance-sqlite-2026-10-30.md)
+with raw pinned-CPU measurements. Its report lists performance qualification that
+remains incomplete; the historical core baseline does not cover this adapter.
