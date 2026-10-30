@@ -33,7 +33,8 @@ scaling. Output directories must not already exist. Both scenarios use the same
 4-byte input and 8-byte checkpoint/output; capacity changes reserved wrapper
 workspace, not the logical dataset.
 
-Only smoke validation has run so far. No qualification result is claimed here.
+The [initial comparison](performance-hosted-memory-2026-10-30.md) records a hosted
+stack regression; qualification remains open.
 Whole-process sampled maxima include fixture ownership/moves and startup; they
 are not a static worst-case bound or isolated supervisor cost. The fixed ports do
 not characterize SQLite or process-runtime allocation. OS caches and frequency

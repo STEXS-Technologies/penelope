@@ -244,8 +244,9 @@ The optional SQLite adapter has a [current store baseline](performance-sqlite-20
 with raw pinned-CPU measurements. Its report lists performance qualification that
 remains incomplete; the historical core baseline does not cover this adapter.
 The [hosted supervisor comparison method](hosted-task-memory-method.md) provides
-a calibrated before/after allocation and sampled-stack runner; qualification
-measurements remain pending.
+a calibrated before/after allocation and sampled-stack runner. The
+[initial measurements](performance-hosted-memory-2026-10-30.md) show a stack
+regression; this qualification requirement remains open.
 The Linux runtime also has a [real-worker dispatch/host-ACK baseline](performance-worker-dispatch-2026-10-30.md)
 with fresh and reused store/runtime profiles, raw samples and disclosed limits.
 

@@ -198,11 +198,60 @@
       "file": "supervisor-error-compat-clippy.log.gz",
       "uncompressed_sha256": "6e451ebed7cbe327c3a7ec7c1c173cc3bc6cd2ebb728f21d98cf8e532345dd36",
       "compressed_sha256": "a634ee68427930ff15b3a184e1c9d9e85d050155b0c89f9fc622444c62a4c326"
+    },
+    "migration-sigkill": {
+      "file": "migration-sigkill.log.gz",
+      "uncompressed_sha256": "1658a8eed330c5e6d2b69ccca619b2e13dd8196ae2945c0f5dad0b4d23ed6317",
+      "compressed_sha256": "3427c00b8cb13b508b2d03c3cc7e325ca3f34522b784fcc2b09e8963a49f74c2"
+    },
+    "migration-sigkill-msrv": {
+      "file": "migration-sigkill-msrv.log.gz",
+      "uncompressed_sha256": "03470ed65101fda1467e9290d2184f0efb9b94df83698a81c0f1027131cd4f95",
+      "compressed_sha256": "982cd9ca609ee50a38587c126ed6cdb9b6158cb4035dd85d84361471d32612d5"
+    },
+    "migration-clippy": {
+      "file": "migration-clippy.log.gz",
+      "uncompressed_sha256": "7aa20619641b97a989a03c10666a97256705a80a0cecff31fb4e1a82087ecca4",
+      "compressed_sha256": "0b438d79af97307090412b0fb46bf3d7f319f76412432651884861c68910f328"
+    },
+    "migration-all-targets": {
+      "file": "migration-all-targets.log.gz",
+      "uncompressed_sha256": "9a829153dd54af00baa6009d1e73db6ac73121e4bcc3f1aa57cfaab8116d292d",
+      "compressed_sha256": "ede56ae6b34cbd33997f1e9231321cf122b1bd8103fbb590245a6bbfc955fd62"
+    },
+    "coverage-migration": {
+      "file": "coverage-migration.log.gz",
+      "uncompressed_sha256": "6155ef4897dd7fa8b53a34919deed5ee6c7b85eafe1079608bd61fcc7d97f131",
+      "compressed_sha256": "0fff1ae003c1e92d342fbf66060937b001f9b69852cea372b93dffa52d101476"
+    },
+    "authority-repro-10000": {
+      "file": "authority-repro-10000.log.gz",
+      "uncompressed_sha256": "6c3731aa1e2be28dbed780677c7dd906e4206cff06396eaf322614eac0029df4",
+      "compressed_sha256": "169b50134f75b1efb09b8fddfefbd3e505cf5f8b3917cda232c12c5044cf40c5"
+    },
+    "authority-repro-syscalls": {
+      "file": "authority-repro-syscalls.log.gz",
+      "uncompressed_sha256": "244cb0924e478150c8dbc089c1303cda227802743179324c1c90df83c3403b21",
+      "compressed_sha256": "66a2374e07bb8946e3058ddafff5d6c15409e3eda604918127fa00339a82a187"
+    },
+    "authority-repro-10000-native": {
+      "file": "authority-repro-10000-native.log.gz",
+      "uncompressed_sha256": "cda7b92a05ee1d91d09ba70f0a028ce24f93b8f3df3702de4edf671b370c5b40",
+      "compressed_sha256": "24bfbd057d8838d96ffa3076d287c5f2764b82f4301c5c56da9fc0591738c965"
+    },
+    "chaos-local-filesystem": {
+      "file": "chaos-local-filesystem.log.gz",
+      "uncompressed_sha256": "a6f217029125ce60dae0c84523e45b59b8d034318f445b3ac8e5bd4b44a98c11",
+      "compressed_sha256": "f4d8eea92251393eaf0be22267193c4db5b21a21b3b913443f0b3f462bc81985"
+    },
+    "migration-all-targets-msrv": {
+      "file": "migration-all-targets-msrv.log.gz",
+      "uncompressed_sha256": "a2a4edbdc9b74fb31f3083463ef5f31cba65afb28646d6d11848d020f57669f9",
+      "compressed_sha256": "99d18cb7468ffa75b87be6d6c78e6322c42dd8636ca1b1e59b08ee22f8b91c59"
     }
   },
   "campaigns_pending": [
-    "Three-iteration chaos campaign did not pass; restart required after diagnosis",
-    "Fixed-input 10000 repetitions on local filesystem under strace in progress"
+    "Three-iteration chaos campaign must restart after hosted performance fix; local-filesystem restart was intentionally stopped with signal 15 before completion"
   ],
   "property_campaign": {
     "status": "passed",
@@ -241,5 +290,34 @@
       "crates/penelope-ports/src/implementation.rs": "30c8791d85adf3b8914c5282fa96da90c4cbd73f28141b644ab2fcdbf0f6f5d8",
       "crates/penelope-executor/tests/supervisor_error_compat.rs": "52fed46e009469dc9ffcb657442a9aa42f522f3fd5fcc752e4059692f13a1380"
     }
+  },
+  "schema_migration_crash": {
+    "result": "passed",
+    "cuts": [
+      "before-transaction",
+      "after-begin",
+      "after-v2",
+      "after-v3",
+      "after-v4",
+      "before-commit",
+      "after-commit"
+    ],
+    "mechanism": "SIGKILL child, reopen real WAL/FULL database, check original-or-final schema and immutable records/blob/fence state, finish migration, reject delayed start",
+    "source_sha256": {
+      "crates/penelope-sqlite/src/schema.rs": "02510f9e4595ee7e339d9558a9ea3d547e8fadf093feed56f48745400fb164bd",
+      "crates/penelope-sqlite/src/schema_tests.rs": "0d05fe3ca2f8000597016c26da989753558269efb0d9a809b2eab05301ccb759"
+    },
+    "coverage_lines": {
+      "count": 9370,
+      "covered": 8815,
+      "percent": 94.07684098185699
+    },
+    "production_hooks": false,
+    "validation": "all-target SQLite tests on Rust 1.99.0 and 1.85.0, strict all-target Clippy, coverage ratchet"
+  },
+  "authority_reproduction": {
+    "fixed_input_native_10000": "passed exit 0, sanitizer enabled, local-filesystem TMPDIR",
+    "fixed_input_traced_10000": "all input repetitions completed without monitored syscall failure; exit 1 because LeakSanitizer rejects ptrace; not a clean sanitizer pass",
+    "original_quota_failure": "retained; full random campaign still required"
   }
 }

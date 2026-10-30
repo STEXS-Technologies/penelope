@@ -63,8 +63,13 @@ input passed 100 fixed-input repetitions. A longer replay on `/tmp` failed on a
 read, while strace also reported **Disk quota exceeded** writing its own log.
 This establishes a host quota problem during reproduction, but does not prove
 the original failure has no adapter cause. The original log, input and failed
-reproduction are retained. A 10,000-repetition replay using an explicit temporary
-directory on the local filesystem is pending. The chaos campaign has not passed.
+reproduction are retained. The exact input subsequently passed 10,000 native repetitions with the sanitizer
+enabled and an explicit temporary directory on the local filesystem (exit 0).
+A separate traced replay completed all 10,000 input repetitions without a
+monitored syscall failure, then exited 1 because LeakSanitizer rejects ptrace.
+It is not counted as a clean sanitizer pass. The random chaos campaign has not
+passed. Its local-filesystem restart was intentionally stopped with SIGTERM so
+the measured hosted stack regression could be addressed before the next full run.
 Existing [saga performance concerns](performance-parallel-followup-2026-10-30.md)
 and [worst-case memory/stack qualification](performance-portable-memory-2026-10-30.md)
 remain open. No coverage, correctness or package check closes those requirements.
@@ -81,3 +86,16 @@ variant imports, exhaustive match, traits and conversions compile in an
 external test crate on stable and MSRV. See the [source compatibility
 review](RELEASE.md#source-compatibility-review). The failing raw API reports are
 retained; they are not represented as a green compatibility gate.
+
+The SQLite schema suite now kills a real child at seven migration boundaries:
+before the transaction, after begin, after each v2/v3/v4 DDL stage, before commit
+and after commit. Each cut preserves exact task records, input bytes and confirmed
+fence tombstones. Recovery observes either the original v1 schema or committed
+v4 schema, completes migration, replays the same task and rejects delayed launch
+of the fenced generation. Hooks compile only in Unix unit-test builds. The
+all-target SQLite suite passed on stable and MSRV, along with strict Clippy.
+Coverage remained above the unchanged ratchet at 8,815/9,370 lines (94.0768%).
+
+The [hosted comparison](performance-hosted-memory-2026-10-30.md) records zero
+allocation fixture paths but a stack regression at both 4 KiB and 64 KiB wrapper
+capacities. This is an open qualification issue, not an accepted exception.
