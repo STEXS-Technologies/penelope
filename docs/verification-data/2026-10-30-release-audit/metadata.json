@@ -88,10 +88,58 @@
       "file": "upstream-conformance.log.gz",
       "uncompressed_sha256": "d9bc9d706222998735a07b4cd1cf8b6eddcf8fd4504a5dd0e7cc12ca3a5a52a5",
       "compressed_sha256": "952697356f92dbe01e39cb58a54bcfb5a10a08d408de8d6fe1ff5a397756f586"
+    },
+    "property-campaign": {
+      "file": "property-campaign.log.gz",
+      "uncompressed_sha256": "bc3d2e0d392575a753bc44c783e10cf9921e52a28f5938d0df0156e71aa40530",
+      "compressed_sha256": "829c1a36fdb6686bb5907842f020f2e8279c544295f8dffcaca895defed4132a"
+    },
+    "chaos-incomplete": {
+      "file": "chaos-incomplete.log.gz",
+      "uncompressed_sha256": "451db84f32c06ed172bb5ce307e272a95980467866253235c3e5dd1023ba03fd",
+      "compressed_sha256": "f581cfe834c0ae332f2a65a19403c286f92b235d2117c6a2ba89565857f3d2c9"
+    },
+    "authority-repro-100": {
+      "file": "authority-repro-100.log.gz",
+      "uncompressed_sha256": "1309304e9e2f1589796aaf0d3d21ba8db22f695a9e3f16ad9df737aef0355308",
+      "compressed_sha256": "b6e4db5aa55c9faab380239b57f719577d4ce55cd16bb88dd5429507566642bc"
+    },
+    "authority-repro-tmp-quota": {
+      "file": "authority-repro-tmp-quota.log.gz",
+      "uncompressed_sha256": "3af5173f078b547cca1602c17751554b0532c0f00bbb1b1fd72e2221cb4b16f1",
+      "compressed_sha256": "e44d9ff3fff81dec1cd9ae44a46bf2d2ba4c3a8468a04e92b76096242ed446ba"
+    },
+    "property-seeded_checkpoint_crash_and_persistence_chaos": {
+      "file": "property-seeded_checkpoint_crash_and_persistence_chaos.log.gz",
+      "uncompressed_sha256": "2913db9a17b6b803b8d731bc1a4a8e89e413772ba4086e4cf3b82eacf009c386",
+      "compressed_sha256": "45c559d8a895226b90a69782fe9b166dda7cc84218e4fc8363d3af6a1f8ab303"
+    },
+    "property-entry-engine-tests-live_transitions_and_event_replay_converge": {
+      "file": "property-entry-engine-tests-live_transitions_and_event_replay_converge.log.gz",
+      "uncompressed_sha256": "5302edc11c147ce73b5300f7d7a296297d9d5626cdb99bfd99d76c3c0bdb069e",
+      "compressed_sha256": "aed7a3abb49ce54d4b634731f0a72167200c3a185f4ae26d35ca93d5226babc0"
+    },
+    "property-entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy": {
+      "file": "property-entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log.gz",
+      "uncompressed_sha256": "79e891e7973603defc2bb2b18f6383ca87b7102bdd5e54f27825d42fd14c9e89",
+      "compressed_sha256": "832ba5dd17b09223b3d5f5e6da58d1245ae0df7679d89770349d9ab686b96746"
     }
   },
   "campaigns_pending": [
-    "Three 300-second properties with 10000 cases per batch",
-    "Three chaos iterations, 10000 property cases and 100000 fuzz runs per registered target per iteration"
-  ]
+    "Three-iteration chaos campaign did not pass; restart required after diagnosis",
+    "Fixed-input 10000 repetitions on local filesystem under strace in progress"
+  ],
+  "property_campaign": {
+    "status": "passed",
+    "duration_seconds_per_property": 300,
+    "cases_per_batch": 10000,
+    "summary": "property-summary.json"
+  },
+  "chaos_campaign": {
+    "status": "failed",
+    "iteration": 1,
+    "target": "fuzz_sqlite_task_authority",
+    "input": "authority-failure-input.json",
+    "not_passed": true
+  }
 }

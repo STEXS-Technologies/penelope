@@ -42,8 +42,20 @@ is outside that coverage run. The layer gate and its negative tests, action-pin
 check, chaos-runner registration checks, 28 Python tests and secret scan passed.
 The default facade's normal dependency tree excludes both optional adapters.
 
-The longer three-property and three-iteration chaos/fuzz campaigns were still
-running when this record was created; this record does not claim they passed.
+The three timed properties subsequently passed, each for at least 300 seconds
+with 10,000 cases per batch and rotating seeds. The retained summary records
+1,387 retry-policy batches, 945 replay-convergence batches and 75 seeded
+checkpoint/persistence-chaos batches. These are requested property-case counts,
+not counts of actual process kills.
+
+The three-iteration chaos campaign failed in iteration one when the SQLite task
+authority fuzzer could not open a fresh database (`Unavailable`). The exact
+input passed 100 fixed-input repetitions. A longer replay on `/tmp` failed on a
+read, while strace also reported **Disk quota exceeded** writing its own log.
+This establishes a host quota problem during reproduction, but does not prove
+the original failure has no adapter cause. The original log, input and failed
+reproduction are retained. A 10,000-repetition replay using an explicit temporary
+directory on the local filesystem is pending. The chaos campaign has not passed.
 Existing [saga performance concerns](performance-parallel-followup-2026-10-30.md)
 and [worst-case memory/stack qualification](performance-portable-memory-2026-10-30.md)
 remain open. No coverage, correctness or package check closes those requirements.
