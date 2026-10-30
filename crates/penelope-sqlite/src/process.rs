@@ -501,8 +501,8 @@ fn verify_committed_batch(
     for action in &commit.actions {
         let (bytes, checksum) = connection
             .query_row(
-                "SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2",
-                params![key, action.action_id.as_str()],
+                "SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2 AND effect_key=?3",
+                params![key, action.action_id.as_str(), action.effect_key().canonical_bytes()],
                 |row| {
                     Ok((
                         copy_column(row, 0, limits.max_record_bytes)?,

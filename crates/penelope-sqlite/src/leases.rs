@@ -82,13 +82,18 @@ impl OutboxStore for SqliteProcessStore {
             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
             let key = request.scope.canonical_bytes();
             let pending = {
-                let mut statement = transaction.prepare("SELECT action,checksum,attempt FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                let mut statement = transaction.prepare("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
                 let mut rows = statement.query(params![key,integer(now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
                     let bytes = copy_column(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,1,32).map_err(|error| db_error(&error))?;
                     let action: ProcessAction = decode(&bytes,&checksum)?;
-                    if action.scope() != request.scope || action.validate().is_err() { return Err(PortError::Invariant); }
+                    let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
+                    let stored_key = row.get_ref(4).map_err(|error| db_error(&error))?;
+                    if action.scope() != request.scope || action.validate().is_err()
+                        || stored_id.as_str().map_err(|_type| PortError::Invariant)? != action.action_id.as_str()
+                        || stored_key.as_blob().map_err(|_type| PortError::Invariant)? != action.effect_key().canonical_bytes()
+                    { return Err(PortError::Invariant); }
                     let attempt: u32 = row.get(2).map_err(|error| db_error(&error))?;
                     if attempt >= MAX_OUTBOX_DELIVERY_ATTEMPTS { return Err(PortError::QuotaExceeded); }
                     pending.push((action,attempt));
@@ -100,7 +105,8 @@ impl OutboxStore for SqliteProcessStore {
                 let lease = OutboxLease { record: OutboxRecord { action,delivery_attempt: attempt,acknowledgement: OutboxAcknowledgement::Pending }, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
                 lease.validate_for_claim_at(&request,now)?;
                 let encoded = encode(&lease,limits.max_record_bytes)?;
-                transaction.execute("UPDATE process_actions SET attempt=?1,lease=?2,expires_at=?3 WHERE scope=?4 AND action_id=?5", params![attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,encoded,integer(expires.0)?,key,lease.record.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                let changed = transaction.execute("UPDATE process_actions SET attempt=?1,lease=?2,expires_at=?3 WHERE scope=?4 AND action_id=?5", params![attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,encoded,integer(expires.0)?,key,lease.record.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                if changed != 1 { return Err(PortError::Invariant); }
                 leases.push(lease);
             }
             transaction.commit().map_err(|error| db_error(&error))?; Ok(leases)
@@ -223,12 +229,18 @@ impl TimerClaimStore for SqliteProcessStore {
             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
             let key = request.scope.canonical_bytes();
             let pending = {
-                let mut statement = transaction.prepare("SELECT timer,checksum,attempt FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                let mut statement = transaction.prepare("SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
                 let mut rows = statement.query(params![key,integer(request.now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
                     let bytes = copy_column(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,1,32).map_err(|error| db_error(&error))?;
                     let timer: TimerSchedule = decode(&bytes,&checksum)?;
+                    let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
+                    let due: i64 = row.get(4).map_err(|error| db_error(&error))?;
+                    if timer.action.scope() != request.scope || timer.validate().is_err()
+                        || stored_id.as_str().map_err(|_type| PortError::Invariant)? != timer.action.action_id.as_str()
+                        || due != integer(timer.due_at.0)?
+                    { return Err(PortError::Invariant); }
                     let attempt: u32 = row.get(2).map_err(|error| db_error(&error))?;
                     if attempt >= MAX_OUTBOX_DELIVERY_ATTEMPTS { return Err(PortError::QuotaExceeded); }
                     pending.push((timer,attempt));
@@ -239,7 +251,8 @@ impl TimerClaimStore for SqliteProcessStore {
             for (timer,attempt) in pending {
                 let lease = TimerLease { timer, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
                 lease.validate_for_claim(&request)?;
-                transaction.execute("UPDATE process_timers SET lease=?1,expires_at=?2,attempt=?3 WHERE scope=?4 AND action_id=?5",params![encode(&lease,limits.max_record_bytes)?,integer(expires.0)?,attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,key,lease.timer.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                let changed = transaction.execute("UPDATE process_timers SET lease=?1,expires_at=?2,attempt=?3 WHERE scope=?4 AND action_id=?5",params![encode(&lease,limits.max_record_bytes)?,integer(expires.0)?,attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,key,lease.timer.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                if changed != 1 { return Err(PortError::Invariant); }
                 leases.push(lease);
             }
             transaction.commit().map_err(|error| db_error(&error))?; Ok(leases)

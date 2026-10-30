@@ -253,3 +253,107 @@ fn clock_overflow_cannot_create_an_unbounded_lease() {
         1
     );
 }
+
+#[test]
+fn damaged_index_bindings_never_return_an_unpersisted_lease() {
+    for timer in [false, true] {
+        for field in ["action_id", "identity"] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("index.db");
+            let adapter = store(&path, clock());
+            let mut commit = commit(timer);
+            let mut other = commit.actions[0].clone();
+            other.action_id = id("act_aaa");
+            other.step_id = id("stp_other");
+            commit.actions.push(other);
+            block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+            if timer {
+                for action in &commit.actions {
+                    block_on(adapter.schedule(&TimerSchedule {
+                        action: action.clone(),
+                        due_at: LogicalTime(100),
+                    }))
+                    .unwrap();
+                }
+            }
+            let connection = Connection::open(&path).unwrap();
+            let table = if timer {
+                "process_timers"
+            } else {
+                "process_actions"
+            };
+            let damage = if field == "action_id" {
+                format!("UPDATE {table} SET action_id='act_zzz' WHERE action_id='act_work'")
+            } else if timer {
+                format!("UPDATE {table} SET due_at=99 WHERE action_id='act_work'")
+            } else {
+                format!("UPDATE {table} SET effect_key=zeroblob(32) WHERE action_id='act_work'")
+            };
+            connection.execute(&damage, []).unwrap();
+            let result = if timer {
+                block_on(adapter.claim_due(&timer_claim(100))).map(|_| ())
+            } else {
+                block_on(adapter.claim(&claim())).map(|_| ())
+            };
+            assert_eq!(result, Err(PortError::Invariant), "{table}/{field}");
+            let state: (u32, u32, i64) = connection.query_row(
+                &format!("SELECT sum(attempt),sum(lease IS NULL),(SELECT next_token FROM lease_counter) FROM {table}"),
+                [], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            ).unwrap();
+            assert_eq!(state, (0, 2, 1), "{table}/{field}");
+        }
+    }
+}
+
+#[test]
+fn ignored_lease_update_rolls_back_tokens_and_returns_no_authority() {
+    for timer in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("ignored.db");
+        let adapter = store(&path, clock());
+        let commit = commit(timer);
+        block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+        if timer {
+            block_on(adapter.schedule(&TimerSchedule {
+                action: commit.actions[0].clone(),
+                due_at: LogicalTime(100),
+            }))
+            .unwrap();
+        }
+        let table = if timer {
+            "process_timers"
+        } else {
+            "process_actions"
+        };
+        let connection = Connection::open(&path).unwrap();
+        connection.execute_batch(&format!(
+            "CREATE TRIGGER ignore_claim BEFORE UPDATE OF lease ON {table} BEGIN SELECT RAISE(IGNORE); END;"
+        )).unwrap();
+        let result = if timer {
+            block_on(adapter.claim_due(&timer_claim(100))).map(|_| ())
+        } else {
+            block_on(adapter.claim(&claim())).map(|_| ())
+        };
+        assert_eq!(result, Err(PortError::Invariant));
+        let state: (u32, bool, i64) = connection.query_row(
+            &format!("SELECT attempt,lease IS NULL,(SELECT next_token FROM lease_counter) FROM {table}"),
+            [], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+        ).unwrap();
+        assert_eq!(state, (0, true, 1));
+        connection
+            .execute_batch("DROP TRIGGER ignore_claim;")
+            .unwrap();
+        let recovered_token = if timer {
+            block_on(adapter.claim_due(&timer_claim(100)))
+                .unwrap()
+                .remove(0)
+                .token
+        } else {
+            block_on(adapter.claim(&claim())).unwrap().remove(0).token
+        };
+        assert_eq!(
+            recovered_token,
+            OutboxLeaseToken::new(std::num::NonZeroU64::new(1).unwrap())
+        );
+    }
+}
