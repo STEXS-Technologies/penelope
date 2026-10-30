@@ -81,7 +81,9 @@ python3 scripts/run-statechronicle-conformance.py /path/to/statechronicle
 
 The runner requires the clean tracked sources of upstream revision
 `ae3d94bc22c7835eaa3fdcd766e3c117929c12bb`, Rust 1.99.0, and the checked-in
-`scripts/conformance/Cargo.lock`. It creates a temporary, nonpublishable workspace;
+`scripts/conformance/Cargo.lock`. The real-worker conformance profile requires
+Linux x86_64 and a C compiler supporting the static fixture build. It creates a
+temporary, nonpublishable workspace;
 StateChronicle is not added to Penelope's normal dependency graph. CI checks out
 the same upstream revision and runs this conformance separately. Updating the
 pinned upstream revision or using `--refresh-lock` requires reviewing the changed
@@ -113,9 +115,20 @@ used for saga replay. The shared contract then reconstructs lost acknowledgement
 runs the protected Linux worker through checkpoint/completion, persists the result,
 and replays the terminal saga. Effectful cases also interrupt a real worker,
 remain blocked on Unknown across reconstruction, and require independent result
-evidence. The runner checks that all three intended signed-source tests are
+evidence. The runner checks that all five intended signed-source tests are
 discovered before executing them; the shared fixture tests run separately in the
 normal workspace suite.
+
+The signed-source SIGKILL campaign adds five source boundaries: before and after
+canonical transaction commit, after verification, after canonical payload storage,
+and after source binding. Combined with the existing ten saga/task boundaries and
+four effect-reconciliation boundaries, it executes 60 pure and 76 effectful
+kill/recovery cases across the two engines and two process/task store layouts.
+Each child must reach its named boundary, terminate with SIGKILL, and reconstruct
+in a fresh process within a deadline. Recovery checks that a previously committed
+canonical row survives byte-for-byte; it does not overwrite or recreate missing
+committed evidence. An interrupted uncommitted source transaction is retried.
+The canonical database is separate in both process/task store layouts.
 
 The signed event authorizes the canonical trigger. It does not prove that the
 worker performed the source transfer. Restart authorization and final external
@@ -123,7 +136,7 @@ effect evidence in the effectful saga contract remain explicit trusted fixtures.
 This conformance uses a test signing authority and local source transaction; it
 is not a production StateChronicle client or execution pipeline. It does not
 prove StateChronicle state-transition authorization, full chain/state-root
-validation, checkpoint proofs, or a SIGKILL campaign with the signed source.
+validation or checkpoint proofs.
 Applications must configure those trust and durability policies independently.
 
 ## Optional checkpoint state evidence
