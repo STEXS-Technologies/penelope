@@ -114,3 +114,26 @@ fn boundaries_and_mixed_invalid_fields_preserve_error_precedence() {
         }
     }
 }
+
+#[test]
+fn strictly_descending_ids_do_not_bypass_forward_or_compensation_retry_limits() {
+    for count in [17_u16, 32, 128] {
+        for long in [false, true] {
+            for compensation in [false, true] {
+                let mut fields: Vec<_> = (0..count).rev().map(|key| (key, 1, None)).collect();
+                let first = fields.first_mut().unwrap();
+                if compensation {
+                    first.2 = Some(65);
+                } else {
+                    first.1 = 65;
+                }
+                let definition = definition(&fields, long);
+                assert_eq!(
+                    definition.validate(),
+                    Err(EngineError::RetryAttemptLimitExceeded)
+                );
+                assert_eq!(definition.validate(), reference(&definition));
+            }
+        }
+    }
+}

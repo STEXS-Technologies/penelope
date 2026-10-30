@@ -32,32 +32,38 @@ fn main() {
     for long in [false, true] {
         let prefix = if long { "x".repeat(96) } else { "x".into() };
         for length in [1, 16, 17, 128] {
-            let mut definition = LinearSagaDefinition {
-                definition_id: "def_alloc".parse().unwrap(),
-                definition_version: "dfv_one".parse().unwrap(),
-                definition_digest: ContentDigest([1; 32]),
-                steps: (0..length)
-                    .rev()
-                    .map(|key| {
-                        StepPlan::canonical_command(
-                            format!("stp_{prefix}_{key:03}").parse().unwrap(),
-                            ContentDigest([2; 32]),
-                            RetryPolicy::no_retry(),
-                        )
-                    })
-                    .collect(),
-            };
-            assert_eq!(count(|| black_box(&definition).validate().unwrap()), 0);
-            if length > 1 {
-                let duplicate = definition.steps.first().unwrap().step_id.clone();
-                definition.steps.last_mut().unwrap().step_id = duplicate;
-                assert_eq!(
-                    count(|| assert_eq!(
-                        black_box(&definition).validate(),
-                        Err(EngineError::DuplicateStepId)
-                    )),
-                    0
-                );
+            for order in 0..3 {
+                let mut definition = LinearSagaDefinition {
+                    definition_id: "def_alloc".parse().unwrap(),
+                    definition_version: "dfv_one".parse().unwrap(),
+                    definition_digest: ContentDigest([1; 32]),
+                    steps: (0..length)
+                        .map(|key| {
+                            StepPlan::canonical_command(
+                                format!("stp_{prefix}_{key:03}").parse().unwrap(),
+                                ContentDigest([2; 32]),
+                                RetryPolicy::no_retry(),
+                            )
+                        })
+                        .collect(),
+                };
+                match order {
+                    1 => definition.steps.reverse(),
+                    2 => definition.steps.rotate_left(1),
+                    _ => {}
+                }
+                assert_eq!(count(|| black_box(&definition).validate().unwrap()), 0);
+                if length > 1 {
+                    let duplicate = definition.steps.first().unwrap().step_id.clone();
+                    definition.steps.last_mut().unwrap().step_id = duplicate;
+                    assert_eq!(
+                        count(|| assert_eq!(
+                            black_box(&definition).validate(),
+                            Err(EngineError::DuplicateStepId)
+                        )),
+                        0
+                    );
+                }
             }
         }
     }
