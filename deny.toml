@@ -32,3 +32,11 @@ wildcards = "allow"
 [sources]
 unknown-registry = "deny"
 unknown-git = "deny"
+
+# Reviewed foldhash 0.2.0 LICENSE: retain its notice and do not misrepresent
+# origin or altered versions. This exact dependency enters through SQLite's
+# hash table; the exception does not allow Zlib for unrelated dependencies.
+[[licenses.exceptions]]
+name = "foldhash"
+version = "=0.2.0"
+allow = ["Zlib"]

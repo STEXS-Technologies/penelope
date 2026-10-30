@@ -40,6 +40,7 @@ jobs:
       - run: cargo run -p penelope --example trade_manual_review --locked
       - run: cargo run -p penelope --example trade_competing_lock --locked
       - run: cargo run -p penelope-executor --example recoverable_task --locked
+      - run: ./scripts/run-supervised-saga-example.sh
 
   msrv:
     name: Minimum supported Rust
