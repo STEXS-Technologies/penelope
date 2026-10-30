@@ -1,10 +1,11 @@
 # 0.3.0 qualification audit
 
-The source/metadata candidate is `16e3e1e3e3c7038aea4f3708cb9cc519fedaf664` on
+The source/metadata candidate is `495451fc427231ee916d32e02ab8ee617d130941` on
 `feature/reliable-execution`. Subsequent documentation/evidence commits do not
 change the qualified Rust sources, dependency versions or build profiles.
 The candidate passed local checks, remote CI and the versioned verification-only
-release workflow. The performance exceptions below are part of this disposition.
+release workflow. The historical graph slowdown is removed by the verified optimization below.
+Other disclosed timing tradeoffs and deployment limits remain part of the disposition.
 No tag, registry publication or GitHub release is authorized by this audit.
 
 ## Evidence and disposition
@@ -16,12 +17,12 @@ No tag, registry publication or GitHub release is authorized by this audit.
 | Durable SQLite task authority | Actual journal tests cover atomic blob/history commit, CAS losers, missing records/heads, rebuild, quotas, retirement, corruption, lock bounds and scoped start/fence admission. Seven actual migration SIGKILL cuts retain exact v1 bytes, blobs and fence tombstones. | Pass for single-host local-filesystem WAL/FULL profile; no power-loss certification. |
 | Durable saga services | `process` tests cover accepted inputs, outcomes/actions, canonical-source dedup, replay payloads, scoped claims, expiry/renew/ACK and worker isolation. `process_fault_tests` kills children at six transaction boundaries. Timer/service tests verify durable acceptance before ACK and later decision consumption. | Pass; no cross-database transaction assumption. |
 | Protected worker | Real static C workers exercise sealed image identity, exact committed start admission, seccomp escape probes, CPU/address-space limits, checkpoint ACK, malformed messages, registry corruption, stop failure and reconstruction. `two_supervisor_processes_admit_one_real_worker_and_replay_one_completion` checks independent supervisors. Bootstrap tests cover synchronous and asynchronous load failure. | Pass for documented Linux x86-64 single-process/thread profile. Failed or unproven fencing blocks successors. |
-| Typed task integration | Full linear/graph pure and effectful tests use shared/separate databases and actual child kills. Scope/code/schema/input substitutions fail. Versioned output classification and independent evidence gate saga success. `completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process` checks a real completed worker against a cancellation-winning CAS. | Pass; task completion alone is not effect-success proof. |
+| Typed task integration | Full linear/graph pure and effectful tests use shared/separate databases and actual child kills. Scope/code/schema/input substitutions fail. Versioned output classification and independent evidence gate saga success. Optimized graph validation is checked against the frozen original validator with 10,000 cases per property on stable/MSRV and explicit bound/cycle/error cases. `completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process` checks a real completed worker against a cancellation-winning CAS. | Pass; task completion alone is not effect-success proof. |
 | Optional trusted evidence | Current local upstream suite and remote CI pass seven tests, including 136 signed-source SIGKILL cases and real signed checkpoint/state proof validation. Exact upstream revision is pinned by the runner. Its head/publication authority and application effect source are fixtures. | Pass for optional adapter contract; production authority/effect services remain application responsibilities. |
-| Adversarial campaigns | Recorded three-iteration campaign exited zero with 48 completed 100,000-input target runs. The final versioned CI bounded-fuzz job passes. Timed property campaigns and real adapter kills have separately retained evidence. | Pass with exact revision/scope disclosure; campaign is not a single-SHA deployment-chaos certification. |
-| Performance and memory | [Final review](performance-final-2026-10-30.md) retains both 20-pair six-benchmark campaigns, self-control, counters, RSS and worker samples. SQLite append quantiles/history-length replay and verified file-page cold/warm runs are separately linked. Hosted allocation/sample-stack evidence and versioned RISC-V static analysis cover their declared profiles. | Explicit graph timing exception: +2.95–3.10% marginal median, 28.53–29.90 ns per operation; smaller positive medians are also disclosed. No universal timing or RAM guarantee. |
+| Adversarial campaigns | Recorded three-iteration campaign exited zero with 48 completed 100,000-input target runs. The final versioned CI bounded-fuzz job passes; the optimized graph/linear target also passes three additional 100,000-input runs. Timed property campaigns and real adapter kills have separately retained evidence. | Pass with exact revision/scope disclosure; campaign is not a single-SHA deployment-chaos certification. |
+| Performance and memory | [Original review](performance-final-2026-10-30.md) retains both 20-pair six-benchmark campaigns, self-control, counters, RSS and worker samples. The [optimization follow-up](performance-graph-optimization-2026-10-30.md) retains all three optimization stages and the fixed 40-pair confirmation. SQLite append quantiles/history-length replay and verified file-page cold/warm runs are separately linked. Hosted allocation/sample-stack evidence and versioned RISC-V static analysis cover their declared profiles. | Graph slowdown exception removed: optimized median time is 15.24% lower than the original baseline, with 17.73% fewer instructions. Other positive control medians remain disclosed. No universal timing or RAM guarantee. |
 | Operations and security | [Runbook](reliable-execution-operations.md) covers admission/authentication, clocks, restart, unknowns, leases/timers, upgrades, retention, backup, fence repair, telemetry and tenant isolation. Malicious-worker tests, private ownership requirements, typed bounded errors, quota checks and secret scans cover the supported boundary. | Pass within declared trust model. Authenticated principals and independent remote-effect evidence come from the application. |
-| Build and supply chain | Versioned local fmt, stable/MSRV all-target tests, docs, strict Clippy/rustdoc, portable checks, layer/negative tests, Python/runner/action-pin checks, audit/deny, secrets, whitespace and nine package archive verifications pass. Coverage is 94.3494% against unchanged 94.0759%. All seven versioned remote CI jobs pass. | Pass: local archives and all seven CI jobs; verification-only release job passed with both publication jobs skipped. |
+| Build and supply chain | Versioned local fmt, stable/MSRV all-target tests, docs, strict Clippy/rustdoc, portable checks, layer/negative tests, Python/runner/action-pin checks, audit/deny, secrets, whitespace and nine package archive verifications pass. Coverage is 94.4655% against unchanged 94.0759%. All seven versioned remote CI jobs pass. | Pass: local archives and all seven CI jobs; verification-only release job passed with both publication jobs skipped. |
 
 [Development gate evidence](verification-data/2026-10-30-final-development-gates/metadata.json)
 retains the completed extended campaign and pre-version checks.
@@ -33,9 +34,12 @@ section inventory. Earlier reports remain historical evidence at their pinned
 revisions; their open dispositions are superseded only where this audit cites
 new completed checks or an explicit exception.
 
-Remote results: [seven-job CI](https://github.com/STEXS-Technologies/penelope/actions/runs/41113165133)
-and [verification-only release workflow](https://github.com/STEXS-Technologies/penelope/actions/runs/41113175257),
-both at `16e3e1e`. The dated 0.3.0 changelog section was also extracted locally
+Optimization results: [seven-job CI](https://github.com/STEXS-Technologies/penelope/actions/runs/41120267832)
+at `495451f` and [verification-only release workflow](https://github.com/STEXS-Technologies/penelope/actions/runs/41119542159)
+at `edf1194`. The intervening change is test-only atomic status-marker publication;
+measured library sources are identical. [Optimization evidence](verification-data/2026-10-30-graph-optimization/metadata.json)
+retains full local checks, 200 marker-race stress repetitions, new fuzz runs,
+coverage and all nine reverified package hashes. The dated 0.3.0 changelog section was also extracted locally
 with `scripts/release-notes.py`; manual nonpublishing workflows intentionally
 skip tag-only checks. No release tag or published artifact was created.
 

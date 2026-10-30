@@ -288,3 +288,8 @@ The [final development performance review](performance-final-2026-10-30.md)
 supersedes earlier open timing dispositions, retaining measured regressions and
 the explicit reference-profile qualification decision. Historical reports retain
 their original source revisions and do not imply universal performance bounds.
+
+The [graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+removes the original graph slowdown exception, with oracle parity tests and
+post-optimization validation. It retains host-load limitations and positive
+control medians; the improvement does not imply all workloads have zero overhead.
