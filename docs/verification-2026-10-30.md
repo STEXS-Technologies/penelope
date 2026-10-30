@@ -166,3 +166,14 @@ retain this checkpoint. Package versions are still 0.2.0 development versions;
 no crates were published and no release tag was created. The restarted chaos
 campaign remains in progress, and these checks do not replace its result or the
 remaining performance and requirement audit.
+
+The new SQLite file-cache harness passed an end-to-end smoke run: main-file
+residency before cold/warm child launch was 0/39 versus 39/39 pages for 16 records,
+0/72 versus 72/72 for 128, and 0/183 versus 183/183 for 512. The replay verifies
+full projections and referenced bytes and rejects changed database hashes.
+The default durable benchmark still executes, benchmark Clippy/MSRV checks pass,
+and all 36 Python tests pass. [Smoke logs](verification-data/2026-10-30-cache-harness/)
+are explicitly not qualification timing: the fuzz campaign was active.
+A serialized run using the [cache method](performance-sqlite-cache-method.md)
+remains required. The harness rejects partial residency and nonempty sidecars;
+it never labels device or whole-system caches cold.

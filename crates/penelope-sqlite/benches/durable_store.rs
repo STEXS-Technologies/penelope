@@ -259,7 +259,7 @@ fn process_case(directory: &Path) -> Result<Value, Error> {
         json!({"commits": distribution(commits)?, "exact_retry_after_ack": distribution(retries)?, "claim_to_ack_without_external_execution": distribution(claim_to_ack)?}),
     )
 }
-fn main() -> Result<(), Error> {
+fn default_benchmark() -> Result<(), Error> {
     let directory = if let Some(parent) = std::env::var_os("PENELOPE_BENCH_DIR") {
         tempfile::tempdir_in(parent)?
     } else {
@@ -274,4 +274,75 @@ fn main() -> Result<(), Error> {
     let report = json!({"schema": 1, "sqlite_version": rusqlite::version(), "journal_mode": "WAL", "synchronous": "FULL", "cache": "OS cache is uncontrolled; warm and reopened-connection runs only", "checkpoint_payload": "one deduplicated immutable 64-byte blob", "tasks": tasks, "process": process, "total_wall_ns": started.elapsed().as_nanos()});
     println!("{}", serde_json::to_string_pretty(&report)?);
     Ok(())
+}
+
+fn expected_history(length: u32) -> Result<TaskProjection, Error> {
+    if ![16, 128, 512].contains(&length) {
+        return Err("unsupported cache dataset".into());
+    }
+    let reference = BlobRef {
+        digest: Digest::of(&[7; 64]),
+        bytes: 64,
+        schema: 1,
+    };
+    let mut projection = TaskProjection::new(task_scope(), definition())?;
+    for sequence in 0..length {
+        let tick = TaskTick::new(u64::from(sequence));
+        let record = match sequence {
+            0 => projection.propose(
+                TaskExecutionEvent::IntentCommitted {
+                    definition: definition(),
+                    input: reference,
+                },
+                TaskGeneration::ZERO,
+                tick,
+            )?,
+            1 => projection.next(tick)?.ok_or("missing start")?,
+            _ => projection.propose(
+                TaskExecutionEvent::CheckpointCommitted {
+                    checkpoint: reference,
+                },
+                projection.generation(),
+                tick,
+            )?,
+        };
+        projection.apply(&record)?;
+    }
+    Ok(projection)
+}
+
+fn main() -> Result<(), Error> {
+    let arguments: Vec<_> = std::env::args_os().collect();
+    match arguments.as_slice() {
+        [_] => default_benchmark(),
+        [_, flag] if flag == "--bench" => default_benchmark(),
+        [_, mode, directory] if mode == "--cache-prepare" => {
+            let mut datasets = Vec::new();
+            for length in [16, 128, 512] {
+                datasets.push(task_case(Path::new(directory), length)?);
+            }
+            println!("{}", json!({"schema": 1, "datasets": datasets}));
+            Ok(())
+        }
+        [_, mode, path, length] if mode == "--cache-replay" => {
+            let length: u32 = length.to_str().ok_or("history length encoding")?.parse()?;
+            let expected = expected_history(length)?;
+            let ((), elapsed) = timed(|| {
+                let mut journal = SqliteTaskJournal::open(
+                    Path::new(path),
+                    definition(),
+                    SqliteLimits::default(),
+                )?;
+                replay_history(&mut journal, expected)
+            })?;
+            println!(
+                "{}",
+                json!({"schema": 1, "records": length,
+                "open_and_replay_ns": elapsed, "sqlite_version": rusqlite::version(),
+                "journal_mode": "WAL", "synchronous": "FULL"})
+            );
+            Ok(())
+        }
+        _ => Err("expected --cache-prepare DIRECTORY or --cache-replay DATABASE LENGTH".into()),
+    }
 }
