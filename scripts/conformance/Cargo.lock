@@ -459,12 +459,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "penelope-executor"
+version = "0.2.0"
+dependencies = [
+ "penelope-core",
+ "penelope-domain",
+ "penelope-intent",
+ "penelope-ports",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "penelope-intent"
+version = "0.2.0"
+dependencies = [
+ "penelope-core",
+ "penelope-domain",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "penelope-ports"
 version = "0.2.0"
 dependencies = [
  "async-trait",
  "penelope-core",
  "penelope-domain",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "penelope-process-runtime"
+version = "0.2.0"
+dependencies = [
+ "libc",
+ "penelope-core",
+ "rustix",
+ "seccompiler",
  "serde",
  "serde_json",
  "thiserror",
@@ -497,13 +532,19 @@ dependencies = [
 name = "penelope-statechronicle-conformance"
 version = "0.0.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "ed25519-dalek",
+ "libc",
+ "penelope-core",
  "penelope-domain",
+ "penelope-executor",
  "penelope-ports",
+ "penelope-process-runtime",
  "penelope-sqlite",
  "penelope-statechronicle",
  "rusqlite",
+ "serde",
  "serde_json",
  "statechronicle-commit",
  "statechronicle-core",
@@ -618,6 +659,15 @@ name = "rustversion"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f"
+
+[[package]]
+name = "seccompiler"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "345a3e4dddf721a478089d4697b83c6c0a8f5bf16086f6c13397e4534eb6e2e5"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "semver"

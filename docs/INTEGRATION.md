@@ -103,10 +103,27 @@ normal SQLite process commit. Reopening and retrying reconstructs the exact
 receipt, while a second input carrying the same canonical source is rejected.
 No transaction spans the canonical and process databases.
 
-This is a conformance source with a test signing authority and local transaction,
-not a production StateChronicle client or execution pipeline. It does not prove
-StateChronicle state-transition authorization, full chain/state-root validation,
-checkpoint proofs, or the complete task/saga integration matrix with StateChronicle.
+Two additional signed-source tests run the existing complete real-worker saga
+contract: linear and graph engines, pure and `ReconcileRequired` tasks, and shared
+versus separate process/task databases (eight combinations). Each canonical
+trigger is committed in a separate source database, reopened and cryptographically
+verified before being attached to the engine's initial atomic commit. Canonical
+event bytes bind the inbox input; engine event bytes remain the outcome payloads
+used for saga replay. The shared contract then reconstructs lost acknowledgements,
+runs the protected Linux worker through checkpoint/completion, persists the result,
+and replays the terminal saga. Effectful cases also interrupt a real worker,
+remain blocked on Unknown across reconstruction, and require independent result
+evidence. The runner checks that all three intended signed-source tests are
+discovered before executing them; the shared fixture tests run separately in the
+normal workspace suite.
+
+The signed event authorizes the canonical trigger. It does not prove that the
+worker performed the source transfer. Restart authorization and final external
+effect evidence in the effectful saga contract remain explicit trusted fixtures.
+This conformance uses a test signing authority and local source transaction; it
+is not a production StateChronicle client or execution pipeline. It does not
+prove StateChronicle state-transition authorization, full chain/state-root
+validation, checkpoint proofs, or a SIGKILL campaign with the signed source.
 Applications must configure those trust and durability policies independently.
 
 ## Optional checkpoint state evidence
