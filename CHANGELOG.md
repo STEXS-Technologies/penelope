@@ -59,6 +59,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Larger linear definitions check duplicate IDs through bounded borrowed-ID
+  sorting and strict reverse-order uniqueness, preserving zero allocations and
+  exact admission errors. The measured 128-step fixtures use 82.76–98.39% less
+  validation time; small-definition and existing-workload controls remain mixed.
+
 - Bounded graph validation tracks transition keys with per-step outcome bits
   instead of a heap tree. Fixed confirmation measures about 11.9% fewer graph
   instructions, with timing variability and unchanged controls retained.
