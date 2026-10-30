@@ -75,7 +75,9 @@ fn collect_newtypes(items: &[Item], result: &mut BTreeSet<String>) {
     for item in items {
         match item {
             Item::Struct(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
-                if item.fields.len() == 1 {
+                // Generic adapter/service wrappers are exercised by their own
+                // lifecycle fuzz targets, rather than wire deserialization.
+                if item.fields.len() == 1 && item.generics.params.is_empty() {
                     result.insert(item.ident.to_string());
                 }
             }
@@ -185,7 +187,7 @@ fn fuzz_inventory_counts_executed_calls_and_ignores_imports() {
     );
     let mut required = BTreeSet::new();
     collect_newtypes(
-        &syn::parse_file("pub struct Fourth(u32); identifier!(Fifth, \"id_\", Error, \"Id\"); pub struct Sixth { value: u64 }")
+        &syn::parse_file("pub struct Fourth(u32); identifier!(Fifth, \"id_\", Error, \"Id\"); pub struct Sixth { value: u64 } pub struct Service<J> { journal: J }")
             .unwrap()
             .items,
         &mut required,

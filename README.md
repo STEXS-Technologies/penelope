@@ -25,8 +25,10 @@ checkpoints and explicit recovery permissions.
 - Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
   operator workflows.
 
-The engine is pure and deterministic. Your application supplies the durable
-adapters and workers through the ports. Penelope never guesses whether an
+The engine is pure and deterministic. Your application selects durable
+adapters and workers through the ports. The optional
+[`penelope-sqlite`](crates/penelope-sqlite/README.md) crate provides a local
+task journal and saga inbox/outbox/timer persistence. Penelope never guesses whether an
 ambiguous payment, trade, or canonical mutation succeeded.
 
 ## The programming model
@@ -68,8 +70,8 @@ distinct newtypes, preventing accidental substitution across these boundaries.
 Penelope never infers completion from a crash or timeout. Interrupted operations
 with external effects require independent reconciliation; unknown evidence does
 not authorize a restart. Application logic defines valid checkpoints, effect
-boundaries and result correctness. There is no instruction-level continuation,
-scheduler, OS integration or storage implementation in the library.
+boundaries and result correctness. The task core does not provide instruction-level continuation or an OS scheduler. Storage
+integrations live in optional adapter packages.
 
 The `penelope-core` task contracts, projection and synchronous ports compile
 without `std` or `alloc`. Select that crate directly for the portable decision

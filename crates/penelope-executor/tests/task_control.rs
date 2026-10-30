@@ -1,0 +1,247 @@
+//! Portable/hosted parity at durable and runtime boundaries.
+#![allow(clippy::unwrap_used, clippy::indexing_slicing)]
+#[path = "support/tasks.rs"]
+mod support;
+
+use penelope_core::task::{control::*, *};
+use penelope_executor::task::TaskSupervisor;
+use support::*;
+
+#[test]
+fn portable_and_hosted_histories_match_through_checkpoint_and_completion() {
+    let input = [1; 64];
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let scope = scope(definition, &input);
+    let mut portable = TaskControl::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    let mut hosted = TaskSupervisor::<_, _, 64>::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    let mut input_buffer = [0; 64];
+    let mut output = [0; 64];
+    let mut checkpoint = [0; 64];
+    let mut workspace = TaskWorkspace {
+        input: &mut input_buffer,
+        output: &mut output,
+        checkpoint: &mut checkpoint,
+    };
+    portable.submit(&input, 1, TaskTick::ZERO).unwrap();
+    hosted.submit(&input, 1, TaskTick::ZERO).unwrap();
+    for tick in 1..20 {
+        let tick = TaskTick::new(tick);
+        let (left, right) = if portable.projection().status() == TaskStatus::Running {
+            (portable.poll(tick, &mut workspace), hosted.poll(tick))
+        } else {
+            (portable.advance(tick, &mut workspace), hosted.advance(tick))
+        };
+        assert_eq!(left, right);
+        assert_eq!(portable.projection(), hosted.projection());
+        if portable.projection().status() == TaskStatus::Completed {
+            break;
+        }
+    }
+    assert_eq!(portable.projection().status(), TaskStatus::Completed);
+    let (left, left_runtime) = portable.into_parts();
+    let (right, right_runtime) = hosted.into_parts();
+    assert_eq!(left.records, right.records);
+    assert_eq!(left.blobs, right.blobs);
+    assert_eq!(left_runtime.starts, right_runtime.starts);
+    assert_eq!(left_runtime.fences, right_runtime.fences);
+}
+
+#[test]
+fn insufficient_workspace_does_not_commit_start_and_can_be_retried() {
+    let definition = definition(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
+    let scope = scope(definition, &[1]);
+    let mut control = TaskControl::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    control.submit(&[1], 1, TaskTick::ZERO).unwrap();
+    let before = *control.projection();
+    let mut input = [0; 64];
+    let mut output = [0; 64];
+    let mut checkpoint = [0; 63];
+    let mut workspace = TaskWorkspace {
+        input: &mut input,
+        output: &mut output,
+        checkpoint: &mut checkpoint,
+    };
+    assert_eq!(
+        control.advance(TaskTick::new(1), &mut workspace),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(control.projection(), &before);
+    let (journal, runtime) = control.into_parts();
+    assert_eq!(journal.records.len(), 1);
+    assert_eq!(runtime.starts, 0);
+}
+
+#[test]
+fn ambiguous_commit_poisoning_matches_hosted_profile() {
+    for cut in [
+        Cut::BeforeCommit,
+        Cut::AfterCommit,
+        Cut::WrongReceipt,
+        Cut::StorageFull,
+    ] {
+        let definition = definition(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
+        let scope = scope(definition, &[1]);
+        let journal = MemoryJournal {
+            cut: Some(cut),
+            ..MemoryJournal::default()
+        };
+        let mut portable = TaskControl::restore(
+            journal.clone(),
+            SumRuntime::default(),
+            scope,
+            definition,
+            TaskTick::ZERO,
+        )
+        .unwrap();
+        let mut hosted = TaskSupervisor::<_, _, 64>::restore(
+            journal,
+            SumRuntime::default(),
+            scope,
+            definition,
+            TaskTick::ZERO,
+        )
+        .unwrap();
+        assert_eq!(
+            portable.submit(&[1], 1, TaskTick::ZERO),
+            hosted.submit(&[1], 1, TaskTick::ZERO)
+        );
+        assert_eq!(
+            portable.submit(&[1], 1, TaskTick::new(1)),
+            Err(SupervisorError::ReconstructionRequired)
+        );
+        assert_eq!(portable.projection(), hosted.projection());
+        assert_eq!(
+            portable.into_parts().0.records,
+            hosted.into_parts().0.records
+        );
+    }
+}
+
+#[test]
+fn undersized_poll_workspace_preserves_worker_progress() {
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let scope = scope(definition, &[1]);
+    let mut control = TaskControl::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    let mut input = [0; 64];
+    let mut output = [0; 64];
+    let mut checkpoint = [0; 64];
+    control.submit(&[1], 1, TaskTick::ZERO).unwrap();
+    control
+        .advance(
+            TaskTick::new(1),
+            &mut TaskWorkspace {
+                input: &mut input,
+                output: &mut output,
+                checkpoint: &mut checkpoint,
+            },
+        )
+        .unwrap();
+    let before = *control.projection();
+    assert_eq!(
+        control.poll(
+            TaskTick::new(2),
+            &mut TaskWorkspace {
+                input: &mut input,
+                output: &mut output[..63],
+                checkpoint: &mut checkpoint
+            }
+        ),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(control.projection(), &before);
+    assert!(
+        control
+            .poll(
+                TaskTick::new(2),
+                &mut TaskWorkspace {
+                    input: &mut input,
+                    output: &mut output,
+                    checkpoint: &mut checkpoint
+                }
+            )
+            .unwrap()
+    );
+    assert!(control.projection().checkpoint().is_some());
+}
+
+#[test]
+fn reconstruction_and_restart_match_hosted_profile() {
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let scope = scope(definition, &[1; 64]);
+    let mut initial_hosted = TaskSupervisor::<_, _, 64>::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    initial_hosted.submit(&[1; 64], 1, TaskTick::ZERO).unwrap();
+    initial_hosted.advance(TaskTick::new(1)).unwrap();
+    initial_hosted.poll(TaskTick::new(2)).unwrap();
+    let (journal, runtime) = initial_hosted.into_parts();
+    let mut portable = TaskControl::restore(
+        journal.clone(),
+        runtime.clone(),
+        scope,
+        definition,
+        TaskTick::new(3),
+    )
+    .unwrap();
+    let mut hosted =
+        TaskSupervisor::<_, _, 64>::restore(journal, runtime, scope, definition, TaskTick::new(3))
+            .unwrap();
+    let mut input = [0; 64];
+    let mut output = [0; 64];
+    let mut checkpoint = [0; 64];
+    let mut workspace = TaskWorkspace {
+        input: &mut input,
+        output: &mut output,
+        checkpoint: &mut checkpoint,
+    };
+    for tick in 4..20 {
+        let tick = TaskTick::new(tick);
+        let (left, right) = if portable.projection().status() == TaskStatus::Running {
+            (portable.poll(tick, &mut workspace), hosted.poll(tick))
+        } else {
+            (portable.advance(tick, &mut workspace), hosted.advance(tick))
+        };
+        assert_eq!(left, right);
+        assert_eq!(portable.projection(), hosted.projection());
+        if portable.projection().status() == TaskStatus::Completed {
+            break;
+        }
+    }
+    assert_eq!(portable.projection().status(), TaskStatus::Completed);
+    let (left, resumed_runtime) = portable.into_parts();
+    assert_eq!(resumed_runtime.resumed, [0, 8]);
+    assert_eq!(left.records, hosted.into_parts().0.records);
+}

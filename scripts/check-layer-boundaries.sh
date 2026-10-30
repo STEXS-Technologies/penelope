@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Verifies the allowed direct internal dependency graph and rejects production
-# infrastructure clients from the ports-only Penelope workspace.
+# infrastructure clients outside explicitly allowlisted adapter packages.
 set -euo pipefail
 
 metadata="$(cargo metadata --format-version=1 --no-deps)"
@@ -30,6 +30,8 @@ require_internal_dependencies penelope-domain 'penelope-core'
 require_internal_dependencies penelope-intent 'penelope-core penelope-domain'
 require_internal_dependencies penelope-ports 'penelope-core penelope-domain'
 require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-intent penelope-ports'
+require_internal_dependencies penelope-process-runtime 'penelope-core penelope-executor penelope-sqlite'
+require_internal_dependencies penelope-sqlite 'penelope-core penelope-domain penelope-ports'
 require_internal_dependencies penelope-statechronicle 'penelope-domain penelope-ports'
 require_internal_dependencies penelope 'penelope-core penelope-domain penelope-executor penelope-intent penelope-ports penelope-statechronicle'
 
@@ -37,10 +39,12 @@ forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-.*|axum|deadpool
 if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
     .packages[]
     | select(.name | startswith("penelope-"))
+    | . as $package
     | .dependencies[]
     | select(.kind != "dev")
+    | select(.name | test($pattern))
+    | select(($package.name == "penelope-sqlite" and .name == "rusqlite") | not)
     | .name
-    | select(test($pattern))
 ' <<<"$metadata" >/dev/null; then
     printf '%s\n' 'layer violation: production infrastructure dependency found in Penelope workspace' >&2
     exit 1

@@ -7,6 +7,28 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Optional Linux static single-process worker runtime with sealed executable
+  identity, bounded IPC, seccomp restrictions, kernel CPU limits and durable
+  generation fencing; release qualification remains in progress.
+
+- Shared allocation-free task supervision through `TaskControl` and explicit
+  caller-owned `TaskWorkspace`, with the existing hosted supervisor preserved.
+- Optional SQLite task history/blob storage, persistent generation reservations
+  and two-phase fencing, terminal-history retirement and maintenance operations.
+- Optional SQLite atomic process commits, deduplicated inbox/source events,
+  durable outbox and timer claims, lease renewal and fenced acknowledgements.
+- Bounded worker isolation for async SQLite process ports, with explicit queue
+  exhaustion and ambiguous cancellation semantics.
+- Adapter tests for transaction-boundary process death, competing connections,
+  lost acknowledgements, corruption, migration and stale leases.
+
+### Changed
+
+- Infrastructure dependency checks allow `rusqlite` only in the dedicated
+  SQLite adapter; core, ports, executor and the facade remain independent.
+
 ## [0.2.0] - 2026-10-11
 
 Penelope now provides recoverable task execution alongside deterministic saga

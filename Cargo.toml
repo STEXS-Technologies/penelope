@@ -8,6 +8,8 @@ members = [
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
+    "crates/penelope-sqlite",
+    "crates/penelope-process-runtime",
     "fuzz",
 ]
 default-members = [
@@ -18,6 +20,8 @@ default-members = [
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
+    "crates/penelope-sqlite",
+    "crates/penelope-process-runtime",
 ]
 
 [workspace.package]
