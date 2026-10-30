@@ -33,9 +33,92 @@ pub fn task_scope_for_effect(
     })
 }
 
+/// Immutable join between one persisted saga action and its recoverable task.
+///
+/// Construct from an authoritatively committed dispatch request. Construction
+/// validates identity but does not prove that a process store committed it.
+/// Private fields prevent callers from substituting one coordinate afterwards.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TaskEffectBinding {
+    request: EffectDispatchRequest,
+    definition: TaskDefinition,
+    scope: TaskScope,
+}
+
+impl TaskEffectBinding {
+    /// Pins the full process scope, action, effect, step, attempt and task input.
+    /// # Errors
+    /// Rejects invalid requests and definitions.
+    pub fn new(
+        request: EffectDispatchRequest,
+        definition: TaskDefinition,
+    ) -> Result<Self, TaskError> {
+        let scope = task_scope_for_effect(&request, definition)?;
+        Ok(Self {
+            request,
+            definition,
+            scope,
+        })
+    }
+
+    /// Exact immutable dispatch, including its optional deadline.
+    #[must_use]
+    pub const fn request(&self) -> &EffectDispatchRequest {
+        &self.request
+    }
+
+    /// Task identity remains stable across restarted generations.
+    #[must_use]
+    pub const fn scope(&self) -> TaskScope {
+        self.scope
+    }
+
+    /// Pinned task code, schemas, effect contract and execution policy.
+    #[must_use]
+    pub const fn definition(&self) -> TaskDefinition {
+        self.definition
+    }
+
+    /// Checks an independently reconstructed request against every pinned field.
+    /// # Errors
+    /// Rejects scope, action, effect, deadline, definition or input substitution.
+    pub fn validate(
+        &self,
+        request: &EffectDispatchRequest,
+        definition: TaskDefinition,
+        input: &[u8],
+    ) -> Result<(), TaskError> {
+        if request != &self.request
+            || definition != self.definition
+            || task_scope_for_effect(request, definition)? != self.scope
+            || input.len()
+                > usize::try_from(definition.budget.max_input_bytes)
+                    .map_err(|_size| TaskError::ScopeMismatch)?
+            || Digest::of(input) != self.scope.input.digest()
+        {
+            return Err(TaskError::ScopeMismatch);
+        }
+        Ok(())
+    }
+
+    /// Stable result relay identity, independent of task generation and delivery
+    /// leases. Use the same identity on every replay; still validate inbox payloads.
+    #[must_use]
+    pub fn relay_identity(&self) -> Digest {
+        let mut bytes = b"penelope.task-effect-relay.v1\0".to_vec();
+        bytes.extend_from_slice(&self.request.effect_key.canonical_bytes());
+        bytes.extend_from_slice(&self.definition.fingerprint().digest().0);
+        // The action identifier is last, so its variable length is unambiguous.
+        bytes.extend_from_slice(self.request.action.action_id.as_str().as_bytes());
+        Digest::of(&bytes)
+    }
+}
+
 /// Translates authoritative task state into the existing effect port contract.
 /// Unknown/exhausted external effects remain ambiguous. The caller must verify
 /// output bytes and any application success condition before advancing a saga.
+/// In particular, `Succeeded` here describes task execution only: effectful
+/// completion requires independent effect evidence before claiming remote success.
 /// # Errors
 /// Rejects a task projection bound to a different saga effect.
 pub fn task_effect_evidence(
