@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -16,6 +17,8 @@ def main():
     parser.add_argument("statechronicle", type=Path)
     parser.add_argument("--refresh-lock", action="store_true", help="explicitly regenerate the checked-in conformance lockfile")
     args = parser.parse_args()
+    if platform.system() != "Linux" or platform.machine() != "x86_64":
+        parser.error("the real-worker signed-source conformance profile requires Linux x86_64")
     upstream = args.statechronicle.resolve()
     revision = subprocess.check_output(["git", "-C", str(upstream), "rev-parse", "HEAD"], text=True).strip()
     if revision != PINNED_REVISION:
@@ -56,6 +59,8 @@ def main():
             "signed_committed_source_binds_atomic_commit_and_deduplicates_after_reopen",
             "task_sagas::signed_source_drives_pure_linear_and_graph_sagas_in_both_store_layouts",
             "task_sagas::signed_source_drives_reconciled_linear_and_graph_sagas_in_both_store_layouts",
+            "task_sagas::signed_source_pure_sagas_recover_after_sigkill",
+            "task_sagas::signed_source_effectful_sagas_recover_after_sigkill",
         }
         discovered = {line.removesuffix(": test") for line in listing.stdout.splitlines() if line.endswith(": test")}
         if discovered != expected_tests:

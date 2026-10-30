@@ -826,7 +826,7 @@ fn modes() -> Vec<bool> {
     std::env::var("PENELOPE_SAGA_SEPARATE")
         .map_or_else(|_missing| vec![false, true], |value| vec![value == "1"])
 }
-fn cut(point: &str) {
+pub(crate) fn cut(point: &str) {
     if std::env::var("PENELOPE_SAGA_CUT").ok().as_deref() == Some(point) {
         let directory = PathBuf::from(std::env::var_os("PENELOPE_SAGA_CRASH_DIR").unwrap());
         std::fs::write(directory.join("crash-ready"), point).unwrap();
@@ -845,17 +845,33 @@ fn killed_coordinators_recover_effectful_sagas_at_reconciliation_boundaries() {
     crash_matrix(true);
 }
 fn crash_matrix(effectful: bool) {
-    use std::process::{Command, Stdio};
+    crash_matrix_with_source(
+        effectful,
+        |engine| {
+            if effectful {
+                format!(
+                    "sagas::reconciled_{engine}_saga_blocks_unknown_then_requires_independent_result_evidence"
+                )
+            } else {
+                format!(
+                    "sagas::full_{engine}_saga_replays_real_task_result_from_shared_and_separate_stores"
+                )
+            }
+        },
+        &[],
+    );
+}
+pub(crate) fn crash_matrix_with_source(
+    effectful: bool,
+    test_for_engine: impl Fn(&str) -> String,
+    source_points: &[&str],
+) {
+    use std::{
+        os::unix::process::ExitStatusExt,
+        process::{Command, Stdio},
+    };
     for engine in ["linear", "graph"] {
-        let test = if effectful {
-            format!(
-                "sagas::reconciled_{engine}_saga_blocks_unknown_then_requires_independent_result_evidence"
-            )
-        } else {
-            format!(
-                "sagas::full_{engine}_saga_replays_real_task_result_from_shared_and_separate_stores"
-            )
-        };
+        let test = test_for_engine(engine);
         let mut points = vec![
             "start-payload",
             "process-commit",
@@ -876,6 +892,7 @@ fn crash_matrix(effectful: bool) {
                 "restart-authorized",
             ]);
         }
+        points.extend_from_slice(source_points);
         for separate in ["0", "1"] {
             for point in &points {
                 let directory = tempfile::tempdir().unwrap();
@@ -899,7 +916,7 @@ fn crash_matrix(effectful: bool) {
                     std::thread::sleep(Duration::from_millis(2));
                 }
                 child.kill().unwrap();
-                assert!(!child.wait().unwrap().success());
+                assert_eq!(child.wait().unwrap().signal(), Some(libc::SIGKILL));
                 let mut recovery = Command::new(std::env::current_exe().unwrap())
                     .args(["--exact", &test, "--nocapture"])
                     .env("PENELOPE_SAGA_CRASH_DIR", directory.path())
