@@ -41,6 +41,7 @@ fuzz_targets=(
   fuzz_task_history
   fuzz_task_supervisor
   fuzz_task_checkpoint
+  fuzz_worker_protocol
 )
 
 dtos=(

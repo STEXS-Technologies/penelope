@@ -64,6 +64,16 @@ path = "../crates/penelope-ports"
 version = "0.2.0"
 path = "../crates/penelope-intent"
 
+[dependencies.penelope-process-runtime]
+version = "0.2.0"
+path = "../crates/penelope-process-runtime"
+
+[[bin]]
+name = "fuzz_worker_protocol"
+path = "fuzz_targets/fuzz_worker_protocol.rs"
+test = false
+doc = false
+
 [[bin]]
 name = "fuzz_identifiers"
 path = "fuzz_targets/fuzz_identifiers.rs"

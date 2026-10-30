@@ -101,9 +101,13 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Thirteen sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Fourteen sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
+The worker protocol target checks bounded start-packet decoding, full scope and
+generation substitutions, truncated and mutated metadata, proposal limits, and
+exact checkpoint acknowledgements. It uses structured valid packets as well as
+arbitrary bytes; it does not execute workers or qualify the Linux sandbox.
 The supervisor fuzzer combines runtime proposals with lost acknowledgements,
 wrong receipts, storage exhaustion and reconstruction, checking durable replay
 and rejection invariants after each operation. A 32-contender thread test checks
