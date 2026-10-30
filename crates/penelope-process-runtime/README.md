@@ -45,6 +45,14 @@ not acknowledge a durable fence. Reconstruct the supervisor and fence before
 allowing a successor. External effects already issued cannot be undone by
 process termination.
 
+Fencing qualification includes a live child with a deliberately mismatched saved
+start time (the PID-reuse case), malformed kernel identity fields, damaged
+manifest bindings and partial identities, symlinked evidence, and registry-lock
+timeout. The integration test commits a successor while the predecessor remains
+unconfirmed and verifies that admission stays blocked. After confirmed stop, the
+successor starts; repeating the old fence leaves it running. These tests do not
+force kernel PID reuse or certify every possible termination-timeout failure.
+
 ## Worker protocol
 
 The `worker` module provides bounded request decoding, proposal encoding and
