@@ -53,7 +53,10 @@ retention. Content digests detect corruption and do not establish authenticity.
 After an ambiguous task operation, reconstruct the supervisor. Do not infer
 rollback from a failed acknowledgement. After an ambiguous process commit,
 retry only the exact immutable batch to reconstruct its receipt or read and
-replay authoritative outcomes; changed batches conflict.
+replay authoritative outcomes; changed batches conflict. Receipt reconstruction
+checks the exact retained outcomes, actions, input consumption digest/frontier and
+canonical source binding. Missing or inconsistent evidence blocks the retry; it
+does not repair metadata or recreate delivery.
 
 A generation authority reservation validates committed start authorization,
 input, schema, checkpoint, generation and deadline. Repeating the same

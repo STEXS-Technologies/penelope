@@ -608,3 +608,6 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
         .unwrap();
     assert_eq!(version, 4);
 }
+
+#[path = "support/commit_integrity.rs"]
+mod commit_integrity;
