@@ -159,7 +159,7 @@ fn invalid_spawn_budgets_do_not_execute_a_command_or_mutate_manifest() {
         let observer = file.try_clone().unwrap();
         let mut command = Command::new("/nonexistent/penelope-worker");
         assert!(matches!(
-            spawn(&mut command, filter().unwrap(), file, cpu, memory),
+            spawn(&mut command, &observer, file, cpu, memory),
             Err(TaskPortError::Exhausted)
         ));
         assert_eq!(observer.metadata().unwrap().len(), 0);

@@ -18,6 +18,13 @@ networking, creating processes/threads, and signalling other processes. This
 profile does not support arbitrary existing programs. No container or cgroup
 setup is performed.
 
+Startup uses `execveat` only on a duplicate of the sealed executable descriptor
+with `AT_EMPTY_PATH`. That descriptor closes on successful exec. The worker's
+filter rejects `execve`, alternative `execveat` descriptors/flags and descriptor
+creation/duplication, so it cannot reopen the executable-loading boundary after
+startup. The supported kernel facilities include `execveat`.
+
+
 CPU limits must be positive whole seconds expressed at the configured trusted
 tick frequency. The kernel enforces CPU time independently of supervisor polls.
 An address-space limit bounds virtual memory, not resident memory. Configure

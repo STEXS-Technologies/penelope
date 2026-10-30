@@ -73,8 +73,9 @@ fn static_worker_completes_only_after_durable_input_and_start() {
 #[test]
 fn kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls() {
     // fork, openat, socket, setrlimit, clone, kill, ptrace, mutating
-    // prlimit64, read outside stdin, and write outside stdout/stderr.
-    for mode in [2, 3, 4, 11, 13, 14, 15, 16, 17, 18] {
+    // prlimit64, read outside stdin, write outside stdout/stderr, execve,
+    // execveat through another descriptor/path, and descriptor rebinding.
+    for mode in [2, 3, 4, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21] {
         let directory = tempfile::tempdir().unwrap();
         let mut supervisor = fresh(directory.path(), &[mode], 2);
         supervisor.advance(TaskTick::new(1)).unwrap();
