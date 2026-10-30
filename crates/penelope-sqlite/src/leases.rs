@@ -21,12 +21,15 @@ fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
     let value = NonZeroU64::new(u64::try_from(next).map_err(|_negative| PortError::Invariant)?)
         .ok_or(PortError::Invariant)?;
     let following = next.checked_add(1).ok_or(PortError::QuotaExceeded)?;
-    connection
+    let changed = connection
         .execute(
             "UPDATE lease_counter SET next_token=?1 WHERE singleton=1 AND next_token=?2",
             params![following, next],
         )
         .map_err(|error| db_error(&error))?;
+    if changed != 1 {
+        return Err(PortError::Invariant);
+    }
     Ok(OutboxLeaseToken::new(value))
 }
 fn expiry(now: LogicalTime, millis: u64) -> Result<LogicalTime, PortError> {
