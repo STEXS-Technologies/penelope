@@ -393,3 +393,136 @@ fn reconciliation_preserves_unknown_and_never_executes_an_effect() {
     );
     assert_eq!(remote.reads.load(Ordering::SeqCst), 1);
 }
+
+#[test]
+fn outbox_driver_rejects_forged_receipt_and_recovers_after_expired_ack() {
+    use penelope_executor::services::{DispatchStage, dispatch_outbox};
+    use penelope_sqlite::SqliteLimits;
+    use std::sync::Arc;
+    struct Scheduler<'ports> {
+        store: &'ports SqliteProcessStore,
+        clock: Arc<Clock>,
+        calls: AtomicU64,
+        bad_receipt: AtomicBool,
+        delay: AtomicBool,
+    }
+    #[async_trait]
+    impl ActionDispatcher for Scheduler<'_> {
+        async fn dispatch(
+            &self,
+            action: &ProcessAction,
+        ) -> Result<ActionDispatchReceipt, PortError> {
+            self.store
+                .schedule(&TimerSchedule {
+                    action: action.clone(),
+                    due_at: LogicalTime(10),
+                })
+                .await?;
+            let previous = self.calls.fetch_add(1, Ordering::SeqCst);
+            if self.bad_receipt.swap(false, Ordering::SeqCst) {
+                return Ok(ActionDispatchReceipt::new(
+                    action.scope(),
+                    id("act_forged"),
+                    false,
+                ));
+            }
+            if self.delay.swap(false, Ordering::SeqCst) {
+                self.clock.0.fetch_add(101, Ordering::SeqCst);
+            }
+            Ok(ActionDispatchReceipt::new(
+                action.scope(),
+                action.action_id.clone(),
+                previous > 0,
+            ))
+        }
+    }
+    let stores = Stores::new(true, scope());
+    planned(&stores, ProcessActionKind::Timer);
+    let clock = Arc::new(Clock(AtomicU64::new(1)));
+    let outbox = SqliteProcessStore::open(
+        &stores.process_path,
+        SqliteLimits::default(),
+        clock.clone(),
+        100,
+        8,
+    )
+    .unwrap();
+    let dispatcher = Scheduler {
+        store: &stores.store,
+        clock: clock.clone(),
+        calls: AtomicU64::new(0),
+        bad_receipt: AtomicBool::new(true),
+        delay: AtomicBool::new(true),
+    };
+    let policy = Policy {
+        allow: AtomicBool::new(true),
+        requests: Mutex::new(Vec::new()),
+    };
+    let request = OutboxClaimRequest::new(
+        stores.scope.clone(),
+        id("pri_dispatch"),
+        NonZeroU16::new(1).unwrap(),
+    )
+    .unwrap();
+    let forged = run(dispatch_outbox(
+        &policy,
+        &outbox,
+        &dispatcher,
+        &request,
+        clock.as_ref(),
+    ))
+    .unwrap_err();
+    assert_eq!(forged.stage, DispatchStage::Receipt);
+    assert_eq!(forged.report.acknowledged, 0);
+    assert_eq!(forged.report.delivered, 0);
+    clock.0.store(111, Ordering::SeqCst);
+    let expired = run(dispatch_outbox(
+        &policy,
+        &outbox,
+        &dispatcher,
+        &request,
+        clock.as_ref(),
+    ))
+    .unwrap_err();
+    assert_eq!(expired.stage, DispatchStage::Acknowledge);
+    assert_eq!(expired.source, PortError::TimedOut);
+    assert_eq!(expired.report.delivered, 1);
+    assert_eq!(expired.report.duplicate_deliveries, 1);
+    assert_eq!(expired.report.acknowledged, 0);
+    let recovered = run(dispatch_outbox(
+        &policy,
+        &outbox,
+        &dispatcher,
+        &request,
+        clock.as_ref(),
+    ))
+    .unwrap();
+    assert_eq!(recovered.acknowledged, 1);
+    assert_eq!(recovered.duplicate_deliveries, 1);
+    assert_eq!(
+        run(dispatch_outbox(
+            &policy,
+            &outbox,
+            &dispatcher,
+            &request,
+            clock.as_ref()
+        ))
+        .unwrap()
+        .claimed,
+        0
+    );
+    let due = TimerClaimRequest::new(
+        stores.scope.clone(),
+        id("pri_timers"),
+        LogicalTime(212),
+        NonZeroU16::new(2).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(run(stores.store.claim_due(&due)).unwrap().len(), 1);
+}
+
+impl penelope_sqlite::SqliteLeaseClock for Clock {
+    fn now(&self) -> Result<LogicalTime, PortError> {
+        Ok(LogicalTime(self.0.load(Ordering::SeqCst)))
+    }
+}

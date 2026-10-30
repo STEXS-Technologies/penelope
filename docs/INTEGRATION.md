@@ -12,6 +12,15 @@ logical time. Deliver only committed actions using their stable identity, and
 acknowledge a lease only after validating durable downstream acceptance. Failed
 or ambiguous delivery requires reconstruction rather than assuming rollback.
 
+`dispatch_outbox` combines an authorized claim with bounded idempotent delivery.
+It checks fresh trusted time before each dispatch, validates the dispatch receipt
+against the exact action and complete scope, then acknowledges with a fresh clock
+reading. Receipt mismatch or expiry leaves the lease unacknowledged, even when
+work may have reached the dispatcher. Its report counts verified downstream
+acceptance separately from outbox acknowledgements. Reconcile/redeliver through
+the same stable action identity. Dispatch acceptance does not mean the action's
+application effect succeeded.
+
 `drive_task_once` requires a validated `CommittedTaskEffect`, matches the task's
 scope and definition, authorizes `DriveTask` and makes one transition or poll with
 an injected `TaskClock`. The host controls how often it calls this function.
@@ -40,6 +49,13 @@ construct the existing typed retry-timer event, validate the engine's outcome
 plan, atomically commit the accepted input/outcomes/actions and validate the
 receipt. Keep the schedule payload until replay/retention requirements permit
 its removal. Expired leases may redeliver; they never prove that an effect failed.
+
+`relay_task_result` authorizes `RelayTaskResult` for the verified binding's exact
+scope and authenticated caller before committing the stable result input through
+`ProcessStore`. The relay checks input identity, payload digest, definition scope
+and receipt. The consuming application still validates the engine's outcome plan
+and persists referenced replay payloads before the result commit. A denied call
+cannot advance the process log; a lost receipt is recovered with the exact batch.
 
 Timer failures return `TimerDrainError` with the stage, coarse port error and
 partial claimed/acknowledged/duplicate counts. An inbox write may have committed

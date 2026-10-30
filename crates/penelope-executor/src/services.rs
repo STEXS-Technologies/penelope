@@ -284,3 +284,114 @@ pub async fn drain_timers(
     }
     Ok(report)
 }
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct DispatchReport {
+    pub claimed: u16,
+    /// Deliveries with a verified durable downstream receipt.
+    pub delivered: u16,
+    pub acknowledged: u16,
+    pub duplicate_deliveries: u16,
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DispatchStage {
+    Clock,
+    Claim,
+    Validate,
+    Dispatch,
+    Receipt,
+    Acknowledge,
+}
+#[derive(Debug, thiserror::Error)]
+#[error("outbox delivery failed at {stage:?} after {report:?}: {source}")]
+pub struct DispatchError {
+    pub stage: DispatchStage,
+    pub report: DispatchReport,
+    pub source: PortError,
+}
+
+/// Delivers one authorized bounded outbox batch to an idempotent dispatcher.
+/// Validate a fresh lease before dispatch, then validate durable downstream
+/// acceptance and acknowledge with fresh trusted time. A receipt establishes
+/// dispatch acceptance, not application success. An error can follow accepted
+/// work; redelivery must use the same action identity rather than a new mutation.
+/// # Errors
+/// Returns the failed stage and partial verified progress. Invalid/expired leases
+/// and mismatched receipts are never acknowledged.
+pub async fn dispatch_outbox(
+    authorizer: &impl ProcessAuthorizer,
+    outbox: &impl OutboxStore,
+    dispatcher: &impl ActionDispatcher,
+    request: &OutboxClaimRequest,
+    clock: &impl Clock,
+) -> Result<DispatchReport, DispatchError> {
+    let mut report = DispatchReport::default();
+    let fail = |stage, partial_report, source| DispatchError {
+        stage,
+        report: partial_report,
+        source,
+    };
+    let now = clock
+        .now()
+        .await
+        .map_err(|error| fail(DispatchStage::Clock, report, error))?;
+    let leases = claim_outbox(authorizer, outbox, request, now)
+        .await
+        .map_err(|error| fail(DispatchStage::Claim, report, error))?;
+    report.claimed = u16::try_from(leases.len())
+        .map_err(|_size| fail(DispatchStage::Validate, report, PortError::Invariant))?;
+    for lease in leases {
+        let dispatch_time = clock
+            .now()
+            .await
+            .map_err(|error| fail(DispatchStage::Clock, report, error))?;
+        lease
+            .validate_at(dispatch_time)
+            .map_err(|error| fail(DispatchStage::Validate, report, error))?;
+        let receipt = dispatcher
+            .dispatch(&lease.record.action)
+            .await
+            .map_err(|error| fail(DispatchStage::Dispatch, report, error))?;
+        receipt
+            .validate_for(&lease.record.action)
+            .map_err(|_invalid| fail(DispatchStage::Receipt, report, PortError::Invariant))?;
+        report.delivered = report.delivered.saturating_add(1);
+        if receipt.duplicate {
+            report.duplicate_deliveries = report.duplicate_deliveries.saturating_add(1);
+        }
+        let acknowledge_time = clock
+            .now()
+            .await
+            .map_err(|error| fail(DispatchStage::Clock, report, error))?;
+        outbox
+            .acknowledge(&lease, acknowledge_time)
+            .await
+            .map_err(|error| fail(DispatchStage::Acknowledge, report, error))?;
+        report.acknowledged = report.acknowledged.saturating_add(1);
+    }
+    Ok(report)
+}
+
+/// Commits a verified task result only after authorization for its complete scope.
+/// The caller still validates the pure engine outcome plan and persists event
+/// payloads before this commit. The relay validates the exact stable inbox input,
+/// scope and process-store receipt. Repeating an immutable commit is safe.
+/// # Errors
+/// Denied authorization performs no process commit. Binding and receipt errors
+/// preserve ambiguity and require authoritative reconstruction.
+pub async fn relay_task_result(
+    authorizer: &impl ProcessAuthorizer,
+    principal: &PrincipalId,
+    relay: &crate::composition::TaskResultRelay,
+    store: &impl ProcessStore,
+    commit: &AtomicProcessCommit,
+) -> Result<AtomicProcessCommitReceipt, TaskCompositionError> {
+    authorize(
+        authorizer,
+        &relay.binding().request().action.scope(),
+        principal,
+        ProcessAuthorizationOperation::RelayTaskResult,
+    )
+    .await?;
+    relay.commit(store, commit).await
+}

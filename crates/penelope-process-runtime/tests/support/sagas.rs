@@ -420,13 +420,53 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
             vec![],
         )
         .unwrap();
-        run(relay.commit(&stores.store, &result_commit)).unwrap();
+        let denied = RelayPolicy {
+            scope: scope.clone(),
+            allow: false,
+        };
+        assert!(
+            run(penelope_executor::services::relay_task_result(
+                &denied,
+                &id("pri_relay"),
+                &relay,
+                &stores.store,
+                &result_commit
+            ))
+            .is_err()
+        );
+        let pending_result =
+            OutcomeReplayRequest::new(scope.clone(), sequence, NonZeroU16::new(1).unwrap())
+                .unwrap();
+        assert!(
+            run(stores.store.read_outcomes(&pending_result))
+                .unwrap()
+                .outcomes
+                .is_empty()
+        );
+        let allowed = RelayPolicy {
+            scope: scope.clone(),
+            allow: true,
+        };
+        run(penelope_executor::services::relay_task_result(
+            &allowed,
+            &id("pri_relay"),
+            &relay,
+            &stores.store,
+            &result_commit,
+        ))
+        .unwrap();
         cut("result-commit");
         stores.reopen();
         assert!(
-            run(relay.commit(&stores.store, &result_commit))
-                .unwrap()
-                .duplicate_input
+            run(penelope_executor::services::relay_task_result(
+                &allowed,
+                &id("pri_relay"),
+                &relay,
+                &stores.store,
+                &result_commit
+            ))
+            .unwrap()
+            .duplicate_input
         );
         let reconstructed = replay(
             &definition,
@@ -529,13 +569,53 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
             vec![],
         )
         .unwrap();
-        run(relay.commit(&stores.store, &result_commit)).unwrap();
+        let denied = RelayPolicy {
+            scope: scope.clone(),
+            allow: false,
+        };
+        assert!(
+            run(penelope_executor::services::relay_task_result(
+                &denied,
+                &id("pri_relay"),
+                &relay,
+                &stores.store,
+                &result_commit
+            ))
+            .is_err()
+        );
+        let pending_result =
+            OutcomeReplayRequest::new(scope.clone(), sequence, NonZeroU16::new(1).unwrap())
+                .unwrap();
+        assert!(
+            run(stores.store.read_outcomes(&pending_result))
+                .unwrap()
+                .outcomes
+                .is_empty()
+        );
+        let allowed = RelayPolicy {
+            scope: scope.clone(),
+            allow: true,
+        };
+        run(penelope_executor::services::relay_task_result(
+            &allowed,
+            &id("pri_relay"),
+            &relay,
+            &stores.store,
+            &result_commit,
+        ))
+        .unwrap();
         cut("result-commit");
         stores.reopen();
         assert!(
-            run(relay.commit(&stores.store, &result_commit))
-                .unwrap()
-                .duplicate_input
+            run(penelope_executor::services::relay_task_result(
+                &allowed,
+                &id("pri_relay"),
+                &relay,
+                &stores.store,
+                &result_commit
+            ))
+            .unwrap()
+            .duplicate_input
         );
         let reconstructed = replay_graph(
             &definition,
@@ -637,3 +717,27 @@ fn killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries() {
 
 #[path = "services.rs"]
 mod services;
+
+struct RelayPolicy {
+    scope: ProcessScope,
+    allow: bool,
+}
+#[async_trait::async_trait]
+impl ProcessAuthorizer for RelayPolicy {
+    async fn authorize(
+        &self,
+        request: &ProcessAuthorizationRequest,
+    ) -> Result<ProcessAuthorizationDecision, PortError> {
+        assert_eq!(request.scope, self.scope);
+        assert_eq!(request.principal_id, id("pri_relay"));
+        assert_eq!(
+            request.operation,
+            ProcessAuthorizationOperation::RelayTaskResult
+        );
+        Ok(if self.allow {
+            ProcessAuthorizationDecision::Authorized
+        } else {
+            ProcessAuthorizationDecision::Denied
+        })
+    }
+}
