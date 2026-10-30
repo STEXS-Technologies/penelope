@@ -62,3 +62,18 @@ fn kernel_identity_parser_preserves_command_delimiters_and_rejects_bad_start_tim
         assert!(sandbox::parse_identity(123, malformed.as_bytes()).is_err());
     }
 }
+
+#[test]
+fn unrepresentable_fence_deadline_preserves_error_after_signaling_owned_child() {
+    let mut child = Command::new("sleep").arg("60").spawn().unwrap();
+    let bytes = std::fs::read(format!("/proc/{}/stat", child.id())).unwrap();
+    let identity = sandbox::parse_identity(child.id(), &bytes).unwrap();
+    assert_eq!(
+        stop_identity(identity, Duration::MAX),
+        Err(TaskPortError::Runtime)
+    );
+    assert!(!child.wait().unwrap().success());
+    // A failed stop result cannot be treated as confirmed authority. Retrying
+    // from durable evidence can confirm the process is now gone.
+    stop_identity(identity, Duration::from_secs(1)).unwrap();
+}

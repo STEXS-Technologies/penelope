@@ -447,3 +447,102 @@ fn unconfirmed_quota_fence_poisoning_precedes_the_proposal_error() {
         assert_eq!(runtime.0.borrow().fences, 0);
     }
 }
+
+#[test]
+fn stale_observation_preserves_running_state_and_poll_at_deadline_records_timeout() {
+    let definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let journal = Journal::new(MemoryJournal::default());
+    let runtime = Runtime::default();
+    let mut active = Control::restore(
+        journal.clone(),
+        runtime.clone(),
+        scope(definition, &INPUT),
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    active.submit(&INPUT, 1, TaskTick::ZERO).unwrap();
+    advance(&mut active, 1).unwrap();
+    let before = *active.projection();
+    let records = journal.state.borrow().records.clone();
+    let observation = TaskObservation {
+        scope: before.scope(),
+        generation: before.generation(),
+        progress: RuntimeProgress::Complete {
+            bytes: 8,
+            schema: 1,
+        },
+    };
+    assert_eq!(
+        active.observe(observation, &[8; 8], TaskTick::ZERO),
+        Err(SupervisorError::Decision(TaskError::InvalidOrder))
+    );
+    assert_eq!(*active.projection(), before);
+    assert_eq!(journal.state.borrow().records, records);
+    assert_eq!(runtime.0.borrow().fences, 0);
+    assert!(
+        active
+            .poll(
+                before.execution_deadline(),
+                &mut TaskWorkspace {
+                    input: &mut [0; 64],
+                    output: &mut [0; 64],
+                    checkpoint: &mut [0; 64],
+                }
+            )
+            .unwrap()
+    );
+    assert_eq!(active.projection().status(), TaskStatus::Faulted);
+    assert!(active.projection().output().is_none());
+    let (finished_journal, finished_runtime) = active.into_parts();
+    assert_eq!(finished_runtime.0.borrow().starts, 1);
+    assert_eq!(finished_runtime.0.borrow().fences, 1);
+    assert!(matches!(
+        finished_journal
+            .state
+            .borrow()
+            .records
+            .last()
+            .unwrap()
+            .event,
+        TaskExecutionEvent::FaultObserved {
+            fault: TaskFault::Timeout
+        }
+    ));
+}
+
+#[test]
+fn zero_schema_live_output_is_fenced_without_commit_or_acknowledgement() {
+    for checkpoint in [false, true] {
+        let mut control = running(EffectContract::Pure);
+        let before = *control.projection();
+        let observation = TaskObservation {
+            scope: before.scope(),
+            generation: before.generation(),
+            progress: if checkpoint {
+                RuntimeProgress::Checkpoint {
+                    bytes: 8,
+                    schema: 0,
+                }
+            } else {
+                RuntimeProgress::Complete {
+                    bytes: 8,
+                    schema: 0,
+                }
+            },
+        };
+        assert_eq!(
+            control.observe(observation, &[8; 8], TaskTick::new(2)),
+            Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+        );
+        assert_eq!(*control.projection(), before);
+        assert_eq!(
+            advance(&mut control, 3),
+            Err(SupervisorError::ReconstructionRequired)
+        );
+        let (journal, runtime) = control.into_parts();
+        assert_eq!(runtime.0.borrow().fences, 1);
+        assert_eq!(journal.state.borrow().records.len(), 2);
+        assert_eq!(journal.state.borrow().blobs.len(), 1);
+    }
+}

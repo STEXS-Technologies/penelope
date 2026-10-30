@@ -488,3 +488,7 @@ fn stop_identity(
 #[cfg(test)]
 #[path = "fence_tests.rs"]
 mod fence_tests;
+
+#[cfg(test)]
+#[path = "io_tests.rs"]
+mod io_tests;
