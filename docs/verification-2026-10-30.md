@@ -157,3 +157,12 @@ supplies an already-authorized manual decision; it does not test operator identi
 verification. The focused test passed on stable/MSRV, strict runtime Clippy passed,
 and the full runtime all-target suite passed. [Logs and source hash](verification-data/2026-10-30-completion-cancellation/)
 retain the exact scope and checks.
+
+At candidate `f945a2a`, the full MSRV workspace all-target suite, workspace
+doctests, strict workspace rustdoc, both MSRV RISC-V portable profiles,
+`cargo audit`, `cargo deny check`, and all nine package archive verifications
+passed. [Logs and archive hashes](verification-data/2026-10-30-candidate-checks/)
+retain this checkpoint. Package versions are still 0.2.0 development versions;
+no crates were published and no release tag was created. The restarted chaos
+campaign remains in progress, and these checks do not replace its result or the
+remaining performance and requirement audit.
