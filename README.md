@@ -125,7 +125,7 @@ Add the facade crate to your application:
 
 ```toml
 [dependencies]
-penelope = "0.2.0"
+penelope = "0.3.0"
 ```
 
 Run the included workflows to see the public API:
@@ -143,10 +143,11 @@ cargo run -p penelope --example trade_competing_lock --locked
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
-boundary, release procedure and protocol review. This branch develops 0.3.0;
-workspace versions remain at 0.2.0 until qualification is complete. The optional
+boundary, release procedure and protocol review. The 0.3.0 candidate adds optional
 SQLite and [Linux process runtime](crates/penelope-process-runtime/README.md)
-packages are development additions, and their release qualification is ongoing.
+packages for the documented single-host profile. See the
+[qualification evidence and limits](docs/verification-2026-10-30.md), including
+the explicit performance exception and source-compatibility changes.
 
 Use the [pull request template](.github/pull_request_template.md) when proposing
 changes, and follow the [validation commands](docs/RELEASE.md#validation).
