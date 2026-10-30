@@ -1130,6 +1130,15 @@ fn large_linear_steps_have_duplicate_ids(steps: &[StepPlan]) -> Result<bool, Eng
     for (id, step) in ids.iter_mut().zip(steps) {
         *id = &step.step_id;
     }
+    // Small-sort implementations can do quadratic work on reverse input.
+    // Strict descent already proves uniqueness, without sorting or mutation.
+    if ids
+        .iter()
+        .zip(ids.iter().skip(1))
+        .all(|(left, right)| left > right)
+    {
+        return Ok(false);
+    }
     ids.sort_unstable();
     Ok(ids
         .iter()
