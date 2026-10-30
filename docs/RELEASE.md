@@ -207,6 +207,12 @@ records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
 revision, with raw samples and RSS/wall evidence. Its slower saga medians remain
 unresolved; it does not close the performance release gate.
 
+The [fixed-port RISC-V stack analysis](portable-task-stack-bound-2026-10-30.md)
+provides a conservative bound for one explicit freestanding reference profile.
+The [SQLite file-cache measurements](performance-sqlite-cache-2026-10-30.md)
+verify database-page residency before paired cold/warm replays. Their scopes
+and limitations are separate from the unresolved saga timing qualification.
+
 ## Source compatibility review
 
 The planned pre-1.0 transition to 0.3.0 intentionally extends two exhaustive
