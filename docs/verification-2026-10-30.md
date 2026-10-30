@@ -177,3 +177,14 @@ are explicitly not qualification timing: the fuzz campaign was active.
 A serialized run using the [cache method](performance-sqlite-cache-method.md)
 remains required. The harness rejects partial residency and nonempty sidecars;
 it never labels device or whole-system caches cold.
+
+A [static-frame inventory](task-stack-usage-method.md) now complements sampled
+stack measurements. The generated no_std fixed-port library retains repository
+locked dependency versions and uses Rust 1.99.0, one codegen unit, aborting panics
+and no red zone. The compiler records 89 function frames and detects the 64 KiB
+positive control as 65,560 bytes. [Raw source, compiler usage, library and hashes](verification-data/2026-10-30-static-frame-inventory/)
+retain this profile. All 39 Python tests and layer checks pass. Individual frames
+are not complete call-chain bounds: precompiled runtime functions, ABI costs,
+callbacks and possible recursion still require accounting. Worst-case stack
+qualification stays open; this inventory does not silently substitute samples
+or a maximum individual frame for that requirement.
