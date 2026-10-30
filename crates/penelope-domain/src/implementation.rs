@@ -194,6 +194,7 @@ macro_rules! identifier {
             }
 
             /// Returns the canonical wire representation.
+            #[inline]
             pub fn as_str(&self) -> &str {
                 self.0.as_str()
             }
