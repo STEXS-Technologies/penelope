@@ -144,3 +144,16 @@ removes the previously observed hosted sampled-stack regression for this fixture
 it does not establish static worst-case bounds or universal timing parity.
 The full three-iteration chaos campaign has restarted on this production code,
 with the temporary directory explicitly on the local filesystem.
+
+A real-worker cancellation-crossing test closes an uncovered fault-matrix case.
+It completes and independently classifies the worker result, retaining a success
+batch prepared against the earlier running-saga frontier. After a durable unknown
+outcome escalates the saga, two independent SQLite connections race the operator
+cancellation against that stale result relay. Cancellation commits; the stale
+result conflicts and remains rejected after reopen. Replay contains only start,
+unknown and cancellation, no successful-action/completed outcome, and no next
+action. Both shared and separate task/process database layouts pass. The fixture
+supplies an already-authorized manual decision; it does not test operator identity
+verification. The focused test passed on stable/MSRV, strict runtime Clippy passed,
+and the full runtime all-target suite passed. [Logs and source hash](verification-data/2026-10-30-completion-cancellation/)
+retain the exact scope and checks.
