@@ -483,8 +483,21 @@ fn reconciled_linear_saga_blocks_unknown_then_requires_independent_result_eviden
     run_linear_saga(true);
 }
 fn run_linear_saga(effectful: bool) {
+    run_linear_saga_with_source(effectful, &scope(), |_, _, commit| commit);
+}
+// Reuse the complete engine/runtime/recovery contract for independently verified
+// canonical-source integrations, without duplicating this workflow in a client.
+pub(crate) fn run_linear_saga_with_source(
+    effectful: bool,
+    process_scope: &ProcessScope,
+    attach_source: impl Fn(
+        &SqliteProcessStore,
+        &ProcessScope,
+        AtomicProcessCommit,
+    ) -> AtomicProcessCommit,
+) {
     for separate in modes() {
-        let scope = scope();
+        let scope = process_scope.clone();
         let definition = LinearSagaDefinition::new(
             scope.definition_id.clone(),
             scope.definition_version.clone(),
@@ -529,6 +542,7 @@ fn run_linear_saga(effectful: bool) {
             vec![started.next_action.clone().unwrap()],
         )
         .unwrap();
+        let commit = attach_source(&stores.store, &scope, commit);
         let relay = stores.execute(&commit);
         // Reconstruct the running saga from durable events before applying result.
         let running = replay(
@@ -646,8 +660,21 @@ fn reconciled_graph_saga_blocks_unknown_then_requires_independent_result_evidenc
     run_graph_saga(true);
 }
 fn run_graph_saga(effectful: bool) {
+    run_graph_saga_with_source(effectful, &scope(), |_, _, commit| commit);
+}
+// Reuse the complete engine/runtime/recovery contract for independently verified
+// canonical-source integrations, without duplicating this workflow in a client.
+pub(crate) fn run_graph_saga_with_source(
+    effectful: bool,
+    process_scope: &ProcessScope,
+    attach_source: impl Fn(
+        &SqliteProcessStore,
+        &ProcessScope,
+        AtomicProcessCommit,
+    ) -> AtomicProcessCommit,
+) {
     for separate in modes() {
-        let scope = scope();
+        let scope = process_scope.clone();
         let definition = ProcessGraphDefinition {
             definition_id: scope.definition_id.clone(),
             definition_version: scope.definition_version.clone(),
@@ -695,6 +722,7 @@ fn run_graph_saga(effectful: bool) {
             vec![started.next_action.clone().unwrap()],
         )
         .unwrap();
+        let commit = attach_source(&stores.store, &scope, commit);
         let relay = stores.execute(&commit);
         let running = replay_graph(
             &definition,
