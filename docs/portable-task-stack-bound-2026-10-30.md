@@ -76,3 +76,29 @@ form under [verification data](verification-data/2026-10-30-riscv-stack-bound/ma
 The manifest includes original and compressed SHA-256 hashes. This is stronger
 than the earlier [individual-frame inventory](task-stack-usage-method.md),
 which intentionally did not claim a call-chain bound.
+
+A fresh build also inventories allocated ELF sections with `llvm-readobj`:
+
+| Memory component | Bytes |
+| --- | ---: |
+| Conservative active stack bound | 115,056 |
+| Writable allocated static sections | 0 |
+| Read-only allocated sections, including code | 77,289 |
+| — `.text` | 72,066 |
+| — `.rodata` | 3,287 |
+| — `.eh_frame` | 1,936 |
+
+The fixed-port `no_std` fixture has no allocator. Its reference ports keep their
+records and blobs in fixed-capacity values already included in the active stack
+bound; this is separate from a production journal's database or worker memory.
+The section inventory excludes nonresident symbol/debug tables. It reports
+section byte sums, not loaded segment sizes: loader padding, alignment holes and
+placement of read-only sections in RAM or flash depend on the consumer's memory
+map. These figures must not be added and advertised as a universal device RAM
+requirement. The stack-only result remains unchanged in the fresh image.
+
+The [image-memory evidence](verification-data/2026-10-30-riscv-image-memory/manifest.json)
+retains the exact ELF, raw readobj section report, structured byte accounting,
+source, compiler frames, disassembly and hashes. Tests check writable/read-only
+separation, exclusion of symbol tables and rejection of malformed measurements
+or the wrong image profile. All 55 Python tests passed after this addition.
