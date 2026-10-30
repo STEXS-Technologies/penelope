@@ -23,10 +23,12 @@ fn task(mut value: u64, work: u32) -> u64 {
     value
 }
 
-fn id<T: TryFrom<&'static str, Error = DomainError>>(
-    value: &'static str,
-) -> Result<T, DomainError> {
-    T::try_from(value)
+fn id<T: std::str::FromStr<Err = DomainError>>(value: &str, long: bool) -> Result<T, DomainError> {
+    if long {
+        format!("{value}{}", "_long".repeat(20)).parse()
+    } else {
+        value.parse()
+    }
 }
 
 fn measure(
@@ -42,19 +44,20 @@ fn measure(
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let long_ids = std::env::args().any(|arg| arg == "--long-identifiers");
     let definition = LinearSagaDefinition {
-        definition_id: id("def_overhead")?,
-        definition_version: id("dfv_one")?,
+        definition_id: id("def_overhead", long_ids)?,
+        definition_version: id("dfv_one", long_ids)?,
         definition_digest: ContentDigest([99; 32]),
         steps: vec![StepPlan::canonical_command(
-            id("stp_overhead")?,
+            id("stp_overhead", long_ids)?,
             ContentDigest([1; 32]),
             RetryPolicy::no_retry(),
         )],
     };
-    let tenant: TenantId = id("tnt_overhead")?;
-    let process: ProcessId = id("prc_overhead")?;
-    let action: ActionId = id("act_overhead")?;
+    let tenant: TenantId = id("tnt_overhead", long_ids)?;
+    let process: ProcessId = id("prc_overhead", long_ids)?;
+    let action: ActionId = id("act_overhead", long_ids)?;
     for (work, iterations) in [(0, 100_000), (64, 100_000), (4096, 2000), (65_536, 128)] {
         let direct = |seed| Ok::<_, EngineError>(task(seed, black_box(work)));
         let managed = |seed| {
@@ -101,6 +104,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "{}",
                 serde_json::json!({
                     "work": work, "round": round, "iterations": iterations,
+                    "long_identifiers": long_ids,
                     "direct_ns": direct_result.0, "penelope_ns": managed_result.0,
                     "checksum": direct_result.1,
                 })
