@@ -123,6 +123,26 @@
       "file": "property-entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log.gz",
       "uncompressed_sha256": "79e891e7973603defc2bb2b18f6383ca87b7102bdd5e54f27825d42fd14c9e89",
       "compressed_sha256": "832ba5dd17b09223b3d5f5e6da58d1245ae0df7679d89770349d9ab686b96746"
+    },
+    "supervisor-concurrency": {
+      "file": "supervisor-concurrency.log.gz",
+      "uncompressed_sha256": "db547a7b81c9c6842cf751fe484950a1e5ec2e465150ec8dd9cc86f482e37187",
+      "compressed_sha256": "aa48ff6adde47e340fbda3705d549188a35775d193a76b5c92252b76a4a767dd"
+    },
+    "supervisor-concurrency-msrv": {
+      "file": "supervisor-concurrency-msrv.log.gz",
+      "uncompressed_sha256": "b5956c77b567dc98193b051f2224054f035f14e9d5156d92d40d3074f5032994",
+      "compressed_sha256": "28b496b3131105f70404419d3c2a4ff70885d4031fcf20b1c885542c18cf35c2"
+    },
+    "supervisor-concurrency-clippy": {
+      "file": "supervisor-concurrency-clippy.log.gz",
+      "uncompressed_sha256": "295eb90fcc8f002b3b0be0065acc1f863d41541e5ed3924da23b575d2d8f4cc6",
+      "compressed_sha256": "2754d925252911d10b8a167d2344801a18a9694fb7844c3044db25840335aad3"
+    },
+    "runtime-with-concurrency": {
+      "file": "runtime-with-concurrency.log.gz",
+      "uncompressed_sha256": "96e82e8260128213e17c32920fd1b77275908a8d0cf25ee976554bd40a39b75d",
+      "compressed_sha256": "1758d467fc72258879c9cc100e9c92aec87052eb57a825bd92c24b5b3c8d8a68"
     }
   },
   "campaigns_pending": [
@@ -141,5 +161,15 @@
     "target": "fuzz_sqlite_task_authority",
     "input": "authority-failure-input.json",
     "not_passed": true
+  },
+  "real_supervisor_concurrency": {
+    "result": "passed",
+    "test": "concurrency::two_supervisor_processes_admit_one_real_worker_and_replay_one_completion",
+    "source_sha256": "3509daab2872c0a22414ca737c1282a9524835aa4c89a4c65b8f8466b4fabadd",
+    "toolchains": [
+      "1.99.0",
+      "1.85.0"
+    ],
+    "validation": "runtime all-targets and strict all-target Clippy passed; production Rust sources unchanged"
   }
 }
