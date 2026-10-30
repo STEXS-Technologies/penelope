@@ -6,6 +6,7 @@
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
 
+use super::identifier_text::IdentifierText;
 use core::fmt;
 use core::str::FromStr;
 
@@ -174,7 +175,7 @@ macro_rules! identifier {
     ($name:ident, $prefix:literal, $error_variant:ident, $docs:literal) => {
         #[doc = $docs]
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-        pub struct $name(String);
+        pub struct $name(IdentifierText);
 
         impl $name {
             /// Parses and validates the canonical prefixed identifier.
@@ -186,7 +187,7 @@ macro_rules! identifier {
             /// control character.
             pub fn new(value: String) -> Result<Self, DomainError> {
                 if validate_identifier($prefix, &value) {
-                    Ok(Self(value))
+                    Ok(Self(IdentifierText::from(value)))
                 } else {
                     Err(DomainError::$error_variant)
                 }
@@ -194,13 +195,13 @@ macro_rules! identifier {
 
             /// Returns the canonical wire representation.
             pub fn as_str(&self) -> &str {
-                &self.0
+                self.0.as_str()
             }
         }
 
         impl fmt::Display for $name {
             fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str(&self.0)
+                formatter.write_str(self.0.as_str())
             }
         }
 
@@ -208,7 +209,11 @@ macro_rules! identifier {
             type Err = DomainError;
 
             fn from_str(value: &str) -> Result<Self, Self::Err> {
-                Self::new(String::from(value))
+                if validate_identifier($prefix, value) {
+                    Ok(Self(IdentifierText::from(value)))
+                } else {
+                    Err(DomainError::$error_variant)
+                }
             }
         }
 
@@ -224,13 +229,13 @@ macro_rules! identifier {
             type Error = DomainError;
 
             fn try_from(value: &str) -> Result<Self, Self::Error> {
-                Self::new(String::from(value))
+                value.parse()
             }
         }
 
         impl Serialize for $name {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-                serializer.serialize_str(&self.0)
+                serializer.serialize_str(self.0.as_str())
             }
         }
 

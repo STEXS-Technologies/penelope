@@ -321,6 +321,7 @@ name = "penelope-domain"
 version = "0.3.0"
 dependencies = [
  "penelope-core",
+ "proptest",
  "serde",
  "serde_json",
  "sha2",
