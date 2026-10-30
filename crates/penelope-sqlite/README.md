@@ -88,7 +88,10 @@ opens and migrates synchronously. Its port methods enqueue bounded jobs and
 await notifications. A full queue returns `QuotaExceeded`. Dropping a future
 does not cancel an accepted database operation; its commit may still happen.
 Dropping the store closes admission, and its worker drains already queued jobs
-before closing its connection. No application async runtime is required.
+before closing its connection. Results are published before notification and
+wake callbacks run outside the completion lock. An unwinding wake callback
+cannot stop the worker from draining other accepted requests. No application
+async runtime is required.
 
 Supply a trusted `SqliteLeaseClock` in saga logical milliseconds, with a time
 basis that remains consistent across restart. Task ticks are separate and must
