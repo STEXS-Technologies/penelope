@@ -196,3 +196,57 @@ fn effectful_completion_requires_matching_independent_evidence() {
         Err(Error::EvidenceMismatch)
     );
 }
+
+#[test]
+fn result_relay_maps_to_both_engines_with_one_delivery_identity() {
+    use penelope_domain::ProcessInputKind;
+    use penelope_executor::{
+        composition::TaskResultRelay,
+        engine::{ActionResult, LinearSagaInput},
+        graph::GraphSagaInput,
+    };
+    for state in [
+        ExternalEffectState::Succeeded,
+        ExternalEffectState::KnownFailure,
+    ] {
+        let (binding, projection) = completed(EffectContract::Pure);
+        let verified = VerifiedTaskEffectOutcome::verify(
+            &binding,
+            &projection,
+            projection.generation(),
+            b"valid",
+            &Classifier(state),
+            None,
+        )
+        .unwrap();
+        let relay = TaskResultRelay::new(verified.clone()).unwrap();
+        let repeated = TaskResultRelay::new(verified).unwrap();
+        assert_eq!(relay.input(), repeated.input());
+        assert_eq!(relay.input().kind, ProcessInputKind::TaskEffectResult);
+        assert_eq!(relay.input().tenant_id, binding.request().action.tenant_id);
+        assert_eq!(
+            relay.observation().result,
+            if state == ExternalEffectState::Succeeded {
+                ActionResult::Succeeded
+            } else {
+                ActionResult::TerminalFailure
+            }
+        );
+        assert_eq!(
+            relay.linear_input(None),
+            LinearSagaInput::ActionResult {
+                input_id: relay.input().input_id.clone(),
+                observation: relay.observation(),
+                next_action_id: None,
+            }
+        );
+        assert_eq!(
+            relay.graph_input(None),
+            GraphSagaInput::ActionResult {
+                input_id: relay.input().input_id.clone(),
+                observation: relay.observation(),
+                next_action_id: None,
+            }
+        );
+    }
+}

@@ -401,6 +401,24 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
         sync::Arc,
         task::{Context, Poll, Wake, Waker},
     };
+    struct SumClassifier;
+    impl penelope_ports::tasks::TaskOutputClassifier for SumClassifier {
+        fn identity(&self) -> Digest {
+            Digest([4; 32])
+        }
+        fn classify(
+            &self,
+            _binding: &TaskEffectBinding,
+            output: BlobRef,
+            bytes: &[u8],
+        ) -> Result<ExternalEffectState, penelope_ports::tasks::TaskEffectVerificationError>
+        {
+            if output.schema != 1 || bytes != 6_u64.to_le_bytes() {
+                return Err(penelope_ports::tasks::TaskEffectVerificationError::InvalidOutput);
+            }
+            Ok(ExternalEffectState::Succeeded)
+        }
+    }
     struct Clock;
     impl SqliteLeaseClock for Clock {
         fn now(&self) -> Result<LogicalTime, PortError> {
@@ -544,5 +562,57 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
         recovered.advance(TaskTick::new(1)).unwrap();
         wait(&mut recovered).unwrap();
         assert_eq!(recovered.projection().status(), TaskStatus::Completed);
+        let completed = *recovered.projection();
+        let (mut completed_journal, _completed_runtime) = recovered.into_parts();
+        let mut bytes = [0; 8];
+        completed_journal
+            .read_blob(binding.scope(), completed.output().unwrap(), &mut bytes)
+            .unwrap();
+        let verified = penelope_ports::tasks::VerifiedTaskEffectOutcome::verify(
+            &binding,
+            &completed,
+            completed.generation(),
+            &bytes,
+            &SumClassifier,
+            None,
+        )
+        .unwrap();
+        let relay = penelope_executor::composition::TaskResultRelay::new(verified.clone()).unwrap();
+        let reconstructed_relay =
+            penelope_executor::composition::TaskResultRelay::new(verified).unwrap();
+        assert_eq!(relay.input(), reconstructed_relay.input());
+        assert_eq!(
+            relay.observation().result,
+            penelope_executor::engine::ActionResult::Succeeded
+        );
+        let result_outcome = ProcessOutcome::new(
+            claim.scope.clone(),
+            1,
+            ProcessOutcomeFact::new(
+                "out_result".try_into().unwrap(),
+                CausationId::Input(relay.input().input_id.clone()),
+                OutcomeActor::System,
+                LogicalTime(2),
+                ProcessOutcomeKind::ActionSucceeded,
+                relay.input().payload_digest,
+            ),
+        );
+        let result_commit =
+            AtomicProcessCommit::new(1, Some(relay.input().clone()), vec![result_outcome], vec![])
+                .unwrap();
+        // Lose the result receipt; independently reconstruct the relay and retry.
+        run(relay.commit(&store, &result_commit)).unwrap();
+        assert!(
+            run(reconstructed_relay.commit(&store, &result_commit))
+                .unwrap()
+                .duplicate_input
+        );
+        let mut substituted = result_commit.clone();
+        substituted.input.as_mut().unwrap().input_id = "inp_substituted".try_into().unwrap();
+        assert!(run(relay.commit(&store, &substituted)).is_err());
+        let replay =
+            OutcomeReplayRequest::new(claim.scope.clone(), 0, NonZeroU16::new(10).unwrap())
+                .unwrap();
+        assert_eq!(run(store.read_outcomes(&replay)).unwrap().outcomes.len(), 2);
     }
 }

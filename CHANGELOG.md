@@ -9,6 +9,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Typed saga/task bindings, verified application output and independent effect
+  evidence, committed dispatch acceptance, and stable task-result inbox relay.
+  `TaskEffectResult` extends input categories; existing serialized categories and
+  saga event/action formats retain their existing encoding.
+
 - Optional Linux static single-process worker runtime with sealed executable
   identity, bounded IPC, seccomp restrictions, kernel CPU limits and durable
   generation fencing; release qualification remains in progress.
