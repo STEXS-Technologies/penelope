@@ -8,6 +8,7 @@ fn retry_rejects_damaged_consumption_and_source_bindings() {
         "UPDATE process_inbox SET committed_through=99",
         "UPDATE process_inbox SET committed_through=NULL",
         "DELETE FROM process_sources",
+        "UPDATE process_actions SET effect_key=zeroblob(32)",
         "UPDATE process_sources SET input_id='inp_other'",
     ] {
         let directory = tempfile::tempdir().unwrap();

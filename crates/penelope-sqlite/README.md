@@ -55,7 +55,7 @@ rollback from a failed acknowledgement. After an ambiguous process commit,
 retry only the exact immutable batch to reconstruct its receipt or read and
 replay authoritative outcomes; changed batches conflict. Receipt reconstruction
 checks the exact retained outcomes, actions, input consumption digest/frontier and
-canonical source binding. Missing or inconsistent evidence blocks the retry; it
+canonical source binding, including the retained action effect-key index. Missing or inconsistent evidence blocks the retry; it
 does not repair metadata or recreate delivery.
 
 A generation authority reservation validates committed start authorization,
@@ -71,7 +71,11 @@ Outbox and timer expiry permits redelivery. It does not establish that an effect
 failed. Acknowledge deliveries only after independently establishing the
 required downstream durable acceptance. Exact lease equality, persistent unique
 tokens and inclusive expiry fence stale acknowledgement and renewal attempts.
-Canceled timers remain retained and cannot be silently rescheduled.
+Canceled timers remain retained and cannot be silently rescheduled. Claims compare
+selected action IDs and effect keys, or timer IDs and due times, against the
+validated payload before reserving any lease. Inconsistent selected metadata
+rejects the entire batch without consuming a token. Claim updates must affect
+exactly one row before a lease is returned.
 
 ## Async lifecycle
 
