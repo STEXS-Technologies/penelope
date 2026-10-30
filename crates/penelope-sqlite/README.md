@@ -75,7 +75,10 @@ Canceled timers remain retained and cannot be silently rescheduled. Claims compa
 selected action IDs and effect keys, or timer IDs and due times, against the
 validated payload before reserving any lease. Inconsistent selected metadata
 rejects the entire batch without consuming a token. Claim updates must affect
-exactly one row before a lease is returned.
+exactly one row before a lease is returned. ACK and outbox renewal recheck the
+retained payload/checksum, identity index, expiry and delivery metadata against
+the lease. ACK must update exactly one row; an ignored write cannot report
+durable success. Repeating a valid durable ACK remains idempotent.
 
 ## Async lifecycle
 
