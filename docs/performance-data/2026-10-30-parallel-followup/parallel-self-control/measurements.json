@@ -1,0 +1,2645 @@
+{
+  "schema": 1,
+  "samples": [
+    {
+      "file": "run-1-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.14115ms (77 ns/op, 12844740 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2160
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31141150.0,
+            "ns_per_operation": 77.852875
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "118.723449",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 118723449,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123630287.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 118723449,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "621286772.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 118723449,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 118723449,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 118723449,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 39.484756ms (98 ns/op, 10130491 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2164
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 39484756.0,
+            "ns_per_operation": 98.71189
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.877274",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116877274,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123704707.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116877274,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "613886329.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116877274,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "16.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116877274,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116877274,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.442673ms (78 ns/op, 12721564 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31442673.0,
+            "ns_per_operation": 78.6066825
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "119.497080",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 119497080,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123695913.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 119497080,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "627755891.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 119497080,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "13.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 119497080,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 119497080,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.368844ms (73 ns/op, 13619875 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1940
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29368844.0,
+            "ns_per_operation": 73.42211
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.204115",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116204115,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123629147.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116204115,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "610300115.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116204115,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116204115,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116204115,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-11-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.295012ms (73 ns/op, 13654201 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1900
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29295012.0,
+            "ns_per_operation": 73.23753
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "117.173015",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 117173015,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123805239.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 117173015,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "615454867.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 117173015,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 117173015,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 117173015,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-11-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.135158ms (77 ns/op, 12847212 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2292
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31135158.0,
+            "ns_per_operation": 77.837895
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "117.967635",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 117967635,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123859447.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 117967635,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "619527370.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 117967635,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "11.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 117967635,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 117967635,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-12-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 30.786605ms (76 ns/op, 12992663 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2152
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 30786605.0,
+            "ns_per_operation": 76.9665125
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "120.547592",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 120547592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123521159.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 120547592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "634124819.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 120547592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "3.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 120547592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 120547592,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-12-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.238067ms (78 ns/op, 12804889 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31238067.0,
+            "ns_per_operation": 78.0951675
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "119.005727",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 119005727,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123812268.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 119005727,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "624960422.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 119005727,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "10.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 119005727,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 119005727,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-13-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.858738ms (72 ns/op, 13860619 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2152
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28858738.0,
+            "ns_per_operation": 72.146845
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.486151",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115486151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123612323.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115486151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "606722130.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115486151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115486151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115486151,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-13-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.426326ms (73 ns/op, 13593270 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29426326.0,
+            "ns_per_operation": 73.565815
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.976148",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116976148,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123799450.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116976148,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "614430888.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116976148,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "10.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116976148,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116976148,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-14-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.072371ms (72 ns/op, 13758767 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29072371.0,
+            "ns_per_operation": 72.6809275
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.817540",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116817540,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123738271.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116817540,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "613964228.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116817540,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "10.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116817540,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116817540,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-14-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.244369ms (78 ns/op, 12802306 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2236
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31244369.0,
+            "ns_per_operation": 78.1109225
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "120.175143",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 120175143,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123862208.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 120175143,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "630059529.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 120175143,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "12.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 120175143,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 120175143,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-15-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.746033ms (74 ns/op, 13447171 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2172
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29746033.0,
+            "ns_per_operation": 74.3650825
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.855390",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116855390,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123648600.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116855390,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "613655363.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116855390,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "7.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116855390,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116855390,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-15-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.31975ms (73 ns/op, 13642681 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2164
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29319750.0,
+            "ns_per_operation": 73.299375
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.834292",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116834292,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123652002.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116834292,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "613216590.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116834292,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116834292,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116834292,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-16-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.285313ms (73 ns/op, 13658723 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2152
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29285313.0,
+            "ns_per_operation": 73.2132825
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.615353",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116615353,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123693776.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116615353,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "612178364.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116615353,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "9.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116615353,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116615353,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-16-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 32.070717ms (80 ns/op, 12472437 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 32070717.000000004,
+            "ns_per_operation": 80.1767925
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.479227",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116479227,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123742910.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116479227,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "610837776.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116479227,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "14.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116479227,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116479227,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-17-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.953571ms (72 ns/op, 13815221 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2172
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28953571.0,
+            "ns_per_operation": 72.3839275
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.171245",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116171245,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123593513.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116171245,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "610890438.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116171245,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116171245,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116171245,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-17-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.02737ms (77 ns/op, 12891843 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2432
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31027370.0,
+            "ns_per_operation": 77.568425
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "119.282704",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 119282704,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123674663.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 119282704,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "627317863.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 119282704,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 119282704,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 119282704,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-18-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.791607ms (79 ns/op, 12581937 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31791607.0,
+            "ns_per_operation": 79.4790175
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "120.313935",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 120313935,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123641991.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 120313935,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "632514158.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 120313935,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 120313935,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 120313935,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-18-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 30.187577ms (75 ns/op, 13250483 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 30187577.0,
+            "ns_per_operation": 75.4689425
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "117.448151",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 117448151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123829663.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 117448151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "617221425.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 117448151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "8.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 117448151,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 117448151,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-19-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.848769ms (72 ns/op, 13865409 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1904
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28848769.0,
+            "ns_per_operation": 72.1219225
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.634980",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115634980,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123542866.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115634980,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "607486251.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115634980,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115634980,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115634980,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-19-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.606684ms (74 ns/op, 13510462 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29606684.0,
+            "ns_per_operation": 74.01671
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.367930",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116367930,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123509790.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116367930,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "611060381.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116367930,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116367930,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116367930,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.927531ms (72 ns/op, 13827657 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2096
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28927531.0,
+            "ns_per_operation": 72.3188275
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.484719",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115484719,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123566664.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115484719,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "606939348.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115484719,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115484719,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115484719,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.200239ms (73 ns/op, 13698518 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2404
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29200239.0,
+            "ns_per_operation": 73.0005975
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.333558",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116333558,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123567967.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116333558,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "611911178.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116333558,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116333558,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "3.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116333558,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-20-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.432016ms (73 ns/op, 13590642 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2164
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29432016.0,
+            "ns_per_operation": 73.58004
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "118.168232",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 118168232,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123682619.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 118168232,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "620000637.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 118168232,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "11.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 118168232,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 118168232,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-20-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.335751ms (73 ns/op, 13635239 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29335751.0,
+            "ns_per_operation": 73.3393775
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.477221",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115477221,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123732312.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115477221,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "606786004.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115477221,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "9.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115477221,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "3.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115477221,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 30.657495ms (76 ns/op, 13047380 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 30657495.0,
+            "ns_per_operation": 76.6437375
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "118.100336",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 118100336,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123826539.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 118100336,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "620425506.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 118100336,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "9.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 118100336,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 118100336,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.966937ms (72 ns/op, 13808846 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2216
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28966937.0,
+            "ns_per_operation": 72.4173425
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.118684",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115118684,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123690169.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115118684,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "605063355.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115118684,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "11.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115118684,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115118684,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.048611ms (77 ns/op, 12883023 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31048611.0,
+            "ns_per_operation": 77.6215275
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "120.429433",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 120429433,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123559209.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 120429433,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "632468526.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 120429433,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "7.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 120429433,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 120429433,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.032705ms (72 ns/op, 13777565 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29032705.0,
+            "ns_per_operation": 72.5817625
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.732806",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115732806,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123759090.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115732806,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "607236046.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115732806,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "14.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115732806,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115732806,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.00156ms (77 ns/op, 12902576 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31001560.0,
+            "ns_per_operation": 77.5039
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "120.255156",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 120255156,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123833288.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 120255156,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "633150224.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 120255156,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 120255156,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 120255156,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.984601ms (72 ns/op, 13800431 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2272
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28984601.0,
+            "ns_per_operation": 72.4615025
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "115.601307",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 115601307,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123720762.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 115601307,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "607909825.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 115601307,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 115601307,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 115601307,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.422303ms (78 ns/op, 12729811 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31422303.0,
+            "ns_per_operation": 78.5557575
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "121.339592",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 121339592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123661751.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 121339592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "636235580.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 121339592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "7.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 121339592,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 121339592,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.174879ms (72 ns/op, 13710425 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29174879.0,
+            "ns_per_operation": 72.9371975
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "114.853759",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 114853759,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123659250.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 114853759,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "604333603.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 114853759,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "9.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 114853759,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 114853759,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.60167ms (79 ns/op, 12657558 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2144
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31601670.0,
+            "ns_per_operation": 79.004175
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "121.622313",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 121622313,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123878045.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 121622313,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "637307989.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 121622313,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "16.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 121622313,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "4.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 121622313,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.675117ms (74 ns/op, 13479306 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29675117.0,
+            "ns_per_operation": 74.1877925
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "117.672100",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 117672100,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123624378.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 117672100,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "614673445.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 117672100,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "5.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 117672100,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 117672100,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.927684ms (74 ns/op, 13365551 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2228
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29927684.0,
+            "ns_per_operation": 74.81921
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.800610",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116800610,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123679469.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116800610,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "612698492.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116800610,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "10.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116800610,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116800610,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.386869ms (73 ns/op, 13611521 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29386869.0,
+            "ns_per_operation": 73.4671725
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "117.024519",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 117024519,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123674748.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 117024519,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "613788110.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 117024519,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "6.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 117024519,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "1.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 117024519,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.14416ms (72 ns/op, 13724876 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2228
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29144160.0,
+            "ns_per_operation": 72.8604
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "116.411212",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 116411212,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123624217.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 116411212,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "611432729.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 116411212,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "7.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 116411212,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "0.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 116411212,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 31.698116ms (79 ns/op, 12619046 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 31698116.0,
+            "ns_per_operation": 79.24529
+          }
+        ],
+        "perf": [
+          {
+            "counter-value": "118.954142",
+            "unit": "msec",
+            "event": "task-clock",
+            "event-runtime": 118954142,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "2123725650.000000",
+            "unit": "",
+            "event": "instructions",
+            "event-runtime": 118954142,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "624455455.000000",
+            "unit": "",
+            "event": "cycles",
+            "event-runtime": 118954142,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "10.000000",
+            "unit": "",
+            "event": "context-switches",
+            "event-runtime": 118954142,
+            "pcnt-running": 100.0
+          },
+          {
+            "counter-value": "3.000000",
+            "unit": "",
+            "event": "cpu-migrations",
+            "event-runtime": 118954142,
+            "pcnt-running": 100.0
+          }
+        ]
+      }
+    }
+  ]
+}
