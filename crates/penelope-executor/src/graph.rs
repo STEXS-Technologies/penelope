@@ -187,13 +187,22 @@ fn ensure_new_action(
 
 // Every result replaces the current step and active action. Preserve the
 // durable history without cloning identities that would immediately be dropped.
-fn inactive_projection(projection: &GraphSagaProjection) -> GraphSagaProjection {
+fn inactive_projection(
+    projection: &GraphSagaProjection,
+    reserve_action: bool,
+) -> GraphSagaProjection {
+    let capacity = projection
+        .issued_action_ids
+        .len()
+        .saturating_add(usize::from(reserve_action));
+    let mut issued_action_ids = Vec::with_capacity(capacity);
+    issued_action_ids.extend_from_slice(&projection.issued_action_ids);
     GraphSagaProjection {
         scope: projection.scope.clone(),
         current_step_id: None,
         step_visits: projection.step_visits,
         active_action_id: None,
-        issued_action_ids: projection.issued_action_ids.clone(),
+        issued_action_ids,
         status: projection.status,
     }
 }
@@ -291,7 +300,7 @@ pub fn apply_graph_result(
         if next_action_id.is_some() {
             return Err(GraphEngineError::ActionIdentityMismatch);
         }
-        let mut escalated = inactive_projection(projection);
+        let mut escalated = inactive_projection(projection, false);
         escalated.status = SagaStatus::Escalated;
         return Ok(GraphSagaDecision {
             projection: escalated,
@@ -309,7 +318,7 @@ pub fn apply_graph_result(
         .iter()
         .find(|edge| &edge.from_step == step_id && edge.on == outcome)
         .ok_or(GraphEngineError::MissingTransition)?;
-    let mut next_projection = inactive_projection(projection);
+    let mut next_projection = inactive_projection(projection, transition.to_step.is_some());
     let next_action = if let Some(to_step) = &transition.to_step {
         let action_id = ensure_new_action(projection, next_action_id.as_ref())?;
         let next_visits = projection
