@@ -103,7 +103,12 @@ interrupted worker, persist an unknown outcome, reconstruct the blocked state,
 then supply explicit trusted restart authorization. A successor's completion
 still requires matching independent effect evidence before the normal authorized
 result relay can commit a terminal saga decision. These external evidence sources
-are fixtures, not live external systems or StateChronicle proof verification.
+are fixtures, not live external systems or StateChronicle proof verification. The
+coordinator crash suite covers 56 effectful cases (two engines, two store layouts,
+14 boundaries), including initial launch, reconciliation required, unknown evidence
+and persisted restart authorization. Each case uses SIGKILL followed by a fresh
+process; reconciliation cases assert the original generation and blocked or
+authorized state before recovery continues.
 
 ## Discovering accepted inputs after restart
 
