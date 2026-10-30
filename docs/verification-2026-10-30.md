@@ -1,6 +1,6 @@
 # Reliable execution verification — 2026-10-30
 
-Current production sources through `50fec4e` pass all seven remote CI jobs;
+Current source/test candidate `afc5648` passes all seven remote CI jobs;
 remote line coverage is **94.3494%** against the unchanged **94.0759%** ratchet.
 A separate three-iteration extended-chaos run and verification-only release
 workflow passed at their pinned earlier revisions. [Retained remote evidence](verification-data/2026-10-30-remote-qualification/metadata.json)
@@ -251,8 +251,9 @@ schedules. An immediate runtime error requires reconstruction; an accepted
 handoff must fault if polled. Recovery without polling fences generation one
 and records `SupervisorInterrupted`. Either path leaves exactly a fault after
 intent/start, no completed output and no successor generation. Stable/MSRV and
-strict Clippy checks pass locally; the corrected remote result must be inspected
-separately. The original failing CI and corrected test diff are retained with the
+strict Clippy checks pass locally. The
+[corrected remote run](https://github.com/STEXS-Technologies/penelope/actions/runs/41077837306)
+passes all seven CI jobs, including stable and MSRV. The original failing CI and corrected test diff are retained with the
 [bootstrap timing evidence](verification-data/2026-10-30-bootstrap-timing/metadata.json).
 This supplements the [executable-boundary regression](worker-executable-boundary-2026-10-30.md)
 without equating launch admission with successful application execution.
