@@ -319,7 +319,10 @@ fn task_driver_authorizes_before_starting_or_polling_worker() {
     .unwrap();
     assert!(started.changed);
     assert_eq!(started.status, TaskStatus::Running);
-    for _ in 0..100 {
+    // A fixed 100-poll budget can expire while the worker is descheduled on
+    // a busy CI host. Bound wall time like the other real-process tests.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while std::time::Instant::now() < deadline {
         let report = run(drive_task_once(
             &policy,
             &claim.owner,
