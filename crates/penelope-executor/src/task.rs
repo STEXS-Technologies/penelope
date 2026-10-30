@@ -4,7 +4,7 @@ pub use penelope_core::task::control::SupervisorError;
 use penelope_core::task::{
     BlobRef, Digest, Reconciliation, TaskDefinition, TaskError, TaskGeneration, TaskProjection,
     TaskScope, TaskTick,
-    control::TaskControl,
+    control::{TaskControl, TaskDispatchWorkspace},
     runtime::{TaskJournal, TaskObservation, TaskRuntime},
 };
 
@@ -61,14 +61,12 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
         self.control.submit(input, schema, tick)
     }
 
-    /// Advances one transition using two dispatch buffers and shared policy.
+    /// Advances one transition, initializing two buffers only when dispatching.
     /// # Errors
     /// Returns policy, storage, integrity or runtime failures.
     pub fn advance(&mut self, tick: TaskTick) -> Result<bool, SupervisorError> {
-        let mut input = [0; N];
-        let mut checkpoint = [0; N];
         self.control
-            .advance_with_buffers(tick, &mut input, &mut checkpoint)
+            .advance_with_workspace(tick, &mut FixedDispatchWorkspace::<N>)
     }
 
     /// Polls with one proposal buffer; timeout wins over completion.
@@ -119,5 +117,15 @@ impl<J: TaskJournal, R: TaskRuntime, const N: usize> TaskSupervisor<J, R, N> {
     ) -> Result<(), SupervisorError> {
         self.control
             .import_checkpoint(source, previous, bytes, authorization, tick)
+    }
+}
+
+struct FixedDispatchWorkspace<const N: usize>;
+
+impl<const N: usize> TaskDispatchWorkspace for FixedDispatchWorkspace<N> {
+    fn with_buffers<T>(&mut self, operation: impl FnOnce(&mut [u8], &mut [u8]) -> T) -> T {
+        let mut input = [0; N];
+        let mut checkpoint = [0; N];
+        operation(&mut input, &mut checkpoint)
     }
 }

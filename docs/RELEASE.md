@@ -72,7 +72,10 @@ and commit policy with the hosted `TaskSupervisor` wrapper. Operation-specific
 storage separately. The full-workspace calls retain admission of all capacities
 before launch; poll storage must fit the larger checkpoint/output declaration.
 The hosted wrapper validates its const capacity during restore and supplies two
-arrays for advance and one for poll. Actual stack frames remain compiler- and
+arrays only when dispatching and one for poll. `TaskDispatchWorkspace` lets
+portable callers supply dispatch storage lazily, after the shared policy chooses
+a start/restart and before its authorizing commit. Waiting, fault and recovery
+decisions do not invoke the provider. Actual stack frames remain compiler- and
 adapter-dependent. The owning wrapper,
 saga facade and asynchronous ports remain hosted.
 

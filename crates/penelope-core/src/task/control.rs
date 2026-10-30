@@ -44,6 +44,25 @@ impl TaskWorkspace<'_> {
     }
 }
 
+/// Supplies dispatch storage only when a start/restart transition needs it.
+/// Implementations choose bounded storage; the controller owns no byte arrays.
+/// The operation consumes its callback, so it cannot dispatch twice.
+pub trait TaskDispatchWorkspace {
+    /// Borrows input and checkpoint storage for one synchronous operation.
+    fn with_buffers<T>(&mut self, operation: impl FnOnce(&mut [u8], &mut [u8]) -> T) -> T;
+}
+
+struct BorrowedDispatchWorkspace<'workspace> {
+    input: &'workspace mut [u8],
+    checkpoint: &'workspace mut [u8],
+}
+
+impl TaskDispatchWorkspace for BorrowedDispatchWorkspace<'_> {
+    fn with_buffers<T>(&mut self, operation: impl FnOnce(&mut [u8], &mut [u8]) -> T) -> T {
+        operation(self.input, self.checkpoint)
+    }
+}
+
 fn validate_capacity(required: u32, available: usize) -> Result<(), TaskError> {
     if usize::try_from(required)
         .ok()
@@ -160,7 +179,10 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
     ) -> Result<bool, SupervisorError> {
         self.advance_inner(
             tick,
-            Some((&mut *workspace.input, &mut *workspace.checkpoint)),
+            &mut BorrowedDispatchWorkspace {
+                input: workspace.input,
+                checkpoint: workspace.checkpoint,
+            },
             Some(workspace.output.len()),
         )
     }
@@ -177,44 +199,55 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
         input: &mut [u8],
         checkpoint: &mut [u8],
     ) -> Result<bool, SupervisorError> {
-        self.advance_inner(tick, Some((input, checkpoint)), None)
+        self.advance_with_workspace(tick, &mut BorrowedDispatchWorkspace { input, checkpoint })
     }
 
-    fn advance_inner(
+    /// Advances with lazily supplied dispatch storage. The provider is called
+    /// only for start/restart, before its authorizing commit. Its capacities are
+    /// checked before any durable mutation; polling validates its own buffer.
+    /// # Errors
+    /// Returns capacity, clock/policy, storage, integrity or runtime failures.
+    pub fn advance_with_workspace<W: TaskDispatchWorkspace>(
         &mut self,
         tick: TaskTick,
-        buffers: Option<(&mut [u8], &mut [u8])>,
+        workspace: &mut W,
+    ) -> Result<bool, SupervisorError> {
+        self.advance_inner(tick, workspace, None)
+    }
+
+    fn advance_inner<W: TaskDispatchWorkspace>(
+        &mut self,
+        tick: TaskTick,
+        workspace: &mut W,
         poll_capacity: Option<usize>,
     ) -> Result<bool, SupervisorError> {
         self.ensure_healthy()?;
         let Some(record) = self.projection.next(tick)? else {
             return Ok(false);
         };
-        let dispatch = if matches!(
+        if matches!(
             record.event,
             TaskExecutionEvent::Started | TaskExecutionEvent::Restarted
         ) {
-            let (input, checkpoint) = buffers.ok_or(TaskError::InvalidTransition)?;
-            let definition = self.projection.definition();
-            validate_capacity(definition.budget.max_input_bytes, input.len())?;
-            validate_capacity(definition.recovery.max_checkpoint_bytes, checkpoint.len())?;
-            if let Some(capacity) = poll_capacity {
-                validate_poll_capacity(definition, capacity)?;
-            }
-            Some((input, checkpoint))
+            workspace.with_buffers(|input, checkpoint| {
+                let definition = self.projection.definition();
+                validate_capacity(definition.budget.max_input_bytes, input.len())?;
+                validate_capacity(definition.recovery.max_checkpoint_bytes, checkpoint.len())?;
+                if let Some(capacity) = poll_capacity {
+                    validate_poll_capacity(definition, capacity)?;
+                }
+                self.commit(&record, None)?;
+                let result = self.dispatch(input, checkpoint);
+                if result.is_err() {
+                    self.poisoned = true;
+                }
+                result
+            })?;
         } else {
-            None
-        };
-        if matches!(record.event, TaskExecutionEvent::FaultObserved { .. }) {
-            self.fence(record.scope, record.generation)?;
-        }
-        self.commit(&record, None)?;
-        if let Some((input, checkpoint)) = dispatch {
-            let result = self.dispatch(input, checkpoint);
-            if result.is_err() {
-                self.poisoned = true;
+            if matches!(record.event, TaskExecutionEvent::FaultObserved { .. }) {
+                self.fence(record.scope, record.generation)?;
             }
-            result?;
+            self.commit(&record, None)?;
         }
         Ok(true)
     }
@@ -291,7 +324,14 @@ impl<J: TaskJournal, R: TaskRuntime> TaskControl<J, R> {
             return Err(TaskError::InvalidTransition.into());
         }
         if tick >= self.projection.execution_deadline() {
-            return self.advance_inner(tick, None, None);
+            return self.advance_inner(
+                tick,
+                &mut BorrowedDispatchWorkspace {
+                    input: &mut [],
+                    checkpoint: &mut [],
+                },
+                None,
+            );
         }
         let definition = self.projection.definition();
         if let Some((input_capacity, checkpoint_capacity)) = dispatch_capacities {
