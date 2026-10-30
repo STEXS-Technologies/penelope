@@ -640,3 +640,56 @@ fn exhausted_or_corrupt_lease_counters_and_clock_overflow_preserve_pending_work(
         }
     }
 }
+
+#[test]
+fn ignored_token_counter_update_returns_no_lease_and_preserves_work() {
+    for timer in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("ignored-counter.db");
+        let adapter = store(&path, clock());
+        let commit = commit(timer);
+        block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+        if timer {
+            block_on(adapter.schedule(&TimerSchedule {
+                action: commit.actions[0].clone(),
+                due_at: LogicalTime(100),
+            }))
+            .unwrap();
+        }
+        let table = if timer {
+            "process_timers"
+        } else {
+            "process_actions"
+        };
+        let connection = Connection::open(&path).unwrap();
+        connection.execute_batch(
+            "CREATE TRIGGER ignore_claim BEFORE UPDATE OF next_token ON lease_counter BEGIN SELECT RAISE(IGNORE); END;"
+        ).unwrap();
+        let result = if timer {
+            block_on(adapter.claim_due(&timer_claim(100))).map(|_| ())
+        } else {
+            block_on(adapter.claim(&claim())).map(|_| ())
+        };
+        assert_eq!(result, Err(PortError::Invariant));
+        let state: (u32, bool, i64) = connection.query_row(
+            &format!("SELECT attempt,lease IS NULL,(SELECT next_token FROM lease_counter) FROM {table}"),
+            [], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+        ).unwrap();
+        assert_eq!(state, (0, true, 1));
+        connection
+            .execute_batch("DROP TRIGGER ignore_claim;")
+            .unwrap();
+        let recovered_token = if timer {
+            block_on(adapter.claim_due(&timer_claim(100)))
+                .unwrap()
+                .remove(0)
+                .token
+        } else {
+            block_on(adapter.claim(&claim())).unwrap().remove(0).token
+        };
+        assert_eq!(
+            recovered_token,
+            OutboxLeaseToken::new(std::num::NonZeroU64::new(1).unwrap())
+        );
+    }
+}
