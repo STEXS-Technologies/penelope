@@ -1,7 +1,8 @@
 # penelope-process-runtime
 
-Optional Linux process execution for Penelope's task ports. Release qualification
-is ongoing. The default facade does not depend on this package.
+Optional Linux process execution for Penelope's task ports. The default facade
+does not depend on this package. The [0.3.0 qualification report](../../docs/qualification-0.3.0.md)
+records the verified profile, evidence and limits.
 
 ## Supported profile
 
@@ -86,4 +87,5 @@ and graph engines with shared and separate databases. Recovery checks the pendin
 inbox before redelivery, exact timer bytes, duplicate acceptance after a lost ACK,
 and a single committed retry action. These cases stop at retry dispatch; the
 orderly timer workflows separately execute the real worker and relay its result.
-Broader adversarial release qualification remains in progress.
+The qualification report records the completed adversarial campaigns and their
+exact revision/scope limits.

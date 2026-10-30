@@ -1,8 +1,9 @@
 # Operating reliable execution
 
 This runbook covers the optional single-host SQLite and static Linux x86-64
-worker profile. Release qualification is ongoing. It does not establish a
-production deployment, distributed fencing, or exactly-once remote effects.
+worker profile. The [qualification audit](qualification-0.3.0.md) records the
+verified scope and evidence. It does not establish a consumer production
+deployment, distributed fencing, or exactly-once remote effects.
 See the [SQLite profile](../crates/penelope-sqlite/README.md) and
 [worker restrictions](../crates/penelope-process-runtime/README.md) before setup.
 

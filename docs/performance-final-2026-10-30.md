@@ -89,3 +89,46 @@ The other qualification evidence remains in the [SQLite cache report](performanc
 [hosted allocation/stack comparison](performance-hosted-borrowed-restore-2026-10-30.md),
 and [RISC-V closed call-chain bound](portable-task-stack-bound-2026-10-30.md).
 Those reports retain their exact profile, source revision and scope limits.
+
+## Versioned 0.3.0 candidate confirmation
+
+After the metadata update, candidate
+`16e3e1e3e3c7038aea4f3708cb9cc519fedaf664` passed the full local check sequence.
+A second serialized twenty-pair six-binary comparison then ran with the same
+method, followed by three worker runs and the static RISC-V analysis. This
+refresh accounts for compiler crate identity/layout changes after versioning;
+both campaigns remain retained. [Versioned records and hashes](performance-data/2026-10-30-versioned-qualified/manifest.json)
+are authoritative for the versioned candidate.
+
+| Workload | Baseline ns/op | Candidate ns/op | Median change | Median peak RSS KiB, before → after |
+| --- | ---: | ---: | ---: | ---: |
+| Linear start/result/complete | 270.850 | 272.442 | +0.59% | 2118 → 2078 |
+| Graph start/result/result | 968.562 | 997.088 | +2.95% | 2132 → 2146 |
+| Linear replay | 412.661 | 406.940 | -1.39% | 2140 → 2128 |
+| Parallel linear | 75.314 | 72.303 | -4.00% | 2154 → 2190 |
+| Parallel graph | 284.200 | 286.645 | +0.86% | 2178 → 2212 |
+| Canonical DTO encoding | 333.678 | 321.298 | -3.71% | 4432 → 4236 |
+| Bounded outcome append | 509.274 | 503.169 | -1.20% | 4432 → 4236 |
+
+Graph's paired time difference is +3.44%, exploratory interval +2.43% to +4.55%;
+task-clock +3.41%, cycles +3.45%, instructions +0.112%. Its 28.53 ns marginal
+median cost confirms the preceding explicit exception; the cause remains
+unresolved. The +0.59% linear and +0.86% parallel-graph medians are also accepted
+under the same reference-profile tradeoff. Parallel linear's paired time is
+-2.92%, interval -10.12% to +3.06%; task-clock +0.112%, instructions -0.0015%.
+No interval establishes noninferiority, and the differing signs/variation are
+retained. No further run was selected to replace an inconvenient result.
+
+For the versioned worker runs, ranges of run-specific medians in milliseconds:
+
+| Profile | Start return | Dispatch → host checkpoint ACK | Dispatch → completion and fence |
+| --- | ---: | ---: | ---: |
+| Fresh store/runtime | 3.380–3.448 | 4.093–4.167 | 5.928–6.084 |
+| Reused store/runtime | 3.010–3.106 | 3.759–3.986 | 5.708–6.450 |
+
+The versioned RISC-V analysis again closes 42 reachable functions at a
+**115,056-byte** conservative stack bound, with **65,552 bytes** for the positive
+control. The retained generated profile, frame inventory, disassembly and ELF
+section accounting preserve its exact toolchain/source scope. This is the same
+fixed-port, aligned-entry, no-interrupt profile described in the original stack
+report, not a bound for arbitrary adapters or application call chains.

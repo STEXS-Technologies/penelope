@@ -1,6 +1,6 @@
-# Penelope release contract — 0.3.0 candidate
+# Penelope release contract — 0.3.0
 
-Penelope 0.2.0 provides deterministic, runtime-independent task recovery
+Penelope provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
@@ -9,8 +9,9 @@ single-process runtime. All nine library crates use version `0.3.0`. Saga v1
 records, linear/graph decisions, task history v1 and fingerprints retain their
 existing formats. The [dated changelog](../CHANGELOG.md#030---2026-10-30) records
 source-compatibility changes. [Qualification evidence](verification-2026-10-30.md)
-includes measured performance exceptions and deployment limits. Versioned
-package/workflow verification must pass before tagging or publishing.
+includes measured performance exceptions and deployment limits. The
+[qualification audit](qualification-0.3.0.md) records the passing versioned
+package/workflow verification. Tagging and publishing are separate release actions.
 
 ## Recoverable execution
 
@@ -211,7 +212,8 @@ The [fixed-port RISC-V stack analysis](portable-task-stack-bound-2026-10-30.md)
 provides a conservative bound for one explicit freestanding reference profile.
 The [SQLite file-cache measurements](performance-sqlite-cache-2026-10-30.md)
 verify database-page residency before paired cold/warm replays. Their scopes
-and limitations are separate from the unresolved saga timing qualification.
+and limitations are separate from the final saga timing review and its
+explicit performance exceptions.
 
 ## Source compatibility review
 
@@ -256,12 +258,14 @@ already-published versions and verifies all expected versions. Credentials
 remain outside the repository.
 
 The optional SQLite adapter has a [current store baseline](performance-sqlite-2026-10-30.md)
-with raw pinned-CPU measurements. Its report lists performance qualification that
-remains incomplete; the historical core baseline does not cover this adapter.
+with raw pinned-CPU measurements. The final performance review links subsequent
+cache and integration evidence; the historical core baseline does not cover this adapter.
 The [hosted supervisor comparison method](hosted-task-memory-method.md) provides
 a calibrated before/after allocation and sampled-stack runner. The
-[initial measurements](performance-hosted-memory-2026-10-30.md) show a stack
-regression; this qualification requirement remains open.
+[initial measurements](performance-hosted-memory-2026-10-30.md) retain the original
+stack regression. The [borrowed-restore follow-up](performance-hosted-borrowed-restore-2026-10-30.md)
+records its removal for that fixture; the static RISC-V report supplies its
+separately scoped conservative call-chain bound.
 The Linux runtime also has a [real-worker dispatch/host-ACK baseline](performance-worker-dispatch-2026-10-30.md)
 with fresh and reused store/runtime profiles, raw samples and disclosed limits.
 
