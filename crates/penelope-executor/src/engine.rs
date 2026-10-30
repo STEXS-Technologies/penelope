@@ -1153,21 +1153,18 @@ impl LinearSagaDefinition {
     ///
     /// Returns [`EngineError::EmptyDefinition`] when no step is declared.
     pub fn validate(&self) -> Result<(), EngineError> {
-        if self.steps.is_empty() {
-            return Err(EngineError::EmptyDefinition);
-        }
-        if self.steps.len() > MAX_DEFINITION_STEPS {
-            return Err(EngineError::DefinitionStepLimitExceeded);
-        }
-        let duplicate = if self.steps.len() > 16 {
-            large_linear_steps_have_duplicate_ids(&self.steps)?
-        } else {
-            self.steps.iter().enumerate().any(|(index, step)| {
+        let duplicate = match self.steps.len() {
+            0 => return Err(EngineError::EmptyDefinition),
+            // The common path needs only the empty/threshold branches, keeping
+            // both the larger scratch frame and an extra bounds branch out.
+            1..=16 => self.steps.iter().enumerate().any(|(index, step)| {
                 self.steps
                     .iter()
                     .skip(index.saturating_add(1))
                     .any(|other_step| other_step.step_id == step.step_id)
-            })
+            }),
+            17..=MAX_DEFINITION_STEPS => large_linear_steps_have_duplicate_ids(&self.steps)?,
+            _ => return Err(EngineError::DefinitionStepLimitExceeded),
         };
         if duplicate {
             return Err(EngineError::DuplicateStepId);
