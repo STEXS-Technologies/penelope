@@ -56,7 +56,12 @@ the worker before accepting terminal state.
 
 Integration tests compile a freestanding static C worker using `cc`; they exercise
 results, checkpoint acknowledgement, malformed frames, prohibited syscalls,
-CPU enforcement, and reconstruction with a live worker. Full linear and graph
+CPU enforcement, and reconstruction with a live worker. The memory admission
+test verifies that a small anonymous mapping works and an oversized virtual
+mapping returns `ENOMEM` under the configured address-space limit. Escape probes
+cover process creation, filesystem/network access, signalling, tracing, limit
+changes, and reads/writes outside the permitted standard descriptors.
+Full linear and graph
 sagas replay persisted event bytes with shared and separate databases. A process
 kill matrix interrupts their coordinator at ten durable boundaries, including
 worker start, task completion and result commit, then reconstructs both logs.

@@ -133,8 +133,10 @@ fn static_worker_completes_only_after_durable_input_and_start() {
     assert_eq!(u64::from_le_bytes(bytes), 6);
 }
 #[test]
-fn kernel_blocks_fork_filesystem_and_network_syscalls() {
-    for mode in [2, 3, 4] {
+fn kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls() {
+    // fork, openat, socket, setrlimit, clone, kill, ptrace, mutating
+    // prlimit64, read outside stdin, and write outside stdout/stderr.
+    for mode in [2, 3, 4, 11, 13, 14, 15, 16, 17, 18] {
         let directory = tempfile::tempdir().unwrap();
         let mut supervisor = fresh(directory.path(), &[mode], 2);
         supervisor.advance(TaskTick::new(1)).unwrap();
@@ -150,6 +152,22 @@ fn kernel_blocks_fork_filesystem_and_network_syscalls() {
             }
         ));
     }
+}
+#[test]
+fn kernel_address_space_limit_allows_small_and_rejects_large_allocations() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut supervisor = fresh(directory.path(), &[10, 1, 2, 3], 2);
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    // Both mmap attempts occur in the worker. No poll callback can enforce its
+    // memory admission, and merely reserving the oversized mapping must fail.
+    wait(&mut supervisor).unwrap();
+    assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+    let output = supervisor.projection().output().unwrap();
+    let scope = supervisor.projection().scope();
+    let (mut journal, _runtime) = supervisor.into_parts();
+    let mut bytes = [0; 8];
+    journal.read_blob(scope, output, &mut bytes).unwrap();
+    assert_eq!(u64::from_le_bytes(bytes), 6);
 }
 #[test]
 fn checkpoint_requires_exact_commit_ack_before_completion() {
