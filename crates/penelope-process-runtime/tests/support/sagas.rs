@@ -64,7 +64,38 @@ impl TaskOutputClassifier for SumClassifier {
         Ok(ExternalEffectState::Succeeded)
     }
 }
+// Independent trusted fixture: this deliberately models an external authority,
+// rather than treating the protected worker's completion as effect evidence.
+struct SumEvidence {
+    binding: TaskEffectBinding,
+    generation: penelope_core::task::TaskGeneration,
+    output: BlobRef,
+}
+impl TaskEffectEvidenceVerifier for SumEvidence {
+    fn verify(
+        &self,
+        binding: &TaskEffectBinding,
+        generation: penelope_core::task::TaskGeneration,
+        output: BlobRef,
+        bytes: &[u8],
+    ) -> Result<ExternalEffectEvidence, TaskEffectVerificationError> {
+        if binding != &self.binding
+            || generation != self.generation
+            || output != self.output
+            || bytes != 6_u64.to_le_bytes()
+        {
+            return Err(TaskEffectVerificationError::BindingMismatch);
+        }
+        Ok(ExternalEffectEvidence {
+            action_id: binding.request().action.action_id.clone(),
+            effect_key: binding.request().effect_key.clone(),
+            external_reference_id: None,
+            state: ExternalEffectState::Succeeded,
+        })
+    }
+}
 struct Stores {
+    effectful: bool,
     directory: PathBuf,
     _temporary: Option<tempfile::TempDir>,
     now: LogicalTime,
@@ -102,6 +133,7 @@ impl Stores {
         )
         .unwrap();
         Self {
+            effectful: false,
             directory,
             _temporary: temporary,
             now,
@@ -156,8 +188,12 @@ impl Stores {
     }
     fn execute(&mut self, commit: &AtomicProcessCommit) -> TaskResultRelay {
         let action = commit.actions.first().unwrap().clone();
+        let mut task_definition = definition(2);
+        if self.effectful {
+            task_definition.effects = penelope_core::task::EffectContract::ReconcileRequired;
+        }
         let binding =
-            TaskEffectBinding::new(EffectDispatchRequest::new(action), definition(2)).unwrap();
+            TaskEffectBinding::new(EffectDispatchRequest::new(action), task_definition).unwrap();
         // Lose the initial process acknowledgement, reopen, then reconstruct the
         // exact commit receipt before any worker can be admitted.
         run(self.store.commit(commit)).unwrap();
@@ -220,7 +256,67 @@ impl Stores {
                 .unwrap()
         };
         cut("outbox-ack");
-        for offset in 1..45 {
+        let first_offset = if self.effectful {
+            use penelope_core::task::Reconciliation;
+            supervisor.advance(TaskTick::new(tick + 1)).unwrap();
+            assert_eq!(supervisor.projection().status(), TaskStatus::Running);
+            let (interrupted_journal, interrupted_runtime) = supervisor.into_parts();
+            supervisor = Supervisor::restore(
+                interrupted_journal,
+                interrupted_runtime,
+                binding.scope(),
+                binding.definition(),
+                TaskTick::new(tick + 2),
+            )
+            .unwrap();
+            supervisor.advance(TaskTick::new(tick + 3)).unwrap();
+            assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
+            let generation = supervisor.projection().generation();
+            supervisor
+                .reconcile(
+                    binding.scope(),
+                    generation,
+                    Reconciliation::Unknown {
+                        evidence: Digest([3; 32]),
+                    },
+                    None,
+                    TaskTick::new(tick + 3),
+                )
+                .unwrap();
+            for offset in 4..7 {
+                assert!(!supervisor.advance(TaskTick::new(tick + offset)).unwrap());
+                assert_eq!(supervisor.projection().generation(), generation);
+                assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
+            }
+            let (blocked_journal, blocked_runtime) = supervisor.into_parts();
+            supervisor = Supervisor::restore(
+                blocked_journal,
+                blocked_runtime,
+                binding.scope(),
+                binding.definition(),
+                TaskTick::new(tick + 7),
+            )
+            .unwrap();
+            assert_eq!(supervisor.projection().status(), TaskStatus::Reconciling);
+            assert_eq!(supervisor.projection().generation(), generation);
+            // Trusted fixture policy authorizes retry independently of worker output.
+            // These evidence digests identify the fixture; they are not cryptographic proof.
+            supervisor
+                .reconcile(
+                    binding.scope(),
+                    generation,
+                    Reconciliation::RestartAuthorized {
+                        evidence: Digest([4; 32]),
+                    },
+                    None,
+                    TaskTick::new(tick + 7),
+                )
+                .unwrap();
+            8
+        } else {
+            1
+        };
+        for offset in first_offset..45 {
             if supervisor.projection().status() == TaskStatus::Completed {
                 break;
             }
@@ -271,13 +367,39 @@ impl Stores {
         recovered_journal
             .read_blob(binding.scope(), projection.output().unwrap(), &mut bytes)
             .unwrap();
+        let evidence = SumEvidence {
+            binding: binding.clone(),
+            generation: projection.generation(),
+            output: BlobRef {
+                digest: Digest::of(&6_u64.to_le_bytes()),
+                bytes: 8,
+                schema: 1,
+            },
+        };
+        let verifier = self
+            .effectful
+            .then_some(&evidence as &dyn TaskEffectEvidenceVerifier);
+        if self.effectful {
+            assert_eq!(
+                VerifiedTaskEffectOutcome::verify(
+                    binding,
+                    &projection,
+                    projection.generation(),
+                    &bytes,
+                    &SumClassifier,
+                    None
+                ),
+                Err(TaskEffectVerificationError::MissingEvidence)
+            );
+            assert!(projection.generation() > penelope_core::task::TaskGeneration::new(1));
+        }
         let outcome = VerifiedTaskEffectOutcome::verify(
             binding,
             &projection,
             projection.generation(),
             &bytes,
             &SumClassifier,
-            None,
+            verifier,
         )
         .unwrap();
         TaskResultRelay::new(outcome).unwrap()
@@ -328,6 +450,13 @@ fn start_input(scope: &ProcessScope) -> ProcessInput {
 
 #[test]
 fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
+    run_linear_saga(false);
+}
+#[test]
+fn reconciled_linear_saga_blocks_unknown_then_requires_independent_result_evidence() {
+    run_linear_saga(true);
+}
+fn run_linear_saga(effectful: bool) {
     for separate in modes() {
         let scope = scope();
         let definition = LinearSagaDefinition::new(
@@ -337,6 +466,7 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
             vec![step()],
         );
         let mut stores = Stores::new(separate, scope.clone());
+        stores.effectful = effectful;
         let input = LinearSagaInput::Start {
             input_id: id("inp_start"),
             action_id: id("act_sum"),
@@ -483,6 +613,13 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
 
 #[test]
 fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
+    run_graph_saga(false);
+}
+#[test]
+fn reconciled_graph_saga_blocks_unknown_then_requires_independent_result_evidence() {
+    run_graph_saga(true);
+}
+fn run_graph_saga(effectful: bool) {
     for separate in modes() {
         let scope = scope();
         let definition = ProcessGraphDefinition {
@@ -499,6 +636,7 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
             max_step_visits: NonZeroU32::new(1).unwrap(),
         };
         let mut stores = Stores::new(separate, scope.clone());
+        stores.effectful = effectful;
         let started = start_graph(
             &definition,
             scope.tenant_id.clone(),

@@ -96,6 +96,15 @@ this decorator with SQLite: rejected verification or substituted evidence leaves
 the worker paused without an ACK, and reconstruction fences that generation. Its
 trusted verifier is a fixture; applications must supply actual proof verification.
 
+The full linear and graph saga fixtures in
+`crates/penelope-process-runtime/tests/support/sagas.rs` also exercise
+`ReconcileRequired` tasks against shared and separate SQLite stores. They fence an
+interrupted worker, persist an unknown outcome, reconstruct the blocked state,
+then supply explicit trusted restart authorization. A successor's completion
+still requires matching independent effect evidence before the normal authorized
+result relay can commit a terminal saga decision. These external evidence sources
+are fixtures, not live external systems or StateChronicle proof verification.
+
 ## Discovering accepted inputs after restart
 
 `penelope_ports::inbox::PendingInbox` exposes read-only, bounded discovery of
