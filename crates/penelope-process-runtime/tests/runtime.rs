@@ -655,3 +655,6 @@ mod worker_protocol;
 
 #[path = "support/launch_contracts.rs"]
 mod launch_contracts;
+
+#[path = "support/checkpoint_state.rs"]
+mod checkpoint_state;
