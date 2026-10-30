@@ -708,3 +708,35 @@ mod fence_contracts;
 
 #[path = "support/concurrency.rs"]
 mod concurrency;
+
+#[test]
+fn fragmented_completion_survives_exit_and_truncated_completion_faults() {
+    for (mode, expected) in [(22, TaskStatus::Completed), (23, TaskStatus::Faulted)] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut supervisor = fresh(directory.path(), &[mode, 1, 2, 3], 2);
+        supervisor.advance(TaskTick::new(1)).unwrap();
+        wait(&mut supervisor).unwrap();
+        assert_eq!(supervisor.projection().status(), expected);
+        if expected == TaskStatus::Completed {
+            assert_eq!(supervisor.projection().output().unwrap().bytes, 8);
+        } else {
+            assert!(supervisor.projection().output().is_none());
+            let projection = *supervisor.projection();
+            let (mut journal, _runtime) = supervisor.into_parts();
+            let last = journal
+                .read(
+                    projection.scope(),
+                    projection.next_sequence().saturating_sub(1),
+                )
+                .unwrap()
+                .unwrap();
+            assert!(matches!(
+                last.event,
+                TaskExecutionEvent::FaultObserved {
+                    fault: TaskFault::ApplicationFailure,
+                    ..
+                }
+            ));
+        }
+    }
+}

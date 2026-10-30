@@ -14,7 +14,7 @@ use std::{
     io::{Read, Write},
     os::{fd::AsRawFd, unix::process::ExitStatusExt},
     path::PathBuf,
-    process::{Child, ChildStdin, ChildStdout, Command, Stdio},
+    process::{Child, ChildStdin, ChildStdout, Command, ExitStatus, Stdio},
     time::{Duration, Instant},
 };
 
@@ -98,6 +98,27 @@ fn send(writer: &mut impl Write, bytes: &[u8], timeout: Duration) -> Result<(), 
         }
     }
     Ok(())
+}
+// A worker may write and exit after a nonblocking read reports WouldBlock.
+// Only EOF proves that no observation bytes remain to be consumed. Reaping the
+// child before that point can turn a queued valid completion into a false fault.
+fn progress_after_read(
+    reached_eof: bool,
+    exit_status: impl FnOnce() -> std::io::Result<Option<ExitStatus>>,
+) -> Result<RuntimeProgress, TaskPortError> {
+    if !reached_eof {
+        return Ok(RuntimeProgress::Pending);
+    }
+    Ok(exit_status()
+        .map_err(|_wait| TaskPortError::Runtime)?
+        .map_or(RuntimeProgress::Pending, |status| {
+            RuntimeProgress::Fault(match status.signal() {
+                Some(libc::SIGSYS) => TaskFault::ProtectionViolation,
+                Some(libc::SIGXCPU) => TaskFault::CpuBudgetExceeded,
+                Some(_) => TaskFault::Crash,
+                None => TaskFault::ApplicationFailure,
+            })
+        }))
 }
 impl<A: TaskGenerationAuthority> LinuxProcessRuntime<A> {
     /// Pins a sealed static ELF and validates Linux feature/configuration bounds.
@@ -274,8 +295,10 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
             .buffer
             .get_mut(active.filled..)
             .ok_or(TaskPortError::Corrupt)?;
+        let mut reached_eof = false;
         if !remaining.is_empty() {
             match active.stdout.read(remaining) {
+                Ok(0) => reached_eof = true,
                 Ok(count) => {
                     active.filled = active
                         .filled
@@ -359,18 +382,7 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
                 });
             }
         }
-        let progress = active
-            .child
-            .try_wait()
-            .map_err(|_wait| TaskPortError::Runtime)?
-            .map_or(RuntimeProgress::Pending, |status| {
-                RuntimeProgress::Fault(match status.signal() {
-                    Some(libc::SIGSYS) => TaskFault::ProtectionViolation,
-                    Some(libc::SIGXCPU) => TaskFault::CpuBudgetExceeded,
-                    Some(_) => TaskFault::Crash,
-                    None => TaskFault::ApplicationFailure,
-                })
-            });
+        let progress = progress_after_read(reached_eof, || active.child.try_wait())?;
         Ok(TaskObservation {
             scope,
             generation,
