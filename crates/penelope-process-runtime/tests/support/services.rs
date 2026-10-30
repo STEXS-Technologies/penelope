@@ -526,3 +526,6 @@ impl penelope_sqlite::SqliteLeaseClock for Clock {
         Ok(LogicalTime(self.0.load(Ordering::SeqCst)))
     }
 }
+
+#[path = "service_faults.rs"]
+mod service_faults;
