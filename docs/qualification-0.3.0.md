@@ -74,6 +74,16 @@ measures 11.9% fewer graph instructions and 13.68%/16.49% lower serial/parallel
 graph time. The initial unfavorable controls and identical-source timing
 variation are retained; this does not revise application-wide overhead figures.
 
+The [linear-validation follow-up](performance-linear-validation-2026-10-31.md)
+at `dd3ac8d` replaces quadratic duplicate checks for larger definitions with
+bounded borrowed-ID sorting and strict-descent admission. Frozen-reference
+properties cover 40,000 generated cases; allocation fixtures, stable/MSRV
+workspace suites, 100,000 targeted fuzz iterations and all seven source CI jobs
+pass. The fixed comparison measures 82.76–98.39% less validation time for its
+128-step fixtures. The pilot regression, small-definition tradeoffs and mixed
+existing-workload controls remain disclosed. No application-wide slowdown or
+full historical release requalification claim is made.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |
