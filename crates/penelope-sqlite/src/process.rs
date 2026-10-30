@@ -188,7 +188,7 @@ pub(crate) fn commit_process(
         if digest != commit_digest.0 {
             return Err(PortError::Conflict);
         }
-        verify_committed_batch(&transaction, commit, limits)?;
+        verify_committed_batch(&transaction, commit, commit_digest, limits)?;
         let receipt = AtomicProcessCommitReceipt {
             committed_through_sequence: u64::try_from(through)
                 .map_err(|_negative| PortError::Invariant)?,
@@ -456,6 +456,7 @@ pub(crate) fn charge_process(
 fn verify_committed_batch(
     connection: &Connection,
     commit: &AtomicProcessCommit,
+    commit_digest: Digest,
     limits: SqliteLimits,
 ) -> Result<(), PortError> {
     let scope = commit.outcomes.first().ok_or(PortError::Invariant)?.scope();
@@ -517,9 +518,29 @@ fn verify_committed_batch(
         }
     }
     if let Some(input) = &commit.input {
-        let (bytes,checksum) = connection.query_row("SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2 AND commit_digest IS NOT NULL", params![process_key(input)?,input.input_id.as_str()], |row| Ok((copy_column(row,0,limits.max_record_bytes)?,copy_column(row,1,32)?))).optional().map_err(|error| db_error(&error))?.ok_or(PortError::Invariant)?;
+        // Consumption is part of the committed batch: an arbitrary non-null
+        // marker cannot prove this input belongs to this exact receipt.
+        let (bytes, checksum) = connection
+            .query_row(
+                "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2 AND commit_digest=?3 AND committed_through=?4",
+                params![process_key(input)?, input.input_id.as_str(), commit_digest.0.as_slice(), expected_end.checked_sub(1).ok_or(PortError::Invariant)?],
+                |row| Ok((copy_column(row, 0, limits.max_record_bytes)?, copy_column(row, 1, 32)?)),
+            )
+            .optional()
+            .map_err(|error| db_error(&error))?
+            .ok_or(PortError::Invariant)?;
         if decode::<ProcessInput>(&bytes, &checksum)? != *input {
             return Err(PortError::Invariant);
+        }
+        if let Some(source) = &commit.canonical_source_event_id {
+            let bound: bool = connection.query_row(
+                "SELECT EXISTS(SELECT 1 FROM process_sources WHERE process_key=?1 AND event_id=?2 AND input_id=?3)",
+                params![process_key(input)?, source.as_str(), input.input_id.as_str()],
+                |row| row.get(0),
+            ).map_err(|error| db_error(&error))?;
+            if !bound {
+                return Err(PortError::Invariant);
+            }
         }
     }
     Ok(())
