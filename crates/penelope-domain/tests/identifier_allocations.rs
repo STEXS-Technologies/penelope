@@ -34,6 +34,11 @@ fn main() {
             let value: $kind = $text.parse().unwrap();
             assert_eq!(count(|| <$kind>::try_from(black_box($text)).unwrap()), 0);
             assert_eq!(count(|| black_box(&value).clone()), 0);
+            let json = serde_json::to_string($text).unwrap();
+            assert_eq!(
+                count(|| serde_json::from_str::<$kind>(black_box(&json)).unwrap()),
+                0
+            );
             let long = format!("{}{}", $text, "x".repeat(64));
             let value: $kind = long.parse().unwrap();
             assert_eq!(count(|| long.parse::<$kind>().unwrap()), 1);
@@ -58,7 +63,34 @@ fn main() {
     check!(OperationId, "op_a");
     check!(ExternalReferenceId, "ext_a");
     check!(MigrationId, "mig_a");
+    let scope = ProcessScope::new(
+        "tnt_bench".parse().unwrap(),
+        "prc_bench".parse().unwrap(),
+        "def_bench".parse().unwrap(),
+        "dfv_one".parse().unwrap(),
+        ContentDigest([3; 32]),
+    );
+    let outcome = ProcessOutcome::new(
+        scope,
+        0,
+        ProcessOutcomeFact::new(
+            "out_bench_0".parse().unwrap(),
+            CausationId::Action("act_bench".parse().unwrap()),
+            OutcomeActor::System,
+            LogicalTime(0),
+            ProcessOutcomeKind::ActionPlanned,
+            ContentDigest([4; 32]),
+        ),
+    );
+    assert_eq!(
+        count(|| black_box(&outcome).canonical_wire_bytes().unwrap()),
+        1
+    );
+    assert_eq!(
+        count(|| ContentDigest([255; 32]).canonical_wire_bytes().unwrap()),
+        1
+    );
     println!(
-        "All 16 identifier types: short parse/clone zero allocations; long parse/clone one allocation; unchanged value size"
+        "All 16 identifier types: short borrowed parse/JSON decode/clone zero allocations; long parse/clone one allocation; unchanged value size"
     );
 }

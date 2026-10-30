@@ -22,14 +22,20 @@ use penelope_ports::{
 fuzz_target!(|data: &[u8]| {
     if let Ok(definition) = serde_json::from_slice::<ProcessDefinition>(data) {
         let _ = definition.validate();
-        let _ = definition.canonical_wire_bytes();
+        assert_eq!(
+            definition.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&definition).ok()
+        );
         let _ = definition.canonical_bytes();
         let _ = definition.computed_digest();
         let _ = definition.require_canonical_digest();
     }
     if let Ok(migration) = serde_json::from_slice::<DefinitionMigration>(data) {
         let _ = migration.validate();
-        let _ = migration.canonical_wire_bytes();
+        assert_eq!(
+            migration.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&migration).ok()
+        );
     }
     if let Ok(receipt) = serde_json::from_slice::<DefinitionRegistrationReceipt>(data) {
         let _ = receipt.canonical_wire_bytes();
@@ -42,19 +48,31 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(input) = serde_json::from_slice::<ProcessInput>(data) {
         let _ = input.validate();
-        let _ = input.canonical_wire_bytes();
+        assert_eq!(
+            input.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&input).ok()
+        );
     }
     if let Ok(envelope) = serde_json::from_slice::<ProcessInputEnvelope>(data) {
         let _ = envelope.validate();
-        let _ = envelope.canonical_wire_bytes();
+        assert_eq!(
+            envelope.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&envelope).ok()
+        );
     }
     if let Ok(outcome) = serde_json::from_slice::<ProcessOutcome>(data) {
         let _ = outcome.validate();
-        let _ = outcome.canonical_wire_bytes();
+        assert_eq!(
+            outcome.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&outcome).ok()
+        );
     }
     if let Ok(action) = serde_json::from_slice::<ProcessAction>(data) {
         let _ = action.validate();
-        let _ = action.canonical_wire_bytes();
+        assert_eq!(
+            action.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&action).ok()
+        );
         let _ = action.effect_key();
         let _ = action.scope().canonical_bytes();
         let _ = action.effect_key().canonical_bytes();
@@ -79,15 +97,24 @@ fuzz_target!(|data: &[u8]| {
         let _ = quota.canonical_wire_bytes();
     }
     if let Ok(scope) = serde_json::from_slice::<ProcessScope>(data) {
-        let _ = scope.canonical_wire_bytes();
+        assert_eq!(
+            scope.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&scope).ok()
+        );
         let _ = scope.canonical_bytes();
     }
     if let Ok(time) = serde_json::from_slice::<LogicalTime>(data) {
-        let _ = time.canonical_wire_bytes();
+        assert_eq!(
+            time.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&time).ok()
+        );
     }
     if let Ok(command) = serde_json::from_slice::<CanonicalCommand>(data) {
         let _ = command.validate();
-        let _ = command.canonical_wire_bytes();
+        assert_eq!(
+            command.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&command).ok()
+        );
     }
     if let Ok(receipt) = serde_json::from_slice::<CanonicalSubmitReceipt>(data) {
         let _ = receipt.canonical_wire_bytes();
@@ -97,11 +124,17 @@ fuzz_target!(|data: &[u8]| {
     }
     if let Ok(event) = serde_json::from_slice::<CanonicalEvent>(data) {
         let _ = event.validate();
-        let _ = event.canonical_wire_bytes();
+        assert_eq!(
+            event.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&event).ok()
+        );
     }
     if let Ok(review) = serde_json::from_slice::<ManualReview>(data) {
         let _ = review.validate();
-        let _ = review.canonical_wire_bytes();
+        assert_eq!(
+            review.canonical_wire_bytes().ok(),
+            serde_json::to_vec(&review).ok()
+        );
     }
     if let Ok(claim) = serde_json::from_slice::<ManualReviewClaim>(data) {
         let _ = claim.canonical_wire_bytes();
