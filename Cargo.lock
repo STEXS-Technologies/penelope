@@ -381,6 +381,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "penelope-process-runtime"
+version = "0.2.0"
+dependencies = [
+ "libc",
+ "penelope-core",
+ "penelope-executor",
+ "penelope-sqlite",
+ "rustix",
+ "seccompiler",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "penelope-sqlite"
+version = "0.2.0"
+dependencies = [
+ "async-trait",
+ "penelope-core",
+ "penelope-domain",
+ "penelope-ports",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "penelope-statechronicle"
 version = "0.2.0"
 dependencies = [
@@ -558,6 +588,15 @@ dependencies = [
  "quick-error",
  "tempfile",
  "wait-timeout",
+]
+
+[[package]]
+name = "seccompiler"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "345a3e4dddf721a478089d4697b83c6c0a8f5bf16086f6c13397e4534eb6e2e5"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

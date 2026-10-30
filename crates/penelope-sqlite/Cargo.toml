@@ -1,0 +1,25 @@
+[package]
+name = "penelope-sqlite"
+description = "Optional single-host SQLite persistence adapter for Penelope."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+penelope-core = { workspace = true, features = ["serde"] }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde_json.workspace = true
+serde.workspace = true
+async-trait.workspace = true
+penelope-domain.workspace = true
+penelope-ports.workspace = true
+
+[dev-dependencies]
+rusqlite = { version = "0.40.2", features = ["bundled", "functions"] }
+tempfile = "3"
+
+[lints]
+workspace = true

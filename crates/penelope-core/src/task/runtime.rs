@@ -135,3 +135,49 @@ pub trait TaskRuntime {
 pub trait TaskClock {
     fn now(&self) -> TaskTick;
 }
+
+/// Result of reserving an already committed execution authorization. Repeating
+/// a reservation never authorizes a second launch, even with the same identity.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StartReservation {
+    Reserved,
+    AlreadyReserved,
+}
+
+/// Persistent adapter join between the task journal and protected runtime.
+/// Execution identities are supplied by the trusted runtime, never the worker.
+/// A fence tombstone must win races with delayed start. Fencing is two-phase:
+/// persist the tombstone, stop/verify the execution domain, then confirm stopped.
+/// A successor cannot reserve while any predecessor remains unconfirmed.
+pub trait TaskGenerationAuthority {
+    /// Validates exact committed start/definition/input/checkpoint/deadline and
+    /// atomically reserves one execution unless this generation is tombstoned.
+    /// # Errors
+    /// Returns invalid authorization, reservation conflict or storage failure.
+    fn reserve_start(
+        &mut self,
+        request: TaskStart<'_>,
+        execution: super::Digest,
+    ) -> Result<StartReservation, TaskPortError>;
+
+    /// Durably blocks subsequent starts, returning the execution to terminate.
+    /// `None` proves only that no execution was reserved, not a worker's exit.
+    /// # Errors
+    /// Returns storage/integrity failure; no fence may be acknowledged on error.
+    fn begin_fence(
+        &mut self,
+        scope: TaskScope,
+        generation: TaskGeneration,
+    ) -> Result<Option<super::Digest>, TaskPortError>;
+
+    /// Records verified termination for exactly the identity returned by begin.
+    /// The trusted runtime must establish termination before calling this method.
+    /// # Errors
+    /// Returns mismatched identity, missing tombstone or storage failure.
+    fn confirm_stopped(
+        &mut self,
+        scope: TaskScope,
+        generation: TaskGeneration,
+        execution: Option<super::Digest>,
+    ) -> Result<(), TaskPortError>;
+}
