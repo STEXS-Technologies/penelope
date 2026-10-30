@@ -31,6 +31,29 @@ def run(*arguments, **kwargs):
     return subprocess.run(arguments, check=True, text=True, capture_output=True, **kwargs)
 
 
+def image_sections(report):
+    """Inventory allocated ELF sections without assuming a board memory map."""
+    if len(report) != 1 or report[0]['FileSummary']['Format'] != 'elf32-littleriscv':
+        raise ValueError('expected one little-endian RISC-V32 ELF image')
+    sections = []
+    for entry in report[0]['Sections']:
+        row = entry['Section']
+        flags = row['Flags']['Value']
+        size = row['Size']
+        if not isinstance(flags, int) or not isinstance(size, int) or flags < 0 or size < 0:
+            raise ValueError('invalid ELF section size or flags')
+        if flags & 2:  # SHF_ALLOC; symbol/debug tables are not resident sections.
+            sections.append({'name': row['Name']['Name'], 'bytes': size,
+                             'writable': bool(flags & 1),
+                             'executable': bool(flags & 4)})
+    if not sections or not any(row['executable'] for row in sections):
+        raise ValueError('missing allocated executable sections')
+    return {'sections': sections,
+            'writable_section_bytes': sum(row['bytes'] for row in sections if row['writable']),
+            'readonly_section_bytes': sum(row['bytes'] for row in sections if not row['writable']),
+            'scope': 'allocated section byte sums; excludes loader/segment padding, stack and board memory-map placement'}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path)
@@ -90,6 +113,11 @@ def main():
         shutil.copyfile(binary, output / 'fixture.elf')
     assembly = run('llvm-objdump', '-d', '--no-show-raw-insn', str(output / 'fixture.elf')).stdout
     (output / 'disassembly.txt').write_text(assembly)
+    elf_report = run('llvm-readobj', '--elf-output-style=JSON', '--file-headers',
+                     '--sections', str(output / 'fixture.elf')).stdout
+    (output / 'elf-sections.json').write_text(elf_report)
+    image = image_sections(json.loads(elf_report))
+    (output / 'image-memory.json').write_text(json.dumps(image, indent=2) + '\n')
     records = []
     for path in sorted(usage.glob('*.su')):
         records.extend(INVENTORY.parse_usage(path.read_text()))
@@ -107,13 +135,15 @@ def main():
         'tracked_diff': run('git', 'diff', 'HEAD', cwd=ROOT).stdout,
         'rustc': run('rustc', '+1.99.0', '-vV').stdout,
         'objdump': run('llvm-objdump', '--version').stdout,
+        'readobj': run('llvm-readobj', '--version').stdout,
         'target': TARGET, 'flags': FLAGS,
         'profile': 'release, one codegen unit, panic abort, freestanding no_std binary, fixed ports',
         'hashes': {str(path.relative_to(ROOT)): INVENTORY.digest(path) for path in
                    (original, entry, Path(__file__), ROOT / 'scripts/analyze-riscv-stack.py',
                     ROOT / 'scripts/record-task-stack-usage.py')},
         'artifact_hashes': {name: INVENTORY.digest(output / name) for name in
-                           ('fixture.rs', 'Cargo.lock', 'fixture.elf', 'disassembly.txt', 'bound.json')},
+                           ('fixture.rs', 'Cargo.lock', 'fixture.elf', 'disassembly.txt', 'bound.json',
+                            'elf-sections.json', 'image-memory.json')},
         'limitations': ['starts at _start with a valid 16-byte-aligned RISC-V stack pointer',
             'excludes boot code, interrupts, caller frames and other execution contexts',
             'fixed Journal/Runtime ports and bounded fixture paths only; arbitrary adapters require reanalysis',
