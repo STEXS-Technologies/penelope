@@ -1792,13 +1792,16 @@ fn terminal_projection(
     status: SagaStatus,
 ) -> LinearSagaProjection {
     LinearSagaProjection {
+        definition_id: projection.definition_id.clone(),
+        definition_version: projection.definition_version.clone(),
+        definition_digest: projection.definition_digest,
+        retry_due_at: projection.retry_due_at,
         next_step_index,
         current_attempt: projection.current_attempt,
         active_action_id: None,
         issued_action_ids: projection.issued_action_ids.clone(),
         compensable_step_indices,
         status,
-        ..projection.clone()
     }
 }
 
@@ -1814,7 +1817,9 @@ fn fresh_action_id(
 }
 
 fn issued_ids_after(projection: &LinearSagaProjection, action_id: ActionId) -> Vec<ActionId> {
-    let mut issued_action_ids = projection.issued_action_ids.clone();
+    let mut issued_action_ids =
+        Vec::with_capacity(projection.issued_action_ids.len().saturating_add(1));
+    issued_action_ids.extend_from_slice(&projection.issued_action_ids);
     issued_action_ids.push(action_id);
     issued_action_ids
 }
@@ -2061,6 +2066,59 @@ mod tests {
                     compensation: None,
                 },
             ],
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn terminal_projection_preserves_reference_fields(
+            attempt in any::<u32>(),
+            next_index in any::<usize>(),
+            due in proptest::option::of(any::<u64>()),
+            history in proptest::collection::vec(any::<bool>(), 0..128),
+            compensable in proptest::collection::vec(any::<usize>(), 0..128),
+            replacement in proptest::collection::vec(any::<usize>(), 0..128),
+            active in any::<bool>(),
+            status_index in 0_u8..6,
+        ) {
+            let status = match status_index {
+                0 => SagaStatus::Running,
+                1 => SagaStatus::Compensating,
+                2 => SagaStatus::Completed,
+                3 => SagaStatus::Escalated,
+                4 => SagaStatus::Cancelled,
+                _ => SagaStatus::Compensated,
+            };
+            let projection = LinearSagaProjection {
+                definition_id: id("def_reference"),
+                definition_version: id("dfv_reference"),
+                definition_digest: ContentDigest([42; 32]),
+                next_step_index: 17,
+                current_attempt: attempt,
+                retry_due_at: due.map(LogicalTime),
+                active_action_id: active.then(|| id("act_reference")),
+                issued_action_ids: history.into_iter().map(|second| {
+                    if second { id("act_second") } else { id("act_first") }
+                }).collect(),
+                compensable_step_indices: compensable,
+                status: SagaStatus::Running,
+            };
+            // Original expression intentionally clones overwritten fields.
+            let reference = LinearSagaProjection {
+                next_step_index: next_index,
+                current_attempt: projection.current_attempt,
+                active_action_id: None,
+                issued_action_ids: projection.issued_action_ids.clone(),
+                compensable_step_indices: replacement.clone(),
+                status,
+                ..projection.clone()
+            };
+            prop_assert_eq!(
+                terminal_projection(&projection, next_index, replacement, status), reference
+            );
+            let mut history_reference = projection.issued_action_ids.clone();
+            history_reference.push(id("act_next"));
+            prop_assert_eq!(issued_ids_after(&projection, id("act_next")), history_reference);
         }
     }
 
