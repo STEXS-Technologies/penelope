@@ -10,7 +10,6 @@ use super::identifier_text::IdentifierText;
 use core::fmt;
 use core::str::FromStr;
 
-use serde::de::Error as _;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
@@ -242,8 +241,7 @@ macro_rules! identifier {
 
         impl<'de> Deserialize<'de> for $name {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-                let value = String::deserialize(deserializer)?;
-                Self::new(value).map_err(D::Error::custom)
+                super::identifier_serde::deserialize(deserializer)
             }
         }
     };
@@ -852,42 +850,52 @@ pub struct ManualReview {
     pub evidence_digest: ContentDigest,
 }
 
-fn canonical_serialize<T: Serialize>(value: &T) -> Result<Vec<u8>, CanonicalEncodingError> {
-    serde_json::to_vec(value).map_err(|_serialization_error| CanonicalEncodingError::Serialization)
+fn canonical_serialize<T: Serialize>(
+    value: &T,
+    initial_capacity: usize,
+) -> Result<Vec<u8>, CanonicalEncodingError> {
+    let mut bytes = Vec::with_capacity(initial_capacity);
+    serde_json::to_writer(&mut bytes, value)
+        .map_err(|_serialization_error| CanonicalEncodingError::Serialization)?;
+    Ok(bytes)
 }
 
 macro_rules! canonical_wire_impl {
-    ($($ty:ty),+ $(,)?) => {
+    ($($ty:ty => $capacity:expr),+ $(,)?) => {
         $(
             impl CanonicalWireBytes for $ty {
                 fn canonical_wire_bytes(&self) -> Result<Vec<u8>, CanonicalEncodingError> {
-                    canonical_serialize(self)
+                    canonical_serialize(self, $capacity)
                 }
             }
         )+
     };
 }
 
+// Initial allocation hints, not wire-size limits: the writer grows normally
+// for long identifiers, larger arrays and future admitted values. Small scalars
+// avoid the serializer's default 128-byte allocation; common records avoid its
+// repeated 128 -> 256 -> 512 growth. No second sizing/serialization pass.
 canonical_wire_impl!(
-    ContentDigest,
-    LogicalTime,
-    ProcessInputKind,
-    ProcessOutcomeKind,
-    ProcessActionKind,
-    CausationId,
-    OutcomeActor,
-    ProcessOutcomeFact,
-    ProcessDefinition,
-    DefinitionMigration,
-    ProcessInput,
-    ProcessInputEnvelope,
-    ProcessOutcome,
-    ProcessScope,
-    ProcessAction,
-    EffectKey,
-    CanonicalCommand,
-    CanonicalEvent,
-    ManualReview,
+    ContentDigest => 129,
+    LogicalTime => 20,
+    ProcessInputKind => 32,
+    ProcessOutcomeKind => 32,
+    ProcessActionKind => 32,
+    CausationId => 128,
+    OutcomeActor => 128,
+    ProcessOutcomeFact => 256,
+    ProcessDefinition => 256,
+    DefinitionMigration => 512,
+    ProcessInput => 256,
+    ProcessInputEnvelope => 256,
+    ProcessOutcome => 512,
+    ProcessScope => 256,
+    ProcessAction => 512,
+    EffectKey => 512,
+    CanonicalCommand => 512,
+    CanonicalEvent => 512,
+    ManualReview => 512,
 );
 
 impl ProcessDefinition {
@@ -1619,6 +1627,17 @@ mod tests {
             ),
             Err(DefinitionMigrationError::NoOp)
         );
+    }
+
+    proptest::proptest! {
+        #[test]
+        fn allocation_hint_does_not_change_encoding_or_bound_output(
+            values in proptest::collection::vec(proptest::prelude::any::<String>(), 0..64),
+            hint in 0_usize..1024,
+        ) {
+            proptest::prop_assert_eq!(canonical_serialize(&values, hint).unwrap(),
+                serde_json::to_vec(&values).unwrap());
+        }
     }
 
     #[test]
