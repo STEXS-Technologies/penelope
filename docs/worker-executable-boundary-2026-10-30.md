@@ -30,3 +30,10 @@ latency reports describe their earlier pinned candidates; the final worker
 measurement must include this changed startup path. The library state-machine
 fuzz campaign continues independently; final workspace checks and runtime
 measurements remain required before release qualification.
+
+The follow-up kernel-rejected-bootstrap test uses a static ELF header with no
+loadable segment. Startup returns a runtime error and poisons the supervisor;
+authoritative reconstruction fences generation one and appends only its
+interruption. Durable history contains no completion or successor. Stable,
+MSRV and strict Clippy logs are retained with the
+[remote qualification evidence](verification-data/2026-10-30-remote-qualification/metadata.json).

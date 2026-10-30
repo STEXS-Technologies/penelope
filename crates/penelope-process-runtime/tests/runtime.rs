@@ -93,6 +93,83 @@ fn kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls
     }
 }
 #[test]
+fn kernel_rejected_bootstrap_requires_reconstruction_and_cannot_complete() {
+    let directory = tempfile::tempdir().unwrap();
+    // Structurally recognizable static ELF, but no loadable segment. The image
+    // admission parser accepts its identity; the kernel rejects execution.
+    let mut bytes = [0_u8; 120];
+    bytes[..7].copy_from_slice(b"\x7fELF\x02\x01\x01");
+    bytes[16..18].copy_from_slice(&2_u16.to_le_bytes());
+    bytes[18..20].copy_from_slice(&62_u16.to_le_bytes());
+    bytes[20..24].copy_from_slice(&1_u32.to_le_bytes());
+    bytes[32..40].copy_from_slice(&64_u64.to_le_bytes());
+    bytes[52..54].copy_from_slice(&64_u16.to_le_bytes());
+    bytes[54..56].copy_from_slice(&56_u16.to_le_bytes());
+    bytes[56..58].copy_from_slice(&1_u16.to_le_bytes());
+    let image = directory.path().join("rejected-worker");
+    std::fs::write(&image, bytes).unwrap();
+    let mut definition = definition(2);
+    definition.code = Digest::of(&bytes);
+    let input = [0, 1, 2, 3];
+    let scope = scope(definition, &input);
+    let database = directory.path().join("tasks.db");
+    let journal = SqliteTaskJournal::open(&database, definition, SqliteLimits::default()).unwrap();
+    let authority =
+        SqliteTaskJournal::open(&database, definition, SqliteLimits::default()).unwrap();
+    let mut configuration = config(directory.path());
+    configuration.worker = image.clone();
+    let runtime = Runtime::new(authority, configuration).unwrap();
+    let mut supervisor =
+        Supervisor::restore(journal, runtime, scope, definition, TaskTick::ZERO).unwrap();
+    supervisor.submit(&input, 1, TaskTick::ZERO).unwrap();
+    assert_eq!(
+        supervisor.advance(TaskTick::new(1)),
+        Err(SupervisorError::Port(TaskPortError::Runtime))
+    );
+    assert_eq!(
+        supervisor.advance(TaskTick::new(2)),
+        Err(SupervisorError::ReconstructionRequired)
+    );
+    let (retained_journal, failed_runtime) = supervisor.into_parts();
+    drop(failed_runtime);
+    let restored_authority =
+        SqliteTaskJournal::open(&database, definition, SqliteLimits::default()).unwrap();
+    let mut restored_configuration = config(directory.path());
+    restored_configuration.worker = image;
+    let restored_runtime = Runtime::new(restored_authority, restored_configuration).unwrap();
+    let restored_supervisor = Supervisor::restore(
+        retained_journal,
+        restored_runtime,
+        scope,
+        definition,
+        TaskTick::new(2),
+    )
+    .unwrap();
+    assert_eq!(
+        restored_supervisor.projection().status(),
+        TaskStatus::Faulted
+    );
+    assert_eq!(
+        restored_supervisor.projection().generation(),
+        TaskGeneration::new(1)
+    );
+    let (mut restored_journal, _restored_runtime) = restored_supervisor.into_parts();
+    assert!(matches!(
+        restored_journal
+            .read(scope, TaskSequence::new(2))
+            .unwrap()
+            .unwrap()
+            .event,
+        TaskExecutionEvent::FaultObserved {
+            fault: TaskFault::SupervisorInterrupted
+        }
+    ));
+    assert_eq!(
+        restored_journal.read(scope, TaskSequence::new(3)).unwrap(),
+        None
+    );
+}
+#[test]
 fn kernel_address_space_limit_allows_small_and_rejects_large_allocations() {
     let directory = tempfile::tempdir().unwrap();
     let mut supervisor = fresh(directory.path(), &[10, 1, 2, 3], 2);
