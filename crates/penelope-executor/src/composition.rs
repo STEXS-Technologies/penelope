@@ -122,3 +122,136 @@ impl CommittedTaskEffect {
         Ok(supervisor)
     }
 }
+
+/// Stable typed result delivery reconstructed from a verified completed task.
+/// The input identity excludes generation and transport leases; altered evidence
+/// under the same identity conflicts instead of becoming a second mutation.
+#[derive(Debug, Clone)]
+pub struct TaskResultRelay {
+    outcome: penelope_ports::tasks::VerifiedTaskEffectOutcome,
+    input: penelope_domain::ProcessInput,
+}
+
+impl TaskResultRelay {
+    /// Creates a replayable inbox input from already verified application output.
+    /// Known failures become terminal failures; retry policy needs explicit
+    /// application handling rather than an automatic second external mutation.
+    /// # Errors
+    /// Rejects unresolved evidence or an invalid derived input identity.
+    pub fn new(
+        outcome: penelope_ports::tasks::VerifiedTaskEffectOutcome,
+    ) -> Result<Self, TaskCompositionError> {
+        use penelope_core::task::Digest;
+        use penelope_domain::{ContentDigest, ProcessInput, ProcessInputKind};
+        use penelope_ports::ExternalEffectState;
+        use std::fmt::Write as _;
+        let identity = outcome.binding().relay_identity();
+        let mut input_id = String::from("inp_task_");
+        for byte in identity.0 {
+            write!(input_id, "{byte:02x}")
+                .map_err(|_format| TaskCompositionError::BindingMismatch)?;
+        }
+        let mut payload = b"penelope.task-effect-result.v1\0".to_vec();
+        payload.extend_from_slice(&identity.0);
+        payload.extend_from_slice(&outcome.generation().get().to_be_bytes());
+        payload.extend_from_slice(&outcome.output().digest.0);
+        payload.extend_from_slice(&outcome.output().bytes.to_be_bytes());
+        payload.extend_from_slice(&outcome.output().schema.to_be_bytes());
+        payload.extend_from_slice(&outcome.classifier().0);
+        payload.push(match outcome.evidence().state {
+            ExternalEffectState::Succeeded => 1,
+            ExternalEffectState::KnownFailure => 2,
+            ExternalEffectState::Unknown => return Err(TaskCompositionError::BindingMismatch),
+        });
+        match &outcome.evidence().external_reference_id {
+            Some(reference) => {
+                payload.push(1);
+                payload.extend_from_slice(reference.as_str().as_bytes());
+            }
+            None => payload.push(0),
+        }
+        let action = &outcome.binding().request().action;
+        let input = ProcessInput::new(
+            action.tenant_id.clone(),
+            action.process_id.clone(),
+            input_id
+                .try_into()
+                .map_err(|_invalid| TaskCompositionError::BindingMismatch)?,
+            ProcessInputKind::TaskEffectResult,
+            ContentDigest(Digest::of(&payload).0),
+        );
+        Ok(Self { outcome, input })
+    }
+
+    #[must_use]
+    pub const fn input(&self) -> &penelope_domain::ProcessInput {
+        &self.input
+    }
+
+    /// Existing engine observation; no new saga action or event wire kinds.
+    #[must_use]
+    pub fn observation(&self) -> crate::engine::ActionResultObservation {
+        use crate::engine::ActionResultObservation;
+        use penelope_ports::ExternalEffectState;
+        let action = self.outcome.binding().request().action.action_id.clone();
+        match self.outcome.evidence().state {
+            ExternalEffectState::Succeeded => ActionResultObservation::succeeded(action),
+            ExternalEffectState::KnownFailure => ActionResultObservation::terminal_failure(action),
+            ExternalEffectState::Unknown => ActionResultObservation::unknown(action),
+        }
+    }
+
+    #[must_use]
+    pub fn linear_input(
+        &self,
+        next_action_id: Option<penelope_domain::ActionId>,
+    ) -> crate::engine::LinearSagaInput {
+        crate::engine::LinearSagaInput::ActionResult {
+            input_id: self.input.input_id.clone(),
+            observation: self.observation(),
+            next_action_id,
+        }
+    }
+
+    #[must_use]
+    pub fn graph_input(
+        &self,
+        next_action_id: Option<penelope_domain::ActionId>,
+    ) -> crate::graph::GraphSagaInput {
+        crate::graph::GraphSagaInput::ActionResult {
+            input_id: self.input.input_id.clone(),
+            observation: self.observation(),
+            next_action_id,
+        }
+    }
+
+    /// Commits the engine-produced result batch with the exact stable inbox input.
+    /// The caller must validate the engine's required outcome plan first. This
+    /// checks full binding scope and receipt, and never invents log sequences.
+    /// Retrying the exact immutable batch recovers a lost acknowledgement.
+    /// # Errors
+    /// Rejects substituted inputs, scopes, source evidence and invalid receipts.
+    pub async fn commit(
+        &self,
+        store: &impl ProcessStore,
+        commit: &AtomicProcessCommit,
+    ) -> Result<AtomicProcessCommitReceipt, TaskCompositionError> {
+        if commit.input.as_ref() != Some(&self.input)
+            || commit.canonical_source_event_id.is_some()
+            || commit
+                .outcomes
+                .iter()
+                .any(|outcome| outcome.scope() != self.outcome.binding().request().action.scope())
+        {
+            return Err(TaskCompositionError::BindingMismatch);
+        }
+        commit
+            .validate()
+            .map_err(|_invalid| TaskCompositionError::BindingMismatch)?;
+        let receipt = store.commit(commit).await?;
+        receipt
+            .validate_for(commit)
+            .map_err(|_invalid| TaskCompositionError::InvalidReceipt)?;
+        Ok(receipt)
+    }
+}
