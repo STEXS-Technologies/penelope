@@ -73,6 +73,39 @@ impl CommittedTaskEffect {
         &self.binding
     }
 
+    /// Recovers an already accepted task after its outbox delivery was acknowledged.
+    /// Reconstruct the committed action from authoritative saga events first.
+    /// An empty journal cannot be admitted through this path: new intent still
+    /// requires a leased delivery through `accept`.
+    /// # Errors
+    /// Rejects missing intent, substituted input/schema and unconfirmed fencing.
+    pub fn recover<J: TaskJournal, R: TaskRuntime, const N: usize>(
+        &self,
+        journal: J,
+        runtime: R,
+        input: &[u8],
+        schema: u32,
+        tick: TaskTick,
+    ) -> Result<TaskSupervisor<J, R, N>, TaskCompositionError> {
+        self.binding
+            .validate(self.binding.request(), self.binding.definition(), input)?;
+        let supervisor = TaskSupervisor::restore(
+            journal,
+            runtime,
+            self.binding.scope(),
+            self.binding.definition(),
+            tick,
+        )?;
+        if supervisor
+            .projection()
+            .input()
+            .is_none_or(|reference| reference.schema != schema)
+        {
+            return Err(TaskCompositionError::BindingMismatch);
+        }
+        Ok(supervisor)
+    }
+
     /// Reconstructs or commits the exact task intent, then acknowledges its
     /// outbox lease only after durable downstream acceptance. It never starts
     /// worker code. The caller drives the returned supervisor. A failed ACK may

@@ -1,6 +1,6 @@
 //! Full engine/store/runtime composition. Every replay event is read from the
 //! durable payload store through an authoritative outcome reference.
-use super::{Runtime, Supervisor, config, definition, wait};
+use super::{Runtime, Supervisor, config, definition};
 use penelope_core::task::{BlobRef, Digest, TaskStatus, TaskTick, runtime::TaskJournal};
 use penelope_domain::*;
 use penelope_executor::{
@@ -41,10 +41,10 @@ fn run<T>(future: impl Future<Output = T>) -> T {
         std::thread::park_timeout(Duration::from_millis(2));
     }
 }
-struct Clock;
+struct Clock(u64);
 impl SqliteLeaseClock for Clock {
     fn now(&self) -> Result<LogicalTime, PortError> {
-        Ok(LogicalTime(1))
+        Ok(LogicalTime(self.0))
     }
 }
 struct SumClassifier;
@@ -65,7 +65,9 @@ impl TaskOutputClassifier for SumClassifier {
     }
 }
 struct Stores {
-    directory: tempfile::TempDir,
+    directory: PathBuf,
+    _temporary: Option<tempfile::TempDir>,
+    now: LogicalTime,
     process_path: PathBuf,
     task_path: PathBuf,
     store: SqliteProcessStore,
@@ -73,23 +75,36 @@ struct Stores {
 }
 impl Stores {
     fn new(separate: bool, scope: ProcessScope) -> Self {
-        let directory = tempfile::tempdir().unwrap();
-        let task_path = directory.path().join("tasks.db");
+        let temporary = std::env::var_os("PENELOPE_SAGA_CRASH_DIR")
+            .is_none()
+            .then(|| tempfile::tempdir().unwrap());
+        let directory = temporary.as_ref().map_or_else(
+            || PathBuf::from(std::env::var_os("PENELOPE_SAGA_CRASH_DIR").unwrap()),
+            |value| value.path().to_path_buf(),
+        );
+        let now = LogicalTime(if std::env::var_os("PENELOPE_SAGA_RECOVER").is_some() {
+            2000
+        } else {
+            1
+        });
+        let task_path = directory.join("tasks.db");
         let process_path = if separate {
-            directory.path().join("process.db")
+            directory.join("process.db")
         } else {
             task_path.clone()
         };
         let store = SqliteProcessStore::open(
             &process_path,
             SqliteLimits::default(),
-            Arc::new(Clock),
+            Arc::new(Clock(now.0)),
             100,
             8,
         )
         .unwrap();
         Self {
             directory,
+            _temporary: temporary,
+            now,
             process_path,
             task_path,
             store,
@@ -100,7 +115,7 @@ impl Stores {
         self.store = SqliteProcessStore::open(
             &self.process_path,
             SqliteLimits::default(),
-            Arc::new(Clock),
+            Arc::new(Clock(self.now.0)),
             100,
             8,
         )
@@ -146,6 +161,7 @@ impl Stores {
         // Lose the initial process acknowledgement, reopen, then reconstruct the
         // exact commit receipt before any worker can be admitted.
         run(self.store.commit(commit)).unwrap();
+        cut("process-commit");
         self.reopen();
         let committed = run(commit_task_effect(&self.store, commit, binding.clone())).unwrap();
         let claim = OutboxClaimRequest::new(
@@ -154,7 +170,8 @@ impl Stores {
             NonZeroU16::new(1).unwrap(),
         )
         .unwrap();
-        let lease = run(self.store.claim(&claim)).unwrap().pop().unwrap();
+        let lease = run(self.store.claim(&claim)).unwrap().pop();
+        cut("outbox-claim");
         let journal = SqliteTaskJournal::open(
             &self.task_path,
             binding.definition(),
@@ -167,25 +184,64 @@ impl Stores {
             SqliteLimits::default(),
         )
         .unwrap();
-        let runtime = Runtime::new(authority, config(self.directory.path())).unwrap();
-        let mut supervisor: Supervisor = run(committed.accept(
-            &self.store,
-            &claim,
-            &lease,
-            LogicalTime(1),
-            journal,
-            runtime,
-            &[0, 1, 2, 3],
-            1,
-            TaskTick::ZERO,
-        ))
-        .unwrap();
-        supervisor.advance(TaskTick::new(1)).unwrap();
-        wait(&mut supervisor).unwrap();
+        let runtime = Runtime::new(authority, config(&self.directory)).unwrap();
+        let tick = if self.now.0 == 1 { 10 } else { 100 };
+        let mut supervisor: Supervisor = if let Some(lease) = lease {
+            let mut accepted = Supervisor::restore(
+                journal,
+                runtime,
+                binding.scope(),
+                binding.definition(),
+                TaskTick::new(tick),
+            )
+            .unwrap();
+            if accepted.projection().status() == TaskStatus::Empty {
+                accepted
+                    .submit(&[0, 1, 2, 3], 1, TaskTick::new(tick))
+                    .unwrap();
+            }
+            cut("task-intent");
+            let (accepted_journal, accepted_runtime) = accepted.into_parts();
+            run(committed.accept(
+                &self.store,
+                &claim,
+                &lease,
+                self.now,
+                accepted_journal,
+                accepted_runtime,
+                &[0, 1, 2, 3],
+                1,
+                TaskTick::new(tick),
+            ))
+            .unwrap()
+        } else {
+            committed
+                .recover(journal, runtime, &[0, 1, 2, 3], 1, TaskTick::new(tick))
+                .unwrap()
+        };
+        cut("outbox-ack");
+        for offset in 1..45 {
+            if supervisor.projection().status() == TaskStatus::Completed {
+                break;
+            }
+            let next_tick = TaskTick::new(tick + offset);
+            if supervisor.projection().status() == TaskStatus::Running {
+                supervisor.poll(next_tick).unwrap();
+            } else {
+                supervisor.advance(next_tick).unwrap();
+                if supervisor.projection().status() == TaskStatus::Running {
+                    cut("worker-start");
+                }
+            }
+            std::thread::sleep(Duration::from_millis(2));
+        }
         assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+        cut("task-complete");
         drop(supervisor);
         self.reopen();
-        self.read_result(&binding)
+        let relay = self.read_result(&binding);
+        cut("result-verified");
+        relay
     }
     fn read_result(&self, binding: &TaskEffectBinding) -> TaskResultRelay {
         let journal = SqliteTaskJournal::open(
@@ -200,13 +256,13 @@ impl Stores {
             SqliteLimits::default(),
         )
         .unwrap();
-        let runtime = Runtime::new(authority, config(self.directory.path())).unwrap();
+        let runtime = Runtime::new(authority, config(&self.directory)).unwrap();
         let recovered = Supervisor::restore(
             journal,
             runtime,
             binding.scope(),
             binding.definition(),
-            TaskTick::new(3),
+            TaskTick::new(150),
         )
         .unwrap();
         let projection = *recovered.projection();
@@ -272,7 +328,7 @@ fn start_input(scope: &ProcessScope) -> ProcessInput {
 
 #[test]
 fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
-    for separate in [false, true] {
+    for separate in modes() {
         let scope = scope();
         let definition = LinearSagaDefinition::new(
             scope.definition_id.clone(),
@@ -295,6 +351,7 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
         )
         .unwrap();
         let digest = stores.persist(&event);
+        cut("start-payload");
         let facts = stores.facts(
             &id("inp_start"),
             event
@@ -325,6 +382,11 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
             &stores.replay_events(),
         )
         .unwrap();
+        if running.projection.status == SagaStatus::Completed {
+            assert!(running.next_action.is_none());
+            assert_eq!(stores.replay_events::<LinearSagaEvent>().len(), 2);
+            continue;
+        }
         let result_input = relay.linear_input(None);
         let result_event = result_input.to_event(&definition);
         let finished = decide(
@@ -337,6 +399,7 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
         .unwrap();
         assert_eq!(finished.projection.status, SagaStatus::Completed);
         let result_digest = stores.persist(&result_event);
+        cut("result-payload");
         let result_facts = stores.facts(
             &relay.input().input_id,
             result_event
@@ -358,6 +421,7 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
         )
         .unwrap();
         run(relay.commit(&stores.store, &result_commit)).unwrap();
+        cut("result-commit");
         stores.reopen();
         assert!(
             run(relay.commit(&stores.store, &result_commit))
@@ -379,7 +443,7 @@ fn full_linear_saga_replays_real_task_result_from_shared_and_separate_stores() {
 
 #[test]
 fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
-    for separate in [false, true] {
+    for separate in modes() {
         let scope = scope();
         let definition = ProcessGraphDefinition {
             definition_id: scope.definition_id.clone(),
@@ -406,6 +470,7 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
         )
         .unwrap();
         let digest = stores.persist(&started.event);
+        cut("start-payload");
         let facts = stores.facts(
             started.event.input_id(),
             started
@@ -434,9 +499,15 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
             &stores.replay_events(),
         )
         .unwrap();
+        if running.status == SagaStatus::Completed {
+            assert!(running.active_action_id.is_none());
+            assert_eq!(stores.replay_events::<GraphSagaEvent>().len(), 2);
+            continue;
+        }
         let finished = apply_graph_result(&definition, &running, relay.graph_input(None)).unwrap();
         assert_eq!(finished.projection.status, SagaStatus::Completed);
         let result_digest = stores.persist(&finished.event);
+        cut("result-payload");
         let result_facts = stores.facts(
             finished.event.input_id(),
             finished
@@ -459,6 +530,7 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
         )
         .unwrap();
         run(relay.commit(&stores.store, &result_commit)).unwrap();
+        cut("result-commit");
         stores.reopen();
         assert!(
             run(relay.commit(&stores.store, &result_commit))
@@ -475,5 +547,90 @@ fn full_graph_saga_replays_real_task_result_from_shared_and_separate_stores() {
         assert_eq!(reconstructed, finished.projection);
         assert!(reconstructed.active_action_id.is_none());
         assert_eq!(stores.replay_events::<GraphSagaEvent>().len(), 2);
+    }
+}
+
+fn modes() -> Vec<bool> {
+    std::env::var("PENELOPE_SAGA_SEPARATE")
+        .map_or_else(|_missing| vec![false, true], |value| vec![value == "1"])
+}
+fn cut(point: &str) {
+    if std::env::var("PENELOPE_SAGA_CUT").ok().as_deref() == Some(point) {
+        let directory = PathBuf::from(std::env::var_os("PENELOPE_SAGA_CRASH_DIR").unwrap());
+        std::fs::write(directory.join("crash-ready"), point).unwrap();
+        loop {
+            std::thread::sleep(Duration::from_millis(10));
+        }
+    }
+}
+
+#[test]
+fn killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries() {
+    use std::process::{Command, Stdio};
+    for engine in ["linear", "graph"] {
+        let test = format!(
+            "sagas::full_{engine}_saga_replays_real_task_result_from_shared_and_separate_stores"
+        );
+        for separate in ["0", "1"] {
+            for point in [
+                "start-payload",
+                "process-commit",
+                "outbox-claim",
+                "task-intent",
+                "outbox-ack",
+                "worker-start",
+                "task-complete",
+                "result-verified",
+                "result-payload",
+                "result-commit",
+            ] {
+                let directory = tempfile::tempdir().unwrap();
+                let mut child = Command::new(std::env::current_exe().unwrap())
+                    .args(["--exact", &test, "--nocapture"])
+                    .env("PENELOPE_SAGA_CRASH_DIR", directory.path())
+                    .env("PENELOPE_SAGA_SEPARATE", separate)
+                    .env("PENELOPE_SAGA_CUT", point)
+                    .stdout(Stdio::null())
+                    .spawn()
+                    .unwrap();
+                let deadline = Instant::now() + Duration::from_secs(10);
+                while !directory.path().join("crash-ready").exists() {
+                    if child.try_wait().unwrap().is_some() || Instant::now() >= deadline {
+                        let _kill_result = child.kill();
+                        let _wait_result = child.wait();
+                        panic!(
+                            "{engine}/{separate}/{point}: coordinator never reached crash boundary"
+                        );
+                    }
+                    std::thread::sleep(Duration::from_millis(2));
+                }
+                child.kill().unwrap();
+                assert!(!child.wait().unwrap().success());
+                let mut recovery = Command::new(std::env::current_exe().unwrap())
+                    .args(["--exact", &test, "--nocapture"])
+                    .env("PENELOPE_SAGA_CRASH_DIR", directory.path())
+                    .env("PENELOPE_SAGA_SEPARATE", separate)
+                    .env("PENELOPE_SAGA_RECOVER", "1")
+                    .stdout(Stdio::null())
+                    .spawn()
+                    .unwrap();
+                let recovery_deadline = Instant::now() + Duration::from_secs(10);
+                loop {
+                    if let Some(status) = recovery.try_wait().unwrap() {
+                        assert!(
+                            status.success(),
+                            "{engine}/{separate}/{point}: reconstruction failed"
+                        );
+                        break;
+                    }
+                    if Instant::now() >= recovery_deadline {
+                        let _kill_result = recovery.kill();
+                        let _wait_result = recovery.wait();
+                        panic!("{engine}/{separate}/{point}: reconstruction timed out");
+                    }
+                    std::thread::sleep(Duration::from_millis(2));
+                }
+            }
+        }
     }
 }

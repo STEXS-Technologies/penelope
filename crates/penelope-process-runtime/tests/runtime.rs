@@ -505,6 +505,18 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
             TaskEffectBinding::new(EffectDispatchRequest::new(action), task_definition).unwrap();
         let committed = run(commit_task_effect(&store, &commit, binding.clone())).unwrap();
         assert_eq!(committed.binding(), &binding);
+        let empty_journal =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let empty_authority =
+            SqliteTaskJournal::open(&task_path, task_definition, SqliteLimits::default()).unwrap();
+        let empty_runtime = Runtime::new(empty_authority, config(directory.path())).unwrap();
+        let missing_intent: Result<Supervisor, _> =
+            committed.recover(empty_journal, empty_runtime, &input, 1, TaskTick::ZERO);
+        assert!(matches!(
+            missing_intent,
+            Err(penelope_executor::composition::TaskCompositionError::BindingMismatch)
+        ));
+
         let claim = OutboxClaimRequest::new(
             process_scope,
             "pri_worker".try_into().unwrap(),

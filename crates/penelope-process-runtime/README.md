@@ -56,5 +56,8 @@ the worker before accepting terminal state.
 
 Integration tests compile a freestanding static C worker using `cc`; they exercise
 results, checkpoint acknowledgement, malformed frames, prohibited syscalls,
-CPU enforcement, and reconstruction with a live worker. Broader crash and
-adversarial release qualification remains in progress.
+CPU enforcement, and reconstruction with a live worker. Full linear and graph
+sagas replay persisted event bytes with shared and separate databases. A process
+kill matrix interrupts their coordinator at ten durable boundaries, including
+worker start, task completion and result commit, then reconstructs both logs.
+Broader adversarial release qualification remains in progress.
