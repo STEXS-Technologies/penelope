@@ -16,7 +16,10 @@ use std::{
     collections::BTreeMap,
     fs::File,
     io,
-    os::unix::process::CommandExt,
+    os::unix::{
+        io::{AsRawFd, RawFd},
+        process::CommandExt,
+    },
     process::{Child, Command},
 };
 
@@ -27,7 +30,7 @@ pub(crate) struct ProcessIdentity {
     pub(crate) start_ticks: u64,
 }
 
-pub(crate) fn filter() -> Result<BpfProgram, TaskPortError> {
+fn filter(executable: RawFd) -> Result<BpfProgram, TaskPortError> {
     let mut rules = BTreeMap::new();
     for syscall in [
         libc::SYS_brk,
@@ -65,7 +68,6 @@ pub(crate) fn filter() -> Result<BpfProgram, TaskPortError> {
         libc::SYS_getrlimit,
         libc::SYS_exit,
         libc::SYS_exit_group,
-        libc::SYS_execve,
     ] {
         rules.insert(syscall, Vec::new());
     }
@@ -87,6 +89,31 @@ pub(crate) fn filter() -> Result<BpfProgram, TaskPortError> {
         }
         rules.insert(syscall, alternatives);
     }
+    // Only the sealed bootstrap descriptor may be executed. It is CLOEXEC, so
+    // the worker cannot execute it again; descriptor-creating/duplicating calls
+    // are absent from the allowlist and cannot rebind this number after exec.
+    rules.insert(
+        libc::SYS_execveat,
+        vec![
+            SeccompRule::new(vec![
+                SeccompCondition::new(
+                    0,
+                    SeccompCmpArgLen::Qword,
+                    SeccompCmpOp::Eq,
+                    u64::try_from(executable).map_err(|_fd| TaskPortError::Runtime)?,
+                )
+                .map_err(|_condition| TaskPortError::Runtime)?,
+                SeccompCondition::new(
+                    4,
+                    SeccompCmpArgLen::Qword,
+                    SeccompCmpOp::Eq,
+                    u64::try_from(libc::AT_EMPTY_PATH).map_err(|_flags| TaskPortError::Runtime)?,
+                )
+                .map_err(|_condition| TaskPortError::Runtime)?,
+            ])
+            .map_err(|_rule| TaskPortError::Runtime)?,
+        ],
+    );
     // Rust's static runtime reads its stack limit; no caller may change limits.
     rules.insert(
         libc::SYS_prlimit64,
@@ -208,7 +235,7 @@ fn prepare_child(
 
 pub(crate) fn spawn(
     command: &mut Command,
-    program: BpfProgram,
+    image: &File,
     manifest: File,
     cpu_seconds: u64,
     address_space: u64,
@@ -216,6 +243,11 @@ pub(crate) fn spawn(
     if cpu_seconds == 0 || address_space < 8 * 1024 * 1024 {
         return Err(TaskPortError::Exhausted);
     }
+    // Keep the executable above stdio even if the host started with closed
+    // standard descriptors. Prepare both the duplicate and BPF before fork.
+    let executable =
+        rustix::io::fcntl_dupfd_cloexec(image, 3).map_err(|_duplicate| TaskPortError::Runtime)?;
+    let program = filter(executable.as_raw_fd())?;
     let parent = getpid();
     command.process_group(0);
     // SAFETY: the closure performs no allocation, locking, formatting, environment
@@ -228,7 +260,21 @@ pub(crate) fn spawn(
             prepare_child(parent, &manifest, cpu_seconds, address_space)?;
             seccompiler::apply_filter(&program)
                 .map_err(|_filter| io::Error::from_raw_os_error(libc::EPERM))?;
-            Ok(())
+            let arguments = [c"penelope-worker".as_ptr(), std::ptr::null()];
+            let environment = [std::ptr::null::<libc::c_char>()];
+            // SAFETY: all pointers reference live NUL-terminated strings or
+            // terminated pointer arrays. The descriptor owns the sealed image.
+            // Success replaces the image and closes CLOEXEC descriptors,
+            // including Rust's exec-error pipe; failure returns an OS error.
+            libc::syscall(
+                libc::SYS_execveat,
+                executable.as_raw_fd(),
+                c"".as_ptr(),
+                arguments.as_ptr(),
+                environment.as_ptr(),
+                libc::AT_EMPTY_PATH,
+            );
+            Err(io::Error::last_os_error())
         });
     }
     command.spawn().map_err(|_spawn| TaskPortError::Runtime)

@@ -184,7 +184,7 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
             .stderr(Stdio::null());
         let mut child = sandbox::spawn(
             &mut command,
-            sandbox::filter()?,
+            &self.image.file,
             manifest,
             request
                 .definition

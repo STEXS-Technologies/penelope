@@ -53,6 +53,13 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Infrastructure dependency checks allow `rusqlite` only in the dedicated
   SQLite adapter; core, ports, executor and the facade remain independent.
 
+### Security
+
+- Linux worker startup executes only the sealed CLOEXEC image descriptor through
+  `execveat`. Ordinary `execve`, other executable descriptors and descriptor
+  rebinding remain forbidden after startup. Real worker probes catch attempts
+  to re-execute or load another executable under the retained seccomp filter.
+
 ## [0.2.0] - 2026-10-11
 
 Penelope now provides recoverable task execution alongside deterministic saga

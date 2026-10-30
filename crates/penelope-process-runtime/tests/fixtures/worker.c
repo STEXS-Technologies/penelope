@@ -43,6 +43,9 @@ void _start(void) {
   if(mode==16){u64 limit[2]={~0UL,~0UL};call6(302,0,9,(long)limit,0,0,0);finish(83);}
   if(mode==17){call(0,3,(long)scratch,1);finish(83);}
   if(mode==18){call(1,0,(long)scratch,1);finish(83);}
+  if(mode==19){call(59,(long)"/proc/self/exe",0,0);finish(83);}
+  if(mode==20){call6(322,-100,(long)"/proc/self/exe",0,0,0,0);finish(83);}
+  if(mode==21){call(33,0,3,0);finish(83);} /* dup2 must not rebind bootstrap fd */
   copy(frame,(unsigned char*)"PNLOBS01",8);copy(frame+8,start+8,36);
   frame[44]=mode==5?2:1;frame[45]=0;frame[46]=0;frame[47]=0;frame[48]=8;
   frame[49]=0;frame[50]=0;frame[51]=0;frame[52]=1;
