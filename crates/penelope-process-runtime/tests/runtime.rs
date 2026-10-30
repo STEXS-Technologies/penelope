@@ -616,3 +616,6 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
         assert_eq!(run(store.read_outcomes(&replay)).unwrap().outcomes.len(), 2);
     }
 }
+
+#[path = "support/sagas.rs"]
+mod sagas;
