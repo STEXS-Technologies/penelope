@@ -79,7 +79,9 @@ profile; the existing facade, saga crates and async ports remain hosted.
 `TaskControl` accepts a complete caller-owned `TaskWorkspace`, or dispatch-only
 buffers through `advance_with_buffers` and a later `poll_with_buffer`. Poll
 storage must fit the larger of the declared checkpoint and output sizes; a full
-workspace validates all capacities before dispatch.
+workspace validates all capacities before dispatch. `advance_with_workspace`
+accepts a `TaskDispatchWorkspace` provider, borrowing or initializing its storage
+only for a start/restart transition.
 
 ```bash
 cargo run -p penelope-executor --example recoverable_task --locked

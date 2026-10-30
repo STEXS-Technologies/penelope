@@ -387,3 +387,69 @@ fn standalone_workspace_validation_admits_the_largest_declared_proposal() {
         );
     }
 }
+
+#[test]
+fn lazy_dispatch_workspace_is_unused_for_wait_fault_and_recovery_decisions() {
+    struct Workspace {
+        calls: usize,
+        capacity: usize,
+    }
+    impl TaskDispatchWorkspace for Workspace {
+        fn with_buffers<T>(&mut self, operation: impl FnOnce(&mut [u8], &mut [u8]) -> T) -> T {
+            self.calls += 1;
+            operation(&mut [0; 64][..self.capacity], &mut [0; 64][..self.capacity])
+        }
+    }
+    let definition = definition(RecoveryMode::RestartFromBeginning, EffectContract::Pure);
+    let scope = scope(definition, &[1]);
+    let mut control = TaskControl::restore(
+        MemoryJournal::default(),
+        SumRuntime::default(),
+        scope,
+        definition,
+        TaskTick::ZERO,
+    )
+    .unwrap();
+    let mut workspace = Workspace {
+        calls: 0,
+        capacity: 0,
+    };
+    assert_eq!(
+        control.advance_with_workspace(TaskTick::ZERO, &mut workspace),
+        Ok(false)
+    );
+    assert_eq!(workspace.calls, 0);
+    control.submit(&[1], 1, TaskTick::ZERO).unwrap();
+    let pending = *control.projection();
+    assert_eq!(
+        control.advance_with_workspace(TaskTick::new(1), &mut workspace),
+        Err(SupervisorError::Decision(TaskError::QuotaExhausted))
+    );
+    assert_eq!(workspace.calls, 1);
+    assert_eq!(*control.projection(), pending);
+    workspace.capacity = 64;
+    assert_eq!(
+        control.advance_with_workspace(TaskTick::new(1), &mut workspace),
+        Ok(true)
+    );
+    assert_eq!(workspace.calls, 2);
+    assert_eq!(
+        control.advance_with_workspace(TaskTick::new(2), &mut workspace),
+        Ok(false)
+    );
+    let deadline = control.projection().execution_deadline();
+    assert_eq!(
+        control.advance_with_workspace(deadline, &mut workspace),
+        Ok(true)
+    );
+    assert_eq!(control.projection().status(), TaskStatus::Faulted);
+    assert_eq!(
+        control.advance_with_workspace(deadline, &mut workspace),
+        Ok(true)
+    );
+    assert_eq!(workspace.calls, 2);
+    let (journal, runtime) = control.into_parts();
+    assert_eq!(journal.records.len(), 4);
+    assert_eq!(runtime.starts, 1);
+    assert_eq!(runtime.fences, 1);
+}

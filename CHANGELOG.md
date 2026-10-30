@@ -42,6 +42,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Hosted task advance initializes its two dispatch buffers only for an actual
+  start/restart via the shared controller's lazy `TaskDispatchWorkspace` provider.
 - Hosted task advance supplies two dispatch buffers and polling supplies one
   proposal buffer to the same core controller. Operation-specific portable calls
   avoid borrowing unused buffers while preserving full-workspace admission.
