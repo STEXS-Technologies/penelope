@@ -44,6 +44,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Linear saga completion clones only retained projection fields; action-history
+  extension reserves capacity for the next identity. The direct-task benchmark
+  measures an approximately 9% reduction in empty-task added engine time, with
+  application overhead depending on task duration and integration services.
+
 - Hosted task advance initializes its two dispatch buffers only for an actual
   start/restart via the shared controller's lazy `TaskDispatchWorkspace` provider.
 - Hosted task advance supplies two dispatch buffers and polling supplies one

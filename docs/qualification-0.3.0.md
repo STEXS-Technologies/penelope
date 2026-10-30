@@ -1,12 +1,22 @@
 # 0.3.0 qualification audit
 
-The source/metadata candidate is `495451fc427231ee916d32e02ab8ee617d130941` on
-`feature/reliable-execution`. Subsequent documentation/evidence commits do not
-change the qualified Rust sources, dependency versions or build profiles.
+The full release-qualification reference is
+`495451fc427231ee916d32e02ab8ee617d130941` on `feature/reliable-execution`.
 The candidate passed local checks, remote CI and the versioned verification-only
 release workflow. The historical graph slowdown is removed by the verified optimization below.
 Other disclosed timing tradeoffs and deployment limits remain part of the disposition.
 No tag, registry publication or GitHub release is authorized by this audit.
+
+The subsequent linear-engine optimization at `8a9e298` removes discarded terminal
+projection clones and reserves successor-history capacity. Its [direct-task
+comparison and scoped verification](performance-application-overhead-2026-10-30.md)
+measure approximately 0.24–0.26 µs of added one-step in-memory engine time.
+The ~61 µs synthetic task has 0.43% median overhead; the ~3.8 µs task has 6.39%.
+These exclude persistence and worker isolation. Earlier qualification records
+remain evidence for their pinned revisions; the follow-up documents its additional
+stable/MSRV tests, equivalence properties and targeted fuzzing separately.
+[All seven code CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41132374645)
+also pass on `8a9e298`.
 
 ## Evidence and disposition
 

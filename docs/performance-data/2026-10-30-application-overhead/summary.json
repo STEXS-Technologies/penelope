@@ -1,0 +1,94 @@
+{
+  "before": {
+    "0": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 1.12367,
+      "median_penelope_ns_per_task": 271.14172499999995,
+      "median_paired_added_ns": 270.01790500000004,
+      "median_paired_overhead_percent": 24887.587773713192,
+      "paired_overhead_percent_range": [
+        22107.248502497176,
+        30589.255005590003
+      ]
+    },
+    "64": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 44.187915000000004,
+      "median_penelope_ns_per_task": 314.325455,
+      "median_paired_added_ns": 270.99699499999997,
+      "median_paired_overhead_percent": 630.569927985563,
+      "paired_overhead_percent_range": [
+        456.9256797446096,
+        867.2570197108973
+      ]
+    },
+    "4096": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 3804.369,
+      "median_penelope_ns_per_task": 4070.27025,
+      "median_paired_added_ns": 267.48225,
+      "median_paired_overhead_percent": 7.06131535723441,
+      "paired_overhead_percent_range": [
+        5.496079311847635,
+        12.863839677729171
+      ]
+    },
+    "65536": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 60682.96484375,
+      "median_penelope_ns_per_task": 60969.69140625,
+      "median_paired_added_ns": 287.7421875,
+      "median_paired_overhead_percent": 0.47628289612731134,
+      "paired_overhead_percent_range": [
+        -0.49153245068543905,
+        1.3812387481297428
+      ]
+    }
+  },
+  "after": {
+    "0": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 1.12377,
+      "median_penelope_ns_per_task": 246.780735,
+      "median_paired_added_ns": 245.75259499999999,
+      "median_paired_overhead_percent": 22339.4864772394,
+      "paired_overhead_percent_range": [
+        20140.018479587685,
+        28282.603729678372
+      ]
+    },
+    "64": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 44.02334999999999,
+      "median_penelope_ns_per_task": 283.80235,
+      "median_paired_added_ns": 240.697285,
+      "median_paired_overhead_percent": 556.5785407197034,
+      "paired_overhead_percent_range": [
+        506.843636182694,
+        608.9984473064271
+      ]
+    },
+    "4096": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 3785.4525000000003,
+      "median_penelope_ns_per_task": 4028.234,
+      "median_paired_added_ns": 242.74425000000002,
+      "median_paired_overhead_percent": 6.391770303644084,
+      "paired_overhead_percent_range": [
+        4.403835913368437,
+        7.808938137024479
+      ]
+    },
+    "65536": {
+      "pairs": 160,
+      "median_direct_ns_per_task": 60753.7265625,
+      "median_penelope_ns_per_task": 61028.3203125,
+      "median_paired_added_ns": 263.3984375,
+      "median_paired_overhead_percent": 0.43308515734178377,
+      "paired_overhead_percent_range": [
+        -1.608200950184313,
+        2.6749587862326507
+      ]
+    }
+  }
+}
