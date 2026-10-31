@@ -1,0 +1,143 @@
+{
+  "2": {
+    "comparisons": {
+      "baseline-to-uncached": {
+        "paired_mean_percent": 5.331379811173255,
+        "bootstrap_95_percent": [
+          0.040965859900594925,
+          12.95589763527464
+        ]
+      },
+      "baseline-to-cached": {
+        "paired_mean_percent": -4.74495098377718,
+        "bootstrap_95_percent": [
+          -5.792259483298635,
+          -3.5640931031807717
+        ]
+      },
+      "uncached-to-cached": {
+        "paired_mean_percent": -8.016023169540729,
+        "bootstrap_95_percent": [
+          -12.609616169229495,
+          -4.613473879661019
+        ]
+      }
+    },
+    "mean_ns_per_retry": {
+      "baseline": 21721.824666666667,
+      "uncached": 22882.418166666666,
+      "cached": 20683.965166666665
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        2,
+        0,
+        64
+      ],
+      "uncached": [
+        0,
+        0,
+        0
+      ],
+      "cached": [
+        1,
+        0,
+        96
+      ]
+    }
+  },
+  "16": {
+    "comparisons": {
+      "baseline-to-uncached": {
+        "paired_mean_percent": 4.638636451456562,
+        "bootstrap_95_percent": [
+          0.8820926762576171,
+          10.743284233542225
+        ]
+      },
+      "baseline-to-cached": {
+        "paired_mean_percent": -0.5959867279752789,
+        "bootstrap_95_percent": [
+          -1.694653680217796,
+          0.96263684545888
+        ]
+      },
+      "uncached-to-cached": {
+        "paired_mean_percent": -3.9278931197659976,
+        "bootstrap_95_percent": [
+          -8.109913610128379,
+          -1.0648509909283668
+        ]
+      }
+    },
+    "mean_ns_per_retry": {
+      "baseline": 71416.62916666667,
+      "uncached": 74738.31016666666,
+      "cached": 70976.15983333334
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        2,
+        0,
+        64
+      ],
+      "uncached": [
+        0,
+        0,
+        0
+      ],
+      "cached": [
+        1,
+        0,
+        96
+      ]
+    }
+  },
+  "128": {
+    "comparisons": {
+      "baseline-to-uncached": {
+        "paired_mean_percent": 1.6753981501702564,
+        "bootstrap_95_percent": [
+          0.08010608591194068,
+          3.567456182973615
+        ]
+      },
+      "baseline-to-cached": {
+        "paired_mean_percent": 0.34930169760920654,
+        "bootstrap_95_percent": [
+          -0.9846781653572458,
+          1.9361917093263052
+        ]
+      },
+      "uncached-to-cached": {
+        "paired_mean_percent": -1.213129894049902,
+        "bootstrap_95_percent": [
+          -2.772821578904606,
+          0.028032338247353333
+        ]
+      }
+    },
+    "mean_ns_per_retry": {
+      "baseline": 468545.205,
+      "uncached": 476169.07933333336,
+      "cached": 469931.831
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        2,
+        0,
+        64
+      ],
+      "uncached": [
+        0,
+        0,
+        0
+      ],
+      "cached": [
+        1,
+        0,
+        96
+      ]
+    }
+  }
+}

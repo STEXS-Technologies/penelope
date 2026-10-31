@@ -1,0 +1,55 @@
+{
+  "cpu": 0,
+  "blocks": 24,
+  "orders": [
+    [
+      "baseline",
+      "uncached",
+      "cached"
+    ],
+    [
+      "baseline",
+      "cached",
+      "uncached"
+    ],
+    [
+      "uncached",
+      "baseline",
+      "cached"
+    ],
+    [
+      "uncached",
+      "cached",
+      "baseline"
+    ],
+    [
+      "cached",
+      "baseline",
+      "uncached"
+    ],
+    [
+      "cached",
+      "uncached",
+      "baseline"
+    ]
+  ],
+  "order_repeats": 4,
+  "warmup": 16,
+  "iterations": 250,
+  "start_utc": "2026-10-31T05:16:18Z",
+  "note": "Separate ordinary latency and allocation traffic executables. No other agent-owned builds/tests/graph jobs during timing.",
+  "kernel": "7.2.9-100.fc43.x86_64",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "baseline": "cd2e0c6404a78e520d2fd5f70997a11d01f15222",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "af6dc0405d4e8c44db03384f3256206238ca1b73e06687972845a12be833f1c3",
+    "crates/penelope-sqlite/src/authority.rs": "79cb82f854b031f08a8c3e941f68a27d3761a382cddae581ae8e9cd93638fb8f",
+    "crates/penelope-sqlite/tests/support/authority_columns.rs": "523f16683cf554b2a656c3f742f0a243e771aa9c281e83cb4eea78204396eab7",
+    "crates/penelope-sqlite/benches/task_reconstruction.rs": "de43c4701ae22be6aea56953f75c14debb7d2e0fad4afea1cfe25747aa4bc6af",
+    "crates/penelope-sqlite/benches/task_reconstruction_allocations.rs": "d59c5993b5eeba2bab35a4ece0a384407ee0d7392cc0dc05318be0d31d13d15c",
+    "crates/penelope-sqlite/benches/support/task_reconstruction_fixture.rs": "51ea3a7156ee38f135c6008167c8e3d3a83dc912122d306903b246b10f846974",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "code_commit": "908af7ba2d9402f6ade9ca8e08a922c24ced5f57"
+}
