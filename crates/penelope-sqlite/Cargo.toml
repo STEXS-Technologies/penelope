@@ -47,3 +47,7 @@ harness = false
 [[bench]]
 name = "claim_history"
 harness = false
+
+[[bench]]
+name = "process_replay"
+harness = false

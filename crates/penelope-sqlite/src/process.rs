@@ -377,7 +377,7 @@ impl ProcessStore for SqliteProcessStore {
             let key = request.scope.canonical_bytes();
             let next = process_head(&transaction, &key)?.map_or(0, |(next, _used)| next);
             let next = u64::try_from(next).map_err(|_negative| PortError::Invariant)?;
-            let mut statement = transaction.prepare("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
+            let mut statement = transaction.prepare_cached("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
             let mut rows = statement.query(params![key,integer(request.from_sequence)?,request.limit.get()]).map_err(|error| db_error(&error))?;
             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
