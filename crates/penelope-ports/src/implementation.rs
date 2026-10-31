@@ -2072,6 +2072,32 @@ impl OutcomeLog {
     }
 }
 
+// Compare the complete effect coordinates by reference. The exhaustive
+// destructuring requires review if ProcessAction gains another coordinate.
+fn same_effect_key(first: &ProcessAction, second: &ProcessAction) -> bool {
+    let ProcessAction {
+        tenant_id,
+        process_id,
+        definition_id,
+        definition_version,
+        definition_digest,
+        step_id,
+        attempt,
+        kind,
+        payload_digest,
+        action_id: _,
+    } = first;
+    tenant_id == &second.tenant_id
+        && process_id == &second.process_id
+        && definition_id == &second.definition_id
+        && definition_version == &second.definition_version
+        && definition_digest == &second.definition_digest
+        && step_id == &second.step_id
+        && attempt == &second.attempt
+        && kind == &second.kind
+        && payload_digest == &second.payload_digest
+}
+
 impl AtomicProcessCommit {
     /// Creates and validates a single atomic process commit request.
     ///
@@ -2163,12 +2189,11 @@ impl AtomicProcessCommit {
             {
                 return Err(CommitValidationError::DuplicateActionId);
             }
-            let effect_key = action.effect_key();
             if self
                 .actions
                 .iter()
                 .skip(index.saturating_add(1))
-                .any(|other_action| other_action.effect_key() == effect_key)
+                .any(|other_action| same_effect_key(action, other_action))
             {
                 return Err(CommitValidationError::DuplicateActionEffectKey);
             }
