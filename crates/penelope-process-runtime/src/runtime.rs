@@ -72,6 +72,20 @@ fn execution_id(scope: TaskScope, generation: TaskGeneration) -> Digest {
     generation_bytes.copy_from_slice(&generation.get().to_be_bytes());
     Digest::of(&bytes)
 }
+fn start_header(scope: TaskScope, generation: TaskGeneration, lengths: [u32; 4]) -> [u8; 60] {
+    let mut bytes = [0; 60];
+    let (magic, remaining) = bytes.split_at_mut(8);
+    magic.copy_from_slice(START_MAGIC);
+    let (scope_bytes, fields) = remaining.split_at_mut(32);
+    scope_bytes.copy_from_slice(&scope_digest(scope).0);
+    for (destination, value) in fields
+        .chunks_exact_mut(4)
+        .zip(std::iter::once(generation.get()).chain(lengths))
+    {
+        destination.copy_from_slice(&value.to_be_bytes());
+    }
+    bytes
+}
 fn number(bytes: &[u8], offset: usize) -> Result<u32, TaskPortError> {
     Ok(u32::from_be_bytes(
         bytes
@@ -290,19 +304,17 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
         if metadata.len() > 8192 {
             return Err(TaskPortError::Exhausted);
         }
-        let mut header = Vec::with_capacity(60);
-        header.extend_from_slice(START_MAGIC);
-        header.extend_from_slice(&scope_digest(request.scope).0);
-        header.extend_from_slice(&request.generation.get().to_be_bytes());
-        for value in [
-            u32::try_from(metadata.len()).map_err(|_length| TaskPortError::Exhausted)?,
-            u32::try_from(request.input.len()).map_err(|_length| TaskPortError::Exhausted)?,
-            u32::try_from(request.checkpoint.map_or(0, <[u8]>::len))
-                .map_err(|_length| TaskPortError::Exhausted)?,
-            u32::from(request.checkpoint.is_some()),
-        ] {
-            header.extend_from_slice(&value.to_be_bytes());
-        }
+        let header = start_header(
+            request.scope,
+            request.generation,
+            [
+                u32::try_from(metadata.len()).map_err(|_length| TaskPortError::Exhausted)?,
+                u32::try_from(request.input.len()).map_err(|_length| TaskPortError::Exhausted)?,
+                u32::try_from(request.checkpoint.map_or(0, <[u8]>::len))
+                    .map_err(|_length| TaskPortError::Exhausted)?,
+                u32::from(request.checkpoint.is_some()),
+            ],
+        );
         send_parts(
             &mut active.stdin,
             &[

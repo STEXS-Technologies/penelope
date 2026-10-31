@@ -282,3 +282,60 @@ fn continuous_interruptions_do_not_reset_the_write_deadline() {
     );
     assert_eq!(output.attempts, attempts);
 }
+
+#[test]
+fn fixed_start_header_matches_legacy_wire_for_varied_bindings_and_lengths() {
+    let mut state = 29_u64;
+    for index in 0..10_000 {
+        let mut digest = || {
+            let mut bytes = [0; 32];
+            for byte in &mut bytes {
+                state ^= state << 13;
+                state ^= state >> 7;
+                state ^= state << 17;
+                *byte = state.to_le_bytes().first().copied().unwrap();
+            }
+            Digest(bytes)
+        };
+        let scope = TaskScope {
+            tenant: TaskTenantId::from_digest(digest()),
+            task: TaskId::from_digest(digest()),
+            definition: TaskDefinitionFingerprint::from_digest(digest()),
+            input: TaskInputDigest::from_digest(digest()),
+        };
+        let generation = TaskGeneration::new(match index {
+            0 => 0,
+            1 => u32::MAX,
+            _ => number(&digest().0, 0).unwrap(),
+        });
+        let lengths = match index % 4 {
+            0 => [0, 0, 0, 0],
+            1 => [8192, u32::MAX, u32::MAX, 1],
+            2 => [1, 1, 0, 1],
+            _ => [
+                number(&digest().0, 0).unwrap(),
+                number(&digest().0, 0).unwrap(),
+                number(&digest().0, 0).unwrap(),
+                1,
+            ],
+        };
+        // Independently reproduce the previous growable wire encoder,
+        // including the legacy scope-digest layout.
+        let mut scope_bytes = b"penelope.linux-worker.scope.v1\0".to_vec();
+        for item in [
+            scope.tenant.digest(),
+            scope.task.digest(),
+            scope.definition.digest(),
+            scope.input.digest(),
+        ] {
+            scope_bytes.extend_from_slice(&item.0);
+        }
+        let mut legacy = b"PNLWRK01".to_vec();
+        legacy.extend_from_slice(&Digest::of(&scope_bytes).0);
+        legacy.extend_from_slice(&generation.get().to_be_bytes());
+        for length in lengths {
+            legacy.extend_from_slice(&length.to_be_bytes());
+        }
+        assert_eq!(start_header(scope, generation, lengths).as_slice(), legacy);
+    }
+}
