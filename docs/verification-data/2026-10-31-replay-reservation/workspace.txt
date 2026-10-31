@@ -1,0 +1,1008 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+   Compiling penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+   Compiling penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.36s
+     Running unittests src/lib.rs (target/debug/deps/penelope-16f73d953c86e6d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trade.rs (target/debug/examples/trade-4d0305e08f931c40)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trade_compensation.rs (target/debug/examples/trade_compensation-ee5f406b7e0171f6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trade_competing_lock.rs (target/debug/examples/trade_competing_lock-ce2f9fb80cd9b198)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trade_manual_review.rs (target/debug/examples/trade_manual_review-ab4912f574f86205)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trade_retry_timer.rs (target/debug/examples/trade_retry_timer-e423677e7b866a41)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_core-e3aeeb18c73fea52)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_allocations.rs (target/debug/deps/task_allocations-cf4aceb20c6dd0c7)
+{"path":"pure_checkpoint_recovery","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"effect_reconciliation_recovery","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"undersized_workspace","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"checkpoint_migration","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"independent_completion","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+     Running unittests src/lib.rs (target/debug/deps/penelope_domain-7051abdfec6217c5)
+
+running 17 tests
+test entry::identifier_serde::tests::invalid_utf8_and_noncanonical_text_stay_rejected ... ok
+test entry::identifier_serde::tests::visitor_preserves_borrowed_owned_and_byte_string_admission ... ok
+test entry::identifier_text::tests::boundary_lengths_and_multibyte_text_round_trip ... ok
+test entry::identifier_text::tests::storage_preserves_string_semantics ... ok
+test entry::implementation::tests::allocation_hint_does_not_change_encoding_or_bound_output ... ok
+test entry::implementation::tests::canonical_bytes_are_deterministic_and_bind_effect_semantics ... ok
+test entry::implementation::tests::canonical_definition_digest_is_reproducible_and_rejects_tampering ... ok
+test entry::implementation::tests::canonical_scope_validation_bounds_and_deduplicates_resources ... ok
+test entry::implementation::tests::definition_compatibility_fails_closed_on_identity_and_semantic_changes ... ok
+test entry::implementation::tests::definition_migration_binds_identity_and_destination_digest ... ok
+test entry::implementation::tests::definition_validation_bounds_and_deduplicates_steps ... ok
+test entry::implementation::tests::deserialization_preserves_identifier_validation ... ok
+test entry::implementation::tests::effect_key_binds_every_semantic_effect_coordinate ... ok
+test entry::implementation::tests::every_public_wire_value_has_deterministic_canonical_bytes ... ok
+test entry::implementation::tests::identifiers_reject_ambiguous_storage_and_log_characters ... ok
+test entry::implementation::tests::invalid_identifiers_report_their_typed_error_variant ... ok
+test entry::implementation::tests::outcome_scope_validation_rejects_cross_process_records ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+
+     Running tests/golden_wire.rs (target/debug/deps/golden_wire-a7af88884602eb0c)
+
+running 2 tests
+test process_input_category_discriminants_preserve_existing_variants ... ok
+test wire_fixtures_are_immutable_and_typed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/identifier_allocations.rs (target/debug/deps/identifier_allocations-6156ce67ee31871d)
+All 16 identifier types: short borrowed parse/JSON decode/clone zero allocations; long parse/clone one allocation; unchanged value size
+     Running tests/identifier_contract.rs (target/debug/deps/identifier_contract-5ba59a96192e68d7)
+
+running 1 test
+test public_identifiers_preserve_admission_wire_and_traits ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running benches/identifier_decode.rs (target/debug/deps/identifier_decode-b0c6164f801b04a8)
+identifier JSON decode short: 100000 operations in 29.94676ms (299 ns/op)
+identifier JSON decode escaped: 100000 operations in 45.365265ms (453 ns/op)
+identifier JSON decode long: 100000 operations in 201.497552ms (2014 ns/op)
+     Running unittests src/lib.rs (target/debug/deps/penelope_executor-ee67aa42306a67ef)
+
+running 39 tests
+test entry::engine::tests::a_projection_rejects_a_definition_with_different_pinned_semantics ... ok
+test entry::engine::tests::authorized_manual_resolution_replays_compensation_or_cancellation ... ok
+test entry::engine::tests::crash_after_every_trade_event_replays_to_the_same_compensated_state ... ok
+test entry::engine::tests::decide_rejects_a_result_without_a_replayed_projection ... ok
+test entry::engine::tests::decide_routes_typed_start_and_result_inputs_without_side_effects ... ok
+test entry::engine::tests::escalated_decision_builds_a_scope_pinned_manual_review_request ... ok
+test entry::engine::tests::exhausted_retry_policy_escalates_without_a_new_action ... ok
+test entry::engine::tests::external_saga_inputs_always_require_an_accepted_input_record ... ok
+test entry::engine::tests::graph_definition_validates_references_reachability_and_terminal_edges ... ok
+test entry::engine::tests::input_to_event_preserves_the_exact_immutable_input_identity ... ok
+test entry::engine::tests::known_terminal_failure_compensates_succeeded_steps_in_lifo_order ... ok
+test entry::engine::tests::linear_definition_rejects_duplicate_and_oversized_steps ... ok
+test entry::engine::tests::live_transitions_and_event_replay_converge ... ok
+test entry::engine::tests::ordered_replay_rejects_a_sequence_gap_before_applying_events ... ok
+test entry::engine::tests::outcome_batch_binds_accepted_input_to_the_event_input_identity ... ok
+test entry::engine::tests::outcome_plan_requires_every_observed_and_planned_lifecycle_fact_in_order ... ok
+test entry::engine::tests::replay_rebuilds_the_final_projection_from_immutable_events ... ok
+test entry::engine::tests::replay_rejects_a_duplicate_accepted_input_identity ... ok
+test entry::engine::tests::replay_rejects_a_second_start_record ... ok
+test entry::engine::tests::replay_rejects_a_start_event_with_different_pinned_semantics ... ok
+test entry::engine::tests::result_for_a_different_action_cannot_advance_the_saga ... ok
+test entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy ... ok
+test entry::engine::tests::retry_backoff_is_deterministic_exponential_and_capped ... ok
+test entry::engine::tests::retry_backoff_plans_replayable_due_timer_and_rejects_early_or_duplicate_fire ... ok
+test entry::engine::tests::retry_backoff_rejects_invalid_bounds_and_due_time_overflow ... ok
+test entry::engine::tests::retry_cannot_reuse_an_issued_action_identity ... ok
+test entry::engine::tests::retry_creates_a_new_attempt_for_the_same_step ... ok
+test entry::engine::tests::retry_deadline_allows_its_boundary_and_escalates_after_it ... ok
+test entry::engine::tests::retry_jitter_is_seeded_bounded_and_replayable ... ok
+test entry::engine::tests::retry_schedule_input_preserves_the_jitter_seed_in_its_replay_event ... ok
+test entry::engine::tests::success_plans_ordered_steps_then_completes ... ok
+test entry::engine::tests::terminal_projection_preserves_reference_fields ... ok
+test entry::engine::tests::unknown_result_escalates_instead_of_blind_retry ... ok
+test entry::graph::tests::graph_escalates_unknown_without_following_an_edge ... ok
+test entry::graph::tests::graph_rejects_result_for_wrong_action ... ok
+test entry::graph::tests::graph_replay_rejects_oversized_logs_before_allocating_tracking_state ... ok
+test entry::graph::tests::graph_start_result_and_replay_converge ... ok
+test entry::graph::tests::ordered_graph_replay_rejects_sequence_gaps ... ok
+test graph_outcomes::tests::graph_outcome_plan_checks_order_scope_causation_and_sequence ... ok
+
+test result: ok. 39 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/architecture.rs (target/debug/deps/architecture-7beb69d8b1c46bd4)
+
+running 5 tests
+test every_public_newtype_has_an_explicit_fuzz_invocation ... ok
+test fuzz_inventory_counts_executed_calls_and_ignores_imports ... ok
+test module_entry_files_contain_only_declarations_and_exports ... ok
+test module_rule_rejects_implementations_and_inline_modules ... ok
+test public_type_inventory_accepts_only_static_thread_local_declarations ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/definition_allocations.rs (target/debug/deps/definition_allocations-ffca67fce0f314d7)
+Linear definition admission: zero allocations for valid and duplicate fixtures across the sorting threshold, short and long identifiers
+     Running tests/graph_validation_parity.rs (target/debug/deps/graph_validation_parity-6410cd6cb505adbc)
+
+running 5 tests
+test arbitrary_graphs_preserve_exact_validation_errors ... ok
+test bounds_references_duplicate_keys_and_disconnected_cycles_preserve_errors ... ok
+test every_bounded_source_and_outcome_key_rejects_duplicates_with_original_precedence ... ok
+test maximum_size_branching_graph_preserves_reachability_through_cycles ... ok
+test reachable_chains_cycles_and_reordered_steps_remain_valid ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.40s
+
+     Running tests/linear_validation_parity.rs (target/debug/deps/linear_validation_parity-c2a5da2b56ef87c7)
+
+running 4 tests
+test arbitrary_definitions_preserve_exact_errors_and_source_order ... ok
+test boundaries_and_mixed_invalid_fields_preserve_error_precedence ... ok
+test strictly_descending_ids_do_not_bypass_forward_or_compensation_retry_limits ... ok
+test unique_definitions_and_injected_duplicates_preserve_admission ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/supervisor_error_compat.rs (target/debug/deps/supervisor_error_compat-cfd366c5b358a1ad)
+
+running 1 test
+test hosted_error_path_variant_imports_conversions_and_exhaustive_match_still_compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_adversarial.rs (target/debug/deps/task_adversarial-2404c81f23f61be5)
+
+running 8 tests
+test cooldown_cannot_be_bypassed_and_checkpoint_substitution_cannot_authorize_restart ... ok
+test history_and_attempt_quotas_fail_closed_before_new_authorization ... ok
+test invalid_definitions_and_incompatible_intents_never_become_pending ... ok
+test migration_rejects_foreign_task_wrong_schema_and_oversized_checkpoint ... ok
+test pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history ... ok
+test poisoned_restore_corrupt_journal_and_runtime_failure_never_claim_completion ... ok
+test premature_faults_completion_and_reconciliation_are_rejected ... ok
+test valid_replay_survives_every_prefix_and_corrupt_history_is_rejected ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_audit.rs (target/debug/deps/task_audit-1303846dfbee0ff6)
+
+running 7 tests
+test foreign_or_stale_late_observations_cannot_fence_the_current_generation ... ok
+test forwarded_pending_observation_at_timeout_stops_execution ... ok
+test last_history_slot_is_reserved_for_stopping_the_generation ... ok
+test oversized_reports_stop_execution_even_when_the_buffer_is_truncated ... ok
+test persisted_input_schema_reaches_the_runtime_before_computation ... ok
+test quota_fence_failure_poisoning_never_acknowledges_a_checkpoint ... ok
+test restart_without_a_terminal_history_slot_never_dispatches ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_concurrency.rs (target/debug/deps/task_concurrency-efadeeb2e51db3c4)
+
+running 3 tests
+test competing_intents_cannot_dispatch_after_a_cas_conflict ... ok
+test delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction ... ok
+test many_competing_supervisors_commit_and_dispatch_exactly_one_execution ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/task_contracts.rs (target/debug/deps/task_contracts-6607bdb77b236126)
+
+running 5 tests
+test checkpoint_upgrade_requires_explicit_application_authorized_import ... ok
+test malformed_history_is_rejected_without_mutating_projection ... ok
+test quotas_and_deadline_are_checked_before_new_execution ... ok
+test task_wire_v1_fixture_is_immutable ... ok
+test time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control.rs (target/debug/deps/task_control-8789e63460e88edd)
+
+running 9 tests
+test ambiguous_commit_poisoning_matches_hosted_profile ... ok
+test checkpoint_proposals_require_poll_storage_larger_than_final_output ... ok
+test insufficient_workspace_does_not_commit_start_and_can_be_retried ... ok
+test lazy_dispatch_workspace_is_unused_for_wait_fault_and_recovery_decisions ... ok
+test portable_and_hosted_histories_match_through_checkpoint_and_completion ... ok
+test reconstruction_and_restart_match_hosted_profile ... ok
+test single_buffer_poll_records_timeout_without_dispatch_or_poll_storage ... ok
+test standalone_workspace_validation_admits_the_largest_declared_proposal ... ok
+test undersized_poll_workspace_preserves_worker_progress ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control_failures.rs (target/debug/deps/task_control_failures-5eb65e5eabbb3f22)
+
+running 8 tests
+test corrupt_input_and_checkpoint_reads_poison_dispatch_before_user_code ... ok
+test foreign_input_admission_leaves_no_durable_mutation_and_allows_correct_retry ... ok
+test interruption_receipt_ambiguity_is_resolved_only_by_authoritative_replay ... ok
+test invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch ... ok
+test restore_read_and_clock_failures_neither_fence_nor_append ... ok
+test stale_observation_preserves_running_state_and_poll_at_deadline_records_timeout ... ok
+test unconfirmed_quota_fence_poisoning_precedes_the_proposal_error ... ok
+test zero_schema_live_output_is_fenced_without_commit_or_acknowledgement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_effect_bridge.rs (target/debug/deps/task_effect_bridge-30430da7d326237d)
+
+running 2 tests
+test existing_effect_identity_survives_task_crash_without_changing_saga_records ... ok
+test typed_binding_rejects_each_substituted_dispatch_coordinate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_newtypes.rs (target/debug/deps/task_newtypes-71829a69941af2cf)
+
+running 2 tests
+test scoped_identity_roles_preserve_exact_content_and_wire_values ... ok
+test task_counters_reject_wire_overflow_and_arithmetic_never_wraps ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_process_crash.rs (target/debug/deps/task_process_crash-ee06f8aafabac357)
+
+running 3 tests
+test crash_worker ... ok
+test killed_process_recovers_only_committed_checkpoint ... ok
+test valid_json_corruption_is_rejected_by_journal_integrity_before_replay ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/task_recovery.rs (target/debug/deps/task_recovery-68883b66cf3d28e6)
+
+running 14 tests
+test checkpoint_commit_ack_loss_is_recovered_from_committed_boundary ... ok
+test committed_checkpoint_resumes_computation_after_supervisor_crash ... ok
+test corrupt_checkpoint_fails_closed_before_task_code_runs ... ok
+test crash_after_start_commit_before_dispatch_is_reconstructed_without_success ... ok
+test effect_interruption_requires_evidence_and_unknown_never_restarts ... ok
+test failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkpoint ... ok
+test independent_completion_evidence_commits_bytes_without_reexecution ... ok
+test no_commit_or_lost_acknowledgement_never_dispatches ... ok
+test oversized_input_migration_and_reconciled_output_are_rejected_before_commit ... ok
+test regressed_clock_is_rejected_before_runtime_poll_consumes_progress ... ok
+test repeated_faults_are_bounded_by_generation_quota ... ok
+test seeded_checkpoint_crash_and_persistence_chaos ... ok
+test stale_generation_and_foreign_scope_leave_state_unchanged ... ok
+test timeout_late_results_and_fence_failure_do_not_claim_success ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/task_security.rs (target/debug/deps/task_security-e4cb85837365f1a8)
+
+running 3 tests
+test all_recovery_modes_preserve_ambiguity_for_interrupted_effects ... ok
+test definition_fingerprint_pins_every_permission_and_budget_field ... ok
+test task_wire_rejects_unknown_duplicate_overflow_and_wrong_shape_fields ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_sqlite_recovery.rs (target/debug/deps/task_sqlite_recovery-78eabaa5e4fe5868)
+
+running 3 tests
+test process_death_rolls_back_or_recovers_the_whole_checkpoint_transaction ... ok
+test separate_database_connections_arbitrate_one_intent_and_reject_corruption ... ok
+test sqlite_crash_worker ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/task_verified_result.rs (target/debug/deps/task_verified_result-1c59ad9908960244)
+
+running 3 tests
+test effectful_completion_requires_matching_independent_evidence ... ok
+test pure_completion_requires_exact_output_and_resolved_application_meaning ... ok
+test result_relay_maps_to_both_engines_with_one_delivery_identity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/application_overhead.rs (target/debug/deps/application_overhead-b248008d5ce8d6ff)
+{"checksum":0,"direct_ns":1198156,"iterations":100000,"long_identifiers":false,"penelope_ns":65716085,"round":0,"work":0}
+{"checksum":0,"direct_ns":1220259,"iterations":100000,"long_identifiers":false,"penelope_ns":64984741,"round":1,"work":0}
+{"checksum":0,"direct_ns":1285866,"iterations":100000,"long_identifiers":false,"penelope_ns":64836665,"round":2,"work":0}
+{"checksum":0,"direct_ns":1218446,"iterations":100000,"long_identifiers":false,"penelope_ns":64966876,"round":3,"work":0}
+{"checksum":0,"direct_ns":1391049,"iterations":100000,"long_identifiers":false,"penelope_ns":64926979,"round":4,"work":0}
+{"checksum":0,"direct_ns":1208075,"iterations":100000,"long_identifiers":false,"penelope_ns":65274101,"round":5,"work":0}
+{"checksum":0,"direct_ns":1221982,"iterations":100000,"long_identifiers":false,"penelope_ns":64935045,"round":6,"work":0}
+{"checksum":0,"direct_ns":1215379,"iterations":100000,"long_identifiers":false,"penelope_ns":65228842,"round":7,"work":0}
+{"checksum":0,"direct_ns":1227352,"iterations":100000,"long_identifiers":false,"penelope_ns":65043465,"round":8,"work":0}
+{"checksum":0,"direct_ns":1227603,"iterations":100000,"long_identifiers":false,"penelope_ns":65866194,"round":9,"work":0}
+{"checksum":0,"direct_ns":1284763,"iterations":100000,"long_identifiers":false,"penelope_ns":65109321,"round":10,"work":0}
+{"checksum":0,"direct_ns":1203356,"iterations":100000,"long_identifiers":false,"penelope_ns":66133191,"round":11,"work":0}
+{"checksum":0,"direct_ns":1224917,"iterations":100000,"long_identifiers":false,"penelope_ns":65296233,"round":12,"work":0}
+{"checksum":0,"direct_ns":1334680,"iterations":100000,"long_identifiers":false,"penelope_ns":65074424,"round":13,"work":0}
+{"checksum":0,"direct_ns":1229567,"iterations":100000,"long_identifiers":false,"penelope_ns":65223853,"round":14,"work":0}
+{"checksum":0,"direct_ns":1319601,"iterations":100000,"long_identifiers":false,"penelope_ns":66122320,"round":15,"work":0}
+{"checksum":0,"direct_ns":1322136,"iterations":100000,"long_identifiers":false,"penelope_ns":65643955,"round":16,"work":0}
+{"checksum":0,"direct_ns":1286076,"iterations":100000,"long_identifiers":false,"penelope_ns":65309930,"round":17,"work":0}
+{"checksum":0,"direct_ns":1231441,"iterations":100000,"long_identifiers":false,"penelope_ns":67279347,"round":18,"work":0}
+{"checksum":0,"direct_ns":1294443,"iterations":100000,"long_identifiers":false,"penelope_ns":66955271,"round":19,"work":0}
+{"checksum":0,"direct_ns":1342024,"iterations":100000,"long_identifiers":false,"penelope_ns":65209646,"round":20,"work":0}
+{"checksum":0,"direct_ns":1239817,"iterations":100000,"long_identifiers":false,"penelope_ns":66060421,"round":21,"work":0}
+{"checksum":0,"direct_ns":1360580,"iterations":100000,"long_identifiers":false,"penelope_ns":67575879,"round":22,"work":0}
+{"checksum":0,"direct_ns":1232964,"iterations":100000,"long_identifiers":false,"penelope_ns":67115230,"round":23,"work":0}
+{"checksum":0,"direct_ns":1353607,"iterations":100000,"long_identifiers":false,"penelope_ns":67943821,"round":24,"work":0}
+{"checksum":0,"direct_ns":1282580,"iterations":100000,"long_identifiers":false,"penelope_ns":66673646,"round":25,"work":0}
+{"checksum":0,"direct_ns":1234696,"iterations":100000,"long_identifiers":false,"penelope_ns":65199576,"round":26,"work":0}
+{"checksum":0,"direct_ns":1211001,"iterations":100000,"long_identifiers":false,"penelope_ns":66979317,"round":27,"work":0}
+{"checksum":0,"direct_ns":1352905,"iterations":100000,"long_identifiers":false,"penelope_ns":70103907,"round":28,"work":0}
+{"checksum":0,"direct_ns":1283060,"iterations":100000,"long_identifiers":false,"penelope_ns":68839663,"round":29,"work":0}
+{"checksum":0,"direct_ns":1293080,"iterations":100000,"long_identifiers":false,"penelope_ns":72460392,"round":30,"work":0}
+{"checksum":0,"direct_ns":1258493,"iterations":100000,"long_identifiers":false,"penelope_ns":72773186,"round":31,"work":0}
+{"checksum":0,"direct_ns":1303189,"iterations":100000,"long_identifiers":false,"penelope_ns":70829539,"round":32,"work":0}
+{"checksum":0,"direct_ns":1409064,"iterations":100000,"long_identifiers":false,"penelope_ns":69856559,"round":33,"work":0}
+{"checksum":0,"direct_ns":1478498,"iterations":100000,"long_identifiers":false,"penelope_ns":67444576,"round":34,"work":0}
+{"checksum":0,"direct_ns":1230569,"iterations":100000,"long_identifiers":false,"penelope_ns":66162167,"round":35,"work":0}
+{"checksum":0,"direct_ns":1233183,"iterations":100000,"long_identifiers":false,"penelope_ns":66966271,"round":36,"work":0}
+{"checksum":0,"direct_ns":1217373,"iterations":100000,"long_identifiers":false,"penelope_ns":66213667,"round":37,"work":0}
+{"checksum":0,"direct_ns":1365960,"iterations":100000,"long_identifiers":false,"penelope_ns":69444422,"round":38,"work":0}
+{"checksum":0,"direct_ns":1623128,"iterations":100000,"long_identifiers":false,"penelope_ns":72436115,"round":39,"work":0}
+{"checksum":4589511652137028250,"direct_ns":36091879,"iterations":100000,"long_identifiers":false,"penelope_ns":103203370,"round":0,"work":64}
+{"checksum":4589511652137028250,"direct_ns":35303004,"iterations":100000,"long_identifiers":false,"penelope_ns":104656370,"round":1,"work":64}
+{"checksum":4589511652137028250,"direct_ns":35216366,"iterations":100000,"long_identifiers":false,"penelope_ns":107356289,"round":2,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34915875,"iterations":100000,"long_identifiers":false,"penelope_ns":103372809,"round":3,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33555836,"iterations":100000,"long_identifiers":false,"penelope_ns":100491249,"round":4,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33394795,"iterations":100000,"long_identifiers":false,"penelope_ns":101306785,"round":5,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33203024,"iterations":100000,"long_identifiers":false,"penelope_ns":99798018,"round":6,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33482575,"iterations":100000,"long_identifiers":false,"penelope_ns":100466650,"round":7,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33890322,"iterations":100000,"long_identifiers":false,"penelope_ns":100998639,"round":8,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33166484,"iterations":100000,"long_identifiers":false,"penelope_ns":99855580,"round":9,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33146394,"iterations":100000,"long_identifiers":false,"penelope_ns":100058512,"round":10,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33716527,"iterations":100000,"long_identifiers":false,"penelope_ns":99561641,"round":11,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33465662,"iterations":100000,"long_identifiers":false,"penelope_ns":100006331,"round":12,"work":64}
+{"checksum":4589511652137028250,"direct_ns":35413587,"iterations":100000,"long_identifiers":false,"penelope_ns":99987424,"round":13,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34591268,"iterations":100000,"long_identifiers":false,"penelope_ns":100459206,"round":14,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34149153,"iterations":100000,"long_identifiers":false,"penelope_ns":100405372,"round":15,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34182308,"iterations":100000,"long_identifiers":false,"penelope_ns":100376056,"round":16,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33209888,"iterations":100000,"long_identifiers":false,"penelope_ns":100001511,"round":17,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33308017,"iterations":100000,"long_identifiers":false,"penelope_ns":100676687,"round":18,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34439364,"iterations":100000,"long_identifiers":false,"penelope_ns":100637211,"round":19,"work":64}
+{"checksum":4589511652137028250,"direct_ns":35447162,"iterations":100000,"long_identifiers":false,"penelope_ns":99952075,"round":20,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34143612,"iterations":100000,"long_identifiers":false,"penelope_ns":100673190,"round":21,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33307426,"iterations":100000,"long_identifiers":false,"penelope_ns":100158785,"round":22,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33229776,"iterations":100000,"long_identifiers":false,"penelope_ns":100076266,"round":23,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33078594,"iterations":100000,"long_identifiers":false,"penelope_ns":99926186,"round":24,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33249404,"iterations":100000,"long_identifiers":false,"penelope_ns":100326460,"round":25,"work":64}
+{"checksum":4589511652137028250,"direct_ns":34076683,"iterations":100000,"long_identifiers":false,"penelope_ns":100247176,"round":26,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33329869,"iterations":100000,"long_identifiers":false,"penelope_ns":100219653,"round":27,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33556237,"iterations":100000,"long_identifiers":false,"penelope_ns":101873641,"round":28,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33349086,"iterations":100000,"long_identifiers":false,"penelope_ns":99856802,"round":29,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33522943,"iterations":100000,"long_identifiers":false,"penelope_ns":101138539,"round":30,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33230838,"iterations":100000,"long_identifiers":false,"penelope_ns":100742504,"round":31,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33044738,"iterations":100000,"long_identifiers":false,"penelope_ns":101271647,"round":32,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33925090,"iterations":100000,"long_identifiers":false,"penelope_ns":101785420,"round":33,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33426686,"iterations":100000,"long_identifiers":false,"penelope_ns":100144889,"round":34,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33494047,"iterations":100000,"long_identifiers":false,"penelope_ns":100222789,"round":35,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33816200,"iterations":100000,"long_identifiers":false,"penelope_ns":100238930,"round":36,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33311104,"iterations":100000,"long_identifiers":false,"penelope_ns":100558508,"round":37,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33361050,"iterations":100000,"long_identifiers":false,"penelope_ns":100416052,"round":38,"work":64}
+{"checksum":4589511652137028250,"direct_ns":33394134,"iterations":100000,"long_identifiers":false,"penelope_ns":100697517,"round":39,"work":64}
+{"checksum":11693392760377137017,"direct_ns":40938849,"iterations":2000,"long_identifiers":false,"penelope_ns":47241181,"round":0,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41062457,"iterations":2000,"long_identifiers":false,"penelope_ns":47290006,"round":1,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41071395,"iterations":2000,"long_identifiers":false,"penelope_ns":46767496,"round":2,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40900734,"iterations":2000,"long_identifiers":false,"penelope_ns":47486064,"round":3,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41009544,"iterations":2000,"long_identifiers":false,"penelope_ns":47260067,"round":4,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40877119,"iterations":2000,"long_identifiers":false,"penelope_ns":47218167,"round":5,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40870587,"iterations":2000,"long_identifiers":false,"penelope_ns":46591846,"round":6,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40889533,"iterations":2000,"long_identifiers":false,"penelope_ns":47239568,"round":7,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40963306,"iterations":2000,"long_identifiers":false,"penelope_ns":47553595,"round":8,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40884413,"iterations":2000,"long_identifiers":false,"penelope_ns":47448562,"round":9,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40934210,"iterations":2000,"long_identifiers":false,"penelope_ns":46332735,"round":10,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41120239,"iterations":2000,"long_identifiers":false,"penelope_ns":47252323,"round":11,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40988104,"iterations":2000,"long_identifiers":false,"penelope_ns":47236372,"round":12,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41095240,"iterations":2000,"long_identifiers":false,"penelope_ns":47128274,"round":13,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41088377,"iterations":2000,"long_identifiers":false,"penelope_ns":47381372,"round":14,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41037790,"iterations":2000,"long_identifiers":false,"penelope_ns":47478610,"round":15,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41065453,"iterations":2000,"long_identifiers":false,"penelope_ns":46560957,"round":16,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41050845,"iterations":2000,"long_identifiers":false,"penelope_ns":47400078,"round":17,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41066886,"iterations":2000,"long_identifiers":false,"penelope_ns":47566981,"round":18,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41071305,"iterations":2000,"long_identifiers":false,"penelope_ns":47184401,"round":19,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41064992,"iterations":2000,"long_identifiers":false,"penelope_ns":45439478,"round":20,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41095732,"iterations":2000,"long_identifiers":false,"penelope_ns":47398485,"round":21,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41334372,"iterations":2000,"long_identifiers":false,"penelope_ns":47551401,"round":22,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41097275,"iterations":2000,"long_identifiers":false,"penelope_ns":47416690,"round":23,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41097545,"iterations":2000,"long_identifiers":false,"penelope_ns":47617790,"round":24,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41061625,"iterations":2000,"long_identifiers":false,"penelope_ns":47571771,"round":25,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41084039,"iterations":2000,"long_identifiers":false,"penelope_ns":47553756,"round":26,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40934510,"iterations":2000,"long_identifiers":false,"penelope_ns":47364930,"round":27,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41055393,"iterations":2000,"long_identifiers":false,"penelope_ns":47428914,"round":28,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41025005,"iterations":2000,"long_identifiers":false,"penelope_ns":47682434,"round":29,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41079661,"iterations":2000,"long_identifiers":false,"penelope_ns":47602470,"round":30,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41047749,"iterations":2000,"long_identifiers":false,"penelope_ns":47470374,"round":31,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41071835,"iterations":2000,"long_identifiers":false,"penelope_ns":46818664,"round":32,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41057487,"iterations":2000,"long_identifiers":false,"penelope_ns":47446278,"round":33,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41081364,"iterations":2000,"long_identifiers":false,"penelope_ns":47004995,"round":34,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41051166,"iterations":2000,"long_identifiers":false,"penelope_ns":47276109,"round":35,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41121531,"iterations":2000,"long_identifiers":false,"penelope_ns":47455756,"round":36,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":40994315,"iterations":2000,"long_identifiers":false,"penelope_ns":47517576,"round":37,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41045655,"iterations":2000,"long_identifiers":false,"penelope_ns":44579245,"round":38,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":41049612,"iterations":2000,"long_identifiers":false,"penelope_ns":47412141,"round":39,"work":4096}
+{"checksum":7334920370759019873,"direct_ns":42101045,"iterations":128,"long_identifiers":false,"penelope_ns":47173471,"round":0,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42259000,"iterations":128,"long_identifiers":false,"penelope_ns":47410559,"round":1,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42166762,"iterations":128,"long_identifiers":false,"penelope_ns":47766788,"round":2,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42079243,"iterations":128,"long_identifiers":false,"penelope_ns":47019243,"round":3,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42015149,"iterations":128,"long_identifiers":false,"penelope_ns":47851241,"round":4,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42020559,"iterations":128,"long_identifiers":false,"penelope_ns":47884415,"round":5,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42091116,"iterations":128,"long_identifiers":false,"penelope_ns":47880036,"round":6,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42002604,"iterations":128,"long_identifiers":false,"penelope_ns":48733126,"round":7,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42096195,"iterations":128,"long_identifiers":false,"penelope_ns":47780263,"round":8,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42003456,"iterations":128,"long_identifiers":false,"penelope_ns":48456981,"round":9,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42017664,"iterations":128,"long_identifiers":false,"penelope_ns":45190517,"round":10,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41870129,"iterations":128,"long_identifiers":false,"penelope_ns":48226115,"round":11,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41846282,"iterations":128,"long_identifiers":false,"penelope_ns":48694691,"round":12,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42997899,"iterations":128,"long_identifiers":false,"penelope_ns":48012783,"round":13,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41923351,"iterations":128,"long_identifiers":false,"penelope_ns":48160869,"round":14,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42167924,"iterations":128,"long_identifiers":false,"penelope_ns":47553715,"round":15,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41883955,"iterations":128,"long_identifiers":false,"penelope_ns":47580878,"round":16,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41793450,"iterations":128,"long_identifiers":false,"penelope_ns":47560739,"round":17,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41836273,"iterations":128,"long_identifiers":false,"penelope_ns":46739061,"round":18,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41828879,"iterations":128,"long_identifiers":false,"penelope_ns":48175317,"round":19,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41805063,"iterations":128,"long_identifiers":false,"penelope_ns":47017459,"round":20,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41801967,"iterations":128,"long_identifiers":false,"penelope_ns":47988185,"round":21,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41886180,"iterations":128,"long_identifiers":false,"penelope_ns":47690509,"round":22,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41764244,"iterations":128,"long_identifiers":false,"penelope_ns":47710338,"round":23,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41828779,"iterations":128,"long_identifiers":false,"penelope_ns":48736332,"round":24,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41712083,"iterations":128,"long_identifiers":false,"penelope_ns":48116443,"round":25,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41762100,"iterations":128,"long_identifiers":false,"penelope_ns":47578322,"round":26,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41782849,"iterations":128,"long_identifiers":false,"penelope_ns":47618591,"round":27,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41818899,"iterations":128,"long_identifiers":false,"penelope_ns":47250259,"round":28,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41766638,"iterations":128,"long_identifiers":false,"penelope_ns":47752801,"round":29,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41794122,"iterations":128,"long_identifiers":false,"penelope_ns":47706050,"round":30,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41788019,"iterations":128,"long_identifiers":false,"penelope_ns":47973577,"round":31,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42057681,"iterations":128,"long_identifiers":false,"penelope_ns":47951353,"round":32,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41885138,"iterations":128,"long_identifiers":false,"penelope_ns":47831342,"round":33,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41842715,"iterations":128,"long_identifiers":false,"penelope_ns":47375712,"round":34,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":43574323,"iterations":128,"long_identifiers":false,"penelope_ns":47433994,"round":35,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":43748399,"iterations":128,"long_identifiers":false,"penelope_ns":46772485,"round":36,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":43178588,"iterations":128,"long_identifiers":false,"penelope_ns":48017813,"round":37,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":43246459,"iterations":128,"long_identifiers":false,"penelope_ns":46420675,"round":38,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42851736,"iterations":128,"long_identifiers":false,"penelope_ns":47331395,"round":39,"work":65536}
+     Running benches/definition_validation.rs (target/debug/deps/definition_validation-b5b5cdeb43c779ca)
+linear definition count=1 long=false order=ascending: 100000 operations in 6.307363ms (63 ns/op)
+linear definition count=1 long=false order=descending: 100000 operations in 5.790894ms (57 ns/op)
+linear definition count=1 long=false order=permuted: 100000 operations in 5.787759ms (57 ns/op)
+linear definition count=2 long=false order=ascending: 100000 operations in 11.978034ms (119 ns/op)
+linear definition count=2 long=false order=descending: 100000 operations in 17.349227ms (173 ns/op)
+linear definition count=2 long=false order=permuted: 100000 operations in 17.318368ms (173 ns/op)
+linear definition count=4 long=false order=ascending: 100000 operations in 47.73197ms (477 ns/op)
+linear definition count=4 long=false order=descending: 100000 operations in 35.763634ms (357 ns/op)
+linear definition count=4 long=false order=permuted: 100000 operations in 33.500138ms (335 ns/op)
+linear definition count=8 long=false order=ascending: 100000 operations in 108.884763ms (1088 ns/op)
+linear definition count=8 long=false order=descending: 100000 operations in 111.372342ms (1113 ns/op)
+linear definition count=8 long=false order=permuted: 100000 operations in 108.468339ms (1084 ns/op)
+linear definition count=9 long=false order=ascending: 100000 operations in 133.909759ms (1339 ns/op)
+linear definition count=9 long=false order=descending: 100000 operations in 132.717003ms (1327 ns/op)
+linear definition count=9 long=false order=permuted: 100000 operations in 132.760547ms (1327 ns/op)
+linear definition count=16 long=false order=ascending: 100000 operations in 386.487694ms (3864 ns/op)
+linear definition count=16 long=false order=descending: 100000 operations in 387.720817ms (3877 ns/op)
+linear definition count=16 long=false order=permuted: 100000 operations in 391.355253ms (3913 ns/op)
+linear definition count=17 long=false order=ascending: 100000 operations in 132.063821ms (1320 ns/op)
+linear definition count=17 long=false order=descending: 100000 operations in 91.824755ms (918 ns/op)
+linear definition count=17 long=false order=permuted: 100000 operations in 258.495213ms (2584 ns/op)
+linear definition count=32 long=false order=ascending: 10000 operations in 23.140633ms (2314 ns/op)
+linear definition count=32 long=false order=descending: 10000 operations in 16.001903ms (1600 ns/op)
+linear definition count=32 long=false order=permuted: 10000 operations in 80.211315ms (8021 ns/op)
+linear definition count=64 long=false order=ascending: 10000 operations in 44.456158ms (4445 ns/op)
+linear definition count=64 long=false order=descending: 10000 operations in 30.596616ms (3059 ns/op)
+linear definition count=64 long=false order=permuted: 10000 operations in 184.766008ms (18476 ns/op)
+linear definition count=128 long=false order=ascending: 10000 operations in 87.566593ms (8756 ns/op)
+linear definition count=128 long=false order=descending: 10000 operations in 59.968825ms (5996 ns/op)
+linear definition count=128 long=false order=permuted: 10000 operations in 390.292228ms (39029 ns/op)
+linear definition count=1 long=true order=ascending: 100000 operations in 5.768942ms (57 ns/op)
+linear definition count=1 long=true order=descending: 100000 operations in 5.790463ms (57 ns/op)
+linear definition count=1 long=true order=permuted: 100000 operations in 5.953198ms (59 ns/op)
+linear definition count=2 long=true order=ascending: 100000 operations in 10.675367ms (106 ns/op)
+linear definition count=2 long=true order=descending: 100000 operations in 10.638225ms (106 ns/op)
+linear definition count=2 long=true order=permuted: 100000 operations in 10.776102ms (107 ns/op)
+linear definition count=4 long=true order=ascending: 100000 operations in 26.983532ms (269 ns/op)
+linear definition count=4 long=true order=descending: 100000 operations in 26.8794ms (268 ns/op)
+linear definition count=4 long=true order=permuted: 100000 operations in 27.187265ms (271 ns/op)
+linear definition count=8 long=true order=ascending: 100000 operations in 82.537221ms (825 ns/op)
+linear definition count=8 long=true order=descending: 100000 operations in 83.551592ms (835 ns/op)
+linear definition count=8 long=true order=permuted: 100000 operations in 82.805951ms (828 ns/op)
+linear definition count=9 long=true order=ascending: 100000 operations in 101.875645ms (1018 ns/op)
+linear definition count=9 long=true order=descending: 100000 operations in 102.053718ms (1020 ns/op)
+linear definition count=9 long=true order=permuted: 100000 operations in 101.725654ms (1017 ns/op)
+linear definition count=16 long=true order=ascending: 100000 operations in 301.307413ms (3013 ns/op)
+linear definition count=16 long=true order=descending: 100000 operations in 293.228986ms (2932 ns/op)
+linear definition count=16 long=true order=permuted: 100000 operations in 295.892575ms (2958 ns/op)
+linear definition count=17 long=true order=ascending: 100000 operations in 108.735916ms (1087 ns/op)
+linear definition count=17 long=true order=descending: 100000 operations in 83.872503ms (838 ns/op)
+linear definition count=17 long=true order=permuted: 100000 operations in 207.177472ms (2071 ns/op)
+linear definition count=32 long=true order=ascending: 10000 operations in 19.081045ms (1908 ns/op)
+linear definition count=32 long=true order=descending: 10000 operations in 13.920469ms (1392 ns/op)
+linear definition count=32 long=true order=permuted: 10000 operations in 65.280012ms (6528 ns/op)
+linear definition count=64 long=true order=ascending: 10000 operations in 34.868785ms (3486 ns/op)
+linear definition count=64 long=true order=descending: 10000 operations in 26.167054ms (2616 ns/op)
+linear definition count=64 long=true order=permuted: 10000 operations in 149.759928ms (14975 ns/op)
+linear definition count=128 long=true order=ascending: 10000 operations in 67.711001ms (6771 ns/op)
+linear definition count=128 long=true order=descending: 10000 operations in 50.715798ms (5071 ns/op)
+linear definition count=128 long=true order=permuted: 10000 operations in 317.351046ms (31735 ns/op)
+     Running benches/graph_saga.rs (target/debug/deps/graph_saga-0c8edabb0e96e67d)
+graph-saga start/result/result: 100000 operations in 420.870889ms (4208 ns/op, 237603 ops/s)
+     Running benches/linear_saga.rs (target/debug/deps/linear_saga-5a8d2fb598ceee8b)
+linear-saga start/result/complete: 100000 operations in 64.050254ms (640 ns/op)
+     Running benches/parallel_graph_saga.rs (target/debug/deps/parallel_graph_saga-bda5daab542608a8)
+parallel graph-saga: 3200000 isolated operations across 32 workers in 1.127316088s (2838600 ops/s)
+     Running benches/parallel_linear_saga.rs (target/debug/deps/parallel_linear_saga-a0ba638f7f2a33c8)
+parallel linear-saga start/result/complete: 3200000 isolated operations across 32 workers in 192.994084ms (60 ns/op, 16580819 ops/s)
+     Running benches/replay_saga.rs (target/debug/deps/replay_saga-ab8ee3a636638bd7)
+linear-saga replay: 1000000 logs in 1.333817262s (1333 ns/replay)
+     Running benches/task_poll.rs (target/debug/deps/task_poll-8255b15ace4237e3)
+portable pending capacity=64: 2000000 operations in 363.529964ms (181 ns/op)
+observe pending capacity=64: 2000000 operations in 156.570233ms (78 ns/op)
+portable pending capacity=4096: 2000000 operations in 289.334417ms (144 ns/op)
+observe pending capacity=4096: 2000000 operations in 178.679813ms (89 ns/op)
+portable pending capacity=65536: 2000000 operations in 386.008958ms (193 ns/op)
+observe pending capacity=65536: 2000000 operations in 217.083862ms (108 ns/op)
+hosted pending capacity=64: 2000000 operations in 394.444865ms (197 ns/op)
+hosted pending capacity=4096: 2000000 operations in 499.980425ms (249 ns/op)
+hosted pending capacity=65536: 20000 operations in 16.125432ms (806 ns/op)
+     Running unittests examples/recoverable_task.rs (target/debug/examples/recoverable_task-98a1454fde9cb27a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/saga_recoverable_task.rs (target/debug/examples/saga_recoverable_task-7916410c2d487456)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_intent-35470f41fbcd36df)
+
+running 2 tests
+test entry::implementation::tests::parse_accepts_a_constructed_process_input ... ok
+test entry::implementation::tests::parse_rejects_malformed_typed_input ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_ports-5fea71be185ca5fb)
+
+running 38 tests
+test entry::implementation::tests::action_dispatch_receipt_is_bound_to_the_exact_action ... ok
+test entry::implementation::tests::atomic_commit_receipt_is_bound_to_sequence_and_input_semantics ... ok
+test entry::implementation::tests::atomic_commit_rejects_an_oversized_action_batch ... ok
+test entry::implementation::tests::atomic_commit_rejects_an_oversized_outcome_batch ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_action_effect_key ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_action_identity ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_outcome_identity ... ok
+test entry::implementation::tests::atomic_commit_rejects_outcomes_from_different_definitions ... ok
+test entry::implementation::tests::atomic_commit_rejects_outgoing_action_from_another_definition ... ok
+test entry::implementation::tests::atomic_commit_rejects_outgoing_action_from_another_process ... ok
+test entry::implementation::tests::atomic_commit_requires_accepted_input_causation ... ok
+test entry::implementation::tests::atomic_commit_requires_contiguous_outcomes_in_one_scope ... ok
+test entry::implementation::tests::authorization_decisions_fail_closed_without_message_matching ... ok
+test entry::implementation::tests::authorization_matrix_requires_distinct_principals_for_high_value_actions ... ok
+test entry::implementation::tests::canonical_source_event_key_requires_a_canonical_inbox_input ... ok
+test entry::implementation::tests::canonical_submit_receipt_is_bound_to_the_exact_command_action ... ok
+test entry::implementation::tests::definition_registration_receipt_is_bound_to_identity_version_and_digest ... ok
+test entry::implementation::tests::external_effect_deadline_is_inclusive_and_fail_closed_after_expiry ... ok
+test entry::implementation::tests::external_effect_evidence_requires_the_exact_action_and_effect_key ... ok
+test entry::implementation::tests::inbox_receipt_is_bound_to_the_exact_submitted_input ... ok
+test entry::implementation::tests::manual_review_audit_entry_is_scope_bound_and_expiry_checked ... ok
+test entry::implementation::tests::manual_review_operations_require_the_pinned_scope_and_dual_control ... ok
+test entry::implementation::tests::manual_review_receipt_is_bound_to_the_exact_case ... ok
+test entry::implementation::tests::migration_registration_receipt_is_bound_to_migration_identity ... ok
+test entry::implementation::tests::outbox_claim_request_rejects_an_oversized_batch ... ok
+test entry::implementation::tests::outbox_lease_expiry_is_checked_at_logical_boundary ... ok
+test entry::implementation::tests::outbox_lease_rejects_a_cross_scope_claim ... ok
+test entry::implementation::tests::outbox_record_requires_valid_action_and_bounded_attempt ... ok
+test entry::implementation::tests::outcome_log_append_is_atomic_and_rejects_reorder_scope_and_duplicates ... ok
+test entry::implementation::tests::outcome_replay_pages_are_bounded_scope_pinned_and_contiguous ... ok
+test entry::implementation::tests::quota_requests_are_typed_bounded_and_fail_closed ... ok
+test entry::implementation::tests::reconciliation_rejects_committed_evidence_for_another_action ... ok
+test entry::implementation::tests::reconciliation_rejects_evidence_for_another_action ... ok
+test entry::implementation::tests::reconciliation_requires_the_action_scope_and_valid_committed_evidence ... ok
+test entry::implementation::tests::reconciliation_window_only_allows_retry_after_horizon ... ok
+test entry::implementation::tests::redacted_diagnostics_are_bounded_and_never_require_message_matching ... ok
+test entry::implementation::tests::timer_claim_lease_requires_due_time_scope_owner_and_expiry ... ok
+test entry::implementation::tests::timer_schedule_requires_a_schema_valid_timer_action ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/atomic_commit_faults.rs (target/debug/deps/atomic_commit_faults-0515ac943f665cf9)
+
+running 1 test
+test injected_failure_at_every_atomic_boundary_has_no_visible_partial_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/atomic_validation_parity.rs (target/debug/deps/atomic_validation_parity-deb08ddba18347c0)
+
+running 2 tests
+test shared_step_payloads_and_later_invalid_scopes_preserve_effect_identity ... ok
+test validation_preserves_all_effect_coordinates_and_error_precedence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+
+     Running tests/ports_conformance.rs (target/debug/deps/ports_conformance-74108169b48cb6d5)
+
+running 2 tests
+test authorization_operation_discriminants_preserve_existing_variants ... ok
+test every_port_is_object_safe_send_sync_callable_and_fail_closed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/atomic_validation.rs (target/debug/deps/atomic_validation-c213b27ca7b8c4a9)
+actions=0 iterations=100000 elapsed_ns=38660504
+actions=1 iterations=100000 elapsed_ns=40080390
+actions=16 iterations=10000 elapsed_ns=93686624
+actions=128 iterations=1000 elapsed_ns=504654720
+     Running benches/atomic_validation_allocations.rs (target/debug/deps/atomic_validation_allocations-67cf77a4b80ed9c6)
+actions=0 allocations=0 reallocations=0 deallocations=0 requested_bytes=0
+actions=1 allocations=0 reallocations=0 deallocations=0 requested_bytes=0
+actions=16 allocations=0 reallocations=0 deallocations=0 requested_bytes=0
+actions=128 allocations=0 reallocations=0 deallocations=0 requested_bytes=0
+     Running benches/contract_throughput.rs (target/debug/deps/contract_throughput-6f7eb1374a0d7c18)
+canonical DTO encoding: 100000 operations in 1.199697487s (11996 ns/op, 41200000 bytes)
+bounded outcome-log append: 4096 operations in 9.628944ms (2350 ns/op)
+     Running unittests src/lib.rs (target/debug/deps/penelope_process_runtime-d68abd21abf7fabd)
+
+running 29 tests
+test registry::tests::all_manifest_lengths_match_the_bounded_legacy_reader ... ok
+test registry::tests::fixed_header_matches_legacy_wire_for_varied_bindings ... ok
+test registry::tests::manifest_read_retries_interruptions_and_collects_short_reads ... ok
+test registry::tests::read_errors_before_or_after_a_complete_manifest_are_runtime_errors ... ok
+test runtime::fence_tests::impossible_saved_pids_are_corruption_without_signaling ... ok
+test runtime::fence_tests::kernel_identity_parser_preserves_command_delimiters_and_rejects_bad_start_times ... ok
+test runtime::fence_tests::pidfd_wait_accepts_readiness_even_with_an_expired_deadline ... ok
+test runtime::fence_tests::pidfd_wait_expiry_or_permanent_error_does_not_retry_or_claim_readiness ... ok
+test runtime::fence_tests::pidfd_wait_retries_interruption_and_empty_returns_with_remaining_budget ... ok
+test runtime::fence_tests::pidfd_wait_timeout_does_not_claim_a_live_child_has_exited ... ok
+test runtime::fence_tests::stale_start_time_cannot_signal_a_reused_pid ... ok
+test runtime::fence_tests::unrepresentable_fence_deadline_preserves_error_after_signaling_owned_child ... ok
+test runtime::io_tests::bounded_send_rejects_a_final_positive_write_finishing_after_deadline ... ok
+test runtime::io_tests::bounded_send_rejects_expiry_despite_continuous_positive_progress ... ok
+test runtime::io_tests::bounded_send_rejects_zero_permanent_error_and_expired_retry ... ok
+test runtime::io_tests::bounded_send_retries_transient_errors_without_duplicate_or_missing_bytes ... ok
+test runtime::io_tests::continuous_interruptions_do_not_reset_the_write_deadline ... ok
+test runtime::io_tests::eof_without_a_complete_frame_preserves_terminal_fault_classification ... ok
+test runtime::io_tests::execution_identity_preserves_legacy_encoding_and_generation_boundaries ... ok
+test runtime::io_tests::exit_between_empty_read_and_status_check_cannot_discard_queued_completion ... ok
+test runtime::io_tests::fixed_start_header_matches_legacy_wire_for_varied_bindings_and_lengths ... ok
+test runtime::io_tests::frame_number_rejects_truncation_and_offset_overflow ... ok
+test runtime::io_tests::interrupted_bursts_preserve_bytes_across_short_writes_and_parts ... ok
+test runtime::io_tests::startup_parts_cannot_reset_budget_after_each_positive_write ... ok
+test runtime::io_tests::startup_parts_share_deadline_and_expired_parts_do_not_write ... ok
+test runtime::io_tests::would_block_bursts_preserve_bytes_across_short_writes_and_parts ... ok
+test sandbox::tests::invalid_spawn_budgets_do_not_execute_a_command_or_mutate_manifest ... ok
+test sandbox::tests::isolated_child_setup_helper ... ok
+test sandbox::tests::isolated_setup_persists_kernel_identity_and_bounds_and_rejects_invalid_parent_or_file ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.47s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-4d75d3962bd833ac)
+
+running 67 tests
+test checkpoint_requires_exact_commit_ack_before_completion ... ok
+test checkpoint_state::independent_checkpoint_gate_controls_real_worker_ack_and_reconstruction ... ok
+test committed_dispatch_recovers_task_intent_in_shared_and_separate_databases ... ok
+test concurrency::competing_supervisor_helper ... ok
+test concurrency::two_supervisor_processes_admit_one_real_worker_and_replay_one_completion ... 
+running 1 test
+test concurrency::competing_supervisor_helper ... 
+running 1 test
+test concurrency::competing_supervisor_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.03s
+
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.03s
+
+ok
+test corrupt_registry_blocks_fence_until_evidence_is_restored ... ok
+test corrupt_scope_and_oversized_frames_cannot_complete ... ok
+test cpu_budget_is_enforced_by_kernel_without_supervisor_polling ... ok
+test exit_zero_without_result_is_not_completion ... ok
+test fence_contracts::each_registry_binding_and_partial_identity_blocks_fence_until_repaired ... ok
+test fence_contracts::externally_reaped_worker_can_still_be_fenced_by_original_runtime ... ok
+test fence_contracts::reconstructed_fence_reaps_worker_after_original_runtime_is_dropped ... ok
+test fence_contracts::registry_symlink_is_not_followed_and_lock_timeout_does_not_confirm_termination ... ok
+test filesystem_paths::filesystem_case_helper ... ok
+test filesystem_paths::manifest_fifo_with_writer_is_rejected_and_repairable ... ok
+test filesystem_paths::manifest_fifo_without_writer_is_rejected_and_repairable ... ok
+test filesystem_paths::registry_lock_fifo_is_rejected_and_repairable ... ok
+test filesystem_paths::worker_directory_is_rejected ... ok
+test filesystem_paths::worker_fifo_with_writer_is_rejected ... ok
+test filesystem_paths::worker_fifo_without_writer_is_rejected ... ok
+test filesystem_paths::worker_procfd_regular_image_remains_valid ... ok
+test filesystem_paths::worker_symlink_to_regular_image_remains_valid ... ok
+test fragmented_completion_survives_exit_and_truncated_completion_faults ... ok
+test kernel_address_space_limit_allows_small_and_rejects_large_allocations ... ok
+test kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls ... ok
+test killed_supervisor_reconstructs_and_fences_without_clean_shutdown ... 
+running 1 test
+test supervisor_crash_helper ... ok
+test launch_contracts::expired_startup_write_poisoning_requires_reconstruction_and_fences_worker ... ok
+test launch_contracts::invalid_runtime_limits_are_rejected_before_any_worker_can_start ... ok
+test launch_contracts::live_capacity_does_not_reject_the_exact_reserved_start_retry ... ok
+test launch_contracts::sealed_worker_survives_replacement_of_its_source_file ... ok
+test launch_contracts::wrong_architecture_truncated_and_dynamic_images_are_rejected ... ok
+test maximum_completion_and_acknowledged_checkpoint_remain_valid ... ok
+test maximum_frames_reject_coalesced_trailing_bytes ... ok
+test restored_runtime_fences_live_generation_and_rejects_delayed_start ... ok
+test sagas::cancellation::completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process ... ok
+test sagas::full_graph_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::full_linear_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::killed_coordinators_recover_effectful_sagas_at_reconciliation_boundaries ... ok
+test sagas::killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries ... ok
+test sagas::reconciled_graph_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test sagas::reconciled_linear_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test sagas::saga_completion_waits_for_a_delayed_real_worker ... ok
+test sagas::services::authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input ... ok
+test sagas::services::denied_dispatch_cannot_claim_work_and_allowed_claim_is_exactly_scoped ... ok
+test sagas::services::graph_timer::discovered_graph_timer_selects_one_retry_task_and_replays_terminal_state ... ok
+test sagas::services::graph_timer::timer_delivery_reconstruction_consumes_one_input ... ok
+test sagas::services::outbox_driver_rejects_forged_receipt_and_recovers_after_expired_ack ... ok
+test sagas::services::reconciliation_preserves_unknown_and_never_executes_an_effect ... ok
+test sagas::services::service_faults::ambiguous_timer_payload_and_inbox_receipts_recover_without_a_second_identity ... ok
+test sagas::services::service_faults::malformed_outbox_batches_never_dispatch_or_acknowledge ... ok
+test sagas::services::service_faults::malformed_timer_batches_never_write_payloads_accept_inputs_or_acknowledge ... ok
+test sagas::services::task_driver_authorizes_before_starting_or_polling_worker ... ok
+test sagas::services::timer_saga::discovered_timer_commits_one_retry_task_and_replays_terminal_saga ... ok
+test sagas::services::timer_saga::timer_crash::killed_timer_coordinators_recover_delivery_and_decision ... ok
+test sagas::services::timer_saga::timer_crash::timer_delivery_reconstruction_consumes_one_input ... ok
+test static_worker_completes_only_after_durable_input_and_start ... ok
+test supervisor_crash_helper ... ok
+test unacknowledged_checkpoint_cannot_advance_worker ... ok
+test unloadable_bootstrap_cannot_complete_and_reconstruction_fences_its_generation ... ok
+test worker_protocol::advertised_lengths_are_rejected_before_reading_or_allocating_payloads ... ok
+test worker_protocol::checkpoint_ack_requires_exact_magic_digest_and_complete_frame ... ok
+test worker_protocol::metadata_definition_schema_input_and_definition_limits_are_enforced ... ok
+test worker_protocol::proposals_bind_kind_scope_generation_schema_and_bytes_and_surface_pipe_errors ... ok
+test worker_protocol::scope_hash_matches_legacy_wire_encoding_for_varied_scopes ... ok
+test worker_protocol::start_packet_preserves_full_metadata_input_and_optional_checkpoint ... ok
+test worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read ... ok
+test worker_protocol::truncated_packets_and_substituted_envelopes_fail_closed ... ok
+
+test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.87s
+
+     Running tests/worker_protocol_allocations.rs (target/debug/deps/worker_protocol_allocations-32657593a957a47e)
+Real runtime allocations: supervisor dispatch=249
+Real runtime allocations: repeated public fences=[9, 9, 9]
+Real runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0
+Protocol allocations: proposal=0, valid request=2, pinned-bound rejection=1
+     Running benches/dispatch.rs (target/debug/deps/dispatch-bf90f1286207e19d)
+{
+  "ack_endpoint": "successful host checkpoint ACK write, not a worker/application receipt",
+  "cache": "OS cache uncontrolled; fresh profile is not page-cache-cold",
+  "journal_mode": "WAL",
+  "polling": "yield_now between pending polls; monotonic whole-second task ticks",
+  "profiles": [
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 4052214,
+          "p95_ns": 4256598,
+          "p99_ns": 4256598,
+          "samples": 2
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 7521771,
+          "p95_ns": 7808054,
+          "p99_ns": 7808054,
+          "samples": 2
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 5053950,
+          "p95_ns": 5285367,
+          "p99_ns": 5285367,
+          "samples": 2
+        },
+        "intent_commit_ns": {
+          "p50_ns": 815847,
+          "p95_ns": 6169587,
+          "p99_ns": 6169587,
+          "samples": 2
+        },
+        "setup_ns": {
+          "p50_ns": 5634613,
+          "p95_ns": 6137744,
+          "p99_ns": 6137744,
+          "samples": 2
+        }
+      },
+      "profile": "fresh_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 4256598,
+          "dispatch_to_durable_completion_and_fence_ns": 7808054,
+          "dispatch_to_host_checkpoint_ack_ns": 5285367,
+          "index": 0,
+          "intent_commit_ns": 6169587,
+          "setup_ns": 6137744,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 4052214,
+          "dispatch_to_durable_completion_and_fence_ns": 7521771,
+          "dispatch_to_host_checkpoint_ack_ns": 5053950,
+          "index": 1,
+          "intent_commit_ns": 815847,
+          "setup_ns": 5634613,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 3547267,
+          "p95_ns": 3584790,
+          "p99_ns": 3584790,
+          "samples": 2
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 6926239,
+          "p95_ns": 7121557,
+          "p99_ns": 7121557,
+          "samples": 2
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 4493116,
+          "p95_ns": 4554274,
+          "p99_ns": 4554274,
+          "samples": 2
+        },
+        "intent_commit_ns": {
+          "p50_ns": 852899,
+          "p95_ns": 891864,
+          "p99_ns": 891864,
+          "samples": 2
+        },
+        "setup_ns": {
+          "p50_ns": 1283,
+          "p95_ns": 1283,
+          "p99_ns": 1283,
+          "samples": 2
+        }
+      },
+      "profile": "reused_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 4145894,
+          "dispatch_to_durable_completion_and_fence_ns": 7531058,
+          "dispatch_to_host_checkpoint_ack_ns": 5151588,
+          "index": 0,
+          "intent_commit_ns": 5745186,
+          "setup_ns": 5400128,
+          "warmup": true
+        },
+        {
+          "dispatch_start_return_ns": 3584790,
+          "dispatch_to_durable_completion_and_fence_ns": 7121557,
+          "dispatch_to_host_checkpoint_ack_ns": 4554274,
+          "index": 1,
+          "intent_commit_ns": 852899,
+          "setup_ns": 1283,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3547267,
+          "dispatch_to_durable_completion_and_fence_ns": 6926239,
+          "dispatch_to_host_checkpoint_ack_ns": 4493116,
+          "index": 2,
+          "intent_commit_ns": 891864,
+          "setup_ns": 1283,
+          "warmup": false
+        }
+      ]
+    }
+  ],
+  "schema": 1,
+  "synchronous": "FULL",
+  "worker_code_sha256": [
+    29,
+    87,
+    41,
+    237,
+    113,
+    38,
+    251,
+    24,
+    53,
+    213,
+    146,
+    80,
+    3,
+    217,
+    246,
+    190,
+    148,
+    189,
+    87,
+    152,
+    18,
+    169,
+    232,
+    235,
+    159,
+    132,
+    9,
+    76,
+    41,
+    253,
+    153,
+    219
+  ],
+  "worker_input": [
+    5,
+    1,
+    2,
+    3
+  ],
+  "worker_output_u64": 6
+}
+     Running benches/fence.rs (target/debug/deps/fence-156d03f6472c5b08)
+{"profiles_ns":{"exited":[1517153,1510279],"live":[1624891,1575887],"repeated":[267588,264882]},"samples_per_profile":2,"schema":1,"scope":"Public fence includes registry lock, WAL/FULL begin/confirm and kernel termination/reaping. Fresh fixture/worker startup and post-fence validation excluded. Exited worker and repeated fence controls.","worker_cpu":null}
+     Running benches/worker_protocol.rs (target/debug/deps/worker_protocol-d2ae32ee9ee049b3)
+worker proposal checkpoint=false: 100000 operations in 573.926639ms (5739 ns/op)
+worker proposal checkpoint=true: 100000 operations in 575.017899ms (5750 ns/op)
+worker request valid=true: 10000 operations in 403.802625ms (40380 ns/op)
+worker request valid=false: 10000 operations in 375.74161ms (37574 ns/op)
+     Running unittests examples/saga_recoverable_task.rs (target/debug/examples/saga_recoverable_task-4faa68a1289b678e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_statechronicle-36c4be679f35f273)
+
+running 8 tests
+test entry::implementation::tests::duplicate_resources_in_expected_scope_are_rejected_before_correlation ... ok
+test entry::implementation::tests::duplicate_resources_in_received_evidence_are_rejected_before_correlation ... ok
+test entry::implementation::tests::expectation_can_be_derived_from_a_validated_command ... ok
+test entry::implementation::tests::expectation_rejects_a_command_from_another_tenant ... ok
+test entry::implementation::tests::verified_event_binding_pins_source_and_rejects_substituted_digest ... ok
+test entry::implementation::tests::verified_event_requires_full_correlation ... ok
+test entry::implementation::tests::wrong_action_cannot_advance_a_saga ... ok
+test entry::implementation::tests::wrong_committed_result_digest_cannot_advance_a_saga ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_checkpoint.rs (target/debug/deps/task_checkpoint-d34432f987b096d7)
+
+running 5 tests
+test combined_verification_invokes_the_verifier_and_propagates_failure ... ok
+test invalid_records_do_not_invoke_the_independent_verifier ... ok
+test migrated_checkpoint_verification_binds_the_new_blob_and_generation ... ok
+test returned_evidence_must_match_every_scope_generation_and_blob_coordinate ... ok
+test verified_checkpoint_state_cannot_be_reused_across_generation_or_scope ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
