@@ -1,0 +1,21 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.93s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+
+thread 'wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history' (460016) panicked at crates/penelope-sqlite/tests/support/wal_checkpoint.rs:48:5:
+assertion `left == right` failed
+  left: 0
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history ... FAILED
+
+failures:
+
+failures:
+    wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 42 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test tasks`
