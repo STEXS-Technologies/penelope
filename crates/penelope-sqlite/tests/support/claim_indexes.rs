@@ -1,8 +1,7 @@
 //! Additive index migration must preserve authoritative rows and live leases.
 use super::write_snapshot::snapshot;
 use super::*;
-const INDEXES: &str =
-    "DROP INDEX process_actions_pending; DROP INDEX process_timers_due; PRAGMA user_version=4;";
+const INDEXES: &str = "DROP INDEX process_actions_pending; DROP INDEX process_timers_due; DROP INDEX process_inbox_pending; PRAGMA user_version=4;";
 const TABLES: &[&str] = &[
     "process_usage",
     "process_heads",
@@ -46,7 +45,7 @@ fn version_four_upgrade_preserves_live_outbox_and_timer_leases() {
     connection.execute_batch(INDEXES).unwrap();
     let before = snapshot(&connection, TABLES);
     let upgraded = store(&path, clock);
-    assert_eq!(version(&connection), 5);
+    assert_eq!(version(&connection), 6);
     assert_eq!(
         index_names(&connection),
         ["process_actions_pending", "process_timers_due"]
@@ -97,7 +96,7 @@ fn second_index_creation_failure_rolls_back_version_first_index_and_rows() {
         .execute_batch("DROP INDEX process_timers_due")
         .unwrap();
     let repaired = store(&path, clock());
-    assert_eq!(version(&connection), 5);
+    assert_eq!(version(&connection), 6);
     assert_eq!(
         index_names(&connection),
         ["process_actions_pending", "process_timers_due"]
@@ -140,7 +139,7 @@ fn index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase(
     assert!(index_names(&connection).is_empty());
     assert_eq!(snapshot(&connection, TABLES), before);
     let repaired = store(&path, clock());
-    assert_eq!(version(&connection), 5);
+    assert_eq!(version(&connection), 6);
     assert_eq!(snapshot(&connection, TABLES), before);
     assert_eq!(block_on(repaired.claim(&claim())).unwrap().len(), 1);
 }

@@ -55,3 +55,7 @@ harness = false
 [[bench]]
 name = "process_replay_allocations"
 harness = false
+
+[[bench]]
+name = "pending_history"
+harness = false
