@@ -7,6 +7,12 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Build Linux execution identities and checkpoint acknowledgements with fixed
+  stack buffers. Checkpoint ACKs now allocate zero times after setup, verified
+  with a real protected worker and a durably committed checkpoint.
+
 ### Fixed
 
 - Linux worker responses at the maximum payload size now reject a trailing

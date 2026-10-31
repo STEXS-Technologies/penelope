@@ -111,3 +111,33 @@ fn eof_without_a_complete_frame_preserves_terminal_fault_classification() {
         Err(TaskPortError::Runtime)
     );
 }
+
+#[test]
+fn execution_identity_preserves_legacy_encoding_and_generation_boundaries() {
+    // Independent heap-based encoding freezes durable registry identities.
+    for seed in 0_u32..10_000 {
+        let bytes = Digest::of(&seed.to_be_bytes());
+        let scope = TaskScope {
+            tenant: TaskTenantId::from_digest(bytes),
+            task: TaskId::from_digest(Digest::of(&bytes.0)),
+            definition: TaskDefinitionFingerprint::from_digest(Digest::of(&seed.to_le_bytes())),
+            input: TaskInputDigest::from_digest(Digest::of(&seed.wrapping_add(1).to_be_bytes())),
+        };
+        for value in [0, 1, 255, 256, u32::MAX] {
+            let generation = TaskGeneration::new(value);
+            let mut legacy_scope = b"penelope.linux-worker.scope.v1\0".to_vec();
+            for digest in [
+                scope.tenant.digest(),
+                scope.task.digest(),
+                scope.definition.digest(),
+                scope.input.digest(),
+            ] {
+                legacy_scope.extend_from_slice(&digest.0);
+            }
+            let mut legacy = b"penelope.linux.single-process.v1\0".to_vec();
+            legacy.extend_from_slice(&Digest::of(&legacy_scope).0);
+            legacy.extend_from_slice(&value.to_be_bytes());
+            assert_eq!(execution_id(scope, generation), Digest::of(&legacy));
+        }
+    }
+}

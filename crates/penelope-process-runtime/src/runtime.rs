@@ -56,9 +56,13 @@ pub struct LinuxProcessRuntime<A> {
     active: Vec<Active>,
 }
 fn execution_id(scope: TaskScope, generation: TaskGeneration) -> Digest {
-    let mut bytes = b"penelope.linux.single-process.v1\0".to_vec();
-    bytes.extend_from_slice(&scope_digest(scope).0);
-    bytes.extend_from_slice(&generation.get().to_be_bytes());
+    const PREFIX: &[u8] = b"penelope.linux.single-process.v1\0";
+    let mut bytes = [0; PREFIX.len().saturating_add(36)];
+    let (prefix, fields) = bytes.split_at_mut(PREFIX.len());
+    prefix.copy_from_slice(PREFIX);
+    let (scope_bytes, generation_bytes) = fields.split_at_mut(32);
+    scope_bytes.copy_from_slice(&scope_digest(scope).0);
+    generation_bytes.copy_from_slice(&generation.get().to_be_bytes());
     Digest::of(&bytes)
 }
 fn number(bytes: &[u8], offset: usize) -> Result<u32, TaskPortError> {
@@ -403,8 +407,10 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
         if active.checkpoint != Some(checkpoint) {
             return Err(TaskPortError::Conflict);
         }
-        let mut bytes = b"PNLACK01".to_vec();
-        bytes.extend_from_slice(&checkpoint.digest.0);
+        let mut bytes = [0; 40];
+        let (magic, digest) = bytes.split_at_mut(8);
+        magic.copy_from_slice(b"PNLACK01");
+        digest.copy_from_slice(&checkpoint.digest.0);
         send(&mut active.stdin, &bytes, self.config.startup_timeout)?;
         active.checkpoint = None;
         Ok(())
