@@ -7,7 +7,7 @@ use crate::{
 use async_trait::async_trait;
 use penelope_domain::{ContentDigest, ProcessScope};
 use penelope_ports::{PortError, payloads::ProcessPayloadStore};
-use rusqlite::{OptionalExtension, TransactionBehavior, params};
+use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 
 #[async_trait]
 impl ProcessPayloadStore for SqliteProcessStore {
@@ -31,21 +31,31 @@ impl ProcessPayloadStore for SqliteProcessStore {
         let limits = self.limits;
         self.worker
             .run(move |connection| {
+                let key = scope.canonical_bytes();
+                // An exact retry only reads committed evidence. Finish that read
+                // before opening a write transaction, so unrelated writers do not
+                // block retries. Never cache payload bytes or validation answers.
+                if let Some(matches) =
+                    stored_payload_matches(connection, &key, digest, &bytes, limits.max_blob_bytes)?
+                {
+                    return if matches {
+                        Ok(digest)
+                    } else {
+                        Err(PortError::Invariant)
+                    };
+                }
                 let transaction = connection
                     .transaction_with_behavior(TransactionBehavior::Immediate)
                     .map_err(|error| db_error(&error))?;
-                let key = scope.canonical_bytes();
-                let stored = transaction
-                    .query_row(
-                        "SELECT bytes FROM process_payloads WHERE scope=?1 AND digest=?2",
-                        params![key, digest.0.as_slice()],
-                        |row| {
-                            column_bytes(row, 0, limits.max_blob_bytes)
-                                .map(|stored| stored == bytes.as_slice())
-                        },
-                    )
-                    .optional()
-                    .map_err(|error| db_error(&error))?;
+                // Another writer may have inserted after our read. Recheck under
+                // the writer lock before charging quota or inserting a new row.
+                let stored = stored_payload_matches(
+                    &transaction,
+                    &key,
+                    digest,
+                    &bytes,
+                    limits.max_blob_bytes,
+                )?;
                 if let Some(stored) = stored {
                     if !stored {
                         return Err(PortError::Invariant);
@@ -117,3 +127,25 @@ impl ProcessPayloadStore for SqliteProcessStore {
             .await
     }
 }
+
+/// Read current, bounded BLOB evidence; the statement is reset before returning.
+fn stored_payload_matches(
+    connection: &Connection,
+    key: &[u8],
+    digest: ContentDigest,
+    bytes: &[u8],
+    limit: u32,
+) -> Result<Option<bool>, PortError> {
+    connection
+        .prepare_cached("SELECT bytes FROM process_payloads WHERE scope=?1 AND digest=?2")
+        .map_err(|error| db_error(&error))?
+        .query_row(params![key, digest.0.as_slice()], |row| {
+            column_bytes(row, 0, limit).map(|stored| stored == bytes)
+        })
+        .optional()
+        .map_err(|error| db_error(&error))
+}
+
+#[cfg(test)]
+#[path = "payload_retry_tests.rs"]
+mod tests;

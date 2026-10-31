@@ -667,3 +667,6 @@ mod append_outcomes;
 
 #[path = "support/commit_encoding.rs"]
 mod commit_encoding;
+
+#[path = "support/payload_retry_lock.rs"]
+mod payload_retry_lock;

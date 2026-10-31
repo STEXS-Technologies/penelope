@@ -1,0 +1,35 @@
+{
+  "parent": "704688d5ec28eca0d277165e8a365d7d52edab3f",
+  "runtime_sources": {
+    "baseline": {
+      "crates/penelope-sqlite/src/payloads.rs": "29fded3f9932ab2a4687f9b4f1630c2e2a44eb9216c7c6a70e5bea30e4ef28b4"
+    },
+    "candidate": {
+      "crates/penelope-sqlite/src/payloads.rs": "fa03f0a0414fe5ffcc0114fcbd9bd15aca36878c8c05e25796f1d2362f407eef"
+    }
+  },
+  "common_sha256": {
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+    "crates/penelope-sqlite/Cargo.toml": "967ff8c88eef3631745d32e4f173a31ec880d5b239d0f31e09cbcb32acece0de",
+    "crates/penelope-sqlite/tests/process.rs": "cf8924911d027f3038f2810e631bd616422a08f2b3bdbeda21ab01077f3acb86",
+    "crates/penelope-sqlite/tests/support/payload_retry_lock.rs": "9cca443c72224ee6aed43891cc306a78331df9363ff37816bdeb6dc756b99e37",
+    "crates/penelope-sqlite/tests/support/payload_columns.rs": "d9753b8231db6edc7c072b03931e9f85a5da05cb1009ff8f79f78ed15594b55b",
+    "crates/penelope-sqlite/src/payload_retry_tests.rs": "b3a586c67c489a0b4be22e2bf1b89d024fb371fe3ca3035a019431afdfddbd08",
+    "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+    "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+    "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514",
+    "crates/penelope-executor/benches/durable_timer_workload.rs": "76cf94b632be63f0df935caefa6475381155cdcde4e506786e6c4cfd92edc637",
+    "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+    "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d",
+    "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395"
+  },
+  "binaries": {
+    "baseline-process_payloads": "7a6391fa4d3e5fff51b58d073974025f0f1390de2bcbc1d3fab19ac9a76c102d",
+    "baseline-process_payload_allocations": "cd78bb9c74f70eb81a5ae0b43e7bf0a0732b3410078101483d0741f75685d04d",
+    "baseline-durable_timer_workload": "f46379ac151d654fed22c9c417467c984549a705e82e4d9c205728ca64aa9c07",
+    "candidate-process_payloads": "e97000df2a33a10dfade3df5e704f9a18c13806b3b3136e7b7f4452398f678b8",
+    "candidate-process_payload_allocations": "3501b873b91a22f1799c3f0e2f4ed7fc43696d980acc35b249e26072171434cb",
+    "candidate-durable_timer_workload": "35c5e3d934af7fdc3d4680fa9883e66e1fa1f3f4970de1ce9d722c4ef25a5076"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}
