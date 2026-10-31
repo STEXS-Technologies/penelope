@@ -1,0 +1,19 @@
+{
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "crates/penelope-sqlite/Cargo.toml": "967ff8c88eef3631745d32e4f173a31ec880d5b239d0f31e09cbcb32acece0de",
+  "crates/penelope-sqlite/tests/process.rs": "ee7c70c33c74f3b73514c090a6365f8d60befc760ef87a8ac59f8aa5e26b4e0e",
+  "crates/penelope-sqlite/tests/support/inbox_retry_lock.rs": "77fe042a24131c97a2828506ec26f0c4bf826b7c5f36b7304773d5b635182426",
+  "crates/penelope-sqlite/tests/support/inbox_validation.rs": "6dbea6a181cfd91d559f14fecff328f3e7be709121cc37ff9a4d1670a7911164",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+  "crates/penelope-sqlite/src/inbox_retry_tests.rs": "285f03ac836fa5d690e3aab6057d1c3b247310e1b80a8bb125210773e724eabe",
+  "crates/penelope-sqlite/benches/inbox_accept.rs": "67f98e4f075b32efea9a52446b1b16d4f134df3f9f4bd2278f2cc8878137f4aa",
+  "crates/penelope-sqlite/benches/inbox_accept_allocations.rs": "5745cf42cf5f7ddd8577e73cf8da83e86507487cf5f1d757abe7cc8d71fa77d2",
+  "crates/penelope-sqlite/benches/support/inbox_fixture.rs": "7a3c3ba994de8fb869af1e6d34ed406a6b7365beeb928c67b817243f40d9a981",
+  "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02",
+  "crates/penelope-executor/benches/durable_timer_workload.rs": "76cf94b632be63f0df935caefa6475381155cdcde4e506786e6c4cfd92edc637",
+  "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+  "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d",
+  "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+  "crates/penelope-sqlite/src/process.rs": "22d0497fce81556566ad5a8b16e4b99244c496c9f70f453af67a724abb3f1ade",
+  "docs/performance-inbox-retry-fastpath-2026-10-31.md": "dfeda204b026e31c2fee5bf9a1783fa12bcac05f06c64a0c9d2ba962022610d3"
+}

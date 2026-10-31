@@ -670,3 +670,6 @@ mod commit_encoding;
 
 #[path = "support/payload_retry_lock.rs"]
 mod payload_retry_lock;
+
+#[path = "support/inbox_retry_lock.rs"]
+mod inbox_retry_lock;

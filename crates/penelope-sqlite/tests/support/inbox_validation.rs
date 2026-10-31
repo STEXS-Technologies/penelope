@@ -14,6 +14,31 @@ const TABLES: [&str; 10] = [
 ];
 #[test]
 fn duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection() {
+    duplicate_cases(false);
+}
+#[test]
+fn duplicate_admission_validates_evidence_without_the_writer_lock() {
+    duplicate_cases(true);
+}
+fn test_store(path: &std::path::Path, writer_locked: bool) -> SqliteProcessStore {
+    if writer_locked {
+        SqliteProcessStore::open(
+            path,
+            SqliteLimits {
+                busy_timeout: Duration::ZERO,
+                ..SqliteLimits::default()
+            },
+            clock(),
+            10,
+            16,
+        )
+        .unwrap()
+    } else {
+        store(path, clock())
+    }
+}
+fn duplicate_cases(writer_locked: bool) {
+    let mut cases = 0;
     for consumed in [false, true] {
         for case in [
             "canonical",
@@ -30,7 +55,7 @@ fn duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection() 
         ] {
             let directory = tempfile::tempdir().unwrap();
             let path = directory.path().join("inbox-evidence.db");
-            let adapter = store(&path, clock());
+            let adapter = test_store(&path, writer_locked);
             let committed = commit(false);
             let input = committed.input.as_ref().unwrap();
             if consumed {
@@ -101,12 +126,19 @@ fn duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection() 
             for reopened in [false, true] {
                 let recovered;
                 let active = if reopened {
-                    recovered = store(&path, clock());
+                    recovered = test_store(&path, writer_locked);
                     &recovered
                 } else {
                     &adapter
                 };
+                if writer_locked {
+                    connection.execute_batch("BEGIN IMMEDIATE").unwrap();
+                }
                 let result = block_on(active.accept(input));
+                if writer_locked {
+                    connection.execute_batch("ROLLBACK").unwrap();
+                }
+                cases += 1;
                 if let Some(error) = expected {
                     assert_eq!(
                         result,
@@ -124,6 +156,10 @@ fn duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection() 
             }
         }
     }
+    assert_eq!(cases, 44);
+    println!(
+        "inbox_retry_validation_cases={cases} writer_locked={writer_locked} pending_and_consumed=true encodings=true no_mutation=true"
+    );
 }
 #[test]
 fn stored_record_limit_bounds_noncanonical_duplicate_encodings() {
