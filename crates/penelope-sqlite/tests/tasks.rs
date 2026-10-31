@@ -711,3 +711,8 @@ fn structural_integrity_check_reports_constraint_corruption_and_recovery() {
         .unwrap();
     journal.check_integrity().unwrap();
 }
+
+#[path = "support/suppressed_task_writes.rs"]
+mod suppressed_task_writes;
+#[path = "support/write_snapshot.rs"]
+mod write_snapshot;

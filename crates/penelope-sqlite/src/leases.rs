@@ -1,6 +1,7 @@
 use crate::{
     SqliteProcessStore,
-    process::{charge_process, db_error, decode, encode, integer, scope_process_key},
+    process::{charge_process, db_error, decode, encode, integer, port_error, scope_process_key},
+    schema::execute_one,
     tasks::copy_column,
 };
 use async_trait::async_trait;
@@ -191,7 +192,7 @@ impl TimerScheduler for SqliteProcessStore {
             }
             let bytes = encode(&timer,limits.max_record_bytes)?;
             charge_process(&transaction, &scope_process_key(&timer.action.scope())?, u64::try_from(bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?.saturating_add(128), limits)?;
-            transaction.execute("INSERT INTO process_timers(scope,action_id,timer,checksum,due_at) VALUES (?1,?2,?3,?4,?5)", params![key,timer.action.action_id.as_str(),bytes,Digest::of(&bytes).0.as_slice(),integer(timer.due_at.0)?]).map_err(|error| db_error(&error))?;
+            execute_one(&transaction,"INSERT INTO process_timers(scope,action_id,timer,checksum,due_at) VALUES (?1,?2,?3,?4,?5)", params![key,timer.action.action_id.as_str(),bytes,Digest::of(&bytes).0.as_slice(),integer(timer.due_at.0)?]).map_err(port_error)?;
             transaction.commit().map_err(|error| db_error(&error))
         })?.await
     }
@@ -222,12 +223,12 @@ impl TimerScheduler for SqliteProcessStore {
                 if decode::<TimerSchedule>(&existing.0, &existing.1)? != timer {
                     return Err(PortError::Conflict);
                 }
-                transaction
-                    .execute(
-                        "UPDATE process_timers SET state=2 WHERE scope=?1 AND action_id=?2",
-                        params![key, timer.action.action_id.as_str()],
-                    )
-                    .map_err(|error| db_error(&error))?;
+                execute_one(
+                    &transaction,
+                    "UPDATE process_timers SET state=2 WHERE scope=?1 AND action_id=?2",
+                    params![key, timer.action.action_id.as_str()],
+                )
+                .map_err(port_error)?;
                 transaction.commit().map_err(|error| db_error(&error))
             })?
             .await
