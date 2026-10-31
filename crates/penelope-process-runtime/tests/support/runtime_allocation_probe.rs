@@ -94,5 +94,9 @@ pub(super) fn run() {
         std::thread::sleep(Duration::from_millis(2));
     }
     runtime.fence(scope, generation).unwrap();
+    let repeated_fences = std::array::from_fn::<_, 3, _>(|_sample| {
+        count(|| runtime.fence(scope, generation).unwrap())
+    });
+    println!("Real runtime allocations: repeated public fences={repeated_fences:?}");
     println!("Real runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0");
 }
