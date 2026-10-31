@@ -43,3 +43,7 @@ harness = false
 [[bench]]
 name = "claim_selection"
 harness = false
+
+[[bench]]
+name = "claim_history"
+harness = false
