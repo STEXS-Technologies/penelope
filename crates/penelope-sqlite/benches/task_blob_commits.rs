@@ -3,7 +3,11 @@
 use penelope_core::task::{runtime::*, *};
 use penelope_sqlite::{SqliteLimits, SqliteTaskJournal};
 fn main() {
+    let external_commit = std::env::var_os("PENELOPE_BENCH_EXTERNAL_COMMIT").is_some();
     for size in [0_u32, 32, 4096, 1048576] {
+        if external_commit && size > 4096 {
+            continue;
+        }
         let bytes = vec![7; usize::try_from(size).unwrap()];
         let definition = TaskDefinition {
             code: Digest([3; 32]),
@@ -64,6 +68,13 @@ fn main() {
             assert_eq!(journal.commit(&record, blob).unwrap(), record);
             projection.apply(&record).unwrap();
         }
+        let noise = external_commit.then(|| {
+            let connection = rusqlite::Connection::open(&path).unwrap();
+            connection
+                .execute("CREATE TABLE cache_revision_noise(value INTEGER)", [])
+                .unwrap();
+            connection
+        });
         let mut elapsed_ns = 0_u128;
         for sequence in 2..130_u32 {
             let record = projection
@@ -75,6 +86,13 @@ fn main() {
                     TaskTick::new(u64::from(sequence)),
                 )
                 .unwrap();
+            // This unrelated external commit is deliberately outside timing;
+            // any resulting journal replay remains inside the timed operation.
+            if let Some(connection) = &noise {
+                connection
+                    .execute("INSERT INTO cache_revision_noise VALUES (?1)", [sequence])
+                    .unwrap();
+            }
             let started = std::time::Instant::now();
             let result = std::hint::black_box(journal.commit(&record, Some(&bytes)));
             elapsed_ns = elapsed_ns
@@ -83,6 +101,15 @@ fn main() {
             assert_eq!(result.unwrap(), record);
             projection.apply(&record).unwrap();
         }
+        if let Some(connection) = &noise {
+            let count: u32 = connection
+                .query_row("SELECT count(*) FROM cache_revision_noise", [], |row| {
+                    row.get(0)
+                })
+                .unwrap();
+            assert_eq!(count, 128);
+        }
+        drop(noise);
         journal.rebuild_head(scope).unwrap();
         drop(journal);
         let connection = rusqlite::Connection::open(&path).unwrap();
@@ -97,7 +124,7 @@ fn main() {
         drop(connection);
         println!(
             "{}",
-            serde_json::json!({"size":size,"iterations":128,"elapsed_ns":elapsed_ns})
+            serde_json::json!({"size":size,"iterations":128,"elapsed_ns":elapsed_ns,"external_commit":external_commit})
         );
     }
 }
