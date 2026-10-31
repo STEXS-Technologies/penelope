@@ -564,6 +564,17 @@ fn retirement_preserves_fences_and_prevents_resurrection() {
     let path = directory.path().join("tasks.db");
     let mut journal = open(&path);
     let mut projection = committed_start(&mut journal);
+    let mut observer = open(&path);
+    assert_eq!(
+        observer.read(scope(), TaskSequence::ZERO),
+        Ok(Some(intent()))
+    );
+    let input = BlobRef {
+        digest: Digest::of(b"input"),
+        bytes: 5,
+        schema: 1,
+    };
+    assert_eq!(observer.read_blob(scope(), input, &mut [0; 5]), Ok(5));
     assert_eq!(
         journal.retire_task(scope(), projection.next_sequence()),
         Err(TaskPortError::Conflict)
@@ -604,6 +615,45 @@ fn retirement_preserves_fences_and_prevents_resurrection() {
         .retire_task(scope(), projection.next_sequence())
         .unwrap();
     assert_eq!(retired.next_sequence, TaskSequence::new(3));
+    let snapshot_connection = Connection::open(&path).unwrap();
+    let tables = [
+        "task_records",
+        "task_heads",
+        "task_blobs",
+        "task_retirements",
+        "runtime_generations",
+    ];
+    let retired_snapshot = write_snapshot::snapshot(&snapshot_connection, &tables);
+    let mut unknown = scope();
+    unknown.task = TaskId::from_digest(Digest([88; 32]));
+    for _ in 0..3 {
+        assert_eq!(observer.read(unknown, TaskSequence::ZERO), Ok(None));
+        assert_eq!(
+            observer.read(scope(), TaskSequence::ZERO),
+            Err(TaskPortError::Conflict)
+        );
+        assert_eq!(
+            observer.commit(&intent(), Some(b"input")),
+            Err(TaskPortError::Conflict)
+        );
+        assert_eq!(observer.rebuild_head(scope()), Err(TaskPortError::Conflict));
+        let mut buffer = [0xa5; 4];
+        assert_eq!(
+            observer.read_blob(scope(), output, &mut buffer),
+            Err(TaskPortError::Conflict)
+        );
+        assert_eq!(buffer, [0xa5; 4]);
+        assert_eq!(
+            observer.retire_task(scope(), projection.next_sequence()),
+            Err(TaskPortError::Conflict)
+        );
+        assert_eq!(
+            write_snapshot::snapshot(&snapshot_connection, &tables),
+            retired_snapshot
+        );
+    }
+    drop(observer);
+    drop(snapshot_connection);
     drop(journal);
     let mut reopened = open(&path);
     assert_eq!(

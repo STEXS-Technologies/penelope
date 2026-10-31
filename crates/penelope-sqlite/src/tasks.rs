@@ -595,11 +595,9 @@ pub(crate) fn reject_retired(
     scope: TaskScope,
 ) -> Result<(), TaskPortError> {
     let retired: bool = connection
-        .query_row(
-            "SELECT EXISTS(SELECT 1 FROM task_retirements WHERE scope=?1)",
-            [key(scope)],
-            |row| row.get(0),
-        )
+        .prepare_cached("SELECT EXISTS(SELECT 1 FROM task_retirements WHERE scope=?1)")
+        .map_err(|error| sql_error(&error))?
+        .query_row([key(scope)], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
     if retired {
         Err(TaskPortError::Conflict)
