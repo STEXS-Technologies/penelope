@@ -1,0 +1,42 @@
+{
+  "baseline": {
+    "1": {
+      "allocations": 21,
+      "reallocations": 16,
+      "requested_bytes": 7075,
+      "samples": 128
+    },
+    "16": {
+      "allocations": 66,
+      "reallocations": 78,
+      "requested_bytes": 32143,
+      "samples": 128
+    }
+  },
+  "candidate": {
+    "1": {
+      "allocations": 18,
+      "reallocations": 16,
+      "requested_bytes": 6392,
+      "samples": 128
+    },
+    "16": {
+      "allocations": 33,
+      "reallocations": 78,
+      "requested_bytes": 25640,
+      "samples": 128
+    }
+  },
+  "savings": {
+    "1": {
+      "allocations": 3,
+      "reallocations": 0,
+      "requested_bytes": 683
+    },
+    "16": {
+      "allocations": 33,
+      "reallocations": 0,
+      "requested_bytes": 6503
+    }
+  }
+}
