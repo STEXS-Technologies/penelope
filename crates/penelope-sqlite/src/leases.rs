@@ -2,7 +2,7 @@ use crate::{
     SqliteProcessStore,
     process::{charge_process, db_error, decode, encode, integer, port_error, scope_process_key},
     schema::execute_one,
-    tasks::copy_column,
+    tasks::{column_bytes, copy_column},
 };
 use async_trait::async_trait;
 use penelope_core::task::Digest;
@@ -102,8 +102,8 @@ impl OutboxStore for SqliteProcessStore {
                 let mut rows = statement.query(params![key,integer(now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
-                    let bytes = copy_column(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,1,32).map_err(|error| db_error(&error))?;
-                    let action: ProcessAction = decode(&bytes,&checksum)?;
+                    let bytes = column_bytes(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,1,32).map_err(|error| db_error(&error))?;
+                    let action: ProcessAction = decode(bytes,checksum)?;
                     let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
                     let stored_key = row.get_ref(4).map_err(|error| db_error(&error))?;
                     if action.scope() != request.scope || action.validate().is_err()
@@ -255,8 +255,8 @@ impl TimerClaimStore for SqliteProcessStore {
                 let mut rows = statement.query(params![key,integer(request.now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
-                    let bytes = copy_column(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,1,32).map_err(|error| db_error(&error))?;
-                    let timer: TimerSchedule = decode(&bytes,&checksum)?;
+                    let bytes = column_bytes(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,1,32).map_err(|error| db_error(&error))?;
+                    let timer: TimerSchedule = decode(bytes,checksum)?;
                     let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
                     let due: i64 = row.get(4).map_err(|error| db_error(&error))?;
                     if timer.action.scope() != request.scope || timer.validate().is_err()
