@@ -12,6 +12,10 @@ use penelope_core::task::{
 use penelope_domain::{LogicalTime, PrincipalId, ProcessScope};
 use penelope_ports::{payloads::ProcessPayloadStore, *};
 
+#[path = "lease_batch_index.rs"]
+mod lease_batch_index;
+use lease_batch_index::validate_batch;
+
 async fn authorize(
     authorizer: &impl ProcessAuthorizer,
     scope: &ProcessScope,
@@ -50,16 +54,30 @@ pub async fn claim_outbox(
     if leases.len() > usize::from(request.limit.get()) {
         return Err(PortError::Invariant);
     }
-    for (index, lease) in leases.iter().enumerate() {
-        lease.validate_for_claim_at(request, now)?;
-        if lease.record.acknowledgement != OutboxAcknowledgement::Pending
-            || leases.iter().skip(index.saturating_add(1)).any(|other| {
-                other.record.action.action_id == lease.record.action.action_id
-                    || other.token == lease.token
-            })
-        {
-            return Err(PortError::Invariant);
+    if leases.len() <= 16 {
+        for (index, lease) in leases.iter().enumerate() {
+            lease.validate_for_claim_at(request, now)?;
+            if lease.record.acknowledgement != OutboxAcknowledgement::Pending
+                || leases.iter().skip(index.saturating_add(1)).any(|other| {
+                    other.record.action.action_id == lease.record.action.action_id
+                        || other.token == lease.token
+                })
+            {
+                return Err(PortError::Invariant);
+            }
         }
+    } else {
+        validate_batch(
+            &leases,
+            |lease| (lease.record.action.action_id.as_str(), lease.token),
+            |lease| {
+                lease.validate_for_claim_at(request, now)?;
+                if lease.record.acknowledgement != OutboxAcknowledgement::Pending {
+                    return Err(PortError::Invariant);
+                }
+                Ok(())
+            },
+        )?;
     }
     Ok(leases)
 }
@@ -209,20 +227,29 @@ pub async fn drain_timers(
     }
     report.claimed = u16::try_from(leases.len())
         .map_err(|_size| fail(TimerDrainStage::Validate, report, PortError::Invariant))?;
-    for (index, lease) in leases.iter().enumerate() {
-        lease
-            .validate_for_claim(lease_request)
-            .map_err(|error| fail(TimerDrainStage::Validate, report, error))?;
-        if leases.iter().skip(index.saturating_add(1)).any(|other| {
-            other.timer.action.action_id == lease.timer.action.action_id
-                || other.token == lease.token
-        }) {
-            return Err(fail(
-                TimerDrainStage::Validate,
-                report,
-                PortError::Invariant,
-            ));
+    if leases.len() <= 16 {
+        for (index, lease) in leases.iter().enumerate() {
+            lease
+                .validate_for_claim(lease_request)
+                .map_err(|error| fail(TimerDrainStage::Validate, report, error))?;
+            if leases.iter().skip(index.saturating_add(1)).any(|other| {
+                other.timer.action.action_id == lease.timer.action.action_id
+                    || other.token == lease.token
+            }) {
+                return Err(fail(
+                    TimerDrainStage::Validate,
+                    report,
+                    PortError::Invariant,
+                ));
+            }
         }
+    } else {
+        validate_batch(
+            &leases,
+            |lease| (lease.timer.action.action_id.as_str(), lease.token),
+            |lease| lease.validate_for_claim(lease_request),
+        )
+        .map_err(|error| fail(TimerDrainStage::Validate, report, error))?;
     }
     for lease in leases {
         let (input, bytes) =

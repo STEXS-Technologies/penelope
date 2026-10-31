@@ -78,3 +78,15 @@ harness = false
 [[test]]
 name = "timer_input_allocations"
 harness = false
+
+[[bench]]
+name = "lease_batch_services"
+harness = false
+
+[[bench]]
+name = "lease_batch_service_allocations"
+harness = false
+
+[[test]]
+name = "lease_batch_allocations"
+harness = false
