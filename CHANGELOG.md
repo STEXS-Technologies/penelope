@@ -18,6 +18,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Reap reconstructed Linux workers through their identity-checked pidfds and
+  allow fencing after another host reaper consumed the exact stopped child.
 - Enforce one Linux startup-frame write deadline across all frame parts,
   including continuous positive progress and late final writes. Checkpoint ACK
   writes use the same expiry checks; timed-out transfers require reconstruction.
