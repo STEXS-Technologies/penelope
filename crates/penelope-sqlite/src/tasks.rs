@@ -109,7 +109,7 @@ fn with_verified_blob<T>(
         return Err(TaskPortError::Exhausted);
     }
     let mut statement = connection
-        .prepare(BLOB_QUERY)
+        .prepare_cached(BLOB_QUERY)
         .map_err(|error| sql_error(&error))?;
     with_verified_statement(&mut statement, scope, blob, limit, consume)
 }
