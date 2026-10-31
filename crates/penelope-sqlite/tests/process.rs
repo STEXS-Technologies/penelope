@@ -622,3 +622,6 @@ mod claim_indexes;
 
 #[path = "support/record_limits.rs"]
 mod record_limits;
+
+#[path = "support/process_frontier.rs"]
+mod process_frontier;

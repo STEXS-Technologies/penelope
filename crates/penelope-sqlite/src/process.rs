@@ -98,6 +98,25 @@ impl SqliteProcessStore {
     }
 }
 
+// Read authoritative metadata and the indexed outcome tail in one snapshot.
+// A missing scope is empty only when both the head and its outcomes are absent.
+fn process_head(connection: &Connection, key: &[u8]) -> Result<Option<(i64, i64)>, PortError> {
+    let (next, used, last): (Option<i64>, Option<i64>, Option<i64>) = connection
+        .prepare_cached("SELECT head.next_sequence,head.bytes_used,(SELECT max(sequence) FROM process_outcomes WHERE scope=?1) FROM (SELECT 1) LEFT JOIN process_heads AS head ON head.scope=?1")
+        .map_err(|error| db_error(&error))?
+        .query_row([key], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
+        .map_err(|error| db_error(&error))?;
+    match (next, used, last) {
+        (None, None, None) => Ok(None),
+        (Some(next), Some(used), Some(last))
+            if next > 0 && used >= 0 && last >= 0 && last.checked_add(1) == Some(next) =>
+        {
+            Ok(Some((next, used)))
+        }
+        _ => Err(PortError::Invariant),
+    }
+}
+
 fn accept_input(
     connection: &Connection,
     input: &ProcessInput,
@@ -198,14 +217,7 @@ pub(crate) fn commit_process(
             .map_err(|_receipt| PortError::Invariant)?;
         return Ok(receipt);
     }
-    let head = transaction
-        .query_row(
-            "SELECT next_sequence,bytes_used FROM process_heads WHERE scope=?1",
-            [&key],
-            |row| Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?)),
-        )
-        .optional()
-        .map_err(|error| db_error(&error))?;
+    let head = process_head(&transaction, &key)?;
     let (next, used) = head.unwrap_or((0, 0));
     if integer(commit.expected_sequence)? != next {
         return Err(PortError::Conflict);
@@ -363,8 +375,8 @@ impl ProcessStore for SqliteProcessStore {
         self.worker.run(move |connection| {
             let transaction = connection.transaction().map_err(|error| db_error(&error))?;
             let key = request.scope.canonical_bytes();
-            let next: Option<i64> = transaction.query_row("SELECT next_sequence FROM process_heads WHERE scope=?1", [&key], |row| row.get(0)).optional().map_err(|error| db_error(&error))?;
-            let next = u64::try_from(next.unwrap_or(0)).map_err(|_negative| PortError::Invariant)?;
+            let next = process_head(&transaction, &key)?.map_or(0, |(next, _used)| next);
+            let next = u64::try_from(next).map_err(|_negative| PortError::Invariant)?;
             let mut statement = transaction.prepare("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
             let mut rows = statement.query(params![key,integer(request.from_sequence)?,request.limit.get()]).map_err(|error| db_error(&error))?;
             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
@@ -460,14 +472,7 @@ fn verify_committed_batch(
 ) -> Result<(), PortError> {
     let scope = commit.outcomes.first().ok_or(PortError::Invariant)?.scope();
     let key = scope.canonical_bytes();
-    let frontier: Option<i64> = connection
-        .query_row(
-            "SELECT next_sequence FROM process_heads WHERE scope=?1",
-            [&key],
-            |row| row.get(0),
-        )
-        .optional()
-        .map_err(|error| db_error(&error))?;
+    let frontier = process_head(connection, &key)?.map(|(next, _used)| next);
     let expected_end = commit
         .expected_sequence
         .checked_add(
