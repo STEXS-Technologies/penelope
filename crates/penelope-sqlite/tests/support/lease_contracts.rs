@@ -693,3 +693,110 @@ fn ignored_token_counter_update_returns_no_lease_and_preserves_work() {
         );
     }
 }
+
+#[test]
+fn warmed_token_statements_preserve_batch_rollback_retry_and_reopen() {
+    fn tokens(
+        adapter: &SqliteProcessStore,
+        timer: bool,
+        now: u64,
+    ) -> Result<Vec<OutboxLeaseToken>, PortError> {
+        if timer {
+            block_on(adapter.claim_due(&timer_claim(now)))
+                .map(|leases| leases.into_iter().map(|lease| lease.token).collect())
+        } else {
+            block_on(adapter.claim(&claim()))
+                .map(|leases| leases.into_iter().map(|lease| lease.token).collect())
+        }
+    }
+    fn snapshot(connection: &Connection, table: &str) -> Vec<(u32, Vec<u8>, i64)> {
+        connection
+            .prepare(&format!(
+                "SELECT attempt,lease,expires_at FROM {table} ORDER BY action_id"
+            ))
+            .unwrap()
+            .query_map([], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
+            .unwrap()
+            .collect::<rusqlite::Result<_>>()
+            .unwrap()
+    }
+    for timer in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("batch-rollback.db");
+        let clock = clock();
+        let adapter = store(&path, clock.clone());
+        let mut commit = commit(timer);
+        let template = commit.actions[0].clone();
+        for index in 1..3 {
+            let mut action = template.clone();
+            action.action_id = id(&format!("act_work{index}"));
+            action.step_id = id(&format!("stp_work{index}"));
+            commit.actions.push(action);
+        }
+        block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+        if timer {
+            for action in &commit.actions {
+                block_on(adapter.schedule(&TimerSchedule {
+                    action: action.clone(),
+                    due_at: LogicalTime(100),
+                }))
+                .unwrap();
+            }
+        }
+        let original = tokens(&adapter, timer, 100).unwrap();
+        assert_eq!(original.len(), 3);
+        let connection = Connection::open(&path).unwrap();
+        let table = if timer {
+            "process_timers"
+        } else {
+            "process_actions"
+        };
+        let before = snapshot(&connection, table);
+        clock.now.store(111, Ordering::SeqCst);
+        // Token 4 and the first lease update succeed, then token 5's counter
+        // increment is suppressed. The entire claim must roll back.
+        connection.execute_batch(
+            "CREATE TRIGGER fail_second_token BEFORE UPDATE OF next_token ON lease_counter WHEN NEW.next_token=6 BEGIN SELECT RAISE(IGNORE); END;"
+        ).unwrap();
+        assert_eq!(tokens(&adapter, timer, 111), Err(PortError::Invariant));
+        assert_eq!(snapshot(&connection, table), before);
+        let next: i64 = connection
+            .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(next, 4);
+        connection
+            .execute_batch("DROP TRIGGER fail_second_token")
+            .unwrap();
+        let retried = tokens(&adapter, timer, 111).unwrap();
+        for (token, value) in retried.iter().zip(4..7) {
+            assert_eq!(
+                *token,
+                OutboxLeaseToken::new(std::num::NonZeroU64::new(value).unwrap())
+            );
+            assert!(!original.contains(token));
+        }
+        assert_eq!(retried.len(), 3);
+        assert!(
+            snapshot(&connection, table)
+                .iter()
+                .all(|(attempt, _, expires)| *attempt == 2 && *expires == 121)
+        );
+        drop(adapter);
+        clock.now.store(122, Ordering::SeqCst);
+        let reopened = store(&path, clock);
+        let recovered = tokens(&reopened, timer, 122).unwrap();
+        assert_eq!(recovered.len(), 3);
+        for (token, value) in recovered.iter().zip(7..10) {
+            assert_eq!(
+                *token,
+                OutboxLeaseToken::new(std::num::NonZeroU64::new(value).unwrap())
+            );
+            assert!(!retried.contains(token));
+        }
+        assert!(
+            snapshot(&connection, table)
+                .iter()
+                .all(|(attempt, _, expires)| *attempt == 3 && *expires == 132)
+        );
+    }
+}

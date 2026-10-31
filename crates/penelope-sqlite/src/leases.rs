@@ -13,20 +13,19 @@ use std::num::NonZeroU64;
 
 fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
     let next: i64 = connection
-        .query_row(
-            "SELECT next_token FROM lease_counter WHERE singleton=1",
-            [],
-            |row| row.get(0),
-        )
+        .prepare_cached("SELECT next_token FROM lease_counter WHERE singleton=1")
+        .map_err(|error| db_error(&error))?
+        .query_row([], |row| row.get(0))
         .map_err(|error| db_error(&error))?;
     let value = NonZeroU64::new(u64::try_from(next).map_err(|_negative| PortError::Invariant)?)
         .ok_or(PortError::Invariant)?;
     let following = next.checked_add(1).ok_or(PortError::QuotaExceeded)?;
     let changed = connection
-        .execute(
+        .prepare_cached(
             "UPDATE lease_counter SET next_token=?1 WHERE singleton=1 AND next_token=?2",
-            params![following, next],
         )
+        .map_err(|error| db_error(&error))?
+        .execute(params![following, next])
         .map_err(|error| db_error(&error))?;
     if changed != 1 {
         return Err(PortError::Invariant);
