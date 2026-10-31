@@ -20,7 +20,9 @@ proof that the implementation contains no defects.
    them from v0.3.0. They now appear in the existing dated 0.3.0 section, alongside
    schema v6, pending discovery, and the qualified retry improvements. The
    generator was exercised against that section; this does not tag or publish
-   a release.
+   a release. This recommendation was subsequently corrected: until release,
+   changes belong under `Unreleased`, without a date. The changelog now summarizes
+   the delta from v0.2.0 rather than fixes to intermediate 0.3.0 implementations.
 3. **Inconsistent branch subjects.** Branch commits are normalized to
    `type(scope): summary`, retaining feature, fix, test, documentation, and
    performance distinctions. The rewrite preserves each commit's file tree,
