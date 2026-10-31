@@ -2045,7 +2045,12 @@ impl OutcomeLog {
             if outcome.validate().is_err() {
                 return Err(OutcomeLogValidationError::InvalidOutcome);
             }
-            if outcome.scope() != self.scope {
+            if outcome.tenant_id != self.scope.tenant_id
+                || outcome.process_id != self.scope.process_id
+                || outcome.definition_id != self.scope.definition_id
+                || outcome.definition_version != self.scope.definition_version
+                || outcome.definition_digest != self.scope.definition_digest
+            {
                 return Err(OutcomeLogValidationError::ScopeMismatch);
             }
             if outcome.sequence != expected {

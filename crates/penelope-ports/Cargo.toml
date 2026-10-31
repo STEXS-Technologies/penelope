@@ -29,3 +29,15 @@ harness = false
 [[bench]]
 name = "atomic_validation_allocations"
 harness = false
+
+[[bench]]
+name = "outcome_log"
+harness = false
+
+[[bench]]
+name = "outcome_log_allocations"
+harness = false
+
+[[test]]
+name = "outcome_log_allocations"
+harness = false
