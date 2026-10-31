@@ -47,7 +47,7 @@
   ],
   "scope": "IPC deadline/result handling, not global timing guarantees or a performance measurement; empty transfers preserve no-op behavior; initial failures retained",
   "artifact_sha256": {
-    "baseline-fixtures.patch": "48c493bdbcac8e2cda14d371a248f1a9f7cb0b4314360d6560cbcafd3205d075",
+    "baseline-fixtures.patch": "14ba74c798fc64973f55243a41306db7d137bf7332b158d897196a4afb3d0db2",
     "baseline.log.gz": "799c9bdeadbf7d87c0672a0d183866e7ace3e6386ab70f2a26ad5863b273811a",
     "clippy-final.log.gz": "e6f2a8f29ffa31838f46cd14b0a1b9c5a2491af671efe8c414d88ba189dcd859",
     "clippy-initial.log.gz": "be9a3ee451f5d62f742bfba06ea81eaca1dc5b2b3b6d9992177b33d4e7a3d5ed",
