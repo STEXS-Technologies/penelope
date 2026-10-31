@@ -661,3 +661,6 @@ mod inbox_validation;
 
 #[path = "support/inbox_concurrency.rs"]
 mod inbox_concurrency;
+
+#[path = "support/append_outcomes.rs"]
+mod append_outcomes;

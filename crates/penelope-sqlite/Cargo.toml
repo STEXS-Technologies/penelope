@@ -119,3 +119,11 @@ harness = false
 [[bench]]
 name = "pending_input_allocations"
 harness = false
+
+[[bench]]
+name = "process_append_allocations"
+harness = false
+
+[[test]]
+name = "process_append_allocations"
+harness = false
