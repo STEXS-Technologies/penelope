@@ -14,6 +14,24 @@ use std::{
 };
 
 type Job = Box<dyn FnOnce(&mut Connection) + Send>;
+fn contain_panic<T>(operation: impl FnOnce() -> T) -> Result<T, PortError> {
+    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(operation)) {
+        Ok(value) => Ok(value),
+        Err(payload) => {
+            // Panic payload destructors are application code too. Dispose of
+            // the first payload behind another unwind boundary. If that drop
+            // panics, retain its payload: recursively dropping arbitrary panic
+            // payloads cannot be made safe or bounded. This leaks only the
+            // secondary payload on this exceptional path, never normal results.
+            if let Err(secondary) =
+                std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| drop(payload)))
+            {
+                std::mem::forget(secondary);
+            }
+            Err(PortError::Unavailable)
+        }
+    }
+}
 struct Completion<T> {
     result: Option<Result<T, PortError>>,
     waker: Option<Waker>,
@@ -101,10 +119,8 @@ impl DatabaseWorker {
         let result_state = completion.clone();
         self.sender
             .try_send(Box::new(move |connection| {
-                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    operation(connection)
-                }))
-                .unwrap_or(Err(PortError::Unavailable));
+                let result =
+                    contain_panic(|| operation(connection)).unwrap_or(Err(PortError::Unavailable));
                 let waker = result_state.lock().map_or_else(
                     |_poison| None,
                     |mut state| {
@@ -116,10 +132,7 @@ impl DatabaseWorker {
                     // Executor callbacks are application code. The result is already
                     // published and unlocked; an unwinding notification must not
                     // kill the worker and strand unrelated accepted requests.
-                    let _wake_result =
-                        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                            waker.wake();
-                        }));
+                    let _wake_result = contain_panic(|| waker.wake());
                 }
             }))
             .map_err(|error| match error {
@@ -408,3 +421,7 @@ mod tests {
 #[cfg(test)]
 #[path = "worker_waker_tests.rs"]
 mod waker_tests;
+
+#[cfg(test)]
+#[path = "worker_panic_tests.rs"]
+mod panic_tests;
