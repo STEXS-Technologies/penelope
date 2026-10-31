@@ -1,0 +1,32 @@
+{
+  "baseline": "fa8d06746bf67271ad7bf8421102bbd32a287c2f",
+  "source": "8a45d9563b2ead09520a3c508c1e4e22542eb21b",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/leases.rs": "101d2ecaab095e3bc6966a2ef76cca9484927edae40b93930d42b924c03bb620",
+    "crates/penelope-sqlite/src/process_fault_tests.rs": "abfc1c9565f2658d6e30b726c0e6a2830863a892ed6686843d266231713550b7",
+    "crates/penelope-sqlite/src/lease_clock_tests.rs": "098b8d627474a5504d11915041c6d294865e61dff9bad7e8b32411c79965c4e3",
+    "crates/penelope-executor/tests/architecture.rs": "c983c65c98c3330781ca241e3312824a1fc30d9cc3ad351e8e657f4355f60954"
+  },
+  "baseline_failures": 2,
+  "repeated_test_processes": 150,
+  "repeated_contended_claims": 100,
+  "repeated_clock_error_and_overflow_recoveries": 100,
+  "artifact_sha256": {
+    "architecture.log.gz": "47002d38946bddcfcab5d5bcf7490820d4d814738cf6ee74f9e849810a32ffdc",
+    "baseline-final.log.gz": "d95bcee57d4e9ea5d8de39c2937bf8fae6cb890184d1dd53fa01db9eff536667",
+    "baseline-fixtures.patch": "7bc2272ba20eb8ddc5acc8dfd019afc36f94465005025491cb8d432f774f29cc",
+    "clippy-architecture-attempt1.log.gz": "30151455bc44d8556bc7579e97c38124a57f40c5f3dd20b049f14dde037477f5",
+    "clippy-final.log.gz": "bbce2a1f4461b49026296ae300401502f3cda8281351d66a50464793e8b806f5",
+    "fixed.log.gz": "f9c986a0a756d1cfecfd1d15713ce2f533f247f0c2dddcbe590ca8b8191b58c9",
+    "fixture-compile.log.gz": "04877ad6ff04008fc54eb2381c8dde183c2b79db33720e3fdbbec4fe784b337a",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "97417e6708c9f6cdcf127f032bbf8893afb04f81cce2074dcd01b7eb792ff39b",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "4fedd1d529d06ef34ec82d66da75339556a9ac13532f4923bb4bf763257c204d",
+    "repeat.py": "6c66c3332e56cc6379814b7a3466a21a8b4d299f6173e24d9980b234d3836469",
+    "repeated.jsonl.gz": "92c74b60d4c02e569e84c432d20a461385cdd507438dd8b53eeb26c01fbec919",
+    "verify.py": "d1507c22049406a396d5eee9b166b0f4be823bb36a9a5b29e5e14eb0032f2d2c",
+    "workspace-attempt1.log.gz": "c9cd36f70c4a122c7974b89493b0e4c3268732b875aa5a7b1a5937625ceee600",
+    "workspace.log.gz": "6b3b7c3e16a9c6d42a2a9f8143fcfdcb43ad10e933cf5cc209200cf532daa91e"
+  }
+}
