@@ -67,3 +67,11 @@ harness = false
 [[bench]]
 name = "process_payload_allocations"
 harness = false
+
+[[bench]]
+name = "task_reads"
+harness = false
+
+[[bench]]
+name = "task_read_allocations"
+harness = false

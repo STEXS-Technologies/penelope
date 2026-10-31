@@ -289,18 +289,18 @@ impl TaskJournal for SqliteTaskJournal {
                 "SELECT record,checksum FROM task_records WHERE scope=?1 AND sequence=?2",
                 params![key(scope), sequence.get()],
                 |row| {
-                    Ok((
-                        copy_column(row, 0, self.limits.max_record_bytes)?,
-                        copy_column(row, 1, 32)?,
+                    Ok(decode(
+                        column_bytes(row, 0, self.limits.max_record_bytes)?,
+                        column_bytes(row, 1, 32)?,
+                        scope,
+                        sequence,
                     ))
                 },
             )
             .optional()
             .map_err(|error| sql_error(&error))?;
         match (head, stored) {
-            (Some(next), Some((bytes, checksum))) if sequence.get() < next => {
-                decode(&bytes, &checksum, scope, sequence).map(Some)
-            }
+            (Some(next), Some(record)) if sequence.get() < next => record.map(Some),
             (Some(next), None) if sequence.get() >= next => Ok(None),
             (None, None) => Ok(None),
             _ => Err(TaskPortError::Corrupt),
