@@ -719,3 +719,6 @@ mod write_snapshot;
 
 #[path = "support/cache_usage.rs"]
 mod cache_usage;
+
+#[path = "support/task_frontier.rs"]
+mod task_frontier;
