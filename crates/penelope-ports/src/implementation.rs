@@ -2087,15 +2087,17 @@ fn same_effect_key(first: &ProcessAction, second: &ProcessAction) -> bool {
         payload_digest,
         action_id: _,
     } = first;
-    tenant_id == &second.tenant_id
+    // Valid batches share the scope. Check varying effect coordinates first,
+    // while retaining every scope comparison for unvalidated later actions.
+    step_id == &second.step_id
+        && attempt == &second.attempt
+        && kind == &second.kind
+        && payload_digest == &second.payload_digest
+        && tenant_id == &second.tenant_id
         && process_id == &second.process_id
         && definition_id == &second.definition_id
         && definition_version == &second.definition_version
         && definition_digest == &second.definition_digest
-        && step_id == &second.step_id
-        && attempt == &second.attempt
-        && kind == &second.kind
-        && payload_digest == &second.payload_digest
 }
 
 impl AtomicProcessCommit {

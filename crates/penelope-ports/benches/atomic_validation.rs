@@ -8,7 +8,10 @@ fn main() {
     let long = std::env::var_os("PENELOPE_BENCH_LONG_IDS").is_some();
     for (actions, iterations) in [(0, 100_000_u32), (1, 100_000), (16, 10_000), (128, 1_000)] {
         let iterations = if long { iterations / 10 } else { iterations };
-        let batch = fixture::commit_with_identifiers(actions, long);
+        let mut batch = fixture::commit_with_identifiers(actions, long);
+        if std::env::var_os("PENELOPE_BENCH_VARY_PAYLOAD").is_some() {
+            fixture::vary_payloads(&mut batch);
+        }
         for _ in 0..100 {
             black_box(black_box(&batch).validate()).unwrap();
         }

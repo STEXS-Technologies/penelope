@@ -78,7 +78,10 @@ fn main() {
     fixture::commit(0).validate().unwrap();
     let long = std::env::var_os("PENELOPE_BENCH_LONG_IDS").is_some();
     for actions in [0, 1, 16, 128] {
-        let batch = fixture::commit_with_identifiers(actions, long);
+        let mut batch = fixture::commit_with_identifiers(actions, long);
+        if std::env::var_os("PENELOPE_BENCH_VARY_PAYLOAD").is_some() {
+            fixture::vary_payloads(&mut batch);
+        }
         batch.validate().unwrap();
         start_counting();
         let result = black_box(&batch).validate();

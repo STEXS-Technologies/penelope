@@ -60,3 +60,13 @@ pub fn commit_with_identifiers(actions: usize, long: bool) -> AtomicProcessCommi
             .collect(),
     }
 }
+
+pub fn vary_payloads(batch: &mut AtomicProcessCommit) {
+    let Some(step) = batch.actions.first().map(|action| action.step_id.clone()) else {
+        return;
+    };
+    for (index, action) in batch.actions.iter_mut().enumerate() {
+        action.step_id = step.clone();
+        action.payload_digest = ContentDigest([u8::try_from(index).unwrap(); 32]);
+    }
+}
