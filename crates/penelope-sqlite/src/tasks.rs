@@ -13,15 +13,15 @@ pub struct SqliteTaskJournal {
     pub(crate) cache: Option<(TaskProjection, Digest)>,
 }
 
-pub(crate) fn key(scope: TaskScope) -> Vec<u8> {
-    let mut key = Vec::with_capacity(128);
-    for digest in [
+pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
+    let mut key = [0; 128];
+    for (destination, digest) in key.chunks_exact_mut(32).zip([
         scope.tenant.digest(),
         scope.task.digest(),
         scope.definition.digest(),
         scope.input.digest(),
-    ] {
-        key.extend_from_slice(&digest.0);
+    ]) {
+        destination.copy_from_slice(&digest.0);
     }
     key
 }
@@ -500,3 +500,7 @@ pub(crate) fn reject_retired(
 #[cfg(test)]
 #[path = "fault_tests.rs"]
 mod fault_tests;
+
+#[cfg(test)]
+#[path = "key_tests.rs"]
+mod key_tests;
