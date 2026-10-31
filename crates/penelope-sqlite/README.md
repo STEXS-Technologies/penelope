@@ -8,6 +8,7 @@ records the verified profile, evidence and limits.
 `TaskGenerationAuthority` for one pinned task definition. `SqliteProcessStore`
 implements the async `ProcessStore`, `Inbox`, `OutboxStore`, `TimerScheduler` and
 `TimerClaimStore` ports through a bounded dedicated database worker.
+`PendingInbox` discovers retained inputs awaiting atomic consumption.
 `ProcessPayloadStore` retains scoped immutable event/evidence bytes for replay. Construct
 these adapters explicitly; the library does not create application services.
 
@@ -48,6 +49,26 @@ process storage quota, with per-payload and retained-count bounds. Schema versio
 Payloads and unreferenced writes are retained; automatic payload garbage
 collection is not implemented. Account for failed/orphan writes when sizing
 retention. Content digests detect corruption and do not establish authenticity.
+
+## Pending inputs and exact retries
+
+Use `PendingInbox::pending_inputs` to recover accepted but unconsumed inputs.
+Each call returns at most 64 inputs for one tenant/process, ordered by input ID.
+This order is not causal order or FIFO, and discovery does not bind a definition,
+lease an input, acknowledge delivery, or consume it. Validate retained payloads
+against the pinned definition and authorize access at the application boundary.
+Concurrent hosts can discover the same input; atomic process commit arbitrates
+its consumption. Continue discovery after consuming a batch to reach later IDs.
+
+Exact `Inbox::accept` and `put_payload` retries validate current committed bytes
+before requesting writer admission. They can succeed while another WAL writer
+is active, including at a full quota. A missing row still enters an immediate
+transaction and rechecks before charging or inserting. Inbox retries preserve
+checksum checks and semantic equality for valid noncanonical JSON. Acceptance
+of an already-consumed input returns a duplicate receipt and never consumes it
+again. This removes unnecessary writer contention; other storage/lock errors can
+still fail the call. Atomic `ProcessStore::commit` retains its write transaction
+and exact history/consumption verification.
 
 ## Recovery and fencing
 
@@ -111,6 +132,13 @@ maintenance work to inserts and acknowledgements; the database page limit still
 applies during upgrade. A failed upgrade rolls back both indexes and the schema
 version. Pending but unexpired leases can still require scanning within the
 pending index. These indexes do not implement saga-history retention.
+
+Schema version 6 adds a partial index on unconsumed inbox inputs by
+`(process_key, input_id)`. It preserves retained consumed rows, receipts, and
+leases while bounding selection by the pending set. Index creation and the
+version update share the migration transaction and database page limit. A failed
+upgrade preserves the previous schema and rows. Version 6 is the current schema;
+older adapters must not open an upgraded database.
 
 `check_integrity` checks SQLite structure. Replaying task histories also checks
 record order and referenced blob identity. On corruption, stop dispatch,

@@ -7,7 +7,100 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-30
+
+### Added
+
+- Read-only pending inbox discovery, scoped to tenant/process, with batches up
+  to 64 inputs ordered by input ID. Discovery does not lease, acknowledge, or
+  consume an input; atomic process commit still arbitrates consumption.
+
+- Typed saga/task bindings, verified application output and independent effect
+  evidence, committed dispatch acceptance, and stable task-result inbox relay.
+  `TaskEffectResult` extends input categories; existing serialized categories and
+  saga event/action formats retain their existing encoding.
+
+- Optional Linux static single-process worker runtime with sealed executable
+  identity, bounded IPC, seccomp restrictions, kernel CPU limits and durable
+  generation fencing for the documented single-host deployment profile.
+
+- Shared allocation-free task supervision through `TaskControl` and explicit
+  caller-owned `TaskWorkspace`, with the existing hosted supervisor preserved.
+- Optional SQLite task history/blob storage, persistent generation reservations
+  and two-phase fencing, terminal-history retirement and maintenance operations.
+- Optional SQLite atomic process commits, deduplicated inbox/source events,
+  durable outbox and timer claims, lease renewal and fenced acknowledgements.
+- Bounded worker isolation for async SQLite process ports, with explicit queue
+  exhaustion and ambiguous cancellation semantics.
+- Adapter tests for transaction-boundary process death, competing connections,
+  lost acknowledgements, corruption, migration and stale leases.
+
+### Compatibility
+
+- The 0.3.0 release adds `ProcessInputKind::TaskEffectResult` and five
+  `ProcessAuthorizationOperation` variants (`Dispatch`, `DriveTask`,
+  `ReconcileEffect`, `DeliverTimer`, `RelayTaskResult`). Consumers with exhaustive
+  matches must handle these variants when upgrading. Existing variant names,
+  numeric discriminants and saga/task v1 record encodings are preserved.
+- `penelope_executor::task::SupervisorError` remains available, including variant
+  imports, exhaustive matches and error conversions, through a re-export of the
+  shared core controller error.
+
+### Fixed
+
+- Sample the SQLite outbox lease clock after obtaining the writer transaction,
+  preventing lock waits from consuming a new lease window or hiding an expired
+  lease that became reclaimable during contention.
+
+- Include the validated byte charge in SQLite task append-cache checks,
+  rejecting changed quota counters until explicit head repair.
+
+- Preserve SQLite task head, record and blob read error categories: unavailable
+  storage and exhausted capacity no longer masquerade as database corruption.
+
+- Reject non-regular Linux worker images, registry manifests and lock files
+  through nonblocking opens and descriptor type checks, avoiding FIFO hangs.
+
+- Reap reconstructed Linux workers through their identity-checked pidfds and
+  allow fencing after another host reaper consumed the exact stopped child.
+- Enforce one Linux startup-frame write deadline across all frame parts,
+  including continuous positive progress and late final writes. Checkpoint ACK
+  writes use the same expiry checks; timed-out transfers require reconstruction.
+- Reject suppressed required SQLite writes before acknowledging process/task
+  commits, service updates, generation authority or head repair. Retirement
+  verifies complete scoped history deletion before committing its tombstone.
+- Clone and destroy SQLite response wakers outside completion locks, preserving
+  ready results if executor callbacks unwind during registration.
+- Linux worker responses at the maximum payload size now reject a trailing
+  byte available in the same pipe read, matching smaller response handling.
+  Each active response buffer reserves one additional byte; valid maximum-size
+  completions and checkpoint acknowledgements retain their existing behavior.
+
+- SQLite executor wake callbacks cannot terminate the database worker through
+  unwinding, preserving committed results and draining other accepted requests
+  after response cancellation or admission closure.
+
+- SQLite outbox/timer claims fail and roll back if the durable lease-token
+  counter update is ignored, preserving pending work and token allocation.
+
+- Worker requests reject pinned payload bounds and schema zero before payload
+  allocation or I/O, including when transport limits are looser.
+
+- Linux worker polling drains observations to EOF before classifying child exit,
+  preventing a queued valid completion from being reported as a task fault.
+
 ### Changed
+
+- Upgrade SQLite storage to schema version 6, adding the partial pending-inbox
+  index after the schema v5 outbox/timer indexes. The upgrade remains atomic;
+  failed index creation preserves the previous schema and data.
+- Exact payload and inbox retries validate current committed evidence before
+  requesting writer admission. Missing rows still require a write transaction
+  and a second check before quota charging. Input checksums, semantic JSON
+  equality, consumed markers, and atomic process commit behavior are retained.
+- Reserve timer input buffers and use bounded duplicate indexing for larger
+  delivery batches. Benchmarks retain workload-specific improvements and
+  regressions; these are not universal application-overhead measurements.
 
 - Upgrade SQLite storage to schema version 5 with partial indexes for pending
   outbox and due-timer selection. Retained completed rows and future timers no
@@ -46,88 +139,6 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Build Linux execution identities and checkpoint acknowledgements with fixed
   stack buffers. Checkpoint ACKs now allocate zero times after setup, verified
   with a real protected worker and a durably committed checkpoint.
-
-### Fixed
-
-- Sample the SQLite outbox lease clock after obtaining the writer transaction,
-  preventing lock waits from consuming a new lease window or hiding an expired
-  lease that became reclaimable during contention.
-
-- Include the validated byte charge in SQLite task append-cache checks,
-  rejecting changed quota counters until explicit head repair.
-
-- Preserve SQLite task head, record and blob read error categories: unavailable
-  storage and exhausted capacity no longer masquerade as database corruption.
-
-- Reject non-regular Linux worker images, registry manifests and lock files
-  through nonblocking opens and descriptor type checks, avoiding FIFO hangs.
-
-- Reap reconstructed Linux workers through their identity-checked pidfds and
-  allow fencing after another host reaper consumed the exact stopped child.
-- Enforce one Linux startup-frame write deadline across all frame parts,
-  including continuous positive progress and late final writes. Checkpoint ACK
-  writes use the same expiry checks; timed-out transfers require reconstruction.
-- Reject suppressed required SQLite writes before acknowledging process/task
-  commits, service updates, generation authority or head repair. Retirement
-  verifies complete scoped history deletion before committing its tombstone.
-- Clone and destroy SQLite response wakers outside completion locks, preserving
-  ready results if executor callbacks unwind during registration.
-- Linux worker responses at the maximum payload size now reject a trailing
-  byte available in the same pipe read, matching smaller response handling.
-  Each active response buffer reserves one additional byte; valid maximum-size
-  completions and checkpoint acknowledgements retain their existing behavior.
-
-## [0.3.0] - 2026-10-30
-
-### Added
-
-- Typed saga/task bindings, verified application output and independent effect
-  evidence, committed dispatch acceptance, and stable task-result inbox relay.
-  `TaskEffectResult` extends input categories; existing serialized categories and
-  saga event/action formats retain their existing encoding.
-
-- Optional Linux static single-process worker runtime with sealed executable
-  identity, bounded IPC, seccomp restrictions, kernel CPU limits and durable
-  generation fencing for the documented single-host deployment profile.
-
-- Shared allocation-free task supervision through `TaskControl` and explicit
-  caller-owned `TaskWorkspace`, with the existing hosted supervisor preserved.
-- Optional SQLite task history/blob storage, persistent generation reservations
-  and two-phase fencing, terminal-history retirement and maintenance operations.
-- Optional SQLite atomic process commits, deduplicated inbox/source events,
-  durable outbox and timer claims, lease renewal and fenced acknowledgements.
-- Bounded worker isolation for async SQLite process ports, with explicit queue
-  exhaustion and ambiguous cancellation semantics.
-- Adapter tests for transaction-boundary process death, competing connections,
-  lost acknowledgements, corruption, migration and stale leases.
-
-### Compatibility
-
-- The 0.3.0 release adds `ProcessInputKind::TaskEffectResult` and five
-  `ProcessAuthorizationOperation` variants (`Dispatch`, `DriveTask`,
-  `ReconcileEffect`, `DeliverTimer`, `RelayTaskResult`). Consumers with exhaustive
-  matches must handle these variants when upgrading. Existing variant names,
-  numeric discriminants and saga/task v1 record encodings are preserved.
-- `penelope_executor::task::SupervisorError` remains available, including variant
-  imports, exhaustive matches and error conversions, through a re-export of the
-  shared core controller error.
-
-### Fixed
-
-- SQLite executor wake callbacks cannot terminate the database worker through
-  unwinding, preserving committed results and draining other accepted requests
-  after response cancellation or admission closure.
-
-- SQLite outbox/timer claims fail and roll back if the durable lease-token
-  counter update is ignored, preserving pending work and token allocation.
-
-- Worker requests reject pinned payload bounds and schema zero before payload
-  allocation or I/O, including when transport limits are looser.
-
-- Linux worker polling drains observations to EOF before classifying child exit,
-  preventing a queued valid completion from being reported as a task fault.
-
-### Changed
 
 - Larger linear definitions check duplicate IDs through bounded borrowed-ID
   sorting and strict reverse-order uniqueness, preserving zero allocations and

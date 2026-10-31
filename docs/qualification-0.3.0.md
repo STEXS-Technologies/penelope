@@ -7,6 +7,11 @@ release workflow. The historical graph slowdown is removed by the verified optim
 Other disclosed timing tradeoffs and deployment limits remain part of the disposition.
 No tag, registry publication or GitHub release is authorized by this audit.
 
+The [pre-merge review](premerge-audit-0.3.0-2026-10-31.md) records the later code/
+documentation audit, packaging checks, passing pre-rewrite CI, and preservation
+of historical evidence during commit-message normalization. Its scope is
+separate from the historical full-release qualification reference above.
+
 The subsequent linear-engine optimization at `8a9e298` removes discarded terminal
 projection clones and reserves successor-history capacity. Its [direct-task
 comparison and scoped verification](performance-application-overhead-2026-10-30.md)
