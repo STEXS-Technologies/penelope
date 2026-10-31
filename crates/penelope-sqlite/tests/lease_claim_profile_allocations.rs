@@ -20,11 +20,8 @@ fn main() -> Result<(), Error> {
             let issued = issued?;
             fixture.verify(&issued, sample)?;
             if sample >= 2 {
-                let (allocation_limit, byte_limit) = if timers {
-                    (795, 184096)
-                } else {
-                    (1435, 324152)
-                };
+                let (allocation_limit, byte_limit) =
+                    if timers { (795, 184096) } else { (923, 258616) };
                 if allocations > allocation_limit {
                     return Err(format!(
                         "{name}: allocations={allocations} limit={allocation_limit}"

@@ -5,6 +5,8 @@
     clippy::indexing_slicing
 )]
 use penelope_domain::*;
+#[path = "support/action_effect_fixture.rs"]
+mod action_fixture;
 #[path = "support/effect_key_fixture.rs"]
 mod fixture;
 fn legacy(key: &EffectKey) -> Vec<u8> {
@@ -61,11 +63,24 @@ fn canonical_effect_keys_match_legacy_across_sizes_kinds_attempts_and_digests() 
         );
         let encoded = key.canonical_bytes();
         assert_eq!(encoded, legacy(&key), "case={case}");
+        let mut action = action_fixture::action(key.clone());
+        assert_eq!(action.effect_key(), key);
+        assert_eq!(
+            action.canonical_effect_key_bytes(),
+            encoded,
+            "action case={case}"
+        );
+        action.action_id = "act_other".parse().unwrap();
+        assert_eq!(
+            action.canonical_effect_key_bytes(),
+            encoded,
+            "action ID case={case}"
+        );
         assert_eq!(encoded.len(), 79 + lengths.into_iter().sum::<usize>());
         cases += 1;
     }
     assert_eq!(cases, 10005);
     println!(
-        "effect_key_legacy_cases={cases} all_kinds=true attempt_boundaries=true exact_bytes=true"
+        "effect_key_legacy_cases={cases} all_kinds=true attempt_boundaries=true exact_bytes=true direct_action=true action_id_excluded=true"
     );
 }

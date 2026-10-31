@@ -167,7 +167,7 @@ fn timer_input(lease: &TimerLease) -> Result<(ProcessInput, Vec<u8>), PortError>
         .canonical_wire_bytes()
         .map_err(|_invalid| PortError::Invariant)?;
     let mut key = b"penelope.timer-input.v1\0".to_vec();
-    key.extend_from_slice(&lease.timer.action.effect_key().canonical_bytes());
+    key.extend_from_slice(&lease.timer.action.canonical_effect_key_bytes());
     key.extend_from_slice(lease.timer.action.action_id.as_str().as_bytes());
     let digest = ContentDigest::sha256(&key);
     let mut identity = String::from("inp_timer_");

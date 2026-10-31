@@ -299,7 +299,7 @@ pub(crate) fn commit_process(
                 u64::try_from(record_bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?,
             )
             .ok_or(PortError::QuotaExceeded)?;
-        execute_one(&transaction,"INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.effect_key().canonical_bytes(),record_bytes,Digest::of(&record_bytes).0.as_slice()]).map_err(port_error)?;
+        execute_one(&transaction,"INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.canonical_effect_key_bytes(),record_bytes,Digest::of(&record_bytes).0.as_slice()]).map_err(port_error)?;
     }
     let total = u64::try_from(used)
         .map_err(|_negative| PortError::Invariant)?
@@ -552,7 +552,7 @@ fn verify_committed_batch(
                 .query(params![
                     key,
                     action.action_id.as_str(),
-                    action.effect_key().canonical_bytes()
+                    action.canonical_effect_key_bytes()
                 ])
                 .map_err(|error| db_error(&error))?;
             let row = rows

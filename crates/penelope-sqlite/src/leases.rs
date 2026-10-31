@@ -73,7 +73,7 @@ fn outbox_lease(connection: &Connection, lease: &OutboxLease, limit: u32) -> Res
     }
     // A matching lease alone cannot authorize mutation of a damaged action.
     if decode::<ProcessAction>(bytes, checksum)? != lease.record.action
-        || key != lease.record.action.effect_key().canonical_bytes()
+        || key != lease.record.action.canonical_effect_key_bytes()
         || expires != integer(lease.lease_expires_at.0)?
         || attempt != integer(u64::from(lease.record.delivery_attempt).saturating_add(1))?
     {
@@ -160,7 +160,7 @@ impl OutboxStore for SqliteProcessStore {
                     let stored_key = row.get_ref(4).map_err(|error| db_error(&error))?;
                     if !action_in_scope(&action, &request.scope) || action.validate().is_err()
                         || stored_id.as_str().map_err(|_type| PortError::Invariant)? != action.action_id.as_str()
-                        || stored_key.as_blob().map_err(|_type| PortError::Invariant)? != action.effect_key().canonical_bytes()
+                        || stored_key.as_blob().map_err(|_type| PortError::Invariant)? != action.canonical_effect_key_bytes()
                     { return Err(PortError::Invariant); }
                     let attempt: u32 = row.get(2).map_err(|error| db_error(&error))?;
                     if attempt >= MAX_OUTBOX_DELIVERY_ATTEMPTS { return Err(PortError::QuotaExceeded); }
