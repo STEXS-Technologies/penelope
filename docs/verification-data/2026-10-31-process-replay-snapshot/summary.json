@@ -1,0 +1,42 @@
+[
+  {
+    "tool": "1.85.0",
+    "profile": "empty",
+    "interleavings": 20
+  },
+  {
+    "tool": "1.85.0",
+    "profile": "end",
+    "interleavings": 20
+  },
+  {
+    "tool": "1.85.0",
+    "profile": "page",
+    "interleavings": 20
+  },
+  {
+    "tool": "1.85.0",
+    "profile": "whole",
+    "interleavings": 20
+  },
+  {
+    "tool": "stable",
+    "profile": "empty",
+    "interleavings": 20
+  },
+  {
+    "tool": "stable",
+    "profile": "end",
+    "interleavings": 20
+  },
+  {
+    "tool": "stable",
+    "profile": "page",
+    "interleavings": 20
+  },
+  {
+    "tool": "stable",
+    "profile": "whole",
+    "interleavings": 20
+  }
+]
