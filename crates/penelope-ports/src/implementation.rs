@@ -2040,6 +2040,9 @@ impl OutcomeLog {
         }
         let mut expected = u64::try_from(self.outcomes.len())
             .map_err(|_conversion_error| OutcomeLogValidationError::SequenceOverflow)?;
+        if let [outcome] = outcomes {
+            return self.append_one(outcome, expected);
+        }
         let mut new_ids = HashSet::with_capacity(outcomes.len());
         for outcome in outcomes {
             if outcome.validate().is_err() {
@@ -2067,6 +2070,30 @@ impl OutcomeLog {
         }
         self.outcomes.extend_from_slice(outcomes);
         self.seen_outcome_ids.extend(new_ids);
+        Ok(())
+    }
+
+    // Keep the bulk loop unchanged: singleton batches need no temporary ID set.
+    #[inline(never)]
+    fn append_one(
+        &mut self,
+        outcome: &ProcessOutcome,
+        expected: u64,
+    ) -> Result<(), OutcomeLogValidationError> {
+        outcome
+            .validate()
+            .map_err(|_invalid_outcome| OutcomeLogValidationError::InvalidOutcome)?;
+        outcome
+            .validate_for_scope(&self.scope)
+            .map_err(|_scope_mismatch| OutcomeLogValidationError::ScopeMismatch)?;
+        if outcome.sequence != expected {
+            return Err(OutcomeLogValidationError::NonContiguousSequence);
+        }
+        if self.seen_outcome_ids.contains(&outcome.outcome_id) {
+            return Err(OutcomeLogValidationError::DuplicateOutcomeId);
+        }
+        self.outcomes.push(outcome.clone());
+        self.seen_outcome_ids.insert(outcome.outcome_id.clone());
         Ok(())
     }
 
