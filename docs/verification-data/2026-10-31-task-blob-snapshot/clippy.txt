@@ -1,0 +1,4 @@
+    Checking penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Checking penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Checking penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.70s
