@@ -24,6 +24,9 @@ use std::{
 #[path = "support/lease_contracts.rs"]
 mod lease_contracts;
 
+#[path = "support/outbox_race.rs"]
+mod outbox_race;
+
 #[path = "support/pending_inbox.rs"]
 mod pending_inbox;
 
