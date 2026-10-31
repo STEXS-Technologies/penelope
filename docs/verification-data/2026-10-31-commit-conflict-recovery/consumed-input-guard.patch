@@ -1,0 +1,13 @@
+--- a/crates/penelope-sqlite/src/process.rs
++++ b/crates/penelope-sqlite/src/process.rs
+@@ -245,9 +245,7 @@
+     if let Some(input) = &commit.input {
+         duplicate_input = accept_input(&transaction, input, limits)?;
+         let consumed: bool = transaction.query_row("SELECT commit_digest IS NOT NULL FROM process_inbox WHERE process_key=?1 AND input_id=?2", params![process_key,input.input_id.as_str()], |row| row.get(0)).map_err(|error| db_error(&error))?;
+-        if consumed {
+-            return Err(PortError::Conflict);
+-        }
++        let _ = consumed; // negative control: allow input consumption twice
+         if let Some(source) = &commit.canonical_source_event_id {
+             execute_one(
+                 &transaction,

@@ -1,0 +1,22 @@
+{
+  "cpu": 0,
+  "pairs": 24,
+  "warmup": 100,
+  "iterations": 1000,
+  "start_utc": "2026-10-31T04:46:26Z",
+  "note": "Each variant runs ordinary allocator latency, then a separate Rust allocation traffic probe. AB/BA alternating pairs. No other agent-owned builds/tests during measurement.",
+  "kernel": "7.2.9-100.fc43.x86_64",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "baseline": "523eab8a4eb8539267d25573b56f4f77b93d40c7",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "8abcd87488216bb62cadf8d2f01d952eaf935f79d39c6ec9151f72c52e7ab542",
+    "crates/penelope-sqlite/tests/support/task_columns.rs": "5481f2ac57581239bf3e13ccc1020fd65320f980fe1a23efa0af74da4a9e3b4b",
+    "crates/penelope-sqlite/benches/task_reads.rs": "02f459b156cccbd51017c48ef87e6ff1f5dd28256e04ee0d52e1a4743b6dff2c",
+    "crates/penelope-sqlite/benches/task_read_allocations.rs": "1dcd25ef9de8f0b6de2ebe2616300f98c39e7dcabf9b332967ffc3b6502c16fd",
+    "crates/penelope-sqlite/benches/support/task_read_fixture.rs": "bb3abfd3626541a301092cd8060fe28e8cf5c90c9d165145de3a3fdd2c45f790",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "code_commit": "9af39f39e221540656bf792f7be6688d67646e81"
+}

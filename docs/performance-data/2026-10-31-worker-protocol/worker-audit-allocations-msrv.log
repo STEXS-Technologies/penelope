@@ -1,0 +1,4 @@
+   Compiling penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running tests/worker_protocol_allocations.rs (target/worker-audit-msrv/debug/deps/worker_protocol_allocations-c2f2a06b4589f071)
+Protocol allocations: proposal=0, valid request=2, pinned-bound rejection=1

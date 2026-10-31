@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-30T12:47:38.474988+00:00",
+  "revisions": {
+    "before": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+    "after": "24c02fadb9f0080bfe5e0eb1a797ad0d19726fb1"
+  },
+  "cpu": 0,
+  "capacity": 65536,
+  "runs": 3,
+  "repetitions": 1000000,
+  "fixture_sha256": "37030fb6b0ffad305aed9b8748bff2f04f5fa55b614311059a5f98bc0d37ae15",
+  "runner_sha256": "5e1fa8657739e52224a477f78b7821a9b49b1b98f7e6523759b215b267825a0c",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "valgrind": "valgrind-3.27.1",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "snapshots": {
+    "before": {
+      "lock_sha256": "5e1cba239f7b8e81a4238a1507cc9f16e04c3789a8aca5a9d81d0e9329eb50fe",
+      "binary_sha256": "205e7ffcca793352bf76421c91bececd7b90f29c63c8cbc3944afdb249b62101",
+      "fixture_sha256": "37030fb6b0ffad305aed9b8748bff2f04f5fa55b614311059a5f98bc0d37ae15"
+    },
+    "after": {
+      "lock_sha256": "461abc6e2125e821baa67d260648f85ff332c674e75db3d3fdf4d084e6b303eb",
+      "binary_sha256": "e1f498b524b0b97277c625a981811bbbd944d7c1dd446e9ccc9ede2e2c893217",
+      "fixture_sha256": "37030fb6b0ffad305aed9b8748bff2f04f5fa55b614311059a5f98bc0d37ae15"
+    }
+  },
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null,
+    "CARGO_PROFILE_RELEASE_LTO": null
+  },
+  "scope": "fixed in-memory ports, complete lifecycle including recovery; not SQLite/process adapters",
+  "limitations": [
+    "Massif maximum retained sample, not static worst-case bound",
+    "whole-process stack and RSS include fixtures/startup; not incremental supervisor cost",
+    "one native warmup per revision/path; OS caches and CPU frequency uncontrolled",
+    "native timing excludes compilation; no cold-cache claim",
+    "separate locked builds; no dependency version substitution"
+  ]
+}

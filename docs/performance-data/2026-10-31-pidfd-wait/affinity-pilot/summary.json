@@ -1,0 +1,258 @@
+{
+  "dispatch/fresh_runtime_and_store/dispatch_start_return_ns": {
+    "baseline_median_ns": 3447083.5,
+    "candidate_median_ns": 3407356.5,
+    "paired_median_percent": -1.2438656266441361,
+    "paired_bootstrap_95_percent": [
+      -10.5553011443142,
+      2.636609665762979
+    ],
+    "all_paired_percent": [
+      -10.5553011443142,
+      -4.1767394988377005,
+      -1.1524815108192143,
+      -1.2438656266441361,
+      2.636609665762979
+    ]
+  },
+  "dispatch/fresh_runtime_and_store/dispatch_to_durable_completion_and_fence_ns": {
+    "baseline_median_ns": 6040426.0,
+    "candidate_median_ns": 6133771.5,
+    "paired_median_percent": -0.5083085199619974,
+    "paired_bootstrap_95_percent": [
+      -43.587940584003306,
+      14.977471263910736
+    ],
+    "all_paired_percent": [
+      -43.587940584003306,
+      -39.379376213817,
+      -0.5083085199619974,
+      14.977471263910736,
+      2.969100564806726
+    ]
+  },
+  "dispatch/fresh_runtime_and_store/dispatch_to_host_checkpoint_ack_ns": {
+    "baseline_median_ns": 4177660.0,
+    "candidate_median_ns": 4133715.5,
+    "paired_median_percent": -1.0917116280405814,
+    "paired_bootstrap_95_percent": [
+      -34.754925583366926,
+      4.149802708662853
+    ],
+    "all_paired_percent": [
+      -34.754925583366926,
+      -33.54638956769184,
+      -0.9117038307309699,
+      -1.0917116280405814,
+      4.149802708662853
+    ]
+  },
+  "dispatch/fresh_runtime_and_store/intent_commit_ns": {
+    "baseline_median_ns": 630333.5,
+    "candidate_median_ns": 630238.5,
+    "paired_median_percent": 1.4320990396353706,
+    "paired_bootstrap_95_percent": [
+      -4.364563787958586,
+      2.997481602295804
+    ],
+    "all_paired_percent": [
+      -4.364563787958586,
+      -1.4505546261518676,
+      2.997481602295804,
+      1.4320990396353706,
+      1.8421989239675085
+    ]
+  },
+  "dispatch/fresh_runtime_and_store/setup_ns": {
+    "baseline_median_ns": 4408777.5,
+    "candidate_median_ns": 4349557.5,
+    "paired_median_percent": -0.25169108670147766,
+    "paired_bootstrap_95_percent": [
+      -29.762663096636633,
+      2.395268998550071
+    ],
+    "all_paired_percent": [
+      -24.272509056160573,
+      -29.762663096636633,
+      -0.25169108670147766,
+      -0.09225140764032025,
+      2.395268998550071
+    ]
+  },
+  "dispatch/reused_runtime_and_store/dispatch_start_return_ns": {
+    "baseline_median_ns": 2978407.0,
+    "candidate_median_ns": 2998220.5,
+    "paired_median_percent": -0.9138332584685882,
+    "paired_bootstrap_95_percent": [
+      -4.607812611308859,
+      3.7566968732257733
+    ],
+    "all_paired_percent": [
+      -1.8080422077507596,
+      -4.607812611308859,
+      -0.9138332584685882,
+      3.7566968732257733,
+      0.6652381625479764
+    ]
+  },
+  "dispatch/reused_runtime_and_store/dispatch_to_durable_completion_and_fence_ns": {
+    "baseline_median_ns": 5662326.0,
+    "candidate_median_ns": 5806709.5,
+    "paired_median_percent": 3.051529150084731,
+    "paired_bootstrap_95_percent": [
+      -39.92070682266255,
+      4.639833524244286
+    ],
+    "all_paired_percent": [
+      -39.92070682266255,
+      -23.423291049169627,
+      4.639833524244286,
+      3.783998019658652,
+      3.051529150084731
+    ]
+  },
+  "dispatch/reused_runtime_and_store/dispatch_to_host_checkpoint_ack_ns": {
+    "baseline_median_ns": 3769822.5,
+    "candidate_median_ns": 3733352.0,
+    "paired_median_percent": -0.755765026072186,
+    "paired_bootstrap_95_percent": [
+      -35.44452196089017,
+      4.407425256136754
+    ],
+    "all_paired_percent": [
+      -35.44452196089017,
+      -3.164319169672769,
+      -0.755765026072186,
+      4.407425256136754,
+      -0.6693600782592735
+    ]
+  },
+  "dispatch/reused_runtime_and_store/intent_commit_ns": {
+    "baseline_median_ns": 676372.5,
+    "candidate_median_ns": 669689.5,
+    "paired_median_percent": -0.7929221992151847,
+    "paired_bootstrap_95_percent": [
+      -5.54438520259366,
+      1.7947747468390896
+    ],
+    "all_paired_percent": [
+      -1.5856452550447653,
+      -5.54438520259366,
+      0.18658357635770173,
+      1.7947747468390896,
+      -0.7929221992151847
+    ]
+  },
+  "dispatch/reused_runtime_and_store/setup_ns": {
+    "baseline_median_ns": 100.0,
+    "candidate_median_ns": 70.0,
+    "paired_median_percent": -30.000000000000004,
+    "paired_bootstrap_95_percent": [
+      -51.72413793103448,
+      125.83333333333333
+    ],
+    "all_paired_percent": [
+      -36.36363636363637,
+      -51.72413793103448,
+      0.0,
+      -30.000000000000004,
+      125.83333333333333
+    ]
+  },
+  "fence-remote/exited": {
+    "baseline_median_ns": 1239606.5,
+    "candidate_median_ns": 1222558.5,
+    "paired_median_percent": 1.5194575889290851,
+    "paired_bootstrap_95_percent": [
+      -6.073655920381416,
+      2.9059187065949788
+    ],
+    "all_paired_percent": [
+      -6.073655920381416,
+      -1.3752751377150707,
+      2.9059187065949788,
+      2.462063847374485,
+      1.5194575889290851
+    ]
+  },
+  "fence-remote/live": {
+    "baseline_median_ns": 2294720.5,
+    "candidate_median_ns": 1267335.0,
+    "paired_median_percent": -44.326145537851346,
+    "paired_bootstrap_95_percent": [
+      -46.79429594429947,
+      -42.88439485331656
+    ],
+    "all_paired_percent": [
+      -46.79429594429947,
+      -42.88439485331656,
+      -43.67098326821504,
+      -45.069054584491894,
+      -44.326145537851346
+    ]
+  },
+  "fence-remote/repeated": {
+    "baseline_median_ns": 85951.0,
+    "candidate_median_ns": 85204.5,
+    "paired_median_percent": -0.6927292486328507,
+    "paired_bootstrap_95_percent": [
+      -4.017618267124023,
+      0.353929143503251
+    ],
+    "all_paired_percent": [
+      -1.6201091319472671,
+      -4.017618267124023,
+      -0.6927292486328507,
+      0.14107771618689924,
+      0.353929143503251
+    ]
+  },
+  "fence/exited": {
+    "baseline_median_ns": 1234546.0,
+    "candidate_median_ns": 1219983.0,
+    "paired_median_percent": -1.364583409130049,
+    "paired_bootstrap_95_percent": [
+      -3.2886691373828936,
+      3.510561777365928
+    ],
+    "all_paired_percent": [
+      -1.364583409130049,
+      -3.2886691373828936,
+      1.6271104433011052,
+      -1.9502464000208275,
+      3.510561777365928
+    ]
+  },
+  "fence/live": {
+    "baseline_median_ns": 1305168.0,
+    "candidate_median_ns": 1278887.0,
+    "paired_median_percent": -2.197133933214812,
+    "paired_bootstrap_95_percent": [
+      -4.540634650099418,
+      0.8039410808414305
+    ],
+    "all_paired_percent": [
+      -4.540634650099418,
+      -3.5082073725374863,
+      -2.197133933214812,
+      0.8039410808414305,
+      -1.4095049436839036
+    ]
+  },
+  "fence/repeated": {
+    "baseline_median_ns": 86547.5,
+    "candidate_median_ns": 86257.0,
+    "paired_median_percent": -1.3937763058027963,
+    "paired_bootstrap_95_percent": [
+      -6.5217624644448025,
+      0.3722537587772523
+    ],
+    "all_paired_percent": [
+      0.3722537587772523,
+      0.26269600492845324,
+      -6.5217624644448025,
+      -1.3937763058027963,
+      -1.4760680551142435
+    ]
+  }
+}

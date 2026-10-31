@@ -1,0 +1,22 @@
+{
+  "clippy.txt.gz": "57b20808c875e08751e96aa173f251fff68fe08753a6ad77011562c2fa14688d",
+  "fmt.txt.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+  "focused.txt.gz": "89e0ad1ef6b06b9dce014ddc6a29e2459a9c5f423fb5de1eba5d5d06aa3863a4",
+  "graph.txt.gz": "249ef6a7303a2e534ec7473db69c3312a93a63a4e67e27b1cf5fc7bfe093e37f",
+  "layers.txt.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+  "metadata.json": "ebff2632f42bff58521589b5171e5e820f1c2f9940c98d4b538d4887b8a52bbd",
+  "msrv-repetitions.json": "60d43f73b3cc0aa27a11b3798dc6c9f204206802e39782b26709c76d1f119c1a",
+  "msrv-repetitions.txt.gz": "6b358aafd749fef65699d22c5ed89cda340230c37f41f6c60e132148c4d575eb",
+  "msrv-sqlite.txt.gz": "88e9ce84d5a009ebf338579395d20bb8ef1e65a9b61a3517f2b471a5ec230685",
+  "negative-commit-ack.txt.gz": "e85e5c1d89c39b2b76146931b6e1ec2d39c578897f6ebf318ad8d5d348fd73e1",
+  "negative-inbox-ack.txt.gz": "b059a35396dbcff53feaf317fda1a393d25c8b838ddaa6dbbb465083c2d0a5a4",
+  "negative-rollback.txt.gz": "04f391d19c33974181f7fd073971e27090f770d3a7869594ec5e51ce836223f8",
+  "negative.py": "07c2ffd24701c2ce188b5dbb8720ef56390b52c8420ba8dd4266c908dca74d76",
+  "qualification.json": "856a94af37d3fb0c2c466a3caef97f07527af38edd429972462672982af9c001",
+  "repeat.py": "ab72411e55b351b0702e88d818e3801c6fffdd90c4ebf8a97764c208c5abaee0",
+  "source-hashes.json": "291a496206c5c3268a6b7d4fc4f07ba344f7cf1097cfef61192b112ebd5a9332",
+  "stable-repetitions.json": "d61428bf2658e3abbe27e9ad067fc097a924a025199d4f26fa18e4b5c7898c29",
+  "stable-repetitions.txt.gz": "d1be34e3b82345ca11157863bcfcd0a2584e3dfcdb7f1003040f3840e22321d4",
+  "stable-workspace.txt.gz": "b1e0e005cebb498f299e8d4047dd61c241c647d99bdb7439ab9d75dba603a503",
+  "verify.py": "b4baf89be3dc1db8f242f3517b0baa5f4da72b3995ce994bea954c699f53425b"
+}

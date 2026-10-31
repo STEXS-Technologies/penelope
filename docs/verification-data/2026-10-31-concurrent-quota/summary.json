@@ -1,0 +1,49 @@
+{
+  "processes": 20,
+  "test_executions": 40,
+  "races": 180,
+  "admitted_requests": 360,
+  "race_winners": 180,
+  "race_quota_rejections": 180,
+  "serial_model_rejections": 360,
+  "reopened_duplicate_retries": 180,
+  "reopened_loser_rejections": 180,
+  "observed_winners": {
+    "bytes/inbox-inbox": [
+      4,
+      16
+    ],
+    "bytes/payload-commit": [
+      6,
+      14
+    ],
+    "bytes/payload-inbox": [
+      14,
+      6
+    ],
+    "bytes/payload-payload-cross-definition": [
+      11,
+      9
+    ],
+    "bytes/payload-timer": [
+      10,
+      10
+    ],
+    "scopes/inbox-inbox": [
+      7,
+      13
+    ],
+    "scopes/payload-commit": [
+      4,
+      16
+    ],
+    "scopes/payload-inbox": [
+      11,
+      9
+    ],
+    "scopes/payload-payload": [
+      7,
+      13
+    ]
+  }
+}

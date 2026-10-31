@@ -1,0 +1,10 @@
+{
+  "baseline_commit": "8b6ff6d46497ac2cc95472b743ace0da41c4cf54",
+  "test": "replay_cache::maximum_pages_refresh_across_workers_and_reject_corrupted_last_rows",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "c0d2a59d740f5885a80fb282846cdaf8171b99aa5cfe960959b3c9a3c1ca0797",
+    "crates/penelope-sqlite/tests/support/replay_cache.rs": "7df7db0ee3b1eeff5f24ea215ae9ad916fb0393defc74cb75bf464fc27e64f9f"
+  },
+  "control": "In read_outcomes only, replace decode(bytes,checksum) with decode(bytes, penelope_domain::ContentDigest::sha256(bytes).0.as_slice()); retain the stored-checksum borrow. Restore production source afterward.",
+  "control_exit": 101
+}

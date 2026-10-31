@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-30T10:36:04.002283+00:00",
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null
+  },
+  "revision": "ddadbed024527d97ec3c607c799703e102954bcf",
+  "tracked_diff": "diff --git a/crates/penelope-sqlite/Cargo.toml b/crates/penelope-sqlite/Cargo.toml\nindex 0333757..e38eeeb 100644\n--- a/crates/penelope-sqlite/Cargo.toml\n+++ b/crates/penelope-sqlite/Cargo.toml\n@@ -23,3 +23,7 @@ tempfile = \"3\"\n \n [lints]\n workspace = true\n+\n+[[bench]]\n+name = \"durable_store\"\n+harness = false\n",
+  "benchmark_sha256": "dd2a1b727aca20fa8a825f53edcd1a7740090d1412c47f8113bb217e61fcf456",
+  "cargo_lock_sha256": "461abc6e2125e821baa67d260648f85ff332c674e75db3d3fdf4d084e6b303eb",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": 0,
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "filesystem": {
+    "filesystems": [
+      {
+        "target": "/home",
+        "source": "/dev/nvme0n1p3[/home]",
+        "fstype": "btrfs",
+        "options": "rw,noatime,seclabel,compress=zstd:1,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/home"
+      }
+    ]
+  },
+  "data_parent": "/home/ac/projects/penelope/target",
+  "runs": 3,
+  "cold_cache": false,
+  "cache_policy": "OS cache uncontrolled; no global cache eviction",
+  "sync_policy": "SQLite WAL with synchronous=FULL; no fsync bypass",
+  "peak_rss_scope": "entire benchmark process and its database-worker thread; KiB",
+  "allocations": "not measured",
+  "supervisor_stack": "not measured",
+  "external_worker_execution": "not measured"
+}

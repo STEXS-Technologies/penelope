@@ -1,0 +1,78 @@
+{
+  "rows": 96,
+  "timers": 12288,
+  "latency": [
+    {
+      "campaign": 0,
+      "metric": "schedule_ns",
+      "change_pct": 0.04986417823020955,
+      "ci_low": -2.3837004469054337,
+      "ci_high": 2.8794546250422903,
+      "one_median_ns_per_timer": 721413.421875,
+      "two_median_ns_per_timer": 719940.26171875
+    },
+    {
+      "campaign": 0,
+      "metric": "delivery_ns",
+      "change_pct": 2.3639111593265945,
+      "ci_low": -0.5718884752063583,
+      "ci_high": 5.471385542154807,
+      "one_median_ns_per_timer": 2036745.890625,
+      "two_median_ns_per_timer": 2058518.328125
+    },
+    {
+      "campaign": 0,
+      "metric": "consume_ns",
+      "change_pct": 0.8194661117827478,
+      "ci_low": -1.2716507483684436,
+      "ci_high": 3.7212597242072367,
+      "one_median_ns_per_timer": 1450831.9609375,
+      "two_median_ns_per_timer": 1465223.8828125
+    },
+    {
+      "campaign": 0,
+      "metric": "managed_ns",
+      "change_pct": 1.4408599873163548,
+      "ci_low": -0.9821394486871811,
+      "ci_high": 4.426247602318548,
+      "one_median_ns_per_timer": 4192652.10546875,
+      "two_median_ns_per_timer": 4233252.23046875
+    },
+    {
+      "campaign": 1,
+      "metric": "schedule_ns",
+      "change_pct": 5.136288861202813,
+      "ci_low": -0.47457142310007044,
+      "ci_high": 12.452520078650272,
+      "one_median_ns_per_timer": 736713.1875,
+      "two_median_ns_per_timer": 724083.66015625
+    },
+    {
+      "campaign": 1,
+      "metric": "delivery_ns",
+      "change_pct": 1.4804618578182154,
+      "ci_low": -3.4917702675594327,
+      "ci_high": 8.036674641331718,
+      "one_median_ns_per_timer": 2067746.71484375,
+      "two_median_ns_per_timer": 2012000.83203125
+    },
+    {
+      "campaign": 1,
+      "metric": "consume_ns",
+      "change_pct": 2.9013064279026524,
+      "ci_low": 0.5672429168580688,
+      "ci_high": 5.118885612660384,
+      "one_median_ns_per_timer": 1489922.4375,
+      "two_median_ns_per_timer": 1492919.4453125
+    },
+    {
+      "campaign": 1,
+      "metric": "managed_ns",
+      "change_pct": 2.5360716404678008,
+      "ci_low": -0.32939614024321856,
+      "ci_high": 6.849234248322772,
+      "one_median_ns_per_timer": 4287703.140625,
+      "two_median_ns_per_timer": 4198679.734375
+    }
+  ]
+}

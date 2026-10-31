@@ -1,0 +1,11 @@
+{
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "started_unix": 1793444363.7064703,
+  "ended_unix": 1793444445.4216084,
+  "timing_processes": 96,
+  "profiles_per_process": 15,
+  "timed_calls_per_profile": 1000,
+  "warmups_per_profile": 100,
+  "filesystem": "btrfs"
+}

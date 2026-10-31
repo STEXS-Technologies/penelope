@@ -1,0 +1,9 @@
+{
+  "outbox": 1,
+  "timer": 1,
+  "tenant_id": 101,
+  "process_id": 101,
+  "definition_id": 101,
+  "definition_version": 101,
+  "definition_digest": 101
+}

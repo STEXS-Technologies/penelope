@@ -1,0 +1,175 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "penelope-sqlite",
+    "--all-features",
+    "--lib",
+    "tasks::commit_boundary_tests",
+    "--",
+    "--nocapture"
+  ],
+  "repetitions": [
+    {
+      "index": 0,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 1,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 2,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 3,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 4,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 5,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 6,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 7,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 8,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 9,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 10,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 11,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 12,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 13,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 14,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 15,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 16,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 17,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 18,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    },
+    {
+      "index": 19,
+      "exit_code": 0,
+      "counts": {
+        "deferred_task_append_cases": 9,
+        "deferred_first_intent_cases": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+diff --git a/crates/penelope-process-runtime/src/runtime.rs b/crates/penelope-process-runtime/src/runtime.rs
+index bc1d0da..edd9c59 100644
+--- a/crates/penelope-process-runtime/src/runtime.rs
++++ b/crates/penelope-process-runtime/src/runtime.rs
+@@ -516,40 +516,36 @@ fn stop_identity(
+     let deadline = Instant::now()
+         .checked_add(timeout)
+         .ok_or(TaskPortError::Runtime)?;
++    wait_for_exit(&fd, deadline)?;
++    // A dropped Child handle does not reap its process. Reconstruction in the
++    // same parent releases that zombie through the pinned pidfd. Non-child
++    // workers are reaped by their parent; readiness already proved exit.
++    match waitid(
++        WaitId::PidFd(fd.as_fd()),
++        WaitIdOptions::EXITED | WaitIdOptions::NOHANG,
++    ) {
++        Ok(Some(_)) | Err(rustix::io::Errno::CHILD) => Ok(()),
++        Ok(None) | Err(_) => Err(TaskPortError::Runtime),
++    }
++}
++fn wait_for_exit(fd: &impl AsFd, deadline: Instant) -> Result<(), TaskPortError> {
+     loop {
+-        let mut descriptors = [rustix::event::PollFd::new(
+-            &fd,
+-            rustix::event::PollFlags::IN,
+-        )];
+-        rustix::event::poll(
+-            &mut descriptors,
+-            Some(&rustix::event::Timespec {
+-                tv_sec: 0,
+-                tv_nsec: 0,
+-            }),
+-        )
+-        .map_err(|_poll| TaskPortError::Runtime)?;
++        let remaining = deadline.saturating_duration_since(Instant::now());
++        let timeout = rustix::event::Timespec::try_from(remaining)
++            .map_err(|_timeout| TaskPortError::Runtime)?;
++        let mut descriptors = [rustix::event::PollFd::new(fd, rustix::event::PollFlags::IN)];
++        rustix::event::poll(&mut descriptors, Some(&timeout))
++            .map_err(|_poll| TaskPortError::Runtime)?;
+         if descriptors.first().is_some_and(|descriptor| {
+             descriptor
+                 .revents()
+                 .intersects(rustix::event::PollFlags::IN | rustix::event::PollFlags::HUP)
+         }) {
+-            // A dropped Child handle does not reap its process. Reconstruction
+-            // in the same parent must release that zombie through the pinned
+-            // pidfd, never a PID that could have been reused. Non-child workers
+-            // are reaped by their own parent; readiness already proved exit.
+-            return match waitid(
+-                WaitId::PidFd(fd.as_fd()),
+-                WaitIdOptions::EXITED | WaitIdOptions::NOHANG,
+-            ) {
+-                Ok(Some(_)) | Err(rustix::io::Errno::CHILD) => Ok(()),
+-                Ok(None) | Err(_) => Err(TaskPortError::Runtime),
+-            };
++            return Ok(());
+         }
+         if Instant::now() >= deadline {
+             return Err(TaskPortError::Runtime);
+         }
+-        std::thread::sleep(Duration::from_millis(1));
+     }
+ }
+ 

@@ -1,0 +1,13 @@
+{
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "crates/penelope-ports/src/implementation.rs": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5",
+  "crates/penelope-ports/tests/support/timer_claim_fixture.rs": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+  "crates/penelope-sqlite/Cargo.toml": "967ff8c88eef3631745d32e4f173a31ec880d5b239d0f31e09cbcb32acece0de",
+  "crates/penelope-sqlite/benches/lease_claim_profile_allocations.rs": "387c743e83dc131f2c07e93e65736d78b6be8ba1ee1873a3d0c2ee093fccc3d0",
+  "crates/penelope-sqlite/benches/lease_claim_profiles.rs": "9afb0e53d4bd58fe875d90261fccb30d48a6cd64d455d24e75cd13ea4d3cea1c",
+  "crates/penelope-sqlite/benches/support/lease_claim_fixture.rs": "a382ed33ae32fa463afc01b81feb51f77fcc501ec25e9498d3805034128ec053",
+  "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02",
+  "crates/penelope-sqlite/src/lease_scope_tests.rs": "bbe12f06a0c7b94c5ffcaa4f1a9ac6c4fdeb82c7047cac5ea9fbe93fc3fc482b",
+  "crates/penelope-sqlite/src/leases.rs": "8ecef768c129c2ad4ca246bb09cee80e7f7ae52c25cd23baf4da86cabd00a9eb",
+  "crates/penelope-sqlite/tests/lease_claim_profile_allocations.rs": "24070ba1d6cb1389563cc2a5ae84ff7332cfce7151d6fe2b12ebf00741322ec1"
+}

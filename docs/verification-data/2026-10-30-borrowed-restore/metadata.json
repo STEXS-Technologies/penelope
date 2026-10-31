@@ -1,0 +1,42 @@
+{
+  "candidate": "7d2a2b9",
+  "logs": [
+    {
+      "file": "borrowed-restore-workspace.log.gz",
+      "original_sha256": "bf59ea72c7f1de282c5db22c6d8d58987d4bd6dea67652fc7982918ae8859abf",
+      "archive_sha256": "790010a1e20838cb62a88f095aa2095d20e95ec349b3e149426b52a35165aeed"
+    },
+    {
+      "file": "borrowed-restore-msrv.log.gz",
+      "original_sha256": "650eca4288a67a96fb273d860885dd7d5bc6dd45101bc43c423257eb300f0655",
+      "archive_sha256": "243e0a301754d3c9ff61e00831ad06b19a79cc752eb9e701698d427a225a68fa"
+    },
+    {
+      "file": "borrowed-restore-clippy.log.gz",
+      "original_sha256": "e7f1351e31b6a5e0350cdd7fa19cd8eed790faa10f54c02b262a62ee3177cbb8",
+      "archive_sha256": "74168f7c33c15cca918a7c3e63a1db9851a1d0413fd369d0f2b7c1311e76c2cc"
+    },
+    {
+      "file": "borrowed-restore-allocations.log.gz",
+      "original_sha256": "ad982f995be59f2f41e3d8e1c213502747f510baaf53b2bbc288b80fb701b8bf",
+      "archive_sha256": "0ca778d2f7bbda3b5a85f5bce50f2fe00e1bc50cc71f71c67c1e7e989509ea40"
+    },
+    {
+      "file": "borrowed-restore-coverage.log.gz",
+      "original_sha256": "be89bd7f28e3ad5033bd3a5716d3795d2e78c18ce8e3a130668be05560f69916",
+      "archive_sha256": "095bde0c02bb6d1a91cc8a2eb8a17066d59ff1d973cea2836092a6adcda3fbb6"
+    },
+    {
+      "file": "borrowed-restore-graph.log.gz",
+      "original_sha256": "43d3456da76e11d4690b8f0ec044d337a509600adbbfc3322eb79cab558d9a15",
+      "archive_sha256": "cdb96ddce958223e8e3a4af80277a16e94a562434010bee894da2aeff6373c26"
+    }
+  ],
+  "coverage_lines": {
+    "count": 9445,
+    "covered": 8889,
+    "percent": 94.1132874536792
+  },
+  "ratchet_percent": 94.0759,
+  "scope": "Recorded correctness checks, not final release qualification"
+}

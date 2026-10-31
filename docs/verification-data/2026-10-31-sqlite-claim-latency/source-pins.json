@@ -1,0 +1,6 @@
+{
+  "benchmark_commit": "fa817f713e73ddbad71e77633d861424dbc974b1",
+  "indexed_source": "5966fe2b32b3b5ac53c3ed049294e20e5ab25618",
+  "pre_index_source": "4f1a0f39cc84974d81aaf67c48f9ecee3db41fda",
+  "rejected_candidate": "Uncommitted experiment on indexed_source. Original build candidate_source records parent HEAD, not a clean candidate commit; exact schema snapshot/hash identifies the compiled experiment. Production helper restored to indexed source."
+}

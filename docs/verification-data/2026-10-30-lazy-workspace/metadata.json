@@ -1,0 +1,57 @@
+{
+  "candidate": "b5cd836",
+  "logs": [
+    {
+      "path": "lazy-workspace-tests.log.gz",
+      "original_sha256": "4e95398f97da58f1e43176771c39bb338dc21eb0a321d96e105860cbba16e915",
+      "archive_sha256": "18a0f3d7574261b25783eab1895c7099b5551dd1928cc70df9bb8372e92b73dd"
+    },
+    {
+      "path": "lazy-workspace-clippy.log.gz",
+      "original_sha256": "f4ffcf2fe914dc40eac2fc4d285cc5cda304894d6b07b03ae3eb659d4bccefac",
+      "archive_sha256": "a41f3ec4ade834cd165587023852fd54f0130a37d71ffc763ca505ec19a29401"
+    },
+    {
+      "path": "lazy-workspace-msrv.log.gz",
+      "original_sha256": "064dde7d38b2f056c9b112c2bbe23257f3754436ba6e97cc41c06610fad989dc",
+      "archive_sha256": "7814cd910c96a264f8271b7f51c4c92e42af1a453f94ea749bf6cc0c1c15a74e"
+    },
+    {
+      "path": "lazy-workspace-allocations.log.gz",
+      "original_sha256": "84908eaf4cd87e947b62bc03d3d20475cff3306c89454c6695b146af3d251812",
+      "archive_sha256": "245805d4238da22499489ed22e74468e9734e51aaf4a5b7270afd748568cbc97"
+    },
+    {
+      "path": "lazy-workspace-full.log.gz",
+      "original_sha256": "b4089be616ca272b92a9e3d5b3d7ce1d6eaa71e57de23d13927a66c24b2c152d",
+      "archive_sha256": "4935d83d98caa111f6e52c3f83d02f64478fd35a57d276bdf7042a85851fe040"
+    },
+    {
+      "path": "lazy-workspace-graph.log.gz",
+      "original_sha256": "92a721c39f705ef28df41580594df31d0b6222caea4ff9941a5c82d4ec6b3213",
+      "archive_sha256": "f1fd61d725eff436842c748268c6e1885992c3ec6a5997284aecae356e1bb24f"
+    },
+    {
+      "path": "lazy-workspace-riscv.log.gz",
+      "original_sha256": "fc624d58153a521094524a1710712745a2e7ddf3db2f84126e7492bba06c114b",
+      "archive_sha256": "404fb12b1961a7487d1c50ea88e5c7bcbb1686fc8fbf026354a80c13b857e174"
+    },
+    {
+      "path": "lazy-workspace-doc.log.gz",
+      "original_sha256": "c7bd0465581d54123becfb74abb00cace21239f1f4d0cbe523358464dead1e93",
+      "archive_sha256": "4d3ee740a6d7529158c3862d979d80857dfdeb107d21898cd19157400f399947"
+    },
+    {
+      "path": "lazy-workspace-coverage.log.gz",
+      "original_sha256": "5da3d2cd291d232296a53dd83845b6ec3ce875dcbfe1ff3a81fd55a93adc51ba",
+      "archive_sha256": "385aa1e1a328054b1b255ef8edbcb0fec342b85b254c0ce2a7a9a6acb1983797"
+    }
+  ],
+  "coverage_lines": {
+    "count": 9435,
+    "covered": 8879,
+    "percent": 94.10704822469529
+  },
+  "ratchet_percent": 94.0759,
+  "scope": "Checks listed in logs; not the final release audit or full chaos campaign"
+}

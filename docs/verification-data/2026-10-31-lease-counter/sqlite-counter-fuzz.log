@@ -1,0 +1,18 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+   Compiling penelope-fuzz v0.0.0 (/home/ac/projects/penelope/fuzz)
+    Finished `release` profile [optimized + debuginfo] target(s) in 6.35s
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.05s
+     Running `target/x86_64-unknown-linux-gnu/release/fuzz_sqlite_process -artifact_prefix=/home/ac/projects/penelope/fuzz/artifacts/fuzz_sqlite_process/ -runs=100000 -seed=7 /home/ac/projects/penelope/fuzz/corpus/fuzz_sqlite_process`
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 7
+INFO: Loaded 1 modules   (25450 inline 8-bit counters): 25450 [0x55b9aade4740, 0x55b9aadeaaaa), 
+INFO: Loaded 1 PC tables (25450 PCs): 25450 [0x55b9aadeaab0,0x55b9aae4e150), 
+INFO:     1011 files found in /home/ac/projects/penelope/fuzz/corpus/fuzz_sqlite_process
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: seed corpus: files: 1011 min: 1b max: 377b total: 28654b rss: 43Mb
+#128	pulse  cov: 3213 ft: 6356 corp: 49/94b exec/s: 64 rss: 234Mb
+#256	pulse  cov: 3219 ft: 6885 corp: 78/194b exec/s: 51 rss: 264Mb
+==3425102== libFuzzer: run interrupted; exiting
+────────────────────────────────────────────────────────────────────────────────
+
+Error: Fuzz target exited with exit status: 72

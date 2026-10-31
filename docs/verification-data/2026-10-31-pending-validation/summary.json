@@ -1,0 +1,59 @@
+{
+  "baseline": {
+    "0": {
+      "allocations": 7,
+      "reallocations": 0,
+      "requested_bytes": 2128,
+      "samples": 128
+    },
+    "1": {
+      "allocations": 9,
+      "reallocations": 0,
+      "requested_bytes": 2338,
+      "samples": 128
+    },
+    "16": {
+      "allocations": 39,
+      "reallocations": 0,
+      "requested_bytes": 5488,
+      "samples": 128
+    }
+  },
+  "candidate": {
+    "0": {
+      "allocations": 7,
+      "reallocations": 0,
+      "requested_bytes": 480,
+      "samples": 128
+    },
+    "1": {
+      "allocations": 8,
+      "reallocations": 0,
+      "requested_bytes": 2272,
+      "samples": 128
+    },
+    "16": {
+      "allocations": 8,
+      "reallocations": 0,
+      "requested_bytes": 2272,
+      "samples": 128
+    }
+  },
+  "savings": {
+    "0": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 1648
+    },
+    "1": {
+      "allocations": 1,
+      "reallocations": 0,
+      "requested_bytes": 66
+    },
+    "16": {
+      "allocations": 31,
+      "reallocations": 0,
+      "requested_bytes": 3216
+    }
+  }
+}

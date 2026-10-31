@@ -1,0 +1,20 @@
+{
+  "parent": "459780941807379174f15b4c3a79a321d9cb758a",
+  "unchanged_release_sources": [
+    "crates/penelope-sqlite/src/authority.rs",
+    "crates/penelope-sqlite/src/inbox.rs",
+    "crates/penelope-sqlite/src/leases.rs",
+    "crates/penelope-sqlite/src/lib.rs",
+    "crates/penelope-sqlite/src/lifecycle.rs",
+    "crates/penelope-sqlite/src/payloads.rs",
+    "crates/penelope-sqlite/src/process.rs",
+    "crates/penelope-sqlite/src/schema.rs",
+    "crates/penelope-sqlite/src/task_decode.rs",
+    "crates/penelope-sqlite/src/tasks.rs",
+    "crates/penelope-sqlite/src/worker.rs"
+  ],
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+  "cases_per_repetition": 16,
+  "repetitions_per_toolchain": 20
+}

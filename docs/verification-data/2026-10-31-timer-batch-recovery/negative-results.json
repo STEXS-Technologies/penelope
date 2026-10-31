@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "name": "report",
+      "case": "17-9-8-AckAfter",
+      "marker": "assertion `left == right` failed",
+      "rejected": true
+    },
+    {
+      "name": "receipt",
+      "case": "17-9-8-ReceiptMismatch",
+      "marker": "on an `Ok` value",
+      "rejected": true
+    },
+    {
+      "name": "identity",
+      "case": "17-9-8-AckBefore",
+      "marker": "assertion `left == right` failed",
+      "rejected": true
+    },
+    {
+      "name": "expiry",
+      "case": "17-9-8-AckAfter",
+      "marker": "assertion `left == right` failed",
+      "rejected": true
+    },
+    {
+      "name": "continue-after-failure",
+      "case": "17-9-8-AckBefore",
+      "marker": "on an `Ok` value",
+      "rejected": true
+    },
+    {
+      "name": "consume-twice",
+      "case": "17-9-8-AckAfter",
+      "marker": "assertion `left == right` failed",
+      "rejected": true
+    }
+  ],
+  "restored_sha256": {
+    "crates/penelope-executor/src/services.rs": "01c17fa051446b7bc0337687e9aaaa3fb25271cc68cb980abf8e54503e41bf4e",
+    "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06",
+    "crates/penelope-sqlite/src/leases.rs": "a1b595731f98352aaf2759fd97db8f883b9c6073829d2dcd4451ca100bb20b67",
+    "crates/penelope-sqlite/src/process.rs": "7c04143fc482edacc5afde2734144a4c7d585f4e753db2053791bc84beb26ed8"
+  }
+}

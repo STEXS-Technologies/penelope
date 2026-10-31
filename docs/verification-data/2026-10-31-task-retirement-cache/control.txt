@@ -1,0 +1,21 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+
+thread 'retirement_preserves_fences_and_prevents_resurrection' (420893) panicked at crates/penelope-sqlite/tests/tasks.rs:631:9:
+assertion `left == right` failed
+  left: Ok(None)
+ right: Err(Conflict)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test retirement_preserves_fences_and_prevents_resurrection ... FAILED
+
+failures:
+
+failures:
+    retirement_preserves_fences_and_prevents_resurrection
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 41 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test tasks`

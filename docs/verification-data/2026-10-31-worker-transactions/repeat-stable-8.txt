@@ -1,0 +1,41 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/penelope_sqlite-f950664ad0365ea6)
+
+running 1 test
+
+thread 'penelope-sqlite' (326921) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+committed=false canceled=false closed=false: durable history and queue verified
+
+thread 'penelope-sqlite' (326922) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=false canceled=false closed=true: durable history and queue verified
+
+thread 'penelope-sqlite' (326923) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=false canceled=true closed=false: durable history and queue verified
+
+thread 'penelope-sqlite' (326924) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=false canceled=true closed=true: durable history and queue verified
+
+thread 'penelope-sqlite' (326925) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=true canceled=false closed=false: durable history and queue verified
+
+thread 'penelope-sqlite' (326926) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=true canceled=false closed=true: durable history and queue verified
+
+thread 'penelope-sqlite' (326927) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=true canceled=true closed=false: durable history and queue verified
+
+thread 'penelope-sqlite' (326928) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+committed=true canceled=true closed=true: durable history and queue verified
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.07s
+

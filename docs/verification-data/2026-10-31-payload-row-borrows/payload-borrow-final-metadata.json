@@ -1,0 +1,185 @@
+{
+  "baseline": "ea5a230e847a6eca9c088e8811c458d92fc37d87",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "source_sha256": "0e8569c8c93cb9174bbab3c15b0aca2d04be88595f31fe18dd690ca7caf644b6",
+      "binaries": {
+        "process_payloads": {
+          "path": "target/payload-borrow-baseline-process_payloads",
+          "sha256": "4275b5086b0f1fd10c0c699728c1b10530fd55133fde8672b20a5f9a82c2de47"
+        },
+        "process_payload_allocations": {
+          "path": "target/payload-borrow-baseline-process_payload_allocations",
+          "sha256": "b531c051a68b98be9305f72ef737705f6ab93acb2de4ab8c83b81c020f07b7c1"
+        }
+      }
+    },
+    "nested": {
+      "source_sha256": "6a4b2cc0c0f77c5575ff28fa97f17c1a22dab0247dbcefd6dbe59140d0d84cf1",
+      "binaries": {
+        "process_payloads": {
+          "path": "target/payload-borrow-borrowed-process_payloads",
+          "sha256": "5c2c7f43ad3d23633740a4e18b6db8810f4758cb2cbf213e951da3f9a3e89125"
+        },
+        "process_payload_allocations": {
+          "path": "target/payload-borrow-borrowed-process_payload_allocations",
+          "sha256": "7218ac7784ed04461c8794304029f6bfba938e072a8efddb51eaf864ee42ccb8"
+        }
+      }
+    },
+    "borrowed": {
+      "source_sha256": "5e03ab67fcbdf80cf31812df4e1ca37ebf1167c52c8bc91e5876e4ba2d975b28",
+      "binaries": {
+        "process_payloads": {
+          "path": "target/payload-borrow-final-borrowed-process_payloads",
+          "sha256": "9be6d43a1e05108c3a65a9e3f755016ac344ea6fcd874a8c84c6f4dbe999636d"
+        },
+        "process_payload_allocations": {
+          "path": "target/payload-borrow-final-borrowed-process_payload_allocations",
+          "sha256": "ec5a0064b4dfc092dd64017b0f84931f7424dd0e3837b7c963c6fc536dbf320a"
+        }
+      }
+    }
+  },
+  "fixture_sha256": {
+    "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+    "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+    "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514"
+  },
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 24,
+  "order": [
+    [
+      "baseline",
+      "nested",
+      "borrowed"
+    ],
+    [
+      "baseline",
+      "borrowed",
+      "nested"
+    ],
+    [
+      "nested",
+      "baseline",
+      "borrowed"
+    ],
+    [
+      "nested",
+      "borrowed",
+      "baseline"
+    ],
+    [
+      "borrowed",
+      "baseline",
+      "nested"
+    ],
+    [
+      "borrowed",
+      "nested",
+      "baseline"
+    ],
+    [
+      "baseline",
+      "nested",
+      "borrowed"
+    ],
+    [
+      "baseline",
+      "borrowed",
+      "nested"
+    ],
+    [
+      "nested",
+      "baseline",
+      "borrowed"
+    ],
+    [
+      "nested",
+      "borrowed",
+      "baseline"
+    ],
+    [
+      "borrowed",
+      "baseline",
+      "nested"
+    ],
+    [
+      "borrowed",
+      "nested",
+      "baseline"
+    ],
+    [
+      "baseline",
+      "nested",
+      "borrowed"
+    ],
+    [
+      "baseline",
+      "borrowed",
+      "nested"
+    ],
+    [
+      "nested",
+      "baseline",
+      "borrowed"
+    ],
+    [
+      "nested",
+      "borrowed",
+      "baseline"
+    ],
+    [
+      "borrowed",
+      "baseline",
+      "nested"
+    ],
+    [
+      "borrowed",
+      "nested",
+      "baseline"
+    ],
+    [
+      "baseline",
+      "nested",
+      "borrowed"
+    ],
+    [
+      "baseline",
+      "borrowed",
+      "nested"
+    ],
+    [
+      "nested",
+      "baseline",
+      "borrowed"
+    ],
+    [
+      "nested",
+      "borrowed",
+      "baseline"
+    ],
+    [
+      "borrowed",
+      "baseline",
+      "nested"
+    ],
+    [
+      "borrowed",
+      "nested",
+      "baseline"
+    ]
+  ],
+  "background": "no own builds, tests or graph jobs during timing",
+  "sizes": [
+    0,
+    32,
+    4096,
+    1048576
+  ],
+  "iterations": "1000 below 1 MiB; 128 at 1 MiB",
+  "warmup": "100 below 1 MiB; 32 at 1 MiB; allocation fixture 16 warmups and 16 samples per condition"
+}

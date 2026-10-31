@@ -1,0 +1,122 @@
+[
+  {
+    "toolchain": "stable",
+    "repeat": 0,
+    "exit": 0,
+    "log": "repeat-stable-0.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 1,
+    "exit": 0,
+    "log": "repeat-stable-1.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 2,
+    "exit": 0,
+    "log": "repeat-stable-2.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 3,
+    "exit": 0,
+    "log": "repeat-stable-3.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 4,
+    "exit": 0,
+    "log": "repeat-stable-4.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 5,
+    "exit": 0,
+    "log": "repeat-stable-5.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 6,
+    "exit": 0,
+    "log": "repeat-stable-6.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 7,
+    "exit": 0,
+    "log": "repeat-stable-7.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 8,
+    "exit": 0,
+    "log": "repeat-stable-8.txt"
+  },
+  {
+    "toolchain": "stable",
+    "repeat": 9,
+    "exit": 0,
+    "log": "repeat-stable-9.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 0,
+    "exit": 0,
+    "log": "repeat-1.85.0-0.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 1,
+    "exit": 0,
+    "log": "repeat-1.85.0-1.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 2,
+    "exit": 0,
+    "log": "repeat-1.85.0-2.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 3,
+    "exit": 0,
+    "log": "repeat-1.85.0-3.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 4,
+    "exit": 0,
+    "log": "repeat-1.85.0-4.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 5,
+    "exit": 0,
+    "log": "repeat-1.85.0-5.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 6,
+    "exit": 0,
+    "log": "repeat-1.85.0-6.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 7,
+    "exit": 0,
+    "log": "repeat-1.85.0-7.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 8,
+    "exit": 0,
+    "log": "repeat-1.85.0-8.txt"
+  },
+  {
+    "toolchain": "1.85.0",
+    "repeat": 9,
+    "exit": 0,
+    "log": "repeat-1.85.0-9.txt"
+  }
+]

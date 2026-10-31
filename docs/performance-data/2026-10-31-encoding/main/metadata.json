@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-30T22:16:46.105598+00:00",
+  "revisions": {
+    "before": "2276030fb6f68654fee9bbba8fe8b16b32bb824b",
+    "after": "53734a1d1ceedb971a18c2b108558b6725fbe568"
+  },
+  "serial_cpu": 0,
+  "parallel_cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "runs": 20,
+  "warmup_processes_per_binary": 1,
+  "benchmarks": [
+    "linear_saga",
+    "graph_saga",
+    "replay_saga",
+    "parallel_linear_saga",
+    "parallel_graph_saga",
+    "contract_throughput",
+    "identifier_decode"
+  ],
+  "perf": {
+    "version": "perf version 7.2.9-100.fc43.x86_64",
+    "events": [
+      "task-clock",
+      "instructions",
+      "cycles",
+      "context-switches",
+      "cpu-migrations"
+    ],
+    "scope": "GNU time wrapper and benchmark, including all child threads"
+  },
+  "runner_sha256": "9b473fd4e3404eb750d1abec439d612d1f54e2227014e6c94eaff9f2376ed1ea",
+  "build_target_policy": "separate explicit target directory in each archived snapshot",
+  "order": "alternating before/after by round; fixed benchmark order within each revision",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "CARGO_TARGET_DIR": null,
+    "CARGO_PROFILE_BENCH_OPT_LEVEL": null,
+    "CARGO_PROFILE_BENCH_LTO": null,
+    "CARGO_PROFILE_BENCH_CODEGEN_UNITS": null
+  },
+  "cache_policy": "one warmup; OS caches uncontrolled; no cold-cache claim",
+  "resources": "GNU time process wall/user/system seconds and peak RSS KiB, including threads",
+  "limitations": [
+    "pure in-process workloads, no persistence or external execution",
+    "allocations and stack high-water marks not measured",
+    "RSS is whole-process peak, not incremental library memory",
+    "each revision uses its own locked dependencies; lock hashes disclosed"
+  ],
+  "sources": {
+    "before": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+      "penelope-domain/identifier_decode": "cf165699b2d9a120d777908bd7713285505a306ebf7b70c2f5b593b741cd0d3e"
+    },
+    "after": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+      "penelope-domain/identifier_decode": "cf165699b2d9a120d777908bd7713285505a306ebf7b70c2f5b593b741cd0d3e"
+    }
+  },
+  "locks": {
+    "before": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb",
+    "after": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb"
+  },
+  "binaries": {
+    "before": {
+      "linear_saga": "01afdfa79faa2d61ac704796df2a1c48714cd48cd2fe9c1f3f6f319382ab5aa8",
+      "graph_saga": "c08e35968997d7baa786741bd77b70b5bafdc0c1523d3aae184064e7253257be",
+      "replay_saga": "1e19eb68d92194cd5e954a78ef4ab45a03d3f927fb554d660d5acc27905bfd44",
+      "parallel_linear_saga": "ad8bf5d1b0f84f7c98b74bdd973b4476402c9572c1e864beae753e4fe441d639",
+      "parallel_graph_saga": "ba9eeb2c2fdd7fdadb87aa9d122ea59bcce1dcd7956272083715b2aca89829d5",
+      "contract_throughput": "987f08e263afbf5e997ef5537feff53565549204728717dcf2ff41a0af635ee0",
+      "identifier_decode": "331cbcbc989b2f8b04d7e32617ef9124708f50c20ae48d09434a58108d020ce2"
+    },
+    "after": {
+      "linear_saga": "2063b052083b31515330af0fd0fbf709f1a7324c196b7c50b7c640680bd372bd",
+      "graph_saga": "097a6e272c19a8613fe38c4a8d8bc1f926c76b575025ea6f87f7b96b7be4c9fb",
+      "replay_saga": "b4b39ff6d66573b742458c5dd8e9f996a315a209af70d927277e656f36920104",
+      "parallel_linear_saga": "9170aa73bcb1ce891560565ab73015bcafcd0cb46f0c677a5025e9f6202582d9",
+      "parallel_graph_saga": "4d65cdfe0999da390f71e2ea4ca229419d831580ac361eb254851b7c72248742",
+      "contract_throughput": "eaae5cb7f4ff82d7176d6720c41a1d1d912f4d21acf272f7ee7cc83b2c2f1054",
+      "identifier_decode": "00846c56a56da6dcc0482bdd9dde5b2aeb126e4792c3cc5722c80fc5d7a2e432"
+    }
+  }
+}

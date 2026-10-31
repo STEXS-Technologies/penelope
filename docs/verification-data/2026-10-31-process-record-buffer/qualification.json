@@ -1,0 +1,37 @@
+{
+  "stable": {
+    "command": "cargo test --workspace --exclude penelope-fuzz --all-features --tests",
+    "exit_code": 0,
+    "log": "final-stable.txt.gz"
+  },
+  "msrv": {
+    "command": "CARGO_TARGET_DIR=target/worker-audit-msrv cargo +1.85.0 test -p penelope-sqlite --all-features --tests",
+    "exit_code": 0,
+    "log": "final-msrv.txt.gz"
+  },
+  "msrv-check": {
+    "command": "CARGO_TARGET_DIR=target/worker-audit-msrv cargo +1.85.0 check -p penelope-sqlite --all-features --all-targets",
+    "exit_code": 0,
+    "log": "final-msrv-check.txt.gz"
+  },
+  "clippy": {
+    "command": "cargo clippy --workspace --all-features --all-targets -- -D warnings",
+    "exit_code": 0,
+    "log": "final-clippy.txt.gz"
+  },
+  "fmt": {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0,
+    "log": "final-fmt.txt.gz"
+  },
+  "layers": {
+    "command": "bash scripts/check-layer-boundaries.sh",
+    "exit_code": 0,
+    "log": "final-layers.txt.gz"
+  },
+  "graph": {
+    "command": "graphify update .",
+    "exit_code": 0,
+    "log": "final-graph.txt.gz"
+  }
+}

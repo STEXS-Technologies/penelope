@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "baseline_revision": "0656b7c506c59d576b58bfffc86e98566c40b8f6",
+  "source_revision": "815acc89083928169ed981fe626491664ce8a26e",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/runtime.rs": "fc19a188410f5fe5289d4bea5d11e1a66f618479021119688fd7d194f2bdfc87",
+    "crates/penelope-process-runtime/src/fence_tests.rs": "53ed34ed1fb4b960b19cd3677cf6edf09f0f8599c3fa454308b61f477d643344",
+    "crates/penelope-process-runtime/tests/support/fence_contracts.rs": "453b847efdc22b65ea33db0ad55cbcf395ab77149d1e9ddceb2e5808a0aa0977",
+    "crates/penelope-process-runtime/README.md": "66cbcc76230606f1cf7d74c06a97d954233152c6496703332ec087f28d7e48ff"
+  },
+  "binary_sha256": {
+    "target/debug/deps/penelope_process_runtime-0630a7813abe3acd": "031e6684dd5f6d0f7451e291a776d7dd746c65da8a4776fdfa730ef214810ed5",
+    "target/debug/deps/runtime-fc67005e4e738a2c": "dcbe95e3b6b46043d58a103146c285ee05200bb060b615f314b9084e98d4f7f6",
+    "target/worker-audit-msrv/debug/deps/penelope_process_runtime-68cf58304cf62634": "6317e1bbd0f439108dcee4a2af584ca2601f1de6fb6190f2a84cea66ead5eebd",
+    "target/worker-audit-msrv/debug/deps/runtime-f2cb0137fabcb2d5": "208e236328d37ec8927859d9e4f8558415d32ec2ede469bfd611e1b8b68cecdc"
+  },
+  "toolchains": {
+    "1.99.0": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "results": {
+    "baseline_dropped_runtime": "failed as expected: confirmed fence retained zombie /proc entry; fixture cleaned up via pinned pidfd",
+    "baseline_external_reaper": "failed as expected: Runtime error from original Child handle after external reaping",
+    "stable_workspace": "pass; RUST_TEST_THREADS=1; all targets/all features excluding fuzz; runtime 17 library +57 integration",
+    "msrv_workspace": "pass; RUST_TEST_THREADS=1; all targets/all features excluding fuzz; runtime 17 library +57 integration",
+    "clippy": "pass strict workspace/all targets/all features excluding fuzz",
+    "fmt": "pass",
+    "layers": "pass",
+    "graph": "pass",
+    "repetitions": "50 iterations x5 isolated scenarios per compiler; 500 total successful processes"
+  },
+  "commands": [
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= RUST_TEST_THREADS=1 cargo test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= RUST_TEST_THREADS=1 CARGO_TARGET_DIR=target/worker-audit-msrv cargo +1.85.0 test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz -- -D warnings",
+    "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo fmt --all -- --check",
+    "bash scripts/check-layer-boundaries.sh",
+    "graphify update .",
+    "python3 target/repeat-runtime-reap.py target/runtime-reap-workspace.log target/runtime-reap-repeat-stable.jsonl",
+    "python3 target/repeat-runtime-reap.py target/runtime-reap-msrv.log target/runtime-reap-repeat-msrv.jsonl"
+  ],
+  "baseline_commands": [
+    "cargo test -p penelope-process-runtime --test runtime reconstructed_fence_reaps_worker_after_original_runtime_is_dropped",
+    "cargo test -p penelope-process-runtime --test runtime externally_reaped_worker_can_still_be_fenced_by_original_runtime"
+  ],
+  "baseline_expected_exit": 101,
+  "scope": "Only test-created children are signaled or reaped. Same-parent reconstruction and external reaping, stale-identity rejection, fence retry and timed-out-start recovery. Existing process-kill matrices cover distinct coordinator parents. No forced kernel PID reuse, universal Drop cleanup, new fuzz campaign or performance claim.",
+  "artifact_sha256": {
+    "baseline-dropped.log.gz": "e049344745eae1c1e9900b4922b3ce2f3f968e0409b715a3c884fef4f6e73df4",
+    "baseline-external.log.gz": "532e7445b425c38400432443728a790abd2aebc12a54e49ac70f61ae700620ab",
+    "baseline-fixtures.patch": "2e22add5570c8cce2949e1a160b6ba32e0757300d509abcf542ccca50d15c5c3",
+    "clippy.log.gz": "48e796407d2eb2bced804fa258e561a2ba02a58e3d69f3fed390b9fca285357a",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "9468aee01a9eb741d056c6389082d95b8727bc9aa85091ff986699734e1b5bda",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv-workspace.log.gz": "01b3e1c158623178541ad40ac1326780ba1c66e31628482d79930722ce293e21",
+    "previous-ci.json": "6d47eda6ab09bd22a63d605f018e43d6f51e8d4ddc13f8d6fe3d6b404f8023eb",
+    "repeat-msrv.jsonl.gz": "661b5bcd3bd2bebe6b8bab4d2adce89b9625998dd5c631bd491cc64ce106ac3f",
+    "repeat-stable.jsonl.gz": "88403bebc8d60c24a871a74b3d57c97789a8ac2cc22c375ff161bced8345c5a3",
+    "repeat.py": "8620c439f720c904aa32998430fc0265d40b4d995965a984905aafcc749d98c7",
+    "stable-workspace.log.gz": "97e4d9fe8fc361feac626fd0737f9fd5d8fe523b187377113ba100992e0a9cd8"
+  },
+  "baseline_dropped_process_state": "Z"
+}

@@ -1,0 +1,50 @@
+{
+  "conclusion": "success",
+  "headSha": "cd099118f55bf2c8d38b6d0d5becce6e4daa2bb4",
+  "jobs": [
+    {
+      "name": "Supply-chain verification",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423534"
+    },
+    {
+      "name": "Minimum supported Rust",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423686"
+    },
+    {
+      "name": "Stable verification",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423734"
+    },
+    {
+      "name": "Allocation-free portable core",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423747"
+    },
+    {
+      "name": "Optional StateChronicle signed-event conformance",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423757"
+    },
+    {
+      "name": "Bounded fuzzing",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423792"
+    },
+    {
+      "name": "Secret scanning",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684/job/124405423797"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41156849684"
+}

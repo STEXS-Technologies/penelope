@@ -1,0 +1,79 @@
+[
+  {
+    "symbol": "<lease_batch_services::fixture::Fixture>::invoke_outbox",
+    "normalized_equal": false,
+    "baseline_instructions": 398,
+    "candidate_instructions": 398,
+    "different_lines": 22
+  },
+  {
+    "symbol": "core::slice::sort::shared::smallsort::sort4_stable::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 142,
+    "candidate_instructions": 142,
+    "different_lines": 1
+  },
+  {
+    "symbol": "core::slice::sort::shared::smallsort::small_sort_general::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 328,
+    "candidate_instructions": 328,
+    "different_lines": 7
+  },
+  {
+    "symbol": "penelope_executor::services::lease_batch_index::first_duplicate_index::<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>",
+    "normalized_equal": false,
+    "baseline_instructions": 456,
+    "candidate_instructions": 456,
+    "different_lines": 8
+  },
+  {
+    "symbol": "penelope_executor::services::lease_batch_index::first_duplicate_index::<penelope_ports::entry::implementation::OutboxLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::claim_outbox<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#1}>",
+    "normalized_equal": false,
+    "baseline_instructions": 456,
+    "candidate_instructions": 456,
+    "different_lines": 8
+  },
+  {
+    "symbol": "core::slice::sort::unstable::ipnsort::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 141,
+    "candidate_instructions": 141,
+    "different_lines": 3
+  },
+  {
+    "symbol": "core::slice::sort::unstable::ipnsort::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::OutboxLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::claim_outbox<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#1}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 141,
+    "candidate_instructions": 141,
+    "different_lines": 3
+  },
+  {
+    "symbol": "core::slice::sort::shared::pivot::median3_rec::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 103,
+    "candidate_instructions": 103,
+    "different_lines": 2
+  },
+  {
+    "symbol": "core::slice::sort::unstable::heapsort::heapsort::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 118,
+    "candidate_instructions": 118,
+    "different_lines": 2
+  },
+  {
+    "symbol": "core::slice::sort::unstable::quicksort::quicksort::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::TimerLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::drain_timers<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#8}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 395,
+    "candidate_instructions": 395,
+    "different_lines": 9
+  },
+  {
+    "symbol": "core::slice::sort::unstable::quicksort::quicksort::<(&str, usize), <[(&str, usize)]>::sort_unstable_by<penelope_executor::services::lease_batch_index::first_duplicate_index<penelope_ports::entry::implementation::OutboxLease, penelope_ports::entry::implementation::OutboxLeaseToken, penelope_executor::services::claim_outbox<lease_batch_services::fixture::Ports, lease_batch_services::fixture::Ports>::{closure#0}::{closure#1}>::{closure#1}>::{closure#0}>",
+    "normalized_equal": false,
+    "baseline_instructions": 395,
+    "candidate_instructions": 395,
+    "different_lines": 9
+  }
+]

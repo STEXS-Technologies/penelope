@@ -1,0 +1,3365 @@
+{
+  "schema": 1,
+  "samples": [
+    {
+      "file": "run-1-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 32.875492ms (328 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.165776ms (528 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4504
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 32875492.0,
+            "ns_per_operation": 328.75492
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2165776.0,
+            "ns_per_operation": 528.75390625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 151.238235ms (1512 ns/op, 661208 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.15,
+          "user_seconds": 0.15,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1936
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 151238235.0,
+            "ns_per_operation": 1512.38235
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 28.591141ms (285 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1984
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 28591141.0,
+            "ns_per_operation": 285.91141
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 168.687581ms (2371247 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.17,
+          "user_seconds": 0.53,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2252
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 168687581.0,
+            "ns_per_operation": 421.7189525
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 46.475729ms (116 ns/op, 8606642 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2176
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 46475729.0,
+            "ns_per_operation": 116.1893225
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 570.941792ms (570 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.57,
+          "user_seconds": 0.56,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 570941792.0,
+            "ns_per_operation": 570.941792
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 36.682099ms (366 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 3.50263ms (855 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4472
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 36682099.0,
+            "ns_per_operation": 366.82099
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 3502630.0,
+            "ns_per_operation": 855.13427734375
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 100.91504ms (1009 ns/op, 990933 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2160
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 100915040.0,
+            "ns_per_operation": 1009.1504
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.57616ms (275 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1972
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27576160.0,
+            "ns_per_operation": 275.7616
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 172.561318ms (2318017 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.17,
+          "user_seconds": 0.57,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2216
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 172561318.0,
+            "ns_per_operation": 431.403295
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 45.391383ms (113 ns/op, 8812245 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.15,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 45391383.0,
+            "ns_per_operation": 113.4784575
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-1-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 424.97715ms (424 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2108
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 424977150.0,
+            "ns_per_operation": 424.97715
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 32.751973ms (327 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.136439ms (521 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4180
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 32751973.0,
+            "ns_per_operation": 327.51973
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2136439.0,
+            "ns_per_operation": 521.591552734375
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 101.433081ms (1014 ns/op, 985872 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1928
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 101433081.0,
+            "ns_per_operation": 1014.33081
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.860369ms (278 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2192
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27860369.0,
+            "ns_per_operation": 278.60369
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 142.425592ms (2808484 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.14,
+          "user_seconds": 0.45,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2144
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 142425592.0,
+            "ns_per_operation": 356.06398
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 49.507158ms (123 ns/op, 8079639 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.05,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2212
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 49507158.0,
+            "ns_per_operation": 123.767895
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 432.198287ms (432 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.43,
+          "user_seconds": 0.43,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2228
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 432198287.0,
+            "ns_per_operation": 432.198287
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 34.965601ms (349 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.12116ms (517 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4188
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 34965601.0,
+            "ns_per_operation": 349.65601
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2121160.0,
+            "ns_per_operation": 517.861328125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 97.466354ms (974 ns/op, 1025995 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.09,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 97466354.0,
+            "ns_per_operation": 974.66354
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.413865ms (274 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27413865.0,
+            "ns_per_operation": 274.13865
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 164.32569ms (2434190 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.16,
+          "user_seconds": 0.46,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2184
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 164325690.0,
+            "ns_per_operation": 410.814225
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 38.073378ms (95 ns/op, 10506028 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2164
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 38073378.0,
+            "ns_per_operation": 95.183445
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-10-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 419.194383ms (419 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.41,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2216
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 419194383.0,
+            "ns_per_operation": 419.194383
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 34.966193ms (349 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.591729ms (632 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 3952
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 34966193.0,
+            "ns_per_operation": 349.66193
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2591729.0,
+            "ns_per_operation": 632.746337890625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 160.381226ms (1603 ns/op, 623514 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.16,
+          "user_seconds": 0.16,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 160381226.0,
+            "ns_per_operation": 1603.81226
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 41.419285ms (414 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.04,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 41419285.0,
+            "ns_per_operation": 414.19285
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 171.54317ms (2331775 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.17,
+          "user_seconds": 0.57,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2120
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 171543170.0,
+            "ns_per_operation": 428.857925
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 54.644888ms (136 ns/op, 7319989 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.05,
+          "user_seconds": 0.15,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2188
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 54644888.0,
+            "ns_per_operation": 136.61222
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 465.802307ms (465 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.46,
+          "user_seconds": 0.46,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 465802307.0,
+            "ns_per_operation": 465.802307
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 53.623805ms (536 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 3.309687ms (808 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.05,
+          "user_seconds": 0.05,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 3956
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 53623805.0,
+            "ns_per_operation": 536.23805
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 3309687.0,
+            "ns_per_operation": 808.029052734375
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 153.198583ms (1531 ns/op, 652748 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.15,
+          "user_seconds": 0.15,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1928
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 153198583.0,
+            "ns_per_operation": 1531.98583
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 42.260712ms (422 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.04,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 42260712.0,
+            "ns_per_operation": 422.60712
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 204.082603ms (1959991 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.2,
+          "user_seconds": 0.63,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2172
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 204082603.0,
+            "ns_per_operation": 510.2065075
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 66.66482ms (166 ns/op, 6000166 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.06,
+          "user_seconds": 0.16,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 66664820.00000001,
+            "ns_per_operation": 166.66205000000002
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-2-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 630.014168ms (630 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.63,
+          "user_seconds": 0.62,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2188
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 630014168.0,
+            "ns_per_operation": 630.014168
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 35.104551ms (351 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.40072ms (586 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4504
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 35104551.0,
+            "ns_per_operation": 351.04551
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2400720.0,
+            "ns_per_operation": 586.11328125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 107.230467ms (1072 ns/op, 932571 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2224
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 107230467.0,
+            "ns_per_operation": 1072.30467
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 29.249313ms (292 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 29249313.0,
+            "ns_per_operation": 292.49313
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 172.921484ms (2313189 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.17,
+          "user_seconds": 0.51,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2212
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 172921484.0,
+            "ns_per_operation": 432.30371
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 42.706814ms (106 ns/op, 9366186 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.14,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2192
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 42706814.0,
+            "ns_per_operation": 106.767035
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 430.468263ms (430 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.43,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2212
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 430468263.0,
+            "ns_per_operation": 430.468263
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 34.803889ms (348 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.197427ms (536 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4224
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 34803889.0,
+            "ns_per_operation": 348.03889
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2197427.0,
+            "ns_per_operation": 536.481201171875
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 102.285859ms (1022 ns/op, 977652 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2144
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 102285859.0,
+            "ns_per_operation": 1022.85859
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 28.042752ms (280 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 28042752.0,
+            "ns_per_operation": 280.42752
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 160.229153ms (2496425 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.16,
+          "user_seconds": 0.54,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2116
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 160229153.0,
+            "ns_per_operation": 400.5728825
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 42.785256ms (106 ns/op, 9349014 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.13,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2172
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 42785256.0,
+            "ns_per_operation": 106.96314
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-3-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 426.730219ms (426 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2140
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 426730219.0,
+            "ns_per_operation": 426.730219
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 33.103543ms (331 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.109437ms (514 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4252
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 33103543.000000004,
+            "ns_per_operation": 331.03543
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2109437.0,
+            "ns_per_operation": 514.999267578125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 103.875561ms (1038 ns/op, 962690 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 103875561.0,
+            "ns_per_operation": 1038.75561
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 28.045116ms (280 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2192
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 28045116.0,
+            "ns_per_operation": 280.45116
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 182.116837ms (2196392 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.18,
+          "user_seconds": 0.57,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2212
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 182116837.0,
+            "ns_per_operation": 455.2920925
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 45.681484ms (114 ns/op, 8756282 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.14,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2216
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 45681484.0,
+            "ns_per_operation": 114.20371
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 444.095031ms (444 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.44,
+          "user_seconds": 0.44,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1920
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 444095031.0,
+            "ns_per_operation": 444.095031
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 35.473503ms (354 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.258205ms (551 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4172
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 35473503.0,
+            "ns_per_operation": 354.73503
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2258205.0,
+            "ns_per_operation": 551.319580078125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 99.41474ms (994 ns/op, 1005887 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2172
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 99414740.0,
+            "ns_per_operation": 994.1474
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.953619ms (279 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1860
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27953619.0,
+            "ns_per_operation": 279.53619
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 156.721563ms (2552297 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.15,
+          "user_seconds": 0.53,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2116
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 156721563.0,
+            "ns_per_operation": 391.8039075
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 43.932783ms (109 ns/op, 9104818 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.14,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1944
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 43932783.0,
+            "ns_per_operation": 109.8319575
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-4-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 420.813482ms (420 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1960
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 420813482.0,
+            "ns_per_operation": 420.813482
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 33.333287ms (333 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.211204ms (539 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 3944
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 33333287.0,
+            "ns_per_operation": 333.33287
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2211204.0,
+            "ns_per_operation": 539.8447265625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 101.358887ms (1013 ns/op, 986593 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 101358887.0,
+            "ns_per_operation": 1013.58887
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 28.05283ms (280 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2128
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 28052830.0,
+            "ns_per_operation": 280.5283
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 169.312589ms (2362494 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.17,
+          "user_seconds": 0.53,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2176
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 169312589.0,
+            "ns_per_operation": 423.2814725
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 52.569918ms (131 ns/op, 7608914 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.05,
+          "user_seconds": 0.13,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2192
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 52569918.0,
+            "ns_per_operation": 131.424795
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 415.561851ms (415 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.41,
+          "user_seconds": 0.41,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 415561851.0,
+            "ns_per_operation": 415.561851
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 39.165259ms (391 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.304675ms (562 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.04,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4500
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 39165259.0,
+            "ns_per_operation": 391.65259
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2304675.0,
+            "ns_per_operation": 562.664794921875
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 98.239509ms (982 ns/op, 1017920 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.09,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 98239509.0,
+            "ns_per_operation": 982.39509
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.649612ms (276 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1964
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27649612.0,
+            "ns_per_operation": 276.49612
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 165.829767ms (2412112 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.16,
+          "user_seconds": 0.52,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 165829767.0,
+            "ns_per_operation": 414.5744175
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 39.819073ms (99 ns/op, 10045437 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2208
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 39819073.0,
+            "ns_per_operation": 99.5476825
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-5-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 420.742876ms (420 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2188
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 420742876.0,
+            "ns_per_operation": 420.742876
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 32.635659ms (326 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.130458ms (520 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4452
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 32635658.999999996,
+            "ns_per_operation": 326.35659
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2130458.0,
+            "ns_per_operation": 520.13134765625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 100.872407ms (1008 ns/op, 991351 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2200
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 100872407.0,
+            "ns_per_operation": 1008.72407
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.04847ms (270 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2180
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27048470.0,
+            "ns_per_operation": 270.4847
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 123.073257ms (3250097 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.12,
+          "user_seconds": 0.46,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2124
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 123073257.0,
+            "ns_per_operation": 307.6831425
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 44.594593ms (111 ns/op, 8969697 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2244
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 44594593.0,
+            "ns_per_operation": 111.4864825
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 411.252513ms (411 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.41,
+          "user_seconds": 0.4,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2184
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 411252513.0,
+            "ns_per_operation": 411.252513
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 33.64531ms (336 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.174673ms (530 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 3952
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 33645310.0,
+            "ns_per_operation": 336.4531
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2174673.0,
+            "ns_per_operation": 530.926025390625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 99.028273ms (990 ns/op, 1009813 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 99028273.0,
+            "ns_per_operation": 990.28273
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.325465ms (273 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1988
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27325465.0,
+            "ns_per_operation": 273.25465
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 161.121247ms (2482602 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.16,
+          "user_seconds": 0.53,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2144
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 161121247.0,
+            "ns_per_operation": 402.8031175
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 40.130946ms (100 ns/op, 9967370 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.13,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 40130946.0,
+            "ns_per_operation": 100.327365
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-6-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 410.321624ms (410 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.41,
+          "user_seconds": 0.4,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2148
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 410321624.0,
+            "ns_per_operation": 410.321624
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 33.077102ms (330 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.101732ms (513 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4176
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 33077101.999999996,
+            "ns_per_operation": 330.77101999999996
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2101732.0,
+            "ns_per_operation": 513.1181640625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 99.699931ms (996 ns/op, 1003010 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2156
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 99699931.0,
+            "ns_per_operation": 996.99931
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.726089ms (277 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1928
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27726089.0,
+            "ns_per_operation": 277.26089
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 112.455145ms (3556974 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.11,
+          "user_seconds": 0.44,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2152
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 112455145.0,
+            "ns_per_operation": 281.1378625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 29.598468ms (73 ns/op, 13514212 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 29598468.0,
+            "ns_per_operation": 73.99617
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 412.125701ms (412 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.41,
+          "user_seconds": 0.41,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2124
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 412125701.0,
+            "ns_per_operation": 412.125701
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 34.465315ms (344 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.129857ms (519 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4180
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 34465315.0,
+            "ns_per_operation": 344.65315
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2129857.0,
+            "ns_per_operation": 519.984619140625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 97.543243ms (975 ns/op, 1025186 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.09,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1920
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 97543243.0,
+            "ns_per_operation": 975.43243
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.496976ms (274 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2120
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27496976.0,
+            "ns_per_operation": 274.96976
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 120.113526ms (3330183 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.12,
+          "user_seconds": 0.46,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2160
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 120113526.0,
+            "ns_per_operation": 300.283815
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 30.310945ms (75 ns/op, 13196553 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 30310945.0,
+            "ns_per_operation": 75.7773625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-7-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 436.493869ms (436 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.43,
+          "user_seconds": 0.43,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1984
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 436493869.0,
+            "ns_per_operation": 436.493869
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 34.046506ms (340 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.621257ms (639 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4208
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 34046506.0,
+            "ns_per_operation": 340.46506
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2621257.0,
+            "ns_per_operation": 639.955322265625
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 100.544483ms (1005 ns/op, 994585 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2136
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 100544483.0,
+            "ns_per_operation": 1005.44483
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.514651ms (275 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1920
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27514651.0,
+            "ns_per_operation": 275.14651
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 156.638743ms (2553647 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.15,
+          "user_seconds": 0.48,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2208
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 156638743.0,
+            "ns_per_operation": 391.5968575
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 30.888031ms (77 ns/op, 12949999 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2208
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 30888031.0,
+            "ns_per_operation": 77.2200775
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 424.988472ms (424 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2112
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 424988472.0,
+            "ns_per_operation": 424.988472
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 35.060816ms (350 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.234599ms (545 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4220
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 35060816.0,
+            "ns_per_operation": 350.60816
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2234599.0,
+            "ns_per_operation": 545.556396484375
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 96.881774ms (968 ns/op, 1032186 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.09,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1988
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 96881774.0,
+            "ns_per_operation": 968.81774
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 27.395761ms (273 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2168
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 27395761.0,
+            "ns_per_operation": 273.95761
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 157.513343ms (2539467 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.15,
+          "user_seconds": 0.5,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2228
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 157513343.0,
+            "ns_per_operation": 393.7833575
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 39.5797ms (98 ns/op, 10106190 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 39579700.0,
+            "ns_per_operation": 98.94925
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-8-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 421.625772ms (421 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.42,
+          "user_seconds": 0.42,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2188
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 421625772.0,
+            "ns_per_operation": 421.625772
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 32.319528ms (323 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.140157ms (522 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4444
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 32319528.0,
+            "ns_per_operation": 323.19528
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2140157.0,
+            "ns_per_operation": 522.499267578125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 101.697733ms (1016 ns/op, 983306 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.1,
+          "user_seconds": 0.1,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1944
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 101697733.0,
+            "ns_per_operation": 1016.97733
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 29.006684ms (290 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 1928
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 29006684.0,
+            "ns_per_operation": 290.06684
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 143.549393ms (2786497 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.14,
+          "user_seconds": 0.47,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2212
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 143549393.0,
+            "ns_per_operation": 358.8734825
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 40.030772ms (100 ns/op, 9992312 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.04,
+          "user_seconds": 0.12,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 40030772.0,
+            "ns_per_operation": 100.07693
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-after-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 473.86992ms (473 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.47,
+          "user_seconds": 0.47,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2176
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 473869920.0,
+            "ns_per_operation": 473.86992
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-contract_throughput.json",
+      "record": {
+        "benchmark": "contract_throughput",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "canonical DTO encoding: 100000 operations in 33.742297ms (337 ns/op, 41200000 bytes)\nbounded outcome-log append: 4096 operations in 2.070582ms (505 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.03,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 4192
+        },
+        "observations": [
+          {
+            "operation": "canonical DTO encoding",
+            "operations": 100000,
+            "elapsed_ns": 33742297.0,
+            "ns_per_operation": 337.42297
+          },
+          {
+            "operation": "bounded outcome-log append",
+            "operations": 4096,
+            "elapsed_ns": 2070582.0,
+            "ns_per_operation": 505.51318359375
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-graph_saga.json",
+      "record": {
+        "benchmark": "graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "graph-saga start/result/result: 100000 operations in 96.482402ms (964 ns/op, 1036458 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.09,
+          "user_seconds": 0.09,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2232
+        },
+        "observations": [
+          {
+            "operation": "graph-saga start/result/result",
+            "operations": 100000,
+            "elapsed_ns": 96482402.0,
+            "ns_per_operation": 964.82402
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-linear_saga.json",
+      "record": {
+        "benchmark": "linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga start/result/complete: 100000 operations in 26.871898ms (268 ns/op)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.02,
+          "user_seconds": 0.02,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2180
+        },
+        "observations": [
+          {
+            "operation": "linear-saga start/result/complete",
+            "operations": 100000,
+            "elapsed_ns": 26871898.0,
+            "ns_per_operation": 268.71898
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-parallel_graph_saga.json",
+      "record": {
+        "benchmark": "parallel_graph_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel graph-saga: 400000 isolated operations across 4 workers in 119.979157ms (3333912 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.12,
+          "user_seconds": 0.45,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2196
+        },
+        "observations": [
+          {
+            "operation": "parallel graph-saga",
+            "operations": 400000,
+            "elapsed_ns": 119979157.0,
+            "ns_per_operation": 299.9478925
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-parallel_linear_saga.json",
+      "record": {
+        "benchmark": "parallel_linear_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "stdout": "parallel linear-saga start/result/complete: 400000 isolated operations across 4 workers in 28.779045ms (71 ns/op, 13899001 ops/s)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.03,
+          "user_seconds": 0.11,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2216
+        },
+        "observations": [
+          {
+            "operation": "parallel linear-saga start/result/complete",
+            "operations": 400000,
+            "elapsed_ns": 28779045.0,
+            "ns_per_operation": 71.9476125
+          }
+        ]
+      }
+    },
+    {
+      "file": "run-9-before-replay_saga.json",
+      "record": {
+        "benchmark": "replay_saga",
+        "revision": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+        "cpus": [
+          0
+        ],
+        "stdout": "linear-saga replay: 1000000 logs in 452.43469ms (452 ns/replay)\n",
+        "stderr": "",
+        "resources": {
+          "wall_seconds": 0.45,
+          "user_seconds": 0.45,
+          "system_seconds": 0.0,
+          "peak_rss_kib": 2188
+        },
+        "observations": [
+          {
+            "operation": "linear-saga replay",
+            "operations": 1000000,
+            "elapsed_ns": 452434690.0,
+            "ns_per_operation": 452.43469
+          }
+        ]
+      }
+    }
+  ]
+}

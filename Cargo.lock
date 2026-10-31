@@ -296,7 +296,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "penelope"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -309,7 +309,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-core"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "sha2",
@@ -318,9 +318,10 @@ dependencies = [
 
 [[package]]
 name = "penelope-domain"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "penelope-core",
+ "proptest",
  "serde",
  "serde_json",
  "sha2",
@@ -329,17 +330,20 @@ dependencies = [
 
 [[package]]
 name = "penelope-executor"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
+ "async-trait",
  "penelope-core",
  "penelope-domain",
  "penelope-intent",
  "penelope-ports",
+ "penelope-sqlite",
  "proptest",
  "rusqlite",
  "serde",
  "serde_json",
  "syn 2.0.119",
+ "tempfile",
  "thiserror",
 ]
 
@@ -353,14 +357,17 @@ dependencies = [
  "penelope-executor",
  "penelope-intent",
  "penelope-ports",
+ "penelope-process-runtime",
+ "penelope-sqlite",
  "penelope-statechronicle",
  "serde",
  "serde_json",
+ "tempfile",
 ]
 
 [[package]]
 name = "penelope-intent"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -370,7 +377,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-ports"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "async-trait",
  "penelope-core",
@@ -381,8 +388,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "penelope-process-runtime"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "libc",
+ "penelope-core",
+ "penelope-domain",
+ "penelope-executor",
+ "penelope-ports",
+ "penelope-sqlite",
+ "penelope-statechronicle",
+ "rustix",
+ "seccompiler",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "penelope-sqlite"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "penelope-core",
+ "penelope-domain",
+ "penelope-ports",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "penelope-statechronicle"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "penelope-domain",
  "penelope-ports",
@@ -558,6 +599,15 @@ dependencies = [
  "quick-error",
  "tempfile",
  "wait-timeout",
+]
+
+[[package]]
+name = "seccompiler"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "345a3e4dddf721a478089d4697b83c6c0a8f5bf16086f6c13397e4534eb6e2e5"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

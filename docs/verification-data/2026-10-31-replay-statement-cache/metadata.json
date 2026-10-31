@@ -1,0 +1,17 @@
+{
+  "candidate": "a20bb8c7a09f8bcdd62ddd12346f1a59533b7e0e",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "32d3d824a159d9c272b216875fef3f28299f478b20b89701e88544412cd011e6",
+    "crates/penelope-sqlite/benches/process_replay.rs": "c021d7dca1d6d7a130419b4d9142a6c180e2695ab47d8e046e47f2e9e4d43489",
+    "crates/penelope-sqlite/tests/support/replay_cache.rs": "d100b4439b4d76dffc2c8679544bd257cac48e78ba7ee40dd6c3b60006aed9cb",
+    "crates/penelope-sqlite/tests/process.rs": "b6c6c36a121985d3ea4a07f6cddbfc90e43a8870afcbdaa54f44c7653ad809f3",
+    "crates/penelope-sqlite/Cargo.toml": "1e0078d295333a0cb367fcaa1bebdb560fe731ba23e333d4e200f8b507103eb2"
+  },
+  "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+  "timing_scope": "single CPU, public adapter replay latency, fixed typed records; not overall application overhead",
+  "campaigns": {
+    "main": "24 blocks, all six variant permutations repeated four times",
+    "confirmation": "24 pairs alternating AB/BA, same binaries; declared once after main result"
+  }
+}

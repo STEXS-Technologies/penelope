@@ -1,0 +1,14 @@
+{
+  "baseline_source": "fbcb4c725de6ba45f5c275f0444e8f213307bde4",
+  "candidate_source": "40c674ae8e3ec24b7a3b09055f9f02a95b77316c",
+  "compiler": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "source_sha256": {
+    "baseline": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d",
+    "candidate": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  }
+}

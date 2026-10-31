@@ -1,0 +1,307 @@
+# Hosted integration services
+
+The `penelope_executor::services` module provides bounded calls through injected
+ports. The host owns the worker loop, authenticated principals, clock basis and
+policy configuration. These calls do not create a scheduler. Optional SQLite and
+Linux adapters remain outside the executor and the default facade.
+
+`claim_outbox` authorizes `Dispatch` for the exact claim scope and owner before
+claiming one bounded batch. It validates scope, ownership, expiry, pending state,
+batch size and duplicate leases before returning any work. Supply trusted saga
+logical time. Deliver only committed actions using their stable identity, and
+acknowledge a lease only after validating durable downstream acceptance. Failed
+or ambiguous delivery requires reconstruction rather than assuming rollback.
+
+`dispatch_outbox` combines an authorized claim with bounded idempotent delivery.
+It checks fresh trusted time before each dispatch, validates the dispatch receipt
+against the exact action and complete scope, then acknowledges with a fresh clock
+reading. Receipt mismatch or expiry leaves the lease unacknowledged, even when
+work may have reached the dispatcher. Its report counts verified downstream
+acceptance separately from outbox acknowledgements. Reconcile/redeliver through
+the same stable action identity. Dispatch acceptance does not mean the action's
+application effect succeeded.
+
+`drive_task_once` requires a validated `CommittedTaskEffect`, matches the task's
+scope and definition, authorizes `DriveTask` and makes one transition or poll with
+an injected `TaskClock`. The host controls how often it calls this function.
+Journal/runtime errors preserve the supervisor's normal reconstruction rule.
+Rebuild the saga from authoritative events to find an active task whose outbox
+was already acknowledged, then use `CommittedTaskEffect::recover`; this path
+requires an existing durable task intent. New intent requires leased acceptance.
+
+`reconcile_effect` authorizes `ReconcileEffect`, queries the injected external
+effect port and validates its exact action/effect coordinates. It never executes
+or cancels an effect. Unknown remains unknown and requires further evidence or
+operator handling. It cannot authorize an automatic retry or successful result.
+
+`drain_timers` authorizes `DeliverTimer`, reads the injected saga clock and claims
+at most the request limit. It replaces the request's timestamp with trusted time.
+All returned leases are validated before delivery. For each timer it persists
+immutable schedule bytes and accepts a stable `TimerFired` inbox identity, checks
+both receipts, then acknowledges with a fresh clock reading. Lease tokens,
+attempt counts and delivery time do not change the input identity. Lost ACKs
+therefore redeliver the same immutable input. A changed schedule under the same
+action conflicts instead of producing a second input.
+
+Timer inbox acceptance queues durable work; it does not prove that a saga
+handled the firing. The consuming application must read accepted timer payloads,
+construct the existing typed retry-timer event, validate the engine's outcome
+plan, atomically commit the accepted input/outcomes/actions and validate the
+receipt. Keep the schedule payload until replay/retention requirements permit
+its removal. Expired leases may redeliver; they never prove that an effect failed.
+
+`relay_task_result` authorizes `RelayTaskResult` for the verified binding's exact
+scope and authenticated caller before committing the stable result input through
+`ProcessStore`. The relay checks input identity, payload digest, definition scope
+and receipt. The consuming application still validates the engine's outcome plan
+and persists referenced replay payloads before the result commit. A denied call
+cannot advance the process log; a lost receipt is recovered with the exact batch.
+
+Timer failures return `TimerDrainError` with the stage, coarse port error and
+partial claimed/acknowledged/duplicate counts. An inbox write may have committed
+even when an error is returned. Retain evidence, allow lease recovery and repeat
+the same delivery identity. Map these errors to the existing redacted diagnostic
+port without logging payloads or raw credentials.
+
+Authorization uses dedicated `Dispatch`, `DriveTask`, `ReconcileEffect`,
+`DeliverTimer` and `RelayTaskResult` operation categories. Existing start, cancel,
+retry and review permissions do not implicitly grant these categories. The policy
+adapter must fail closed for permissions it has not configured. A principal must
+come from the host authentication boundary; code/content digests and fencing
+tokens do not authenticate a caller. Low-level ports and composition functions
+are protocol building blocks and require authorization in their outer boundary.
+
+## Optional signed canonical-event conformance
+
+With StateChronicle installed, run:
+
+```bash
+python3 scripts/run-statechronicle-conformance.py /path/to/statechronicle
+```
+
+The runner requires the clean tracked sources of upstream revision
+`ae3d94bc22c7835eaa3fdcd766e3c117929c12bb`, Rust 1.99.0, and the checked-in
+`scripts/conformance/Cargo.lock`. The real-worker conformance profile requires
+Linux x86_64 and a C compiler supporting the static fixture build. It creates a
+temporary, nonpublishable workspace;
+StateChronicle is not added to Penelope's normal dependency graph. CI checks out
+the same upstream revision and runs this conformance separately. Updating the
+pinned upstream revision or using `--refresh-lock` requires reviewing the changed
+API and dependency lockfile.
+
+`scripts/conformance/statechronicle.rs` uses actual upstream canonical encoding,
+event Merkle-root computation and strict Ed25519 verification. Its application
+fixture trusts one tenant, executor and key, and maps one persisted action/intent,
+operation and resource. It reads a signed event batch from a committed SQLite row
+in a separate canonical database. An uncommitted row, wrong key, modified signed
+body, substituted event bytes, foreign signed tenant or foreign signed intent
+cannot produce accepted evidence. The fixture's command mapping must become an
+authenticated, persisted mapping in a production adapter; it is not inferred from
+worker output or supplied by a transport caller.
+
+The verified event then passes through `verify_committed_event` and
+`bind_verified_event_to_commit`. Canonical evidence bytes are stored before the
+normal SQLite process commit. Reopening and retrying reconstructs the exact
+receipt, while a second input carrying the same canonical source is rejected.
+No transaction spans the canonical and process databases.
+
+Two additional signed-source tests run the existing complete real-worker saga
+contract: linear and graph engines, pure and `ReconcileRequired` tasks, and shared
+versus separate process/task databases (eight combinations). Each canonical
+trigger is committed in a separate source database, reopened and cryptographically
+verified before being attached to the engine's initial atomic commit. Canonical
+event bytes bind the inbox input; engine event bytes remain the outcome payloads
+used for saga replay. The shared contract then reconstructs lost acknowledgements,
+runs the protected Linux worker through checkpoint/completion, persists the result,
+and replays the terminal saga. Effectful cases also interrupt a real worker,
+remain blocked on Unknown across reconstruction, and require independent result
+evidence. The runner checks that all seven intended signed-source/proof tests are
+discovered before executing them; the shared fixture tests run separately in the
+normal workspace suite.
+
+The signed-source SIGKILL campaign adds five source boundaries: before and after
+canonical transaction commit, after verification, after canonical payload storage,
+and after source binding. Combined with the existing ten saga/task boundaries and
+four effect-reconciliation boundaries, it executes 60 pure and 76 effectful
+kill/recovery cases across the two engines and two process/task store layouts.
+Each child must reach its named boundary, terminate with SIGKILL, and reconstruct
+in a fresh process within a deadline. Recovery checks that a previously committed
+canonical row survives byte-for-byte; it does not overwrite or recreate missing
+committed evidence. An interrupted uncommitted source transaction is retried.
+The canonical database is separate in both process/task store layouts.
+
+The signed event authorizes the canonical trigger. It does not prove that the
+worker performed the source transfer. Restart authorization and final external
+effect evidence in the effectful saga contract remain explicit trusted fixtures.
+This conformance uses a test signing authority and local source transaction; it
+is not a production StateChronicle client or execution pipeline. It does not
+prove StateChronicle state-transition authorization or full canonical-chain
+validation. The checkpoint-state proof path below verifies a state root against
+an explicitly trusted test head.
+Applications must configure those trust and durability policies independently.
+
+## Optional checkpoint state evidence
+
+Applications using StateChronicle can inject a
+`penelope_statechronicle::task::CheckpointStateVerifier` and call
+`verify_checkpoint_state(record, verifier)`. The combined path rejects unsupported
+or non-checkpoint records, invokes the verifier, then binds its returned evidence
+to every task-scope coordinate, generation and checkpoint digest/length/schema.
+It propagates verification failure and rejects substituted evidence. The verifier
+must establish proof authenticity, trusted key policy and the authoritative state
+version; Penelope's correlation checks do not establish those facts themselves.
+
+If independent evidence must gate checkpoint acceptance, place this call in the
+application's journal/commit decorator before returning a successful commit
+receipt to the task controller. A later audit check does not retroactively gate
+the worker's checkpoint ACK. Persist and retry immutable evidence independently;
+there is no transaction spanning StateChronicle and the task journal. The existing
+`bind_checkpoint_state` remains available for applications that already invoked
+their verifier. Pure task durability does not require either integration path.
+
+The protected-worker integration test in
+`crates/penelope-process-runtime/tests/support/checkpoint_state.rs` demonstrates
+this decorator with SQLite: rejected verification or substituted evidence leaves
+the worker paused without an ACK, and reconstruction fences that generation. Its
+trusted verifier is a fixture; applications must supply actual proof verification.
+
+The optional pinned-upstream suite additionally runs
+`scripts/conformance/checkpoint_proof.rs`. Its fixture authority puts a canonical
+BCS payload containing the exact task checkpoint record and state version into a
+consumer-domain state leaf. The actual upstream accumulator builds a sparse
+Merkle inclusion proof; the actual upstream proof verifier checks the signed
+commit, path and claimed state. The application policy pins the signer/key ID,
+executor, tenant, resource, profile and authoritative commit-body digest, checks
+the consumer domain/schema, and compares the complete record payload (including
+scope, generation, checkpoint digest/size/schema, sequence and tick). State version
+is included in the authenticated leaf, rather than inferred from unsigned proof
+metadata. Signed proof bytes are loaded from a committed transaction in a separate
+canonical database before checkpoint acceptance.
+
+Negative cases include an uncommitted proof row, forged signer, wrong configured
+key/head/version, substituted task coordinates/bytes/tick, corrupted claimed
+payload, malformed Merkle path, and foreign tenant/resource. Cryptographically
+valid proofs with incompatible consumer domain/schema are rejected too. A real
+protected-worker test applies this verifier in a journal decorator: rejection
+produces zero ACK attempts and no checkpoint record/blob; reconstruction fences
+the worker. Acceptance produces exactly one ACK, durable checkpoint/completion
+and successful restoration.
+
+This verifies the actual cryptographic proof lane with fixture publication and
+signer/head trust. It is not a production StateChronicle execution/proof service,
+full chain/freshness discovery, upstream snapshot/checkpoint-chain protocol, or
+external-effect success proof. A production adapter must authenticate and persist
+its head/version policy and establish publication authorization. No StateChronicle
+dependency is added to Penelope's normal workspace, and the two databases do not
+share a transaction.
+
+The full linear and graph saga fixtures in
+`crates/penelope-process-runtime/tests/support/sagas.rs` also exercise
+`ReconcileRequired` tasks against shared and separate SQLite stores. They fence an
+interrupted worker, persist an unknown outcome, reconstruct the blocked state,
+then supply explicit trusted restart authorization. A successor's completion
+still requires matching independent effect evidence before the normal authorized
+result relay can commit a terminal saga decision. These external evidence sources
+are fixtures, not live external systems or StateChronicle proof verification. The
+coordinator crash suite covers 56 effectful cases (two engines, two store layouts,
+14 boundaries), including initial launch, reconciliation required, unknown evidence
+and persisted restart authorization. Each case uses SIGKILL followed by a fresh
+process; reconciliation cases assert the original generation and blocked or
+authorized state before recovery continues.
+
+## Discovering accepted inputs after restart
+
+`penelope_ports::inbox::PendingInbox` exposes read-only, bounded discovery of
+inputs accepted by `Inbox` but not consumed by `AtomicProcessCommit`. SQLite
+implements it on the same blocking-isolation worker as the other process ports.
+Call `pending_inputs(tenant, process, limit)` with a nonzero limit up to 64.
+Results are ordered by input ID; this ordering does not establish causality or
+FIFO delivery. Reads do not acquire leases, acknowledge timers, or consume inputs.
+
+The host authorizes access, selects its pinned definition, reads the immutable
+payload through `ProcessPayloadStore`, and validates its complete scope before
+mapping it to a saga input. In particular, a `TimerFired` input's timer payload
+must match the expected action, attempt and due time; tenant/process discovery
+alone does not establish that definition binding. Replay the authoritative saga,
+decide, persist event bytes, then commit that exact accepted input with the
+engine's outcomes/actions. Only the successful atomic commit consumes it.
+Concurrent hosts may discover the same input; CAS and immutable input deduplication
+arbitrate the commit. A timer delivery ACK still leaves its input discoverable
+until the saga decision commits. Retrying discovery after a read error must not
+turn missing or corrupt evidence into an empty inbox.
+
+The `discovered_timer_commits_one_retry_task_and_replays_terminal_saga` runtime
+integration test follows this complete linear-saga path with shared and separate
+SQLite databases. It reopens after timer acceptance, consumes the discovered input
+through the engine's outcome plan, executes the retry in a protected worker,
+relays the verified result, and checks that repeating the timer commit leaves
+no action available for redispatch.
+
+The companion `discovered_graph_timer_selects_one_retry_task_and_replays_terminal_state`
+test uses an explicit graph timer step between failure and retry. Its application
+payload pins the timer's due time; the host verifies that payload, complete scope,
+active action and accepted delivery before submitting the normal graph result.
+Both database layouts reconstruct the graph and complete the verified retry task
+without adding new graph inputs or action kinds.
+
+## Executor composition example
+
+Run `./scripts/run-executor-saga-example.sh`, or keep its state directory with:
+
+```sh
+cargo run -p penelope-executor --example saga_recoverable_task -- STATE_DIRECTORY
+```
+
+This example uses separate SQLite process/task stores and a simulated in-process
+runtime. It commits the saga action before task acceptance, interrupts the
+coordinator after a durable checkpoint, reconstructs and resumes that checkpoint,
+verifies the output, and commits the stable result through the authorized relay.
+The next invocation replays completion without dispatching another task.
+
+The simulation provides no OS isolation or independent budget enforcement. Its
+fixed demo principal illustrates scoped authorization; hosted applications must
+inject an authenticated principal and policy. SQLite and the example's policy
+helper are development dependencies of the executor, so normal executor users
+do not acquire a storage backend. Use the Linux reference below for protected
+worker execution.
+
+## Executable Linux reference
+
+Run `./scripts/run-supervised-saga-example.sh` on the supported Linux x86-64
+profile. It compiles a freestanding static test worker with `cc`, runs the
+`saga_recoverable_task` example with separate task/process SQLite databases,
+and runs it again to verify terminal replay without another dispatch. It
+requires `cc`, `rg` and the runtime kernel facilities documented in
+[the runtime profile](../crates/penelope-process-runtime/README.md).
+
+For retained state, compile the fixture as shown in that script, then run:
+
+```sh
+cargo run -p penelope-process-runtime --example saga_recoverable_task --locked -- STATE_DIRECTORY STATIC_WORKER
+```
+
+The state directory must belong to the current OS user. The CLI maps that
+kernel-authenticated UID to a local principal and allows only this example's
+scope and required operations. This is a local demonstration policy, not an
+HTTP authentication service or a general tenant authorization policy.
+
+The example writes event payloads before outcome commits, validates commit and
+lease receipts, accepts/reconstructs durable task intent, drives the real Linux
+runtime, classifies the exact sum output, commits the stable result inbox input
+and replays the saga from its stored event bytes. The worker executable is
+independently sealed/pinned by the runtime. Changed worker code or output cannot
+silently resume the old binding.
+
+Keep both databases and the registry when interrupted. A live old generation
+must be fenced before restart. If a crash leaves an unexpired claim before any
+task intent was accepted, the immediate rerun fails closed; retry after lease
+expiry instead of deleting evidence. Already accepted tasks can recover even
+when their outbox delivery was acknowledged. Unknown/blocked states require
+independent evidence or operator handling.
+
+Task ticks in this example use an injected monotonic millisecond clock whose
+new origin starts beyond the persisted task frontier. Saga leases use a separate
+host wall-clock basis. Production deployments must choose and document their
+trusted clock/reset policy; neither task ticks nor this CLI imply a game-frame
+or calendar deadline. The example's worker-driving loop is bounded, and runtime
+CPU enforcement remains independent of polling.

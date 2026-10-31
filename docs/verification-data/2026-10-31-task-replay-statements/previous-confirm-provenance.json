@@ -1,0 +1,11 @@
+{
+  "pre_guard_commit": "50856b001f81978daea5044947557a26429d9740",
+  "baseline_commit": "bd187069a30b0c3113089c83260c4b961db45ebe",
+  "benchmark_sha256": "8e611f44c59e0273f4f81053f03c774c09af67ba882ee9c6c6fdf0edee4cbeef",
+  "baseline_matches_previous_candidate": true,
+  "sha256": {
+    "pre_guard": "336326af298f48e429caf8ac3e16e6d1126ffff5657405becd8286ea3b9a0560",
+    "baseline": "85f395e42266ea7a6f12e9afed21a540523d892f35db9521f27a388a85ac7dd3",
+    "candidate": "1ae1132bcc971dea81f2fe170fa588feb06db6652c667fc23d14540e573df289"
+  }
+}

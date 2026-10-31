@@ -1,0 +1,9 @@
+{
+  "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06",
+  "crates/penelope-executor/Cargo.toml": "3d5ce58600a35caa32cb30fc946e698c972d422c11d7f1cdca0d478539db6881",
+  "crates/penelope-executor/benches/lease_batch_services.rs": "11492725c48f4e72c669789ffc5fc9963c982816cd6526f4ffbea905cd9c28f9",
+  "crates/penelope-executor/benches/lease_batch_service_allocations.rs": "5597f3a94f5a6b181135ba4ce56809f04d1f7cd4b83053de9c52779a2778da20",
+  "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "289332e961f12b2aacfa2cde806477f97bac566f5814cdfc80641cfe1e1c12cf",
+  "docs/performance-timer-hex-audit-2026-10-31.md": "de30c03e83f99ae55fcad8113ba703cf29d2a974609992011184fdea644274f3",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+}

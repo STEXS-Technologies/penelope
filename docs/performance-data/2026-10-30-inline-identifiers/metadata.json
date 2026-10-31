@@ -1,0 +1,96 @@
+{
+  "created_utc": "2026-10-30T21:56:11.328843+00:00",
+  "baseline_revision": "46c0ab178b97c86044ac3cbe47b826a17e703c41",
+  "initial_revision": "719cc07c1c95d757153d3519175c600dc8585463",
+  "measured_final_library_revision": "aa2a557193771bbe9a5116b7ccaae967357f00ff",
+  "test_only_followup_revision": "69a749faa0bbba9cec7e26aacd7d8639ee71b3e8",
+  "campaigns": {
+    "initial": {
+      "decision_process_records": 240,
+      "application_records": 2560
+    },
+    "final": {
+      "decision_process_records": 240,
+      "application_records": 2560
+    }
+  },
+  "validation": {
+    "workspace_all_targets_all_features": {
+      "1.99.0": "pass on initial logic",
+      "1.85.0": "pass on initial logic"
+    },
+    "final_domain_contract_properties": {
+      "1.99.0": {
+        "requested_cases_per_property": 10000,
+        "properties": 2,
+        "result": "pass"
+      },
+      "1.85.0": {
+        "requested_cases_per_property": 10000,
+        "properties": 2,
+        "result": "pass"
+      }
+    },
+    "isolated_identifier_allocation_and_size_checks": "pass both toolchains, all 16 types",
+    "golden_wire_and_canonical_tests": "pass both toolchains",
+    "strict_clippy_workspace": "pass final source",
+    "workspace_doctests": "pass",
+    "fmt": "pass",
+    "layer_check": "pass",
+    "graphify_update": "complete",
+    "local_fuzz": {
+      "revision": "719cc07",
+      "targets": [
+        "fuzz_newtypes",
+        "fuzz_identifiers",
+        "fuzz_dtos",
+        "fuzz_linear_engine"
+      ],
+      "inputs_per_target": 100000,
+      "seed": 5,
+      "result": "pass"
+    },
+    "worker_deadline_test": {
+      "repetitions_per_toolchain": 31,
+      "toolchains": [
+        "1.99.0",
+        "1.85.0"
+      ],
+      "result": "pass"
+    },
+    "full_runtime_test_suite": {
+      "tests_per_toolchain": 49,
+      "toolchains": [
+        "1.99.0",
+        "1.85.0"
+      ],
+      "result": "pass"
+    }
+  },
+  "ci": {
+    "run": 41134034437,
+    "revision": "aa2a557",
+    "conclusion": "success",
+    "jobs": 7,
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41134034437"
+  },
+  "previous_ci_failure": {
+    "run": 41132703437,
+    "revision": "4d9c292",
+    "failure": "MSRV worker service test exhausted 100-poll wait before Completed; all 6 other jobs passed",
+    "raw_log": "validation/identifier-prior-doc-ci-failed.log.gz"
+  },
+  "limitations": [
+    "Synthetic in-memory workloads; no application-wide or durability/worker overhead claim",
+    "Encoding regression and long-identifier control retained",
+    "Frequency and unrelated host workloads uncontrolled",
+    "Earlier full release qualification remains pinned to its original documented revisions"
+  ],
+  "test_only_followup_ci": {
+    "run": 41134360757,
+    "revision": "69a749f",
+    "conclusion": "success",
+    "jobs": 7,
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41134360757"
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "source": "rejected-bootstrap-ci-failed.log",
+    "archive": "rejected-bootstrap-ci-failed.log.gz",
+    "sha256": "360c73f6039d818fc45f5f42b2efc3a12572425d851728a9e432ed9298e4c885",
+    "gzip_sha256": "5a3cb7ae83fff7cb3381da21c13f49221b860056536439c10ed4968bf4d6c9f7"
+  },
+  {
+    "source": "unloadable-bootstrap.log",
+    "archive": "unloadable-bootstrap.log.gz",
+    "sha256": "58eeb99ad9af8c8be982ed88dd051bb4eb2c868529e5a6b75ce7a8a36ee78761",
+    "gzip_sha256": "aa78627e27c240afcbafeaf3ce9b6a6567339237a56362bba6fb52f4582b9c7b"
+  },
+  {
+    "source": "unloadable-bootstrap-msrv.log",
+    "archive": "unloadable-bootstrap-msrv.log.gz",
+    "sha256": "6b70987b415fd1e27921c3aaa398067da47f4a4b3fd8876f4cf3a5bfdde1102c",
+    "gzip_sha256": "76cd46505203983885f902e51f7383bf23978cf3c2d2cd8c5f958d0dbab1917a"
+  },
+  {
+    "source": "unloadable-bootstrap-clippy.log",
+    "archive": "unloadable-bootstrap-clippy.log.gz",
+    "sha256": "bb7079b7a6bff99cfbaab44b81fcea19387448148cc13ac8c4323d6d0b5f4934",
+    "gzip_sha256": "5aaf9e473618aca2aff43eb2ca66db6e608cc21b64ade09d5994344e21e00a3c"
+  }
+]

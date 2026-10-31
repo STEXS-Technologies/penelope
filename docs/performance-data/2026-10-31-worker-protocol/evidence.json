@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "source": "2e3a768372d39955843cbd0b279e1c436a6439cc",
+  "baseline": "f6d7766c89f9d07a43ccc4945465f0252d209c1e",
+  "scope": "Worker protocol only. No application-overhead, SQLite, startup, or full release requalification claim.",
+  "method": "20 alternating revision pairs plus one warmup each; Rust 1.99.0 bench, CPU 0; Linux perf whole-process counters. Other host workloads, frequency and caches uncontrolled.",
+  "regression_proof": "New guard-reader test fails old source with Runtime instead of Corrupt, before reverting source. Candidate passes on Rust 1.85 and 1.99.",
+  "checks": {
+    "stable": "workspace excluding nonterminating fuzz binaries; all targets/all features, doctests, docs, strict workspace Clippy",
+    "msrv": "process-runtime all targets/all features plus final isolated allocation executable",
+    "fuzz": "worker_protocol: 100000 iterations seed 7; success",
+    "scope_hash": "10000 varied scopes match independent legacy Vec wire encoding",
+    "allocations": "proposal=0, valid input-only request=2, pinned-input-bound rejection=1; isolated executable on both toolchains"
+  },
+  "ci": {
+    "run": 41143074193,
+    "status": "success; all seven jobs"
+  },
+  "shared_fixture_sha256": {
+    "f6d7766": "d4c384c56c8faff1ae1001abf99593e7e6120b8e0f8ccb5574ee758521f35b98",
+    "2e3a768": "d4c384c56c8faff1ae1001abf99593e7e6120b8e0f8ccb5574ee758521f35b98"
+  }
+}

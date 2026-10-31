@@ -1,0 +1,135 @@
+diff --git a/crates/penelope-process-runtime/src/io_tests.rs b/crates/penelope-process-runtime/src/io_tests.rs
+index 204c6a7..02b80fe 100644
+--- a/crates/penelope-process-runtime/src/io_tests.rs
++++ b/crates/penelope-process-runtime/src/io_tests.rs
+@@ -282,3 +282,60 @@ fn continuous_interruptions_do_not_reset_the_write_deadline() {
+     );
+     assert_eq!(output.attempts, attempts);
+ }
++
++#[test]
++fn fixed_start_header_matches_legacy_wire_for_varied_bindings_and_lengths() {
++    let mut state = 29_u64;
++    for index in 0..10_000 {
++        let mut digest = || {
++            let mut bytes = [0; 32];
++            for byte in &mut bytes {
++                state ^= state << 13;
++                state ^= state >> 7;
++                state ^= state << 17;
++                *byte = state.to_le_bytes().first().copied().unwrap();
++            }
++            Digest(bytes)
++        };
++        let scope = TaskScope {
++            tenant: TaskTenantId::from_digest(digest()),
++            task: TaskId::from_digest(digest()),
++            definition: TaskDefinitionFingerprint::from_digest(digest()),
++            input: TaskInputDigest::from_digest(digest()),
++        };
++        let generation = TaskGeneration::new(match index {
++            0 => 0,
++            1 => u32::MAX,
++            _ => number(&digest().0, 0).unwrap(),
++        });
++        let lengths = match index % 4 {
++            0 => [0, 0, 0, 0],
++            1 => [8192, u32::MAX, u32::MAX, 1],
++            2 => [1, 1, 0, 1],
++            _ => [
++                number(&digest().0, 0).unwrap(),
++                number(&digest().0, 0).unwrap(),
++                number(&digest().0, 0).unwrap(),
++                1,
++            ],
++        };
++        // Independently reproduce the previous growable wire encoder,
++        // including the legacy scope-digest layout.
++        let mut scope_bytes = b"penelope.linux-worker.scope.v1\0".to_vec();
++        for item in [
++            scope.tenant.digest(),
++            scope.task.digest(),
++            scope.definition.digest(),
++            scope.input.digest(),
++        ] {
++            scope_bytes.extend_from_slice(&item.0);
++        }
++        let mut legacy = b"PNLWRK01".to_vec();
++        legacy.extend_from_slice(&Digest::of(&scope_bytes).0);
++        legacy.extend_from_slice(&generation.get().to_be_bytes());
++        for length in lengths {
++            legacy.extend_from_slice(&length.to_be_bytes());
++        }
++        assert_eq!(start_header(scope, generation, lengths).as_slice(), legacy);
++    }
++}
+diff --git a/crates/penelope-process-runtime/src/runtime.rs b/crates/penelope-process-runtime/src/runtime.rs
+index 8f02864..539c7b6 100644
+--- a/crates/penelope-process-runtime/src/runtime.rs
++++ b/crates/penelope-process-runtime/src/runtime.rs
+@@ -72,6 +72,20 @@ fn execution_id(scope: TaskScope, generation: TaskGeneration) -> Digest {
+     generation_bytes.copy_from_slice(&generation.get().to_be_bytes());
+     Digest::of(&bytes)
+ }
++fn start_header(scope: TaskScope, generation: TaskGeneration, lengths: [u32; 4]) -> [u8; 60] {
++    let mut bytes = [0; 60];
++    let (magic, remaining) = bytes.split_at_mut(8);
++    magic.copy_from_slice(START_MAGIC);
++    let (scope_bytes, fields) = remaining.split_at_mut(32);
++    scope_bytes.copy_from_slice(&scope_digest(scope).0);
++    for (destination, value) in fields
++        .chunks_exact_mut(4)
++        .zip(std::iter::once(generation.get()).chain(lengths))
++    {
++        destination.copy_from_slice(&value.to_be_bytes());
++    }
++    bytes
++}
+ fn number(bytes: &[u8], offset: usize) -> Result<u32, TaskPortError> {
+     Ok(u32::from_be_bytes(
+         bytes
+@@ -290,19 +304,17 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
+         if metadata.len() > 8192 {
+             return Err(TaskPortError::Exhausted);
+         }
+-        let mut header = Vec::with_capacity(60);
+-        header.extend_from_slice(START_MAGIC);
+-        header.extend_from_slice(&scope_digest(request.scope).0);
+-        header.extend_from_slice(&request.generation.get().to_be_bytes());
+-        for value in [
+-            u32::try_from(metadata.len()).map_err(|_length| TaskPortError::Exhausted)?,
+-            u32::try_from(request.input.len()).map_err(|_length| TaskPortError::Exhausted)?,
+-            u32::try_from(request.checkpoint.map_or(0, <[u8]>::len))
+-                .map_err(|_length| TaskPortError::Exhausted)?,
+-            u32::from(request.checkpoint.is_some()),
+-        ] {
+-            header.extend_from_slice(&value.to_be_bytes());
+-        }
++        let header = start_header(
++            request.scope,
++            request.generation,
++            [
++                u32::try_from(metadata.len()).map_err(|_length| TaskPortError::Exhausted)?,
++                u32::try_from(request.input.len()).map_err(|_length| TaskPortError::Exhausted)?,
++                u32::try_from(request.checkpoint.map_or(0, <[u8]>::len))
++                    .map_err(|_length| TaskPortError::Exhausted)?,
++                u32::from(request.checkpoint.is_some()),
++            ],
++        );
+         send_parts(
+             &mut active.stdin,
+             &[
+diff --git a/crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs b/crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs
+index ae751ee..def19e1 100644
+--- a/crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs
++++ b/crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs
+@@ -33,7 +33,8 @@ pub(super) fn run() {
+     )
+     .unwrap();
+     supervisor.submit(&input, 1, TaskTick::ZERO).unwrap();
+-    supervisor.advance(TaskTick::new(1)).unwrap();
++    let dispatch_allocations = count(|| supervisor.advance(TaskTick::new(1)).unwrap());
++    println!("Real runtime allocations: supervisor dispatch={dispatch_allocations}");
+     let projection = *supervisor.projection();
+     let generation = projection.generation();
+     let (mut journal, mut runtime) = supervisor.into_parts();

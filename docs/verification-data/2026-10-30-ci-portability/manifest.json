@@ -1,0 +1,38 @@
+[
+  {
+    "source": "ci-example-executor-fixed.log",
+    "archive": "ci-example-executor-fixed.log.gz",
+    "sha256": "d9e428592a1bfd18b514bb74cecf812efd92c93c1edacec59631ca6bec42f26f",
+    "gzip_sha256": "b836b1719b8c6ccc5ded2f737f8c1590ef28cf89ab4a7dc0f022784f6fcf234d"
+  },
+  {
+    "source": "ci-example-supervised-fixed.log",
+    "archive": "ci-example-supervised-fixed.log.gz",
+    "sha256": "af6c39e43f431a572fff69976214d6c6445ae8af57dd2441caa1e5abbe5c471d",
+    "gzip_sha256": "77cd9f8fbabed6874bded4667a9a1d6890c62d94ea804259f163903e3609b198"
+  },
+  {
+    "source": "ci-fixes-python.log",
+    "archive": "ci-fixes-python.log.gz",
+    "sha256": "1a07c6105360686f54076e17bc55c0a576dbace9543597027a71e3d1bc8c1af8",
+    "gzip_sha256": "8c72b4e515d5969e4c4ca6d67b6eca8fc6e9d2930e5c97d3211a896485072141"
+  },
+  {
+    "source": "ci-fixes-statechronicle.log",
+    "archive": "ci-fixes-statechronicle.log.gz",
+    "sha256": "2962670093e1f8bb5aac9bbe1dbbccbff28e98012f6257413a2996f35527d88b",
+    "gzip_sha256": "9087194ce21a1cc9ab166cd212e201b73cf37ad401e42e7229de03f76631250f"
+  },
+  {
+    "source": "ci-fixes-layers.log",
+    "archive": "ci-fixes-layers.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "source": "github-2ed17b3-failed.log",
+    "archive": "github-2ed17b3-failed.log.gz",
+    "sha256": "47ad899df122763bdd268aab9a286582e1100e861af6271e298c432beaeaf55c",
+    "gzip_sha256": "3715941ff6cfbccc6b716cb001aff8f7bfb5288081724305d3ca9cb6bf13a56b"
+  }
+]

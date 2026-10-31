@@ -1,0 +1,662 @@
+{
+  "latency": [
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "one",
+      "baseline_ns_per_log": 100.527,
+      "candidate_ns_per_log": 76.5815,
+      "change_pct": -27.332874203998376,
+      "ci_low": -32.90720904775016,
+      "ci_high": -23.45150214501877
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "page",
+      "baseline_ns_per_log": 7218.738,
+      "candidate_ns_per_log": 7439.925,
+      "change_pct": 0.724043741018627,
+      "ci_low": -2.9883259972755627,
+      "ci_high": 3.1615698962061374
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 244270.40625,
+      "candidate_ns_per_log": 254359.796875,
+      "change_pct": 3.0842684596926206,
+      "ci_low": 0.9893514818068484,
+      "ci_high": 4.896168440733131
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "stream",
+      "baseline_ns_per_log": 491937.5625,
+      "candidate_ns_per_log": 356571.953125,
+      "change_pct": -29.115776132000583,
+      "ci_low": -32.51427082976138,
+      "ci_high": -27.16522205003767
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "one",
+      "baseline_ns_per_log": 138.26049999999998,
+      "candidate_ns_per_log": 89.6135,
+      "change_pct": -34.02561331878338,
+      "ci_low": -36.18654261443952,
+      "ci_high": -31.066944079387575
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "page",
+      "baseline_ns_per_log": 12307.513500000001,
+      "candidate_ns_per_log": 12554.020499999999,
+      "change_pct": -1.4201188978437524,
+      "ci_low": -8.096092882049911,
+      "ci_high": 2.3764210355633315
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 425648.640625,
+      "candidate_ns_per_log": 432251.21875,
+      "change_pct": 1.6222907484622902,
+      "ci_low": 1.0147981201718894,
+      "ci_high": 2.2948637046100906
+    },
+    {
+      "campaign": 0,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "stream",
+      "baseline_ns_per_log": 805804.09375,
+      "candidate_ns_per_log": 634471.046875,
+      "change_pct": -23.727752592644215,
+      "ci_low": -28.383950557243498,
+      "ci_high": -21.02572011523298
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "one",
+      "baseline_ns_per_log": 125.7495,
+      "candidate_ns_per_log": 111.093,
+      "change_pct": -13.50672908759129,
+      "ci_low": -17.817914974446175,
+      "ci_high": -9.68340578027961
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "page",
+      "baseline_ns_per_log": 11590.646,
+      "candidate_ns_per_log": 11708.263500000001,
+      "change_pct": 0.024393056042520924,
+      "ci_low": -2.348298642452269,
+      "ci_high": 1.577722719585929
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 395848.125,
+      "candidate_ns_per_log": 402101.546875,
+      "change_pct": 1.5134262764038433,
+      "ci_low": 0.25541878203671203,
+      "ci_high": 2.5412356348015157
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "stream",
+      "baseline_ns_per_log": 648580.625,
+      "candidate_ns_per_log": 528068.921875,
+      "change_pct": -20.429978547120644,
+      "ci_low": -23.69345335236837,
+      "ci_high": -18.536084620463637
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "one",
+      "baseline_ns_per_log": 168.248,
+      "candidate_ns_per_log": 144.348,
+      "change_pct": -13.106318418864127,
+      "ci_low": -14.577668719706919,
+      "ci_high": -11.18595430339567
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "page",
+      "baseline_ns_per_log": 17150.913,
+      "candidate_ns_per_log": 17527.927000000003,
+      "change_pct": 1.742869353646135,
+      "ci_low": 0.9543455270465927,
+      "ci_high": 2.460075394171893
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 591351.3125,
+      "candidate_ns_per_log": 603700.28125,
+      "change_pct": -1.0576008113507962,
+      "ci_low": -7.289251154799825,
+      "ci_high": 2.770766853622942
+    },
+    {
+      "campaign": 0,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "stream",
+      "baseline_ns_per_log": 994932.625,
+      "candidate_ns_per_log": 817171.3125,
+      "change_pct": -17.780882267295723,
+      "ci_low": -18.035289704923546,
+      "ci_high": -17.514315135574734
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "one",
+      "baseline_ns_per_log": 100.7415,
+      "candidate_ns_per_log": 75.24549999999999,
+      "change_pct": -18.508803918511596,
+      "ci_low": -27.807999744070006,
+      "ci_high": 1.355005861314719
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "page",
+      "baseline_ns_per_log": 7331.5715,
+      "candidate_ns_per_log": 7505.0835,
+      "change_pct": 2.746748650913669,
+      "ci_low": 2.2194082199737415,
+      "ci_high": 3.3612363758132884
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 246737.078125,
+      "candidate_ns_per_log": 255639.53125,
+      "change_pct": 3.0321055637468164,
+      "ci_low": 1.8573946018364076,
+      "ci_high": 4.239858667280395
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "stream",
+      "baseline_ns_per_log": 496078.28125,
+      "candidate_ns_per_log": 361176.9375,
+      "change_pct": -27.629551411508036,
+      "ci_low": -28.10851876868134,
+      "ci_high": -27.1673560162995
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "one",
+      "baseline_ns_per_log": 138.785,
+      "candidate_ns_per_log": 89.47550000000001,
+      "change_pct": -36.77953087875846,
+      "ci_low": -40.03746197031248,
+      "ci_high": -34.7813785570208
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "page",
+      "baseline_ns_per_log": 12389.825,
+      "candidate_ns_per_log": 12691.173,
+      "change_pct": 1.8586444227018006,
+      "ci_low": 0.9209502509793605,
+      "ci_high": 2.833175625223531
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 429976.5,
+      "candidate_ns_per_log": 434730.046875,
+      "change_pct": 1.2986189989235954,
+      "ci_low": 0.69373312971463,
+      "ci_high": 2.046735220473062
+    },
+    {
+      "campaign": 1,
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "stream",
+      "baseline_ns_per_log": 814493.203125,
+      "candidate_ns_per_log": 638969.921875,
+      "change_pct": -24.001170070146706,
+      "ci_low": -28.915271750830634,
+      "ci_high": -21.27580950899872
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "one",
+      "baseline_ns_per_log": 128.345,
+      "candidate_ns_per_log": 108.9315,
+      "change_pct": -17.85047852084165,
+      "ci_low": -19.37157651154723,
+      "ci_high": -16.28343777897791
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "page",
+      "baseline_ns_per_log": 11713.6685,
+      "candidate_ns_per_log": 11754.365,
+      "change_pct": 4.23819357683218,
+      "ci_low": -0.5261836260463918,
+      "ci_high": 12.607773137071101
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 402676.328125,
+      "candidate_ns_per_log": 403135.0625,
+      "change_pct": -0.05111278489521531,
+      "ci_low": -1.958314958343822,
+      "ci_high": 1.6632973675702676
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "stream",
+      "baseline_ns_per_log": 653792.53125,
+      "candidate_ns_per_log": 530867.3125,
+      "change_pct": -16.307265746743443,
+      "ci_low": -19.082564207104795,
+      "ci_high": -10.913909226687622
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "one",
+      "baseline_ns_per_log": 167.26799999999997,
+      "candidate_ns_per_log": 147.04399999999998,
+      "change_pct": -12.08028454541603,
+      "ci_low": -12.852270665102658,
+      "ci_high": -11.301603085719393
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "page",
+      "baseline_ns_per_log": 17291.902000000002,
+      "candidate_ns_per_log": 17467.605000000003,
+      "change_pct": 1.1873853889134471,
+      "ci_low": 0.28012831646731917,
+      "ci_high": 2.123853179691031
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "rebuild",
+      "baseline_ns_per_log": 598999.640625,
+      "candidate_ns_per_log": 603368.859375,
+      "change_pct": -0.46534950968379635,
+      "ci_low": -3.683682318597723,
+      "ci_high": 1.5603658823673812
+    },
+    {
+      "campaign": 1,
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "stream",
+      "baseline_ns_per_log": 1003457.515625,
+      "candidate_ns_per_log": 821780.828125,
+      "change_pct": -18.170817307790582,
+      "ci_low": -18.625008464029623,
+      "ci_high": -17.633982119635842
+    }
+  ],
+  "allocation": [
+    {
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "one",
+      "count": 1,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 3,
+        "reallocations": 0,
+        "requested_bytes": 1288
+      },
+      "candidate": {
+        "allocations": 2,
+        "reallocations": 0,
+        "requested_bytes": 1172
+      },
+      "removed_allocations": 1,
+      "removed_requested_bytes": 116
+    },
+    {
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "page",
+      "count": 128,
+      "chunk": 128,
+      "baseline": {
+        "allocations": 3,
+        "reallocations": 0,
+        "requested_bytes": 46624
+      },
+      "candidate": {
+        "allocations": 3,
+        "reallocations": 0,
+        "requested_bytes": 46624
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "stream",
+      "count": 4096,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 4109,
+        "reallocations": 10,
+        "requested_bytes": 3046460
+      },
+      "candidate": {
+        "allocations": 13,
+        "reallocations": 10,
+        "requested_bytes": 2571324
+      },
+      "removed_allocations": 4096,
+      "removed_requested_bytes": 475136
+    },
+    {
+      "scope_len": 9,
+      "id_len": 8,
+      "profile": "rebuild",
+      "count": 4096,
+      "chunk": 4096,
+      "baseline": {
+        "allocations": 3,
+        "reallocations": 0,
+        "requested_bytes": 1490976
+      },
+      "candidate": {
+        "allocations": 3,
+        "reallocations": 0,
+        "requested_bytes": 1490976
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "one",
+      "count": 1,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 5,
+        "reallocations": 0,
+        "requested_bytes": 1544
+      },
+      "candidate": {
+        "allocations": 4,
+        "reallocations": 0,
+        "requested_bytes": 1428
+      },
+      "removed_allocations": 1,
+      "removed_requested_bytes": 116
+    },
+    {
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "page",
+      "count": 128,
+      "chunk": 128,
+      "baseline": {
+        "allocations": 259,
+        "reallocations": 0,
+        "requested_bytes": 79392
+      },
+      "candidate": {
+        "allocations": 259,
+        "reallocations": 0,
+        "requested_bytes": 79392
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "stream",
+      "count": 4096,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 12301,
+        "reallocations": 10,
+        "requested_bytes": 4095036
+      },
+      "candidate": {
+        "allocations": 8205,
+        "reallocations": 10,
+        "requested_bytes": 3619900
+      },
+      "removed_allocations": 4096,
+      "removed_requested_bytes": 475136
+    },
+    {
+      "scope_len": 9,
+      "id_len": 128,
+      "profile": "rebuild",
+      "count": 4096,
+      "chunk": 4096,
+      "baseline": {
+        "allocations": 8195,
+        "reallocations": 0,
+        "requested_bytes": 2539552
+      },
+      "candidate": {
+        "allocations": 8195,
+        "reallocations": 0,
+        "requested_bytes": 2539552
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "one",
+      "count": 1,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 7,
+        "reallocations": 0,
+        "requested_bytes": 1800
+      },
+      "candidate": {
+        "allocations": 6,
+        "reallocations": 0,
+        "requested_bytes": 1684
+      },
+      "removed_allocations": 1,
+      "removed_requested_bytes": 116
+    },
+    {
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "page",
+      "count": 128,
+      "chunk": 128,
+      "baseline": {
+        "allocations": 515,
+        "reallocations": 0,
+        "requested_bytes": 112160
+      },
+      "candidate": {
+        "allocations": 515,
+        "reallocations": 0,
+        "requested_bytes": 112160
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "stream",
+      "count": 4096,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 20493,
+        "reallocations": 10,
+        "requested_bytes": 5143612
+      },
+      "candidate": {
+        "allocations": 16397,
+        "reallocations": 10,
+        "requested_bytes": 4668476
+      },
+      "removed_allocations": 4096,
+      "removed_requested_bytes": 475136
+    },
+    {
+      "scope_len": 128,
+      "id_len": 8,
+      "profile": "rebuild",
+      "count": 4096,
+      "chunk": 4096,
+      "baseline": {
+        "allocations": 16387,
+        "reallocations": 0,
+        "requested_bytes": 3588128
+      },
+      "candidate": {
+        "allocations": 16387,
+        "reallocations": 0,
+        "requested_bytes": 3588128
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "one",
+      "count": 1,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 2056
+      },
+      "candidate": {
+        "allocations": 8,
+        "reallocations": 0,
+        "requested_bytes": 1940
+      },
+      "removed_allocations": 1,
+      "removed_requested_bytes": 116
+    },
+    {
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "page",
+      "count": 128,
+      "chunk": 128,
+      "baseline": {
+        "allocations": 771,
+        "reallocations": 0,
+        "requested_bytes": 144928
+      },
+      "candidate": {
+        "allocations": 771,
+        "reallocations": 0,
+        "requested_bytes": 144928
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "stream",
+      "count": 4096,
+      "chunk": 1,
+      "baseline": {
+        "allocations": 28685,
+        "reallocations": 10,
+        "requested_bytes": 6192188
+      },
+      "candidate": {
+        "allocations": 24589,
+        "reallocations": 10,
+        "requested_bytes": 5717052
+      },
+      "removed_allocations": 4096,
+      "removed_requested_bytes": 475136
+    },
+    {
+      "scope_len": 128,
+      "id_len": 128,
+      "profile": "rebuild",
+      "count": 4096,
+      "chunk": 4096,
+      "baseline": {
+        "allocations": 24579,
+        "reallocations": 0,
+        "requested_bytes": 4636704
+      },
+      "candidate": {
+        "allocations": 24579,
+        "reallocations": 0,
+        "requested_bytes": 4636704
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    }
+  ]
+}

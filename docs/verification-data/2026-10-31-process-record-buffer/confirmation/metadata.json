@@ -1,0 +1,14 @@
+{
+  "parent": "0c68fdc754c7be223b0463803029c0aa1a290416",
+  "sources": {
+    "baseline": "888306d1b29a1419b3ed6fc91b798d2f98c0ac5d75378d080717aee96122d761",
+    "candidate": "045c11cea070c15f5a236634632c45a4b183e7cbbb32f54447a32dd5bd9f9343"
+  },
+  "binaries": {
+    "baseline-process_encoding": "aeffdbc1e5b5890ef7cad013f6509b684218254290a3dca7f94d3fbeadbde366",
+    "baseline-process_encoding_allocations": "f2bf77fcedd77ab8cca4e5fc6b2b5ef72a08a1a9eb22a6e65dbc856938dd7f53",
+    "candidate-process_encoding": "1c65f1b0e32f2af6bd3bc898286d1b1663c9ef5f9cfbde03abdb130c3e0b898f",
+    "candidate-process_encoding_allocations": "0a5d7a4d1d76ee9e9a71da4aa16722a8267c91db8aaffce1033ec3f0e54dfbb1"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

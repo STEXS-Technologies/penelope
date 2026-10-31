@@ -1,0 +1,83 @@
+{
+  "workspace": {
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--all-features",
+      "--tests",
+      "--locked",
+      "--exclude",
+      "penelope-fuzz"
+    ],
+    "exit_code": 0
+  },
+  "msrv": {
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "test",
+      "-p",
+      "penelope-executor",
+      "-p",
+      "penelope-process-runtime",
+      "--all-features",
+      "--tests",
+      "--locked"
+    ],
+    "exit_code": 0
+  },
+  "clippy": {
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--exclude",
+      "penelope-fuzz",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0
+  },
+  "msrv-check": {
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "check",
+      "-p",
+      "penelope-executor",
+      "--all-targets",
+      "--all-features",
+      "--locked"
+    ],
+    "exit_code": 0
+  },
+  "fmt": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  "layers": {
+    "command": [
+      "bash",
+      "scripts/check-layer-boundaries.sh"
+    ],
+    "exit_code": 0
+  },
+  "graph": {
+    "command": [
+      "graphify",
+      "update",
+      "."
+    ],
+    "exit_code": 0
+  }
+}

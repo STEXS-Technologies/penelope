@@ -1,0 +1,25 @@
+{
+  "baseline": "bd0cdf5bfcced391d59ce11d58831dbc6a764f88",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "source_sha256": "358792d2281267ca8247fa494333e68d175bf53e6a8ddff8006c5d0a37b782f9",
+      "binary_sha256": "515ff58ec7a6696307f2050edfa7497c863fc699980addc898c753d026e78c37",
+      "path": "target/inbox-index-baseline"
+    },
+    "indexed": {
+      "source_sha256": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+      "binary_sha256": "7d1568b33bba0a8acaeaabecd04f55cf81d597c991e1eceb17389e4245065964",
+      "path": "target/inbox-index-indexed"
+    }
+  },
+  "fixture_sha256": "92c2b59ccebffbd2a214a8d5c778b244df584e4586d454f79a5e14654c0f7b57",
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 24,
+  "order": "alternating AB/BA; 0,128,1024 retained inputs per process; all public ports",
+  "background": "no own builds, tests or graph jobs during timing",
+  "warmup": 100,
+  "iterations": 1000
+}

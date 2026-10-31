@@ -1,0 +1,10 @@
+{
+  "clone-only/metadata.json": "01dcebfebb050b2b4b8e38369cb4cc392fee5857212fafb88d2d9b30ec217146",
+  "clone-only/measurements.json.gz": "a9030313ad2aae364fc1a4823b8f0655ff8737a40b255161d414c5d067b00d79",
+  "history-capacity/metadata.json": "92ba3962b3fb0004c81105b0a4bcf507fdf75fcd348c1e9b40b76e822b15f7e5",
+  "history-capacity/measurements.json.gz": "f2e08751623c161d6d4375f086d4fcf0401e543be976942ffc89ad7d08b31e6a",
+  "indexed-validation/metadata.json": "85243d8c85939478fd213eaee43eaeea337641658150bcc7954963c5a61b4962",
+  "indexed-validation/measurements.json.gz": "c4b8f300220e66fc48b774d9d26a2c25e77586997eaa1ad15125f9661caaafc5",
+  "indexed-validation/graph-summary.json": "b2522add025a8d2861726cee23ef698d9a3aca323aa71d8b1faa277baa0f7edb",
+  "indexed-validation/parallel-graph-summary.json": "e7a98205cea7ac61251208c3ed254862d1e44101f99e8086c5f78216f65ead14"
+}

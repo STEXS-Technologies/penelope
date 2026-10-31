@@ -3,6 +3,7 @@
 //! owns isolation and immediate safety; the supervisor owns recovery policy.
 
 mod contracts;
+pub mod control;
 mod identities;
 mod projection;
 pub mod runtime;

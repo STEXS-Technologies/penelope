@@ -1,0 +1,2 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `release` profile [optimized] target(s) in 0.24s

@@ -1,0 +1,33 @@
+{
+  "production_candidate": "7d2a2b9",
+  "test_source": "crates/penelope-process-runtime/tests/support/cancellation.rs",
+  "test_sha256": "8adc465126a623315883b9c5050430ef2c037b3fbc7e45753cfd2ee5665012cb",
+  "logs": [
+    {
+      "path": "completion-cancellation.log.gz",
+      "original_sha256": "1d9b8496e8f695d39990dc217f51b1a09626e438e891315864f9be714a10e3ed",
+      "archive_sha256": "c3b85412fd73e85e32a1568eda4944e21cfa99f0edf442a70ff1ec6410f35b38"
+    },
+    {
+      "path": "completion-cancellation-msrv.log.gz",
+      "original_sha256": "b2d68fcddc91746834de6e53f5920f438bebd4d89b5539fcd80a58751a67f248",
+      "archive_sha256": "dbf06c1859c00852353e8b503b87564ea5280a705d9576c5a0417eda202a54b4"
+    },
+    {
+      "path": "completion-cancellation-clippy.log.gz",
+      "original_sha256": "b9625bae51b9ffb7294199a8f558ba5535aea4e25cbaf7f0de35a0033a692bfe",
+      "archive_sha256": "1b13d6d5e65c955ea642514d2a1a66b0b802e7904f4813dcc099f58a42588495"
+    },
+    {
+      "path": "completion-cancellation-graph.log.gz",
+      "original_sha256": "2525795b4c51f3e5ec97d79506802742542280c895fa0951f8d69d198c74e8fc",
+      "archive_sha256": "0fcb3a7298bf625198df30c5cced20f4fdc50d3615fe72cb39592b549b3b96e2"
+    },
+    {
+      "path": "completion-cancellation-runtime-all.log.gz",
+      "original_sha256": "6cee6c67f507bc7b21e20a9ce73288aef2ba7cec708b5cc4b5b29e31dd843811",
+      "archive_sha256": "308c49b7aaef0f6fcf1daddeb002a4ce276203847c07581d0472ea3251e84c75"
+    }
+  ],
+  "scope": "Completed real worker result prepared at old saga frontier; unknown committed, then cancellation races stale result through separate connections; shared/separate task and saga databases"
+}

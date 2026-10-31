@@ -1,0 +1,21 @@
+{
+  "source_parent": "5a04a54f1141c351b9a5a3b9c2d9ce30200a2699",
+  "sources": {
+    "baseline": {
+      "crates/penelope-sqlite/src/process.rs": "28ff49095218b73e3eed9763181f340795d2187658cbc269daa1a824331a8af5"
+    },
+    "candidate": {
+      "crates/penelope-sqlite/src/process.rs": "888306d1b29a1419b3ed6fc91b798d2f98c0ac5d75378d080717aee96122d761"
+    }
+  },
+  "harness_sha256": {
+    "crates/penelope-sqlite/benches/process_append_allocations.rs": "0d24c018a88a39f2454f06ebb279f35b75d41ee92a98ed228d12647d9fada04f",
+    "crates/penelope-sqlite/benches/support/caller_allocator.rs": "e6c4179f7055f7fe2ad327e043faab0cb0df0c38ebc0a6444cb437f9badc9a27",
+    "crates/penelope-sqlite/benches/support/process_append_fixture.rs": "9aea2bb6802310b01e6496718874e0a691674c63468c71bb8eacc98b803514c2"
+  },
+  "binaries": {
+    "baseline-probe": "fa3fd1f70aa04fff1b391832119cf0b48930943ec86cfbf66dd6732141fd94e6",
+    "candidate-probe": "c3eaa87195856912c68dee35e11b6c176c174b5193d3446c1ff7b12e53dcbb79"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

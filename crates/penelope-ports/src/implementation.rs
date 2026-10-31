@@ -1270,6 +1270,16 @@ pub enum ProcessAuthorizationOperation {
     DecideReview,
     /// Submit an explicit terminal override after review and evidence.
     TerminalOverride,
+    /// Claim and dispatch already committed outgoing actions.
+    Dispatch,
+    /// Drive a durably accepted recoverable task.
+    DriveTask,
+    /// Reconcile independently issued external effects.
+    ReconcileEffect,
+    /// Deliver durable due-timer inputs.
+    DeliverTimer,
+    /// Relay a verified task result into a process commit.
+    RelayTaskResult,
 }
 
 /// Minimum control required before a mutable process operation can proceed.
@@ -1286,9 +1296,14 @@ impl ProcessAuthorizationOperation {
     #[must_use]
     pub const fn minimum_requirement(self) -> AuthorizationRequirement {
         match self {
-            Self::Start | Self::Cancel | Self::Retry => {
-                AuthorizationRequirement::AuthenticatedPrincipal
-            }
+            Self::Start
+            | Self::Cancel
+            | Self::Retry
+            | Self::Dispatch
+            | Self::DriveTask
+            | Self::ReconcileEffect
+            | Self::DeliverTimer
+            | Self::RelayTaskResult => AuthorizationRequirement::AuthenticatedPrincipal,
             Self::DecideReview | Self::TerminalOverride => {
                 AuthorizationRequirement::DistinctPrincipals
             }
@@ -1572,7 +1587,12 @@ impl TimerLease {
         self.timer
             .validate()
             .map_err(|_timer_error| PortError::Invariant)?;
-        if self.timer.action.scope() != request.scope
+        let action = &self.timer.action;
+        if action.tenant_id != request.scope.tenant_id
+            || action.process_id != request.scope.process_id
+            || action.definition_id != request.scope.definition_id
+            || action.definition_version != request.scope.definition_version
+            || action.definition_digest != request.scope.definition_digest
             || self.owner != request.owner
             || self.timer.due_at > request.now
         {
@@ -2025,12 +2045,20 @@ impl OutcomeLog {
         }
         let mut expected = u64::try_from(self.outcomes.len())
             .map_err(|_conversion_error| OutcomeLogValidationError::SequenceOverflow)?;
+        if let [outcome] = outcomes {
+            return self.append_one(outcome, expected);
+        }
         let mut new_ids = HashSet::with_capacity(outcomes.len());
         for outcome in outcomes {
             if outcome.validate().is_err() {
                 return Err(OutcomeLogValidationError::InvalidOutcome);
             }
-            if outcome.scope() != self.scope {
+            if outcome.tenant_id != self.scope.tenant_id
+                || outcome.process_id != self.scope.process_id
+                || outcome.definition_id != self.scope.definition_id
+                || outcome.definition_version != self.scope.definition_version
+                || outcome.definition_digest != self.scope.definition_digest
+            {
                 return Err(OutcomeLogValidationError::ScopeMismatch);
             }
             if outcome.sequence != expected {
@@ -2050,11 +2078,63 @@ impl OutcomeLog {
         Ok(())
     }
 
+    // Keep the bulk loop unchanged: singleton batches need no temporary ID set.
+    #[inline(never)]
+    fn append_one(
+        &mut self,
+        outcome: &ProcessOutcome,
+        expected: u64,
+    ) -> Result<(), OutcomeLogValidationError> {
+        outcome
+            .validate()
+            .map_err(|_invalid_outcome| OutcomeLogValidationError::InvalidOutcome)?;
+        outcome
+            .validate_for_scope(&self.scope)
+            .map_err(|_scope_mismatch| OutcomeLogValidationError::ScopeMismatch)?;
+        if outcome.sequence != expected {
+            return Err(OutcomeLogValidationError::NonContiguousSequence);
+        }
+        if self.seen_outcome_ids.contains(&outcome.outcome_id) {
+            return Err(OutcomeLogValidationError::DuplicateOutcomeId);
+        }
+        self.outcomes.push(outcome.clone());
+        self.seen_outcome_ids.insert(outcome.outcome_id.clone());
+        Ok(())
+    }
+
     /// Returns the next sequence required by [`Self::append`].
     #[must_use]
     pub fn next_sequence(&self) -> u64 {
         u64::try_from(self.outcomes.len()).unwrap_or(u64::MAX)
     }
+}
+
+// Compare the complete effect coordinates by reference. The exhaustive
+// destructuring requires review if ProcessAction gains another coordinate.
+fn same_effect_key(first: &ProcessAction, second: &ProcessAction) -> bool {
+    let ProcessAction {
+        tenant_id,
+        process_id,
+        definition_id,
+        definition_version,
+        definition_digest,
+        step_id,
+        attempt,
+        kind,
+        payload_digest,
+        action_id: _,
+    } = first;
+    // Valid batches share the scope. Check varying effect coordinates first,
+    // while retaining every scope comparison for unvalidated later actions.
+    step_id == &second.step_id
+        && attempt == &second.attempt
+        && kind == &second.kind
+        && payload_digest == &second.payload_digest
+        && tenant_id == &second.tenant_id
+        && process_id == &second.process_id
+        && definition_id == &second.definition_id
+        && definition_version == &second.definition_version
+        && definition_digest == &second.definition_digest
 }
 
 impl AtomicProcessCommit {
@@ -2148,12 +2228,11 @@ impl AtomicProcessCommit {
             {
                 return Err(CommitValidationError::DuplicateActionId);
             }
-            let effect_key = action.effect_key();
             if self
                 .actions
                 .iter()
                 .skip(index.saturating_add(1))
-                .any(|other_action| other_action.effect_key() == effect_key)
+                .any(|other_action| same_effect_key(action, other_action))
             {
                 return Err(CommitValidationError::DuplicateActionEffectKey);
             }

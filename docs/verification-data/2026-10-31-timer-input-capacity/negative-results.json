@@ -1,0 +1,17 @@
+[
+  {
+    "name": "budget",
+    "rejected": true,
+    "marker": "timer input allocation budget"
+  },
+  {
+    "name": "metadata",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  },
+  {
+    "name": "prefix",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  }
+]

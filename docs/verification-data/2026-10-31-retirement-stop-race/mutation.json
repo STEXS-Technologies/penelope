@@ -1,0 +1,7 @@
+{
+  "mutation": "disable active-generation retirement guard: if active && false",
+  "expected_exit": 101,
+  "actual_exit": 101,
+  "restored_sha256": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+  "restored_equal_head": true
+}
