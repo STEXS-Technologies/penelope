@@ -640,3 +640,6 @@ mod payload_columns;
 
 #[path = "support/lease_encoding.rs"]
 mod lease_encoding;
+
+#[path = "support/concurrent_quota.rs"]
+mod concurrent_quota;
