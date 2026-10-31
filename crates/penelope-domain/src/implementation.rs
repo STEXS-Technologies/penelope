@@ -781,7 +781,17 @@ impl EffectKey {
     /// attempt, so two distinct effects cannot collide by concatenation.
     #[must_use]
     pub fn canonical_bytes(&self) -> Vec<u8> {
-        let mut bytes = Vec::new();
+        // Five two-byte identifier lengths, two digests, attempt and kind.
+        let capacity = [
+            self.tenant_id.as_str().len(),
+            self.process_id.as_str().len(),
+            self.definition_id.as_str().len(),
+            self.definition_version.as_str().len(),
+            self.step_id.as_str().len(),
+        ]
+        .into_iter()
+        .fold(79_usize, usize::saturating_add);
+        let mut bytes = Vec::with_capacity(capacity);
         encode_identifier(&mut bytes, self.tenant_id.as_str());
         encode_identifier(&mut bytes, self.process_id.as_str());
         encode_identifier(&mut bytes, self.definition_id.as_str());

@@ -1,6 +1,8 @@
 //! Isolated executable: verify short identity parsing/cloning has no allocation.
 #![allow(clippy::unwrap_used)]
 use penelope_domain::*;
+#[path = "support/effect_key_fixture.rs"]
+mod effect_fixture;
 use std::{
     alloc::{GlobalAlloc, Layout, System},
     hint::black_box,
@@ -115,6 +117,19 @@ fn main() {
         count(|| ContentDigest([255; 32]).canonical_wire_bytes().unwrap()),
         1
     );
+    for (profile, lengths) in effect_fixture::PROFILES {
+        for (kind, category) in effect_fixture::KINDS.into_iter().enumerate() {
+            let key = effect_fixture::key(lengths, category, u32::MAX, 255);
+            assert_eq!(
+                count(|| black_box(&key).canonical_bytes()),
+                1,
+                "{profile} kind={kind}"
+            );
+            let bytes = key.canonical_bytes();
+            assert_eq!(bytes.capacity(), bytes.len());
+        }
+    }
+    println!("effect_key_profiles=20 allocations=1 exact_capacity=true");
     println!(
         "All 16 identifier types: short borrowed parse/JSON decode/clone zero allocations; long parse/clone one allocation; unchanged value size"
     );
