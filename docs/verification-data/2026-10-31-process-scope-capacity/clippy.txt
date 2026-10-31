@@ -1,0 +1,9 @@
+    Checking penelope-domain v0.3.0 (/home/ac/projects/penelope/crates/penelope-domain)
+    Checking penelope-ports v0.3.0 (/home/ac/projects/penelope/crates/penelope-ports)
+    Checking penelope-intent v0.3.0 (/home/ac/projects/penelope/crates/penelope-intent)
+    Checking penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Checking penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Checking penelope-statechronicle v0.3.0 (/home/ac/projects/penelope/crates/penelope-statechronicle)
+    Checking penelope v0.3.0 (/home/ac/projects/penelope/crates/penelope)
+    Checking penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.41s
