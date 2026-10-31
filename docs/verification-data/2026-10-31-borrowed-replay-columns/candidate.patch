@@ -1,0 +1,595 @@
+diff --git a/crates/penelope-sqlite/Cargo.toml b/crates/penelope-sqlite/Cargo.toml
+index e478b7b..e1c2e17 100644
+--- a/crates/penelope-sqlite/Cargo.toml
++++ b/crates/penelope-sqlite/Cargo.toml
+@@ -51,3 +51,7 @@ harness = false
+ [[bench]]
+ name = "process_replay"
+ harness = false
++
++[[bench]]
++name = "process_replay_allocations"
++harness = false
+diff --git a/crates/penelope-sqlite/benches/process_replay.rs b/crates/penelope-sqlite/benches/process_replay.rs
+index ef30865..e7775af 100644
+--- a/crates/penelope-sqlite/benches/process_replay.rs
++++ b/crates/penelope-sqlite/benches/process_replay.rs
+@@ -1,128 +1,11 @@
+-//! Public replay latency at selected history sizes and page cursors.
+-//! Population uses typed public commits; validation is outside the timed region.
++//! Public replay latency; fixture validation stays outside the timed region.
++#[path = "support/process_replay_fixture.rs"]
++mod fixture;
++use fixture::{Clock, Error, block_on, populate, verify};
+ use penelope_domain::*;
+ use penelope_ports::*;
+-use penelope_sqlite::{SqliteLeaseClock, SqliteLimits, SqliteProcessStore};
+-use std::{
+-    future::Future,
+-    num::NonZeroU16,
+-    sync::Arc,
+-    task::{Context, Poll, Wake, Waker},
+-    time::{Duration, Instant},
+-};
+-type Error = Box<dyn std::error::Error>;
+-struct Clock;
+-impl SqliteLeaseClock for Clock {
+-    fn now(&self) -> Result<LogicalTime, PortError> {
+-        Ok(LogicalTime(100))
+-    }
+-}
+-struct ThreadWake(std::thread::Thread);
+-impl Wake for ThreadWake {
+-    fn wake(self: Arc<Self>) {
+-        self.0.unpark();
+-    }
+-    fn wake_by_ref(self: &Arc<Self>) {
+-        self.0.unpark();
+-    }
+-}
+-fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
+-    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
+-    let mut context = Context::from_waker(&waker);
+-    let mut future = Box::pin(future);
+-    let deadline = Instant::now()
+-        .checked_add(Duration::from_secs(10))
+-        .ok_or("deadline overflow")?;
+-    loop {
+-        if let Poll::Ready(result) = future.as_mut().poll(&mut context) {
+-            return Ok(result);
+-        }
+-        if Instant::now() >= deadline {
+-            return Err("replay timed out".into());
+-        }
+-        std::thread::park_timeout(Duration::from_millis(10));
+-    }
+-}
+-fn populate(
+-    store: &SqliteProcessStore,
+-    scope: &ProcessScope,
+-    count: u32,
+-) -> Result<Vec<ProcessOutcome>, Error> {
+-    let input = ProcessInput::new(
+-        scope.tenant_id.clone(),
+-        scope.process_id.clone(),
+-        "inp_start".parse()?,
+-        ProcessInputKind::CanonicalEvent,
+-        ContentDigest([2; 32]),
+-    );
+-    let mut outcomes = Vec::new();
+-    for sequence in 0..count {
+-        outcomes.push(ProcessOutcome::new(
+-            scope.clone(),
+-            u64::from(sequence),
+-            ProcessOutcomeFact::new(
+-                format!("out_{sequence:06}").parse()?,
+-                CausationId::Input(input.input_id.clone()),
+-                OutcomeActor::System,
+-                LogicalTime(1),
+-                if sequence == 0 {
+-                    ProcessOutcomeKind::Started
+-                } else {
+-                    ProcessOutcomeKind::ActionPlanned
+-                },
+-                ContentDigest([3; 32]),
+-            ),
+-        ));
+-    }
+-    let mut start = 0_u64;
+-    for batch in outcomes.chunks(128) {
+-        let commit = AtomicProcessCommit::new(
+-            start,
+-            if start == 0 {
+-                Some(input.clone())
+-            } else {
+-                None
+-            },
+-            batch.to_vec(),
+-            Vec::new(),
+-        )?;
+-        block_on(ProcessStore::commit(store, &commit))??.validate_for(&commit)?;
+-        start = start
+-            .checked_add(u64::try_from(batch.len())?)
+-            .ok_or("sequence overflow")?;
+-    }
+-    Ok(outcomes)
+-}
+-fn verify(
+-    page: &OutcomeReplayPage,
+-    request: &OutcomeReplayRequest,
+-    history: &[ProcessOutcome],
+-) -> Result<(), Error> {
+-    page.validate()?;
+-    let expected: Vec<_> = history
+-        .iter()
+-        .filter(|outcome| outcome.sequence >= request.from_sequence)
+-        .take(usize::from(request.limit.get()))
+-        .cloned()
+-        .collect();
+-    let next = request
+-        .from_sequence
+-        .checked_add(u64::try_from(expected.len())?)
+-        .ok_or("sequence overflow")?;
+-    let continuation = if next < u64::try_from(history.len())? {
+-        Some(next)
+-    } else {
+-        None
+-    };
+-    if page.scope != request.scope
+-        || page.from_sequence != request.from_sequence
+-        || page.outcomes != expected
+-        || page.next_sequence != continuation
+-    {
+-        return Err("incorrect replay page".into());
+-    }
+-    Ok(())
+-}
++use penelope_sqlite::{SqliteLimits, SqliteProcessStore};
++use std::{num::NonZeroU16, sync::Arc, time::Instant};
+ fn main() -> Result<(), Error> {
+     for count in [1_u32, 128, 4096] {
+         let directory = tempfile::tempdir()?;
+diff --git a/crates/penelope-sqlite/benches/process_replay_allocations.rs b/crates/penelope-sqlite/benches/process_replay_allocations.rs
+new file mode 100644
+index 0000000..ad8681d
+--- /dev/null
++++ b/crates/penelope-sqlite/benches/process_replay_allocations.rs
+@@ -0,0 +1,114 @@
++//! Public replay allocation traffic, counted separately from latency.
++#![allow(unsafe_code, clippy::unwrap_used, clippy::arithmetic_side_effects)]
++use std::{
++    alloc::{GlobalAlloc, Layout, System},
++    sync::atomic::{AtomicBool, AtomicUsize, Ordering},
++};
++#[path = "support/process_replay_fixture.rs"]
++mod fixture;
++use fixture::{Clock, Error, block_on, populate, verify};
++use penelope_domain::*;
++use penelope_ports::*;
++use penelope_sqlite::{SqliteLimits, SqliteProcessStore};
++use std::{num::NonZeroU16, sync::Arc};
++struct CountingAllocator;
++static ENABLED: AtomicBool = AtomicBool::new(false);
++static ALLOCATIONS: AtomicUsize = AtomicUsize::new(0);
++static REALLOCATIONS: AtomicUsize = AtomicUsize::new(0);
++static REQUESTED_BYTES: AtomicUsize = AtomicUsize::new(0);
++#[global_allocator]
++static ALLOCATOR: CountingAllocator = CountingAllocator;
++// SAFETY: each operation forwards the original pointer/layout to System. The
++// instrumentation uses only atomics and cannot allocate, unwind or recurse.
++unsafe impl GlobalAlloc for CountingAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        if ENABLED.load(Ordering::SeqCst) {
++            ALLOCATIONS.fetch_add(1, Ordering::SeqCst);
++            REQUESTED_BYTES.fetch_add(layout.size(), Ordering::SeqCst);
++        }
++        // SAFETY: caller supplies the GlobalAlloc layout contract unchanged.
++        unsafe { System.alloc(layout) }
++    }
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        if ENABLED.load(Ordering::SeqCst) {
++            ALLOCATIONS.fetch_add(1, Ordering::SeqCst);
++            REQUESTED_BYTES.fetch_add(layout.size(), Ordering::SeqCst);
++        }
++        // SAFETY: caller supplies the GlobalAlloc layout contract unchanged.
++        unsafe { System.alloc_zeroed(layout) }
++    }
++    unsafe fn realloc(&self, pointer: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        if ENABLED.load(Ordering::SeqCst) {
++            REALLOCATIONS.fetch_add(1, Ordering::SeqCst);
++            REQUESTED_BYTES.fetch_add(size, Ordering::SeqCst);
++        }
++        // SAFETY: pointer, old layout and new size retain the caller's contract.
++        unsafe { System.realloc(pointer, layout, size) }
++    }
++    unsafe fn dealloc(&self, pointer: *mut u8, layout: Layout) {
++        // SAFETY: pointer/layout are forwarded to their original allocator.
++        unsafe { System.dealloc(pointer, layout) }
++    }
++}
++fn main() -> Result<(), Error> {
++    let directory = tempfile::tempdir()?;
++    let path = directory.path().join("allocations.db");
++    let store = SqliteProcessStore::open(&path, SqliteLimits::default(), Arc::new(Clock), 10, 16)?;
++    let scope = ProcessScope::new(
++        "tnt_bench".parse()?,
++        "prc_bench".parse()?,
++        "def_bench".parse()?,
++        "dfv_one".parse()?,
++        ContentDigest([1; 32]),
++    );
++    let history = populate(&store, &scope, 128)?;
++    for (profile, from, limit) in [
++        ("first", 0, 1),
++        ("last", 127, 1),
++        ("end", 128, 1),
++        ("past", 145, 1),
++        ("page", 0, 128),
++    ] {
++        let request = OutcomeReplayRequest::new(
++            scope.clone(),
++            from,
++            NonZeroU16::new(limit).ok_or("zero page")?,
++        )?;
++        let mut copied_bytes = 0_usize;
++        for outcome in history
++            .iter()
++            .filter(|outcome| outcome.sequence >= from)
++            .take(usize::from(limit))
++        {
++            copied_bytes = copied_bytes
++                .checked_add(serde_json::to_vec(outcome)?.len())
++                .and_then(|bytes| bytes.checked_add(32))
++                .ok_or("byte count overflow")?;
++        }
++        for _ in 0..100 {
++            verify(
++                &block_on(store.read_outcomes(&request))??,
++                &request,
++                &history,
++            )?;
++        }
++        for sample in 0..16 {
++            ALLOCATIONS.store(0, Ordering::SeqCst);
++            REALLOCATIONS.store(0, Ordering::SeqCst);
++            REQUESTED_BYTES.store(0, Ordering::SeqCst);
++            ENABLED.store(true, Ordering::SeqCst);
++            let result = block_on(store.read_outcomes(&request));
++            ENABLED.store(false, Ordering::SeqCst);
++            let allocations = ALLOCATIONS.load(Ordering::SeqCst);
++            let reallocations = REALLOCATIONS.load(Ordering::SeqCst);
++            let requested_bytes = REQUESTED_BYTES.load(Ordering::SeqCst);
++            let page = result??;
++            verify(&page, &request, &history)?;
++            println!(
++                "{}",
++                serde_json::json!({"profile":profile,"from":from,"limit":limit,"sample":sample,"rows":page.outcomes.len(),"copied_bytes":copied_bytes,"allocations":allocations,"reallocations":reallocations,"requested_bytes":requested_bytes})
++            );
++        }
++    }
++    Ok(())
++}
+diff --git a/crates/penelope-sqlite/benches/support/process_replay_fixture.rs b/crates/penelope-sqlite/benches/support/process_replay_fixture.rs
+new file mode 100644
+index 0000000..c387c61
+--- /dev/null
++++ b/crates/penelope-sqlite/benches/support/process_replay_fixture.rs
+@@ -0,0 +1,124 @@
++//! Public replay latency at selected history sizes and page cursors.
++//! Population uses typed public commits; validation is outside the timed region.
++use penelope_domain::*;
++use penelope_ports::*;
++use penelope_sqlite::{SqliteLeaseClock, SqliteProcessStore};
++use std::{
++    future::Future,
++    sync::Arc,
++    task::{Context, Poll, Wake, Waker},
++    time::{Duration, Instant},
++};
++pub(super) type Error = Box<dyn std::error::Error>;
++pub(super) struct Clock;
++impl SqliteLeaseClock for Clock {
++    fn now(&self) -> Result<LogicalTime, PortError> {
++        Ok(LogicalTime(100))
++    }
++}
++struct ThreadWake(std::thread::Thread);
++impl Wake for ThreadWake {
++    fn wake(self: Arc<Self>) {
++        self.0.unpark();
++    }
++    fn wake_by_ref(self: &Arc<Self>) {
++        self.0.unpark();
++    }
++}
++pub(super) fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
++    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
++    let mut context = Context::from_waker(&waker);
++    let mut future = Box::pin(future);
++    let deadline = Instant::now()
++        .checked_add(Duration::from_secs(10))
++        .ok_or("deadline overflow")?;
++    loop {
++        if let Poll::Ready(result) = future.as_mut().poll(&mut context) {
++            return Ok(result);
++        }
++        if Instant::now() >= deadline {
++            return Err("replay timed out".into());
++        }
++        std::thread::park_timeout(Duration::from_millis(10));
++    }
++}
++pub(super) fn populate(
++    store: &SqliteProcessStore,
++    scope: &ProcessScope,
++    count: u32,
++) -> Result<Vec<ProcessOutcome>, Error> {
++    let input = ProcessInput::new(
++        scope.tenant_id.clone(),
++        scope.process_id.clone(),
++        "inp_start".parse()?,
++        ProcessInputKind::CanonicalEvent,
++        ContentDigest([2; 32]),
++    );
++    let mut outcomes = Vec::new();
++    for sequence in 0..count {
++        outcomes.push(ProcessOutcome::new(
++            scope.clone(),
++            u64::from(sequence),
++            ProcessOutcomeFact::new(
++                format!("out_{sequence:06}").parse()?,
++                CausationId::Input(input.input_id.clone()),
++                OutcomeActor::System,
++                LogicalTime(1),
++                if sequence == 0 {
++                    ProcessOutcomeKind::Started
++                } else {
++                    ProcessOutcomeKind::ActionPlanned
++                },
++                ContentDigest([3; 32]),
++            ),
++        ));
++    }
++    let mut start = 0_u64;
++    for batch in outcomes.chunks(128) {
++        let commit = AtomicProcessCommit::new(
++            start,
++            if start == 0 {
++                Some(input.clone())
++            } else {
++                None
++            },
++            batch.to_vec(),
++            Vec::new(),
++        )?;
++        block_on(ProcessStore::commit(store, &commit))??.validate_for(&commit)?;
++        start = start
++            .checked_add(u64::try_from(batch.len())?)
++            .ok_or("sequence overflow")?;
++    }
++    Ok(outcomes)
++}
++pub(super) fn verify(
++    page: &OutcomeReplayPage,
++    request: &OutcomeReplayRequest,
++    history: &[ProcessOutcome],
++) -> Result<(), Error> {
++    page.validate()?;
++    let expected: Vec<_> = history
++        .iter()
++        .filter(|outcome| outcome.sequence >= request.from_sequence)
++        .take(usize::from(request.limit.get()))
++        .cloned()
++        .collect();
++    let next = request
++        .from_sequence
++        .checked_add(u64::try_from(expected.len())?)
++        .ok_or("sequence overflow")?;
++    let continuation = if next < u64::try_from(history.len())? {
++        Some(next)
++    } else {
++        None
++    };
++    if page.scope != request.scope
++        || page.from_sequence != request.from_sequence
++        || page.outcomes != expected
++        || page.next_sequence != continuation
++    {
++        return Err("incorrect replay page".into());
++    }
++    Ok(())
++}
+diff --git a/crates/penelope-sqlite/src/process.rs b/crates/penelope-sqlite/src/process.rs
+index 2ea84d3..629e621 100644
+--- a/crates/penelope-sqlite/src/process.rs
++++ b/crates/penelope-sqlite/src/process.rs
+@@ -1,7 +1,7 @@
+ use crate::{
+     SqliteLimits,
+     schema::{execute_one, open, sql_error},
+-    tasks::copy_column,
++    tasks::{column_bytes, copy_column},
+     worker::DatabaseWorker,
+ };
+ use async_trait::async_trait;
+@@ -382,8 +382,8 @@ impl ProcessStore for SqliteProcessStore {
+             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
+             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
+                 let sequence: i64 = row.get(0).map_err(|error| db_error(&error))?;
+-                let bytes = copy_column(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,2,32).map_err(|error| db_error(&error))?;
+-                let outcome: ProcessOutcome = decode(&bytes,&checksum)?;
++                let bytes = column_bytes(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,2,32).map_err(|error| db_error(&error))?;
++                let outcome: ProcessOutcome = decode(bytes,checksum)?;
+                 if sequence != integer(expected)? || outcome.sequence != expected || outcome.scope() != request.scope || outcome.validate().is_err() || expected >= next { return Err(PortError::Invariant); }
+                 expected = expected.checked_add(1).ok_or(PortError::Invariant)?;
+                 outcomes.push(outcome);
+diff --git a/crates/penelope-sqlite/src/tasks.rs b/crates/penelope-sqlite/src/tasks.rs
+index eaf2fd7..cc57def 100644
+--- a/crates/penelope-sqlite/src/tasks.rs
++++ b/crates/penelope-sqlite/src/tasks.rs
+@@ -26,11 +26,11 @@ pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
+     key
+ }
+ 
+-pub(crate) fn copy_column(
+-    row: &rusqlite::Row<'_>,
++pub(crate) fn column_bytes<'row>(
++    row: &'row rusqlite::Row<'_>,
+     index: usize,
+     limit: u32,
+-) -> rusqlite::Result<Vec<u8>> {
++) -> rusqlite::Result<&'row [u8]> {
+     let bytes = row.get_ref(index)?.as_blob()?;
+     if u32::try_from(bytes.len())
+         .ok()
+@@ -38,7 +38,15 @@ pub(crate) fn copy_column(
+     {
+         return Err(rusqlite::Error::InvalidQuery);
+     }
+-    Ok(bytes.to_vec())
++    Ok(bytes)
++}
++
++pub(crate) fn copy_column(
++    row: &rusqlite::Row<'_>,
++    index: usize,
++    limit: u32,
++) -> rusqlite::Result<Vec<u8>> {
++    column_bytes(row, index, limit).map(<[u8]>::to_vec)
+ }
+ 
+ fn decode(
+diff --git a/crates/penelope-sqlite/tests/process.rs b/crates/penelope-sqlite/tests/process.rs
+index b035b33..04a3a17 100644
+--- a/crates/penelope-sqlite/tests/process.rs
++++ b/crates/penelope-sqlite/tests/process.rs
+@@ -628,3 +628,6 @@ mod process_frontier;
+ 
+ #[path = "support/replay_cache.rs"]
+ mod replay_cache;
++
++#[path = "support/replay_columns.rs"]
++mod replay_columns;
+diff --git a/crates/penelope-sqlite/tests/support/replay_columns.rs b/crates/penelope-sqlite/tests/support/replay_columns.rs
+new file mode 100644
+index 0000000..1f470e5
+--- /dev/null
++++ b/crates/penelope-sqlite/tests/support/replay_columns.rs
+@@ -0,0 +1,117 @@
++//! Borrowed row bytes retain the original type, size, checksum and record checks.
++use super::*;
++use rusqlite::types::Value;
++#[test]
++fn replay_column_validation_and_owned_results_survive_warm_statement_reuse() {
++    let expected = commit(false);
++    let original = serde_json::to_vec(&expected.outcomes[0]).unwrap();
++    let checksum = ContentDigest::sha256(&original).0.to_vec();
++    assert!(original.len() < 4096);
++    let mut padded = original.clone();
++    padded.resize(4096, b' ');
++    let mut oversized = padded.clone();
++    oversized.push(b' ');
++    let mut wrong_scope = expected.outcomes[0].clone();
++    wrong_scope.process_id = id("prc_wrong");
++    let mut wrong_sequence = expected.outcomes[0].clone();
++    wrong_sequence.sequence = 1;
++    let encoded_cases = [
++        ("original", original.clone(), true),
++        ("at-limit", padded, true),
++        ("over-limit", oversized, false),
++        ("empty", Vec::new(), false),
++        ("malformed-json", b"{".to_vec(), false),
++        ("json-null", b"null".to_vec(), false),
++        (
++            "trailing-json",
++            [original.as_slice(), b"{}"].concat(),
++            false,
++        ),
++        ("invalid-utf8", vec![255], false),
++        (
++            "wrong-scope",
++            serde_json::to_vec(&wrong_scope).unwrap(),
++            false,
++        ),
++        (
++            "wrong-sequence",
++            serde_json::to_vec(&wrong_sequence).unwrap(),
++            false,
++        ),
++    ];
++    let mut cases = Vec::new();
++    for (name, bytes, valid) in encoded_cases {
++        let digest = ContentDigest::sha256(&bytes).0.to_vec();
++        cases.push((name, Value::Blob(bytes), Value::Blob(digest), valid));
++    }
++    for (name, record) in [
++        (
++            "text-record",
++            Value::Text(String::from_utf8(original.clone()).unwrap()),
++        ),
++        ("integer-record", Value::Integer(1)),
++        ("real-record", Value::Real(1.5)),
++    ] {
++        cases.push((name, record, Value::Blob(checksum.clone()), false));
++    }
++    for (name, digest) in [
++        ("text-checksum", Value::Text("x".repeat(32))),
++        ("integer-checksum", Value::Integer(1)),
++        ("real-checksum", Value::Real(1.5)),
++        ("empty-checksum", Value::Blob(Vec::new())),
++        ("short-checksum", Value::Blob(vec![0; 31])),
++        ("wrong-checksum", Value::Blob(vec![0; 32])),
++        ("long-checksum", Value::Blob(vec![0; 33])),
++    ] {
++        cases.push((name, Value::Blob(original.clone()), digest, false));
++    }
++    for (name, record, digest, valid) in cases {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("columns.db");
++        let adapter = SqliteProcessStore::open(
++            &path,
++            SqliteLimits {
++                max_record_bytes: 4096,
++                ..SqliteLimits::default()
++            },
++            clock(),
++            10,
++            16,
++        )
++        .unwrap();
++        block_on(ProcessStore::commit(&adapter, &expected)).unwrap();
++        let held = block_on(adapter.read_outcomes(&replay())).unwrap();
++        assert_eq!(held.outcomes, expected.outcomes);
++        let connection = Connection::open(&path).unwrap();
++        connection
++            .execute(
++                "UPDATE process_outcomes SET record=?1,checksum=?2",
++                rusqlite::params![record, digest],
++            )
++            .unwrap();
++        let before = write_snapshot::snapshot(&connection, &["process_outcomes", "process_heads"]);
++        let result = block_on(adapter.read_outcomes(&replay()));
++        println!("case={name} valid={valid} accepted={}", result.is_ok());
++        if valid {
++            let page = result.unwrap();
++            page.validate().unwrap();
++            assert_eq!(page.outcomes, expected.outcomes, "{name}");
++        } else {
++            assert_eq!(result, Err(PortError::Invariant), "{name}");
++        }
++        assert_eq!(
++            write_snapshot::snapshot(&connection, &["process_outcomes", "process_heads"]),
++            before,
++            "{name}"
++        );
++        connection
++            .execute(
++                "UPDATE process_outcomes SET record=?1,checksum=?2",
++                rusqlite::params![original, checksum],
++            )
++            .unwrap();
++        let recovered = block_on(adapter.read_outcomes(&replay())).unwrap();
++        assert_eq!(recovered.outcomes, expected.outcomes, "{name}");
++        assert_eq!(held.outcomes, expected.outcomes, "{name}");
++    }
++}
