@@ -144,3 +144,94 @@ fn notification_panic_payload_destructor_cannot_strand_accepted_work() {
         }
     }
 }
+
+struct CanceledResult {
+    drops: Arc<AtomicUsize>,
+    nested: bool,
+}
+impl Drop for CanceledResult {
+    fn drop(&mut self) {
+        self.drops.fetch_add(1, Ordering::SeqCst);
+        if self.nested {
+            std::panic::panic_any(NestedPayload);
+        }
+        panic!("injected canceled result destructor panic");
+    }
+}
+fn canceled_result_scenarios(nested: bool) {
+    for close_admission in [false, true] {
+        for register_waker in [false, true] {
+            let initial_connection = Connection::open_in_memory().unwrap();
+            initial_connection
+                .execute_batch("CREATE TABLE writes(value INTEGER)")
+                .unwrap();
+            let worker = DatabaseWorker::new(initial_connection, 1).unwrap();
+            let drops = Arc::new(AtomicUsize::new(0));
+            let result_drops = drops.clone();
+            let (entered, started) = std::sync::mpsc::channel();
+            let (release, resume) = std::sync::mpsc::channel();
+            let mut canceled = Box::pin(
+                worker
+                    .run(move |connection| {
+                        entered.send(()).unwrap();
+                        resume.recv_timeout(Duration::from_secs(5)).unwrap();
+                        connection
+                            .execute("INSERT INTO writes VALUES (1)", [])
+                            .map_err(|_database| PortError::Unavailable)?;
+                        Ok(CanceledResult {
+                            drops: result_drops,
+                            nested,
+                        })
+                    })
+                    .unwrap(),
+            );
+            started.recv_timeout(Duration::from_secs(5)).unwrap();
+            if register_waker {
+                let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
+                assert!(
+                    canceled
+                        .as_mut()
+                        .poll(&mut Context::from_waker(&waker))
+                        .is_pending()
+                );
+            }
+            drop(canceled);
+            let queued = worker
+                .run(|connection| {
+                    connection
+                        .execute("INSERT INTO writes VALUES (2)", [])
+                        .map_err(|_database| PortError::Unavailable)?;
+                    connection
+                        .query_row("SELECT count(*) FROM writes", [], |row| {
+                            row.get::<_, u32>(0)
+                        })
+                        .map_err(|_database| PortError::Unavailable)
+                })
+                .unwrap();
+            let retained = if close_admission {
+                drop(worker);
+                None
+            } else {
+                Some(worker)
+            };
+            release.send(()).unwrap();
+            assert_eq!(wait(queued), Ok(2));
+            assert_eq!(drops.load(Ordering::SeqCst), 1);
+            if let Some(live_worker) = retained {
+                assert_eq!(wait(live_worker.run(|_connection| Ok(7)).unwrap()), Ok(7));
+            }
+            println!(
+                "nested={nested} close_admission={close_admission} register_waker={register_waker} committed=2 dropped_once=true queued_completed=true"
+            );
+        }
+    }
+}
+
+#[test]
+fn canceled_result_destructor_cannot_strand_accepted_work() {
+    canceled_result_scenarios(false);
+}
+#[test]
+fn nested_result_destructor_cannot_abort_worker_or_strand_accepted_work() {
+    canceled_result_scenarios(true);
+}

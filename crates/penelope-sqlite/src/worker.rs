@@ -101,7 +101,9 @@ impl DatabaseWorker {
             .name("penelope-sqlite".into())
             .spawn(move || {
                 while let Ok(job) = receiver.recv() {
-                    job(&mut connection);
+                    // Cleanup belongs to the job too: a canceled response can
+                    // leave its result's destructor running on this thread.
+                    let _job_result = contain_panic(|| job(&mut connection));
                 }
             })
             .map_err(|_thread| PortError::Unavailable)?;
