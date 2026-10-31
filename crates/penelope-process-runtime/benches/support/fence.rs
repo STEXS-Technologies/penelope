@@ -6,7 +6,11 @@ use std::time::{Duration, Instant};
 #[path = "../../tests/support/runtime_fixture.rs"]
 mod fixture;
 type Error = Box<dyn std::error::Error>;
-fn case(profile: &str, definition: TaskDefinition) -> Result<u64, Error> {
+fn case(
+    profile: &str,
+    definition: TaskDefinition,
+    worker_cpu: Option<usize>,
+) -> Result<u64, Error> {
     let directory = tempfile::tempdir()?;
     let input = [if profile == "exited" { 7 } else { 9 }];
     let scope = TaskScope {
@@ -24,6 +28,24 @@ fn case(profile: &str, definition: TaskDefinition) -> Result<u64, Error> {
     supervisor.submit(&input, 1, TaskTick::ZERO)?;
     supervisor.advance(TaskTick::new(1))?;
     let projection = *supervisor.projection();
+    if let Some(cpu) = worker_cpu.filter(|_| profile != "exited") {
+        // Only this fixture's unreaped, single-thread child can own the saved
+        // PID. Pinning occurs before timing and before any runtime status read.
+        let manifest = std::fs::read_dir(directory.path().join("registry"))?
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .find(|entry| entry.file_name().len() == 64)
+            .ok_or("missing manifest")?;
+        let saved = std::fs::read(manifest.path())?;
+        let raw = u32::from_be_bytes(saved.get(160..164).ok_or("short manifest")?.try_into()?);
+        let pid = rustix::process::Pid::from_raw(i32::try_from(raw)?).ok_or("zero PID")?;
+        let mut cpus = rustix::thread::CpuSet::new();
+        cpus.set(cpu);
+        rustix::thread::sched_setaffinity(Some(pid), &cpus)?;
+        if rustix::thread::sched_getaffinity(Some(pid))? != cpus {
+            return Err("worker affinity mismatch".into());
+        }
+    }
     let (_journal, mut runtime) = supervisor.into_parts();
     if profile == "exited" {
         let deadline = Instant::now()
@@ -75,19 +97,26 @@ pub(super) fn run() -> Result<(), Error> {
     if !(1..=1024).contains(&samples) {
         return Err("samples must be 1..=1024".into());
     }
+    let worker_cpu = std::env::var("PENELOPE_FENCE_WORKER_CPU")
+        .ok()
+        .map(|value| value.parse::<usize>())
+        .transpose()?;
+    if worker_cpu.is_some_and(|cpu| cpu >= rustix::thread::CpuSet::MAX_CPU) {
+        return Err("worker CPU outside CpuSet".into());
+    }
     let definition = fixture::definition(2);
     let mut profiles = serde_json::Map::new();
     for profile in ["live", "exited", "repeated"] {
         let mut rows = Vec::new();
         for _ in 0..samples {
-            rows.push(case(profile, definition)?);
+            rows.push(case(profile, definition, worker_cpu)?);
         }
         profiles.insert(profile.into(), json!(rows));
     }
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"schema":1,"samples_per_profile":samples,"profiles_ns":profiles,"scope":"Public fence includes registry lock, WAL/FULL begin/confirm and kernel termination/reaping. Fresh fixture/worker startup and post-fence validation excluded. Exited worker and repeated fence controls."})
+            &json!({"schema":1,"samples_per_profile":samples,"worker_cpu":worker_cpu,"profiles_ns":profiles,"scope":"Public fence includes registry lock, WAL/FULL begin/confirm and kernel termination/reaping. Fresh fixture/worker startup and post-fence validation excluded. Exited worker and repeated fence controls."})
         )?
     );
     Ok(())
