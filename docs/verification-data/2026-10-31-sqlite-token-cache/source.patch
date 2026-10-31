@@ -1,0 +1,356 @@
+diff --git a/crates/penelope-sqlite/Cargo.toml b/crates/penelope-sqlite/Cargo.toml
+index 4f9c82c..217d3b6 100644
+--- a/crates/penelope-sqlite/Cargo.toml
++++ b/crates/penelope-sqlite/Cargo.toml
+@@ -35,3 +35,7 @@ harness = false
+ [[bench]]
+ name = "lease_claim"
+ harness = false
++
++[[bench]]
++name = "lease_batch"
++harness = false
+diff --git a/crates/penelope-sqlite/benches/lease_batch.rs b/crates/penelope-sqlite/benches/lease_batch.rs
+new file mode 100644
+index 0000000..626c9c9
+--- /dev/null
++++ b/crates/penelope-sqlite/benches/lease_batch.rs
+@@ -0,0 +1,192 @@
++//! Nonempty lease batches, including worker dispatch and WAL/FULL transactions.
++use penelope_domain::*;
++use penelope_ports::*;
++use penelope_sqlite::{SqliteLeaseClock, SqliteLimits, SqliteProcessStore};
++use std::{
++    future::Future,
++    num::NonZeroU16,
++    sync::{
++        Arc,
++        atomic::{AtomicU64, Ordering},
++    },
++    task::{Context, Poll, Wake, Waker},
++    time::{Duration, Instant},
++};
++type Error = Box<dyn std::error::Error>;
++struct Clock(AtomicU64);
++impl SqliteLeaseClock for Clock {
++    fn now(&self) -> Result<LogicalTime, PortError> {
++        Ok(LogicalTime(self.0.load(Ordering::SeqCst)))
++    }
++}
++struct ThreadWake(std::thread::Thread);
++impl Wake for ThreadWake {
++    fn wake(self: Arc<Self>) {
++        self.0.unpark();
++    }
++    fn wake_by_ref(self: &Arc<Self>) {
++        self.0.unpark();
++    }
++}
++fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
++    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
++    let mut context = Context::from_waker(&waker);
++    let mut future = Box::pin(future);
++    let deadline = Instant::now()
++        .checked_add(Duration::from_secs(10))
++        .ok_or("deadline overflow")?;
++    loop {
++        if let Poll::Ready(result) = future.as_mut().poll(&mut context) {
++            return Ok(result);
++        }
++        if Instant::now() >= deadline {
++            return Err("claim timed out".into());
++        }
++        std::thread::park_timeout(Duration::from_millis(10));
++    }
++}
++fn main() -> Result<(), Error> {
++    for timers in [false, true] {
++        for batch in [1_u16, 16] {
++            let mut elapsed = Duration::ZERO;
++            let mut total = 0_u32;
++            for _ in 0..8 {
++                let directory = tempfile::tempdir()?;
++                let path = directory.path().join("batches.db");
++                let clock = Arc::new(Clock(AtomicU64::new(100)));
++                let store = SqliteProcessStore::open(
++                    &path,
++                    SqliteLimits::default(),
++                    clock.clone(),
++                    10,
++                    16,
++                )?;
++                let scope = ProcessScope::new(
++                    "tnt_bench".parse()?,
++                    "prc_bench".parse()?,
++                    "def_bench".parse()?,
++                    "dfv_one".parse()?,
++                    ContentDigest([1; 32]),
++                );
++                let input = ProcessInput::new(
++                    scope.tenant_id.clone(),
++                    scope.process_id.clone(),
++                    "inp_start".parse()?,
++                    ProcessInputKind::CanonicalEvent,
++                    ContentDigest([2; 32]),
++                );
++                let outcome = ProcessOutcome::new(
++                    scope.clone(),
++                    0,
++                    ProcessOutcomeFact::new(
++                        "out_start".parse()?,
++                        CausationId::Input(input.input_id.clone()),
++                        OutcomeActor::System,
++                        LogicalTime(1),
++                        ProcessOutcomeKind::Started,
++                        ContentDigest([3; 32]),
++                    ),
++                );
++                let mut actions = Vec::new();
++                for index in 0..batch {
++                    actions.push(ProcessAction::new(
++                        scope.clone(),
++                        format!("act_{index:03}").parse()?,
++                        format!("stp_{index:03}").parse()?,
++                        0,
++                        if timers {
++                            ProcessActionKind::Timer
++                        } else {
++                            ProcessActionKind::ExternalEffect
++                        },
++                        ContentDigest([4; 32]),
++                    ));
++                }
++                let commit = AtomicProcessCommit::new(0, Some(input), vec![outcome], actions)?;
++                block_on(ProcessStore::commit(&store, &commit))??;
++                if timers {
++                    for action in &commit.actions {
++                        block_on(store.schedule(&TimerSchedule {
++                            action: action.clone(),
++                            due_at: LogicalTime(1),
++                        }))??;
++                    }
++                }
++                let limit = NonZeroU16::new(batch).ok_or("zero batch")?;
++                let outbox = OutboxClaimRequest::new(scope.clone(), "pri_bench".parse()?, limit)?;
++                let mut tokens = Vec::new();
++                for iteration in 0..60_u32 {
++                    let now = 100_u64
++                        .checked_add(
++                            u64::from(iteration)
++                                .checked_mul(11)
++                                .ok_or("time overflow")?,
++                        )
++                        .ok_or("time overflow")?;
++                    clock.0.store(now, Ordering::SeqCst);
++                    let timer = TimerClaimRequest::new(
++                        scope.clone(),
++                        "pri_bench".parse()?,
++                        LogicalTime(now),
++                        limit,
++                    )?;
++                    let started = Instant::now();
++                    let issued = if timers {
++                        let leases = block_on(store.claim_due(&timer))??;
++                        let duration = started.elapsed();
++                        if iteration >= 10 {
++                            elapsed = elapsed.checked_add(duration).ok_or("duration overflow")?;
++                        }
++                        leases
++                            .into_iter()
++                            .map(|lease| lease.token)
++                            .collect::<Vec<_>>()
++                    } else {
++                        let leases = block_on(store.claim(&outbox))??;
++                        let duration = started.elapsed();
++                        if iteration >= 10 {
++                            elapsed = elapsed.checked_add(duration).ok_or("duration overflow")?;
++                        }
++                        if leases
++                            .iter()
++                            .any(|lease| lease.record.delivery_attempt != iteration)
++                        {
++                            return Err("wrong attempt".into());
++                        }
++                        leases
++                            .into_iter()
++                            .map(|lease| lease.token)
++                            .collect::<Vec<_>>()
++                    };
++                    if issued.len() != usize::from(batch) {
++                        return Err("wrong batch size".into());
++                    }
++                    for token in issued {
++                        if tokens.contains(&token) {
++                            return Err("reused token".into());
++                        }
++                        tokens.push(token);
++                    }
++                    if iteration >= 10 {
++                        total = total.checked_add(1).ok_or("count overflow")?;
++                    }
++                }
++                let connection = rusqlite::Connection::open(&path)?;
++                let next: i64 =
++                    connection
++                        .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))?;
++                let expected = 1_i64
++                    .checked_add(i64::from(batch).checked_mul(60).ok_or("counter overflow")?)
++                    .ok_or("counter overflow")?;
++                if next != expected {
++                    return Err("wrong persisted counter".into());
++                }
++            }
++            println!(
++                "timers={timers} batch={batch} iterations={total} elapsed_ns={}",
++                elapsed.as_nanos()
++            );
++        }
++    }
++    Ok(())
++}
+diff --git a/crates/penelope-sqlite/src/leases.rs b/crates/penelope-sqlite/src/leases.rs
+index 7a43be1..ec2af00 100644
+--- a/crates/penelope-sqlite/src/leases.rs
++++ b/crates/penelope-sqlite/src/leases.rs
+@@ -13,20 +13,19 @@ use std::num::NonZeroU64;
+ 
+ fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
+     let next: i64 = connection
+-        .query_row(
+-            "SELECT next_token FROM lease_counter WHERE singleton=1",
+-            [],
+-            |row| row.get(0),
+-        )
++        .prepare_cached("SELECT next_token FROM lease_counter WHERE singleton=1")
++        .map_err(|error| db_error(&error))?
++        .query_row([], |row| row.get(0))
+         .map_err(|error| db_error(&error))?;
+     let value = NonZeroU64::new(u64::try_from(next).map_err(|_negative| PortError::Invariant)?)
+         .ok_or(PortError::Invariant)?;
+     let following = next.checked_add(1).ok_or(PortError::QuotaExceeded)?;
+     let changed = connection
+-        .execute(
++        .prepare_cached(
+             "UPDATE lease_counter SET next_token=?1 WHERE singleton=1 AND next_token=?2",
+-            params![following, next],
+         )
++        .map_err(|error| db_error(&error))?
++        .execute(params![following, next])
+         .map_err(|error| db_error(&error))?;
+     if changed != 1 {
+         return Err(PortError::Invariant);
+diff --git a/crates/penelope-sqlite/tests/support/lease_contracts.rs b/crates/penelope-sqlite/tests/support/lease_contracts.rs
+index 39c61a0..71fdddf 100644
+--- a/crates/penelope-sqlite/tests/support/lease_contracts.rs
++++ b/crates/penelope-sqlite/tests/support/lease_contracts.rs
+@@ -693,3 +693,110 @@ fn ignored_token_counter_update_returns_no_lease_and_preserves_work() {
+         );
+     }
+ }
++
++#[test]
++fn warmed_token_statements_preserve_batch_rollback_retry_and_reopen() {
++    fn tokens(
++        adapter: &SqliteProcessStore,
++        timer: bool,
++        now: u64,
++    ) -> Result<Vec<OutboxLeaseToken>, PortError> {
++        if timer {
++            block_on(adapter.claim_due(&timer_claim(now)))
++                .map(|leases| leases.into_iter().map(|lease| lease.token).collect())
++        } else {
++            block_on(adapter.claim(&claim()))
++                .map(|leases| leases.into_iter().map(|lease| lease.token).collect())
++        }
++    }
++    fn snapshot(connection: &Connection, table: &str) -> Vec<(u32, Vec<u8>, i64)> {
++        connection
++            .prepare(&format!(
++                "SELECT attempt,lease,expires_at FROM {table} ORDER BY action_id"
++            ))
++            .unwrap()
++            .query_map([], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
++            .unwrap()
++            .collect::<rusqlite::Result<_>>()
++            .unwrap()
++    }
++    for timer in [false, true] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("batch-rollback.db");
++        let clock = clock();
++        let adapter = store(&path, clock.clone());
++        let mut commit = commit(timer);
++        let template = commit.actions[0].clone();
++        for index in 1..3 {
++            let mut action = template.clone();
++            action.action_id = id(&format!("act_work{index}"));
++            action.step_id = id(&format!("stp_work{index}"));
++            commit.actions.push(action);
++        }
++        block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
++        if timer {
++            for action in &commit.actions {
++                block_on(adapter.schedule(&TimerSchedule {
++                    action: action.clone(),
++                    due_at: LogicalTime(100),
++                }))
++                .unwrap();
++            }
++        }
++        let original = tokens(&adapter, timer, 100).unwrap();
++        assert_eq!(original.len(), 3);
++        let connection = Connection::open(&path).unwrap();
++        let table = if timer {
++            "process_timers"
++        } else {
++            "process_actions"
++        };
++        let before = snapshot(&connection, table);
++        clock.now.store(111, Ordering::SeqCst);
++        // Token 4 and the first lease update succeed, then token 5's counter
++        // increment is suppressed. The entire claim must roll back.
++        connection.execute_batch(
++            "CREATE TRIGGER fail_second_token BEFORE UPDATE OF next_token ON lease_counter WHEN NEW.next_token=6 BEGIN SELECT RAISE(IGNORE); END;"
++        ).unwrap();
++        assert_eq!(tokens(&adapter, timer, 111), Err(PortError::Invariant));
++        assert_eq!(snapshot(&connection, table), before);
++        let next: i64 = connection
++            .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
++            .unwrap();
++        assert_eq!(next, 4);
++        connection
++            .execute_batch("DROP TRIGGER fail_second_token")
++            .unwrap();
++        let retried = tokens(&adapter, timer, 111).unwrap();
++        for (token, value) in retried.iter().zip(4..7) {
++            assert_eq!(
++                *token,
++                OutboxLeaseToken::new(std::num::NonZeroU64::new(value).unwrap())
++            );
++            assert!(!original.contains(token));
++        }
++        assert_eq!(retried.len(), 3);
++        assert!(
++            snapshot(&connection, table)
++                .iter()
++                .all(|(attempt, _, expires)| *attempt == 2 && *expires == 121)
++        );
++        drop(adapter);
++        clock.now.store(122, Ordering::SeqCst);
++        let reopened = store(&path, clock);
++        let recovered = tokens(&reopened, timer, 122).unwrap();
++        assert_eq!(recovered.len(), 3);
++        for (token, value) in recovered.iter().zip(7..10) {
++            assert_eq!(
++                *token,
++                OutboxLeaseToken::new(std::num::NonZeroU64::new(value).unwrap())
++            );
++            assert!(!retried.contains(token));
++        }
++        assert!(
++            snapshot(&connection, table)
++                .iter()
++                .all(|(attempt, _, expires)| *attempt == 3 && *expires == 132)
++        );
++    }
++}
