@@ -111,3 +111,11 @@ harness = false
 [[bench]]
 name = "inbox_accept"
 harness = false
+
+[[bench]]
+name = "pending_inputs"
+harness = false
+
+[[bench]]
+name = "pending_input_allocations"
+harness = false
