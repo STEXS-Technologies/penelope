@@ -1,0 +1,53 @@
+{
+  "baseline": "245da19ea8d8e7f11b50c7ef7f7d9983293830b7",
+  "candidate_parent": "245da19ea8d8e7f11b50c7ef7f7d9983293830b7",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "source_sha256": "30c8791d85adf3b8914c5282fa96da90c4cbd73f28141b644ab2fcdbf0f6f5d8",
+      "binaries": {
+        "atomic_validation": {
+          "path": "target/atomic-validation-baseline-atomic_validation",
+          "sha256": "0ce05152c4b913c732c3e098d0eaaf4e3186a5a142995aeb0a02bafba87822ca"
+        },
+        "atomic_validation_allocations": {
+          "path": "target/atomic-validation-baseline-atomic_validation_allocations",
+          "sha256": "67d602932e52c4fbd41c8f31a9408225ee66d88a4da4c596d294c300ebdc9091"
+        },
+        "claim_history": {
+          "path": "target/atomic-validation-baseline-claim_history",
+          "sha256": "96eb02025637a53caad57ee8b00694681ff790fcde3316e00b7bb39a8e7eca06"
+        }
+      }
+    },
+    "candidate": {
+      "source_sha256": "334f2cb406d9235ea47b0077a2229e796bfc92865a2c65078662c5791eb50604",
+      "binaries": {
+        "atomic_validation": {
+          "path": "target/atomic-validation-candidate-atomic_validation",
+          "sha256": "3416d882951cd664ab623fdd8d58e22b91f2452f061c0837de9c9ffaf3845746"
+        },
+        "atomic_validation_allocations": {
+          "path": "target/atomic-validation-candidate-atomic_validation_allocations",
+          "sha256": "9780027ab1897a73998767c3052203fff1a95b6a44125c450f249b8fdc68ff73"
+        },
+        "claim_history": {
+          "path": "target/atomic-validation-candidate-claim_history",
+          "sha256": "908a716288abfbad800522b50b4cbec3ed5fc26bf5066feb270247423d1dd5b6"
+        }
+      }
+    }
+  },
+  "fixture_sha256": {
+    "crates/penelope-ports/benches/atomic_validation.rs": "b4151ba15c66f69f4b4e3509f07886ce0e9baca49ee5129d8445e708270e6712",
+    "crates/penelope-ports/benches/atomic_validation_allocations.rs": "3eeb7cab6ee19d783c1693bd77ada2e6a660a59228e61dfb103b0cecad8ea3ac",
+    "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "52853778d730b45718aa62766b751adbd0a406b903b75088bf09706a4e398bb4",
+    "crates/penelope-sqlite/benches/claim_history.rs": "5cb1c6f933302b3fdc28dad1fb35f903fbc92c7c2c3d698fa552544af8208d84"
+  },
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 20,
+  "order": "alternating AB/BA; allocations then cpu then history per variant",
+  "background": "no own builds, tests or graph jobs during campaign"
+}
