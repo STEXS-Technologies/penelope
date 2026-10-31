@@ -9,6 +9,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Reuse SQLite prepared statements for outbox and timer claim selection.
+  Paired empty-queue polling benchmarks measured 7.34% and 3.26% lower latency,
+  respectively; these figures describe adapter polling, not application overhead.
+
 - Build fixed-width SQLite task scope keys on the stack. Repeated public-fence
   probes use 16 Rust allocations instead of 24; paired timing intervals still
   include zero, so no wall-clock speedup is established.
