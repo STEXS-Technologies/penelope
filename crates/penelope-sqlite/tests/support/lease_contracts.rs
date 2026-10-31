@@ -753,20 +753,32 @@ fn warmed_token_statements_preserve_batch_rollback_retry_and_reopen() {
         };
         let before = snapshot(&connection, table);
         clock.now.store(111, Ordering::SeqCst);
-        // Token 4 and the first lease update succeed, then token 5's counter
-        // increment is suppressed. The entire claim must roll back.
-        connection.execute_batch(
-            "CREATE TRIGGER fail_second_token BEFORE UPDATE OF next_token ON lease_counter WHEN NEW.next_token=6 BEGIN SELECT RAISE(IGNORE); END;"
-        ).unwrap();
-        assert_eq!(tokens(&adapter, timer, 111), Err(PortError::Invariant));
-        assert_eq!(snapshot(&connection, table), before);
-        let next: i64 = connection
-            .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(next, 4);
-        connection
-            .execute_batch("DROP TRIGGER fail_second_token")
-            .unwrap();
+        // The statements were warmed by the initial claim. An external schema
+        // change must still take effect, and failure after the first lease write
+        // must roll back the whole batch, including all issued tokens.
+        for fault in ["token", "lease"] {
+            let trigger = if fault == "token" {
+                "CREATE TRIGGER fail_second_claim BEFORE UPDATE OF next_token ON lease_counter WHEN NEW.next_token=6 BEGIN SELECT RAISE(IGNORE); END;".to_owned()
+            } else {
+                format!(
+                    "CREATE TRIGGER fail_second_claim BEFORE UPDATE OF lease ON {table} WHEN OLD.action_id='act_work1' BEGIN SELECT RAISE(IGNORE); END;"
+                )
+            };
+            connection.execute_batch(&trigger).unwrap();
+            assert_eq!(
+                tokens(&adapter, timer, 111),
+                Err(PortError::Invariant),
+                "{fault}"
+            );
+            assert_eq!(snapshot(&connection, table), before, "{fault}");
+            let next: i64 = connection
+                .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(next, 4, "{fault}");
+            connection
+                .execute_batch("DROP TRIGGER fail_second_claim")
+                .unwrap();
+        }
         let retried = tokens(&adapter, timer, 111).unwrap();
         for (token, value) in retried.iter().zip(4..7) {
             assert_eq!(
