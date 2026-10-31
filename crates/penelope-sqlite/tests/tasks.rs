@@ -725,3 +725,6 @@ mod task_frontier;
 
 #[path = "support/task_columns.rs"]
 mod task_columns;
+
+#[path = "support/task_append_frontier.rs"]
+mod task_append_frontier;

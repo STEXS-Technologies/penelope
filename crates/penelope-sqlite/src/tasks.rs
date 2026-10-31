@@ -175,27 +175,35 @@ fn head(
         .map_err(|error| sql_error(&error))
 }
 
-// Check the retained tail in the same read snapshot, even for cursors beyond
-// the head. MAX uses the scoped primary key; this does not replay the history.
-fn read_head(connection: &Connection, scope: TaskScope) -> Result<Option<u32>, TaskPortError> {
-    let (next, checksum, used, last): (Option<u32>, Option<bool>, Option<i64>, Option<u32>) = connection
+// Check the retained tail in the caller's transaction snapshot, including
+// before trusting a cached projection for append. MAX uses the scoped primary
+// key; this does not replay the history or cache query results.
+fn checked_head(
+    connection: &Connection,
+    scope: TaskScope,
+) -> Result<Option<(u32, Digest, u64)>, TaskPortError> {
+    let (next, checksum, used, last): (Option<u32>, Option<Digest>, Option<i64>, Option<u32>) = connection
         .prepare_cached("SELECT head.next_sequence,head.last_digest,head.bytes_used,(SELECT max(sequence) FROM task_records WHERE scope=?1) FROM (SELECT 1) LEFT JOIN task_heads AS head ON head.scope=?1")
         .map_err(|error| sql_error(&error))?
         .query_row([key(scope)], |row| {
             let checksum = if row.get_ref(1)? == rusqlite::types::ValueRef::Null {
                 None
             } else {
-                Some(column_bytes(row, 1, 32)?.len() == 32)
+                Some(Digest(column_bytes(row, 1, 32)?.try_into().map_err(|_invalid| rusqlite::Error::InvalidQuery)?))
             };
             Ok((row.get(0)?, checksum, row.get(2)?, row.get(3)?))
         })
         .map_err(|error| sql_error(&error))?;
     match (next, checksum, used, last) {
         (None, None, None, None) => Ok(None),
-        (Some(next), Some(true), Some(used), Some(last))
-            if next > 0 && used >= 0 && last.checked_add(1) == Some(next) =>
+        (Some(next), Some(checksum), Some(used), Some(last))
+            if next > 0 && last.checked_add(1) == Some(next) =>
         {
-            Ok(Some(next))
+            Ok(Some((
+                next,
+                checksum,
+                u64::try_from(used).map_err(|_invalid| TaskPortError::Corrupt)?,
+            )))
         }
         _ => Err(TaskPortError::Corrupt),
     }
@@ -283,7 +291,7 @@ impl TaskJournal for SqliteTaskJournal {
             .transaction()
             .map_err(|error| sql_error(&error))?;
         reject_retired(&transaction, scope)?;
-        let head = read_head(&transaction, scope)?;
+        let head = checked_head(&transaction, scope)?;
         let stored = transaction
             .query_row(
                 "SELECT record,checksum FROM task_records WHERE scope=?1 AND sequence=?2",
@@ -300,8 +308,8 @@ impl TaskJournal for SqliteTaskJournal {
             .optional()
             .map_err(|error| sql_error(&error))?;
         match (head, stored) {
-            (Some(next), Some(record)) if sequence.get() < next => record.map(Some),
-            (Some(next), None) if sequence.get() >= next => Ok(None),
+            (Some((next, _, _)), Some(record)) if sequence.get() < next => record.map(Some),
+            (Some((next, _, _)), None) if sequence.get() >= next => Ok(None),
             (None, None) => Ok(None),
             _ => Err(TaskPortError::Corrupt),
         }
@@ -338,12 +346,12 @@ impl TaskJournal for SqliteTaskJournal {
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| sql_error(&error))?;
         reject_retired(&transaction, record.scope)?;
-        let stored_head = head(&transaction, record.scope)?;
+        let stored_head = checked_head(&transaction, record.scope)?;
         let mut projection = match (&self.cache, &stored_head) {
             (Some((cached, last, cached_used)), Some((next, checksum, stored_used)))
                 if cached.scope() == record.scope
                     && cached.next_sequence().get() == *next
-                    && last.0.as_slice() == checksum
+                    && last == checksum
                     && cached_used == stored_used =>
             {
                 *cached
@@ -354,7 +362,7 @@ impl TaskJournal for SqliteTaskJournal {
                 match &stored_head {
                     Some((next, checksum, stored_used))
                         if *next == projection.next_sequence().get()
-                            && checksum == &last.0
+                            && checksum == &last
                             && *stored_used == used => {}
                     None if projection.next_sequence() == TaskSequence::ZERO => {}
                     _ => return Err(TaskPortError::Corrupt),
@@ -400,7 +408,7 @@ impl TaskJournal for SqliteTaskJournal {
         }
         match stored_head {
             Some((next, checksum, _)) => {
-                let changed = transaction.execute("UPDATE task_heads SET next_sequence=?1,last_digest=?2,bytes_used=?3 WHERE scope=?4 AND next_sequence=?5 AND last_digest=?6", params![projection.next_sequence().get(), digest.0.as_slice(), sql_integer(used)?, key(record.scope), next, checksum]).map_err(|error| sql_error(&error))?;
+                let changed = transaction.execute("UPDATE task_heads SET next_sequence=?1,last_digest=?2,bytes_used=?3 WHERE scope=?4 AND next_sequence=?5 AND last_digest=?6", params![projection.next_sequence().get(), digest.0.as_slice(), sql_integer(used)?, key(record.scope), next, checksum.0.as_slice()]).map_err(|error| sql_error(&error))?;
                 if changed != 1 {
                     return Err(TaskPortError::Conflict);
                 }
