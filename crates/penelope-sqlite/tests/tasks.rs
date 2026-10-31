@@ -799,3 +799,6 @@ mod task_orphan_usage;
 
 #[path = "support/task_confirm_bounds.rs"]
 mod task_confirm_bounds;
+
+#[path = "support/wal_checkpoint.rs"]
+mod wal_checkpoint;
