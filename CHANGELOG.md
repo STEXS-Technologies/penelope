@@ -10,7 +10,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Use fixed buffers for Linux registry manifest encoding and reads, removing
-  five Rust allocations from each measured repeated public fence.
+  five Rust allocations from each measured repeated public fence. A follow-up
+  paired benchmark measured a 2.20% repeated-fence latency reduction; full
+  workflow completion intervals still include zero.
 
 - Wait on Linux worker pidfd readiness instead of one-millisecond polling
   sleeps, retrying interrupted waits within the existing deadline.

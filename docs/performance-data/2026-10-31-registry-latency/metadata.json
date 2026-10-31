@@ -1,0 +1,39 @@
+{
+  "pairs": 20,
+  "fence_samples": 32,
+  "dispatch_samples": 16,
+  "warmups_per_binary": 1,
+  "cpu": 0,
+  "worker_cpu_by_case": {
+    "fence": null,
+    "fence-remote": 1,
+    "dispatch": null
+  },
+  "cpu_topology": {
+    "0": {
+      "core_id": "0",
+      "physical_package_id": "0",
+      "thread_siblings_list": "0,16"
+    },
+    "1": {
+      "core_id": "1",
+      "physical_package_id": "0",
+      "thread_siblings_list": "1,17"
+    }
+  },
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "binary_sha256": {
+    "baseline": {
+      "fence": "eebe5c09fb50edbdb01e48617c98ee151e7972ffea5e462657107282851d6283",
+      "fence-remote": "eebe5c09fb50edbdb01e48617c98ee151e7972ffea5e462657107282851d6283",
+      "dispatch": "423ecfc4abcb6b6a4e8802b9af73f55757c5f1f9bab64da9db6e77fa63a7cff4"
+    },
+    "candidate": {
+      "fence": "4a5d481ae4e1bafcca3f890de7cca4e8cd8b09bbad9f5f03e95fc2e6ffb52434",
+      "fence-remote": "4a5d481ae4e1bafcca3f890de7cca4e8cd8b09bbad9f5f03e95fc2e6ffb52434",
+      "dispatch": "2a9b0fccac2565a47ae6c5eaa6af2b0fcfc08ac40a5550098327d2663ba20828"
+    }
+  },
+  "scope": "Process medians paired by alternating execution order. Fresh local WAL/FULL fixtures. Own compilation/tests excluded from timing; host load, frequency and cache state uncontrolled."
+}
