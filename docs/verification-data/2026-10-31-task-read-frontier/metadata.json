@@ -1,0 +1,19 @@
+{
+  "baseline": "7dcc9c84b42e00cbaf4c885aef0d531cd161b60a",
+  "code_commit": "90bce241673e7046de1003efca390c68966956a6",
+  "isolated_processes": 20,
+  "damage_cases_per_process": 36,
+  "damage_cases_total": 720,
+  "note": "Full workspace and MSRV all-target runs preceded the last three metadata damage cases and healthy-control test; final targeted tests and isolated repeats cover the final fixtures. Benchmark output in broad test logs is smoke validation, not comparative timing evidence.",
+  "sha256": {
+    "baseline.log.gz": "41f42f05a9ed8a0c40045a81a6425696d31414b198eba46b08ec5ef04b37a0d8",
+    "fixed.log.gz": "163e44f7921f31a3731008186ca78c0279e84bee7a177c4b3ed4088b8eda3412",
+    "final.log.gz": "589ba1c08c7707a510acce04afe76ce1162baab65513c42b0605ad6a9d340eb0",
+    "workspace.log.gz": "ec24d9fabc569b4b610d689831355f90e10a95328c929c241054c1f1729f676f",
+    "msrv.log.gz": "66139b0eea785dcae83169783a789642df558f18191a313bb0b9a4e294e623d0",
+    "msrv-final.log.gz": "549147ef3b12d1e0396b861e2d82cd055c1b939ae49bd0b1c08611e35e0e0381",
+    "repeat.log.gz": "92176ff5d18a52915046b8dbc848a260ad7050bf9fc224f832cbe5b72903710b",
+    "clippy.log.gz": "e4b9fc5a3f66cf63f801231487b3b2ed774056a69d089e9b7d6d8f8071eb87e8",
+    "graph.log.gz": "44856ba4687ad2d273ea5ab4e4202288c69253d8b11ba09ef52858d30707c3a5"
+  }
+}
