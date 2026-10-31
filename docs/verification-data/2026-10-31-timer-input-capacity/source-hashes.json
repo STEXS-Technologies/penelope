@@ -1,0 +1,13 @@
+{
+  "crates/penelope-executor/src/services.rs": "68eda7b2c889f93bbca0a9edf66d1b7e6a79ad7815cc3b3a30900329c4e0e482",
+  "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06",
+  "crates/penelope-executor/benches/timer_input.rs": "2650536fde9097d771afe6473e031546d6358645230269183ff757ab88d18f30",
+  "crates/penelope-executor/benches/timer_input_allocations.rs": "985bcd9b02f6a31299e6f8aaf388cb8778c6a3dbab68b247af8672b643e6be38",
+  "crates/penelope-executor/tests/support/timer_input_fixture.rs": "8310422d43ca8a9e197bfd1e0682d37ed79af6dfaf927d6e483fe47d0f578be7",
+  "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+  "crates/penelope-executor/tests/timer_input_identity.rs": "93a8b6e08f78d1eaea2ee1944880a38b7c46893416d421e5167323cb4fecab56",
+  "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "crates/penelope-executor/Cargo.toml": "8b96eeee6e5ca4be82c3fb1a0295836934044b20199c16947ae5986ddf273dfa",
+  "crates/penelope-executor/tests/timer_input_allocations.rs": "6f883a8a0b788dc9087efba1b660020876cd4dddf38d4d5e42bb6641f9616535"
+}
