@@ -26,11 +26,11 @@ pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
     key
 }
 
-pub(crate) fn copy_column(
-    row: &rusqlite::Row<'_>,
+pub(crate) fn column_bytes<'row>(
+    row: &'row rusqlite::Row<'_>,
     index: usize,
     limit: u32,
-) -> rusqlite::Result<Vec<u8>> {
+) -> rusqlite::Result<&'row [u8]> {
     let bytes = row.get_ref(index)?.as_blob()?;
     if u32::try_from(bytes.len())
         .ok()
@@ -38,7 +38,15 @@ pub(crate) fn copy_column(
     {
         return Err(rusqlite::Error::InvalidQuery);
     }
-    Ok(bytes.to_vec())
+    Ok(bytes)
+}
+
+pub(crate) fn copy_column(
+    row: &rusqlite::Row<'_>,
+    index: usize,
+    limit: u32,
+) -> rusqlite::Result<Vec<u8>> {
+    column_bytes(row, index, limit).map(<[u8]>::to_vec)
 }
 
 fn decode(
