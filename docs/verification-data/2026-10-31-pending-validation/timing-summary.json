@@ -1,0 +1,74 @@
+[
+  {
+    "campaign": 0,
+    "pending": 0,
+    "blocks": 12,
+    "baseline_ns_per_call": 11484.273999580297,
+    "candidate_ns_per_call": 10624.325772638033,
+    "change_percent": -7.488050415495885,
+    "bootstrap_95_percent": [
+      -8.62773182493215,
+      -6.664417497673007
+    ]
+  },
+  {
+    "campaign": 0,
+    "pending": 1,
+    "blocks": 12,
+    "baseline_ns_per_call": 12603.169291198803,
+    "candidate_ns_per_call": 11965.276438414077,
+    "change_percent": -5.061368597422511,
+    "bootstrap_95_percent": [
+      -6.140457959601923,
+      -4.275400696351158
+    ]
+  },
+  {
+    "campaign": 0,
+    "pending": 16,
+    "blocks": 12,
+    "baseline_ns_per_call": 23126.078961783744,
+    "candidate_ns_per_call": 22244.466163595338,
+    "change_percent": -3.812201798866486,
+    "bootstrap_95_percent": [
+      -5.023081701604944,
+      -2.9649512891709233
+    ]
+  },
+  {
+    "campaign": 1,
+    "pending": 0,
+    "blocks": 12,
+    "baseline_ns_per_call": 11279.756706136528,
+    "candidate_ns_per_call": 10451.902693030303,
+    "change_percent": -7.339289620101849,
+    "bootstrap_95_percent": [
+      -7.80185161584824,
+      -6.917571383197769
+    ]
+  },
+  {
+    "campaign": 1,
+    "pending": 1,
+    "blocks": 12,
+    "baseline_ns_per_call": 12525.880312884281,
+    "candidate_ns_per_call": 11825.944940382993,
+    "change_percent": -5.587913623774013,
+    "bootstrap_95_percent": [
+      -6.958341226405936,
+      -4.666654797466184
+    ]
+  },
+  {
+    "campaign": 1,
+    "pending": 16,
+    "blocks": 12,
+    "baseline_ns_per_call": 22752.8790047806,
+    "candidate_ns_per_call": 21982.798070206416,
+    "change_percent": -3.3845428282389123,
+    "bootstrap_95_percent": [
+      -3.5857564550962957,
+      -3.1790171716231024
+    ]
+  }
+]
