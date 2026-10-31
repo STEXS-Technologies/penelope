@@ -396,14 +396,21 @@ impl TaskJournal for SqliteTaskJournal {
                     added = added
                         .checked_add(u64::from(reference.bytes))
                         .ok_or(TaskPortError::Exhausted)?;
-                } else if !with_verified_blob(
-                    &transaction,
-                    record.scope,
-                    reference,
-                    self.limits.max_blob_bytes,
-                    |stored| Ok(stored == bytes),
-                )? {
-                    return Err(TaskPortError::Corrupt);
+                } else {
+                    // The caller bytes were verified above. Exact equality with
+                    // that buffer also verifies the stored length and digest;
+                    // hashing the stored bytes again would duplicate that work.
+                    let matches = transaction
+                        .query_row(
+                            "SELECT bytes FROM task_blobs WHERE scope=?1 AND digest=?2",
+                            params![key(record.scope), reference.digest.0.as_slice()],
+                            |row| Ok(column_bytes(row, 0, self.limits.max_blob_bytes)? == bytes),
+                        )
+                        .optional()
+                        .map_err(|error| sql_error(&error))?;
+                    if matches != Some(true) {
+                        return Err(TaskPortError::Corrupt);
+                    }
                 }
             }
             (None, None) => {}
