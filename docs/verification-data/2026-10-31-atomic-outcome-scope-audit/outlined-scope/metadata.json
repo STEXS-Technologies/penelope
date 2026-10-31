@@ -1,0 +1,23 @@
+{
+  "source_parent": "2c9fb0c1d39dfb0d2e9ea8e0d585acb5b33f214a",
+  "sources": {
+    "baseline": {
+      "crates/penelope-ports/src/implementation.rs": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e"
+    },
+    "candidate": {
+      "crates/penelope-ports/src/implementation.rs": "e8a804e993e3a0c14c76dfdf56c57e8ad537a64744e90b2dfb3fe35f76e10867"
+    }
+  },
+  "harness_sha256": {
+    "crates/penelope-ports/benches/atomic_validation.rs": "9d41d3b3bf48feb7b86c0d2f0bb305f94e71dcb34e35340a7af808b72a9fdfd4",
+    "crates/penelope-ports/benches/atomic_validation_allocations.rs": "d63437f02be7b31e4fce541082ae149a244841ff5f7dd1ce9a43eed180842c53",
+    "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a"
+  },
+  "binaries": {
+    "baseline-atomic_validation": "1091a93109092885da73a3dfd69b4cdd64b469a943956a48cdfd0a7623f42e31",
+    "baseline-atomic_validation_allocations": "4abba46a0d1d2f7bb7d83d238eff89c4be4cf22bc22304cea6cb822f3afbfdd1",
+    "candidate-atomic_validation": "84fd5cde3c6d1be57a501e2a64494e01830c9c0e7143f98f7b2786cf57641373",
+    "candidate-atomic_validation_allocations": "01d37f2cb067dcd0024bd584148d38ab470d795af875579edc7bdc49a3df4fe8"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

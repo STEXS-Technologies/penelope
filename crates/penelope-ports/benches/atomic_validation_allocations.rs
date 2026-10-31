@@ -82,13 +82,33 @@ fn main() {
         if std::env::var_os("PENELOPE_BENCH_VARY_PAYLOAD").is_some() {
             fixture::vary_payloads(&mut batch);
         }
+        if std::env::var_os("PENELOPE_BENCH_MANY_OUTCOMES").is_some() {
+            let template = batch.outcomes.first().unwrap().clone();
+            for sequence in 1..128_u64 {
+                let mut outcome = template.clone();
+                outcome.sequence = sequence;
+                outcome.outcome_id = if long {
+                    format!("out_{sequence:0124}")
+                } else {
+                    format!("out_{sequence:04}")
+                }
+                .parse()
+                .unwrap();
+                outcome.kind = penelope_domain::ProcessOutcomeKind::ActionPlanned;
+                batch.outcomes.push(outcome);
+            }
+        }
+        let checksum = serde_json::to_string(&penelope_domain::ContentDigest::sha256(
+            &serde_json::to_vec(&batch).unwrap(),
+        ))
+        .unwrap();
         batch.validate().unwrap();
         start_counting();
         let result = black_box(&batch).validate();
         let counts = stop_counting();
         result.unwrap();
         println!(
-            "actions={actions} allocations={} reallocations={} deallocations={} requested_bytes={}",
+            "actions={actions} allocations={} reallocations={} deallocations={} requested_bytes={} checksum={checksum}",
             counts.allocations, counts.reallocations, counts.deallocations, counts.requested_bytes
         );
     }
