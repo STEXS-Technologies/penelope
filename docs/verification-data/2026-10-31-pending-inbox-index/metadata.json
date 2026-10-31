@@ -1,0 +1,20 @@
+{
+  "candidate": "02416c007df7262b46a154555b0104dbe8ee1022",
+  "baseline": "bd0cdf5bfcced391d59ce11d58831dbc6a764f88",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+    "crates/penelope-sqlite/src/schema_tests.rs": "d4cd3bc3dc830bc43d4a5ba14de14ebc4ac2540672d62e84f325dbc6ca8137eb",
+    "crates/penelope-sqlite/src/schema_inbox_tests.rs": "872f88cfcac865d690f824295426fd5d891e1dc7c4f68f4e390731768358adea",
+    "crates/penelope-sqlite/src/inbox.rs": "1331c978194b2aed2c1e6352575427b9109ec7605a8b0a1c4e43a52243afcc1a",
+    "crates/penelope-sqlite/benches/pending_history.rs": "92c2b59ccebffbd2a214a8d5c778b244df584e4586d454f79a5e14654c0f7b57",
+    "crates/penelope-sqlite/tests/support/inbox_index.rs": "12950e057ff88c2bb7ea7b09ca3bfdb6b5a8e0b89792aa7f88266759619196f6",
+    "crates/penelope-sqlite/tests/support/claim_indexes.rs": "263e6cc33cc75ddcf7e54cdb7ad5e6b8c265372cc87fb1a7227fd781ef180dc1",
+    "crates/penelope-sqlite/tests/process.rs": "0e57691614e4844faad49148b1ecb2a6f86280abb4d672d9ab7d2092cc16d1f3",
+    "crates/penelope-sqlite/tests/tasks.rs": "d60be10f19f73f888e86268c2dbb1554a9ed0479301df14d1a55994b4825ece1",
+    "crates/penelope-sqlite/Cargo.toml": "ec186a4933660369da6dc4960f858d25035d821ce589e98f748a8ccd00294476"
+  },
+  "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+  "confirmation": "one independent confirmation declared after main write-cost result, same binaries and 24 matched pairs",
+  "timing_scope": "single CPU, public PendingInbox, Inbox.accept and ProcessStore.commit latency, fresh WAL/FULL DBs; not application-wide overhead or populated migration latency"
+}

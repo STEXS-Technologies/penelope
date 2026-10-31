@@ -1,0 +1,212 @@
+[
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 0,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 1,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 2,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 3,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 4,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 5,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 6,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 7,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 8,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "port",
+    "run": 9,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "stable",
+    "kind": "migration",
+    "run": 0,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "stable",
+    "kind": "migration",
+    "run": 1,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "stable",
+    "kind": "migration",
+    "run": 2,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "stable",
+    "kind": "migration",
+    "run": 3,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "stable",
+    "kind": "migration",
+    "run": 4,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 0,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 1,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 2,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 3,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 4,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 5,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 6,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 7,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 8,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "port",
+    "run": 9,
+    "returncode": 0,
+    "cases": 4
+  },
+  {
+    "compiler": "msrv",
+    "kind": "migration",
+    "run": 0,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "msrv",
+    "kind": "migration",
+    "run": 1,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "msrv",
+    "kind": "migration",
+    "run": 2,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "msrv",
+    "kind": "migration",
+    "run": 3,
+    "returncode": 0,
+    "cases": 18
+  },
+  {
+    "compiler": "msrv",
+    "kind": "migration",
+    "run": 4,
+    "returncode": 0,
+    "cases": 18
+  }
+]
