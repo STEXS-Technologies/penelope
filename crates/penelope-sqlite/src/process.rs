@@ -167,17 +167,16 @@ pub(crate) fn commit_process(
     let scope = commit.outcomes.first().ok_or(PortError::Invariant)?.scope();
     let key = scope.canonical_bytes();
     let process_key = scope_process_key(&scope)?;
-    let max_encoded = limits
-        .max_record_bytes
-        .checked_mul(
-            u32::try_from(
-                MAX_OUTCOMES_PER_ATOMIC_COMMIT
-                    .saturating_add(MAX_ACTIONS_PER_ATOMIC_COMMIT)
-                    .saturating_add(2),
-            )
-            .map_err(|_overflow| PortError::QuotaExceeded)?,
+    // Cap the aggregate encoding allowance instead of rejecting overflow: a
+    // larger per-record limit must still admit an identical small batch.
+    let max_encoded = limits.max_record_bytes.saturating_mul(
+        u32::try_from(
+            MAX_OUTCOMES_PER_ATOMIC_COMMIT
+                .saturating_add(MAX_ACTIONS_PER_ATOMIC_COMMIT)
+                .saturating_add(2),
         )
-        .ok_or(PortError::QuotaExceeded)?;
+        .map_err(|_overflow| PortError::QuotaExceeded)?,
+    );
     let commit_bytes = encode(commit, max_encoded)?;
     let commit_digest = Digest::of(&commit_bytes);
     let transaction = connection
