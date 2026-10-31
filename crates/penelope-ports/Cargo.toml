@@ -45,3 +45,15 @@ harness = false
 [[test]]
 name = "atomic_scope_allocations"
 harness = false
+
+[[bench]]
+name = "timer_claim_validation"
+harness = false
+
+[[bench]]
+name = "timer_claim_allocations"
+harness = false
+
+[[test]]
+name = "timer_claim_allocations"
+harness = false
