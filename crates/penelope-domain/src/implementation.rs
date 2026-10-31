@@ -1102,7 +1102,12 @@ impl ProcessOutcome {
     /// Returns a typed error when the schema or scope is invalid.
     pub fn validate_for_scope(&self, expected: &ProcessScope) -> Result<(), DomainError> {
         self.validate()?;
-        if self.scope() == *expected {
+        if self.tenant_id == expected.tenant_id
+            && self.process_id == expected.process_id
+            && self.definition_id == expected.definition_id
+            && self.definition_version == expected.definition_version
+            && self.definition_digest == expected.definition_digest
+        {
             Ok(())
         } else {
             Err(DomainError::OutcomeScopeMismatch)

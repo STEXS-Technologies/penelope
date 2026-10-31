@@ -30,6 +30,9 @@ mod outbox_race;
 #[path = "support/timer_cancel_race.rs"]
 mod timer_cancel_race;
 
+#[path = "support/replay_scope.rs"]
+mod replay_scope;
+
 #[path = "support/pending_inbox.rs"]
 mod pending_inbox;
 

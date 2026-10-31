@@ -404,7 +404,7 @@ impl ProcessStore for SqliteProcessStore {
                 let sequence: i64 = row.get(0).map_err(|error| db_error(&error))?;
                 let bytes = column_bytes(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,2,32).map_err(|error| db_error(&error))?;
                 let outcome: ProcessOutcome = decode(bytes,checksum)?;
-                if sequence != integer(expected)? || outcome.sequence != expected || outcome.scope() != request.scope || outcome.validate().is_err() || expected >= next { return Err(PortError::Invariant); }
+                if sequence != integer(expected)? || outcome.sequence != expected || expected >= next { return Err(PortError::Invariant); }
                 expected = expected.checked_add(1).ok_or(PortError::Invariant)?;
                 if outcomes.is_empty() {
                     outcomes.reserve_exact(usize::try_from(required).map_err(|_overflow| PortError::Invariant)?);
@@ -412,6 +412,8 @@ impl ProcessStore for SqliteProcessStore {
                 outcomes.push(outcome);
             }
             if u64::try_from(outcomes.len()).ok() != Some(required) { return Err(PortError::Invariant); }
+            // The checked constructor validates every outcome schema and exact scope
+            // without constructing a cloned ProcessScope for each decoded row.
             OutcomeReplayPage::new(request.scope,request.from_sequence,outcomes, if expected < next { Some(expected) } else { None }).map_err(|_invalid| PortError::Invariant)
         })?.await
     }

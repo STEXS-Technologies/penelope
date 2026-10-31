@@ -122,3 +122,25 @@ pub(super) fn verify(
     }
     Ok(())
 }
+
+/// Optional maximum-width identities exercise heap-backed scope validation.
+pub(super) fn scope() -> Result<ProcessScope, Error> {
+    let long = match std::env::var("PENELOPE_REPLAY_LONG_SCOPE") {
+        Ok(value) if value == "1" => true,
+        Ok(_) => return Err("PENELOPE_REPLAY_LONG_SCOPE must be 1 when set".into()),
+        Err(std::env::VarError::NotPresent) => false,
+        Err(std::env::VarError::NotUnicode(_)) => return Err("non-Unicode scope option".into()),
+    };
+    let suffix = if long {
+        "x".repeat(124)
+    } else {
+        "bench".to_owned()
+    };
+    Ok(ProcessScope::new(
+        format!("tnt_{suffix}").parse()?,
+        format!("prc_{suffix}").parse()?,
+        format!("def_{suffix}").parse()?,
+        format!("dfv_{}", if long { suffix.as_str() } else { "one" }).parse()?,
+        ContentDigest([1; 32]),
+    ))
+}

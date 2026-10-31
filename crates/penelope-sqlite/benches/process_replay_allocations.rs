@@ -7,7 +7,6 @@ use std::{
 #[path = "support/process_replay_fixture.rs"]
 mod fixture;
 use fixture::{Clock, Error, block_on, populate, verify};
-use penelope_domain::*;
 use penelope_ports::*;
 use penelope_sqlite::{SqliteLimits, SqliteProcessStore};
 use std::{num::NonZeroU16, sync::Arc};
@@ -54,13 +53,7 @@ fn main() -> Result<(), Error> {
     let directory = tempfile::tempdir()?;
     let path = directory.path().join("allocations.db");
     let store = SqliteProcessStore::open(&path, SqliteLimits::default(), Arc::new(Clock), 10, 16)?;
-    let scope = ProcessScope::new(
-        "tnt_bench".parse()?,
-        "prc_bench".parse()?,
-        "def_bench".parse()?,
-        "dfv_one".parse()?,
-        ContentDigest([1; 32]),
-    );
+    let scope = fixture::scope()?;
     let history = populate(&store, &scope, 128)?;
     for (profile, from, limit) in [
         ("first", 0, 1),
