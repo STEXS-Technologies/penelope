@@ -9,6 +9,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Encode the fixed 60-byte Linux worker startup header on the stack, removing
+  one Rust allocation from measured real supervisor dispatches on stable and
+  the minimum supported Rust toolchain.
+
 - Reuse SQLite lease-token counter statements during nonempty outbox and timer
   claims. A paired batch benchmark measured lower latency in all four tested
   profiles; rollback, retry, and reopen retain durable token fencing.

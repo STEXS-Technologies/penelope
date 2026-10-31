@@ -33,7 +33,8 @@ pub(super) fn run() {
     )
     .unwrap();
     supervisor.submit(&input, 1, TaskTick::ZERO).unwrap();
-    supervisor.advance(TaskTick::new(1)).unwrap();
+    let dispatch_allocations = count(|| supervisor.advance(TaskTick::new(1)).unwrap());
+    println!("Real runtime allocations: supervisor dispatch={dispatch_allocations}");
     let projection = *supervisor.projection();
     let generation = projection.generation();
     let (mut journal, mut runtime) = supervisor.into_parts();
