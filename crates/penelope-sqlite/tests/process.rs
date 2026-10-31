@@ -643,3 +643,6 @@ mod lease_encoding;
 
 #[path = "support/concurrent_quota.rs"]
 mod concurrent_quota;
+
+#[path = "support/timer_validation.rs"]
+mod timer_validation;

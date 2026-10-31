@@ -48,8 +48,14 @@ fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
     }
 }
 fn main() -> Result<(), Error> {
-    for case in ["outbox_ack", "timer_ack", "outbox_renew"] {
-        let timers = case == "timer_ack";
+    for case in [
+        "outbox_ack",
+        "timer_ack",
+        "outbox_renew",
+        "timer_schedule",
+        "timer_cancel",
+    ] {
+        let timers = case.starts_with("timer_");
         let batch = 1_u16;
         let directory = tempfile::tempdir()?;
         let path = directory.path().join("batches.db");
@@ -127,8 +133,16 @@ fn main() -> Result<(), Error> {
         } else {
             None
         };
+        let schedule = TimerSchedule {
+            action: commit.actions.first().ok_or("missing action")?.clone(),
+            due_at: LogicalTime(1),
+        };
         let mut call = || -> Result<(), Error> {
-            if let Some(lease) = &timer_lease {
+            if case == "timer_schedule" {
+                block_on(store.schedule(&schedule))??;
+            } else if case == "timer_cancel" {
+                block_on(store.cancel(&schedule))??;
+            } else if let Some(lease) = &timer_lease {
                 block_on(TimerClaimStore::acknowledge(
                     &store,
                     lease,
@@ -172,7 +186,12 @@ fn main() -> Result<(), Error> {
             [],
             |row| row.get(0),
         )?;
-        if terminal != i64::from(case != "outbox_renew") {
+        let expected = match case {
+            "timer_schedule" | "outbox_renew" => 0,
+            "timer_cancel" => 2,
+            _ => 1,
+        };
+        if terminal != expected {
             return Err("wrong final state".into());
         }
         if case == "outbox_renew" {

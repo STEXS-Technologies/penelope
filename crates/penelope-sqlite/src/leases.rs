@@ -5,13 +5,13 @@ use crate::{
         scope_process_key,
     },
     schema::execute_one,
-    tasks::{column_bytes, copy_column},
+    tasks::column_bytes,
 };
 use async_trait::async_trait;
 use penelope_core::task::Digest;
 use penelope_domain::{LogicalTime, ProcessAction};
 use penelope_ports::*;
-use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
+use rusqlite::{Connection, TransactionBehavior, params};
 use std::num::NonZeroU64;
 
 fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
@@ -102,6 +102,28 @@ fn timer_lease(connection: &Connection, lease: &TimerLease, limit: u32) -> Resul
         return Err(PortError::Invariant);
     }
     Ok(())
+}
+
+// Decode while the SQLite row is alive; retain no row data or validation result
+// between operations, including duplicate schedules and cancellation retries.
+fn stored_timer(
+    connection: &Connection,
+    key: &[u8],
+    action_id: &str,
+    limit: u32,
+) -> Result<Option<TimerSchedule>, PortError> {
+    let mut statement = connection
+        .prepare_cached("SELECT timer,checksum FROM process_timers WHERE scope=?1 AND action_id=?2")
+        .map_err(|error| db_error(&error))?;
+    let mut rows = statement
+        .query(params![key, action_id])
+        .map_err(|error| db_error(&error))?;
+    let Some(row) = rows.next().map_err(|error| db_error(&error))? else {
+        return Ok(None);
+    };
+    let bytes = column_bytes(row, 0, limit).map_err(|error| db_error(&error))?;
+    let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+    decode(bytes, checksum).map(Some)
 }
 
 #[async_trait]
@@ -209,11 +231,17 @@ impl TimerScheduler for SqliteProcessStore {
         self.worker.run(move |connection| {
             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
             let key = timer.action.scope().canonical_bytes();
-            let persisted = transaction.query_row("SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2", params![key,timer.action.action_id.as_str()], |row| Ok((copy_column(row,0,limits.max_record_bytes)?,copy_column(row,1,32)?))).optional().map_err(|error| db_error(&error))?.ok_or(PortError::Conflict)?;
-            if decode::<ProcessAction>(&persisted.0,&persisted.1)? != timer.action { return Err(PortError::Conflict); }
-            let existing = transaction.query_row("SELECT timer,checksum FROM process_timers WHERE scope=?1 AND action_id=?2",params![key,timer.action.action_id.as_str()],|row| Ok((copy_column(row,0,limits.max_record_bytes)?,copy_column(row,1,32)?))).optional().map_err(|error| db_error(&error))?;
-            if let Some((bytes,checksum)) = existing {
-                if decode::<TimerSchedule>(&bytes,&checksum)? != timer { return Err(PortError::Conflict); }
+            let persisted: ProcessAction = {
+                let mut statement = transaction.prepare_cached("SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2").map_err(|error| db_error(&error))?;
+                let mut rows = statement.query(params![key,timer.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                let row = rows.next().map_err(|error| db_error(&error))?.ok_or(PortError::Conflict)?;
+                let bytes = column_bytes(row,0,limits.max_record_bytes).map_err(|error| db_error(&error))?;
+                let checksum = column_bytes(row,1,32).map_err(|error| db_error(&error))?;
+                decode(bytes,checksum)?
+            };
+            if persisted != timer.action { return Err(PortError::Conflict); }
+            if let Some(existing) = stored_timer(&transaction,&key,timer.action.action_id.as_str(),limits.max_record_bytes)? {
+                if existing != timer { return Err(PortError::Conflict); }
                 return Ok(());
             }
             let bytes = encode(&timer,limits.max_record_bytes)?;
@@ -232,21 +260,14 @@ impl TimerScheduler for SqliteProcessStore {
                     .transaction_with_behavior(TransactionBehavior::Immediate)
                     .map_err(|error| db_error(&error))?;
                 let key = timer.action.scope().canonical_bytes();
-                let existing = transaction
-                    .query_row(
-                        "SELECT timer,checksum FROM process_timers WHERE scope=?1 AND action_id=?2",
-                        params![key, timer.action.action_id.as_str()],
-                        |row| {
-                            Ok((
-                                copy_column(row, 0, limits.max_record_bytes)?,
-                                copy_column(row, 1, 32)?,
-                            ))
-                        },
-                    )
-                    .optional()
-                    .map_err(|error| db_error(&error))?
-                    .ok_or(PortError::Conflict)?;
-                if decode::<TimerSchedule>(&existing.0, &existing.1)? != timer {
+                let existing = stored_timer(
+                    &transaction,
+                    &key,
+                    timer.action.action_id.as_str(),
+                    limits.max_record_bytes,
+                )?
+                .ok_or(PortError::Conflict)?;
+                if existing != timer {
                     return Err(PortError::Conflict);
                 }
                 execute_one(
