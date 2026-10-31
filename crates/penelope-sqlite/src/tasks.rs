@@ -140,6 +140,9 @@ pub(crate) fn reconstruct(
         .map_err(|error| sql_error(&error))?;
     let mut last = Digest([0; 32]);
     let mut used = 0_u64;
+    // Replay holds one transaction snapshot. An identical full reference can
+    // reuse its verification here, but never across scopes or replay calls.
+    let mut verified_blob = None;
     while let Some(row) = rows.next().map_err(|error| sql_error(&error))? {
         if projection.next_sequence().get() >= limits.max_history_records {
             return Err(TaskPortError::Exhausted);
@@ -152,10 +155,11 @@ pub(crate) fn reconstruct(
         projection
             .apply(&record)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
-        if let Some(blob) = reference(&record) {
+        if let Some(blob) = reference(&record).filter(|blob| Some(*blob) != verified_blob) {
             with_verified_blob(connection, scope, blob, limits.max_blob_bytes, |_bytes| {
                 Ok(())
             })?;
+            verified_blob = Some(blob);
         }
         // decode verified this checksum against the exact encoded bytes.
         last = Digest(
