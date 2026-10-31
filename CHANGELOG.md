@@ -9,6 +9,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Reuse SQLite lease-token counter statements during nonempty outbox and timer
+  claims. A paired batch benchmark measured lower latency in all four tested
+  profiles; rollback, retry, and reopen retain durable token fencing.
+
 - Reuse SQLite prepared statements for outbox and timer claim selection.
   Paired empty-queue polling benchmarks measured 7.34% and 3.26% lower latency,
   respectively; these figures describe adapter polling, not application overhead.

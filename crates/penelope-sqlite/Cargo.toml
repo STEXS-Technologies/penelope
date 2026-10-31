@@ -35,3 +35,7 @@ harness = false
 [[bench]]
 name = "lease_claim"
 harness = false
+
+[[bench]]
+name = "lease_batch"
+harness = false
