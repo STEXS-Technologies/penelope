@@ -9,6 +9,10 @@ use std::{
     io::Cursor,
     sync::atomic::{AtomicUsize, Ordering},
 };
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[path = "support/runtime_allocation_probe.rs"]
+mod runtime_allocation_probe;
+
 struct Allocator;
 static ALLOCATIONS: AtomicUsize = AtomicUsize::new(0);
 #[global_allocator]
@@ -31,6 +35,8 @@ fn count<T>(operation: impl FnOnce() -> T) -> usize {
     ALLOCATIONS.load(Ordering::Relaxed).saturating_sub(before)
 }
 fn main() {
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    runtime_allocation_probe::run();
     let metadata = fixture::metadata();
     let mut frame = [0; 61];
     for checkpoint in [false, true] {
