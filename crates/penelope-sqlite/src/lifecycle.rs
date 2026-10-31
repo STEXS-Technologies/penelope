@@ -1,6 +1,6 @@
 use crate::{
     SqliteTaskJournal,
-    schema::sql_error,
+    schema::{execute_one, sql_error},
     tasks::{authorized_projection, key, reject_retired},
 };
 use penelope_core::task::{runtime::TaskPortError, *};
@@ -72,17 +72,24 @@ impl SqliteTaskJournal {
                 .try_into()
                 .map_err(|_length| TaskPortError::Corrupt)?,
         );
-        transaction
-            .execute(
-                "INSERT INTO task_retirements VALUES (?1,?2,?3)",
-                params![key(scope), expected.get(), digest.0.as_slice()],
-            )
-            .map_err(|error| sql_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO task_retirements VALUES (?1,?2,?3)",
+            params![key(scope), expected.get(), digest.0.as_slice()],
+        )?;
         for table in ["task_records", "task_blobs", "task_heads"] {
             // Table names are static adapter-owned identifiers, never input.
             transaction
                 .execute(&format!("DELETE FROM {table} WHERE scope=?1"), [key(scope)])
                 .map_err(|error| sql_error(&error))?;
+        }
+        let retained: bool = transaction.query_row(
+            "SELECT EXISTS(SELECT 1 FROM task_records WHERE scope=?1 UNION ALL SELECT 1 FROM task_blobs WHERE scope=?1 UNION ALL SELECT 1 FROM task_heads WHERE scope=?1)",
+            [key(scope)],
+            |row| row.get(0),
+        ).map_err(|error| sql_error(&error))?;
+        if retained {
+            return Err(TaskPortError::Corrupt);
         }
         transaction.commit().map_err(|error| sql_error(&error))?;
         Ok(TaskRetirement {

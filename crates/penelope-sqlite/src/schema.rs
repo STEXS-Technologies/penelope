@@ -45,6 +45,22 @@ pub(crate) const fn sql_error(error: &rusqlite::Error) -> TaskPortError {
     }
 }
 
+// Required single-row writes run inside the caller's transaction. SQLite can
+// successfully execute a statement while a trigger suppresses its row change.
+pub(crate) fn execute_one(
+    connection: &Connection,
+    sql: &str,
+    params: impl rusqlite::Params,
+) -> Result<(), TaskPortError> {
+    let changed = connection
+        .execute(sql, params)
+        .map_err(|error| sql_error(&error))?;
+    if changed != 1 {
+        return Err(TaskPortError::Corrupt);
+    }
+    Ok(())
+}
+
 pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, TaskPortError> {
     if limits.max_blob_bytes == 0
         || limits.max_record_bytes < 4096

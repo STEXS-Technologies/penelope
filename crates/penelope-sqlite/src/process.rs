@@ -1,6 +1,6 @@
 use crate::{
     SqliteLimits,
-    schema::{open, sql_error},
+    schema::{execute_one, open, sql_error},
     tasks::copy_column,
     worker::DatabaseWorker,
 };
@@ -144,17 +144,17 @@ fn accept_input(
             .saturating_add(128),
         limits,
     )?;
-    connection
-        .execute(
-            "INSERT INTO process_inbox(process_key,input_id,input,checksum) VALUES (?1,?2,?3,?4)",
-            params![
-                key,
-                input.input_id.as_str(),
-                bytes,
-                Digest::of(&bytes).0.as_slice()
-            ],
-        )
-        .map_err(|error| db_error(&error))?;
+    execute_one(
+        connection,
+        "INSERT INTO process_inbox(process_key,input_id,input,checksum) VALUES (?1,?2,?3,?4)",
+        params![
+            key,
+            input.input_id.as_str(),
+            bytes,
+            Digest::of(&bytes).0.as_slice()
+        ],
+    )
+    .map_err(port_error)?;
     Ok(false)
 }
 
@@ -219,12 +219,12 @@ pub(crate) fn commit_process(
             return Err(PortError::Conflict);
         }
         if let Some(source) = &commit.canonical_source_event_id {
-            transaction
-                .execute(
-                    "INSERT INTO process_sources VALUES (?1,?2,?3)",
-                    params![process_key, source.as_str(), input.input_id.as_str()],
-                )
-                .map_err(|error| db_error(&error))?;
+            execute_one(
+                &transaction,
+                "INSERT INTO process_sources VALUES (?1,?2,?3)",
+                params![process_key, source.as_str(), input.input_id.as_str()],
+            )
+            .map_err(port_error)?;
         }
     }
     let new_next = commit
@@ -244,25 +244,25 @@ pub(crate) fn commit_process(
         added = added
             .checked_add(u64::try_from(bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?)
             .ok_or(PortError::QuotaExceeded)?;
-        transaction
-            .execute(
-                "INSERT INTO process_outcomes VALUES (?1,?2,?3,?4,?5)",
-                params![
-                    key,
-                    integer(outcome.sequence)?,
-                    outcome.outcome_id.as_str(),
-                    bytes,
-                    Digest::of(&bytes).0.as_slice()
-                ],
-            )
-            .map_err(|error| db_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO process_outcomes VALUES (?1,?2,?3,?4,?5)",
+            params![
+                key,
+                integer(outcome.sequence)?,
+                outcome.outcome_id.as_str(),
+                bytes,
+                Digest::of(&bytes).0.as_slice()
+            ],
+        )
+        .map_err(port_error)?;
     }
     for action in &commit.actions {
         let bytes = encode(action, limits.max_record_bytes)?;
         added = added
             .checked_add(u64::try_from(bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?)
             .ok_or(PortError::QuotaExceeded)?;
-        transaction.execute("INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.effect_key().canonical_bytes(),bytes,Digest::of(&bytes).0.as_slice()]).map_err(|error| db_error(&error))?;
+        execute_one(&transaction,"INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.effect_key().canonical_bytes(),bytes,Digest::of(&bytes).0.as_slice()]).map_err(port_error)?;
     }
     let total = u64::try_from(used)
         .map_err(|_negative| PortError::Invariant)?
@@ -284,12 +284,12 @@ pub(crate) fn commit_process(
         if count >= limits.max_scopes {
             return Err(PortError::QuotaExceeded);
         }
-        transaction
-            .execute(
-                "INSERT INTO process_heads VALUES (?1,?2,?3,?4)",
-                params![key, process_key, integer(new_next)?, integer(total)?],
-            )
-            .map_err(|error| db_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO process_heads VALUES (?1,?2,?3,?4)",
+            params![key, process_key, integer(new_next)?, integer(total)?],
+        )
+        .map_err(port_error)?;
     } else {
         let changed = transaction.execute("UPDATE process_heads SET next_sequence=?1,bytes_used=?2 WHERE scope=?3 AND next_sequence=?4", params![integer(new_next)?,integer(total)?,key,next]).map_err(|error| db_error(&error))?;
         if changed != 1 {
@@ -297,19 +297,19 @@ pub(crate) fn commit_process(
         }
     }
     let through = new_next.checked_sub(1).ok_or(PortError::Invariant)?;
-    transaction
-        .execute(
-            "INSERT INTO process_commits VALUES (?1,?2,?3,?4)",
-            params![
-                key,
-                integer(commit.expected_sequence)?,
-                commit_digest.0.as_slice(),
-                integer(through)?
-            ],
-        )
-        .map_err(|error| db_error(&error))?;
+    execute_one(
+        &transaction,
+        "INSERT INTO process_commits VALUES (?1,?2,?3,?4)",
+        params![
+            key,
+            integer(commit.expected_sequence)?,
+            commit_digest.0.as_slice(),
+            integer(through)?
+        ],
+    )
+    .map_err(port_error)?;
     if let Some(input) = &commit.input {
-        transaction.execute("UPDATE process_inbox SET commit_digest=?1,committed_through=?2 WHERE process_key=?3 AND input_id=?4", params![commit_digest.0.as_slice(),integer(through)?,process_key,input.input_id.as_str()]).map_err(|error| db_error(&error))?;
+        execute_one(&transaction,"UPDATE process_inbox SET commit_digest=?1,committed_through=?2 WHERE process_key=?3 AND input_id=?4", params![commit_digest.0.as_slice(),integer(through)?,process_key,input.input_id.as_str()]).map_err(port_error)?;
     }
     let receipt = AtomicProcessCommitReceipt {
         committed_through_sequence: through,
@@ -436,19 +436,19 @@ pub(crate) fn charge_process(
         if count >= limits.max_scopes {
             return Err(PortError::QuotaExceeded);
         }
-        connection
-            .execute(
-                "INSERT INTO process_usage VALUES (?1,?2)",
-                params![key, integer(next)?],
-            )
-            .map_err(|error| db_error(&error))?;
+        execute_one(
+            connection,
+            "INSERT INTO process_usage VALUES (?1,?2)",
+            params![key, integer(next)?],
+        )
+        .map_err(port_error)?;
     } else {
-        connection
-            .execute(
-                "UPDATE process_usage SET bytes_used=?1 WHERE process_key=?2",
-                params![integer(next)?, key],
-            )
-            .map_err(|error| db_error(&error))?;
+        execute_one(
+            connection,
+            "UPDATE process_usage SET bytes_used=?1 WHERE process_key=?2",
+            params![integer(next)?, key],
+        )
+        .map_err(port_error)?;
     }
     Ok(())
 }

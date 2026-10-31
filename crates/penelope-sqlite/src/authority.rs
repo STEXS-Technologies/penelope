@@ -1,6 +1,6 @@
 use crate::{
     SqliteTaskJournal,
-    schema::sql_error,
+    schema::{execute_one, sql_error},
     tasks::{authorized_projection, key},
 };
 use penelope_core::task::{runtime::*, *};
@@ -80,16 +80,15 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
             }
             Some(_) => return Err(TaskPortError::Conflict),
             None => {
-                transaction
-                    .execute(
-                        "INSERT INTO runtime_generations VALUES (?1,?2,?3,0)",
-                        params![
-                            key(request.scope),
-                            request.generation.get(),
-                            execution.0.as_slice()
-                        ],
-                    )
-                    .map_err(|error| sql_error(&error))?;
+                execute_one(
+                    &transaction,
+                    "INSERT INTO runtime_generations VALUES (?1,?2,?3,0)",
+                    params![
+                        key(request.scope),
+                        request.generation.get(),
+                        execution.0.as_slice()
+                    ],
+                )?;
                 StartReservation::Reserved
             }
         };
@@ -118,7 +117,11 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
         if generation > projection.generation() {
             return Err(TaskPortError::Conflict);
         }
-        transaction.execute("INSERT INTO runtime_generations VALUES (?1,?2,NULL,1) ON CONFLICT(scope,generation) DO UPDATE SET state=CASE WHEN state=2 THEN 2 ELSE 1 END", params![key(scope), generation.get()]).map_err(|error| sql_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO runtime_generations VALUES (?1,?2,NULL,1) ON CONFLICT(scope,generation) DO UPDATE SET state=CASE WHEN state=2 THEN 2 ELSE 1 END",
+            params![key(scope), generation.get()],
+        )?;
         let id = transaction
             .query_row(
                 "SELECT execution FROM runtime_generations WHERE scope=?1 AND generation=?2",

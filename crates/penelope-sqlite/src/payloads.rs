@@ -1,6 +1,7 @@
 use crate::{
     SqliteProcessStore,
-    process::{charge_process, db_error, scope_process_key},
+    process::{charge_process, db_error, port_error, scope_process_key},
+    schema::execute_one,
     tasks::copy_column,
 };
 use async_trait::async_trait;
@@ -67,12 +68,12 @@ impl ProcessPayloadStore for SqliteProcessStore {
                         .and_then(|size| size.checked_add(128))
                         .ok_or(PortError::QuotaExceeded)?;
                     charge_process(&transaction, &usage_key, charge, limits)?;
-                    transaction
-                        .execute(
-                            "INSERT INTO process_payloads VALUES (?1,?2,?3)",
-                            params![key, digest.0.as_slice(), bytes],
-                        )
-                        .map_err(|error| db_error(&error))?;
+                    execute_one(
+                        &transaction,
+                        "INSERT INTO process_payloads VALUES (?1,?2,?3)",
+                        params![key, digest.0.as_slice(), bytes],
+                    )
+                    .map_err(port_error)?;
                 }
                 transaction.commit().map_err(|error| db_error(&error))?;
                 Ok(digest)

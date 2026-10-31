@@ -1,4 +1,4 @@
-use crate::schema::{SqliteLimits, open, sql_error};
+use crate::schema::{SqliteLimits, execute_one, open, sql_error};
 use penelope_core::task::{runtime::*, *};
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::path::Path;
@@ -219,7 +219,16 @@ impl SqliteTaskJournal {
         {
             return Err(TaskPortError::Corrupt);
         }
-        transaction.execute("INSERT INTO task_heads VALUES (?1,?2,?3,?4) ON CONFLICT(scope) DO UPDATE SET next_sequence=excluded.next_sequence,last_digest=excluded.last_digest,bytes_used=excluded.bytes_used", params![key(scope), projection.next_sequence().get(), last.0.as_slice(), sql_integer(used)?]).map_err(|error| sql_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO task_heads VALUES (?1,?2,?3,?4) ON CONFLICT(scope) DO UPDATE SET next_sequence=excluded.next_sequence,last_digest=excluded.last_digest,bytes_used=excluded.bytes_used",
+            params![
+                key(scope),
+                projection.next_sequence().get(),
+                last.0.as_slice(),
+                sql_integer(used)?
+            ],
+        )?;
         transaction.commit().map_err(|error| sql_error(&error))?;
         self.cache = Some((projection, last));
         Ok(())
@@ -381,30 +390,28 @@ impl TaskJournal for SqliteTaskJournal {
                 if count >= self.limits.max_scopes {
                     return Err(TaskPortError::Exhausted);
                 }
-                transaction
-                    .execute(
-                        "INSERT INTO task_heads VALUES (?1,?2,?3,?4)",
-                        params![
-                            key(record.scope),
-                            projection.next_sequence().get(),
-                            digest.0.as_slice(),
-                            sql_integer(used)?
-                        ],
-                    )
-                    .map_err(|error| sql_error(&error))?;
+                execute_one(
+                    &transaction,
+                    "INSERT INTO task_heads VALUES (?1,?2,?3,?4)",
+                    params![
+                        key(record.scope),
+                        projection.next_sequence().get(),
+                        digest.0.as_slice(),
+                        sql_integer(used)?
+                    ],
+                )?;
             }
         }
-        transaction
-            .execute(
-                "INSERT INTO task_records VALUES (?1,?2,?3,?4)",
-                params![
-                    key(record.scope),
-                    record.sequence.get(),
-                    encoded,
-                    digest.0.as_slice()
-                ],
-            )
-            .map_err(|error| sql_error(&error))?;
+        execute_one(
+            &transaction,
+            "INSERT INTO task_records VALUES (?1,?2,?3,?4)",
+            params![
+                key(record.scope),
+                record.sequence.get(),
+                encoded,
+                digest.0.as_slice()
+            ],
+        )?;
         transaction.commit().map_err(|error| sql_error(&error))?;
         self.cache = Some((projection, digest));
         Ok(*record)

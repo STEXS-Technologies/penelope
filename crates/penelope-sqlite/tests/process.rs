@@ -611,3 +611,8 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
 
 #[path = "support/commit_integrity.rs"]
 mod commit_integrity;
+
+#[path = "support/suppressed_process_writes.rs"]
+mod suppressed_process_writes;
+#[path = "support/write_snapshot.rs"]
+mod write_snapshot;
