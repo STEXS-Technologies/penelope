@@ -703,7 +703,16 @@ impl ProcessScope {
     /// text or serialized JSON.
     #[must_use]
     pub fn canonical_bytes(&self) -> Vec<u8> {
-        let mut bytes = Vec::new();
+        // Four two-byte identifier lengths and one 32-byte definition digest.
+        let capacity = [
+            self.tenant_id.as_str().len(),
+            self.process_id.as_str().len(),
+            self.definition_id.as_str().len(),
+            self.definition_version.as_str().len(),
+        ]
+        .into_iter()
+        .fold(40_usize, usize::saturating_add);
+        let mut bytes = Vec::with_capacity(capacity);
         encode_identifier(&mut bytes, self.tenant_id.as_str());
         encode_identifier(&mut bytes, self.process_id.as_str());
         encode_identifier(&mut bytes, self.definition_id.as_str());

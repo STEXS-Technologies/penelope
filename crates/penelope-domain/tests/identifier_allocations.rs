@@ -70,6 +70,15 @@ fn main() {
         "dfv_one".parse().unwrap(),
         ContentDigest([3; 32]),
     );
+    assert_eq!(count(|| black_box(&scope).canonical_bytes()), 1);
+    let maximum_scope = ProcessScope::new(
+        format!("tnt_{}", "x".repeat(124)).parse().unwrap(),
+        format!("prc_{}", "x".repeat(124)).parse().unwrap(),
+        format!("def_{}", "x".repeat(124)).parse().unwrap(),
+        format!("dfv_{}", "x".repeat(124)).parse().unwrap(),
+        ContentDigest([3; 32]),
+    );
+    assert_eq!(count(|| black_box(&maximum_scope).canonical_bytes()), 1);
     let outcome = ProcessOutcome::new(
         scope,
         0,

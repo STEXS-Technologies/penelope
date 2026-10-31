@@ -1,0 +1,1465 @@
+   Compiling penelope-domain v0.3.0 (/home/ac/projects/penelope/crates/penelope-domain)
+   Compiling penelope-ports v0.3.0 (/home/ac/projects/penelope/crates/penelope-ports)
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.32s
+     Running unittests src/lib.rs (target/worker-audit-msrv/debug/deps/penelope_domain-435995fa9e9a71ea)
+
+running 17 tests
+test entry::identifier_serde::tests::invalid_utf8_and_noncanonical_text_stay_rejected ... ok
+test entry::identifier_serde::tests::visitor_preserves_borrowed_owned_and_byte_string_admission ... ok
+test entry::identifier_text::tests::boundary_lengths_and_multibyte_text_round_trip ... ok
+test entry::identifier_text::tests::storage_preserves_string_semantics ... ok
+test entry::implementation::tests::allocation_hint_does_not_change_encoding_or_bound_output ... ok
+test entry::implementation::tests::canonical_bytes_are_deterministic_and_bind_effect_semantics ... ok
+test entry::implementation::tests::canonical_definition_digest_is_reproducible_and_rejects_tampering ... ok
+test entry::implementation::tests::canonical_scope_validation_bounds_and_deduplicates_resources ... ok
+test entry::implementation::tests::definition_compatibility_fails_closed_on_identity_and_semantic_changes ... ok
+test entry::implementation::tests::definition_migration_binds_identity_and_destination_digest ... ok
+test entry::implementation::tests::definition_validation_bounds_and_deduplicates_steps ... ok
+test entry::implementation::tests::deserialization_preserves_identifier_validation ... ok
+test entry::implementation::tests::effect_key_binds_every_semantic_effect_coordinate ... ok
+test entry::implementation::tests::every_public_wire_value_has_deterministic_canonical_bytes ... ok
+test entry::implementation::tests::identifiers_reject_ambiguous_storage_and_log_characters ... ok
+test entry::implementation::tests::invalid_identifiers_report_their_typed_error_variant ... ok
+test entry::implementation::tests::outcome_scope_validation_rejects_cross_process_records ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s
+
+     Running tests/golden_wire.rs (target/worker-audit-msrv/debug/deps/golden_wire-30d34db96d696fa7)
+
+running 2 tests
+test process_input_category_discriminants_preserve_existing_variants ... ok
+test wire_fixtures_are_immutable_and_typed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/identifier_allocations.rs (target/worker-audit-msrv/debug/deps/identifier_allocations-433d63458c7854a8)
+All 16 identifier types: short borrowed parse/JSON decode/clone zero allocations; long parse/clone one allocation; unchanged value size
+     Running tests/identifier_contract.rs (target/worker-audit-msrv/debug/deps/identifier_contract-03e1694a8c93e466)
+
+running 1 test
+test public_identifiers_preserve_admission_wire_and_traits ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/scope_encoding.rs (target/worker-audit-msrv/debug/deps/scope_encoding-35647b0857e19fb6)
+
+running 1 test
+test canonical_scope_matches_legacy_encoding_across_identifier_boundaries ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running benches/identifier_decode.rs (target/worker-audit-msrv/debug/deps/identifier_decode-809e5afc42f97a2a)
+identifier JSON decode short: 100000 operations in 32.784515ms (327 ns/op)
+identifier JSON decode escaped: 100000 operations in 46.292717ms (462 ns/op)
+identifier JSON decode long: 100000 operations in 201.914597ms (2019 ns/op)
+     Running unittests src/lib.rs (target/worker-audit-msrv/debug/deps/penelope_sqlite-128453bc64a39922)
+
+running 35 tests
+test process::encode_tests::failed_or_oversized_encoding_cannot_contaminate_a_later_value ... ok
+test process::encode_tests::reused_encoding_matches_json_at_exact_size_boundaries ... ok
+test process::fault_tests::crash_worker ... ok
+test process::fault_tests::lease_clock_tests::clock_failure_and_expiry_overflow_release_the_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::expired_outbox_lease_is_reclaimed_using_time_after_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::new_outbox_claim_samples_clock_after_contended_writer_lock ... ok
+test process::fault_tests::process_death_never_splits_atomic_saga_commit ... ok
+test schema::tests::inbox::sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test schema::tests::migration_process_helper ... ok
+test schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test task_decode::tests::replay_scope_decoder_matches_core_json_forms_and_mutated_records ... ok
+test task_decode::tests::scope_encoding_bound_covers_every_digest_byte_and_fails_on_short_buffers ... ok
+test task_decode::tests::scratch_reuse_preserves_shorter_records_and_owned_results ... ok
+test tasks::blob_snapshot_tests::blob_read_and_external_retirement_share_one_snapshot ... ok
+test tasks::fault_tests::blob_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::crash_worker ... ok
+test tasks::fault_tests::head_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::process_kill_at_each_transaction_boundary_preserves_atomicity ... ok
+test tasks::fault_tests::record_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::key_tests::array_and_legacy_keys_bind_as_identical_sqlite_blobs ... ok
+test tasks::key_tests::fixed_scope_keys_preserve_all_legacy_bytes ... ok
+test worker::panic_tests::canceled_result_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::disconnected_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::full_queue_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::nested_result_destructor_cannot_abort_worker_or_strand_accepted_work ... ok
+test worker::panic_tests::notification_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::operation_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::tests::only_latest_registration_is_woken_after_repeated_polls_and_cancellation ... ok
+test worker::tests::panicking_waker_cannot_strand_accepted_work_or_discard_committed_result ... ok
+test worker::tests::queue_exhaustion_is_immediate_and_cancellation_does_not_undo_commits ... ok
+test worker::tests::replacing_executor_waker_runs_destructor_without_completion_lock ... ok
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... ok
+test worker::waker_tests::cloning_executor_waker_can_complete_response_without_lock_or_lost_result ... ok
+test worker::waker_tests::panicking_clone_or_temporary_waker_drop_preserves_unpoisoned_result ... ok
+test worker::waker_tests::repeated_pending_polls_reuse_registration_without_cloning_executor_waker ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.87s
+
+     Running tests/process.rs (target/worker-audit-msrv/debug/deps/process-8614a7f5f034b32d)
+
+running 61 tests
+test canonical_source_cannot_advance_under_another_input_identity ... ok
+test claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok
+test claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok
+test claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok
+test claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok
+test claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok
+test commit_integrity::later_commits_and_delivery_ack_do_not_invalidate_an_exact_original_retry ... ok
+test commit_integrity::receipt_reconstruction_rejects_missing_and_substituted_constituents ... ok
+test commit_integrity::retry_rejects_damaged_consumption_and_source_bindings ... ok
+test committed_receipt_cannot_mask_missing_authoritative_records ... ok
+test concurrent_quota::concurrent_new_processes_share_the_scope_admission_limit ... ok
+test concurrent_quota::concurrent_ports_share_the_exact_process_byte_budget ... ok
+test durable_atomic_commit_inbox_outbox_and_exact_retry ... ok
+test durable_timer_claims_redeliver_until_exact_acknowledgement ... ok
+test inbox_and_atomic_commit_share_bounded_usage_and_exact_payload_identity ... ok
+test inbox_concurrency::admission_and_commit_races_preserve_identity_consumption_and_source_binding ... ok
+test inbox_concurrency::next_frontier_rejects_consumed_inputs_and_reused_sources_during_admission ... ok
+test inbox_index::inbox_index_collision_rolls_back_version_and_rows_until_repaired ... ok
+test inbox_index::inbox_index_page_limit_failure_preserves_version_and_pending_rows ... ok
+test inbox_index::next_unsupported_schema_rejects_healthy_database_without_row_changes ... ok
+test inbox_index::version_five_upgrade_preserves_pending_inputs_receipts_and_live_leases ... ok
+test inbox_validation::duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection ... ok
+test inbox_validation::stored_record_limit_bounds_noncanonical_duplicate_encodings ... ok
+test lease_contracts::cancellation_fences_a_live_timer_lease_and_rescheduling_cannot_resurrect_it ... ok
+test lease_contracts::clock_overflow_cannot_create_an_unbounded_lease ... ok
+test lease_contracts::corrupted_pending_records_block_claims_and_cancellation ... ok
+test lease_contracts::damaged_index_bindings_never_return_an_unpersisted_lease ... ok
+test lease_contracts::exhausted_or_corrupt_lease_counters_and_clock_overflow_preserve_pending_work ... ok
+test lease_contracts::exhausted_tokens_and_delivery_attempts_roll_back_without_claiming_work ... ok
+test lease_contracts::expired_or_nonextending_renewals_cannot_hide_pending_work ... ok
+test lease_contracts::ignored_acknowledgement_is_not_reported_as_durable_success ... ok
+test lease_contracts::ignored_lease_update_rolls_back_tokens_and_returns_no_authority ... ok
+test lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work ... ok
+test lease_contracts::lease_completion_rejects_damaged_durable_evidence ... ok
+test lease_contracts::renewal_invalidates_the_old_envelope_and_survives_connection_reconstruction ... ok
+test lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok
+test lease_encoding::variable_length_lease_bytes_remain_exact_across_reclaim_and_reopen ... ok
+test locked_database_does_not_block_the_callers_future_poll ... ok
+test missing_or_corrupt_durable_outcomes_never_become_an_empty_log ... ok
+test outbox_expiry_redelivery_renewal_and_substitution_are_fenced ... ok
+test payload_columns::empty_and_maximum_payloads_survive_corruption_repair_and_reopen ... ok
+test payload_columns::payload_row_validation_preserves_owned_reads_retry_errors_and_usage ... ok
+test pending_inbox::discovery_is_bounded_scoped_repeatable_and_only_atomic_commit_consumes_inputs ... ok
+test pending_inbox::discovery_rejects_corrupt_misindexed_and_oversized_inputs_without_consuming_them ... ok
+test pending_inbox::warmed_discovery_tracks_admission_and_consumption_on_other_workers ... ok
+test process_frontier::frontier_query_uses_scoped_indexes_as_history_grows ... ok
+test process_frontier::inconsistent_frontiers_reject_pages_retries_and_appends_until_repaired ... ok
+test process_frontier::unknown_and_inbox_only_scopes_remain_empty_with_other_history_present ... ok
+test receipt_reconstruction_after_reopen_does_not_duplicate_history ... ok
+test record_limits::raising_record_limit_preserves_commit_retry_replay_and_reopen ... ok
+test replay_cache::maximum_pages_refresh_across_workers_and_reject_corrupted_last_rows ... ok
+test replay_cache::warm_replay_rebinds_requests_recovers_from_corruption_and_sees_new_commits ... ok
+test replay_columns::replay_column_validation_and_owned_results_survive_warm_statement_reuse ... ok
+test replay_payload_limits_are_atomic_and_checked_before_stored_copy ... ok
+test replay_payloads_survive_reopen_are_scoped_and_detect_corruption ... ok
+test separate_connections_cannot_both_claim_one_outbox_action ... ok
+test suppressed_process_writes::ignored_process_commit_writes_cannot_return_partial_success ... ok
+test suppressed_process_writes::ignored_process_service_writes_preserve_state_and_recover ... ok
+test timer_validation::warmed_timer_operations_reject_changed_evidence_without_writes ... ok
+test transaction_failure_cannot_leave_inbox_outcomes_or_actions ... ok
+test version_three_upgrade_preserves_process_records_and_adds_payload_storage ... ok
+
+test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.44s
+
+     Running tests/tasks.rs (target/worker-audit-msrv/debug/deps/tasks-864ad32d5525538e)
+
+running 45 tests
+test atomic_blob_history_commit_and_reopen ... ok
+test authority_columns::authorization_head_query_rebinds_scope_and_observes_repairs_and_ddl ... ok
+test authority_columns::generation_identity_columns_validate_in_every_durable_state ... ok
+test authority_race::contending_reservations_and_fences_preserve_serial_histories_and_stop_identity ... ok
+test authorizations_reject_uncommitted_and_substituted_requests ... ok
+test cache_usage::committed_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::committed_cache_rejects_lower_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_lower_usage_until_repaired ... ok
+test concurrent_connections_choose_one_cas_winner ... ok
+test distinct_processes_arbitrate_and_recover_after_unacknowledged_commit ... ok
+test explicit_head_rebuild_validates_log_and_blobs ... ok
+test failed_schema_upgrade_rolls_back_schema_and_version ... ok
+test fence_before_dispatch_prevents_delayed_start_after_reconstruction ... ok
+test fencing_survives_reopen_and_blocks_delayed_start ... ok
+test gaps_corrupt_bytes_missing_head_and_future_schema_fail_closed ... ok
+test head_rebuild_cannot_hide_a_missing_committed_tail ... ok
+test lock_contention_is_bounded_and_does_not_accept_input ... ok
+test retirement_preserves_fences_and_prevents_resurrection ... ok
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... ok
+test schema_upgrade_preserves_v1_task_bytes ... ok
+test scope_quota_rolls_back_blob_and_record_together ... ok
+test sqlite_process_worker ... ok
+test structural_integrity_check_reports_constraint_corruption_and_recovery ... ok
+test successor_is_blocked_until_predecessor_termination_is_confirmed ... ok
+test suppressed_task_writes::ignored_task_authority_writes_cannot_grant_or_fence_a_generation ... ok
+test suppressed_task_writes::ignored_task_commit_writes_roll_back_blobs_heads_and_records ... ok
+test suppressed_task_writes::ignored_task_head_repair_cannot_populate_a_false_cache ... ok
+test suppressed_task_writes::ignored_task_retirement_writes_roll_back_partial_deletion ... ok
+test task_append_frontier::appends_reject_damaged_frontiers_for_warm_rebuilt_and_cold_projections ... ok
+test task_blob_columns::blob_read_rebuild_and_duplicate_commit_preserve_validation ... ok
+test task_blob_columns::empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen ... ok
+test task_cache_revision::cached_appends_reject_external_history_damage_before_writing ... ok
+test task_cache_revision::external_transactions_rebind_cache_after_lock_failure_commit_and_rollback ... ok
+test task_cache_revision::unrelated_scope_damage_and_schema_changes_do_not_poison_healthy_appends ... ok
+test task_columns::task_record_columns_preserve_validation_and_owned_results ... ok
+test task_confirm_bounds::stop_confirmation_rejects_out_of_policy_rows_without_mutation ... ok
+test task_confirm_bounds::valid_confirmations_survive_last_attempt_retirement_and_reopen ... ok
+test task_frontier::cached_frontier_query_rebinds_scope_and_observes_new_tail ... ok
+test task_frontier::reads_reject_inconsistent_frontiers_without_mutation ... ok
+test task_orphan_usage::first_append_accounts_for_orphans_at_exact_quota_across_warm_and_cold_statements ... ok
+test task_replay_memo::repeated_references_reject_changed_metadata_and_recheck_durable_bytes ... ok
+test task_statement_cache::statement_reuse_keeps_scope_bindings_and_observes_delete_repair_and_schema_changes ... ok
+test transaction_failure_after_blob_insert_rolls_back_everything ... ok
+test wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history ... ok
+
+test result: ok. 45 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.12s
+
+     Running benches/claim_history.rs (target/worker-audit-msrv/debug/deps/claim_history-efba4874226ec5a2)
+{"ack_calls":1024,"ack_ns":1214065600,"commit_calls":8,"commit_ns":91884310,"idle_calls":1000,"idle_ns":39492803,"next_token":1025,"open_ns":5942548,"retained_rows":1024,"schedule_calls":0,"schedule_ns":0,"schema_version":6,"seed_claim_calls":8,"seed_claim_ns":61299519,"timers":false,"warmup_calls":100}
+{"ack_calls":0,"ack_ns":0,"commit_calls":8,"commit_ns":84643875,"idle_calls":1000,"idle_ns":41979510,"next_token":1,"open_ns":9638933,"retained_rows":1024,"schedule_calls":1024,"schedule_ns":1132186642,"schema_version":6,"seed_claim_calls":0,"seed_claim_ns":0,"timers":true,"warmup_calls":100}
+     Running benches/claim_selection.rs (target/worker-audit-msrv/debug/deps/claim_selection-c1b2207fb2f187cb)
+{"database_pages":40,"future_timers":false,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":235},"retained":0,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":413}}
+{"database_pages":42,"future_timers":false,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":0,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+{"database_pages":40,"future_timers":true,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":235},"retained":0,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":413}}
+{"database_pages":42,"future_timers":true,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":0,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+{"database_pages":234,"future_timers":false,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":5355},"retained":1024,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":5533}}
+{"database_pages":236,"future_timers":false,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":1024,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+{"database_pages":234,"future_timers":true,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":5355},"retained":1024,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":7581}}
+{"database_pages":245,"future_timers":true,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":1024,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+{"database_pages":3157,"future_timers":false,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":82155},"retained":16384,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":82333}}
+{"database_pages":3159,"future_timers":false,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":16384,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+{"database_pages":3157,"future_timers":true,"indexed":false,"mutation_vm_steps":{"outbox_ack":26,"outbox_insert":45,"outbox_lease_update":31,"timer_ack":26,"timer_insert":38,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX sqlite_autoindex_process_actions_1 (scope=?)"],"sorts":0,"vm_steps":82155},"retained":16384,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX sqlite_autoindex_process_timers_1 (scope=?)","USE TEMP B-TREE FOR ORDER BY"],"sorts":1,"vm_steps":115101}}
+{"database_pages":3302,"future_timers":true,"indexed":true,"mutation_vm_steps":{"outbox_ack":38,"outbox_insert":55,"outbox_lease_update":31,"timer_ack":39,"timer_insert":49,"timer_lease_update":31},"outbox":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_actions USING INDEX process_actions_pending (scope=?)"],"sorts":0,"vm_steps":202},"retained":16384,"sqlite_version":"3.53.2","timers":{"identities":["pending_000","pending_001","pending_002","pending_003","pending_004","pending_005","pending_006","pending_007","pending_008","pending_009","pending_010","pending_011","pending_012","pending_013","pending_014","pending_015"],"plan":["SEARCH process_timers USING INDEX process_timers_due (scope=? AND due_at<?)"],"sorts":0,"vm_steps":206}}
+     Running benches/durable_store.rs (target/worker-audit-msrv/debug/deps/durable_store-ac8231adabaec965)
+{
+  "cache": "OS cache is uncontrolled; warm and reopened-connection runs only",
+  "checkpoint_payload": "one deduplicated immutable 64-byte blob",
+  "journal_mode": "WAL",
+  "process": {
+    "claim_to_ack_without_external_execution": {
+      "p50_ns": 1424484,
+      "p95_ns": 3611051,
+      "p99_ns": 7563050,
+      "samples": 128
+    },
+    "commits": {
+      "p50_ns": 1042546,
+      "p95_ns": 3521527,
+      "p99_ns": 4225729,
+      "samples": 128
+    },
+    "exact_retry_after_ack": {
+      "p50_ns": 249011,
+      "p95_ns": 307284,
+      "p99_ns": 351129,
+      "samples": 128
+    }
+  },
+  "schema": 1,
+  "sqlite_version": "3.53.2",
+  "synchronous": "FULL",
+  "tasks": [
+    {
+      "checkpoint_append": {
+        "p50_ns": 674163,
+        "p95_ns": 738127,
+        "p99_ns": 738127,
+        "samples": 14
+      },
+      "new_database_open_ns": 7132528,
+      "payload_bytes": 64,
+      "records": 16,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 2565179,
+        "p95_ns": 2872422,
+        "p99_ns": 2872422,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 2125147,
+        "p95_ns": 2512487,
+        "p99_ns": 2512487,
+        "samples": 10
+      }
+    },
+    {
+      "checkpoint_append": {
+        "p50_ns": 702267,
+        "p95_ns": 791380,
+        "p99_ns": 2555079,
+        "samples": 126
+      },
+      "new_database_open_ns": 4713242,
+      "payload_bytes": 64,
+      "records": 128,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 17745153,
+        "p95_ns": 18038389,
+        "p99_ns": 18038389,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 17286285,
+        "p95_ns": 17442468,
+        "p99_ns": 17442468,
+        "samples": 10
+      }
+    },
+    {
+      "checkpoint_append": {
+        "p50_ns": 736233,
+        "p95_ns": 1352615,
+        "p99_ns": 2852744,
+        "samples": 510
+      },
+      "new_database_open_ns": 5309914,
+      "payload_bytes": 64,
+      "records": 512,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 69571047,
+        "p95_ns": 71818892,
+        "p99_ns": 71818892,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 68286513,
+        "p95_ns": 70440528,
+        "p99_ns": 70440528,
+        "samples": 10
+      }
+    }
+  ],
+  "total_wall_ns": 2762667223
+}
+     Running benches/inbox_accept.rs (target/worker-audit-msrv/debug/deps/inbox_accept-9a678ba8f308c1bc)
+{"consumed":false,"elapsed_ns":154110728,"iterations":5000}
+{"consumed":true,"elapsed_ns":153182475,"iterations":5000}
+     Running benches/inbox_accept_allocations.rs (target/worker-audit-msrv/debug/deps/inbox_accept_allocations-09bf8930f26f22de)
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":0}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":1}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":2}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":3}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":4}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":5}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":6}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":7}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":8}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":9}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":10}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":11}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":12}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":13}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":14}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":15}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":16}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":17}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":18}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":19}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":20}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":21}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":22}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":23}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":24}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":25}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":26}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":27}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":28}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":29}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":30}
+{"allocations":8,"consumed":false,"reallocations":1,"requested_bytes":992,"sample":31}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":0}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":1}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":2}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":3}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":4}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":5}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":6}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":7}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":8}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":9}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":10}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":11}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":12}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":13}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":14}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":15}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":16}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":17}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":18}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":19}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":20}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":21}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":22}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":23}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":24}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":25}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":26}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":27}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":28}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":29}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":30}
+{"allocations":8,"consumed":true,"reallocations":1,"requested_bytes":992,"sample":31}
+     Running benches/lease_batch.rs (target/worker-audit-msrv/debug/deps/lease_batch-6172651b2b5be677)
+timers=false batch=1 iterations=400 elapsed_ns=322842604
+timers=false batch=16 iterations=400 elapsed_ns=670865323
+timers=true batch=1 iterations=400 elapsed_ns=422377002
+timers=true batch=16 iterations=400 elapsed_ns=996460978
+     Running benches/lease_claim.rs (target/worker-audit-msrv/debug/deps/lease_claim-ac8f88a8433ccfd1)
+timers=false iterations=2000 elapsed_ns=88101237
+timers=true iterations=2000 elapsed_ns=90827627
+     Running benches/lease_completion_allocations.rs (target/worker-audit-msrv/debug/deps/lease_completion_allocations-378b6995ab62c2d5)
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":0}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":1}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":2}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":3}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":4}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":5}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":6}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":7}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":8}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":9}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":10}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":11}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":12}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":13}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":14}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":15}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":16}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":17}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":18}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":19}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":20}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":21}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":22}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":23}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":24}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":25}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":26}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":27}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":28}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":29}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":30}
+{"allocations":10,"case":"outbox_ack","reallocations":6,"requested_bytes":1852,"sample":31}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":0}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":1}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":2}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":3}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":4}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":5}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":6}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":7}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":8}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":9}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":10}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":11}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":12}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":13}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":14}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":15}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":16}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":17}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":18}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":19}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":20}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":21}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":22}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":23}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":24}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":25}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":26}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":27}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":28}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":29}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":30}
+{"allocations":9,"case":"timer_ack","reallocations":2,"requested_bytes":1620,"sample":31}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":0}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":1}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":2}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":3}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":4}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":5}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":6}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":7}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":8}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":9}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":10}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":11}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":12}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":13}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":14}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":15}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":16}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":17}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":18}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":19}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":20}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":21}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":22}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":23}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":24}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":25}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":26}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":27}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":28}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":29}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":30}
+{"allocations":11,"case":"outbox_renew","reallocations":8,"requested_bytes":3284,"sample":31}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":0}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":1}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":2}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":3}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":4}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":5}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":6}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":7}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":8}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":9}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":10}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":11}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":12}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":13}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":14}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":15}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":16}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":17}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":18}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":19}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":20}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":21}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":22}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":23}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":24}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":25}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":26}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":27}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":28}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":29}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":30}
+{"allocations":8,"case":"timer_schedule","reallocations":0,"requested_bytes":690,"sample":31}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":0}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":1}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":2}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":3}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":4}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":5}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":6}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":7}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":8}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":9}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":10}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":11}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":12}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":13}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":14}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":15}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":16}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":17}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":18}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":19}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":20}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":21}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":22}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":23}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":24}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":25}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":26}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":27}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":28}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":29}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":30}
+{"allocations":7,"case":"timer_cancel","reallocations":0,"requested_bytes":554,"sample":31}
+     Running benches/pending_history.rs (target/worker-audit-msrv/debug/deps/pending_history-a9e3810e93c48cb3)
+{"consumed_rows":16,"empty_engine":{"identities":[],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":11},"empty_ns":25689204,"open_ns":9712314,"pages":43,"pending_accept_ns":10854162,"pending_calls":16,"pending_commit_ns":17923705,"pending_engine":{"identities":["inp_pending_000","inp_pending_001","inp_pending_002","inp_pending_003","inp_pending_004","inp_pending_005","inp_pending_006","inp_pending_007","inp_pending_008","inp_pending_009","inp_pending_010","inp_pending_011","inp_pending_012","inp_pending_013","inp_pending_014","inp_pending_015"],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":137},"pending_ns":316257667,"read_calls":1000,"retained":0,"schema_version":6,"seed_accept_ns":0,"seed_commit_ns":0,"sqlite":"3.53.2"}
+{"consumed_rows":144,"empty_engine":{"identities":[],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":11},"empty_ns":25072427,"open_ns":11238184,"pages":88,"pending_accept_ns":13100897,"pending_calls":16,"pending_commit_ns":19018473,"pending_engine":{"identities":["inp_pending_000","inp_pending_001","inp_pending_002","inp_pending_003","inp_pending_004","inp_pending_005","inp_pending_006","inp_pending_007","inp_pending_008","inp_pending_009","inp_pending_010","inp_pending_011","inp_pending_012","inp_pending_013","inp_pending_014","inp_pending_015"],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":137},"pending_ns":320299210,"read_calls":1000,"retained":128,"schema_version":6,"seed_accept_ns":139417862,"seed_commit_ns":169585525,"sqlite":"3.53.2"}
+{"consumed_rows":1040,"empty_engine":{"identities":[],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":11},"empty_ns":25588288,"open_ns":6243610,"pages":388,"pending_accept_ns":21700048,"pending_calls":16,"pending_commit_ns":23359145,"pending_engine":{"identities":["inp_pending_000","inp_pending_001","inp_pending_002","inp_pending_003","inp_pending_004","inp_pending_005","inp_pending_006","inp_pending_007","inp_pending_008","inp_pending_009","inp_pending_010","inp_pending_011","inp_pending_012","inp_pending_013","inp_pending_014","inp_pending_015"],"plan":["SEARCH process_inbox USING INDEX process_inbox_pending (process_key=?)"],"sorts":0,"vm_steps":137},"pending_ns":319515670,"read_calls":1000,"retained":1024,"schema_version":6,"seed_accept_ns":1053160358,"seed_commit_ns":1151971061,"sqlite":"3.53.2"}
+     Running benches/pending_input_allocations.rs (target/worker-audit-msrv/debug/deps/pending_input_allocations-bd9367e45b76d6e2)
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":0}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":1}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":2}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":3}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":4}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":5}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":6}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":7}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":8}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":9}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":10}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":11}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":12}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":13}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":14}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":15}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":16}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":17}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":18}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":19}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":20}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":21}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":22}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":23}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":24}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":25}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":26}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":27}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":28}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":29}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":30}
+{"allocations":7,"pending":0,"reallocations":0,"requested_bytes":504,"sample":31}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":0}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":1}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":2}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":3}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":4}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":5}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":6}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":7}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":8}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":9}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":10}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":11}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":12}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":13}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":14}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":15}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":16}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":17}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":18}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":19}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":20}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":21}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":22}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":23}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":24}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":25}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":26}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":27}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":28}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":29}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":30}
+{"allocations":8,"pending":1,"reallocations":0,"requested_bytes":2296,"sample":31}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":0}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":1}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":2}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":3}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":4}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":5}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":6}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":7}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":8}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":9}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":10}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":11}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":12}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":13}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":14}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":15}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":16}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":17}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":18}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":19}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":20}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":21}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":22}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":23}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":24}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":25}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":26}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":27}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":28}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":29}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":30}
+{"allocations":8,"pending":16,"reallocations":0,"requested_bytes":2296,"sample":31}
+     Running benches/pending_inputs.rs (target/worker-audit-msrv/debug/deps/pending_inputs-520f19c535a0e8a2)
+{"elapsed_ns":135078538,"iterations":5000,"pending":0}
+{"elapsed_ns":247076700,"iterations":5000,"pending":1}
+{"elapsed_ns":1346720091,"iterations":5000,"pending":16}
+     Running benches/process_commit_allocations.rs (target/worker-audit-msrv/debug/deps/process_commit_allocations-e48dd41d56e21b18)
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":0}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":1}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":2}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":3}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":4}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":5}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":6}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":7}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":8}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":9}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":10}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":11}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":12}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":13}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":14}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":15}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":16}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":17}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":18}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":19}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":20}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":21}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":22}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":23}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":24}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":25}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":26}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":27}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":28}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":29}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":30}
+{"actions":1,"allocations":18,"reallocations":8,"requested_bytes":6068,"sample":31}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":0}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":1}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":2}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":3}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":4}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":5}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":6}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":7}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":8}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":9}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":10}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":11}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":12}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":13}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":14}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":15}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":16}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":17}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":18}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":19}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":20}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":21}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":22}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":23}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":24}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":25}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":26}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":27}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":28}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":29}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":30}
+{"actions":16,"allocations":33,"reallocations":70,"requested_bytes":25316,"sample":31}
+     Running benches/process_payload_allocations.rs (target/worker-audit-msrv/debug/deps/process_payload_allocations-22bfed9a3c947800)
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":0,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":1,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":2,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":3,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":4,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":5,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":6,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":7,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":8,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":9,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":10,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":11,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":12,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":13,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":14,"size":0}
+{"allocations":6,"case":"duplicate","reallocations":0,"removed_bytes":0,"requested_bytes":570,"sample":15,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":0,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":1,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":2,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":3,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":4,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":5,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":6,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":7,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":8,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":9,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":10,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":11,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":12,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":13,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":14,"size":0}
+{"allocations":7,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":15,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":0,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":1,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":2,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":3,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":4,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":5,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":6,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":7,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":8,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":9,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":10,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":11,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":12,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":13,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":14,"size":0}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":15,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":0,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":1,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":2,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":3,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":4,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":5,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":6,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":7,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":8,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":9,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":10,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":11,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":12,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":13,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":14,"size":0}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1,"requested_bytes":522,"sample":15,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":0,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":1,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":2,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":3,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":4,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":5,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":6,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":7,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":8,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":9,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":10,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":11,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":12,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":13,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":14,"size":0}
+{"allocations":6,"case":"corrupt_put","reallocations":0,"removed_bytes":1,"requested_bytes":570,"sample":15,"size":0}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":0,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":1,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":2,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":3,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":4,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":5,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":6,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":7,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":8,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":9,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":10,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":11,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":12,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":13,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":14,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":15,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":0,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":1,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":2,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":3,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":4,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":5,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":6,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":7,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":8,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":9,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":10,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":11,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":12,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":13,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":14,"size":32}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":554,"sample":15,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":0,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":1,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":2,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":3,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":4,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":5,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":6,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":7,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":8,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":9,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":10,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":11,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":12,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":13,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":14,"size":32}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":15,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":0,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":1,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":2,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":3,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":4,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":5,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":6,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":7,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":8,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":9,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":10,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":11,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":12,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":13,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":14,"size":32}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":32,"requested_bytes":522,"sample":15,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":0,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":1,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":2,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":3,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":4,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":5,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":6,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":7,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":8,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":9,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":10,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":11,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":12,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":13,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":14,"size":32}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":32,"requested_bytes":602,"sample":15,"size":32}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":0,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":1,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":2,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":3,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":4,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":5,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":6,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":7,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":8,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":9,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":10,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":11,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":12,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":13,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":14,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":15,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":0,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":1,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":2,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":3,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":4,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":5,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":6,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":7,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":8,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":9,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":10,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":11,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":12,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":13,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":14,"size":4096}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":4618,"sample":15,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":0,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":1,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":2,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":3,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":4,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":5,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":6,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":7,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":8,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":9,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":10,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":11,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":12,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":13,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":14,"size":4096}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":15,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":0,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":1,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":2,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":3,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":4,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":5,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":6,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":7,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":8,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":9,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":10,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":11,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":12,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":13,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":14,"size":4096}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":4096,"requested_bytes":522,"sample":15,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":0,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":1,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":2,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":3,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":4,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":5,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":6,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":7,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":8,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":9,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":10,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":11,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":12,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":13,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":14,"size":4096}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":4096,"requested_bytes":4666,"sample":15,"size":4096}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":0,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":1,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":2,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":3,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":4,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":5,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":6,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":7,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":8,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":9,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":10,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":11,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":12,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":13,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":14,"size":1048576}
+{"allocations":7,"case":"duplicate","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":15,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":0,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":1,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":2,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":3,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":4,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":5,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":6,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":7,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":8,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":9,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":10,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":11,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":12,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":13,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":14,"size":1048576}
+{"allocations":8,"case":"read","reallocations":0,"removed_bytes":0,"requested_bytes":1049098,"sample":15,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":0,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":1,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":2,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":3,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":4,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":5,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":6,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":7,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":8,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":9,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":10,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":11,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":12,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":13,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":14,"size":1048576}
+{"allocations":7,"case":"missing","reallocations":0,"removed_bytes":0,"requested_bytes":522,"sample":15,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":0,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":1,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":2,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":3,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":4,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":5,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":6,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":7,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":8,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":9,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":10,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":11,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":12,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":13,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":14,"size":1048576}
+{"allocations":7,"case":"corrupt_read","reallocations":0,"removed_bytes":1048576,"requested_bytes":522,"sample":15,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":0,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":1,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":2,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":3,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":4,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":5,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":6,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":7,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":8,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":9,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":10,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":11,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":12,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":13,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":14,"size":1048576}
+{"allocations":7,"case":"corrupt_put","reallocations":0,"removed_bytes":1048576,"requested_bytes":1049146,"sample":15,"size":1048576}
+     Running benches/process_payloads.rs (target/worker-audit-msrv/debug/deps/process_payloads-6f0a3133725d2534)
+{"case":"duplicate","elapsed_ns":22523937,"expected_removed_bytes":0,"iterations":1000,"size":0,"warmup":100}
+{"case":"read","elapsed_ns":15697795,"expected_removed_bytes":0,"iterations":1000,"size":0,"warmup":100}
+{"case":"missing","elapsed_ns":11007482,"expected_removed_bytes":0,"iterations":1000,"size":0,"warmup":100}
+{"case":"corrupt_read","elapsed_ns":15542726,"expected_removed_bytes":1,"iterations":1000,"size":0,"warmup":100}
+{"case":"corrupt_put","elapsed_ns":23434891,"expected_removed_bytes":1,"iterations":1000,"size":0,"warmup":100}
+{"case":"duplicate","elapsed_ns":23404223,"expected_removed_bytes":32,"iterations":1000,"size":32,"warmup":100}
+{"case":"read","elapsed_ns":16977416,"expected_removed_bytes":0,"iterations":1000,"size":32,"warmup":100}
+{"case":"missing","elapsed_ns":12105842,"expected_removed_bytes":0,"iterations":1000,"size":32,"warmup":100}
+{"case":"corrupt_read","elapsed_ns":16462155,"expected_removed_bytes":32,"iterations":1000,"size":32,"warmup":100}
+{"case":"corrupt_put","elapsed_ns":22378538,"expected_removed_bytes":32,"iterations":1000,"size":32,"warmup":100}
+{"case":"duplicate","elapsed_ns":159303515,"expected_removed_bytes":4096,"iterations":1000,"size":4096,"warmup":100}
+{"case":"read","elapsed_ns":150108857,"expected_removed_bytes":0,"iterations":1000,"size":4096,"warmup":100}
+{"case":"missing","elapsed_ns":11700388,"expected_removed_bytes":0,"iterations":1000,"size":4096,"warmup":100}
+{"case":"corrupt_read","elapsed_ns":148993555,"expected_removed_bytes":4096,"iterations":1000,"size":4096,"warmup":100}
+{"case":"corrupt_put","elapsed_ns":160956036,"expected_removed_bytes":4096,"iterations":1000,"size":4096,"warmup":100}
+{"case":"duplicate","elapsed_ns":4877021825,"expected_removed_bytes":1048576,"iterations":128,"size":1048576,"warmup":32}
+{"case":"read","elapsed_ns":4383861568,"expected_removed_bytes":0,"iterations":128,"size":1048576,"warmup":32}
+{"case":"missing","elapsed_ns":1565729,"expected_removed_bytes":0,"iterations":128,"size":1048576,"warmup":32}
+{"case":"corrupt_read","elapsed_ns":4303560887,"expected_removed_bytes":1048576,"iterations":128,"size":1048576,"warmup":32}
+{"case":"corrupt_put","elapsed_ns":4277061656,"expected_removed_bytes":1048576,"iterations":128,"size":1048576,"warmup":32}
+     Running benches/process_replay.rs (target/worker-audit-msrv/debug/deps/process_replay-bf1a003ed4c7767b)
+{"elapsed_ns":75776930,"from":0,"history":1,"iterations":1000,"limit":1,"profile":"first"}
+{"elapsed_ns":73943595,"from":0,"history":1,"iterations":1000,"limit":1,"profile":"last"}
+{"elapsed_ns":33502837,"from":1,"history":1,"iterations":1000,"limit":1,"profile":"end"}
+{"elapsed_ns":33532227,"from":18,"history":1,"iterations":1000,"limit":1,"profile":"past"}
+{"elapsed_ns":74084670,"from":0,"history":1,"iterations":1000,"limit":128,"profile":"page"}
+{"elapsed_ns":75816990,"from":0,"history":128,"iterations":1000,"limit":1,"profile":"first"}
+{"elapsed_ns":81069563,"from":127,"history":128,"iterations":1000,"limit":1,"profile":"last"}
+{"elapsed_ns":35709650,"from":128,"history":128,"iterations":1000,"limit":1,"profile":"end"}
+{"elapsed_ns":32801834,"from":145,"history":128,"iterations":1000,"limit":1,"profile":"past"}
+{"elapsed_ns":3624955476,"from":0,"history":128,"iterations":1000,"limit":128,"profile":"page"}
+{"elapsed_ns":77208641,"from":0,"history":4096,"iterations":1000,"limit":1,"profile":"first"}
+{"elapsed_ns":78190587,"from":4095,"history":4096,"iterations":1000,"limit":1,"profile":"last"}
+{"elapsed_ns":38425699,"from":4096,"history":4096,"iterations":1000,"limit":1,"profile":"end"}
+{"elapsed_ns":36865685,"from":4113,"history":4096,"iterations":1000,"limit":1,"profile":"past"}
+{"elapsed_ns":3627945713,"from":0,"history":4096,"iterations":1000,"limit":128,"profile":"page"}
+     Running benches/process_replay_allocations.rs (target/worker-audit-msrv/debug/deps/process_replay_allocations-f0077a61212e3d11)
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":0}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":1}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":2}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":3}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":4}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":5}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":6}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":7}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":8}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":9}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":10}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":11}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":12}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":13}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":14}
+{"allocations":9,"copied_bytes":436,"from":0,"limit":1,"profile":"first","reallocations":0,"requested_bytes":1114,"rows":1,"sample":15}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":0}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":1}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":2}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":3}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":4}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":5}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":6}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":7}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":8}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":9}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":10}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":11}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":12}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":13}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":14}
+{"allocations":9,"copied_bytes":444,"from":127,"limit":1,"profile":"last","reallocations":0,"requested_bytes":1114,"rows":1,"sample":15}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":0}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":1}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":2}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":3}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":4}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":5}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":6}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":7}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":8}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":9}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":10}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":11}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":12}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":13}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":14}
+{"allocations":8,"copied_bytes":0,"from":128,"limit":1,"profile":"end","reallocations":0,"requested_bytes":850,"rows":0,"sample":15}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":0}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":1}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":2}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":3}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":4}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":5}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":6}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":7}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":8}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":9}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":10}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":11}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":12}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":13}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":14}
+{"allocations":8,"copied_bytes":0,"from":145,"limit":1,"profile":"past","reallocations":0,"requested_bytes":850,"rows":0,"sample":15}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":0}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":1}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":2}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":3}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":4}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":5}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":6}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":7}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":8}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":9}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":10}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":11}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":12}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":13}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":14}
+{"allocations":9,"copied_bytes":56716,"from":0,"limit":128,"profile":"page","reallocations":0,"requested_bytes":34642,"rows":128,"sample":15}
+     Running benches/task_blob_allocations.rs (target/worker-audit-msrv/debug/deps/task_blob_allocations-6693d35cdf7e4eff)
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":0,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":1,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":2,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":3,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":4,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":5,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":6,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":7,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":8,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":9,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":10,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":11,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":12,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":13,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":14,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":15,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":0,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":1,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":2,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":3,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":4,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":5,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":6,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":7,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":8,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":9,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":10,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":11,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":12,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":13,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":14,"size":0}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":15,"size":0}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":0,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":1,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":2,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":3,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":4,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":5,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":6,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":7,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":8,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":9,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":10,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":11,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":12,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":13,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":14,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":15,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":0,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":1,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":2,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":3,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":4,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":5,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":6,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":7,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":8,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":9,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":10,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":11,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":12,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":13,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":14,"size":32}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":15,"size":32}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":0,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":1,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":2,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":3,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":4,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":5,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":6,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":7,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":8,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":9,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":10,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":11,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":12,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":13,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":14,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":15,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":0,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":1,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":2,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":3,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":4,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":5,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":6,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":7,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":8,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":9,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":10,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":11,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":12,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":13,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":14,"size":4096}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":15,"size":4096}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":0,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":1,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":2,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":3,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":4,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":5,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":6,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":7,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":8,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":9,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":10,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":11,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":12,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":13,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":14,"size":1048576}
+{"allocations":1,"corrupt":false,"reallocations":0,"requested_bytes":176,"sample":15,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":0,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":1,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":2,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":3,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":4,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":5,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":6,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":7,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":8,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":9,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":10,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":11,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":12,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":13,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":14,"size":1048576}
+{"allocations":1,"corrupt":true,"reallocations":0,"requested_bytes":176,"sample":15,"size":1048576}
+     Running benches/task_blob_commits.rs (target/worker-audit-msrv/debug/deps/task_blob_commits-56c06132d4525716)
+{"elapsed_ns":206963535,"external_commit":false,"iterations":128,"size":0}
+{"elapsed_ns":173112313,"external_commit":false,"iterations":128,"size":32}
+{"elapsed_ns":225646743,"external_commit":false,"iterations":128,"size":4096}
+{"elapsed_ns":4342354921,"external_commit":false,"iterations":128,"size":1048576}
+     Running benches/task_blobs.rs (target/worker-audit-msrv/debug/deps/task_blobs-1160dc6cdd5cbaf3)
+{"corrupt":false,"elapsed_ns":19327171,"iterations":1000,"size":0}
+{"corrupt":true,"elapsed_ns":15158051,"iterations":1000,"size":0}
+{"corrupt":false,"elapsed_ns":18900406,"iterations":1000,"size":32}
+{"corrupt":true,"elapsed_ns":19270522,"iterations":1000,"size":32}
+{"corrupt":false,"elapsed_ns":144025333,"iterations":1000,"size":4096}
+{"corrupt":true,"elapsed_ns":143593328,"iterations":1000,"size":4096}
+{"corrupt":false,"elapsed_ns":4109810462,"iterations":128,"size":1048576}
+{"corrupt":true,"elapsed_ns":4107312092,"iterations":128,"size":1048576}
+     Running benches/task_read_allocations.rs (target/worker-audit-msrv/debug/deps/task_read_allocations-f10e006e3cd611eb)
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":0}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":1}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":2}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":3}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":4}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":5}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":6}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":7}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":8}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":9}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":10}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":11}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":12}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":13}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":14}
+{"allocations":3,"profile":"record","reallocations":0,"requested_bytes":360,"sample":15}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":0}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":1}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":2}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":3}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":4}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":5}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":6}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":7}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":8}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":9}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":10}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":11}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":12}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":13}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":14}
+{"allocations":3,"profile":"padded","reallocations":0,"requested_bytes":360,"sample":15}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":0}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":1}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":2}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":3}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":4}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":5}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":6}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":7}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":8}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":9}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":10}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":11}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":12}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":13}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":14}
+{"allocations":3,"profile":"end","reallocations":0,"requested_bytes":360,"sample":15}
+     Running benches/task_reads.rs (target/worker-audit-msrv/debug/deps/task_reads-9ef0aa93c17e88cc)
+{"elapsed_ns":91870533,"iterations":1000,"profile":"record"}
+{"elapsed_ns":204516106,"iterations":1000,"profile":"padded"}
+{"elapsed_ns":23168958,"iterations":1000,"profile":"end"}
+     Running benches/task_reconstruction.rs (target/worker-audit-msrv/debug/deps/task_reconstruction-63e3928888cb250c)
+{"alternating":false,"elapsed_ns":44312741,"expected_removed_bytes":1612,"history":2,"iterations":250,"reformatted":false}
+{"alternating":false,"elapsed_ns":157500541,"expected_removed_bytes":11340,"history":16,"iterations":250,"reformatted":false}
+{"alternating":false,"elapsed_ns":1040871631,"expected_removed_bytes":89348,"history":128,"iterations":250,"reformatted":false}
+     Running benches/task_reconstruction_allocations.rs (target/worker-audit-msrv/debug/deps/task_reconstruction_allocations-45657371d5896bdf)
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":0}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":1}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":2}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":3}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":4}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":5}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":6}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":7}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":8}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":9}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":10}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":11}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":12}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":13}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":14}
+{"allocations":4,"alternating":false,"expected_removed_bytes":1612,"history":2,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":15}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":0}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":1}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":2}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":3}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":4}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":5}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":6}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":7}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":8}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":9}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":10}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":11}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":12}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":13}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":14}
+{"allocations":4,"alternating":false,"expected_removed_bytes":11340,"history":16,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":15}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":0}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":1}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":2}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":3}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":4}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":5}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":6}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":7}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":8}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":9}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":10}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":11}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":12}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":13}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":14}
+{"allocations":4,"alternating":false,"expected_removed_bytes":89348,"history":128,"reallocations":0,"reformatted":false,"requested_bytes":376,"sample":15}
+     Running benches/worker_poll.rs (target/worker-audit-msrv/debug/deps/worker_poll-cc5c646cbb113164)
+sqlite pending alternate=false: 3000000 operations in 157.809529ms (52 ns/op)
+sqlite pending alternate=true: 3000000 operations in 301.412805ms (100 ns/op)

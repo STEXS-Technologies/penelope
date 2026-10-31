@@ -1,0 +1,8 @@
+{
+  "crates/penelope-domain/src/implementation.rs": "10046bd8e33ad8e25ff460500636bdd2ee3cbf3aa427daa5efcee9af2dc65210",
+  "crates/penelope-domain/tests/scope_encoding.rs": "88208c5c17e93153ffc46fd339efac0c9ecc19ad1f48a324c1813cef86e6fa4c",
+  "crates/penelope-domain/tests/identifier_allocations.rs": "9c7fc9f0f5230d56da5649c0152923add0b214f10d0f25cadede26426e153507",
+  "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+  "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+  "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514"
+}

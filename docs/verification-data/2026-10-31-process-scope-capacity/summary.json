@@ -1,0 +1,522 @@
+[
+  {
+    "campaign": 0,
+    "size": 0,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 10299.979648810166,
+    "candidate_ns_per_call": 10235.392933687357,
+    "change_percent": -0.6270567255952003,
+    "bootstrap_95_percent": [
+      -1.0618785119801117,
+      -0.052246568395532204
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 0,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7261.531441480903,
+    "candidate_ns_per_call": 7164.692686845217,
+    "change_percent": -1.3335858340087847,
+    "bootstrap_95_percent": [
+      -1.69806799484341,
+      -0.9463007446016704
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 0,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7054.452118683298,
+    "candidate_ns_per_call": 6957.364271438401,
+    "change_percent": -1.3762634661274067,
+    "bootstrap_95_percent": [
+      -1.6390743503244372,
+      -1.0732765409062028
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 0,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7281.00773961387,
+    "candidate_ns_per_call": 7190.292855885745,
+    "change_percent": -1.245911101489131,
+    "bootstrap_95_percent": [
+      -1.8035463643070146,
+      -0.7537604948634299
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 0,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 10366.823357977231,
+    "candidate_ns_per_call": 10236.707831831767,
+    "change_percent": -1.255114721766048,
+    "bootstrap_95_percent": [
+      -1.5282111255695543,
+      -0.8835421941477162
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 10343.78852257735,
+    "candidate_ns_per_call": 10213.886805916763,
+    "change_percent": -1.255842734768125,
+    "bootstrap_95_percent": [
+      -1.4721242287433842,
+      -1.0750636864919558
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7221.4896628685665,
+    "candidate_ns_per_call": 7163.347609744775,
+    "change_percent": -0.8051254774032799,
+    "bootstrap_95_percent": [
+      -1.091449179564405,
+      -0.4868322414766149
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7017.404494046293,
+    "candidate_ns_per_call": 6959.043757967971,
+    "change_percent": -0.8316570054901532,
+    "bootstrap_95_percent": [
+      -1.1603030958022673,
+      -0.4924367439691631
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7252.481968296637,
+    "candidate_ns_per_call": 7189.483384553805,
+    "change_percent": -0.8686486090999945,
+    "bootstrap_95_percent": [
+      -1.2128945368208754,
+      -0.4832506209910307
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 10409.843506484389,
+    "candidate_ns_per_call": 10252.574180296946,
+    "change_percent": -1.5107751244240504,
+    "bootstrap_95_percent": [
+      -1.8744465300519515,
+      -1.1429853985127296
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 12136.938596575965,
+    "candidate_ns_per_call": 12042.650925124486,
+    "change_percent": -0.7768653577770721,
+    "bootstrap_95_percent": [
+      -1.021736312482838,
+      -0.5389409998110622
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 9073.092310123162,
+    "candidate_ns_per_call": 8992.31408428752,
+    "change_percent": -0.8903053454609897,
+    "bootstrap_95_percent": [
+      -1.470361378387201,
+      -0.15339537764978178
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7084.226313931228,
+    "candidate_ns_per_call": 6989.036767348895,
+    "change_percent": -1.3436830271097326,
+    "bootstrap_95_percent": [
+      -1.479265035825948,
+      -1.1965674784184246
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 9033.138905482496,
+    "candidate_ns_per_call": 8920.233339202405,
+    "change_percent": -1.2499040196489575,
+    "bootstrap_95_percent": [
+      -1.6133208700318344,
+      -0.9516437084792887
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 12319.388833734665,
+    "candidate_ns_per_call": 12052.602841075428,
+    "change_percent": -2.165578148882627,
+    "bootstrap_95_percent": [
+      -3.311375013372284,
+      -1.2054338692903084
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 456693.33131318906,
+    "candidate_ns_per_call": 456285.06861912337,
+    "change_percent": -0.08939537016924583,
+    "bootstrap_95_percent": [
+      -0.28497387156869847,
+      0.06715964560662054
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 438405.7201452879,
+    "candidate_ns_per_call": 437997.1595031812,
+    "change_percent": -0.09319236116985888,
+    "bootstrap_95_percent": [
+      -0.483957745330352,
+      0.24487064222397667
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7034.179713247966,
+    "candidate_ns_per_call": 7008.561156612911,
+    "change_percent": -0.3642010537034577,
+    "bootstrap_95_percent": [
+      -1.1976230485312387,
+      0.4015345369240938
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 421674.1525208694,
+    "candidate_ns_per_call": 421654.77619581233,
+    "change_percent": -0.004595094326096044,
+    "bootstrap_95_percent": [
+      -0.35028029467233435,
+      0.3154054686770042
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 442092.4471393975,
+    "candidate_ns_per_call": 441617.50321904285,
+    "change_percent": -0.10743090578179137,
+    "bootstrap_95_percent": [
+      -0.45259822274692824,
+      0.19163057344967485
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 10306.640131332528,
+    "candidate_ns_per_call": 10247.753246410117,
+    "change_percent": -0.5713489961039456,
+    "bootstrap_95_percent": [
+      -1.0725198457029435,
+      -0.0811038599156799
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7267.612715865382,
+    "candidate_ns_per_call": 7162.775793641724,
+    "change_percent": -1.442522136530402,
+    "bootstrap_95_percent": [
+      -1.808622798998619,
+      -1.0587866571964928
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7102.421901077224,
+    "candidate_ns_per_call": 6971.040172274045,
+    "change_percent": -1.8498158886232428,
+    "bootstrap_95_percent": [
+      -2.8024211244838075,
+      -1.2553664417042925
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7271.81015837266,
+    "candidate_ns_per_call": 7186.23287817196,
+    "change_percent": -1.176836005573835,
+    "bootstrap_95_percent": [
+      -1.4348954861534844,
+      -0.9056948870450273
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 10389.986972085479,
+    "candidate_ns_per_call": 10352.409340488803,
+    "change_percent": -0.36167159494652956,
+    "bootstrap_95_percent": [
+      -1.6429916442162833,
+      1.648792394537158
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 10353.24570770004,
+    "candidate_ns_per_call": 10247.086004914141,
+    "change_percent": -1.0253760587074234,
+    "bootstrap_95_percent": [
+      -1.5567293143726948,
+      -0.4963490233108137
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7216.280199364597,
+    "candidate_ns_per_call": 7175.696589861849,
+    "change_percent": -0.5623896021431783,
+    "bootstrap_95_percent": [
+      -0.9827644266393101,
+      -0.07684400408116576
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7014.738092812356,
+    "candidate_ns_per_call": 6965.634215109133,
+    "change_percent": -0.7000101365656789,
+    "bootstrap_95_percent": [
+      -1.0510027577822862,
+      -0.31421679320799945
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 7249.0956555095245,
+    "candidate_ns_per_call": 7183.85472360894,
+    "change_percent": -0.8999871846221915,
+    "bootstrap_95_percent": [
+      -1.5832042289426462,
+      -0.2067508882831557
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 10403.301935707852,
+    "candidate_ns_per_call": 10278.264839071695,
+    "change_percent": -1.2018981801056259,
+    "bootstrap_95_percent": [
+      -1.7722702786378421,
+      -0.5582237044049753
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 12134.286464402678,
+    "candidate_ns_per_call": 12080.10733040835,
+    "change_percent": -0.4464962497239823,
+    "bootstrap_95_percent": [
+      -0.8780795150596562,
+      0.05093962360154619
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 9077.185107242702,
+    "candidate_ns_per_call": 8997.119187003218,
+    "change_percent": -0.8820567091399879,
+    "bootstrap_95_percent": [
+      -1.3271577938464068,
+      -0.4183193232700385
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7085.322936652662,
+    "candidate_ns_per_call": 6995.59051421409,
+    "change_percent": -1.2664549413039226,
+    "bootstrap_95_percent": [
+      -1.7109895066580698,
+      -0.7673560439372639
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 9024.478097312913,
+    "candidate_ns_per_call": 8841.852625037172,
+    "change_percent": -2.0236679651326686,
+    "bootstrap_95_percent": [
+      -3.2139081185332414,
+      -1.2215764981511341
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 12213.354217207825,
+    "candidate_ns_per_call": 12061.301296914986,
+    "change_percent": -1.2449726552481153,
+    "bootstrap_95_percent": [
+      -1.7774717741889448,
+      -0.6253971823855217
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "case": "duplicate",
+    "blocks": 8,
+    "baseline_ns_per_call": 456915.97857265023,
+    "candidate_ns_per_call": 456754.90997232706,
+    "change_percent": -0.03525125140656042,
+    "bootstrap_95_percent": [
+      -0.2705878722298238,
+      0.21858576942335103
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "case": "read",
+    "blocks": 8,
+    "baseline_ns_per_call": 438134.495733122,
+    "candidate_ns_per_call": 438561.2019570039,
+    "change_percent": 0.09739160646723405,
+    "bootstrap_95_percent": [
+      -0.14080040595897492,
+      0.33913682049740446
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "case": "missing",
+    "blocks": 8,
+    "baseline_ns_per_call": 7017.836886313539,
+    "candidate_ns_per_call": 6979.946018149128,
+    "change_percent": -0.5399223261844321,
+    "bootstrap_95_percent": [
+      -1.0497371263699322,
+      0.05131432100802223
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "case": "corrupt_read",
+    "blocks": 8,
+    "baseline_ns_per_call": 422335.3702107675,
+    "candidate_ns_per_call": 421463.5842290955,
+    "change_percent": -0.20642031029450034,
+    "bootstrap_95_percent": [
+      -0.48163723236162315,
+      0.03392119535611049
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "case": "corrupt_put",
+    "blocks": 8,
+    "baseline_ns_per_call": 443213.7570909362,
+    "candidate_ns_per_call": 442035.9832900459,
+    "change_percent": -0.26573493761125244,
+    "bootstrap_95_percent": [
+      -0.5207535751263659,
+      -0.042507993035241984
+    ]
+  }
+]
