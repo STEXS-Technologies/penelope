@@ -1,7 +1,7 @@
 use crate::{
     SqliteProcessStore,
     process::{db_error, decode, encode},
-    tasks::copy_column,
+    tasks::column_bytes,
 };
 use async_trait::async_trait;
 use penelope_domain::{ProcessId, ProcessInput, TenantId};
@@ -28,21 +28,22 @@ impl PendingInbox for SqliteProcessStore {
         let record_limit = self.limits.max_record_bytes;
         self.worker.run(move |connection| {
             let key = encode(&(&tenant, &process), 1024)?;
-            let mut statement = connection.prepare(
+            let mut statement = connection.prepare_cached(
                 "SELECT input_id,input,checksum FROM process_inbox WHERE process_key=?1 AND commit_digest IS NULL ORDER BY input_id LIMIT ?2"
             ).map_err(|error| db_error(&error))?;
             let mut rows = statement.query(params![key,limit.get()]).map_err(|error| db_error(&error))?;
-            let mut inputs = Vec::with_capacity(usize::from(limit.get()));
+            let mut inputs = Vec::new();
             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
                 let identity = row.get_ref(0).map_err(|error| db_error(&error))?
                     .as_str().map_err(|_kind| PortError::Invariant)?;
-                let bytes = copy_column(row,1,record_limit).map_err(|error| db_error(&error))?;
-                let checksum = copy_column(row,2,32).map_err(|error| db_error(&error))?;
-                let input: ProcessInput = decode(&bytes,&checksum)?;
+                let bytes = column_bytes(row,1,record_limit).map_err(|error| db_error(&error))?;
+                let checksum = column_bytes(row,2,32).map_err(|error| db_error(&error))?;
+                let input: ProcessInput = decode(bytes,checksum)?;
                 if input.tenant_id != tenant || input.process_id != process
                     || input.input_id.as_str() != identity || input.validate().is_err() {
                     return Err(PortError::Invariant);
                 }
+                if inputs.is_empty() { inputs.reserve_exact(usize::from(limit.get())); }
                 inputs.push(input);
             }
             Ok(inputs)
