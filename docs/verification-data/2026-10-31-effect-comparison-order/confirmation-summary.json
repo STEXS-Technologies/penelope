@@ -1,0 +1,101 @@
+{
+  "history/false/ack": {
+    "mean_paired_change_pct": 2.469860375489752,
+    "bootstrap95_pct": [
+      -8.789055993133644,
+      13.533411947512208
+    ],
+    "mean_ns_per_call": {
+      "baseline": 965454.6166503907,
+      "candidate": 951924.8647949218
+    }
+  },
+  "history/false/commit": {
+    "mean_paired_change_pct": -9.889284876080872,
+    "bootstrap95_pct": [
+      -17.05820760786041,
+      -2.428805789256361
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2566673.3875,
+      "candidate": 2257579.9375
+    }
+  },
+  "history/false/idle": {
+    "mean_paired_change_pct": -0.6513711599754446,
+    "bootstrap95_pct": [
+      -1.2710474318332166,
+      -0.02980570684069095
+    ],
+    "mean_ns_per_call": {
+      "baseline": 15417.28465,
+      "candidate": 15315.2644
+    }
+  },
+  "history/false/open": {
+    "mean_paired_change_pct": 10.338709123466883,
+    "bootstrap95_pct": [
+      -8.778549672717773,
+      31.71195034443226
+    ],
+    "mean_ns_per_call": {
+      "baseline": 5941494.45,
+      "candidate": 6061568.65
+    }
+  },
+  "history/false/seed_claim": {
+    "mean_paired_change_pct": 1.8837862936569305,
+    "bootstrap95_pct": [
+      -9.033797015755763,
+      13.392686513475493
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2154403.86875,
+      "candidate": 2127057.94375
+    }
+  },
+  "history/true/commit": {
+    "mean_paired_change_pct": -4.429135149094443,
+    "bootstrap95_pct": [
+      -12.543683965101593,
+      3.897512935860381
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2641817.8,
+      "candidate": 2496125.2375
+    }
+  },
+  "history/true/idle": {
+    "mean_paired_change_pct": -0.025151849279869687,
+    "bootstrap95_pct": [
+      -0.6588214048750873,
+      0.6026485835616935
+    ],
+    "mean_ns_per_call": {
+      "baseline": 16052.94395,
+      "candidate": 16047.52655
+    }
+  },
+  "history/true/open": {
+    "mean_paired_change_pct": 3.798205734876725,
+    "bootstrap95_pct": [
+      -15.748495277172037,
+      24.934579215805442
+    ],
+    "mean_ns_per_call": {
+      "baseline": 6764273.4,
+      "candidate": 6135892.8
+    }
+  },
+  "history/true/schedule": {
+    "mean_paired_change_pct": 4.594033001846731,
+    "bootstrap95_pct": [
+      -6.767479076967975,
+      15.80719388591909
+    ],
+    "mean_ns_per_call": {
+      "baseline": 979782.7151367187,
+      "candidate": 982915.974609375
+    }
+  }
+}
