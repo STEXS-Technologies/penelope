@@ -1,0 +1,93 @@
+{
+  "baseline": {
+    "outbox_ack": {
+      "allocations": 10,
+      "reallocations": 14,
+      "requested_bytes": 2176,
+      "samples": 128
+    },
+    "timer_ack": {
+      "allocations": 9,
+      "reallocations": 10,
+      "requested_bytes": 1944,
+      "samples": 128
+    },
+    "outbox_renew": {
+      "allocations": 11,
+      "reallocations": 16,
+      "requested_bytes": 3608,
+      "samples": 128
+    },
+    "timer_schedule": {
+      "allocations": 10,
+      "reallocations": 4,
+      "requested_bytes": 1428,
+      "samples": 128
+    },
+    "timer_cancel": {
+      "allocations": 8,
+      "reallocations": 4,
+      "requested_bytes": 1009,
+      "samples": 128
+    }
+  },
+  "candidate": {
+    "outbox_ack": {
+      "allocations": 10,
+      "reallocations": 14,
+      "requested_bytes": 2176,
+      "samples": 128
+    },
+    "timer_ack": {
+      "allocations": 9,
+      "reallocations": 10,
+      "requested_bytes": 1944,
+      "samples": 128
+    },
+    "outbox_renew": {
+      "allocations": 11,
+      "reallocations": 16,
+      "requested_bytes": 3608,
+      "samples": 128
+    },
+    "timer_schedule": {
+      "allocations": 8,
+      "reallocations": 4,
+      "requested_bytes": 840,
+      "samples": 128
+    },
+    "timer_cancel": {
+      "allocations": 7,
+      "reallocations": 4,
+      "requested_bytes": 704,
+      "samples": 128
+    }
+  },
+  "savings": {
+    "outbox_ack": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 0
+    },
+    "timer_ack": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 0
+    },
+    "outbox_renew": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 0
+    },
+    "timer_schedule": {
+      "allocations": 2,
+      "reallocations": 0,
+      "requested_bytes": 588
+    },
+    "timer_cancel": {
+      "allocations": 1,
+      "reallocations": 0,
+      "requested_bytes": 305
+    }
+  }
+}
