@@ -144,6 +144,8 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
         "after-v4",
         "after-outbox-index",
         "after-v5",
+        "after-inbox-index",
+        "after-v6",
         "before-commit",
         "after-commit",
     ] {
@@ -180,7 +182,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 5 } else { 1 },
+            if phase == "after-commit" { 6 } else { 1 },
             "{phase}"
         );
         assert_eq!(snapshot(&connection), original, "{phase}");
@@ -190,6 +192,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             "process_payloads",
             "process_actions_pending",
             "process_timers_due",
+            "process_inbox_pending",
         ] {
             let exists: bool = connection
                 .query_row(
@@ -244,7 +247,11 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             checked_connection
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            5
+            6
         );
+        println!("v1 phase={phase} signal=9 rows_preserved=true reopen_version=6");
     }
 }
+
+#[path = "schema_inbox_tests.rs"]
+mod inbox;

@@ -118,7 +118,7 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     let version: u32 = transaction
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
-    if version > 5 {
+    if version > 6 {
         return Err(TaskPortError::Corrupt);
     }
     if version == 0 {
@@ -223,6 +223,18 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     }
     #[cfg(all(test, unix))]
     tests::cut("after-v5");
+    if version < 6 {
+        transaction.execute_batch(
+            "CREATE INDEX process_inbox_pending ON process_inbox(process_key,input_id) WHERE commit_digest IS NULL;"
+        ).map_err(|error| sql_error(&error))?;
+        #[cfg(all(test, unix))]
+        tests::cut("after-inbox-index");
+        transaction
+            .pragma_update(None, "user_version", 6)
+            .map_err(|error| sql_error(&error))?;
+    }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v6");
     #[cfg(all(test, unix))]
     tests::cut("before-commit");
     transaction.commit().map_err(|error| sql_error(&error))?;
