@@ -1,0 +1,80 @@
+[
+  {
+    "kind": "empty",
+    "timers": false,
+    "batch": 0,
+    "pairs": 24,
+    "baseline_ns": 15992.033270833334,
+    "candidate_ns": 16038.158895833334,
+    "change_percent": 0.48909046335745127,
+    "ci95": [
+      -2.352381639755349,
+      4.352168188669676
+    ]
+  },
+  {
+    "kind": "empty",
+    "timers": true,
+    "batch": 0,
+    "pairs": 24,
+    "baseline_ns": 16285.9384375,
+    "candidate_ns": 16473.7233125,
+    "change_percent": 1.1658264141182757,
+    "ci95": [
+      -0.7956777095326153,
+      4.670044675098734
+    ]
+  },
+  {
+    "kind": "batch",
+    "timers": false,
+    "batch": 1,
+    "pairs": 24,
+    "baseline_ns": 29550.071875,
+    "candidate_ns": 31237.601041666665,
+    "change_percent": 5.686038733275192,
+    "ci95": [
+      -1.5082789058351291,
+      14.005003057010736
+    ]
+  },
+  {
+    "kind": "batch",
+    "timers": false,
+    "batch": 16,
+    "pairs": 24,
+    "baseline_ns": 93039.0603125,
+    "candidate_ns": 98831.30625,
+    "change_percent": 6.309088762928594,
+    "ci95": [
+      -1.599332420768408,
+      16.280610353197215
+    ]
+  },
+  {
+    "kind": "batch",
+    "timers": true,
+    "batch": 1,
+    "pairs": 24,
+    "baseline_ns": 29941.41864583333,
+    "candidate_ns": 31545.961979166666,
+    "change_percent": 5.242746282356579,
+    "ci95": [
+      -1.6285716993735984,
+      15.291880670766409
+    ]
+  },
+  {
+    "kind": "batch",
+    "timers": true,
+    "batch": 16,
+    "pairs": 24,
+    "baseline_ns": 86967.72947916666,
+    "candidate_ns": 86830.56260416667,
+    "change_percent": 0.5581629964321043,
+    "ci95": [
+      -4.419484475768075,
+      6.50793042013765
+    ]
+  }
+]
