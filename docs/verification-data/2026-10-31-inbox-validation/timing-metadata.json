@@ -1,0 +1,13 @@
+{
+  "cpu": 0,
+  "campaigns": 2,
+  "blocks_per_campaign": 12,
+  "processes_per_block": 4,
+  "iterations_per_profile": 5000,
+  "warmup_per_profile": 64,
+  "storage": "project qualification-temp; btrfs, not /tmp tmpfs",
+  "binary_sha256": {
+    "baseline": "73e3078919b50cbff4d51012fd37c0d680c6de0a92fea253b66d7d6145850fb1",
+    "candidate": "828b876ede6ab1d02d00ac9d10b47bf511aac5901d721cc0e23face84f822e71"
+  }
+}
