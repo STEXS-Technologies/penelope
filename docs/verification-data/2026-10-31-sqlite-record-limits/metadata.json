@@ -1,0 +1,18 @@
+{
+  "baseline": "4ae1f39ec6d67212615072e8343be0a8cb83f55f",
+  "candidate": "98b0fe3f5ab7a98faa135d3e48fd930acfd65fec",
+  "baseline_cargo_returncode": 101,
+  "compilers": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "limits": [
+    4096,
+    16384,
+    16647160,
+    16647161,
+    4294967295
+  ],
+  "repeated_processes": 50,
+  "configurations": 250
+}
