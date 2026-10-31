@@ -141,3 +141,67 @@ fn execution_identity_preserves_legacy_encoding_and_generation_boundaries() {
         }
     }
 }
+
+struct SlowWriter {
+    bytes: Vec<u8>,
+}
+impl Write for SlowWriter {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        // Positive short writes must not reset or bypass the transfer budget.
+        std::thread::sleep(Duration::from_millis(2));
+        self.bytes.extend_from_slice(bytes.get(..1).unwrap());
+        Ok(1)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
+
+#[test]
+fn bounded_send_rejects_expiry_despite_continuous_positive_progress() {
+    let mut output = SlowWriter { bytes: Vec::new() };
+    assert_eq!(
+        send(&mut output, b"abcdefgh", Duration::from_millis(3)),
+        Err(TaskPortError::Runtime)
+    );
+    assert!(output.bytes.len() < 8);
+}
+
+#[test]
+fn bounded_send_rejects_a_final_positive_write_finishing_after_deadline() {
+    let mut output = SlowWriter { bytes: Vec::new() };
+    assert_eq!(
+        send(&mut output, b"a", Duration::from_millis(1)),
+        Err(TaskPortError::Runtime)
+    );
+}
+
+#[test]
+fn startup_parts_share_deadline_and_expired_parts_do_not_write() {
+    let mut output = writer(None, false);
+    let deadline = Instant::now().checked_add(Duration::from_secs(1)).unwrap();
+    send_until(&mut output, b"header", deadline).unwrap();
+    // Represents the same startup deadline expiring before a later part.
+    let expired = Instant::now();
+    assert_eq!(
+        send_until(&mut output, b"payload", expired),
+        Err(TaskPortError::Runtime)
+    );
+    assert_eq!(output.bytes, b"header");
+    send_until(&mut output, b"", expired).unwrap();
+    assert_eq!(output.bytes, b"header");
+}
+
+#[test]
+fn startup_parts_cannot_reset_budget_after_each_positive_write() {
+    let mut output = SlowWriter { bytes: Vec::new() };
+    assert_eq!(
+        send_parts(
+            &mut output,
+            &[b"a", b"b", b"c", b"d"],
+            Duration::from_millis(3)
+        ),
+        Err(TaskPortError::Runtime)
+    );
+    assert!(output.bytes.len() < 4);
+}

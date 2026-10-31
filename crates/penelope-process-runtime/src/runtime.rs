@@ -30,6 +30,8 @@ pub struct ProcessRuntimeConfig {
     /// Trusted task tick frequency. CPU allowances must be whole OS seconds.
     pub ticks_per_second: u64,
     pub address_space_bytes: u64,
+    /// One deadline for the complete startup-frame write, or one checkpoint ACK.
+    /// Does not bound image loading, process creation or parent scheduling delays.
     pub startup_timeout: Duration,
     pub fence_timeout: Duration,
 }
@@ -79,11 +81,31 @@ fn nonblocking(fd: &impl std::os::fd::AsFd) -> Result<(), TaskPortError> {
     fcntl_setfl(fd, flags | OFlags::NONBLOCK).map_err(|_flags| TaskPortError::Runtime)
 }
 fn send(writer: &mut impl Write, bytes: &[u8], timeout: Duration) -> Result<(), TaskPortError> {
+    send_parts(writer, &[bytes], timeout)
+}
+fn send_parts(
+    writer: &mut impl Write,
+    parts: &[&[u8]],
+    timeout: Duration,
+) -> Result<(), TaskPortError> {
     let deadline = Instant::now()
         .checked_add(timeout)
         .ok_or(TaskPortError::Runtime)?;
+    for bytes in parts {
+        send_until(writer, bytes, deadline)?;
+    }
+    Ok(())
+}
+fn send_until(
+    writer: &mut impl Write,
+    bytes: &[u8],
+    deadline: Instant,
+) -> Result<(), TaskPortError> {
     let mut offset = 0;
     while offset < bytes.len() {
+        if Instant::now() >= deadline {
+            return Err(TaskPortError::Runtime);
+        }
         match writer.write(bytes.get(offset..).ok_or(TaskPortError::Corrupt)?) {
             Ok(0) => return Err(TaskPortError::Runtime),
             Ok(count) => offset = offset.checked_add(count).ok_or(TaskPortError::Runtime)?,
@@ -100,6 +122,11 @@ fn send(writer: &mut impl Write, bytes: &[u8], timeout: Duration) -> Result<(), 
             }
             Err(_write) => return Err(TaskPortError::Runtime),
         }
+    }
+    // A final positive write may also finish after the deadline. Bytes already
+    // written cannot be recalled; the caller treats failure as ambiguous.
+    if !bytes.is_empty() && Instant::now() >= deadline {
+        return Err(TaskPortError::Runtime);
     }
     Ok(())
 }
@@ -273,15 +300,16 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
         ] {
             header.extend_from_slice(&value.to_be_bytes());
         }
-        for bytes in [
-            header.as_slice(),
-            metadata.as_slice(),
-            request.input,
-            request.checkpoint.unwrap_or(&[]),
-        ] {
-            send(&mut active.stdin, bytes, self.config.startup_timeout)?;
-        }
-        Ok(())
+        send_parts(
+            &mut active.stdin,
+            &[
+                header.as_slice(),
+                metadata.as_slice(),
+                request.input,
+                request.checkpoint.unwrap_or(&[]),
+            ],
+            self.config.startup_timeout,
+        )
     }
     fn poll(
         &mut self,

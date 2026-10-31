@@ -202,3 +202,70 @@ fn sealed_worker_survives_replacement_of_its_source_file() {
     journal.read_blob(scope, output, &mut bytes).unwrap();
     assert_eq!(u64::from_le_bytes(bytes), 6);
 }
+
+#[test]
+fn expired_startup_write_poisoning_requires_reconstruction_and_fences_worker() {
+    let directory = tempfile::tempdir().unwrap();
+    let definition = definition(2);
+    let input = [9];
+    let scope = scope(definition, &input);
+    let path = directory.path().join("tasks.db");
+    let journal = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let authority = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let mut configuration = config(directory.path());
+    configuration.startup_timeout = Duration::from_nanos(1);
+    let runtime = Runtime::new(authority, configuration).unwrap();
+    let mut supervisor: Supervisor =
+        TaskSupervisor::restore(journal, runtime, scope, definition, TaskTick::ZERO).unwrap();
+    supervisor.submit(&input, 1, TaskTick::ZERO).unwrap();
+    assert_eq!(
+        supervisor.advance(TaskTick::new(1)),
+        Err(TaskPortError::Runtime.into())
+    );
+    assert_eq!(supervisor.projection().status(), TaskStatus::Running);
+    assert_eq!(
+        supervisor.poll(TaskTick::new(2)),
+        Err(SupervisorError::ReconstructionRequired)
+    );
+    let (retained_journal, mut failed_runtime) = supervisor.into_parts();
+    let restored_authority =
+        SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let restored_runtime = Runtime::new(restored_authority, config(directory.path())).unwrap();
+    let recovered = Supervisor::restore(
+        retained_journal,
+        restored_runtime,
+        scope,
+        definition,
+        TaskTick::new(2),
+    )
+    .unwrap();
+    assert_eq!(recovered.projection().status(), TaskStatus::Faulted);
+    assert_eq!(recovered.projection().output(), None);
+    let generation = recovered.projection().generation();
+    // The reconstructed runtime proves termination; the original child handle
+    // can now reap without blocking or changing the recovered history.
+    failed_runtime.fence(scope, generation).unwrap();
+    let (mut recovered_journal, mut recovered_runtime) = recovered.into_parts();
+    assert_eq!(
+        recovered_journal
+            .read(scope, TaskSequence::new(2))
+            .unwrap()
+            .unwrap()
+            .event,
+        TaskExecutionEvent::FaultObserved {
+            fault: TaskFault::SupervisorInterrupted,
+        }
+    );
+    assert_eq!(
+        recovered_runtime.start(TaskStart {
+            scope,
+            generation,
+            definition,
+            execution_deadline: TaskTick::new(51),
+            input_schema: 1,
+            input: &input,
+            checkpoint: None,
+        }),
+        Err(TaskPortError::Conflict)
+    );
+}
