@@ -1,0 +1,31 @@
+{
+  "baseline": "a0cd454f10a25e85675e44831a658e38354e02a0",
+  "source": "236d897d23152b169a2b0b84b936489393760177",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/registry.rs": "ab5f405cfb99e35c1c9607f7b95fdf93f4491feaf341af85a2f51e67e0b5a879",
+    "crates/penelope-process-runtime/src/registry_tests.rs": "a45537073973c47a005ab3006d77280052dddfdcbf70a31c2d054e5af1812a95",
+    "crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs": "f15812f54a321b6b5daa28bb83c2da18c69b8b1aa3a405a6ee0d9292a289418b"
+  },
+  "processes": 40,
+  "fence_measurements": 120,
+  "artifact_sha256": {
+    "allocation-fixture.patch": "b014b775186e6a2c4f5f527ba9ac7f4e5c5512da27a4ea22accc96aa9dca5c87",
+    "allocations.jsonl.gz": "e2be11e5cca8b5466c3f4cc8ced7edb17433fb92422069ec086834b00e54041d",
+    "compare.py": "298e50014f8730e8ca7de151eaa790515822a505b5a7d4c7738a3ed162ab2edb",
+    "registry-buffers-allocations-baseline.log.gz": "b89861c9562a0b4b2e89f8ebdbed70cc0baeec74fd56f1efcc3868b485397a2a",
+    "registry-buffers-allocations-fixed.log.gz": "dc818e4c6ea010f73bf12e3c2f35d603985c5af3536ce9389683a469a94bf0f2",
+    "registry-buffers-build-baseline-1.85.0.log.gz": "0c91c5b48d274a4fac684387e6d19fe721868ba3b67d6fa7c884a2829a899395",
+    "registry-buffers-build-baseline-stable.log.gz": "68e5979f1b735db6a9e74f5d3ee882849d9d8cd7e11db4c3661b00c6ed999e80",
+    "registry-buffers-build-fixed-1.85.0.log.gz": "8234aff114c4baa5c55035e1248500b18c1e16c9a0823d76bcd9fdff0935e606",
+    "registry-buffers-build-fixed-stable.log.gz": "c9fae3224f4046cc979951226cdd2fa3c5aa00d1ce2d7d9f9cba3f2017988437",
+    "registry-buffers-clippy-final.log.gz": "651d65c93c2af0585494dca47d7e0c42a3a28b30750a870dd21905d0e0f6bb80",
+    "registry-buffers-clippy.log.gz": "da0986506923b7c7fe5a2fb25505268064d87cee56d75aba4a585bcb9bf251bc",
+    "registry-buffers-comparison.log.gz": "a43aa2ff86cc0881b332f9e345afb480c66c282079b7775cc02fc9ae0fefbf73",
+    "registry-buffers-fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "registry-buffers-graph.log.gz": "edb0ab3206d6a8d67a670bad79acf67102d3481553413cdca2a364852cd7058c",
+    "registry-buffers-layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "registry-buffers-msrv.log.gz": "d57ff8d6d4825c7e42c28620686aca4958d50e24f9a1e0abe4c72291ba973637",
+    "registry-buffers-pilot.log.gz": "194dab85059da335fa2bb91ba6663655526b7e4270c7c728dc93953a587205e8",
+    "registry-buffers-workspace.log.gz": "0feb06cc3db654146383e4a965af27353c8e3112bb7926325ad4d89428b5caa0"
+  }
+}
