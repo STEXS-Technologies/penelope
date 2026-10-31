@@ -1,0 +1,4 @@
+{
+  "crates/penelope-sqlite/src/tasks.rs": "bd512995c71cde68375a2ba89526ed721290993de3dbac38c8bbc9243a981afd",
+  "crates/penelope-sqlite/benches/task_blob_commits.rs": "8e611f44c59e0273f4f81053f03c774c09af67ba882ee9c6c6fdf0edee4cbeef"
+}

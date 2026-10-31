@@ -1,0 +1,20 @@
+{
+  "cpu": 0,
+  "campaigns": 2,
+  "blocks_per_campaign": 12,
+  "processes_per_block": 4,
+  "setup_commits": 2,
+  "sizes": [
+    0,
+    32,
+    4096,
+    1048576
+  ],
+  "iterations": 128,
+  "external_commit": false,
+  "storage": "project qualification-temp on btrfs",
+  "binary_sha256": {
+    "baseline": "16c885c4c3d0e821ee9107427c20e6914ce6ddd9a1b60638ed2e63e0efefd4e2",
+    "candidate": "cb3e6e01e39c31512184d5de1ed22e15317bd45058263405188908ab00ba6693"
+  }
+}
