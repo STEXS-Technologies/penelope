@@ -628,3 +628,6 @@ mod process_frontier;
 
 #[path = "support/replay_cache.rs"]
 mod replay_cache;
+
+#[path = "support/replay_columns.rs"]
+mod replay_columns;

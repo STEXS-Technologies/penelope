@@ -1,7 +1,7 @@
 use crate::{
     SqliteLimits,
     schema::{execute_one, open, sql_error},
-    tasks::copy_column,
+    tasks::{column_bytes, copy_column},
     worker::DatabaseWorker,
 };
 use async_trait::async_trait;
@@ -382,8 +382,8 @@ impl ProcessStore for SqliteProcessStore {
             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
                 let sequence: i64 = row.get(0).map_err(|error| db_error(&error))?;
-                let bytes = copy_column(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = copy_column(row,2,32).map_err(|error| db_error(&error))?;
-                let outcome: ProcessOutcome = decode(&bytes,&checksum)?;
+                let bytes = column_bytes(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,2,32).map_err(|error| db_error(&error))?;
+                let outcome: ProcessOutcome = decode(bytes,checksum)?;
                 if sequence != integer(expected)? || outcome.sequence != expected || outcome.scope() != request.scope || outcome.validate().is_err() || expected >= next { return Err(PortError::Invariant); }
                 expected = expected.checked_add(1).ok_or(PortError::Invariant)?;
                 outcomes.push(outcome);
