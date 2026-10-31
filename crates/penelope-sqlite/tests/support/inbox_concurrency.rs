@@ -55,6 +55,12 @@ fn other_definition(original: &AtomicProcessCommit) -> AtomicProcessCommit {
     changed.validate().unwrap();
     changed
 }
+#[derive(Clone, Copy)]
+enum Model {
+    Standard,
+    SeededRejection,
+    CompetingBatches,
+}
 struct Serial {
     state: write_snapshot::Snapshot,
     results: [Result<Receipt, PortError>; 2],
@@ -80,13 +86,14 @@ fn serial(
     }
 }
 fn run_case(name: &str, operations: &[Operation; 2], conflict: bool) {
-    run_seeded_case(name, operations, conflict, None);
+    run_seeded_case(name, operations, conflict, None, Model::Standard);
 }
 fn run_seeded_case(
     name: &str,
     operations: &[Operation; 2],
     conflict: bool,
     seed: Option<&AtomicProcessCommit>,
+    model: Model,
 ) {
     let directory = tempfile::tempdir().unwrap();
     let references = [
@@ -137,7 +144,7 @@ fn run_seeded_case(
     );
     for (order, reference) in references.iter().enumerate() {
         let serial_results = &reference.results;
-        if seed.is_some() {
+        if matches!(model, Model::SeededRejection) {
             assert_eq!(serial_results[0], Err(PortError::Conflict));
             assert_eq!(serial_results[1], Ok(Receipt::Input(true)));
             continue;
@@ -159,6 +166,9 @@ fn run_seeded_case(
         .iter()
         .position(|reference| reference.results == results && reference.state == state)
         .unwrap_or_else(|| panic!("{name}: no legal serial history for {results:?}"));
+    if matches!(model, Model::CompetingBatches) {
+        verify_winner(&connection, operations, results, seed);
+    }
     let reopened = store(&path, clock());
     for (index, operation) in operations.iter().enumerate() {
         let retry = block_on(operation.apply(&reopened));
@@ -258,6 +268,7 @@ fn next_frontier_rejects_consumed_inputs_and_reused_sources_during_admission() {
         ],
         true,
         Some(&consumed),
+        Model::SeededRejection,
     );
     let sourced = commit(false).with_canonical_source_event(id("cev_seed"));
     let sourced_input = sourced.input.as_ref().unwrap().clone();
@@ -269,5 +280,154 @@ fn next_frontier_rejects_consumed_inputs_and_reused_sources_during_admission() {
         ],
         true,
         Some(&sourced),
+        Model::SeededRejection,
     );
+}
+
+fn competing_batch(tag: &str, first_sequence: u64, byte: u8) -> AtomicProcessCommit {
+    let template = commit(false);
+    let mut input = template.input.unwrap();
+    input.input_id = id(&format!("inp_{tag}"));
+    input.payload_digest = ContentDigest([byte; 32]);
+    let mut outcomes = Vec::new();
+    let mut actions = Vec::new();
+    for offset in 0..2 {
+        let mut outcome = template.outcomes[0].clone();
+        outcome.sequence = first_sequence + offset;
+        outcome.outcome_id = id(&format!("out_{tag}_{offset}"));
+        outcome.causation_id = CausationId::Input(input.input_id.clone());
+        outcome.payload_digest = input.payload_digest;
+        if outcome.sequence != 0 {
+            outcome.kind = ProcessOutcomeKind::ActionPlanned;
+        }
+        outcomes.push(outcome);
+        let mut action = template.actions[0].clone();
+        action.action_id = id(&format!("act_{tag}_{offset}"));
+        action.step_id = id(&format!("stp_{tag}_{offset}"));
+        action.payload_digest = input.payload_digest;
+        actions.push(action);
+    }
+    AtomicProcessCommit::new(first_sequence, Some(input), outcomes, actions)
+        .unwrap()
+        .with_canonical_source_event(id(&format!("cev_{tag}")))
+}
+
+fn records<T: serde::de::DeserializeOwned>(connection: &Connection, sql: &str) -> Vec<T> {
+    connection
+        .prepare(sql)
+        .unwrap()
+        .query_map([], |row| row.get::<_, Vec<u8>>(0))
+        .unwrap()
+        .map(|row| serde_json::from_slice(&row.unwrap()).unwrap())
+        .collect()
+}
+
+fn verify_winner(
+    connection: &Connection,
+    operations: &[Operation; 2],
+    results: [Result<Receipt, PortError>; 2],
+    seed: Option<&AtomicProcessCommit>,
+) {
+    let winner = results.iter().position(Result::is_ok).unwrap();
+    let Operation::Commit(committed) = &operations[winner] else {
+        panic!("expected commit");
+    };
+    let batches: Vec<_> = seed
+        .into_iter()
+        .chain(std::iter::once(committed.as_ref()))
+        .collect();
+    let expected_outcomes: Vec<_> = batches
+        .iter()
+        .flat_map(|batch| batch.outcomes.clone())
+        .collect();
+    let mut expected_actions: Vec<_> = batches
+        .iter()
+        .flat_map(|batch| batch.actions.clone())
+        .collect();
+    expected_actions.sort_by(|left, right| left.action_id.cmp(&right.action_id));
+    let mut expected_inputs: Vec<_> = batches
+        .iter()
+        .filter_map(|batch| batch.input.clone())
+        .collect();
+    expected_inputs.sort_by(|left, right| left.input_id.cmp(&right.input_id));
+    assert_eq!(
+        records::<ProcessOutcome>(
+            connection,
+            "SELECT record FROM process_outcomes ORDER BY sequence"
+        ),
+        expected_outcomes
+    );
+    assert_eq!(
+        records::<ProcessAction>(
+            connection,
+            "SELECT action FROM process_actions ORDER BY action_id"
+        ),
+        expected_actions
+    );
+    assert_eq!(
+        records::<ProcessInput>(
+            connection,
+            "SELECT input FROM process_inbox ORDER BY input_id"
+        ),
+        expected_inputs
+    );
+    let mut expected_sources: Vec<_> = batches
+        .iter()
+        .filter_map(|batch| {
+            batch.canonical_source_event_id.as_ref().map(|source| {
+                (
+                    source.as_str().to_owned(),
+                    batch.input.as_ref().unwrap().input_id.as_str().to_owned(),
+                )
+            })
+        })
+        .collect();
+    expected_sources.sort();
+    let sources: Vec<(String, String)> = connection
+        .prepare("SELECT event_id,input_id FROM process_sources ORDER BY event_id")
+        .unwrap()
+        .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+        .unwrap()
+        .map(Result::unwrap)
+        .collect();
+    assert_eq!(sources, expected_sources);
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM process_commits", [], |row| row
+                .get::<_, i64>(0))
+            .unwrap(),
+        i64::try_from(batches.len()).unwrap()
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT next_sequence FROM process_heads", [], |row| row
+                .get::<_, i64>(0))
+            .unwrap(),
+        i64::try_from(expected_outcomes.len()).unwrap()
+    );
+}
+
+#[test]
+fn different_batches_at_one_frontier_commit_exactly_one_complete_winner() {
+    for seeded in [false, true] {
+        let seed = commit(false);
+        let first_sequence = u64::from(seeded);
+        let operations = [
+            Operation::Commit(Box::new(competing_batch("left", first_sequence, 31))),
+            Operation::Commit(Box::new(competing_batch("right", first_sequence, 47))),
+        ];
+        for _ in 0..8 {
+            run_seeded_case(
+                if seeded {
+                    "competing-next-frontier"
+                } else {
+                    "competing-empty-frontier"
+                },
+                &operations,
+                true,
+                seeded.then_some(&seed),
+                Model::CompetingBatches,
+            );
+        }
+    }
 }
