@@ -106,6 +106,18 @@ fn collect_newtypes(items: &[Item], result: &mut BTreeSet<String>) {
                     collect_newtypes(nested_items, result);
                 }
             }
+            Item::Macro(item) if item.mac.path.is_ident("thread_local") => {
+                // Standard TLS declares statics rather than wire types. Parse
+                // the body instead of silently accepting arbitrary macro items.
+                let declarations = syn::parse2::<syn::File>(item.mac.tokens.clone()).unwrap();
+                assert!(
+                    declarations
+                        .items
+                        .iter()
+                        .all(|declaration| matches!(declaration, Item::Static(_))),
+                    "thread_local must contain only static declarations"
+                );
+            }
             Item::Macro(item)
                 if item.mac.path.is_ident("canonical_wire_impl")
                     || item.mac.path.is_ident("canonical_port_impl") => {}
@@ -227,4 +239,22 @@ fn every_public_newtype_has_an_explicit_fuzz_invocation() {
         "public newtypes without direct fuzz invocation: {missing:?}"
     );
     assert!(!required.is_empty());
+}
+
+#[test]
+fn public_type_inventory_accepts_only_static_thread_local_declarations() {
+    let valid = syn::parse_file(
+        "thread_local! { static VALUE: std::cell::Cell<u8> = const { std::cell::Cell::new(0) }; }",
+    )
+    .unwrap();
+    let mut types = BTreeSet::new();
+    collect_newtypes(&valid.items, &mut types);
+    assert!(types.is_empty());
+    let invalid = syn::parse_file("thread_local! { pub struct Hidden(u8); }").unwrap();
+    assert!(
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            collect_newtypes(&invalid.items, &mut types);
+        }))
+        .is_err()
+    );
 }

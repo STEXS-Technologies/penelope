@@ -32,6 +32,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Sample the SQLite outbox lease clock after obtaining the writer transaction,
+  preventing lock waits from consuming a new lease window or hiding an expired
+  lease that became reclaimable during contention.
+
 - Include the validated byte charge in SQLite task append-cache checks,
   rejecting changed quota counters until explicit head repair.
 

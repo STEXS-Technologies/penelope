@@ -172,3 +172,6 @@ fn process_death_never_splits_atomic_saga_commit() {
         assert_eq!(count, 1);
     }
 }
+
+#[path = "lease_clock_tests.rs"]
+mod lease_clock_tests;
