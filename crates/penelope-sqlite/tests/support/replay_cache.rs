@@ -99,3 +99,123 @@ fn warm_replay_rebinds_requests_recovers_from_corruption_and_sees_new_commits() 
     check(&adapter, &first.outcomes, 0, 3);
     check(&adapter, &other.outcomes, 0, 1);
 }
+
+#[test]
+fn maximum_pages_refresh_across_workers_and_reject_corrupted_last_rows() {
+    use super::write_snapshot::snapshot;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("replay-boundaries.db");
+    let reader = store(&path, clock());
+    let writer = store(&path, clock());
+    let request = OutcomeReplayRequest::new(
+        scope(),
+        0,
+        NonZeroU16::new(MAX_OUTCOMES_PER_READ_PAGE).unwrap(),
+    )
+    .unwrap();
+    assert!(
+        block_on(reader.read_outcomes(&request))
+            .unwrap()
+            .outcomes
+            .is_empty()
+    );
+    let first = commit(false);
+    let mut history = Vec::new();
+    for sequence in 0..=u64::from(MAX_OUTCOMES_PER_READ_PAGE) {
+        let mut outcome = first.outcomes[0].clone();
+        outcome.sequence = sequence;
+        outcome.outcome_id = id(&format!("out_boundary_{sequence}"));
+        if sequence != 0 {
+            outcome.kind = ProcessOutcomeKind::ActionPlanned;
+        }
+        history.push(outcome);
+    }
+    let boundary = usize::from(MAX_OUTCOMES_PER_READ_PAGE);
+    for batch in history[..boundary].chunks(MAX_OUTCOMES_PER_ATOMIC_COMMIT) {
+        let start = batch[0].sequence;
+        let commit = AtomicProcessCommit::new(
+            start,
+            if start == 0 {
+                first.input.clone()
+            } else {
+                None
+            },
+            batch.to_vec(),
+            Vec::new(),
+        )
+        .unwrap();
+        block_on(ProcessStore::commit(&writer, &commit)).unwrap();
+    }
+    let cursors = [0, 1, 127, 128, 511, 512, 529];
+    let limits = [1, 127, 128, 511, MAX_OUTCOMES_PER_READ_PAGE];
+    for from in cursors {
+        for limit in limits {
+            check(&reader, &history[..boundary], from, limit);
+        }
+    }
+    let appended = AtomicProcessCommit::new(
+        u64::from(MAX_OUTCOMES_PER_READ_PAGE),
+        None,
+        history[boundary..].to_vec(),
+        Vec::new(),
+    )
+    .unwrap();
+    block_on(ProcessStore::commit(&writer, &appended)).unwrap();
+    for from in cursors {
+        for limit in limits {
+            check(&reader, &history, from, limit);
+        }
+    }
+    let connection = Connection::open(&path).unwrap();
+    let tables = [
+        "process_usage",
+        "process_inbox",
+        "process_sources",
+        "process_outcomes",
+        "process_actions",
+        "process_heads",
+        "process_commits",
+        "process_payloads",
+        "process_timers",
+        "lease_counter",
+    ];
+    let intact = snapshot(&connection, &tables);
+    let last = i64::from(MAX_OUTCOMES_PER_READ_PAGE) - 1;
+    let checksum: Vec<u8> = connection
+        .query_row(
+            "SELECT checksum FROM process_outcomes WHERE sequence=?1",
+            [last],
+            |row| row.get(0),
+        )
+        .unwrap();
+    connection
+        .execute(
+            "UPDATE process_outcomes SET checksum=zeroblob(32) WHERE sequence=?1",
+            [last],
+        )
+        .unwrap();
+    let damaged = snapshot(&connection, &tables);
+    for adapter in [&reader, &store(&path, clock())] {
+        assert_eq!(
+            block_on(adapter.read_outcomes(&request)),
+            Err(PortError::Invariant)
+        );
+        assert_eq!(snapshot(&connection, &tables), damaged);
+        // A healthy suffix outside the damaged page is still independently readable.
+        check(adapter, &history, 512, MAX_OUTCOMES_PER_READ_PAGE);
+    }
+    connection
+        .execute(
+            "UPDATE process_outcomes SET checksum=?2 WHERE sequence=?1",
+            rusqlite::params![last, checksum],
+        )
+        .unwrap();
+    assert_eq!(snapshot(&connection, &tables), intact);
+    check(&reader, &history, 0, MAX_OUTCOMES_PER_READ_PAGE);
+    check(
+        &store(&path, clock()),
+        &history,
+        1,
+        MAX_OUTCOMES_PER_READ_PAGE,
+    );
+}
