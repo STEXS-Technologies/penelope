@@ -663,7 +663,7 @@ fn schema_upgrade_preserves_v1_task_bytes() {
     let version: u32 = migrated_connection
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 4);
+    assert_eq!(version, 5);
 }
 
 #[test]
