@@ -105,13 +105,26 @@ fn with_verified_blob<T>(
     limit: u32,
     consume: impl FnOnce(&[u8]) -> Result<T, TaskPortError>,
 ) -> Result<T, TaskPortError> {
-    if blob.bytes > limit {
-        return Err(TaskPortError::Exhausted);
-    }
-    let mut statement = connection
-        .prepare_cached(BLOB_QUERY)
-        .map_err(|error| sql_error(&error))?;
-    with_verified_statement(&mut statement, scope, blob, limit, consume)
+    // Retirement and blob bytes must come from one SQLite statement snapshot.
+    // Separate checks can observe a tombstone-free state, then a deleted blob.
+    connection
+        .prepare_cached("SELECT EXISTS(SELECT 1 FROM task_retirements WHERE scope=?1),stored.bytes FROM (SELECT 1) LEFT JOIN task_blobs AS stored ON stored.scope=?1 AND stored.digest=?2")
+        .map_err(|error| sql_error(&error))?
+        .query_row(params![key(scope), blob.digest.0.as_slice()], |row| {
+            let retired: bool = row.get(0)?;
+            if retired {
+                return Ok(Err(TaskPortError::Conflict));
+            }
+            if blob.bytes > limit {
+                return Ok(Err(TaskPortError::Exhausted));
+            }
+            let bytes = column_bytes(row, 1, limit)?;
+            Ok(blob
+                .verify(bytes, blob.schema)
+                .map_err(|_invalid| TaskPortError::Corrupt)
+                .and_then(|()| consume(bytes)))
+        })
+        .map_err(|error| sql_error(&error))?
 }
 
 fn with_verified_statement<T>(
@@ -523,7 +536,6 @@ impl TaskJournal for SqliteTaskJournal {
         {
             return Err(TaskPortError::Exhausted);
         }
-        reject_retired(&self.connection, scope)?;
         with_verified_blob(
             &self.connection,
             scope,
@@ -613,3 +625,7 @@ mod fault_tests;
 #[cfg(test)]
 #[path = "key_tests.rs"]
 mod key_tests;
+
+#[cfg(test)]
+#[path = "task_blob_snapshot_tests.rs"]
+mod blob_snapshot_tests;

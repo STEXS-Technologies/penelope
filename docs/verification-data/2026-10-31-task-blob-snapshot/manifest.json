@@ -1,0 +1,27 @@
+{
+  "baseline_runtime_commit": "234c23f0ab98f241219be84b12ef4143581a4285",
+  "comparison": "Replace only src/tasks.rs. Baseline snapshot adds only the shared cfg(test) regression module to the pinned runtime; every other runtime, test and benchmark source remains identical.",
+  "snapshot_sha256": {
+    "baseline-tasks.txt": "382122593d65ad03fa3e1d96ca2c099be46b9fd4858ca31d8d1a1a9fb05a70f6",
+    "candidate-tasks.txt": "bd512995c71cde68375a2ba89526ed721290993de3dbac38c8bbc9243a981afd",
+    "race-test.txt": "307b9e7865bc86b33e93cc10934aedac5f42ec2949fabf7c5e357af5da93ab50"
+  },
+  "benchmark_source_sha256": {
+    "crates/penelope-sqlite/benches/task_blobs.rs": "769563ddd68ef4d8685aaded5b64d56d9a77164a604d2072fad0cd4012ca66ca",
+    "crates/penelope-sqlite/benches/task_blob_allocations.rs": "a9c7aa757ba03a0cef8068e862f92198e7d41ae7dcd8aa99f90324e2425fb988",
+    "crates/penelope-sqlite/benches/support/task_blob_fixture.rs": "bf07435754f97b6341ac97dc67ee78edbd000d0ba30615e46dbc25f664972c01",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux 7.2.9-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Sat Oct  3 18:35:12 UTC 2026",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "baseline_regression_exit": 101,
+  "qualification_exits": {
+    "workspace_all_targets": 0,
+    "sqlite_msrv_all_targets": 0,
+    "clippy_all_targets": 0,
+    "format": 0,
+    "layers": 0,
+    "graph": 0
+  }
+}
