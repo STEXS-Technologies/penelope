@@ -117,13 +117,16 @@ impl OutboxStore for SqliteProcessStore {
                 pending
             };
             let mut leases = Vec::with_capacity(pending.len());
-            for (action, attempt) in pending {
-                let lease = OutboxLease { record: OutboxRecord { action,delivery_attempt: attempt,acknowledgement: OutboxAcknowledgement::Pending }, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
-                lease.validate_for_claim_at(&request,now)?;
-                let encoded = encode(&lease,limits.max_record_bytes)?;
-                let changed = transaction.execute("UPDATE process_actions SET attempt=?1,lease=?2,expires_at=?3 WHERE scope=?4 AND action_id=?5", params![attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,encoded,integer(expires.0)?,key,lease.record.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
-                if changed != 1 { return Err(PortError::Invariant); }
-                leases.push(lease);
+            if !pending.is_empty() {
+                let mut update = transaction.prepare_cached("UPDATE process_actions SET attempt=?1,lease=?2,expires_at=?3 WHERE scope=?4 AND action_id=?5").map_err(|error| db_error(&error))?;
+                for (action, attempt) in pending {
+                    let lease = OutboxLease { record: OutboxRecord { action,delivery_attempt: attempt,acknowledgement: OutboxAcknowledgement::Pending }, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
+                    lease.validate_for_claim_at(&request,now)?;
+                    let encoded = encode(&lease,limits.max_record_bytes)?;
+                    let changed = update.execute(params![attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,encoded,integer(expires.0)?,key,lease.record.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                    if changed != 1 { return Err(PortError::Invariant); }
+                    leases.push(lease);
+                }
             }
             transaction.commit().map_err(|error| db_error(&error))?; Ok(leases)
         })?.await
@@ -267,12 +270,15 @@ impl TimerClaimStore for SqliteProcessStore {
                 pending
             };
             let mut leases = Vec::with_capacity(pending.len());
-            for (timer,attempt) in pending {
-                let lease = TimerLease { timer, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
-                lease.validate_for_claim(&request)?;
-                let changed = transaction.execute("UPDATE process_timers SET lease=?1,expires_at=?2,attempt=?3 WHERE scope=?4 AND action_id=?5",params![encode(&lease,limits.max_record_bytes)?,integer(expires.0)?,attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,key,lease.timer.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
-                if changed != 1 { return Err(PortError::Invariant); }
-                leases.push(lease);
+            if !pending.is_empty() {
+                let mut update = transaction.prepare_cached("UPDATE process_timers SET lease=?1,expires_at=?2,attempt=?3 WHERE scope=?4 AND action_id=?5").map_err(|error| db_error(&error))?;
+                for (timer,attempt) in pending {
+                    let lease = TimerLease { timer, owner: request.owner.clone(), token: token(&transaction)?, lease_expires_at: expires };
+                    lease.validate_for_claim(&request)?;
+                    let changed = update.execute(params![encode(&lease,limits.max_record_bytes)?,integer(expires.0)?,attempt.checked_add(1).ok_or(PortError::QuotaExceeded)?,key,lease.timer.action.action_id.as_str()]).map_err(|error| db_error(&error))?;
+                    if changed != 1 { return Err(PortError::Invariant); }
+                    leases.push(lease);
+                }
             }
             transaction.commit().map_err(|error| db_error(&error))?; Ok(leases)
         })?.await
