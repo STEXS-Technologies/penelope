@@ -548,3 +548,181 @@ fn losing_batch_recovers_at_the_reloaded_frontier_and_consumes_its_input_once() 
         }
     }
 }
+
+#[derive(Clone, Copy, Debug)]
+struct LostAckCase {
+    preaccepted: bool,
+    after_completion: bool,
+    seeded: bool,
+    fail_sql: bool,
+}
+struct CompletionNotice(std::sync::mpsc::Sender<()>);
+impl Wake for CompletionNotice {
+    fn wake(self: Arc<Self>) {
+        // A canceled future need not retain or wake its registration. Only a
+        // live response's notification is used as a completion barrier below.
+        let _notification = self.0.send(());
+    }
+}
+fn prepare_lost_ack(
+    path: &std::path::Path,
+    seed: Option<&AtomicProcessCommit>,
+    committed: &AtomicProcessCommit,
+    case: LostAckCase,
+) -> (SqliteProcessStore, Connection) {
+    let adapter = store(path, clock());
+    if let Some(seed) = seed {
+        let receipt = block_on(ProcessStore::commit(&adapter, seed)).unwrap();
+        receipt.validate_for(seed).unwrap();
+        assert!(!receipt.duplicate_input);
+    }
+    if case.preaccepted {
+        assert!(
+            !block_on(adapter.accept(committed.input.as_ref().unwrap()))
+                .unwrap()
+                .duplicate
+        );
+    }
+    let connection = Connection::open(path).unwrap();
+    if case.fail_sql {
+        // Fail after both outcomes and the first action have been inserted.
+        connection.execute_batch("CREATE TRIGGER fail_lost_ack BEFORE INSERT ON process_actions WHEN NEW.action_id='act_canceled_1' BEGIN SELECT RAISE(ABORT,'injected lost ACK failure'); END;").unwrap();
+    }
+    (adapter, connection)
+}
+fn lost_ack_case(case: LostAckCase) {
+    let directory = tempfile::tempdir().unwrap();
+    let seed = case.seeded.then(|| competing_batch("cancel_seed", 0, 53));
+    let committed = competing_batch("canceled", if case.seeded { 2 } else { 0 }, 71);
+    let batches: Vec<_> = seed.iter().chain(std::iter::once(&committed)).collect();
+    let (reference, reference_connection) = prepare_lost_ack(
+        &directory.path().join("serial.db"),
+        seed.as_ref(),
+        &committed,
+        case,
+    );
+    let reference_result = block_on(ProcessStore::commit(&reference, &committed));
+    if case.fail_sql {
+        assert_eq!(reference_result, Err(PortError::Conflict));
+    } else {
+        let receipt = reference_result.unwrap();
+        receipt.validate_for(&committed).unwrap();
+        assert_eq!(receipt.duplicate_input, case.preaccepted);
+    }
+    let expected_intermediate = write_snapshot::snapshot(&reference_connection, &TABLES);
+    if case.fail_sql {
+        reference_connection
+            .execute_batch("DROP TRIGGER fail_lost_ack")
+            .unwrap();
+        let receipt = block_on(ProcessStore::commit(&reference, &committed)).unwrap();
+        receipt.validate_for(&committed).unwrap();
+        assert_eq!(receipt.duplicate_input, case.preaccepted);
+    }
+    verify_batches(&reference_connection, &batches);
+    let expected_final = write_snapshot::snapshot(&reference_connection, &TABLES);
+    drop(reference);
+    let path = directory.path().join("canceled.db");
+    let (adapter, connection) = prepare_lost_ack(&path, seed.as_ref(), &committed, case);
+    let before = write_snapshot::snapshot(&connection, &TABLES);
+    connection.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let (commit_notice, commit_completed) = std::sync::mpsc::channel();
+    let commit_waker = Waker::from(Arc::new(CompletionNotice(commit_notice)));
+    let mut commit_context = Context::from_waker(&commit_waker);
+    let mut canceled = Box::pin(ProcessStore::commit(&adapter, &committed));
+    assert!(canceled.as_mut().poll(&mut commit_context).is_pending());
+    // This public replay is admitted behind the blocked commit on the same
+    // worker. Its live completion proves the canceled operation has drained.
+    let request = replay();
+    let (read_notice, read_completed) = std::sync::mpsc::channel();
+    let read_waker = Waker::from(Arc::new(CompletionNotice(read_notice)));
+    let mut read_context = Context::from_waker(&read_waker);
+    let mut follower = Box::pin(adapter.read_outcomes(&request));
+    assert!(follower.as_mut().poll(&mut read_context).is_pending());
+    assert_eq!(write_snapshot::snapshot(&connection, &TABLES), before);
+    if case.after_completion {
+        connection.execute_batch("COMMIT").unwrap();
+        commit_completed
+            .recv_timeout(Duration::from_secs(5))
+            .unwrap();
+    }
+    // No commit result is ever polled again, even after result publication.
+    drop(canceled);
+    if !case.after_completion {
+        connection.execute_batch("COMMIT").unwrap();
+    }
+    read_completed.recv_timeout(Duration::from_secs(5)).unwrap();
+    let page = block_on(follower).unwrap();
+    let visible: Vec<_> = seed
+        .iter()
+        .chain((!case.fail_sql).then_some(&committed))
+        .flat_map(|batch| batch.outcomes.clone())
+        .collect();
+    assert_eq!(page.outcomes, visible);
+    assert_eq!(page.next_sequence, None);
+    assert_eq!(
+        write_snapshot::snapshot(&connection, &TABLES),
+        expected_intermediate,
+        "cancellation changed the durable transaction boundary: {case:?}"
+    );
+    if case.fail_sql {
+        assert_eq!(write_snapshot::snapshot(&connection, &TABLES), before);
+        connection
+            .execute_batch("DROP TRIGGER fail_lost_ack")
+            .unwrap();
+    }
+    drop(adapter);
+    let reopened = store(&path, clock());
+    let receipt = block_on(ProcessStore::commit(&reopened, &committed)).unwrap();
+    receipt.validate_for(&committed).unwrap();
+    assert_eq!(
+        receipt.duplicate_input,
+        !case.fail_sql || case.preaccepted,
+        "lost ACK retry must distinguish durable commit from rolled-back admission"
+    );
+    verify_batches(&connection, &batches);
+    assert_eq!(
+        write_snapshot::snapshot(&connection, &TABLES),
+        expected_final
+    );
+    let retry = block_on(ProcessStore::commit(&reopened, &committed)).unwrap();
+    retry.validate_for(&committed).unwrap();
+    assert!(retry.duplicate_input);
+    let mut conflict = committed.clone();
+    conflict.outcomes[0].payload_digest = ContentDigest([99; 32]);
+    conflict.validate().unwrap();
+    assert_eq!(
+        block_on(ProcessStore::commit(&reopened, &conflict)),
+        Err(PortError::Conflict)
+    );
+    assert_eq!(
+        write_snapshot::snapshot(&connection, &TABLES),
+        expected_final
+    );
+    let recovered_page = block_on(reopened.read_outcomes(&replay())).unwrap();
+    let expected: Vec<_> = batches
+        .iter()
+        .flat_map(|batch| batch.outcomes.clone())
+        .collect();
+    assert_eq!(recovered_page.outcomes, expected);
+    assert_eq!(recovered_page.next_sequence, None);
+    println!(
+        "lost_ack={case:?} admitted=2 result_unobserved=true exact_state=true reopened_retry=true conflict_unchanged=true"
+    );
+}
+#[test]
+fn canceled_public_commits_preserve_atomic_state_and_reopened_retry_semantics() {
+    for preaccepted in [false, true] {
+        for after_completion in [false, true] {
+            for seeded in [false, true] {
+                for fail_sql in [false, true] {
+                    lost_ack_case(LostAckCase {
+                        preaccepted,
+                        after_completion,
+                        seeded,
+                        fail_sql,
+                    });
+                }
+            }
+        }
+    }
+}
