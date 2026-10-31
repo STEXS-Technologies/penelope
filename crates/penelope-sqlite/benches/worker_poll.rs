@@ -29,6 +29,8 @@ impl SqliteLeaseClock for GateClock {
     }
 }
 struct Noop;
+// Distinct allocations are required to measure changing registrations.
+#[allow(clippy::manual_noop_waker)]
 impl Wake for Noop {
     fn wake(self: Arc<Self>) {}
 }

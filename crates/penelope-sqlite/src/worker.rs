@@ -24,16 +24,45 @@ pub(crate) struct Response<T> {
 impl<T> Future for Response<T> {
     type Output = Result<T, PortError>;
     fn poll(self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Self::Output> {
-        let Ok(mut state) = self.completion.lock() else {
-            return Poll::Ready(Err(PortError::Unavailable));
+        {
+            let Ok(mut state) = self.completion.lock() else {
+                return Poll::Ready(Err(PortError::Unavailable));
+            };
+            if let Some(result) = state.result.take() {
+                return Poll::Ready(result);
+            }
+            if state
+                .waker
+                .as_ref()
+                .is_some_and(|registered| registered.will_wake(context.waker()))
+            {
+                return Poll::Pending;
+            }
+        }
+        // RawWaker cloning and destruction are executor callbacks. Neither may
+        // run under our mutex: they can reenter application code or unwind.
+        let replacement = context.waker().clone();
+        let (completed, previous) = {
+            let Ok(mut state) = self.completion.lock() else {
+                return Poll::Ready(Err(PortError::Unavailable));
+            };
+            // Completion may have arrived while cloning without the lock.
+            // Preserve it until executor destructors have returned successfully.
+            if state.result.is_some() {
+                (true, Some(replacement))
+            } else {
+                (false, state.waker.replace(replacement))
+            }
         };
-        state.result.take().map_or_else(
-            || {
-                state.waker = Some(context.waker().clone());
-                Poll::Pending
-            },
-            Poll::Ready,
-        )
+        drop(previous);
+        if completed {
+            let Ok(mut state) = self.completion.lock() else {
+                return Poll::Ready(Err(PortError::Unavailable));
+            };
+            state.result.take().map_or(Poll::Pending, Poll::Ready)
+        } else {
+            Poll::Pending
+        }
     }
 }
 
@@ -251,4 +280,131 @@ mod tests {
             }
         }
     }
+    #[test]
+    fn replacing_executor_waker_runs_destructor_without_completion_lock() {
+        use std::sync::{
+            Weak,
+            atomic::{AtomicBool, Ordering},
+        };
+        struct Registration {
+            completion: Weak<Mutex<Completion<u32>>>,
+            unlocked: Arc<AtomicBool>,
+            panic_on_drop: bool,
+        }
+        // This waker carries the destructor whose lock context is under test.
+        #[allow(clippy::manual_noop_waker)]
+        impl Wake for Registration {
+            fn wake(self: Arc<Self>) {}
+        }
+        impl Drop for Registration {
+            fn drop(&mut self) {
+                let completion = self.completion.upgrade().unwrap();
+                self.unlocked
+                    .store(completion.try_lock().is_ok(), Ordering::SeqCst);
+                assert!(
+                    !self.panic_on_drop,
+                    "injected executor registration drop panic"
+                );
+            }
+        }
+        for panic_on_drop in [false, true] {
+            let completion = Arc::new(Mutex::new(Completion {
+                result: None,
+                waker: None,
+            }));
+            let mut response = Box::pin(Response {
+                completion: completion.clone(),
+            });
+            let unlocked = Arc::new(AtomicBool::new(false));
+            let first = Waker::from(Arc::new(Registration {
+                completion: Arc::downgrade(&completion),
+                unlocked: unlocked.clone(),
+                panic_on_drop,
+            }));
+            assert!(
+                response
+                    .as_mut()
+                    .poll(&mut Context::from_waker(&first))
+                    .is_pending()
+            );
+            drop(first);
+            let replacement = Waker::from(Arc::new(ThreadWake(std::thread::current())));
+            let poll = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                response
+                    .as_mut()
+                    .poll(&mut Context::from_waker(&replacement))
+            }));
+            assert_eq!(poll.is_err(), panic_on_drop);
+            assert!(
+                unlocked.load(Ordering::SeqCst),
+                "executor destructor ran under completion lock"
+            );
+            completion.lock().unwrap().result = Some(Ok(7));
+            assert_eq!(
+                response
+                    .as_mut()
+                    .poll(&mut Context::from_waker(&replacement)),
+                Poll::Ready(Ok(7))
+            );
+        }
+    }
+    #[test]
+    fn only_latest_registration_is_woken_after_repeated_polls_and_cancellation() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        struct CountWake(Arc<AtomicUsize>);
+        impl Wake for CountWake {
+            fn wake(self: Arc<Self>) {
+                self.0.fetch_add(1, Ordering::SeqCst);
+            }
+        }
+        for case in 0..32 {
+            let worker = DatabaseWorker::new(Connection::open_in_memory().unwrap(), 1).unwrap();
+            let (entered, started) = std::sync::mpsc::channel();
+            let (release, resume) = std::sync::mpsc::channel();
+            let mut first = Box::pin(
+                worker
+                    .run(move |_connection| {
+                        entered.send(()).unwrap();
+                        resume.recv_timeout(Duration::from_secs(5)).unwrap();
+                        Ok(7)
+                    })
+                    .unwrap(),
+            );
+            started.recv_timeout(Duration::from_secs(5)).unwrap();
+            let old_count = Arc::new(AtomicUsize::new(0));
+            let latest_count = Arc::new(AtomicUsize::new(0));
+            let old = Waker::from(Arc::new(CountWake(old_count.clone())));
+            let latest = Waker::from(Arc::new(CountWake(latest_count.clone())));
+            for waker in [&old, &latest] {
+                for _ in 0..100 {
+                    assert!(
+                        first
+                            .as_mut()
+                            .poll(&mut Context::from_waker(waker))
+                            .is_pending()
+                    );
+                }
+            }
+            let queued = worker.run(|_connection| Ok(9)).unwrap();
+            let retained = if case % 2 == 0 {
+                Some(first)
+            } else {
+                drop(first);
+                None
+            };
+            release.send(()).unwrap();
+            // The worker publishes and wakes the first response before it can
+            // complete this queued request, avoiding a sleep-based race check.
+            assert_eq!(wait(queued), Ok(9));
+            assert_eq!(old_count.load(Ordering::SeqCst), 0);
+            assert_eq!(latest_count.load(Ordering::SeqCst), 1);
+            if let Some(response) = retained {
+                assert_eq!(wait(*Pin::into_inner(response)), Ok(7));
+            }
+        }
+    }
 }
+
+#[cfg(test)]
+#[path = "worker_waker_tests.rs"]
+mod waker_tests;
