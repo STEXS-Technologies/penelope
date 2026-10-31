@@ -139,3 +139,15 @@ harness = false
 [[test]]
 name = "process_encoding_allocations"
 harness = false
+
+[[bench]]
+name = "lease_claim_profiles"
+harness = false
+
+[[bench]]
+name = "lease_claim_profile_allocations"
+harness = false
+
+[[test]]
+name = "lease_claim_profile_allocations"
+harness = false

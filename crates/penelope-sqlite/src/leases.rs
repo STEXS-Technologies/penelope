@@ -9,10 +9,19 @@ use crate::{
 };
 use async_trait::async_trait;
 use penelope_core::task::Digest;
-use penelope_domain::{LogicalTime, ProcessAction};
+use penelope_domain::{LogicalTime, ProcessAction, ProcessScope};
 use penelope_ports::*;
 use rusqlite::{Connection, TransactionBehavior, params};
 use std::num::NonZeroU64;
+
+// Compare decoded rows without constructing an owned scope for each claim.
+fn action_in_scope(action: &ProcessAction, scope: &ProcessScope) -> bool {
+    action.tenant_id == scope.tenant_id
+        && action.process_id == scope.process_id
+        && action.definition_id == scope.definition_id
+        && action.definition_version == scope.definition_version
+        && action.definition_digest == scope.definition_digest
+}
 
 fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
     let next: i64 = connection
@@ -149,7 +158,7 @@ impl OutboxStore for SqliteProcessStore {
                     let action: ProcessAction = decode(bytes,checksum)?;
                     let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
                     let stored_key = row.get_ref(4).map_err(|error| db_error(&error))?;
-                    if action.scope() != request.scope || action.validate().is_err()
+                    if !action_in_scope(&action, &request.scope) || action.validate().is_err()
                         || stored_id.as_str().map_err(|_type| PortError::Invariant)? != action.action_id.as_str()
                         || stored_key.as_blob().map_err(|_type| PortError::Invariant)? != action.effect_key().canonical_bytes()
                     { return Err(PortError::Invariant); }
@@ -302,7 +311,7 @@ impl TimerClaimStore for SqliteProcessStore {
                     let timer: TimerSchedule = decode(bytes,checksum)?;
                     let stored_id = row.get_ref(3).map_err(|error| db_error(&error))?;
                     let due: i64 = row.get(4).map_err(|error| db_error(&error))?;
-                    if timer.action.scope() != request.scope || timer.validate().is_err()
+                    if !action_in_scope(&timer.action, &request.scope) || timer.validate().is_err()
                         || stored_id.as_str().map_err(|_type| PortError::Invariant)? != timer.action.action_id.as_str()
                         || due != integer(timer.due_at.0)?
                     { return Err(PortError::Invariant); }
@@ -355,3 +364,7 @@ impl TimerClaimStore for SqliteProcessStore {
             .await
     }
 }
+
+#[cfg(test)]
+#[path = "lease_scope_tests.rs"]
+mod scope_tests;
