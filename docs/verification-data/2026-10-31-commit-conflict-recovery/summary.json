@@ -1,0 +1,50 @@
+[
+  {
+    "tool": "1.85.0",
+    "case": "recover-empty-frontier",
+    "serial_model": 0,
+    "count": 125
+  },
+  {
+    "tool": "1.85.0",
+    "case": "recover-empty-frontier",
+    "serial_model": 1,
+    "count": 35
+  },
+  {
+    "tool": "1.85.0",
+    "case": "recover-next-frontier",
+    "serial_model": 0,
+    "count": 152
+  },
+  {
+    "tool": "1.85.0",
+    "case": "recover-next-frontier",
+    "serial_model": 1,
+    "count": 8
+  },
+  {
+    "tool": "stable",
+    "case": "recover-empty-frontier",
+    "serial_model": 0,
+    "count": 125
+  },
+  {
+    "tool": "stable",
+    "case": "recover-empty-frontier",
+    "serial_model": 1,
+    "count": 35
+  },
+  {
+    "tool": "stable",
+    "case": "recover-next-frontier",
+    "serial_model": 0,
+    "count": 140
+  },
+  {
+    "tool": "stable",
+    "case": "recover-next-frontier",
+    "serial_model": 1,
+    "count": 20
+  }
+]

@@ -60,6 +60,7 @@ enum Model {
     Standard,
     SeededRejection,
     CompetingBatches,
+    RecoveringBatches,
 }
 struct Serial {
     state: write_snapshot::Snapshot,
@@ -166,7 +167,7 @@ fn run_seeded_case(
         .iter()
         .position(|reference| reference.results == results && reference.state == state)
         .unwrap_or_else(|| panic!("{name}: no legal serial history for {results:?}"));
-    if matches!(model, Model::CompetingBatches) {
+    if matches!(model, Model::CompetingBatches | Model::RecoveringBatches) {
         verify_winner(&connection, operations, results, seed);
     }
     let reopened = store(&path, clock());
@@ -179,6 +180,11 @@ fn run_seeded_case(
         };
         assert_eq!(retry, expected, "{name} reopened index={index}");
         assert_eq!(write_snapshot::snapshot(&connection, &TABLES), state);
+    }
+    drop(reopened);
+    if matches!(model, Model::RecoveringBatches) {
+        recover_loser(&path, &connection, operations, results, seed);
+        println!("case={name} recovered=true exact_history=true consumed_again=false");
     }
     println!(
         "case={name} admitted=2 accepted={accepted} serial_model={order} exact_state=true reopened_retry=true"
@@ -336,6 +342,10 @@ fn verify_winner(
         .into_iter()
         .chain(std::iter::once(committed.as_ref()))
         .collect();
+    verify_batches(connection, &batches);
+}
+
+fn verify_batches(connection: &Connection, batches: &[&AtomicProcessCommit]) {
     let expected_outcomes: Vec<_> = batches
         .iter()
         .flat_map(|batch| batch.outcomes.clone())
@@ -427,6 +437,113 @@ fn different_batches_at_one_frontier_commit_exactly_one_complete_winner() {
                 true,
                 seeded.then_some(&seed),
                 Model::CompetingBatches,
+            );
+        }
+    }
+}
+
+fn at_frontier(original: &AtomicProcessCommit, frontier: u64) -> AtomicProcessCommit {
+    let mut batch = original.clone();
+    batch.expected_sequence = frontier;
+    for (offset, outcome) in batch.outcomes.iter_mut().enumerate() {
+        outcome.sequence = frontier + u64::try_from(offset).unwrap();
+        outcome.kind = ProcessOutcomeKind::ActionPlanned;
+    }
+    batch.validate().unwrap();
+    batch
+}
+
+fn recover_loser(
+    path: &std::path::Path,
+    connection: &Connection,
+    operations: &[Operation; 2],
+    results: [Result<Receipt, PortError>; 2],
+    seed: Option<&AtomicProcessCommit>,
+) {
+    let winner_index = results.iter().position(Result::is_ok).unwrap();
+    let Operation::Commit(winner) = &operations[winner_index] else {
+        panic!("expected commit");
+    };
+    let Operation::Commit(loser) = &operations[1 - winner_index] else {
+        panic!("expected commit");
+    };
+    let recovering = store(path, clock());
+    let request =
+        OutcomeReplayRequest::new(winner.outcomes[0].scope(), 0, NonZeroU16::new(10).unwrap())
+            .unwrap();
+    let page = block_on(recovering.read_outcomes(&request)).unwrap();
+    assert_eq!(page.next_sequence, None);
+    let frontier = page.outcomes.last().unwrap().sequence + 1;
+    let recovered = at_frontier(loser, frontier);
+    let receipt = block_on(ProcessStore::commit(&recovering, &recovered)).unwrap();
+    receipt.validate_for(&recovered).unwrap();
+    assert!(!receipt.duplicate_input);
+    let batches: Vec<_> = seed
+        .into_iter()
+        .chain([winner.as_ref(), &recovered])
+        .collect();
+    verify_batches(connection, &batches);
+    let retained = write_snapshot::snapshot(connection, &TABLES);
+    drop(recovering);
+    let reopened = store(path, clock());
+    for batch in &batches {
+        let duplicate = block_on(ProcessStore::commit(&reopened, batch)).unwrap();
+        duplicate.validate_for(batch).unwrap();
+        assert!(duplicate.duplicate_input);
+        assert_eq!(write_snapshot::snapshot(connection, &TABLES), retained);
+    }
+    assert_eq!(
+        block_on(ProcessStore::commit(&reopened, loser)),
+        Err(PortError::Conflict)
+    );
+    let next = receipt.committed_through_sequence + 1;
+    let mut consumed_again = at_frontier(&recovered, next);
+    // Remove the source-event collision and choose fresh record identities so
+    // only consumed-input fencing can reject this otherwise valid new batch.
+    consumed_again.canonical_source_event_id = None;
+    for (offset, outcome) in consumed_again.outcomes.iter_mut().enumerate() {
+        outcome.outcome_id = id(&format!("out_again_{offset}"));
+    }
+    for (offset, action) in consumed_again.actions.iter_mut().enumerate() {
+        action.action_id = id(&format!("act_again_{offset}"));
+        action.step_id = id(&format!("stp_again_{offset}"));
+    }
+    consumed_again.validate().unwrap();
+    assert_eq!(
+        block_on(ProcessStore::commit(&reopened, &consumed_again)),
+        Err(PortError::Conflict)
+    );
+    assert_eq!(write_snapshot::snapshot(connection, &TABLES), retained);
+    let restored = block_on(reopened.read_outcomes(&request)).unwrap();
+    assert_eq!(
+        restored.outcomes,
+        batches
+            .iter()
+            .flat_map(|batch| batch.outcomes.clone())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(restored.next_sequence, None);
+}
+
+#[test]
+fn losing_batch_recovers_at_the_reloaded_frontier_and_consumes_its_input_once() {
+    for seeded in [false, true] {
+        let seed = commit(false);
+        let operations = [
+            Operation::Commit(Box::new(competing_batch("left", u64::from(seeded), 31))),
+            Operation::Commit(Box::new(competing_batch("right", u64::from(seeded), 47))),
+        ];
+        for _ in 0..8 {
+            run_seeded_case(
+                if seeded {
+                    "recover-next-frontier"
+                } else {
+                    "recover-empty-frontier"
+                },
+                &operations,
+                true,
+                seeded.then_some(&seed),
+                Model::RecoveringBatches,
             );
         }
     }
