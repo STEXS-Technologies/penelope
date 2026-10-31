@@ -2,8 +2,11 @@
 #![allow(clippy::unwrap_used)]
 use penelope_core::task::{runtime::*, *};
 use penelope_sqlite::{SqliteLimits, SqliteTaskJournal};
-pub(super) fn run(mut sample: impl FnMut(u32, bool, usize, &mut dyn FnMut() -> StartReservation)) {
+pub(super) fn run(
+    mut sample: impl FnMut(u32, bool, bool, usize, &mut dyn FnMut() -> StartReservation),
+) {
     let alternating = std::env::var_os("PENELOPE_BENCH_ALTERNATING_BLOBS").is_some();
+    let reformatted = std::env::var_os("PENELOPE_BENCH_REFORMATTED_SCOPE").is_some();
     for count in [2_u32, 16, 128] {
         let definition = TaskDefinition {
             code: Digest([3; 32]),
@@ -86,6 +89,34 @@ pub(super) fn run(mut sample: impl FnMut(u32, bool, usize, &mut dyn FnMut() -> S
                 .and_then(|n| n.checked_add(32))
                 .unwrap();
         }
+        if reformatted {
+            let mut connection = rusqlite::Connection::open(&path).unwrap();
+            let records: Vec<(u32, Vec<u8>)> = connection
+                .prepare("SELECT sequence,record FROM task_records ORDER BY sequence")
+                .unwrap()
+                .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+                .unwrap()
+                .collect::<Result<_, _>>()
+                .unwrap();
+            let transaction = connection.transaction().unwrap();
+            removed_bytes = 0;
+            for (sequence, encoded) in records {
+                let record: TaskRecord = serde_json::from_slice(&encoded).unwrap();
+                let pretty = serde_json::to_vec_pretty(&record).unwrap();
+                removed_bytes = removed_bytes
+                    .checked_add(pretty.len())
+                    .and_then(|n| n.checked_add(32))
+                    .unwrap();
+                transaction
+                    .execute(
+                        "UPDATE task_records SET record=?1,checksum=?2 WHERE sequence=?3",
+                        rusqlite::params![&pretty, Digest::of(&pretty).0.as_slice(), sequence],
+                    )
+                    .unwrap();
+            }
+            transaction.commit().unwrap();
+            journal.rebuild_head(scope).unwrap();
+        }
         let request = TaskStart {
             scope,
             generation: projection.generation(),
@@ -104,7 +135,7 @@ pub(super) fn run(mut sample: impl FnMut(u32, bool, usize, &mut dyn FnMut() -> S
         for _ in 0..16 {
             assert_eq!(retry(), StartReservation::AlreadyReserved);
         }
-        sample(count, alternating, removed_bytes, &mut retry);
+        sample(count, alternating, reformatted, removed_bytes, &mut retry);
         assert_eq!(retry(), StartReservation::AlreadyReserved);
         drop(journal);
         let connection = rusqlite::Connection::open(&path).unwrap();

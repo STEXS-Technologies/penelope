@@ -10,6 +10,7 @@ mod lifecycle;
 mod payloads;
 mod process;
 mod schema;
+mod task_decode;
 mod tasks;
 mod worker;
 pub use lifecycle::{TaskRetirement, WalCheckpoint};
