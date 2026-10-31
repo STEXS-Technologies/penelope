@@ -1,0 +1,11 @@
+{
+  "stable_workspace": 0,
+  "msrv_executor_process_runtime": 0,
+  "msrv_executor_all_targets": 0,
+  "workspace_clippy": 0,
+  "fmt": 0,
+  "layers": 0,
+  "graph": 0,
+  "source_restored": true,
+  "negative_controls": 6
+}

@@ -1,0 +1,3 @@
+{
+  "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "fixture.rs.gz"
+}

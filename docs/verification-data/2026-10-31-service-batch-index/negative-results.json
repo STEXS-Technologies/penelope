@@ -1,0 +1,32 @@
+[
+  {
+    "name": "action",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  },
+  {
+    "name": "token",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  },
+  {
+    "name": "precedence",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  },
+  {
+    "name": "short-validation",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  },
+  {
+    "name": "allocation",
+    "rejected": true,
+    "marker": "duplicate index allocated"
+  },
+  {
+    "name": "timer-wiring",
+    "rejected": true,
+    "marker": "assertion `left == right` failed"
+  }
+]
