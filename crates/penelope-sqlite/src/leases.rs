@@ -41,20 +41,29 @@ fn expiry(now: LogicalTime, millis: u64) -> Result<LogicalTime, PortError> {
     Ok(LogicalTime(value))
 }
 fn outbox_lease(connection: &Connection, lease: &OutboxLease, limit: u32) -> Result<(), PortError> {
-    let Some((stored, bytes, checksum, key, expires, attempt)) = connection
-        .query_row(
-            "SELECT lease,action,checksum,effect_key,expires_at,attempt FROM process_actions WHERE scope=?1 AND action_id=?2",
-            params![lease.record.action.scope().canonical_bytes(), lease.record.action.action_id.as_str()],
-            |row| Ok((copy_column(row, 0, limit)?, copy_column(row, 1, limit)?, copy_column(row, 2, 32)?, copy_column(row, 3, limit)?, row.get::<_, i64>(4)?, row.get::<_, i64>(5)?)),
-        )
-        .optional()
-        .map_err(|error| db_error(&error))?
-    else { return Err(PortError::Conflict); };
+    let mut statement = connection.prepare_cached(
+        "SELECT lease,action,checksum,effect_key,expires_at,attempt FROM process_actions WHERE scope=?1 AND action_id=?2",
+    ).map_err(|error| db_error(&error))?;
+    let mut rows = statement
+        .query(params![
+            lease.record.action.scope().canonical_bytes(),
+            lease.record.action.action_id.as_str()
+        ])
+        .map_err(|error| db_error(&error))?;
+    let Some(row) = rows.next().map_err(|error| db_error(&error))? else {
+        return Err(PortError::Conflict);
+    };
+    let stored = column_bytes(row, 0, limit).map_err(|error| db_error(&error))?;
+    let bytes = column_bytes(row, 1, limit).map_err(|error| db_error(&error))?;
+    let checksum = column_bytes(row, 2, 32).map_err(|error| db_error(&error))?;
+    let key = column_bytes(row, 3, limit).map_err(|error| db_error(&error))?;
+    let expires: i64 = row.get(4).map_err(|error| db_error(&error))?;
+    let attempt: i64 = row.get(5).map_err(|error| db_error(&error))?;
     if stored != encode(lease, limit)? {
         return Err(PortError::Conflict);
     }
     // A matching lease alone cannot authorize mutation of a damaged action.
-    if decode::<ProcessAction>(&bytes, &checksum)? != lease.record.action
+    if decode::<ProcessAction>(bytes, checksum)? != lease.record.action
         || key != lease.record.action.effect_key().canonical_bytes()
         || expires != integer(lease.lease_expires_at.0)?
         || attempt != integer(u64::from(lease.record.delivery_attempt).saturating_add(1))?
@@ -64,19 +73,28 @@ fn outbox_lease(connection: &Connection, lease: &OutboxLease, limit: u32) -> Res
     Ok(())
 }
 fn timer_lease(connection: &Connection, lease: &TimerLease, limit: u32) -> Result<(), PortError> {
-    let Some((stored, bytes, checksum, due, expires, attempt)) = connection
-        .query_row(
-            "SELECT lease,timer,checksum,due_at,expires_at,attempt FROM process_timers WHERE scope=?1 AND action_id=?2 AND state IN (0,1)",
-            params![lease.timer.action.scope().canonical_bytes(), lease.timer.action.action_id.as_str()],
-            |row| Ok((copy_column(row, 0, limit)?, copy_column(row, 1, limit)?, copy_column(row, 2, 32)?, row.get::<_, i64>(3)?, row.get::<_, i64>(4)?, row.get::<_, i64>(5)?)),
-        )
-        .optional()
-        .map_err(|error| db_error(&error))?
-    else { return Err(PortError::Conflict); };
+    let mut statement = connection.prepare_cached(
+        "SELECT lease,timer,checksum,due_at,expires_at,attempt FROM process_timers WHERE scope=?1 AND action_id=?2 AND state IN (0,1)",
+    ).map_err(|error| db_error(&error))?;
+    let mut rows = statement
+        .query(params![
+            lease.timer.action.scope().canonical_bytes(),
+            lease.timer.action.action_id.as_str()
+        ])
+        .map_err(|error| db_error(&error))?;
+    let Some(row) = rows.next().map_err(|error| db_error(&error))? else {
+        return Err(PortError::Conflict);
+    };
+    let stored = column_bytes(row, 0, limit).map_err(|error| db_error(&error))?;
+    let bytes = column_bytes(row, 1, limit).map_err(|error| db_error(&error))?;
+    let checksum = column_bytes(row, 2, 32).map_err(|error| db_error(&error))?;
+    let due: i64 = row.get(3).map_err(|error| db_error(&error))?;
+    let expires: i64 = row.get(4).map_err(|error| db_error(&error))?;
+    let attempt: i64 = row.get(5).map_err(|error| db_error(&error))?;
     if stored != encode(lease, limit)? {
         return Err(PortError::Conflict);
     }
-    if decode::<TimerSchedule>(&bytes, &checksum)? != lease.timer
+    if decode::<TimerSchedule>(bytes, checksum)? != lease.timer
         || due != integer(lease.timer.due_at.0)?
         || expires != integer(lease.lease_expires_at.0)?
         || !(1..=i64::from(MAX_OUTBOX_DELIVERY_ATTEMPTS)).contains(&attempt)
