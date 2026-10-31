@@ -1,13 +1,17 @@
-# Penelope 0.2.0 — Recoverable Task Execution
+# Penelope release contract — 0.3.0
 
-Penelope 0.2.0 provides deterministic, runtime-independent task recovery
+Penelope provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
-The seven library crates share version `0.2.0`. The release preserves saga v1
-records, linear and graph decisions, retries, compensation and reconciliation.
-Tagging and registry publication run through the release workflow after its
-verification gates pass.
+The 0.3.0 candidate adds optional SQLite persistence and a protected Linux
+single-process runtime. All nine library crates use version `0.3.0`. Saga v1
+records, linear/graph decisions, task history v1 and fingerprints retain their
+existing formats. The [dated changelog](../CHANGELOG.md#030---2026-10-30) records
+source-compatibility changes. [Qualification evidence](verification-2026-10-30.md)
+includes measured performance exceptions and deployment limits. The
+[qualification audit](qualification-0.3.0.md) records the passing versioned
+package/workflow verification. Tagging and publishing are separate release actions.
 
 ## Recoverable execution
 
@@ -63,7 +67,18 @@ Checkpoint=1, Reconcile=2, Never=3. This encoding is independent of Serde.
 
 `penelope-core` provides allocation-free task contracts, projection and
 synchronous ports without `std` or `alloc`, including optional Serde support.
-The supervisor's owning crate, saga facade and asynchronous ports remain hosted.
+`TaskControl` uses caller-owned `TaskWorkspace` buffers and shares its transition
+and commit policy with the hosted `TaskSupervisor` wrapper. Operation-specific
+`advance_with_buffers` and `poll_with_buffer` calls borrow dispatch and proposal
+storage separately. The full-workspace calls retain admission of all capacities
+before launch; poll storage must fit the larger checkpoint/output declaration.
+The hosted wrapper validates its const capacity during restore and supplies two
+arrays only when dispatching and one for poll. `TaskDispatchWorkspace` lets
+portable callers supply dispatch storage lazily, after the shared policy chooses
+a start/restart and before its authorizing commit. Waiting, fault and recovery
+decisions do not invoke the provider. Actual stack frames remain compiler- and
+adapter-dependent. The owning wrapper,
+saga facade and asynchronous ports remain hosted.
 
 Penelope is agnostic to runtime, operating system and storage backend.
 Applications own task correctness, checkpoint meaning, migration authorization,
@@ -87,13 +102,16 @@ versioned resource transitions, rollback, lost commit acknowledgements, concurre
 delivery and reconstruction. That suite belongs to StateChronicle and is
 independent of Penelope's optional evidence-correlation contract.
 
-Penelope's SQLite integration fixture commits blobs and history in one
+The original 0.2.0 SQLite integration fixture commits blobs and history in one
 transaction, kills a separate process before and after commit, and reopens the
 database to recover and complete the task. Independent connections also test
-CAS arbitration and corruption rejection. SQLite is a test-only dependency:
-consumer debug and release builds do not compile it through Penelope.
-This fixture supplements the filesystem and simulated journals; it is not a
-shipped storage adapter or a certification of power-loss behavior.
+CAS arbitration and corruption rejection. That fixture is distinct from the
+new optional [`penelope-sqlite`](../crates/penelope-sqlite/README.md) package,
+which provides task and process persistence. The optional
+[`penelope-process-runtime`](../crates/penelope-process-runtime/README.md) package
+provides the declared Linux worker profile. Neither is a dependency of the
+default facade. Their deployment contracts and qualification limits apply;
+process-kill evidence does not certify power-loss behavior.
 
 ## Validation
 
@@ -101,9 +119,32 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Thirteen sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Sixteen sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
+The worker protocol target checks bounded start-packet decoding, full scope and
+generation substitutions, truncated and mutated metadata, proposal limits, and
+exact checkpoint acknowledgements. It uses structured valid packets as well as
+arbitrary bytes; it does not execute workers or qualify the Linux sandbox.
+The SQLite task authority target compares reservation/fence/termination operations
+against an independent state model using a private WAL/FULL database and separate
+connections. It checks schema substitutions, conflicting identities, duplicate
+commits, reopen behavior, immutable input bytes and exact journal replay after
+each operation. Its bounded operation sequences complement the subprocess crash
+tests; they do not simulate power loss.
+The SQLite process target checks a real bounded WAL/FULL database against a
+separate model of input acceptance/consumption, committed outcomes, delivery
+attempts, inclusive lease expiry and acknowledgement. It also checks immutable
+commit retries, conflicting retries, forged owners, scoped pending-input
+visibility, payload digest admission and database reopen behavior. Every input
+runs a fixed operation suffix as well as its mutated sequence; this target does
+not simulate coordinator crashes or power loss.
+Portable controller failure tests retain independent access to the test journal
+and runtime. They check interruption receipt ambiguity, read failures and clock
+regression before mutation, invalid input/checkpoint reads before dispatch,
+rejected reconciliation evidence, unknown results across replay, and unconfirmed
+quota fences. These are injected adapter-contract tests, complementing the actual
+SQLite and process-runtime suites.
 The supervisor fuzzer combines runtime proposals with lost acknowledgements,
 wrong receipts, storage exhaustion and reconstruction, checking durable replay
 and rejection invariants after each operation. A 32-contender thread test checks
@@ -154,21 +195,58 @@ python3 -m unittest discover -s scripts/tests
 git diff --check
 ```
 
+The [2026-10-30 verification record](verification-2026-10-30.md) retains current
+workspace/MSRV, package, supply-chain and coverage evidence with its limits.
+
 Deployment adapters need their own conformance checks for transactional
 commit/CAS, durable retention, idempotent starts, persistent fencing and
 independently verified effect evidence. Host process-kill tests do not certify
 power-loss behavior or production adapter implementations.
 
+The [pinned saga/contract comparison](performance-decisions-2026-10-30.md)
+records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
+revision, with raw samples and RSS/wall evidence. Its slower saga medians remain
+unresolved; it does not close the performance release gate.
+
+The [fixed-port RISC-V stack analysis](portable-task-stack-bound-2026-10-30.md)
+provides a conservative bound for one explicit freestanding reference profile.
+The [SQLite file-cache measurements](performance-sqlite-cache-2026-10-30.md)
+verify database-page residency before paired cold/warm replays. Their scopes
+and limitations are separate from the final saga timing review and its
+explicit performance exceptions.
+
+## Source compatibility review
+
+The pre-1.0 transition to 0.3.0 intentionally extends two exhaustive
+public enums. `ProcessInputKind` adds `TaskEffectResult`;
+`ProcessAuthorizationOperation` adds `Dispatch`, `DriveTask`, `ReconcileEffect`,
+`DeliverTimer` and `RelayTaskResult`. Consumers must update exhaustive matches
+and authorization policies. Existing variant numeric values are pinned by
+regression tests; new variants are appended. Serialized legacy variant names
+and v1 record formats remain unchanged. This is not a patch-compatible API
+extension; consumers must review the documented 0.3.0 source changes.
+
+A strict patch-level `cargo-semver-checks 0.51.0` comparison against the pinned
+0.2.0 baseline identified these additions and reported the moved
+`penelope_executor::task::SupervisorError` enum as missing. The hosted path is
+still a public re-export. An external integration-test crate explicitly imports
+its type and variants, exhaustively matches it, checks its original traits and
+uses both error conversions on stable and MSRV. This compiler evidence resolves
+the path-removal report for that usage; the raw checker report remains a failing
+patch-level check. The deliberate enum additions still require the planned
+pre-1.0 breaking release. No checker finding is silently suppressed.
+
 ## Packaging and publication
 
-`./scripts/publish-crates.sh` verifies the seven unpacked library archives
+`./scripts/publish-crates.sh` verifies the nine unpacked library archives
 using a fresh Cargo temporary registry for each run. It excludes the fuzz
 crate and retains verified archives under the configured Cargo target
 directory's `package` directory.
 
 For an authorized release, validate the latest `main` revision and its dated
-changelog entry, then create and push an annotated `v0.2.0` tag. The release
-workflow verifies the tagged revision and package version, publishes the crates
+changelog entry, then create and push an annotated tag matching the qualified
+workspace version (for this development series, `v0.3.0` after qualification).
+The release workflow verifies the tagged revision and package version, publishes the crates
 dependency-first, and creates a GitHub release from the matching changelog
 section. Missing, empty or duplicate version entries stop release verification.
 Manual verification does not create a GitHub release; manual registry publishing
@@ -178,3 +256,40 @@ The underlying `./scripts/publish-crates.sh --publish` derives dependency order
 from Cargo metadata, waits for exact versions in the crates.io index, skips
 already-published versions and verifies all expected versions. Credentials
 remain outside the repository.
+
+The optional SQLite adapter has a [current store baseline](performance-sqlite-2026-10-30.md)
+with raw pinned-CPU measurements. The final performance review links subsequent
+cache and integration evidence; the historical core baseline does not cover this adapter.
+The [hosted supervisor comparison method](hosted-task-memory-method.md) provides
+a calibrated before/after allocation and sampled-stack runner. The
+[initial measurements](performance-hosted-memory-2026-10-30.md) retain the original
+stack regression. The [borrowed-restore follow-up](performance-hosted-borrowed-restore-2026-10-30.md)
+records its removal for that fixture; the static RISC-V report supplies its
+separately scoped conservative call-chain bound.
+The Linux runtime also has a [real-worker dispatch/host-ACK baseline](performance-worker-dispatch-2026-10-30.md)
+with fresh and reused store/runtime profiles, raw samples and disclosed limits.
+
+Optional upstream signed-event conformance runs in its own pinned temporary
+workspace through `scripts/run-statechronicle-conformance.py`. It includes
+signed canonical triggers through full linear/graph real-worker sagas in both
+store layouts and both effect modes, plus 136 actual SIGKILL/recovery cases
+including the canonical source transaction and binding boundaries. The effect
+reconciliation authority remains a trusted fixture. The same optional suite
+also gates a real worker checkpoint through actual upstream signed sparse-Merkle
+state proof verification, with fixture publication and pinned signer/head trust.
+Production upstream execution, head discovery and external-effect proofs remain
+outside this evidence. See [the integration contract and limits](INTEGRATION.md#optional-signed-canonical-event-conformance).
+
+Deployment lifecycle procedures are in the [reliable execution runbook](reliable-execution-operations.md), including restart, unknown effects, leases, backup/restore and fence failures.
+
+For verified database file-page cold/warm replay, see the [SQLite cache measurement method](performance-sqlite-cache-method.md). Reopened connections alone do not establish cold caches.
+
+The [final development performance review](performance-final-2026-10-30.md)
+supersedes earlier open timing dispositions, retaining measured regressions and
+the explicit reference-profile qualification decision. Historical reports retain
+their original source revisions and do not imply universal performance bounds.
+
+The [graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+removes the original graph slowdown exception, with oracle parity tests and
+post-optimization validation. It retains host-load limitations and positive
+control medians; the improvement does not imply all workloads have zero overhead.

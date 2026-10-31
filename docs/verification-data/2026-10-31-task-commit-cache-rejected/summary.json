@@ -1,0 +1,98 @@
+[
+  {
+    "campaign": 0,
+    "size": 0,
+    "blocks": 12,
+    "baseline_ns_per_call": 827917.0066342477,
+    "candidate_ns_per_call": 838982.22990468,
+    "change_percent": 1.3365135855121406,
+    "bootstrap_95_percent": [
+      -4.975731697820781,
+      10.132566340879979
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "blocks": 12,
+    "baseline_ns_per_call": 819860.2964707455,
+    "candidate_ns_per_call": 817200.8337975822,
+    "change_percent": -0.3243799809080139,
+    "bootstrap_95_percent": [
+      -7.71870389563319,
+      8.277017122812689
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "blocks": 12,
+    "baseline_ns_per_call": 829097.9482383485,
+    "candidate_ns_per_call": 825740.3630501837,
+    "change_percent": -0.40496845943238136,
+    "bootstrap_95_percent": [
+      -6.399852405880992,
+      6.184075014005354
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "blocks": 12,
+    "baseline_ns_per_call": 1322562.2930238196,
+    "candidate_ns_per_call": 1336997.2580262178,
+    "change_percent": 1.0914393279272512,
+    "bootstrap_95_percent": [
+      -5.85477983301442,
+      10.960315491851244
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "blocks": 12,
+    "baseline_ns_per_call": 829247.6112930672,
+    "candidate_ns_per_call": 837057.824420389,
+    "change_percent": 0.9418433072292424,
+    "bootstrap_95_percent": [
+      -6.418796883206617,
+      9.562188819509034
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "blocks": 12,
+    "baseline_ns_per_call": 829971.0165500782,
+    "candidate_ns_per_call": 857955.2679894171,
+    "change_percent": 3.3717142986101276,
+    "bootstrap_95_percent": [
+      -2.3202845853077982,
+      10.29307545059241
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "blocks": 12,
+    "baseline_ns_per_call": 858326.6927146894,
+    "candidate_ns_per_call": 904708.8254400535,
+    "change_percent": 5.403785425648137,
+    "bootstrap_95_percent": [
+      -3.260568855140731,
+      17.02893308418592
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "blocks": 12,
+    "baseline_ns_per_call": 1285411.7826459105,
+    "candidate_ns_per_call": 1316882.9051201148,
+    "change_percent": 2.448330013703742,
+    "bootstrap_95_percent": [
+      -0.9505419475750642,
+      6.530843634717826
+    ]
+  }
+]

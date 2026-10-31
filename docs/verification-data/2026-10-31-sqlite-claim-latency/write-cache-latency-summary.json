@@ -1,0 +1,145 @@
+{
+  "batch/false/1": {
+    "mean_paired_change_pct": 4.388321543256257,
+    "bootstrap95_pct": [
+      -7.272618025141964,
+      17.802913159386023
+    ],
+    "mean_ns_per_call": {
+      "baseline": 907078.2845,
+      "candidate": 916804.945875
+    }
+  },
+  "batch/false/16": {
+    "mean_paired_change_pct": 1.8358942722807248,
+    "bootstrap95_pct": [
+      -7.21999341716133,
+      11.249429771708996
+    ],
+    "mean_ns_per_call": {
+      "baseline": 1071555.248,
+      "candidate": 1059764.686625
+    }
+  },
+  "batch/true/1": {
+    "mean_paired_change_pct": 0.9471760676405427,
+    "bootstrap95_pct": [
+      -8.774462790701488,
+      11.634998461515078
+    ],
+    "mean_ns_per_call": {
+      "baseline": 899903.543625,
+      "candidate": 878378.5825
+    }
+  },
+  "batch/true/16": {
+    "mean_paired_change_pct": 7.549895599436662,
+    "bootstrap95_pct": [
+      0.561389350210173,
+      14.099677811622024
+    ],
+    "mean_ns_per_call": {
+      "baseline": 984431.693125,
+      "candidate": 1047546.7575
+    }
+  },
+  "history/false/ack": {
+    "mean_paired_change_pct": 8.459983678285244,
+    "bootstrap95_pct": [
+      -1.2633369769296965,
+      18.590306790669263
+    ],
+    "mean_ns_per_call": {
+      "baseline": 919670.9685058594,
+      "candidate": 983409.7912109375
+    }
+  },
+  "history/false/commit": {
+    "mean_paired_change_pct": -3.353632225184222,
+    "bootstrap95_pct": [
+      -9.41178935372684,
+      2.5310777609700352
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2621698.56875,
+      "candidate": 2514077.4875
+    }
+  },
+  "history/false/idle": {
+    "mean_paired_change_pct": 0.3314835111763337,
+    "bootstrap95_pct": [
+      -1.7652585888065286,
+      3.3970779262563866
+    ],
+    "mean_ns_per_call": {
+      "baseline": 15764.28075,
+      "candidate": 15820.1764
+    }
+  },
+  "history/false/open": {
+    "mean_paired_change_pct": 30.552306341874047,
+    "bootstrap95_pct": [
+      1.4417962536685591,
+      62.419822890931464
+    ],
+    "mean_ns_per_call": {
+      "baseline": 5625531.65,
+      "candidate": 6646138.4
+    }
+  },
+  "history/false/seed_claim": {
+    "mean_paired_change_pct": -1.87448947764014,
+    "bootstrap95_pct": [
+      -9.479078133612951,
+      6.326105549559791
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2258295.05,
+      "candidate": 2168498.525
+    }
+  },
+  "history/true/commit": {
+    "mean_paired_change_pct": -4.558517168866172,
+    "bootstrap95_pct": [
+      -12.52125752733556,
+      4.075036166979862
+    ],
+    "mean_ns_per_call": {
+      "baseline": 2948678.45,
+      "candidate": 2790797.40625
+    }
+  },
+  "history/true/idle": {
+    "mean_paired_change_pct": 0.3481698076973405,
+    "bootstrap95_pct": [
+      -0.9961833490886196,
+      1.9755726440634946
+    ],
+    "mean_ns_per_call": {
+      "baseline": 16478.588,
+      "candidate": 16538.6273
+    }
+  },
+  "history/true/open": {
+    "mean_paired_change_pct": 0.5689830054750322,
+    "bootstrap95_pct": [
+      -13.587449002929242,
+      15.972275297571702
+    ],
+    "mean_ns_per_call": {
+      "baseline": 6802062.25,
+      "candidate": 6506217.3
+    }
+  },
+  "history/true/schedule": {
+    "mean_paired_change_pct": -4.669400307898175,
+    "bootstrap95_pct": [
+      -10.641433449464543,
+      1.309109464623348
+    ],
+    "mean_ns_per_call": {
+      "baseline": 978787.0786621093,
+      "candidate": 922387.8707519531
+    }
+  }
+}

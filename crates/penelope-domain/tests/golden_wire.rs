@@ -6,12 +6,12 @@
 use core::fmt::Debug;
 
 use penelope_domain::{
-    ActionId, CanonicalCommand, CanonicalCommitId, CanonicalEvent, CanonicalEventId, CausationId,
-    ContentDigest, DefinitionId, DefinitionVersion, DomainError, InputId, LogicalTime,
-    ManualReview, OperationId, OutcomeActor, OutcomeId, ProcessAction, ProcessActionKind,
-    ProcessDefinition, ProcessId, ProcessInput, ProcessInputEnvelope, ProcessInputKind,
-    ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind, ProcessScope, ResourceId, ReviewId,
-    StepId, TenantId,
+    ActionId, CanonicalCommand, CanonicalCommitId, CanonicalEvent, CanonicalEventId,
+    CanonicalWireBytes, CausationId, ContentDigest, DefinitionId, DefinitionVersion, DomainError,
+    InputId, LogicalTime, ManualReview, OperationId, OutcomeActor, OutcomeId, ProcessAction,
+    ProcessActionKind, ProcessDefinition, ProcessId, ProcessInput, ProcessInputEnvelope,
+    ProcessInputKind, ProcessOutcome, ProcessOutcomeFact, ProcessOutcomeKind, ProcessScope,
+    ResourceId, ReviewId, StepId, TenantId,
 };
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -27,13 +27,21 @@ fn assert_fixture<T>(
     expected: T,
     validate: impl FnOnce(&T) -> Result<(), DomainError>,
 ) where
-    T: DeserializeOwned + Serialize + PartialEq + Debug,
+    T: DeserializeOwned + Serialize + CanonicalWireBytes + PartialEq + Debug,
 {
     let decoded: T = serde_json::from_str(fixture).expect("fixture deserializes");
     validate(&decoded).expect("fixture satisfies its typed invariants");
     assert_eq!(
         decoded, expected,
         "fixture decodes to the expected typed DTO"
+    );
+
+    assert_eq!(
+        expected
+            .canonical_wire_bytes()
+            .expect("canonical encoding succeeds"),
+        serde_json::to_vec(&expected).expect("reference serialization succeeds"),
+        "canonical bytes retain the previous serializer's exact field order and bytes"
     );
 
     let fixture_json: serde_json::Value = serde_json::from_str(fixture).expect("fixture is JSON");
@@ -148,4 +156,13 @@ fn wire_fixtures_are_immutable_and_typed() {
         ),
         ManualReview::validate,
     );
+}
+
+#[test]
+fn process_input_category_discriminants_preserve_existing_variants() {
+    // Numeric casts and serializers using enum indices retain their v1 values.
+    assert_eq!(ProcessInputKind::CanonicalEvent as u8, 0);
+    assert_eq!(ProcessInputKind::TimerFired as u8, 1);
+    assert_eq!(ProcessInputKind::ManualResolution as u8, 2);
+    assert_eq!(ProcessInputKind::TaskEffectResult as u8, 3);
 }

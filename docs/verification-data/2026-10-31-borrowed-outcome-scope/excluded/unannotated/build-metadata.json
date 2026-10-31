@@ -1,0 +1,24 @@
+{
+  "source_parent": "cbfe5c5f0d840cbd1ad2a4ba119a5883a9ab1c13",
+  "sources": {
+    "baseline": {
+      "crates/penelope-domain/src/implementation.rs": "10046bd8e33ad8e25ff460500636bdd2ee3cbf3aa427daa5efcee9af2dc65210",
+      "crates/penelope-sqlite/src/process.rs": "c0d2a59d740f5885a80fb282846cdaf8171b99aa5cfe960959b3c9a3c1ca0797"
+    },
+    "candidate": {
+      "crates/penelope-domain/src/implementation.rs": "835dd448b9ec2b01f601751ed5709a2fa68565bbba4bc6c1a69c62c27fac6b07",
+      "crates/penelope-sqlite/src/process.rs": "a8521419b6158a532d3caf92e9669bbef6d29c0fe4848eb7f90c2ee9d5e1d874"
+    }
+  },
+  "binaries": {
+    "baseline-process_replay": "7d5febf59ee5fff1eca5f7a187cf9fe4697dac18a769aab938e7dee22a665866",
+    "baseline-process_replay_allocations": "ed76af5b5ed75c042bf1544c8173a2f51ac14e5393733bca4dfd8f9b9650aa33",
+    "candidate-process_replay": "b98820ca8f7ab3e4c9ee4d68d43637c0e0626b4f19d3788066b5cd8eb1415159",
+    "candidate-process_replay_allocations": "8b1fcafd72fadb43c330c1c19a128a6e7cc8b8ee0aed678547da4fc32f327b7f"
+  },
+  "harness_sha256": {
+    "crates/penelope-sqlite/benches/process_replay.rs": "325295b9c2a1c82b97b7ed14bc756dcfea75a02cea77dc60958f23c87b55f656",
+    "crates/penelope-sqlite/benches/process_replay_allocations.rs": "11d8318ba23a09ea61bd5db57b1e503a38202f0111a595e7d442176ae10014f9",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "0c061934c99caab5cf8ede2f79427cc1b103f921ab0880240e0d7deec4485ed0"
+  }
+}

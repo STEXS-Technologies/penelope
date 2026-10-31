@@ -1,0 +1,167 @@
+{
+  "1/end": {
+    "mean_paired_change_pct": -5.536723088321671,
+    "bootstrap95_pct": [
+      -6.229039554864535,
+      -4.842303416273285
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13127.32325,
+      "cached": 12398.09525
+    }
+  },
+  "1/first": {
+    "mean_paired_change_pct": -3.182269738820165,
+    "bootstrap95_pct": [
+      -4.0799535239951945,
+      -2.2323401810876775
+    ],
+    "mean_ns_per_call": {
+      "frontier": 14954.446791666667,
+      "cached": 14476.033041666667
+    }
+  },
+  "1/last": {
+    "mean_paired_change_pct": -2.9678712453340528,
+    "bootstrap95_pct": [
+      -3.690558713974368,
+      -2.277934382652813
+    ],
+    "mean_ns_per_call": {
+      "frontier": 14907.51925,
+      "cached": 14463.175583333334
+    }
+  },
+  "1/page": {
+    "mean_paired_change_pct": -3.048768778972355,
+    "bootstrap95_pct": [
+      -3.9806744705709662,
+      -2.1440534806174694
+    ],
+    "mean_ns_per_call": {
+      "frontier": 14938.196625,
+      "cached": 14479.3555
+    }
+  },
+  "1/past": {
+    "mean_paired_change_pct": -5.884534337107272,
+    "bootstrap95_pct": [
+      -7.5999031552925755,
+      -4.671465560368948
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13213.352583333333,
+      "cached": 12417.234875
+    }
+  },
+  "128/end": {
+    "mean_paired_change_pct": -5.188923263858292,
+    "bootstrap95_pct": [
+      -5.824948806550234,
+      -4.558176097231903
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13292.345333333333,
+      "cached": 12600.209958333333
+    }
+  },
+  "128/first": {
+    "mean_paired_change_pct": -3.4109025245924407,
+    "bootstrap95_pct": [
+      -4.33451112801122,
+      -2.5652850336754685
+    ],
+    "mean_ns_per_call": {
+      "frontier": 15206.722291666667,
+      "cached": 14684.542833333333
+    }
+  },
+  "128/last": {
+    "mean_paired_change_pct": -2.887399863059237,
+    "bootstrap95_pct": [
+      -4.106371672884912,
+      -1.4327560914189852
+    ],
+    "mean_ns_per_call": {
+      "frontier": 15252.457583333333,
+      "cached": 14808.445083333334
+    }
+  },
+  "128/page": {
+    "mean_paired_change_pct": 0.22303038024229505,
+    "bootstrap95_pct": [
+      -0.269290042412873,
+      0.6364724454510862
+    ],
+    "mean_ns_per_call": {
+      "frontier": 179990.41945833334,
+      "cached": 180381.501875
+    }
+  },
+  "128/past": {
+    "mean_paired_change_pct": -5.3443451832364985,
+    "bootstrap95_pct": [
+      -6.179795522867537,
+      -4.493079079531204
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13326.622125,
+      "cached": 12610.694583333334
+    }
+  },
+  "4096/end": {
+    "mean_paired_change_pct": -4.5096122047100895,
+    "bootstrap95_pct": [
+      -5.661876153959112,
+      -3.4221078210378564
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13898.57275,
+      "cached": 13263.916416666667
+    }
+  },
+  "4096/first": {
+    "mean_paired_change_pct": -3.5852457765548573,
+    "bootstrap95_pct": [
+      -4.423439940304741,
+      -2.7492648550973775
+    ],
+    "mean_ns_per_call": {
+      "frontier": 15553.20075,
+      "cached": 14991.140666666666
+    }
+  },
+  "4096/last": {
+    "mean_paired_change_pct": -2.6638845755118545,
+    "bootstrap95_pct": [
+      -3.3400403236454212,
+      -2.001973081148223
+    ],
+    "mean_ns_per_call": {
+      "frontier": 16004.592,
+      "cached": 15576.319333333333
+    }
+  },
+  "4096/page": {
+    "mean_paired_change_pct": 0.2039131828175167,
+    "bootstrap95_pct": [
+      -0.3328096853411511,
+      0.7228883498369809
+    ],
+    "mean_ns_per_call": {
+      "frontier": 181010.47158333333,
+      "cached": 181354.73229166667
+    }
+  },
+  "4096/past": {
+    "mean_paired_change_pct": -4.348115287967658,
+    "bootstrap95_pct": [
+      -5.066145297943036,
+      -3.657009991803062
+    ],
+    "mean_ns_per_call": {
+      "frontier": 13875.6445,
+      "cached": 13269.436375
+    }
+  }
+}

@@ -73,3 +73,80 @@ fn existing_effect_identity_survives_task_crash_without_changing_saga_records() 
     substituted.action.payload_digest = ContentDigest([9; 32]);
     assert!(task_scope_for_effect(&substituted, definition).is_err());
 }
+
+#[test]
+fn typed_binding_rejects_each_substituted_dispatch_coordinate() {
+    use penelope_ports::tasks::TaskEffectBinding;
+    let input = [1; 64];
+    let process_scope = ProcessScope::new(
+        "tnt_demo".try_into().unwrap(),
+        "prc_demo".try_into().unwrap(),
+        "def_demo".try_into().unwrap(),
+        "dfv_one".try_into().unwrap(),
+        ContentDigest([1; 32]),
+    );
+    let request = EffectDispatchRequest::new(ProcessAction::new(
+        process_scope,
+        "act_compute".try_into().unwrap(),
+        "stp_compute".try_into().unwrap(),
+        0,
+        ProcessActionKind::ExternalEffect,
+        ContentDigest::sha256(&input),
+    ));
+    let task_definition = definition(RecoveryMode::RestartFromCheckpoint, EffectContract::Pure);
+    let binding = TaskEffectBinding::new(request.clone(), task_definition).unwrap();
+    binding.validate(&request, task_definition, &input).unwrap();
+    assert_eq!(
+        binding.scope(),
+        task_scope_for_effect(&request, task_definition).unwrap()
+    );
+    assert_eq!(binding.request(), &request);
+    assert_eq!(binding.definition(), task_definition);
+    assert_eq!(
+        binding.relay_identity(),
+        TaskEffectBinding::new(request.clone(), task_definition)
+            .unwrap()
+            .relay_identity()
+    );
+    for coordinate in 0..10 {
+        let mut changed = request.clone();
+        match coordinate {
+            0 => changed.action.tenant_id = "tnt_other".try_into().unwrap(),
+            1 => changed.action.process_id = "prc_other".try_into().unwrap(),
+            2 => changed.action.definition_id = "def_other".try_into().unwrap(),
+            3 => changed.action.definition_version = "dfv_other".try_into().unwrap(),
+            4 => changed.action.definition_digest = ContentDigest([2; 32]),
+            5 => changed.action.action_id = "act_other".try_into().unwrap(),
+            6 => changed.action.step_id = "stp_other".try_into().unwrap(),
+            7 => changed.action.attempt = 1,
+            8 => changed.action.kind = ProcessActionKind::CanonicalCommand,
+            _ => changed.action.payload_digest = ContentDigest([3; 32]),
+        }
+        // Even a self-consistent replacement request cannot replace a binding.
+        changed.effect_key = changed.action.effect_key();
+        assert!(binding.validate(&changed, task_definition, &input).is_err());
+        if changed.action.kind == ProcessActionKind::ExternalEffect {
+            assert_ne!(
+                binding.relay_identity(),
+                TaskEffectBinding::new(changed, task_definition)
+                    .unwrap()
+                    .relay_identity()
+            );
+        }
+    }
+    let mut changed_definition = task_definition;
+    changed_definition.code = Digest([4; 32]);
+    assert!(
+        binding
+            .validate(&request, changed_definition, &input)
+            .is_err()
+    );
+    assert!(
+        binding
+            .validate(&request, task_definition, &[2; 64])
+            .is_err()
+    );
+    let mut invalid_effect = request;
+    invalid_effect.effect_key.attempt = 2;
+    assert!(TaskEffectBinding::new(invalid_effect, task_definition).is_err());
+}

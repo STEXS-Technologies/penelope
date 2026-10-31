@@ -1,0 +1,29 @@
+{
+  "source_parent": "865911df65ec8c8642d0bea6b2ca29b3a5bfdbc2",
+  "sources_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "28ff49095218b73e3eed9763181f340795d2187658cbc269daa1a824331a8af5",
+    "crates/penelope-sqlite/src/process_snapshot_tests.rs": "16cf0e905bf5e237238ba9adc4be2431dff0d1c04fac8433d2cf6dd522072b58",
+    "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+    "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+    "crates/penelope-sqlite/Cargo.toml": "d9c1c18f463a479031f095ab5785d1c166dddb8f54411c4535c1cd1a26b6a59c"
+  },
+  "files_sha256": {
+    "clippy.txt.gz": "179728dc1dc62fd2a5402615652018bc877cc0275472571c4a4a4fd56ad80adf",
+    "graphify.txt.gz": "945217edb5fd0363415df1673bda6167bacd293946e28af15191d4b1f760a95f",
+    "negative-control.txt.gz": "46db73a52d7a10100025570725fda90c3bbc43c7a508161fbd5a7bb875ec1667",
+    "read-transaction-negative-control.patch": "05283ab08aa5225e12964541a9f2c9ab7e5ca96a2f311882bd5e26b581c6d704",
+    "repeated-1.85.0.txt.gz": "f22f685d968b739e71c62f923f71a6cf7f60354c9f1b5fee6594e1ff7c782b5a",
+    "repeated-stable.txt.gz": "137023dd8eb41e64cec276104eebcbf08b4d1de53a29006706d027dba69b4d41",
+    "sqlite-1.85.0.txt.gz": "5b0f570f0d133f4bc6add2007f16aa1f9c4d5897500050d081d025397ad801ec",
+    "sqlite-stable.txt.gz": "9733491d6e39a74cd77af2443961ad7495c8f0a897573613cbd097e7d5976da0",
+    "static-checks.txt.gz": "a5be443064296d8efe4b5c80cac59552db7cfecc7856e954ec0e04584c440935",
+    "summary.json": "80169e1cf2abc0ed5cabbbc224881897be5af0816374db9fa37c8009f21a35dd",
+    "verify.py": "5814a456e25e1648d9065611be88f506af75fb692a9e79cbd6cb3a36d7ec46bd"
+  },
+  "repetitions_per_toolchain": 20,
+  "profiles_per_repetition": 4,
+  "toolchains": 2,
+  "forced_interleavings": 160,
+  "runtime_change": "Only a cfg(test) module declaration is added to process.rs; runtime read code is unchanged.",
+  "negative_control": "Temporarily replaced the replay read transaction with a bare connection reference; new test failed with Invariant on a valid concurrent append. Original transaction restored before qualification."
+}

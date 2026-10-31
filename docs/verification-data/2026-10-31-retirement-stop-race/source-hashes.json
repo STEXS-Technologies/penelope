@@ -1,0 +1,5 @@
+{
+  "crates/penelope-sqlite/tests/support/retirement_race.rs": "cdfea1b3bb57ced3da456616e5ed524ceda8ce5441981d09fdd4533161a2f523",
+  "crates/penelope-sqlite/src/lifecycle.rs": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+  "crates/penelope-sqlite/src/authority.rs": "cf784bce3c532e86e99e7d55ce0110b3091646e4108443a1a03b060578c05571"
+}

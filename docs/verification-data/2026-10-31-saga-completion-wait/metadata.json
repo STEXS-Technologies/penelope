@@ -1,0 +1,33 @@
+{
+  "baseline": "838505a67a0bbe4e5eaf3e4d10e7ef8be1703679",
+  "code_commit": "2e360b05d9af768511ebc24591efaecec941980c",
+  "isolated_processes": 20,
+  "compilers": [
+    "stable 1.99.0",
+    "MSRV 1.85.0"
+  ],
+  "worker_delay_ms": 300,
+  "minimum_asserted_elapsed_ms": 250,
+  "logical_tick_cap": 44,
+  "wall_deadline_seconds": 10,
+  "upstream_revision": "ae3d94bc22c7835eaa3fdcd766e3c117929c12bb",
+  "optional_signed_tests": 7,
+  "source_sha256": {
+    "crates/penelope-process-runtime/tests/support/sagas.rs": "520cb235c964b36c2867d0da77d10e6eef0cb321c7ddbdee1fb8398faa11a768",
+    "crates/penelope-process-runtime/tests/fixtures/worker.c": "16d3806b462155469c2dc2fb914bf75de204b11b1e07bc8282f58d979d32dc28"
+  },
+  "archive_sha256": {
+    "baseline-sagas.rs.gz": "4920b287b1645d28d790629202f7ca8e5dd1b764a36a6191a08f8f8add1145db",
+    "baseline.log.gz": "b7cfecdecfac33efd0ea19c96cd1b19b4cd08f1b0d02010bef57bf200ed228f9",
+    "clippy.log.gz": "0ef2383f9d69f48443f7ff49514b5e84e22c92550eb6578b870f27f021d8497c",
+    "conformance.log.gz": "c42f8d360a62692b8f018a2ce260fe394a691b5e8a9dd1455d6719538aff5804",
+    "fixed.log.gz": "fd88f61cf549e8f1d51008b2a403861a97c3896f4b4d4ce7e954c5009514f77a",
+    "graph.log.gz": "5bacee652bdce91bed4bf11a0d6513cdab181bd058a9b403f01efbc751ce1601",
+    "msrv.log.gz": "06dbee91749ba2acba24459de1b9ec97a21c385bc214d333687ee694c8f792a5",
+    "preceding-ci.json": "50b4e7b7452d017326e5da1d841d0871122c70d8fc8c46ec5a8d03a7955ce51b",
+    "prior-ci-rerun.json": "4382784c2bd0a7339ab768b3f97029a0480250c805941779dc38702c552da354",
+    "repeat.log.gz": "25cf2181e2fe66c2f9e23401e931f916f6bec9ea63b6b0413ad8555aebcade53",
+    "verify.py": "5c99b5aae83b940ade08eaf05c378a0a7c9eb118066713d4ccba2d9ae693fa2c",
+    "workspace.log.gz": "edd2205f719de444f4e3f1520523db64c270546ed23124c2d2ba1ec3e52b6a68"
+  }
+}

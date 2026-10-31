@@ -1,0 +1,23 @@
+{
+  "allocation-negative-control.txt.gz": "bf90275970ba451aca3b05ef67b35ec604ebd01ded40fdf170b2d90457ee2875",
+  "allocations.jsonl.gz": "e53f99df2095931491748d7a8940760144f72586376a95a3e8082a7b40256973",
+  "analyze.py": "8ebed32cecd4518f427acec41668cb49a9d25fe81ac38907ff822814f9c6124f",
+  "baseline-build.txt.gz": "0cd51c7e7a7d75c0cb1d4cf5092ce729ac74c2f708a35cd8ee36ecb6e3c96150",
+  "baseline-tests.txt.gz": "57939b808caf89ec292b034691b98132b714ed71a0abec7352663798aeb88a54",
+  "build-metadata.json": "97a1d962969aea5700647c91814c79a43f8f930d03bfc3fd4cc07ad50bd7476a",
+  "build.py": "00490618738b538ac3fcbe43dc66dadfa547c1cd02b14eaa32df646b52a895ff",
+  "candidate-build.txt.gz": "88227d53539161fd14fa3865e2550051100267f52ad2976acc386ed0024d03bf",
+  "candidate-tests.txt.gz": "e6b1651dd1a262434966b914afd87c0e70fcd2c8c46e1a308ec85a33a66a5875",
+  "clippy.txt.gz": "baab0d7454032f48ce3efdbd89a3d97b7d9e9faa12bb5b525d17a7da91ff654b",
+  "graphify.txt.gz": "6ed8fa48ad4a57051f9eedd897152de8ec9531e7fda658896620766b6b2bea73",
+  "measure.py": "f658651a5cc535ac0e936bb861b52e9d33f8d6599159d64103323f11df3c12bf",
+  "measurement.json": "86b1f20c75def9baccdd51e31e99e9b104f766c5869ee9de0c9adaf696b240cd",
+  "msrv.txt.gz": "17e323816b80b512c7ec1cdae61250e1623fdcb1ba5b1f4ede843d698bad1797",
+  "raw.jsonl.gz": "ab515931e025e8a69beb3254265eca779b03b4047d72df072f7ed543d10b83b7",
+  "runtime.patch": "f1ada6d38d9483308200a067fcfd6af13f5663830cb46d36275bc031dd0cae2f",
+  "source-hashes.json": "8b716065e71a23320918ae3762f95eeeceace92f7a4b47e79b2192eb6ac3222b",
+  "stable.txt.gz": "9bec14de4656762163a61fa0765820443544ca88f1637f0adf404e7bafc0d52e",
+  "static-checks.txt.gz": "a5be443064296d8efe4b5c80cac59552db7cfecc7856e954ec0e04584c440935",
+  "summary.json": "83d769b648ee984bf3190781ddd369c2652f64d8ad64df112e22ac8d2b862078",
+  "verify.py": "819653e3eeaa950b8e1247bf458d51414bc79d9fd800b504701065d3cb55339f"
+}

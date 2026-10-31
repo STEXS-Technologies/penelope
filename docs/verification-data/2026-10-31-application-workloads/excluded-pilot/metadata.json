@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "git_head": "e41d5957bd8623dae8fb4620e1924e77c8edc291",
+  "git_status": " M Cargo.lock\n M crates/penelope-executor/Cargo.toml\n?? .codex/\n?? .opencode/\n?? AGENTS.md\n?? crates/penelope-executor/benches/application_workloads.rs\n?? crates/penelope-executor/benches/support/\n?? graphify-out/\n?? scripts/application_workloads_summary.py\n?? scripts/benchmark-application-workloads.py\n?? scripts/tests/test_application_workloads_summary.py\n",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "repeats": 4,
+  "rounds": 12,
+  "iterations": 8,
+  "work": [
+    4096,
+    65536,
+    1048576
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "mix": {
+    "linear": 1,
+    "graph": 1,
+    "retry": 1,
+    "replay": 1,
+    "durable": 1,
+    "durable_replay": 1
+  },
+  "cpu_affinity": {
+    "1": [
+      0
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "database_root": "/home/ac/projects/penelope/target/application-workloads-reference/databases",
+  "binary_sha256": "cd6fc0c032e3356116b1283b3022775cbbaddccbabaf8d71ca7d39f7420d8715",
+  "source_sha256": {
+    "crates/penelope-executor/benches/application_workloads.rs": "f5ea3d5d876994d428af8015d28a3745b59e0159ec70803eb4820f7dd55be1cc",
+    "crates/penelope-executor/benches/support/application_workloads/mod.rs": "6079562a43ad477891a5e4114fcd058fe122f9fe62f90776a0ee581d548d6067",
+    "crates/penelope-executor/benches/support/application_workloads/storage.rs": "78706f7d5258f0a642ddaf81a4c15215da7670a0204504c516a66c6477d238ae",
+    "scripts/benchmark-application-workloads.py": "85f29bf68bad459ed2d3e23d3a13a1371129a3fc27fe6b2703fe2bcf1c6fb40e",
+    "scripts/application_workloads_summary.py": "e5816559f541bb173c7cd3c5533956445aee36bb12ed56d650d442b7a3b524df",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "scope": "synthetic business work versus additional orchestration/reliability services; not every Penelope path or a consuming application",
+  "filesystem": "btrfs /dev/nvme0n1p3[/home]"
+}

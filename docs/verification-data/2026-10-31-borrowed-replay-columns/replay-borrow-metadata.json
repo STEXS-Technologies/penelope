@@ -1,0 +1,51 @@
+{
+  "baseline": "ec4399f0cc27698a63b7c9ac23e408b0b6557785",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "source_sha256": {
+        "crates/penelope-sqlite/src/process.rs": "32d3d824a159d9c272b216875fef3f28299f478b20b89701e88544412cd011e6",
+        "crates/penelope-sqlite/src/tasks.rs": "582bc6276d3a9f4e8c02a378515043d2ea5c087ce4b0cbb583b3385f17988dc9"
+      },
+      "binaries": {
+        "process_replay": {
+          "path": "target/replay-borrow-baseline-process_replay",
+          "sha256": "93d9433e3d9e6607ccd2d62394be354271a10adf3d8b0d8889c1676c0b972a9d"
+        },
+        "process_replay_allocations": {
+          "path": "target/replay-borrow-baseline-process_replay_allocations",
+          "sha256": "ca83d9eafbfd150a8ff0f185dcb663c67a7fba1dff3d96ad9c4962113ba1ef31"
+        }
+      }
+    },
+    "borrowed": {
+      "source_sha256": {
+        "crates/penelope-sqlite/src/process.rs": "853efe5dde341800e1626956b99d9c6aa988d98c8b090a36e864b5e0f54e4ba2",
+        "crates/penelope-sqlite/src/tasks.rs": "39276a8ef1457c70f78e25c1a8682ad197f739453abd68bbd521423477672706"
+      },
+      "binaries": {
+        "process_replay": {
+          "path": "target/replay-borrow-borrowed-process_replay",
+          "sha256": "28464d23d054695f16f9fe87cd8c69ab3a949a430715f2718f835d1a1f359795"
+        },
+        "process_replay_allocations": {
+          "path": "target/replay-borrow-borrowed-process_replay_allocations",
+          "sha256": "b53dc011fbfea626c7ad7e904cb2ca06169eb626fdb0801d7dddfcbe900a982c"
+        }
+      }
+    }
+  },
+  "fixture_sha256": {
+    "crates/penelope-sqlite/benches/process_replay.rs": "a4438db2664cd5546b1d9e06cefbffb18efd0629c2982d5515e041f0801102e6",
+    "crates/penelope-sqlite/benches/process_replay_allocations.rs": "e13669216bcd478b489dbd9fe7644be41ea5c411998614c6c88c5846ad05b639",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "28280ee0e9c1d4956b04d2a6e85ed57b6e9fe65a9d11d4ffb9052e665a66daec"
+  },
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 24,
+  "order": "alternating AB/BA; latency then separate allocation process for each variant",
+  "background": "no own builds, tests or graph jobs during timing",
+  "warmup": 100,
+  "iterations": 1000
+}

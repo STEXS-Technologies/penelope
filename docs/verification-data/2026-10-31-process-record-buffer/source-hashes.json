@@ -1,0 +1,13 @@
+{
+  "crates/penelope-sqlite/src/process.rs": "045c11cea070c15f5a236634632c45a4b183e7cbbb32f54447a32dd5bd9f9343",
+  "crates/penelope-sqlite/Cargo.toml": "e92af4a3e0e881dc7e9ccb0b231a525d493b11dcc5dfab8835822a77a3aa5ef9",
+  "crates/penelope-sqlite/tests/process.rs": "23e9fe789d66a3e8077d1fe0af74d6211c80e0fc160d1626ab84b656e1d63823",
+  "crates/penelope-sqlite/tests/support/commit_encoding.rs": "b93cf00aa57f94c16ab7f8e06f519d42dde4eeca9a4d079116bb5007cc82489d",
+  "crates/penelope-sqlite/tests/process_encoding_allocations.rs": "245a359478320a62a297dccd7a35aef32a0d61d488a9aab3d4d7edf0fe1353c9",
+  "crates/penelope-sqlite/src/process_encode_tests.rs": "e0ffa5fb41eb09cc7e39135f71eab662c8f165e0b584e3168d7e518a9c0ebb7f",
+  "crates/penelope-sqlite/benches/process_encoding.rs": "02edfbe144d0c0a2f0c97d0a64c5a12948d2ecb46539307ddaa8e6560e650ee2",
+  "crates/penelope-sqlite/benches/process_encoding_allocations.rs": "605cc17e45c32e9f9aefed9c7ac79367050febd3932c8c6acd200a190f38e13e",
+  "crates/penelope-sqlite/benches/support/process_encoding_fixture.rs": "21a5e7c0f6208b6ad59c4d8cd9afd06f1ae3cebc40a23d28a8fb772744c1e563",
+  "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+  "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+}

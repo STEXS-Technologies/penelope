@@ -1,0 +1,50 @@
+[
+  {
+    "tool": "1.85.0",
+    "case": "competing-empty-frontier",
+    "serial_model": 0,
+    "count": 100
+  },
+  {
+    "tool": "1.85.0",
+    "case": "competing-empty-frontier",
+    "serial_model": 1,
+    "count": 60
+  },
+  {
+    "tool": "1.85.0",
+    "case": "competing-next-frontier",
+    "serial_model": 0,
+    "count": 116
+  },
+  {
+    "tool": "1.85.0",
+    "case": "competing-next-frontier",
+    "serial_model": 1,
+    "count": 44
+  },
+  {
+    "tool": "stable",
+    "case": "competing-empty-frontier",
+    "serial_model": 0,
+    "count": 107
+  },
+  {
+    "tool": "stable",
+    "case": "competing-empty-frontier",
+    "serial_model": 1,
+    "count": 53
+  },
+  {
+    "tool": "stable",
+    "case": "competing-next-frontier",
+    "serial_model": 0,
+    "count": 116
+  },
+  {
+    "tool": "stable",
+    "case": "competing-next-frontier",
+    "serial_model": 1,
+    "count": 44
+  }
+]

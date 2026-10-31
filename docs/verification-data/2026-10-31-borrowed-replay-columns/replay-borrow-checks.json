@@ -1,0 +1,33 @@
+[
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "bash",
+      "scripts/check-layer-boundaries.sh"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "graphify",
+      "update",
+      "."
+    ],
+    "returncode": 0,
+    "stdout": "Re-extracting code files in . (no LLM needed)...\n[graphify watch] 2858 file(s) not classified (no supported extension or shebang), skipped: .gitignore, .ignore, 0-after.jsonl.gz, 0-before.jsonl.gz, 1-after.jsonl.gz, 1-before.jsonl.gz (+2852 more)\n  AST extraction: 100/275 uncached files (36%) [32 workers]\n  AST extraction: 200/275 uncached files (72%) [32 workers]\n  AST extraction: 275/275 uncached files (100%) [32 workers]\n[graphify watch] No code-graph topology changes detected; outputs left untouched.\nCode graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.\nTip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.\n",
+    "stderr": "  warning: 1 source file(s) produced zero nodes and are absent from the graph: Cargo.toml. A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).\n"
+  }
+]

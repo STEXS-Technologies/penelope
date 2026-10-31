@@ -1,0 +1,80 @@
+{
+  "candidate": "f945a2ac05214ad432070320c799447479d1fdab",
+  "logs": [
+    {
+      "file": "candidate-msrv-workspace.log.gz",
+      "original_sha256": "f1fa6117e5c0c2a0b83c260570dd4c8318130e1d3484e440e4a6dd4924315f22",
+      "archive_sha256": "f3a1365e01fd1f9e5854bd35290ed53da105f571d619a41ce2bb656180c12425"
+    },
+    {
+      "file": "candidate-doctests.log.gz",
+      "original_sha256": "26700a1d714718521ff33ef4e2c582e1da9af702177b46e6c26c0fed5b29890e",
+      "archive_sha256": "b749a5331302b4f214f59c1aa005f8b94c74ea2913dec9082b04d76d631db7bf"
+    },
+    {
+      "file": "candidate-rustdoc.log.gz",
+      "original_sha256": "9f527e882325d36e5c0347b7aae60f47cb5afcc0b8cf3882756434a3fd756ddc",
+      "archive_sha256": "d500d5405f34cde8992312da933fbafd8f69ddf306234b861c6d0993a910ae91"
+    },
+    {
+      "file": "candidate-riscv.log.gz",
+      "original_sha256": "50255d9b66ca06d791bf8fdfab54dacb13d1334b237cbc17f50adaca1c6a18fc",
+      "archive_sha256": "4db788017ec9db3297b596c7b500a4c0bd674f40366d9996bea55e939079c119"
+    },
+    {
+      "file": "candidate-audit.log.gz",
+      "original_sha256": "3004077a93a3df63d2aed74d4b3ff3670dc47777f2e450dfe4464eb783b61f9b",
+      "archive_sha256": "0ed744f458f9b87c4ac440352a8db07c3ecd467d7694c2aaba200f84d506238e"
+    },
+    {
+      "file": "candidate-deny.log.gz",
+      "original_sha256": "4608112b22f103f40a662a33e6ab5f74c447b5b7c3018bda195d74fe23319ea2",
+      "archive_sha256": "56953c48dea557c7117fccf7ce066a36051e060f9ff32dbf3613c2da169fdfd5"
+    },
+    {
+      "file": "candidate-packages.log.gz",
+      "original_sha256": "a8a5797ad8dca97fe009c27c2e38a16a27e241239e6bea2b316ca3003a6b0961",
+      "archive_sha256": "fbcaac897df556b537ccfa5a39503d9ac817cbbd8b60198c965d0f90909d5c71"
+    }
+  ],
+  "verified_package_archives": [
+    {
+      "file": "penelope-0.2.0.crate",
+      "sha256": "a35b90ed5429041975ce9552a2de7c8246a7d088e6c55b37c8e45c91d8c3e48f"
+    },
+    {
+      "file": "penelope-core-0.2.0.crate",
+      "sha256": "d68077ce770e14e038451e51db4cb948fc76a8ed95f591391e16842e7e895acb"
+    },
+    {
+      "file": "penelope-domain-0.2.0.crate",
+      "sha256": "5268c3b8a6163aefdf7e657e608676d5d5050ecc02c75a33ab3757c75d88896f"
+    },
+    {
+      "file": "penelope-executor-0.2.0.crate",
+      "sha256": "dd1500e4153d8f7bd62691c466234fdd9fc68ac97864b4284ade59b971ad51da"
+    },
+    {
+      "file": "penelope-intent-0.2.0.crate",
+      "sha256": "94a26c0e220126db4051698c43d205cf562590eee96aa8623fd8dee6c65b940f"
+    },
+    {
+      "file": "penelope-ports-0.2.0.crate",
+      "sha256": "7ae3dbeda3d4d3207674286884e7614fffe6ddde0d57040686de0ab937269466"
+    },
+    {
+      "file": "penelope-process-runtime-0.2.0.crate",
+      "sha256": "a122313003b27a6b84563b7d1ca4eab07df0c6dd3f608ff9928637f1fb9ee716"
+    },
+    {
+      "file": "penelope-sqlite-0.2.0.crate",
+      "sha256": "f6d54697cbbd405c9b7b29eb1e37e4a463068b23386368dc3b6b143c1fe19b65"
+    },
+    {
+      "file": "penelope-statechronicle-0.2.0.crate",
+      "sha256": "b7907700cbcf92505ed9b6aa7f0fae08745d53f4a37e960f57ea954e8c01609b"
+    }
+  ],
+  "version": "0.2.0; development branch, not a tagged 0.3.0 release",
+  "scope": "Recorded checks only; chaos, performance and full requirement audit are separate"
+}

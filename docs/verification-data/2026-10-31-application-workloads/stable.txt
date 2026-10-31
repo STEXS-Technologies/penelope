@@ -1,0 +1,510 @@
+   Compiling penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/debug/deps/penelope_executor-79f0962b3d0a8d74)
+
+running 39 tests
+test entry::engine::tests::a_projection_rejects_a_definition_with_different_pinned_semantics ... ok
+test entry::engine::tests::authorized_manual_resolution_replays_compensation_or_cancellation ... ok
+test entry::engine::tests::crash_after_every_trade_event_replays_to_the_same_compensated_state ... ok
+test entry::engine::tests::decide_rejects_a_result_without_a_replayed_projection ... ok
+test entry::engine::tests::decide_routes_typed_start_and_result_inputs_without_side_effects ... ok
+test entry::engine::tests::escalated_decision_builds_a_scope_pinned_manual_review_request ... ok
+test entry::engine::tests::exhausted_retry_policy_escalates_without_a_new_action ... ok
+test entry::engine::tests::external_saga_inputs_always_require_an_accepted_input_record ... ok
+test entry::engine::tests::graph_definition_validates_references_reachability_and_terminal_edges ... ok
+test entry::engine::tests::input_to_event_preserves_the_exact_immutable_input_identity ... ok
+test entry::engine::tests::known_terminal_failure_compensates_succeeded_steps_in_lifo_order ... ok
+test entry::engine::tests::linear_definition_rejects_duplicate_and_oversized_steps ... ok
+test entry::engine::tests::live_transitions_and_event_replay_converge ... ok
+test entry::engine::tests::ordered_replay_rejects_a_sequence_gap_before_applying_events ... ok
+test entry::engine::tests::outcome_batch_binds_accepted_input_to_the_event_input_identity ... ok
+test entry::engine::tests::outcome_plan_requires_every_observed_and_planned_lifecycle_fact_in_order ... ok
+test entry::engine::tests::replay_rebuilds_the_final_projection_from_immutable_events ... ok
+test entry::engine::tests::replay_rejects_a_duplicate_accepted_input_identity ... ok
+test entry::engine::tests::replay_rejects_a_second_start_record ... ok
+test entry::engine::tests::replay_rejects_a_start_event_with_different_pinned_semantics ... ok
+test entry::engine::tests::result_for_a_different_action_cannot_advance_the_saga ... ok
+test entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy ... ok
+test entry::engine::tests::retry_backoff_is_deterministic_exponential_and_capped ... ok
+test entry::engine::tests::retry_backoff_plans_replayable_due_timer_and_rejects_early_or_duplicate_fire ... ok
+test entry::engine::tests::retry_backoff_rejects_invalid_bounds_and_due_time_overflow ... ok
+test entry::engine::tests::retry_cannot_reuse_an_issued_action_identity ... ok
+test entry::engine::tests::retry_creates_a_new_attempt_for_the_same_step ... ok
+test entry::engine::tests::retry_deadline_allows_its_boundary_and_escalates_after_it ... ok
+test entry::engine::tests::retry_jitter_is_seeded_bounded_and_replayable ... ok
+test entry::engine::tests::retry_schedule_input_preserves_the_jitter_seed_in_its_replay_event ... ok
+test entry::engine::tests::success_plans_ordered_steps_then_completes ... ok
+test entry::engine::tests::terminal_projection_preserves_reference_fields ... ok
+test entry::engine::tests::unknown_result_escalates_instead_of_blind_retry ... ok
+test entry::graph::tests::graph_escalates_unknown_without_following_an_edge ... ok
+test entry::graph::tests::graph_rejects_result_for_wrong_action ... ok
+test entry::graph::tests::graph_replay_rejects_oversized_logs_before_allocating_tracking_state ... ok
+test entry::graph::tests::graph_start_result_and_replay_converge ... ok
+test entry::graph::tests::ordered_graph_replay_rejects_sequence_gaps ... ok
+test graph_outcomes::tests::graph_outcome_plan_checks_order_scope_causation_and_sequence ... ok
+
+test result: ok. 39 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/application_workloads.rs (target/debug/deps/application_workloads-84289769a7f5c3ca)
+
+running 2 tests
+test all_workflow_paths_match_identical_business_work ... ok
+test workload::storage::tests::recovery_rejects_missing_business_result_evidence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/architecture.rs (target/debug/deps/architecture-72a244d8e3735718)
+
+running 5 tests
+test every_public_newtype_has_an_explicit_fuzz_invocation ... ok
+test fuzz_inventory_counts_executed_calls_and_ignores_imports ... ok
+test module_entry_files_contain_only_declarations_and_exports ... ok
+test module_rule_rejects_implementations_and_inline_modules ... ok
+test public_type_inventory_accepts_only_static_thread_local_declarations ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+     Running tests/definition_allocations.rs (target/debug/deps/definition_allocations-865d3070ce4cd166)
+Linear definition admission: zero allocations for valid and duplicate fixtures across the sorting threshold, short and long identifiers
+     Running tests/graph_validation_parity.rs (target/debug/deps/graph_validation_parity-246fc24105e5f91a)
+
+running 5 tests
+test arbitrary_graphs_preserve_exact_validation_errors ... ok
+test bounds_references_duplicate_keys_and_disconnected_cycles_preserve_errors ... ok
+test every_bounded_source_and_outcome_key_rejects_duplicates_with_original_precedence ... ok
+test maximum_size_branching_graph_preserves_reachability_through_cycles ... ok
+test reachable_chains_cycles_and_reordered_steps_remain_valid ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+
+     Running tests/linear_validation_parity.rs (target/debug/deps/linear_validation_parity-bc1c21eb396dfadb)
+
+running 4 tests
+test arbitrary_definitions_preserve_exact_errors_and_source_order ... ok
+test boundaries_and_mixed_invalid_fields_preserve_error_precedence ... ok
+test strictly_descending_ids_do_not_bypass_forward_or_compensation_retry_limits ... ok
+test unique_definitions_and_injected_duplicates_preserve_admission ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/supervisor_error_compat.rs (target/debug/deps/supervisor_error_compat-c0c3216cb1a3134b)
+
+running 1 test
+test hosted_error_path_variant_imports_conversions_and_exhaustive_match_still_compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_adversarial.rs (target/debug/deps/task_adversarial-ea01bc9247fb6526)
+
+running 8 tests
+test cooldown_cannot_be_bypassed_and_checkpoint_substitution_cannot_authorize_restart ... ok
+test history_and_attempt_quotas_fail_closed_before_new_authorization ... ok
+test invalid_definitions_and_incompatible_intents_never_become_pending ... ok
+test migration_rejects_foreign_task_wrong_schema_and_oversized_checkpoint ... ok
+test pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history ... ok
+test poisoned_restore_corrupt_journal_and_runtime_failure_never_claim_completion ... ok
+test premature_faults_completion_and_reconciliation_are_rejected ... ok
+test valid_replay_survives_every_prefix_and_corrupt_history_is_rejected ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_audit.rs (target/debug/deps/task_audit-cba355240b76a9c1)
+
+running 7 tests
+test foreign_or_stale_late_observations_cannot_fence_the_current_generation ... ok
+test forwarded_pending_observation_at_timeout_stops_execution ... ok
+test last_history_slot_is_reserved_for_stopping_the_generation ... ok
+test oversized_reports_stop_execution_even_when_the_buffer_is_truncated ... ok
+test persisted_input_schema_reaches_the_runtime_before_computation ... ok
+test quota_fence_failure_poisoning_never_acknowledges_a_checkpoint ... ok
+test restart_without_a_terminal_history_slot_never_dispatches ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_concurrency.rs (target/debug/deps/task_concurrency-fd214cdf0bb5214f)
+
+running 3 tests
+test competing_intents_cannot_dispatch_after_a_cas_conflict ... ok
+test delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction ... ok
+test many_competing_supervisors_commit_and_dispatch_exactly_one_execution ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/task_contracts.rs (target/debug/deps/task_contracts-3fb540a9a0452221)
+
+running 5 tests
+test checkpoint_upgrade_requires_explicit_application_authorized_import ... ok
+test malformed_history_is_rejected_without_mutating_projection ... ok
+test quotas_and_deadline_are_checked_before_new_execution ... ok
+test task_wire_v1_fixture_is_immutable ... ok
+test time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control.rs (target/debug/deps/task_control-a6f602c2d4958fd8)
+
+running 9 tests
+test ambiguous_commit_poisoning_matches_hosted_profile ... ok
+test checkpoint_proposals_require_poll_storage_larger_than_final_output ... ok
+test insufficient_workspace_does_not_commit_start_and_can_be_retried ... ok
+test lazy_dispatch_workspace_is_unused_for_wait_fault_and_recovery_decisions ... ok
+test portable_and_hosted_histories_match_through_checkpoint_and_completion ... ok
+test reconstruction_and_restart_match_hosted_profile ... ok
+test single_buffer_poll_records_timeout_without_dispatch_or_poll_storage ... ok
+test standalone_workspace_validation_admits_the_largest_declared_proposal ... ok
+test undersized_poll_workspace_preserves_worker_progress ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control_failures.rs (target/debug/deps/task_control_failures-e0af7b8ed462be4c)
+
+running 8 tests
+test corrupt_input_and_checkpoint_reads_poison_dispatch_before_user_code ... ok
+test foreign_input_admission_leaves_no_durable_mutation_and_allows_correct_retry ... ok
+test interruption_receipt_ambiguity_is_resolved_only_by_authoritative_replay ... ok
+test invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch ... ok
+test restore_read_and_clock_failures_neither_fence_nor_append ... ok
+test stale_observation_preserves_running_state_and_poll_at_deadline_records_timeout ... ok
+test unconfirmed_quota_fence_poisoning_precedes_the_proposal_error ... ok
+test zero_schema_live_output_is_fenced_without_commit_or_acknowledgement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_effect_bridge.rs (target/debug/deps/task_effect_bridge-7a0f6a3207ebadd4)
+
+running 2 tests
+test existing_effect_identity_survives_task_crash_without_changing_saga_records ... ok
+test typed_binding_rejects_each_substituted_dispatch_coordinate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_newtypes.rs (target/debug/deps/task_newtypes-ba058befaa7a7751)
+
+running 2 tests
+test scoped_identity_roles_preserve_exact_content_and_wire_values ... ok
+test task_counters_reject_wire_overflow_and_arithmetic_never_wraps ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_process_crash.rs (target/debug/deps/task_process_crash-028d0ee0c85a1058)
+
+running 3 tests
+test crash_worker ... ok
+test killed_process_recovers_only_committed_checkpoint ... ok
+test valid_json_corruption_is_rejected_by_journal_integrity_before_replay ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/task_recovery.rs (target/debug/deps/task_recovery-d6d805147fb72c3c)
+
+running 14 tests
+test checkpoint_commit_ack_loss_is_recovered_from_committed_boundary ... ok
+test committed_checkpoint_resumes_computation_after_supervisor_crash ... ok
+test corrupt_checkpoint_fails_closed_before_task_code_runs ... ok
+test crash_after_start_commit_before_dispatch_is_reconstructed_without_success ... ok
+test effect_interruption_requires_evidence_and_unknown_never_restarts ... ok
+test failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkpoint ... ok
+test independent_completion_evidence_commits_bytes_without_reexecution ... ok
+test no_commit_or_lost_acknowledgement_never_dispatches ... ok
+test oversized_input_migration_and_reconciled_output_are_rejected_before_commit ... ok
+test regressed_clock_is_rejected_before_runtime_poll_consumes_progress ... ok
+test repeated_faults_are_bounded_by_generation_quota ... ok
+test seeded_checkpoint_crash_and_persistence_chaos ... ok
+test stale_generation_and_foreign_scope_leave_state_unchanged ... ok
+test timeout_late_results_and_fence_failure_do_not_claim_success ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/task_security.rs (target/debug/deps/task_security-cebdc0d09f29c298)
+
+running 3 tests
+test all_recovery_modes_preserve_ambiguity_for_interrupted_effects ... ok
+test definition_fingerprint_pins_every_permission_and_budget_field ... ok
+test task_wire_rejects_unknown_duplicate_overflow_and_wrong_shape_fields ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_sqlite_recovery.rs (target/debug/deps/task_sqlite_recovery-a6b9b5009e19b47b)
+
+running 3 tests
+test process_death_rolls_back_or_recovers_the_whole_checkpoint_transaction ... ok
+test separate_database_connections_arbitrate_one_intent_and_reject_corruption ... ok
+test sqlite_crash_worker ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/task_verified_result.rs (target/debug/deps/task_verified_result-f36cb31f2a09d0b6)
+
+running 3 tests
+test effectful_completion_requires_matching_independent_evidence ... ok
+test pure_completion_requires_exact_output_and_resolved_application_meaning ... ok
+test result_relay_maps_to_both_engines_with_one_delivery_identity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/application_overhead.rs (target/debug/deps/application_overhead-e3c2c2297ef2bb9d)
+{"checksum":0,"direct_ns":1368065,"iterations":100000,"long_identifiers":false,"penelope_ns":63005765,"round":0,"work":0}
+{"checksum":0,"direct_ns":1151886,"iterations":100000,"long_identifiers":false,"penelope_ns":62647753,"round":1,"work":0}
+{"checksum":0,"direct_ns":1157768,"iterations":100000,"long_identifiers":false,"penelope_ns":62567137,"round":2,"work":0}
+{"checksum":0,"direct_ns":1377512,"iterations":100000,"long_identifiers":false,"penelope_ns":62552409,"round":3,"work":0}
+{"checksum":0,"direct_ns":1349069,"iterations":100000,"long_identifiers":false,"penelope_ns":62876866,"round":4,"work":0}
+{"checksum":0,"direct_ns":1295003,"iterations":100000,"long_identifiers":false,"penelope_ns":62925610,"round":5,"work":0}
+{"checksum":0,"direct_ns":1226441,"iterations":100000,"long_identifiers":false,"penelope_ns":62590673,"round":6,"work":0}
+{"checksum":0,"direct_ns":1385117,"iterations":100000,"long_identifiers":false,"penelope_ns":62852469,"round":7,"work":0}
+{"checksum":0,"direct_ns":1287660,"iterations":100000,"long_identifiers":false,"penelope_ns":62362201,"round":8,"work":0}
+{"checksum":0,"direct_ns":1201943,"iterations":100000,"long_identifiers":false,"penelope_ns":62548762,"round":9,"work":0}
+{"checksum":0,"direct_ns":1370759,"iterations":100000,"long_identifiers":false,"penelope_ns":62395977,"round":10,"work":0}
+{"checksum":0,"direct_ns":1242171,"iterations":100000,"long_identifiers":false,"penelope_ns":62606664,"round":11,"work":0}
+{"checksum":0,"direct_ns":1373065,"iterations":100000,"long_identifiers":false,"penelope_ns":62371880,"round":12,"work":0}
+{"checksum":0,"direct_ns":1318669,"iterations":100000,"long_identifiers":false,"penelope_ns":62569722,"round":13,"work":0}
+{"checksum":0,"direct_ns":1272880,"iterations":100000,"long_identifiers":false,"penelope_ns":62616332,"round":14,"work":0}
+{"checksum":0,"direct_ns":1318428,"iterations":100000,"long_identifiers":false,"penelope_ns":62549674,"round":15,"work":0}
+{"checksum":0,"direct_ns":1193557,"iterations":100000,"long_identifiers":false,"penelope_ns":62466253,"round":16,"work":0}
+{"checksum":0,"direct_ns":1259534,"iterations":100000,"long_identifiers":false,"penelope_ns":62605552,"round":17,"work":0}
+{"checksum":0,"direct_ns":1369678,"iterations":100000,"long_identifiers":false,"penelope_ns":62492102,"round":18,"work":0}
+{"checksum":0,"direct_ns":1363495,"iterations":100000,"long_identifiers":false,"penelope_ns":62313858,"round":19,"work":0}
+{"checksum":0,"direct_ns":1152939,"iterations":100000,"long_identifiers":false,"penelope_ns":62392099,"round":20,"work":0}
+{"checksum":0,"direct_ns":1149081,"iterations":100000,"long_identifiers":false,"penelope_ns":62264642,"round":21,"work":0}
+{"checksum":0,"direct_ns":1154962,"iterations":100000,"long_identifiers":false,"penelope_ns":62295322,"round":22,"work":0}
+{"checksum":0,"direct_ns":1297638,"iterations":100000,"long_identifiers":false,"penelope_ns":62412699,"round":23,"work":0}
+{"checksum":0,"direct_ns":1368365,"iterations":100000,"long_identifiers":false,"penelope_ns":62312625,"round":24,"work":0}
+{"checksum":0,"direct_ns":1254686,"iterations":100000,"long_identifiers":false,"penelope_ns":62352433,"round":25,"work":0}
+{"checksum":0,"direct_ns":1360951,"iterations":100000,"long_identifiers":false,"penelope_ns":62402739,"round":26,"work":0}
+{"checksum":0,"direct_ns":1369037,"iterations":100000,"long_identifiers":false,"penelope_ns":62589701,"round":27,"work":0}
+{"checksum":0,"direct_ns":1375860,"iterations":100000,"long_identifiers":false,"penelope_ns":62481201,"round":28,"work":0}
+{"checksum":0,"direct_ns":1184620,"iterations":100000,"long_identifiers":false,"penelope_ns":62737577,"round":29,"work":0}
+{"checksum":0,"direct_ns":1378725,"iterations":100000,"long_identifiers":false,"penelope_ns":62435022,"round":30,"work":0}
+{"checksum":0,"direct_ns":1194569,"iterations":100000,"long_identifiers":false,"penelope_ns":62601083,"round":31,"work":0}
+{"checksum":0,"direct_ns":1376100,"iterations":100000,"long_identifiers":false,"penelope_ns":62791682,"round":32,"work":0}
+{"checksum":0,"direct_ns":1223034,"iterations":100000,"long_identifiers":false,"penelope_ns":62433248,"round":33,"work":0}
+{"checksum":0,"direct_ns":1366571,"iterations":100000,"long_identifiers":false,"penelope_ns":62466442,"round":34,"work":0}
+{"checksum":0,"direct_ns":1375459,"iterations":100000,"long_identifiers":false,"penelope_ns":62589340,"round":35,"work":0}
+{"checksum":0,"direct_ns":1375559,"iterations":100000,"long_identifiers":false,"penelope_ns":62460572,"round":36,"work":0}
+{"checksum":0,"direct_ns":1325733,"iterations":100000,"long_identifiers":false,"penelope_ns":62494477,"round":37,"work":0}
+{"checksum":0,"direct_ns":1265606,"iterations":100000,"long_identifiers":false,"penelope_ns":62605912,"round":38,"work":0}
+{"checksum":0,"direct_ns":1364638,"iterations":100000,"long_identifiers":false,"penelope_ns":62560174,"round":39,"work":0}
+{"checksum":4589511652137028250,"direct_ns":31777859,"iterations":100000,"long_identifiers":false,"penelope_ns":95930332,"round":0,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31714487,"iterations":100000,"long_identifiers":false,"penelope_ns":97037822,"round":1,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31997684,"iterations":100000,"long_identifiers":false,"penelope_ns":96735949,"round":2,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31720639,"iterations":100000,"long_identifiers":false,"penelope_ns":96229439,"round":3,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31822696,"iterations":100000,"long_identifiers":false,"penelope_ns":96281319,"round":4,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31575879,"iterations":100000,"long_identifiers":false,"penelope_ns":96098115,"round":5,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31796445,"iterations":100000,"long_identifiers":false,"penelope_ns":97754458,"round":6,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31647688,"iterations":100000,"long_identifiers":false,"penelope_ns":96215022,"round":7,"work":64}
+{"checksum":4589511652137028250,"direct_ns":32060215,"iterations":100000,"long_identifiers":false,"penelope_ns":95835338,"round":8,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31780084,"iterations":100000,"long_identifiers":false,"penelope_ns":95385188,"round":9,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31913401,"iterations":100000,"long_identifiers":false,"penelope_ns":96178551,"round":10,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31594816,"iterations":100000,"long_identifiers":false,"penelope_ns":96176076,"round":11,"work":64}
+{"checksum":4589511652137028250,"direct_ns":32120351,"iterations":100000,"long_identifiers":false,"penelope_ns":95249545,"round":12,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31831052,"iterations":100000,"long_identifiers":false,"penelope_ns":94854912,"round":13,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31605116,"iterations":100000,"long_identifiers":false,"penelope_ns":95164651,"round":14,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31559016,"iterations":100000,"long_identifiers":false,"penelope_ns":94913666,"round":15,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31549498,"iterations":100000,"long_identifiers":false,"penelope_ns":95056081,"round":16,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31508599,"iterations":100000,"long_identifiers":false,"penelope_ns":94779557,"round":17,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31768261,"iterations":100000,"long_identifiers":false,"penelope_ns":94779486,"round":18,"work":64}
+{"checksum":4589511652137028250,"direct_ns":32484705,"iterations":100000,"long_identifiers":false,"penelope_ns":94772312,"round":19,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31859217,"iterations":100000,"long_identifiers":false,"penelope_ns":95591887,"round":20,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31505664,"iterations":100000,"long_identifiers":false,"penelope_ns":95484830,"round":21,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31558996,"iterations":100000,"long_identifiers":false,"penelope_ns":95566799,"round":22,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31672666,"iterations":100000,"long_identifiers":false,"penelope_ns":95595173,"round":23,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31746258,"iterations":100000,"long_identifiers":false,"penelope_ns":95820118,"round":24,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31698526,"iterations":100000,"long_identifiers":false,"penelope_ns":95367413,"round":25,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31647567,"iterations":100000,"long_identifiers":false,"penelope_ns":94926952,"round":26,"work":64}
+{"checksum":4589511652137028250,"direct_ns":32179115,"iterations":100000,"long_identifiers":false,"penelope_ns":94809194,"round":27,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31861261,"iterations":100000,"long_identifiers":false,"penelope_ns":95685578,"round":28,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31559397,"iterations":100000,"long_identifiers":false,"penelope_ns":95581516,"round":29,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31686002,"iterations":100000,"long_identifiers":false,"penelope_ns":95798116,"round":30,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31722863,"iterations":100000,"long_identifiers":false,"penelope_ns":95632987,"round":31,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31662426,"iterations":100000,"long_identifiers":false,"penelope_ns":96012109,"round":32,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31516764,"iterations":100000,"long_identifiers":false,"penelope_ns":95580155,"round":33,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31533537,"iterations":100000,"long_identifiers":false,"penelope_ns":95565676,"round":34,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31520572,"iterations":100000,"long_identifiers":false,"penelope_ns":96184342,"round":35,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31725117,"iterations":100000,"long_identifiers":false,"penelope_ns":96097014,"round":36,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31532956,"iterations":100000,"long_identifiers":false,"penelope_ns":95942024,"round":37,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31559668,"iterations":100000,"long_identifiers":false,"penelope_ns":95864133,"round":38,"work":64}
+{"checksum":4589511652137028250,"direct_ns":31639080,"iterations":100000,"long_identifiers":false,"penelope_ns":95956362,"round":39,"work":64}
+{"checksum":11693392760377137017,"direct_ns":39061779,"iterations":2000,"long_identifiers":false,"penelope_ns":47068757,"round":0,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39034257,"iterations":2000,"long_identifiers":false,"penelope_ns":46189448,"round":1,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38997335,"iterations":2000,"long_identifiers":false,"penelope_ns":46547470,"round":2,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38970303,"iterations":2000,"long_identifiers":false,"penelope_ns":46128409,"round":3,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39049997,"iterations":2000,"long_identifiers":false,"penelope_ns":46404584,"round":4,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38945445,"iterations":2000,"long_identifiers":false,"penelope_ns":46879903,"round":5,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38998197,"iterations":2000,"long_identifiers":false,"penelope_ns":46643536,"round":6,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38994018,"iterations":2000,"long_identifiers":false,"penelope_ns":46414834,"round":7,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38898243,"iterations":2000,"long_identifiers":false,"penelope_ns":46799578,"round":8,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39422797,"iterations":2000,"long_identifiers":false,"penelope_ns":46361170,"round":9,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39061639,"iterations":2000,"long_identifiers":false,"penelope_ns":45935427,"round":10,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39431795,"iterations":2000,"long_identifiers":false,"penelope_ns":46043817,"round":11,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39200758,"iterations":2000,"long_identifiers":false,"penelope_ns":46054738,"round":12,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39792412,"iterations":2000,"long_identifiers":false,"penelope_ns":46363835,"round":13,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39102689,"iterations":2000,"long_identifiers":false,"penelope_ns":46956831,"round":14,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38996213,"iterations":2000,"long_identifiers":false,"penelope_ns":46286676,"round":15,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39064885,"iterations":2000,"long_identifiers":false,"penelope_ns":46654076,"round":16,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38979671,"iterations":2000,"long_identifiers":false,"penelope_ns":46706908,"round":17,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38978058,"iterations":2000,"long_identifiers":false,"penelope_ns":46693222,"round":18,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38942510,"iterations":2000,"long_identifiers":false,"penelope_ns":46158939,"round":19,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38993657,"iterations":2000,"long_identifiers":false,"penelope_ns":46801821,"round":20,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39037292,"iterations":2000,"long_identifiers":false,"penelope_ns":46527512,"round":21,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38992757,"iterations":2000,"long_identifiers":false,"penelope_ns":46793105,"round":22,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39211830,"iterations":2000,"long_identifiers":false,"penelope_ns":46371981,"round":23,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39045147,"iterations":2000,"long_identifiers":false,"penelope_ns":46816039,"round":24,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39119591,"iterations":2000,"long_identifiers":false,"penelope_ns":46604581,"round":25,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39093862,"iterations":2000,"long_identifiers":false,"penelope_ns":46742327,"round":26,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39188835,"iterations":2000,"long_identifiers":false,"penelope_ns":46903689,"round":27,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39224334,"iterations":2000,"long_identifiers":false,"penelope_ns":46933706,"round":28,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39175450,"iterations":2000,"long_identifiers":false,"penelope_ns":46385998,"round":29,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39202622,"iterations":2000,"long_identifiers":false,"penelope_ns":47042988,"round":30,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39236467,"iterations":2000,"long_identifiers":false,"penelope_ns":46733259,"round":31,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39174127,"iterations":2000,"long_identifiers":false,"penelope_ns":47024072,"round":32,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39162455,"iterations":2000,"long_identifiers":false,"penelope_ns":46981359,"round":33,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39240766,"iterations":2000,"long_identifiers":false,"penelope_ns":46904420,"round":34,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39149319,"iterations":2000,"long_identifiers":false,"penelope_ns":46660309,"round":35,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39067701,"iterations":2000,"long_identifiers":false,"penelope_ns":46887017,"round":36,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":39063262,"iterations":2000,"long_identifiers":false,"penelope_ns":46834034,"round":37,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38960294,"iterations":2000,"long_identifiers":false,"penelope_ns":46379415,"round":38,"work":4096}
+{"checksum":11693392760377137017,"direct_ns":38994500,"iterations":2000,"long_identifiers":false,"penelope_ns":46665889,"round":39,"work":4096}
+{"checksum":7334920370759019873,"direct_ns":41298243,"iterations":128,"long_identifiers":false,"penelope_ns":44966023,"round":0,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41320947,"iterations":128,"long_identifiers":false,"penelope_ns":45161882,"round":1,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40712722,"iterations":128,"long_identifiers":false,"penelope_ns":44934101,"round":2,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41102886,"iterations":128,"long_identifiers":false,"penelope_ns":44620846,"round":3,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41399288,"iterations":128,"long_identifiers":false,"penelope_ns":44263165,"round":4,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":44775495,"iterations":128,"long_identifiers":false,"penelope_ns":45291963,"round":5,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":42008216,"iterations":128,"long_identifiers":false,"penelope_ns":45848389,"round":6,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40882479,"iterations":128,"long_identifiers":false,"penelope_ns":45765539,"round":7,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40888531,"iterations":128,"long_identifiers":false,"penelope_ns":45356929,"round":8,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40856609,"iterations":128,"long_identifiers":false,"penelope_ns":44315175,"round":9,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40882549,"iterations":128,"long_identifiers":false,"penelope_ns":45315839,"round":10,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40682162,"iterations":128,"long_identifiers":false,"penelope_ns":44281049,"round":11,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41283875,"iterations":128,"long_identifiers":false,"penelope_ns":43983283,"round":12,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40792705,"iterations":128,"long_identifiers":false,"penelope_ns":44358268,"round":13,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41049512,"iterations":128,"long_identifiers":false,"penelope_ns":44007780,"round":14,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40841029,"iterations":128,"long_identifiers":false,"penelope_ns":43951172,"round":15,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41206837,"iterations":128,"long_identifiers":false,"penelope_ns":44129065,"round":16,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40675389,"iterations":128,"long_identifiers":false,"penelope_ns":44172068,"round":17,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40828094,"iterations":128,"long_identifiers":false,"penelope_ns":43336162,"round":18,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40482536,"iterations":128,"long_identifiers":false,"penelope_ns":43911505,"round":19,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40891516,"iterations":128,"long_identifiers":false,"penelope_ns":43728310,"round":20,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40617086,"iterations":128,"long_identifiers":false,"penelope_ns":44363669,"round":21,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40597929,"iterations":128,"long_identifiers":false,"penelope_ns":45471801,"round":22,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40998203,"iterations":128,"long_identifiers":false,"penelope_ns":43204287,"round":23,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40528835,"iterations":128,"long_identifiers":false,"penelope_ns":43929049,"round":24,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40729313,"iterations":128,"long_identifiers":false,"penelope_ns":43187414,"round":25,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41104689,"iterations":128,"long_identifiers":false,"penelope_ns":43560035,"round":26,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40759892,"iterations":128,"long_identifiers":false,"penelope_ns":44517737,"round":27,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40550096,"iterations":128,"long_identifiers":false,"penelope_ns":43924861,"round":28,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40722460,"iterations":128,"long_identifiers":false,"penelope_ns":44595497,"round":29,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40793998,"iterations":128,"long_identifiers":false,"penelope_ns":44169033,"round":30,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40794629,"iterations":128,"long_identifiers":false,"penelope_ns":43838223,"round":31,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40637776,"iterations":128,"long_identifiers":false,"penelope_ns":43989235,"round":32,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40974407,"iterations":128,"long_identifiers":false,"penelope_ns":42637953,"round":33,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40448350,"iterations":128,"long_identifiers":false,"penelope_ns":44618100,"round":34,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41049322,"iterations":128,"long_identifiers":false,"penelope_ns":43738821,"round":35,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40354158,"iterations":128,"long_identifiers":false,"penelope_ns":44849148,"round":36,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41066405,"iterations":128,"long_identifiers":false,"penelope_ns":44196726,"round":37,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":41258516,"iterations":128,"long_identifiers":false,"penelope_ns":44151810,"round":38,"work":65536}
+{"checksum":7334920370759019873,"direct_ns":40819247,"iterations":128,"long_identifiers":false,"penelope_ns":43721227,"round":39,"work":65536}
+     Running benches/application_workloads.rs (target/debug/deps/application_workloads-c6d50793e68db846)
+{"calls_per_workflow":8,"case":"linear","checksum":12551457579332497020,"direct_first":true,"direct_ns":5170,"iterations_per_worker":2,"penelope_ns":48654,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"linear","checksum":12551457579332497020,"direct_first":false,"direct_ns":5160,"iterations_per_worker":2,"penelope_ns":45729,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":4,"case":"graph","checksum":13793072787089863532,"direct_first":true,"direct_ns":2625,"iterations_per_worker":2,"penelope_ns":45688,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":4,"case":"graph","checksum":13793072787089863532,"direct_first":false,"direct_ns":2616,"iterations_per_worker":2,"penelope_ns":45648,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":9,"case":"retry","checksum":10716531670032327320,"direct_first":true,"direct_ns":5771,"iterations_per_worker":2,"penelope_ns":50898,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":9,"case":"retry","checksum":10716531670032327320,"direct_first":false,"direct_ns":5751,"iterations_per_worker":2,"penelope_ns":50247,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"replay","checksum":12551457579332497020,"direct_first":true,"direct_ns":5140,"iterations_per_worker":2,"penelope_ns":69654,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"replay","checksum":12551457579332497020,"direct_first":false,"direct_ns":5160,"iterations_per_worker":2,"penelope_ns":64785,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"durable","checksum":12551457579332497020,"direct_first":true,"direct_ns":5441,"iterations_per_worker":2,"penelope_ns":87841925,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"durable","checksum":12551457579332497020,"direct_first":false,"direct_ns":6503,"iterations_per_worker":2,"penelope_ns":90074823,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"durable_replay","checksum":12551457579332497020,"direct_first":true,"direct_ns":7925,"iterations_per_worker":2,"penelope_ns":100445330,"round":0,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+{"calls_per_workflow":8,"case":"durable_replay","checksum":12551457579332497020,"direct_first":false,"direct_ns":5361,"iterations_per_worker":2,"penelope_ns":107715333,"round":1,"schema":1,"verified":true,"work":64,"workers":1,"workflows":2}
+     Running benches/definition_validation.rs (target/debug/deps/definition_validation-9d2aab3c1814ff4a)
+linear definition count=1 long=false order=ascending: 100000 operations in 6.726874ms (67 ns/op)
+linear definition count=1 long=false order=descending: 100000 operations in 6.864089ms (68 ns/op)
+linear definition count=1 long=false order=permuted: 100000 operations in 6.638393ms (66 ns/op)
+linear definition count=2 long=false order=ascending: 100000 operations in 13.97285ms (139 ns/op)
+linear definition count=2 long=false order=descending: 100000 operations in 14.067964ms (140 ns/op)
+linear definition count=2 long=false order=permuted: 100000 operations in 13.9617ms (139 ns/op)
+linear definition count=4 long=false order=ascending: 100000 operations in 37.817474ms (378 ns/op)
+linear definition count=4 long=false order=descending: 100000 operations in 38.62216ms (386 ns/op)
+linear definition count=4 long=false order=permuted: 100000 operations in 37.74771ms (377 ns/op)
+linear definition count=8 long=false order=ascending: 100000 operations in 117.390496ms (1173 ns/op)
+linear definition count=8 long=false order=descending: 100000 operations in 117.079995ms (1170 ns/op)
+linear definition count=8 long=false order=permuted: 100000 operations in 117.214204ms (1172 ns/op)
+linear definition count=9 long=false order=ascending: 100000 operations in 144.675189ms (1446 ns/op)
+linear definition count=9 long=false order=descending: 100000 operations in 153.424793ms (1534 ns/op)
+linear definition count=9 long=false order=permuted: 100000 operations in 143.676328ms (1436 ns/op)
+linear definition count=16 long=false order=ascending: 100000 operations in 410.294623ms (4102 ns/op)
+linear definition count=16 long=false order=descending: 100000 operations in 408.492439ms (4084 ns/op)
+linear definition count=16 long=false order=permuted: 100000 operations in 408.645816ms (4086 ns/op)
+linear definition count=17 long=false order=ascending: 100000 operations in 159.025549ms (1590 ns/op)
+linear definition count=17 long=false order=descending: 100000 operations in 119.200024ms (1192 ns/op)
+linear definition count=17 long=false order=permuted: 100000 operations in 284.620665ms (2846 ns/op)
+linear definition count=32 long=false order=ascending: 10000 operations in 28.30206ms (2830 ns/op)
+linear definition count=32 long=false order=descending: 10000 operations in 21.19414ms (2119 ns/op)
+linear definition count=32 long=false order=permuted: 10000 operations in 84.705974ms (8470 ns/op)
+linear definition count=64 long=false order=ascending: 10000 operations in 54.901149ms (5490 ns/op)
+linear definition count=64 long=false order=descending: 10000 operations in 41.33783ms (4133 ns/op)
+linear definition count=64 long=false order=permuted: 10000 operations in 192.284932ms (19228 ns/op)
+linear definition count=128 long=false order=ascending: 10000 operations in 108.534346ms (10853 ns/op)
+linear definition count=128 long=false order=descending: 10000 operations in 80.990261ms (8099 ns/op)
+linear definition count=128 long=false order=permuted: 10000 operations in 407.070451ms (40707 ns/op)
+linear definition count=1 long=true order=ascending: 100000 operations in 6.640576ms (66 ns/op)
+linear definition count=1 long=true order=descending: 100000 operations in 6.648472ms (66 ns/op)
+linear definition count=1 long=true order=permuted: 100000 operations in 6.647951ms (66 ns/op)
+linear definition count=2 long=true order=ascending: 100000 operations in 13.104893ms (131 ns/op)
+linear definition count=2 long=true order=descending: 100000 operations in 13.23272ms (132 ns/op)
+linear definition count=2 long=true order=permuted: 100000 operations in 13.225286ms (132 ns/op)
+linear definition count=4 long=true order=ascending: 100000 operations in 33.199427ms (331 ns/op)
+linear definition count=4 long=true order=descending: 100000 operations in 33.55796ms (335 ns/op)
+linear definition count=4 long=true order=permuted: 100000 operations in 33.132137ms (331 ns/op)
+linear definition count=8 long=true order=ascending: 100000 operations in 97.640287ms (976 ns/op)
+linear definition count=8 long=true order=descending: 100000 operations in 96.203058ms (962 ns/op)
+linear definition count=8 long=true order=permuted: 100000 operations in 96.156508ms (961 ns/op)
+linear definition count=9 long=true order=ascending: 100000 operations in 116.624505ms (1166 ns/op)
+linear definition count=9 long=true order=descending: 100000 operations in 118.273342ms (1182 ns/op)
+linear definition count=9 long=true order=permuted: 100000 operations in 116.61142ms (1166 ns/op)
+linear definition count=16 long=true order=ascending: 100000 operations in 316.097032ms (3160 ns/op)
+linear definition count=16 long=true order=descending: 100000 operations in 317.642879ms (3176 ns/op)
+linear definition count=16 long=true order=permuted: 100000 operations in 315.490398ms (3154 ns/op)
+linear definition count=17 long=true order=ascending: 100000 operations in 134.402211ms (1344 ns/op)
+linear definition count=17 long=true order=descending: 100000 operations in 106.887823ms (1068 ns/op)
+linear definition count=17 long=true order=permuted: 100000 operations in 231.664647ms (2316 ns/op)
+linear definition count=32 long=true order=ascending: 10000 operations in 23.365858ms (2336 ns/op)
+linear definition count=32 long=true order=descending: 10000 operations in 18.862022ms (1886 ns/op)
+linear definition count=32 long=true order=permuted: 10000 operations in 69.336363ms (6933 ns/op)
+linear definition count=64 long=true order=ascending: 10000 operations in 44.907741ms (4490 ns/op)
+linear definition count=64 long=true order=descending: 10000 operations in 36.423469ms (3642 ns/op)
+linear definition count=64 long=true order=permuted: 10000 operations in 158.103687ms (15810 ns/op)
+linear definition count=128 long=true order=ascending: 10000 operations in 89.404086ms (8940 ns/op)
+linear definition count=128 long=true order=descending: 10000 operations in 72.839705ms (7283 ns/op)
+linear definition count=128 long=true order=permuted: 10000 operations in 336.376343ms (33637 ns/op)
+     Running benches/graph_saga.rs (target/debug/deps/graph_saga-ea6b06049cd8769b)
+graph-saga start/result/result: 100000 operations in 416.792915ms (4167 ns/op, 239927 ops/s)
+     Running benches/linear_saga.rs (target/debug/deps/linear_saga-4cb52171ec380985)
+linear-saga start/result/complete: 100000 operations in 63.974488ms (639 ns/op)
+     Running benches/parallel_graph_saga.rs (target/debug/deps/parallel_graph_saga-f00800cf46c5779e)
+parallel graph-saga: 3200000 isolated operations across 32 workers in 973.277426ms (3287860 ops/s)
+     Running benches/parallel_linear_saga.rs (target/debug/deps/parallel_linear_saga-aefed9dccc69ccca)
+parallel linear-saga start/result/complete: 3200000 isolated operations across 32 workers in 137.520768ms (42 ns/op, 23269212 ops/s)
+     Running benches/replay_saga.rs (target/debug/deps/replay_saga-08b761465865945b)
+linear-saga replay: 1000000 logs in 1.227085246s (1227 ns/replay)
+     Running benches/task_poll.rs (target/debug/deps/task_poll-01122a1f8ec8e833)
+portable pending capacity=64: 2000000 operations in 280.581167ms (140 ns/op)
+observe pending capacity=64: 2000000 operations in 144.524789ms (72 ns/op)
+portable pending capacity=4096: 2000000 operations in 275.911369ms (137 ns/op)
+observe pending capacity=4096: 2000000 operations in 143.751744ms (71 ns/op)
+portable pending capacity=65536: 2000000 operations in 274.991841ms (137 ns/op)
+observe pending capacity=65536: 2000000 operations in 142.577664ms (71 ns/op)
+hosted pending capacity=64: 2000000 operations in 286.900102ms (143 ns/op)
+hosted pending capacity=4096: 2000000 operations in 324.51255ms (162 ns/op)
+hosted pending capacity=65536: 20000 operations in 11.541882ms (577 ns/op)
+     Running unittests examples/recoverable_task.rs (target/debug/examples/recoverable_task-350a44e31c882c4f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/saga_recoverable_task.rs (target/debug/examples/saga_recoverable_task-02a9396deae1e927)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

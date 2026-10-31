@@ -1,0 +1,1907 @@
+{
+  "format": 1,
+  "base": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+  "preserved_ref": "refs/heads/archive/reliable-execution-premerge-2026-10-31",
+  "old_tip": "7278eca1a164cf44918f63a1ae9e0b3188d8ad08",
+  "new_tip": "f34a7815de00e9aa954eca7b065b8a8c3eace1da",
+  "commit_count": 271,
+  "commits": [
+    {
+      "old": "78338af6eed8fd6baff0b419e526cbd929f36f70",
+      "old_subject": "feat: add portable task control and durable execution adapters",
+      "new_subject": "feat(execution): add portable task control and durable execution adapters",
+      "tree": "39c53731c8df12f6ebd3f1b46a9653891a090ee7",
+      "new": "cab653151907f0acff84545358c89b8d57d675d8"
+    },
+    {
+      "old": "07b6860171660426de74b45f847dd932d445fe83",
+      "old_subject": "test: exercise runtime crash recovery and unresolved fences",
+      "new_subject": "test(runtime): exercise runtime crash recovery and unresolved fences",
+      "tree": "3e37d70cc4f0a20eec446bb8dc3d9a85e1a12a3f",
+      "new": "00985ff35fea125aa6afe7bb74599635f9a0ebf8"
+    },
+    {
+      "old": "bc1c6184fedeea4fdc892ced21d7544475430aab",
+      "old_subject": "feat: bind saga dispatch identities to recoverable tasks",
+      "new_subject": "feat(executor): bind saga dispatch identities to recoverable tasks",
+      "tree": "7f3b3812777f9706bed0c57634fcb6059f8440a4",
+      "new": "70aaaca56653f384bba75fb4b2fc6d3812f41ed7"
+    },
+    {
+      "old": "0c202d337390b0896bf47814fb437ea5d31daec3",
+      "old_subject": "feat: verify task output and independent effect evidence",
+      "new_subject": "feat(executor): verify task output and independent effect evidence",
+      "tree": "e8040414c6e405cdc025139a57ec507b151793ed",
+      "new": "e9cec277e83e026fc0bccc94382a9602efb6468a"
+    },
+    {
+      "old": "2b41f83170ff4dfbb576302b407d03cdf85cd31c",
+      "old_subject": "feat: coordinate committed saga dispatch with durable task acceptance",
+      "new_subject": "feat(executor): coordinate committed saga dispatch with durable task acceptance",
+      "tree": "1b1c741f102dcdae55ed62480fcb3718ae140243",
+      "new": "7e60557dde1a06066edc03cf3f3b7762e542adf2"
+    },
+    {
+      "old": "abe287dd5d3233373dbdeee82fd86f1edc195f05",
+      "old_subject": "feat: relay verified task results through stable saga inbox identities",
+      "new_subject": "feat(executor): relay verified task results through stable saga inbox identities",
+      "tree": "f1c56700694340f8528389cdcd1408eb8f127763",
+      "new": "2cb636eb90acb4e2968c4b4fc1950f1fd83cadf5"
+    },
+    {
+      "old": "d58d21b19a19a8821567b0d7ebaa84ef94db6c14",
+      "old_subject": "feat: retain scoped process payloads for durable event replay",
+      "new_subject": "feat(sqlite): retain scoped process payloads for durable event replay",
+      "tree": "c41afe1366ffcb1739d9ae7db92dddbc1dd4c0dc",
+      "new": "74b76ebffdc5f98658efa8995c5b7a3ffa17a0a6"
+    },
+    {
+      "old": "228a82ab4b6332d6cb76caa2c56837a5c925b3ad",
+      "old_subject": "feat: validate graph outcome plans and replay complete task-backed sagas",
+      "new_subject": "feat(executor): validate graph outcome plans and replay complete task-backed sagas",
+      "tree": "1113342eec75a0b53888361430d20d4a8103a50b",
+      "new": "ca6057f317f3bbe6cdea54791ceda831d17ee5dd"
+    },
+    {
+      "old": "8da977a41949f1eb3c0620b169d609c8c0adbaa0",
+      "old_subject": "feat: recover acknowledged task intents and test saga coordinator crashes",
+      "new_subject": "feat(executor): recover acknowledged task intents and test saga coordinator crashes",
+      "tree": "8c23d48121c046f256b576d176e25c70c3e27c47",
+      "new": "1c09493ef06dc1a0cb13e5bb3c3c9a833e449601"
+    },
+    {
+      "old": "af2268a39ad43fe25526d7f5d94ae90018d6438c",
+      "old_subject": "feat: add bounded authorized task and timer service drivers",
+      "new_subject": "feat(executor): add bounded authorized task and timer service drivers",
+      "tree": "7ba5b8bc1d989c885442981129310635b14bec1b",
+      "new": "589575bc8cb5088b14c2600e31a70aabb1143d09"
+    },
+    {
+      "old": "444d1f5cbae09b1b792683a97cab593e01752d8c",
+      "old_subject": "feat: dispatch leased outbox work and authorize verified result relay",
+      "new_subject": "feat(executor): dispatch leased outbox work and authorize verified result relay",
+      "tree": "b2ffac9b74b2211d530d1b0611cd74bd90ce5e6a",
+      "new": "5b91bd6eb0507a7b62168521aecea362ae97fffc"
+    },
+    {
+      "old": "730085b97264fae7f8240e0b1a35d6def92b35a6",
+      "old_subject": "feat: add executable supervised saga reference and CI smoke check",
+      "new_subject": "feat(executor): add executable supervised saga reference and CI smoke check",
+      "tree": "2164b0a9da5791d9a7704327558f34342c242b6d",
+      "new": "93479c2cf528b32d540c4721e781c993ef63b01d"
+    },
+    {
+      "old": "45b5c2e46061897088dc1b5526a2f1b641d77c2a",
+      "old_subject": "test: fuzz bounded worker IPC and checkpoint acknowledgements",
+      "new_subject": "test(runtime): fuzz bounded worker IPC and checkpoint acknowledgements",
+      "tree": "3b1769862d9812c3eaa60d30b2a03b34d8e4266b",
+      "new": "75601420c5600819f9d67c6038d166d6b7eb4f4f"
+    },
+    {
+      "old": "548bacfe1142359ae562da325f009fe35a7a2275",
+      "old_subject": "test: fuzz durable SQLite task generation authority",
+      "new_subject": "test(sqlite): fuzz durable SQLite task generation authority",
+      "tree": "e0aeeac3d33a481585eb4454b066e0058d4472cb",
+      "new": "3dcd72ff1fe6beac0627da8183461dfe081e0541"
+    },
+    {
+      "old": "b3e99989f6200d2cf309e72520bd18cb65ee613b",
+      "old_subject": "test: verify Linux memory limits and syscall escape rejection",
+      "new_subject": "test(runtime): verify Linux memory limits and syscall escape rejection",
+      "tree": "e32d582f7fc06198f6fa601906f6601707471a19",
+      "new": "2b1802bc5dfbfeb930e0781bec805557e3295dac"
+    },
+    {
+      "old": "e3c51d8cb3cc9f2dd82b1f21ec4e3ddf40c9df21",
+      "old_subject": "feat: add executor saga checkpoint recovery example",
+      "new_subject": "feat(executor): add executor saga checkpoint recovery example",
+      "tree": "082fbf0146726745c56bf287f48f23fc8f1b598f",
+      "new": "364954a6b62040c6461816a1ddf994a7c3e4c9a3"
+    },
+    {
+      "old": "3e8c2e51e1d7117867b37fd79721d5a780276e60",
+      "old_subject": "test: cover worker protocol admission and pipe failures",
+      "new_subject": "test(runtime): cover worker protocol admission and pipe failures",
+      "tree": "85b4bf5d2e3b41c1fb9def3ac907c9a1d986c056",
+      "new": "b8b8784ecd05876f83e29f34153a870873f10b97"
+    },
+    {
+      "old": "0b797c7dfeeca56cebc532226a05e1a210bc40cd",
+      "old_subject": "test: verify durable SQLite lease failure and cancellation paths",
+      "new_subject": "test(sqlite): verify durable SQLite lease failure and cancellation paths",
+      "tree": "f3eb57d10179a4d90708bf615d1a879c93d85a24",
+      "new": "57c5b3be820dfd1c31ebdbc72ce5fae953235c2f"
+    },
+    {
+      "old": "a383ac14ab7bf1a5a8f9e26e878085b27157056e",
+      "old_subject": "fix: preserve idempotent starts at Linux worker capacity",
+      "new_subject": "fix(runtime): preserve idempotent starts at Linux worker capacity",
+      "tree": "fb00b6fc8a4b883d96520182e7710087586ff6ab",
+      "new": "4712ae5e2bdbbda6c26fc5658f662a5f0dbcc97b"
+    },
+    {
+      "old": "a3ba707ef6a9ecb58a797aab646a85a81a7f44b5",
+      "old_subject": "test: reject malformed service batches and recover ambiguous timer writes",
+      "new_subject": "test(runtime): reject malformed service batches and recover ambiguous timer writes",
+      "tree": "4faed671d9aca08bc15c77b82e1deebf8008c9b7",
+      "new": "04bb382a6d73585ecdedf8624522ffa6fcb43005"
+    },
+    {
+      "old": "00d1785f482c60919333afef0e5ffa77821fcb2d",
+      "old_subject": "feat: discover durable pending inbox inputs for host recovery",
+      "new_subject": "feat(sqlite): discover durable pending inbox inputs for host recovery",
+      "tree": "c0ca8eb850fbe8e4751b82c6c8575e89dfebaef9",
+      "new": "62059c3f9fb9a8d8683e3bce513dbaae508b24d8"
+    },
+    {
+      "old": "28268a2817d9316ff5770d42ecb666606e563b43",
+      "old_subject": "test: drive discovered timer inputs through durable saga retry",
+      "new_subject": "test(executor): drive discovered timer inputs through durable saga retry",
+      "tree": "fcabd6659f92755eab3575f7177d508c93c8a918",
+      "new": "b574f392543e9fb7123305ed6b2e2b21974f00ca"
+    },
+    {
+      "old": "d1f272b8303dc033ed99fafef5b73be4b15ef2b1",
+      "old_subject": "test: recover graph timer inputs into verified retry tasks",
+      "new_subject": "test(executor): recover graph timer inputs into verified retry tasks",
+      "tree": "26472852acfc75cceadd3d34a7d252a19edb0107",
+      "new": "e04e6dd8317cdd5efaeadae9995cdc5c5a15c9d3"
+    },
+    {
+      "old": "685b10d6a2db280be39edb89014974a4a9d616d8",
+      "old_subject": "feat: combine checkpoint state verification with exact record binding",
+      "new_subject": "feat(statechronicle): combine checkpoint state verification with exact record binding",
+      "tree": "f0629a72f0d80c0a189a04dc21141276612dffe4",
+      "new": "5d5cda4baa65d6cdec5bed909886c88a86386ce7"
+    },
+    {
+      "old": "9dfee82658680e7789047d816b5f47fa75439aeb",
+      "old_subject": "test: gate protected worker checkpoint acknowledgements on verified state",
+      "new_subject": "test(runtime): gate protected worker checkpoint acknowledgements on verified state",
+      "tree": "2f1aa5410fee76b4164e565d8d490dfa2b1d62ee",
+      "new": "9d1fa8b2f1fe508e1212d7ab175cfcc274f91d28"
+    },
+    {
+      "old": "6ab93e9888fc8a21357e9828eb0dd35b322ea6eb",
+      "old_subject": "test: recover effectful linear and graph sagas through reconciliation",
+      "new_subject": "test(executor): recover effectful linear and graph sagas through reconciliation",
+      "tree": "7ebb141aff18355c9d34ae94c2bd34e214fc467f",
+      "new": "0a658b93af1aed03ff6c0863e817cb529744c985"
+    },
+    {
+      "old": "824d81f9732854fc4cd8d0e031760666251d14db",
+      "old_subject": "test: kill effectful saga coordinators across reconciliation boundaries",
+      "new_subject": "test(executor): kill effectful saga coordinators across reconciliation boundaries",
+      "tree": "b0e2427909d6e2fa577b13d771ad18ccfd806459",
+      "new": "9e8f50e670b082e89adf376555078c13641f4c4e"
+    },
+    {
+      "old": "4f35d4b0cc812a76e3356e8199935c514b1d2b40",
+      "old_subject": "test: fuzz durable SQLite process and delivery invariants",
+      "new_subject": "test(sqlite): fuzz durable SQLite process and delivery invariants",
+      "tree": "8abb91a4382a57398054ba7112f5a75452810483",
+      "new": "a20a8d86e23ae1f3fb9d1ced491b32d71d290802"
+    },
+    {
+      "old": "ddadbed024527d97ec3c607c799703e102954bcf",
+      "old_subject": "fix: verify exact inbox consumption and source evidence on commit retries",
+      "new_subject": "fix(sqlite): verify exact inbox consumption and source evidence on commit retries",
+      "tree": "fbf25978da587489e69c9de34ea59128cf3d705a",
+      "new": "4a749b7db2087bcd07fd3e40c0a6563e95b3e3db"
+    },
+    {
+      "old": "6bbc16f8db77ddef006820c651a0a1bf8764350d",
+      "old_subject": "perf: record reproducible SQLite append replay and delivery baseline",
+      "new_subject": "perf(sqlite): record reproducible SQLite append replay and delivery baseline",
+      "tree": "87d1723ff5317a7ee81f1c8f597da4d5c9cabae9",
+      "new": "c41fb2fea33fd0beddd76edab8442ccefa7de7e7"
+    },
+    {
+      "old": "f195a836198ce57e2c420c606975394ace2dccc3",
+      "old_subject": "test: verify signed StateChronicle event batches through SQLite process commits",
+      "new_subject": "test(sqlite): verify signed StateChronicle event batches through SQLite process commits",
+      "tree": "a7f3b0172e04d53d2b251a119c14a17543100631",
+      "new": "cf480273a6f0955a2b90be24a53974cc9edb7f8d"
+    },
+    {
+      "old": "547ca9844ec1c423dbb2eca564670948f81c8bba",
+      "old_subject": "test: qualify PID reuse and unconfirmed process fence recovery",
+      "new_subject": "test(runtime): qualify PID reuse and unconfirmed process fence recovery",
+      "tree": "9bc484adcbd602dffed7284202cc37769590fdc4",
+      "new": "e7dc48393dd728d2706ed15291e8f56c4ee717f7"
+    },
+    {
+      "old": "b9fe0cdc6dcda12c65af0c6db552da4537eef948",
+      "old_subject": "test: recover timer delivery and saga decisions after coordinator kills",
+      "new_subject": "test(executor): recover timer delivery and saga decisions after coordinator kills",
+      "tree": "851c4204b286db2891dc3f2416b4a9ca75ff34eb",
+      "new": "17857b99d5d31ba0b690889f7f19fd669fa87aea"
+    },
+    {
+      "old": "209a3b768709200393954211324a2ad2214ad30f",
+      "old_subject": "fix: validate durable index bindings before issuing SQLite leases",
+      "new_subject": "fix(sqlite): validate durable index bindings before issuing SQLite leases",
+      "tree": "58fa689c51494d1e7dec438b983eeeab0f975dce",
+      "new": "a6c837808072e636e3e64650438525eb7d4d1a96"
+    },
+    {
+      "old": "2c0caa17922a40bd8a0cac38643225b72ff1e944",
+      "old_subject": "fix: verify durable lease evidence before acknowledgement and renewal",
+      "new_subject": "fix(sqlite): verify durable lease evidence before acknowledgement and renewal",
+      "tree": "18dd88ea5f46d894b20faed13e76fde2549d21cb",
+      "new": "3f1984bbd1b96dd3df12292f9814fac114de6a02"
+    },
+    {
+      "old": "1aedbaeadf2a9a8f1f657a05b97d06921206c30d",
+      "old_subject": "test: qualify portable control recovery failure boundaries",
+      "new_subject": "test(core): qualify portable control recovery failure boundaries",
+      "tree": "43c272b279c68a7b8103bc0edbdf5325a83e27e9",
+      "new": "3786592fe901de23956b6475536144ca09588c1f"
+    },
+    {
+      "old": "dd9d2628bf73a658d74b2ac417aa6d8015e3d1b3",
+      "old_subject": "perf: record pinned before-after saga and contract benchmarks",
+      "new_subject": "perf(executor): record pinned before-after saga and contract benchmarks",
+      "tree": "0fca7b2ca4a0a7ab986d5760b75decd033b747a8",
+      "new": "40d5d4ca963bac5948a5ff14486291f45536f4a1"
+    },
+    {
+      "old": "47fe4310da0df7305d837044dda2b2e22d915b58",
+      "old_subject": "perf: investigate parallel saga variance with paired hardware counters",
+      "new_subject": "perf(executor): investigate parallel saga variance with paired hardware counters",
+      "tree": "9941a14cc171876bc21497431e23470b050e1b62",
+      "new": "d80cc68d70198f28b1af511f374d4f6407593fc4"
+    },
+    {
+      "old": "aae51bb3c63b3df95bec10cab59877dbb5d1efd8",
+      "old_subject": "test(core): assert allocation-free task control recovery paths",
+      "new_subject": "test(core): assert allocation-free task control recovery paths",
+      "tree": "e9bb487dacb6122fe5e0f65eb8eb176c9aaa171a",
+      "new": "3706375e45d7d71ffdeef21fc427d4cdabf8561f"
+    },
+    {
+      "old": "d982bbe41cdee4f4b18c69392bd76b8cc4f52353",
+      "old_subject": "test(core): record calibrated portable task memory observations",
+      "new_subject": "test(core): record calibrated portable task memory observations",
+      "tree": "4ff290c4133589c493543c93edf735b1c280521d",
+      "new": "7f7a0c093714650ff4c2fd70bff6786902de90a1"
+    },
+    {
+      "old": "4a2bdcdbade412b9a00402ebe30293f7349efc4e",
+      "old_subject": "test(integration): drive real-worker sagas from signed canonical events",
+      "new_subject": "test(integration): drive real-worker sagas from signed canonical events",
+      "tree": "584f42ca67ed663bfb77a08e80f8728568e90335",
+      "new": "f4d76d9e696aade1090fc054e47c9891d77c5ea5"
+    },
+    {
+      "old": "9039c09b214b5388ba39d282409f4b51e071e683",
+      "old_subject": "test(integration): kill and recover signed-source saga coordinators",
+      "new_subject": "test(integration): kill and recover signed-source saga coordinators",
+      "tree": "52c29e37f6d33df752f091cb8328e030d7aeafe9",
+      "new": "f6c36be7ca25ea565eba93a1390cdad93e20d3eb"
+    },
+    {
+      "old": "1c1b9b29ce67f26b8a4cfb0a80a531e22fdd2e89",
+      "old_subject": "test(runtime): qualify isolated child setup and restore coverage gate",
+      "new_subject": "test(runtime): qualify isolated child setup and restore coverage gate",
+      "tree": "29c61c96eafee1087531b68769857ad989469d08",
+      "new": "cbf9f0f6247bed16a210a3b609787b966e6be57c"
+    },
+    {
+      "old": "56f03cf23e3b821413f3fca45bf8c04af7ff0331",
+      "old_subject": "perf(runtime): measure durable real-worker dispatch and checkpoint ACK",
+      "new_subject": "perf(runtime): measure durable real-worker dispatch and checkpoint ACK",
+      "tree": "99fe17fa09096c762c465ad8c8a3fa7bb03aa67c",
+      "new": "1c9cb834a9dd31379164ec300bac366e987cbf58"
+    },
+    {
+      "old": "2223a31457c3561b0f393fd88a3c93cf253a5b5c",
+      "old_subject": "test: verify signed checkpoint state proofs before worker ACK",
+      "new_subject": "test(runtime): verify signed checkpoint state proofs before worker ACK",
+      "tree": "bcd239e5866f7866dfffac8537fa170ce64beef2",
+      "new": "e17ad35b66c756ddce5ef98acec6830b1f8d8e09"
+    },
+    {
+      "old": "0350d877aafd38dc5062daf323fede6407b15e2b",
+      "old_subject": "docs: distinguish reliable execution development from 0.2 release",
+      "new_subject": "docs(release): distinguish reliable execution development from 0.2 release",
+      "tree": "ab3cb57e8707438b605322dafdd141558a6f59ca",
+      "new": "ba68730878c16e0f260a93a791b89f8391b50080"
+    },
+    {
+      "old": "d98b2f155b17b0bf9e1df0d9e0d18b04d749f296",
+      "old_subject": "docs: retain current release verification evidence and open gates",
+      "new_subject": "docs(release): retain current release verification evidence and open gates",
+      "tree": "e59a15f2f4e7b2b107c4a1ba46d8feac3224ae79",
+      "new": "5f197dd4646f694c2b8fa83b0ea418a73ece1110"
+    },
+    {
+      "old": "6eab22c90160e2294edfb146d09289bb3c70ff10",
+      "old_subject": "test: add hosted memory comparison and retain stress campaign diagnostics",
+      "new_subject": "test(execution): add hosted memory comparison and retain stress campaign diagnostics",
+      "tree": "2af422b3a1e50730d36e90dc178857a608a0dff8",
+      "new": "9f27c749eecc1807f72671b7bb22cab51d8a7164"
+    },
+    {
+      "old": "07f6f0469f8b98e9b91280d18097d633889e04fd",
+      "old_subject": "test: arbitrate competing real supervisor processes through SQLite",
+      "new_subject": "test(sqlite): arbitrate competing real supervisor processes through SQLite",
+      "tree": "836db6c76552faa5704e1baee6140938e5aefae1",
+      "new": "506c468e7c373c0c4e7030897a7b9fc8cdc9e3dd"
+    },
+    {
+      "old": "683b90e41ee696aa009c865cb7a1542e8bb3b2a2",
+      "old_subject": "fix: preserve legacy input and authorization enum discriminants",
+      "new_subject": "fix(domain): preserve legacy input and authorization enum discriminants",
+      "tree": "e8240968d68363012e62fc1c8f20d88bf16c452d",
+      "new": "018169eb47ba59bb5e3137a4172fae53ebfb100e"
+    },
+    {
+      "old": "0c9c40089221a33137a4613a06e7a2a64d17670d",
+      "old_subject": "test: kill schema migrations and retain hosted memory regression evidence",
+      "new_subject": "test(sqlite): kill schema migrations and retain hosted memory regression evidence",
+      "tree": "0ed433187196602df70b275508a4733816b93615",
+      "new": "0c29dc0de9f3711c991654508f4eabb287dd7723"
+    },
+    {
+      "old": "cae9e9c6adcb85311d8749cbe4d86bc0746cfbce",
+      "old_subject": "docs: preserve raw profiler stderr in compressed evidence archives",
+      "new_subject": "docs(verification): preserve raw profiler stderr in compressed evidence archives",
+      "tree": "7a4ba7654aec9f595b44ffa478e184a19396caa0",
+      "new": "713d7fc545a28071f53290b55dea6ef45d3489ca"
+    },
+    {
+      "old": "24c02fadb9f0080bfe5e0eb1a797ad0d19726fb1",
+      "old_subject": "fix: borrow only dispatch or poll storage in task supervision",
+      "new_subject": "fix(executor): borrow only dispatch or poll storage in task supervision",
+      "tree": "00d736de1b9f8429e665506472e96e2dd2fbc2c8",
+      "new": "07ddccfa7ccc00a2eeb9f55725c99e08e2ea3f3e"
+    },
+    {
+      "old": "045c99c49d58b5826609cd60d27663dd7312fe9f",
+      "old_subject": "docs: retain hosted buffer follow-up measurements",
+      "new_subject": "docs(verification): retain hosted buffer follow-up measurements",
+      "tree": "840a322625590bfb446d8f5e07c87d04b751e654",
+      "new": "f4340df27fb90505fd290c3b1fec32b0d4461b56"
+    },
+    {
+      "old": "459f485f7e78185e37f9235e4cee052b8bf2b226",
+      "old_subject": "docs: retain task buffer qualification checks",
+      "new_subject": "docs(release): retain task buffer qualification checks",
+      "tree": "cbccb516d3b4ed9f6ea04fe3c3b344e54b970a27",
+      "new": "5b45503dbd72cb61ef9db8e7b505f6ab8ef4c62e"
+    },
+    {
+      "old": "b5cd8367f5eace3a82b49ea40f169afd4323771c",
+      "old_subject": "perf: initialize dispatch workspace only for execution starts",
+      "new_subject": "perf(executor): initialize dispatch workspace only for execution starts",
+      "tree": "e5a6d764b60859cc674e63cd466dbc219f54ea6f",
+      "new": "68cc6e22083ab5bbce9ebd8a0079d703d5e34b6c"
+    },
+    {
+      "old": "4306d8029e84ddb699143b2aee2221ad7cede70a",
+      "old_subject": "docs: record lazy workspace correctness checks",
+      "new_subject": "docs(verification): record lazy workspace correctness checks",
+      "tree": "5be726ce52ed3786b0e05dad958e5a2062320fb6",
+      "new": "b4ca411cb244f14b32e7fede44a62f08041fb40a"
+    },
+    {
+      "old": "fc446a74106621fbc586ee12d8c92cf7607b82bc",
+      "old_subject": "docs: record lazy dispatch performance and remaining regressions",
+      "new_subject": "docs(verification): record lazy dispatch performance and remaining regressions",
+      "tree": "3876a875601029a49554da12f5407b0c5a0e7dda",
+      "new": "8548e9f60c66573ac5e2f1d35fad36a4e20ee513"
+    },
+    {
+      "old": "0fac62a7a2681800e68b27b11b62ffef28d10b20",
+      "old_subject": "perf: retain scoped stack frames for hosted task buffers",
+      "new_subject": "perf(executor): retain scoped stack frames for hosted task buffers",
+      "tree": "35f1660f860c2cd6b1999c8e16048c0e858e50ec",
+      "new": "4a64fa8ee2478b50d4d500028025634b45b6a77f"
+    },
+    {
+      "old": "56ec7f8679f01feff26422fddd70910fde122161",
+      "old_subject": "docs: add reliable execution operating procedures",
+      "new_subject": "docs(verification): add reliable execution operating procedures",
+      "tree": "001bde9f4de5ad373f95a96f9b9a99d8174d2e16",
+      "new": "5fe687dfc409ad6640d01e88798626ab4bd9e637"
+    },
+    {
+      "old": "6912f6ddf0edac7ebf9bc8644cd6498f8fcd324e",
+      "old_subject": "docs: retain scoped hosted buffer measurements",
+      "new_subject": "docs(verification): retain scoped hosted buffer measurements",
+      "tree": "f39125f49940d52baba2f28208d44a7c6309f198",
+      "new": "e8d0d0811c4ef9fb245d34189852c1965b9f92da"
+    },
+    {
+      "old": "7d2a2b9beb87e1e7f6a6f5170037b012de9b0cdb",
+      "old_subject": "perf: reconstruct task projections through borrowed adapters",
+      "new_subject": "perf(core): reconstruct task projections through borrowed adapters",
+      "tree": "c18a0b863979b422dbb24b2ba7e18d228aa6956e",
+      "new": "a5cbc728cb5c65036e33562d73aeaedee9a510fe"
+    },
+    {
+      "old": "98b07f3e167e1077b71bf0faa04555c89d475715",
+      "old_subject": "docs: retain borrowed task reconstruction checks",
+      "new_subject": "docs(verification): retain borrowed task reconstruction checks",
+      "tree": "10ec07d71ead6f419a8fe4e23dff055fe03f0b9a",
+      "new": "aa4fc07d68629d92d533fb7b4cc51b1044e5f239"
+    },
+    {
+      "old": "7d117bdcc8e7a9110ed80f008ed421a544e99163",
+      "old_subject": "docs: record resolved hosted stack regression evidence",
+      "new_subject": "docs(verification): record resolved hosted stack regression evidence",
+      "tree": "a3e1ab9489a24d145ca75ffffa019c34cdd9c1ca",
+      "new": "76247bf1c7167aa76e1eb818c61eaa61a892110c"
+    },
+    {
+      "old": "f945a2ac05214ad432070320c799447479d1fdab",
+      "old_subject": "test: reject completed worker relay crossing saga cancellation",
+      "new_subject": "test(runtime): reject completed worker relay crossing saga cancellation",
+      "tree": "e6915f045e0c37ffaed87671537b90ff445e1d49",
+      "new": "3d5430aca64793384c1c3b6bcdf75fd6ad72bbb9"
+    },
+    {
+      "old": "38d4b1f41ac5e9bad8ec59ff98a68d8b075c10bf",
+      "old_subject": "docs: retain current candidate MSRV and package verification",
+      "new_subject": "docs(verification): retain current candidate MSRV and package verification",
+      "tree": "1a5bf553db9a2fc27d73433484c332ff2add6526",
+      "new": "5c9b540122160172a4d53042863812af2dcdc354"
+    },
+    {
+      "old": "b1407e86aa38b369da3af02e1e80210390e61549",
+      "old_subject": "bench: verify SQLite file cache state before replay",
+      "new_subject": "perf(sqlite): verify SQLite file cache state before replay",
+      "tree": "ea1dc0556ee2418ac901e4610ab22965e5672b76",
+      "new": "73eea9c931850f9fe271c61c297c1d267ea1dd4f"
+    },
+    {
+      "old": "0162c19ad8c15f3e0d559f919b6ccee8caa347f4",
+      "old_subject": "bench: retain compiler task frame inventory and calibration",
+      "new_subject": "perf(execution): retain compiler task frame inventory and calibration",
+      "tree": "b183212ffe6764a1d6b23412b2fd1044fb1374b4",
+      "new": "8e9af5036f2b7547c462ce767be952fe6cdefedc"
+    },
+    {
+      "old": "2ed17b30d8bbbd10dcf9c1484327f2116de334e1",
+      "old_subject": "Qualify fixed-port RISC-V stack and SQLite file-cache replay",
+      "new_subject": "docs(sqlite): qualify fixed-port RISC-V stack and SQLite file-cache replay",
+      "tree": "4e227593fd8b3aadcea7a986dd2888d3ed2057c3",
+      "new": "b03655472c286fd79c08bad02a76022dfb761cb8"
+    },
+    {
+      "old": "c1279f3918ffdb13a73174e023cc697f03e6e44c",
+      "old_subject": "Fix clean-runner examples and isolate upstream conformance workspace",
+      "new_subject": "fix(ci): clean-runner examples and isolate upstream conformance workspace",
+      "tree": "ad4ff3953388ff2a6bbdf5d035ee008bf6afc7f5",
+      "new": "1e9e65cab80523534b7e2f59d38e9c1881a73864"
+    },
+    {
+      "old": "c95a8036f0caa94664f83df9fd39c703d772cbec",
+      "old_subject": "Record clean-runner CI and qualified reference-profile evidence",
+      "new_subject": "docs(verification): record clean-runner CI and qualified reference-profile evidence",
+      "tree": "7ff7d565bf15ac71ef87eba1ce3125c61466c263",
+      "new": "5a7117b3f754ce4357232be8bda20c9d6b699874"
+    },
+    {
+      "old": "a15adf3ab495b34a2e5a24a629d5dcec3bf48da0",
+      "old_subject": "Account for static image memory in the portable reference profile",
+      "new_subject": "docs(core): account for static image memory in the portable reference profile",
+      "tree": "eab17d5f98c9aa667fbf3217dee261502c599233",
+      "new": "762d1263a81c19b16ecedbfeeb54065663442f76"
+    },
+    {
+      "old": "50fec4ee9dd58733199d48ba36f7075c056e06ea",
+      "old_subject": "Restrict worker executable loading to the sealed bootstrap descriptor",
+      "new_subject": "docs(runtime): restrict worker executable loading to the sealed bootstrap descriptor",
+      "tree": "16ea91e62c163aa3c7f1de33264096435be33c85",
+      "new": "7591f0ecd2cd2cac6035cc774f6c5201e7c8f956"
+    },
+    {
+      "old": "2e7a05479f9b5b4ff9c0f0f7fd8fa7fa7b902ce6",
+      "old_subject": "Verify rejected worker bootstrap and retain remote qualification results",
+      "new_subject": "docs(runtime): verify rejected worker bootstrap and retain remote qualification results",
+      "tree": "b5562f6046e6b68529e0681f96c9f0c0394139f3",
+      "new": "ff38557f92842513fcd60f619570975d36701fe4"
+    },
+    {
+      "old": "afc5648d9751a1d585cbf5b9e5fbbf15c2e61359",
+      "old_subject": "Cover synchronous and asynchronous unloadable worker failures",
+      "new_subject": "docs(runtime): cover synchronous and asynchronous unloadable worker failures",
+      "tree": "b20ae62278025f3b5c3421ef0f48bb3ab9c4d1a6",
+      "new": "46191637b2cdbb0679730221f8675c6577ef9f9a"
+    },
+    {
+      "old": "0f4080beccbb0c54d93bf811de354106ebd2fe6a",
+      "old_subject": "Record passing cross-kernel worker recovery checks",
+      "new_subject": "docs(runtime): record passing cross-kernel worker recovery checks",
+      "tree": "4dd3e8e6bcfb8bf98ad43ae61cd49f55a74dac57",
+      "new": "4349e5f95b68d6be66875066c6ba66c8a5dbf609"
+    },
+    {
+      "old": "1a5ab5e65a089aa0d8b31ad6deb9007e1ef99dd0",
+      "old_subject": "Prepare 0.3.0 candidate with completed qualification evidence",
+      "new_subject": "docs(release): prepare 0.3.0 candidate with completed qualification evidence",
+      "tree": "9a2fa9d5ec3eeac55246d6e56a7d6da165c582eb",
+      "new": "1b7d00457ff3a2824a46ddf61bd6be8b97c9c845"
+    },
+    {
+      "old": "16e3e1e3e3c7038aea4f3708cb9cc519fedaf664",
+      "old_subject": "Align fuzz workspace dependencies with 0.3.0 candidate",
+      "new_subject": "docs(release): align fuzz workspace dependencies with 0.3.0 candidate",
+      "tree": "82f9fd0ae7868ff90866c8217aa0a2f7fd1ea7b7",
+      "new": "5e498a2c7b3d240853e120333122c9482b78631a"
+    },
+    {
+      "old": "b2e815f9b8a1be31abed364876f00952849e840b",
+      "old_subject": "Record completed 0.3.0 qualification and deployment limits",
+      "new_subject": "docs(release): record completed 0.3.0 qualification and deployment limits",
+      "tree": "bc430f5882038dd6b826376dce8195065bfae996",
+      "new": "4d75db0737bf49a3b795594798d2393ead97b724"
+    },
+    {
+      "old": "7feecf30379a8f4f345d181e66b8a64e72ee3c79",
+      "old_subject": "Avoid discarded identity clones in graph result projections",
+      "new_subject": "perf(executor): avoid discarded identity clones in graph result projections",
+      "tree": "cdeab6e84d8cb24772588bf6a41b85bcdf29e7c4",
+      "new": "b07f0cafa0b5e432d008e9482760a011535d626a"
+    },
+    {
+      "old": "c6ca7d5d8bde9bbbdc734403993c0fb6c6e6720b",
+      "old_subject": "Reserve successor capacity when cloning graph action history",
+      "new_subject": "docs(executor): reserve successor capacity when cloning graph action history",
+      "tree": "054dcd8cb6504034418be356b4b5c536fa68c045",
+      "new": "909b3e9a7c85675bba41e50b10f009888aa5493e"
+    },
+    {
+      "old": "edf11943113b7a65b80b9fae5c3ac43ebcef2da9",
+      "old_subject": "Reduce graph validation allocations with indexed reachability",
+      "new_subject": "docs(executor): reduce graph validation allocations with indexed reachability",
+      "tree": "d4641c61ec52ce07fdf989a36499efdbbaf41305",
+      "new": "41577eaff4695e9bb9de1e966ba285e965d5273c"
+    },
+    {
+      "old": "495451fc427231ee916d32e02ab8ee617d130941",
+      "old_subject": "Publish arbitration test markers atomically",
+      "new_subject": "docs(release): publish arbitration test markers atomically",
+      "tree": "e4cfd833448a1c3e1fc049be256a5a61c600dc00",
+      "new": "e8de955780d1357f1c3f5377f598be73c32b2f95"
+    },
+    {
+      "old": "92d64f19bdbc2c72c83405ce35df2dbb25ee9491",
+      "old_subject": "Record graph optimization measurements and refreshed qualification",
+      "new_subject": "docs(executor): record graph optimization measurements and refreshed qualification",
+      "tree": "fbd4fef8e142359ea59d0e3b4684bdfa57508833",
+      "new": "4502d17c80e52c1c5f7fd7ebd1f34bd1b61e4732"
+    },
+    {
+      "old": "f00b694833a6cc8691fd86544b78fb6079088927",
+      "old_subject": "Measure direct task execution against in-memory saga orchestration",
+      "new_subject": "docs(executor): measure direct task execution against in-memory saga orchestration",
+      "tree": "5b45684ab13216bfb9839951669c119905f5b572",
+      "new": "b13f021175e932a22fc854ff70818817f220ca82"
+    },
+    {
+      "old": "8a9e298940d68de3d3d19c152a9bbef7f0fc54a0",
+      "old_subject": "Avoid discarded linear completion clones and history reallocation",
+      "new_subject": "perf(executor): avoid discarded linear completion clones and history reallocation",
+      "tree": "a860526030121fecd5b2492e1892c92960a9be71",
+      "new": "2bded68d481f47da1e6287e11bfcc5547c49ae30"
+    },
+    {
+      "old": "4d9c2926f0f4546ffd7369131ea902a558669dd6",
+      "old_subject": "Record direct-task overhead and verified linear engine optimization",
+      "new_subject": "docs(executor): record direct-task overhead and verified linear engine optimization",
+      "tree": "886253bee92fa4ca8e54c1a71c6bf3ace6a80985",
+      "new": "e52d003a416a8157fbb6be2095e1e8e30376222d"
+    },
+    {
+      "old": "46c0ab178b97c86044ac3cbe47b826a17e703c41",
+      "old_subject": "Add long-identifier control to direct-task overhead comparison",
+      "new_subject": "docs(verification): add long-identifier control to direct-task overhead comparison",
+      "tree": "83fe072f3d226bdea054508e7c3ad15c5df56fa9",
+      "new": "829dc75466b3a66d5cad57b80ada5ea7972ce939"
+    },
+    {
+      "old": "719cc07c1c95d757153d3519175c600dc8585463",
+      "old_subject": "Store short protocol identifiers inline with preserved wire and trait contracts",
+      "new_subject": "docs(verification): store short protocol identifiers inline with preserved wire and trait contracts",
+      "tree": "151a588477d625dcf004f5c473cdefc4fb505aab",
+      "new": "175def993c84ff51d2a69cfd6850d6befe89d3f2"
+    },
+    {
+      "old": "aa2a557193771bbe9a5116b7ccaae967357f00ff",
+      "old_subject": "Inline identifier text access at serialization and public boundaries",
+      "new_subject": "docs(verification): inline identifier text access at serialization and public boundaries",
+      "tree": "3fbe0a1320ae67e6cfc3aad83f8a2c8b8e58cf0e",
+      "new": "2dee23e8c971cd149abb4c0d1655ac7f22f94052"
+    },
+    {
+      "old": "69a749faa0bbba9cec7e26aacd7d8639ee71b3e8",
+      "old_subject": "Use a bounded wall-time deadline for worker service completion test",
+      "new_subject": "docs(runtime): use a bounded wall-time deadline for worker service completion test",
+      "tree": "b80710418458e44158e2ed14448afebcf0737d4e",
+      "new": "39dadb787a1b4dd09c067f2e4f567d140d32d935"
+    },
+    {
+      "old": "94fd3cbff58b3396269d0305b9ea04080959315e",
+      "old_subject": "Record inline identifier performance, compatibility and CI evidence",
+      "new_subject": "docs(verification): record inline identifier performance, compatibility and CI evidence",
+      "tree": "b44099a6be0b19144e94e53cc94b4589f80591af",
+      "new": "21890b5fc42056788a11d18ff292533b1e5a543f"
+    },
+    {
+      "old": "5262cb2142357ed510d61c67893cb668113753bd",
+      "old_subject": "Drain worker observations to EOF before classifying process exit",
+      "new_subject": "docs(runtime): drain worker observations to EOF before classifying process exit",
+      "tree": "9ee506bab09f6cb90311c9416c265a058ac043c2",
+      "new": "dc2d28bf1cf5efe1c85500a29774578ca6483edf"
+    },
+    {
+      "old": "2276030fb6f68654fee9bbba8fe8b16b32bb824b",
+      "old_subject": "Benchmark short, escaped and long identifier JSON decoding",
+      "new_subject": "docs(verification): benchmark short, escaped and long identifier JSON decoding",
+      "tree": "8b481ca6db6b10224eacc625e5ba1e7f4b725c4b",
+      "new": "0b897b52c65330696efc2e737bf2dd6e7a196c21"
+    },
+    {
+      "old": "53734a1d1ceedb971a18c2b108558b6725fbe568",
+      "old_subject": "Reduce canonical encoding growth and identifier decode allocations",
+      "new_subject": "docs(verification): reduce canonical encoding growth and identifier decode allocations",
+      "tree": "2d0ef789966ab0f07b9a290e118497e9fe4ca9b2",
+      "new": "1b86e0a8d8eed873c863e6c82d56e9faf902da7a"
+    },
+    {
+      "old": "b9ac133cacacf6c4c7f72acc6b6a7e4d2b12d12b",
+      "old_subject": "Record encoding comparisons and verified worker exit-race correction",
+      "new_subject": "docs(runtime): record encoding comparisons and verified worker exit-race correction",
+      "tree": "64a5506ac5f877801148dcf8387e207c34b1706d",
+      "new": "14bd6d3223b4b80f52d67cce5c051073b18bd887"
+    },
+    {
+      "old": "f6d7766c89f9d07a43ccc4945465f0252d209c1e",
+      "old_subject": "Measure worker protocol proposal and request parsing costs",
+      "new_subject": "docs(runtime): measure worker protocol proposal and request parsing costs",
+      "tree": "7322e1c0894085ca2ce7dde525b7404961c66ed3",
+      "new": "607d58eba9cfc97c7fce451cdbf6ef9dbd1b0274"
+    },
+    {
+      "old": "2e3a768372d39955843cbd0b279e1c436a6439cc",
+      "old_subject": "Remove worker scope hash allocation and reject pinned payload bounds before reads",
+      "new_subject": "docs(runtime): remove worker scope hash allocation and reject pinned payload bounds before reads",
+      "tree": "ee76e5b8f12f9caaed0364cca52cb552d9da0381",
+      "new": "269d4509e27c2ca51b0b19fffd67ab318d5a898f"
+    },
+    {
+      "old": "1dd288b9deea9d1e6a21510f605e212e362e41a7",
+      "old_subject": "Reject SQLite claims when the durable lease counter does not advance",
+      "new_subject": "docs(sqlite): reject SQLite claims when the durable lease counter does not advance",
+      "tree": "40a3118ee5a50bcdd3020f0bd5ead8ff5a3db2d4",
+      "new": "905056fec3d8922b383696b8c26cb07e5209c280"
+    },
+    {
+      "old": "95b8cf54e39a4efa4258eba5544e5e2ac69c970d",
+      "old_subject": "Record worker protocol measurements and lease-counter fault recovery evidence",
+      "new_subject": "docs(runtime): record worker protocol measurements and lease-counter fault recovery evidence",
+      "tree": "235951c39fa7de7332cae6ebc75cd0f0c9d3222f",
+      "new": "0c139d5abfe265a89ccad3fc01de68a63bdf2106"
+    },
+    {
+      "old": "751a010ad3033927aad18bfd465687f371692a4e",
+      "old_subject": "Keep SQLite accepted work draining after an executor wake callback unwinds",
+      "new_subject": "docs(sqlite): keep SQLite accepted work draining after an executor wake callback unwinds",
+      "tree": "ab2e602620a06736093f851fadc5962a91ace8ef",
+      "new": "cd9cf84c6ccf9551f093e64ccf3ed1b3fca0f2b7"
+    },
+    {
+      "old": "99d9a3d2154f31d8064afdf8557b7c7dd78e03eb",
+      "old_subject": "Cover canceled responses and closed admission in SQLite wake-panic regression",
+      "new_subject": "docs(sqlite): cover canceled responses and closed admission in SQLite wake-panic regression",
+      "tree": "8f50ce5cbbc221db8b3d28a83b03d74363c5c159",
+      "new": "7df731afc0e09d8ede83df5051bcdbcce051ddb6"
+    },
+    {
+      "old": "005ea60ecb42bea71383480416243e41742da846",
+      "old_subject": "Track bounded graph transition keys without a heap tree",
+      "new_subject": "docs(executor): track bounded graph transition keys without a heap tree",
+      "tree": "9811e41f32ea1c6127e1845a8680ed482c6f1c26",
+      "new": "71686e4fff8387af486f20b326d3491c515a6e24"
+    },
+    {
+      "old": "52015296c0546a3013a9469a71bf06dc5c53676b",
+      "old_subject": "Record graph-key performance confirmation and SQLite wake recovery audit",
+      "new_subject": "docs(sqlite): record graph-key performance confirmation and SQLite wake recovery audit",
+      "tree": "55af4e9256df74ede537c9d54c77ea2ed4588ad8",
+      "new": "282ab1b4c0cd2d9a340f0ff8755f79b0d33fb654"
+    },
+    {
+      "old": "22a1926d6e9b2537f306962874574a0f446c8e8a",
+      "old_subject": "Measure bounded linear definition validation and freeze its admission oracle",
+      "new_subject": "docs(executor): measure bounded linear definition validation and freeze its admission oracle",
+      "tree": "64e3b41f9026bd68ff7448974e915cfdab066e52",
+      "new": "2194781013dfd24f60b1312b2bf4d87adf6f6b03"
+    },
+    {
+      "old": "807052d70108a4275238c34d8272d5975073efb0",
+      "old_subject": "Bound larger linear definition duplicate checks with allocation-free sorting",
+      "new_subject": "docs(executor): bound larger linear definition duplicate checks with allocation-free sorting",
+      "tree": "933e8d88d3390f8b5f8cad601390ec160f26477f",
+      "new": "8269ecabb8111f9d0de461f5b99f30382c678476"
+    },
+    {
+      "old": "a5d909e4e9cb86dfa173a39f1c4886adf9b41cad",
+      "old_subject": "Prove reverse-order uniqueness before sorting larger linear definitions",
+      "new_subject": "docs(executor): prove reverse-order uniqueness before sorting larger linear definitions",
+      "tree": "e2da29a95128fdcd0f6f79f2fbefe0c9e0526ebd",
+      "new": "f959be923896d7599eaea9d2c2cf8d3f70579c7f"
+    },
+    {
+      "old": "dd3ac8d97869e7a1c9280b8d5ed66f0e7a4574b1",
+      "old_subject": "Keep small linear definition admission on its original two-branch path",
+      "new_subject": "docs(executor): keep small linear definition admission on its original two-branch path",
+      "tree": "8b77c964bdedf67774d3968b67fc0aa04eccefea",
+      "new": "2c363d5cc48756e445ad7030728a37732a1df163"
+    },
+    {
+      "old": "0bcc858347e1069eefb85cb07cafc8a581d793d5",
+      "old_subject": "Record bounded linear validation performance and preserved admission evidence",
+      "new_subject": "docs(executor): record bounded linear validation performance and preserved admission evidence",
+      "tree": "f8821eb078067296726557449afcf48d05a0fd45",
+      "new": "80b9d6cd4477ef7d7b40e2155c6954a896c0135a"
+    },
+    {
+      "old": "738b75bb2c945ddd22a004b20d129ea14d048fc2",
+      "old_subject": "fix(runtime): detect trailing bytes after maximum-size responses",
+      "new_subject": "fix(runtime): detect trailing bytes after maximum-size responses",
+      "tree": "406be3e48b67248dd4e89aa8a00ce6b60b58ff44",
+      "new": "b2553d11b3313b28747a65af034836496d3110cf"
+    },
+    {
+      "old": "d90a0ccac8b54bda3f9f337e4a77af18e4fdbd0c",
+      "old_subject": "perf(runtime): avoid allocations for fixed-size identity and ACK messages",
+      "new_subject": "perf(runtime): avoid allocations for fixed-size identity and ACK messages",
+      "tree": "dfe3132ff5f0731e9c475594ae285b127e7a8af3",
+      "new": "83b1d70c7c77638f51bc6c79f6d9ed1b19ce3d2a"
+    },
+    {
+      "old": "f168bf7921a3cad05faf5a0d068eeff0d76fe3d1",
+      "old_subject": "bench(sqlite): isolate pending polls with stable and changing wakers",
+      "new_subject": "perf(sqlite): isolate pending polls with stable and changing wakers",
+      "tree": "125f546524d81f68be34238796ade4aa23a6d503",
+      "new": "d81988bb81cd66a646e07f49b247837793072095"
+    },
+    {
+      "old": "1ccebdc5e0552113c7e955ac53a86c990fad0bd8",
+      "old_subject": "fix(sqlite): register executor wakers outside completion locks",
+      "new_subject": "fix(sqlite): register executor wakers outside completion locks",
+      "tree": "0ec12ff25c8320d99208556062d733a02e588ea6",
+      "new": "c9199d68e8de8917e1d51da3be153594c0beae8d"
+    },
+    {
+      "old": "c34107fd770e03b71797a22e820d446fe3ebddc7",
+      "old_subject": "docs(perf): retain SQLite waker registration audit and paired polling evidence",
+      "new_subject": "docs(perf): retain SQLite waker registration audit and paired polling evidence",
+      "tree": "71da77d750944a74794e04e1ec05b1db16ec1696",
+      "new": "5a40341dee4094c438d73be34eaa3fba9ce25b5f"
+    },
+    {
+      "old": "8231e0aab8fda2d9c7de576b3a7215016be75e17",
+      "old_subject": "fix(sqlite): reject suppressed required writes before acknowledging commits",
+      "new_subject": "fix(sqlite): reject suppressed required writes before acknowledging commits",
+      "tree": "121b804fc7d2fff172f984df17fc9a5a1bd970b0",
+      "new": "df1005f70cdf30e8ac9bf2e0e9012bdc97fe7e74"
+    },
+    {
+      "old": "aeea3831217f5d6a7555431c5235375431bd695f",
+      "old_subject": "docs(verification): retain required-write rollback matrix and SQLite fuzz evidence",
+      "new_subject": "docs(verification): retain required-write rollback matrix and SQLite fuzz evidence",
+      "tree": "2cba1a2a23b1eb022c3aac6e7497f3359f02a7da",
+      "new": "2cb6ebf3df3e0f9c585650f1a7d5b7dc2a795730"
+    },
+    {
+      "old": "0645672bfa98fae791247553441bd6be9374d3cf",
+      "old_subject": "bench(task): isolate portable and hosted pending polls",
+      "new_subject": "perf(task): isolate portable and hosted pending polls",
+      "tree": "ce397af0cbe0de4e215b67cf93b1dbb6af7fc8ec",
+      "new": "63493d791a878e80ffd42b31513f8282bba8a819"
+    },
+    {
+      "old": "c6a260cacc36450f7dab46baddbc5e23a03fff56",
+      "old_subject": "docs(performance): retain rejected task polling candidates and audit evidence",
+      "new_subject": "docs(performance): retain rejected task polling candidates and audit evidence",
+      "tree": "2d2ee4cccd1ae4c23bab64bde53fd52266df1318",
+      "new": "3ff8a5a457e1911a5df3e2b28f357ff9a5cf17cb"
+    },
+    {
+      "old": "0e8a66db4cd724c3049a2c58e9c4286fe0869328",
+      "old_subject": "fix(runtime): enforce one deadline across startup frame writes",
+      "new_subject": "fix(runtime): enforce one deadline across startup frame writes",
+      "tree": "9bc187df3625ab246efb9646a5f165202537fced",
+      "new": "7925d7736f3934a4171b67535da1cd077aebb6e9"
+    },
+    {
+      "old": "b5839c16cf65706a3f5bfc3d4aac18cf936ba999",
+      "old_subject": "docs(verification): retain IPC deadline regressions and recovery qualification",
+      "new_subject": "docs(verification): retain IPC deadline regressions and recovery qualification",
+      "tree": "ce4d9affd70d6d2065999efeb4e5bd52007ded66",
+      "new": "d61691bad517ffe3e618c61b055afe4b5cfb232e"
+    },
+    {
+      "old": "0656b7c506c59d576b58bfffc86e98566c40b8f6",
+      "old_subject": "docs(verification): normalize baseline fixture patch whitespace",
+      "new_subject": "docs(verification): normalize baseline fixture patch whitespace",
+      "tree": "49899d920f3afb49d9862238ec0254092ef7831d",
+      "new": "0bb4bfdd979df8aae9cbda2db178ff07cfda2583"
+    },
+    {
+      "old": "815acc89083928169ed981fe626491664ce8a26e",
+      "old_subject": "fix(runtime): reap reconstructed workers through their pinned pidfds",
+      "new_subject": "fix(runtime): reap reconstructed workers through their pinned pidfds",
+      "tree": "3b804b05bae6f2e4d7a2f6deef1384eee166b109",
+      "new": "047fec6ed14224f203ad78c6ed4ac596a6c64737"
+    },
+    {
+      "old": "4892154b0ebb00f4ee7893e3d9f4a9a65ced12a6",
+      "old_subject": "docs(verification): retain worker reaping regressions and lifecycle evidence",
+      "new_subject": "docs(verification): retain worker reaping regressions and lifecycle evidence",
+      "tree": "f36305eb936cd6b25f6cf8d396600bc275440bb1",
+      "new": "76c343c7720c5bc39c7c7e92c956c56aba8e7741"
+    },
+    {
+      "old": "441cd3aeea42339776d799a747df87f27ab32dc1",
+      "old_subject": "bench(runtime): isolate live, exited and repeated worker fencing",
+      "new_subject": "perf(runtime): isolate live, exited and repeated worker fencing",
+      "tree": "93f4845e4dbeda219dc355d9c70d1a2bd66e1f6f",
+      "new": "6674d7d46b12d430b1d92783b9c8413c31041a3d"
+    },
+    {
+      "old": "f31a8520c445b22d2b481d70b8a5478abb188e02",
+      "old_subject": "bench(runtime): compare worker fencing across CPU placements",
+      "new_subject": "perf(runtime): compare worker fencing across CPU placements",
+      "tree": "ad2cefbdabb518ff7f2413e4434c802d8fa35e61",
+      "new": "6b6b43947e2cd804c2c88649ea089a795249e3b7"
+    },
+    {
+      "old": "c889898d16374b6e66e364ac2b5fc7a0cbf94119",
+      "old_subject": "perf(runtime): wait on pidfds within the remaining fence deadline",
+      "new_subject": "perf(runtime): wait on pidfds within the remaining fence deadline",
+      "tree": "55aae7a05f7aea19300143adca790456eac34686",
+      "new": "65f848a86257d719f856f996a957aa5083624e10"
+    },
+    {
+      "old": "212c816f49832f0ee11f03a6c6c6cc8fd3903965",
+      "old_subject": "docs(performance): retain paired pidfd wait measurements and qualification",
+      "new_subject": "docs(performance): retain paired pidfd wait measurements and qualification",
+      "tree": "a899c09a1dcfc7be15580bf3cf36ab7ff9dc111d",
+      "new": "314cbd63111002555120ffca27e007eb09a70477"
+    },
+    {
+      "old": "a7ecf96d7e63874568131ad7f50b3a39803fd72d",
+      "old_subject": "Reject non-regular runtime image and registry files",
+      "new_subject": "docs(verification): reject non-regular runtime image and registry files",
+      "tree": "e334d3056e3b9ac8d86b1ee41a44c80c626c5f1c",
+      "new": "eb2f245c5739fee0339aa56be78baea6a6a189c7"
+    },
+    {
+      "old": "a0cd454f10a25e85675e44831a658e38354e02a0",
+      "old_subject": "Record runtime regular-file rejection and recovery qualification",
+      "new_subject": "docs(release): record runtime regular-file rejection and recovery qualification",
+      "tree": "8c5e6dba049f4a330347ced7feaadb523e99378c",
+      "new": "a51f956b462842c227d07c6988817a1cd5d04f09"
+    },
+    {
+      "old": "236d897d23152b169a2b0b84b936489393760177",
+      "old_subject": "Use fixed buffers for Linux registry manifests",
+      "new_subject": "docs(runtime): use fixed buffers for Linux registry manifests",
+      "tree": "176118b3e933eb16893028b3f3d737f8dc63046f",
+      "new": "27ff8738ce9c63d87bb5072daaade5b824dc3c4e"
+    },
+    {
+      "old": "cd099118f55bf2c8d38b6d0d5becce6e4daa2bb4",
+      "old_subject": "Record registry allocation reduction and compatibility evidence",
+      "new_subject": "docs(verification): record registry allocation reduction and compatibility evidence",
+      "tree": "20f05d30219d48a995a8e079f87760fe1ff0f6f0",
+      "new": "e9bbb71d0bfe7467883d7150fde342edc7a63129"
+    },
+    {
+      "old": "fecc2faebfe6a42137fb1590115f7884ccecb872",
+      "old_subject": "Measure fixed registry buffer fence and workflow latency",
+      "new_subject": "docs(verification): measure fixed registry buffer fence and workflow latency",
+      "tree": "af43dae42a2bb5ee4912e1219994aa698e9a7ec0",
+      "new": "a222566ac62f3f0e623b1908d4263907a2fbe841"
+    },
+    {
+      "old": "ce36ba723ec4dda20f00255723f02882abd1b6d6",
+      "old_subject": "Retry interrupted worker writes without backoff",
+      "new_subject": "docs(runtime): retry interrupted worker writes without backoff",
+      "tree": "5336381d472d865d8f6cf4e44acd6baac5671ae9",
+      "new": "8c8a2fcd2b53df37af867dcdc917991c791f7f7e"
+    },
+    {
+      "old": "9334383800aa84b2ff24bf2d4dd7476b15fa221a",
+      "old_subject": "Record interrupted write retry syscall and deadline qualification",
+      "new_subject": "docs(release): record interrupted write retry syscall and deadline qualification",
+      "tree": "bea94841380caa128aeb993a32dfaf168ad2450b",
+      "new": "4a2719c94ce44f2d5f931ba93d07308d9be8c826"
+    },
+    {
+      "old": "202d500a0bf29de9cc0e0d23845f0bf81c7fc0e7",
+      "old_subject": "Preserve SQLite task read engine error categories",
+      "new_subject": "docs(sqlite): preserve SQLite task read engine error categories",
+      "tree": "cc3fe41ac095af3b7fd6fae6e9e863ea86e1dafd",
+      "new": "dbad44f695a58011f8ace96dcfbe77cc30cbc7e2"
+    },
+    {
+      "old": "7acf97f7a6a0bda6a5c0b60dc5eaa201713efad5",
+      "old_subject": "Record SQLite read error classification and recovery verification",
+      "new_subject": "docs(sqlite): record SQLite read error classification and recovery verification",
+      "tree": "47dae6f35ed947e175bbe684bea222f442aa9d65",
+      "new": "c2719c5eb470d36336f4064b0012300a2ebba736"
+    },
+    {
+      "old": "5d367932358c638cb81d881c3d4bc855a87fb96b",
+      "old_subject": "Build fixed-width SQLite task scope keys without heap allocation",
+      "new_subject": "docs(sqlite): build fixed-width SQLite task scope keys without heap allocation",
+      "tree": "10d02e4884e6bd252492ad30722dddbcb6d26d72",
+      "new": "9615fc80fd975e4bfc5b99c15198509a9f984f21"
+    },
+    {
+      "old": "407759a2a0fffa5a163715ec33cb120c4f1cbc0e",
+      "old_subject": "Record SQLite scope-key compatibility, allocations and latency audit",
+      "new_subject": "docs(sqlite): record SQLite scope-key compatibility, allocations and latency audit",
+      "tree": "5d4387471d7cabaa07b6ae6ddfbfab90085bce96",
+      "new": "2240e30c7bd7885ffda299ebed9f03d39452dff4"
+    },
+    {
+      "old": "e6b47d2cffdca20343751d0c4ca14f1bd26b9320",
+      "old_subject": "Validate SQLite cached task byte charges before appending",
+      "new_subject": "docs(sqlite): validate SQLite cached task byte charges before appending",
+      "tree": "2e7d9e4127b00837a0f6082aed9feefad03112a1",
+      "new": "f1b254177d60cda1401bc0c0178a94731889cac7"
+    },
+    {
+      "old": "fa8d06746bf67271ad7bf8421102bbd32a287c2f",
+      "old_subject": "Record cached quota integrity and repair qualification",
+      "new_subject": "docs(release): record cached quota integrity and repair qualification",
+      "tree": "97a0006ecc7ebdee36c816856b74dc2afd8aef14",
+      "new": "f622c1692f3611986ab2feccb9d112715d42bc44"
+    },
+    {
+      "old": "8a45d9563b2ead09520a3c508c1e4e22542eb21b",
+      "old_subject": "Sample outbox lease time after acquiring the SQLite writer lock",
+      "new_subject": "docs(sqlite): sample outbox lease time after acquiring the SQLite writer lock",
+      "tree": "3392f6fa4e854f11b37b3ab839f6a1f1708b85c7",
+      "new": "7d2ee66d9daf5c3be4f09df35525df3235149554"
+    },
+    {
+      "old": "5c032a202ae91682d1698b54b9dbdc74c95db4d2",
+      "old_subject": "Record contended lease clock ordering and rollback verification",
+      "new_subject": "docs(verification): record contended lease clock ordering and rollback verification",
+      "tree": "816801ce69f0604e2919b5a826204aa9c91e5701",
+      "new": "15c79f6a2c50c4f7156d0d7228aaab42c891d2ed"
+    },
+    {
+      "old": "e812c0758b40c50017c70f722b769202af414a33",
+      "old_subject": "Reuse prepared statements for SQLite lease claim selection",
+      "new_subject": "docs(sqlite): reuse prepared statements for SQLite lease claim selection",
+      "tree": "3ca2e86c4a073caeb8eb132ba82ffb0e58fdd19c",
+      "new": "aaac2805303e0c26f1ff657fb7c012151a23ae2d"
+    },
+    {
+      "old": "df5721bd2cb1a396c585f53596697f25b8631371",
+      "old_subject": "Record paired SQLite claim cache benchmark and validation",
+      "new_subject": "docs(sqlite): record paired SQLite claim cache benchmark and validation",
+      "tree": "a566ed4dab77f01ca628a372dae9a7077b390b9f",
+      "new": "5a834048497f12313a579dbcccfbc07c5d72f95b"
+    },
+    {
+      "old": "1260dc94be54a2c554daec29eb9cb0d2927be2c3",
+      "old_subject": "Reuse SQLite token statements across lease batches",
+      "new_subject": "docs(sqlite): reuse SQLite token statements across lease batches",
+      "tree": "21cf4cb248a4c8b10baaf652219917eb78c16194",
+      "new": "08b10990636bd0de4a962d38f7ca710681d7d931"
+    },
+    {
+      "old": "fbcb4c725de6ba45f5c275f0444e8f213307bde4",
+      "old_subject": "Record SQLite token cache latency and rollback evidence",
+      "new_subject": "docs(sqlite): record SQLite token cache latency and rollback evidence",
+      "tree": "3c56db1b4b464852b4bbbb64c1bb8524eb8beb8e",
+      "new": "0e0281b16768c1ddef420004406045b1382617f3"
+    },
+    {
+      "old": "40c674ae8e3ec24b7a3b09055f9f02a95b77316c",
+      "old_subject": "Encode Linux worker startup headers without heap allocation",
+      "new_subject": "docs(runtime): encode Linux worker startup headers without heap allocation",
+      "tree": "ddf75a1e6385c49e1d4fb175bfc52137c6652a1c",
+      "new": "5e6474623dbea876f3be18d83d0175bb11f5fd97"
+    },
+    {
+      "old": "4f1a0f39cc84974d81aaf67c48f9ecee3db41fda",
+      "old_subject": "Record startup header allocation and compatibility evidence",
+      "new_subject": "docs(verification): record startup header allocation and compatibility evidence",
+      "tree": "6d6d6acd66c01e706269b698370cc14c80472dd7",
+      "new": "fcc7634b8441d70e52e7f54c7d656953b5dc1541"
+    },
+    {
+      "old": "b86a438ecb3ff5658b3551cab31043be46282d87",
+      "old_subject": "Index pending SQLite outbox actions and due timers transactionally",
+      "new_subject": "docs(sqlite): index pending SQLite outbox actions and due timers transactionally",
+      "tree": "2729b29792aa8602ff7a523e553ec862ea2965b9",
+      "new": "2e23382677e9c020473aac2fb463a7b415192d77"
+    },
+    {
+      "old": "5966fe2b32b3b5ac53c3ed049294e20e5ab25618",
+      "old_subject": "Record SQLite claim index scaling and migration fault evidence",
+      "new_subject": "docs(sqlite): record SQLite claim index scaling and migration fault evidence",
+      "tree": "8d7a93c87c995f7a25e9af9c332c284b6bd3495b",
+      "new": "d7e3fb8469d36e919e0e76830f532d3a4f9d3314"
+    },
+    {
+      "old": "fa817f713e73ddbad71e77633d861424dbc974b1",
+      "old_subject": "bench(sqlite): measure public claims with retained history",
+      "new_subject": "perf(sqlite): measure public claims with retained history",
+      "tree": "837defa8b0a3d9cb0eb97b4118823d8e1c003dcd",
+      "new": "bd3c964febcad0ae3cfc4cf3a1e7e875b8a53700"
+    },
+    {
+      "old": "ffd6838207299a4b67c83e6261881e3bbdfb92bc",
+      "old_subject": "docs(perf): quantify SQLite claim index read and write tradeoffs",
+      "new_subject": "docs(perf): quantify SQLite claim index read and write tradeoffs",
+      "tree": "b260bba28c4ffeb0a9d4b4ac36206eca89ac5f8a",
+      "new": "658d52ce424f25f2018c5e45edfac68127500ca9"
+    },
+    {
+      "old": "8dad8edd4e1b42dfe410bde6727d6da24cd3e8f3",
+      "old_subject": "fix(sqlite): contain panicking panic-payload destructors",
+      "new_subject": "fix(sqlite): contain panicking panic-payload destructors",
+      "tree": "aa7bb283816ffcefa7b9e1c96406fc49a4fcd088",
+      "new": "0c03950e88d48675a888ec22cf815a12855bcc67"
+    },
+    {
+      "old": "4ae1f39ec6d67212615072e8343be0a8cb83f55f",
+      "old_subject": "docs(verification): record worker panic-payload containment evidence",
+      "new_subject": "docs(verification): record worker panic-payload containment evidence",
+      "tree": "58d5899d12daad78c0e21117d2547e357c70e55f",
+      "new": "50f4624223ed25d9acb4ca1a0817ae35e3c0eb4d"
+    },
+    {
+      "old": "98b0fe3f5ab7a98faa135d3e48fd930acfd65fec",
+      "old_subject": "fix(sqlite): preserve small commits under larger record limits",
+      "new_subject": "fix(sqlite): preserve small commits under larger record limits",
+      "tree": "77af6c5e813d02511bf40ab736d5eacb0627851c",
+      "new": "d779f8adefab1df11e5b481f4fa3c2a1e4c17491"
+    },
+    {
+      "old": "245da19ea8d8e7f11b50c7ef7f7d9983293830b7",
+      "old_subject": "docs(verification): record large record-limit admission checks",
+      "new_subject": "docs(verification): record large record-limit admission checks",
+      "tree": "ccd3095d1533d3f70162fe3147d2e78c20860233",
+      "new": "2d166a7dfba237100514503df1f1fff6a2c3c427"
+    },
+    {
+      "old": "bc0c973cc134933727db3a3e1af98292201d99e3",
+      "old_subject": "perf(ports): compare effect coordinates without cloning keys",
+      "new_subject": "perf(ports): compare effect coordinates without cloning keys",
+      "tree": "260927f4bb65def5f043107062042e710ef2b44d",
+      "new": "b2bb02e18ef016a3c3e1922109633af5996979d9"
+    },
+    {
+      "old": "d6a4072dd06b2f4f4b453f63b990fc022a79d343",
+      "old_subject": "docs(perf): record borrowed effect validation measurements",
+      "new_subject": "docs(perf): record borrowed effect validation measurements",
+      "tree": "a057ec2fc500d72658e8782cb68b9c4147995176",
+      "new": "1f55116e58222c999ad68af896aa2037d8289225"
+    },
+    {
+      "old": "ae8279e66093809ae722a12d2448449c70c570d3",
+      "old_subject": "perf(ports): compare varying effect coordinates before scope",
+      "new_subject": "perf(ports): compare varying effect coordinates before scope",
+      "tree": "d3bfa7f190590e41e8deb8c0d7dfa06a4aab8925",
+      "new": "fcebc6cecae1c8ab7016ff2697f54ff35937ad48"
+    },
+    {
+      "old": "837265bfc82658a6d1fe02e4776372fe4673d805",
+      "old_subject": "docs(perf): verify effect comparison order and SDK confirmation",
+      "new_subject": "docs(perf): verify effect comparison order and SDK confirmation",
+      "tree": "9e7f81029ce5a78b0c4113006a89a5e71bc777d1",
+      "new": "9a31fd133172703de86c55699c4e9cb0834fd72b"
+    },
+    {
+      "old": "b746d3e1382b3e78be0cab1f3884ee2b7c693f2c",
+      "old_subject": "fix(sqlite): reject inconsistent process heads and outcome tails",
+      "new_subject": "fix(sqlite): reject inconsistent process heads and outcome tails",
+      "tree": "d9d7eb26d50c1f09ba8a04f187618e7000b40dcf",
+      "new": "2e914b94baf980659f8e83f3c66cbfc9782ead31"
+    },
+    {
+      "old": "465b6b267afe68796e21e133f971d5ad8796cbc9",
+      "old_subject": "docs: record process frontier corruption and indexed-query verification",
+      "new_subject": "docs(verification): record process frontier corruption and indexed-query verification",
+      "tree": "c345fef017e66247e35ba9a4770f21ae391aeb3c",
+      "new": "e6dd8341b0fce54ef33c13475f507aef48f4328e"
+    },
+    {
+      "old": "a20bb8c7a09f8bcdd62ddd12346f1a59533b7e0e",
+      "old_subject": "perf(sqlite): cache validated outcome replay selection",
+      "new_subject": "perf(sqlite): cache validated outcome replay selection",
+      "tree": "2fb77c7085c4ea3703d5ef12c7e98f93e9bca8b7",
+      "new": "48acd2b51b64f5e091525cdfaa8f32fb5fab81e9"
+    },
+    {
+      "old": "ec4399f0cc27698a63b7c9ac23e408b0b6557785",
+      "old_subject": "docs: qualify public replay cache latency and recovery",
+      "new_subject": "docs(verification): qualify public replay cache latency and recovery",
+      "tree": "14f2b93420b38f79855cf1b148e0bb83081e6909",
+      "new": "00c7bf5cffe9409aa937a163f43efe7002f8a227"
+    },
+    {
+      "old": "47f58fbdb3f32dfb0f31fbf26433c780727c743f",
+      "old_subject": "perf(sqlite): decode replay records from bounded row slices",
+      "new_subject": "perf(sqlite): decode replay records from bounded row slices",
+      "tree": "b1f3103c8d25fc0b07e14287422655bdf0e1d92c",
+      "new": "dfdc127d590a9a7099f7ce9d1bf6431bde8e7981"
+    },
+    {
+      "old": "bd0cdf5bfcced391d59ce11d58831dbc6a764f88",
+      "old_subject": "docs: qualify borrowed replay allocation and latency gains",
+      "new_subject": "docs(verification): qualify borrowed replay allocation and latency gains",
+      "tree": "1ac9b012760d35e60b5796c2db05456c13171453",
+      "new": "8baeb3dd88608cd122805539ace2716dae6910d4"
+    },
+    {
+      "old": "02416c007df7262b46a154555b0104dbe8ee1022",
+      "old_subject": "perf(sqlite): index pending inbox inputs without consumed history",
+      "new_subject": "perf(sqlite): index pending inbox inputs without consumed history",
+      "tree": "544e951d76306a27394ca430b0cb2b8f98c4009f",
+      "new": "7fa395fb1c3b9a10c37b65269f32cbf2b6eed55d"
+    },
+    {
+      "old": "ea5a230e847a6eca9c088e8811c458d92fc37d87",
+      "old_subject": "docs: qualify pending inbox discovery and migration tradeoffs",
+      "new_subject": "docs(verification): qualify pending inbox discovery and migration tradeoffs",
+      "tree": "14a72a531e58c6c8af954bbce4843e96ffd865f1",
+      "new": "efdae299bf60c863bc52a02bd5d1ae139071e94e"
+    },
+    {
+      "old": "e425a04f4c468b84564c476706c31e94fdab5d05",
+      "old_subject": "perf(sqlite): validate payload rows before allocating copies",
+      "new_subject": "perf(sqlite): validate payload rows before allocating copies",
+      "tree": "8fca6501c17f43f7d13f50ad6db99a4f2d7c36e3",
+      "new": "8a8c80c3546c9edafe653ff50a3eec2b34ab747b"
+    },
+    {
+      "old": "7dcc9c84b42e00cbaf4c885aef0d531cd161b60a",
+      "old_subject": "docs: qualify payload allocation savings and read tradeoffs",
+      "new_subject": "docs(verification): qualify payload allocation savings and read tradeoffs",
+      "tree": "b41a935c2cdf80592dc21379f18fe3904cf02549",
+      "new": "32e407df4240bda5395f343e3dc767541b8c753d"
+    },
+    {
+      "old": "90bce241673e7046de1003efca390c68966956a6",
+      "old_subject": "Reject task reads with inconsistent durable frontiers",
+      "new_subject": "docs(verification): reject task reads with inconsistent durable frontiers",
+      "tree": "d908187d20d4b04731e5f0514c7f93f309756785",
+      "new": "c335acf5a46012a478c81508c0183d97b26f812d"
+    },
+    {
+      "old": "523eab8a4eb8539267d25573b56f4f77b93d40c7",
+      "old_subject": "Record task journal frontier corruption verification",
+      "new_subject": "docs(verification): record task journal frontier corruption verification",
+      "tree": "655939dfcdb815c83e0ec049d3e888cadf4f7000",
+      "new": "d6b882e27b85376e3d7d5e77adc7079cd4265e5d"
+    },
+    {
+      "old": "9af39f39e221540656bf792f7be6688d67646e81",
+      "old_subject": "Decode task journal records from borrowed SQLite columns",
+      "new_subject": "docs(sqlite): decode task journal records from borrowed SQLite columns",
+      "tree": "37d530469c83da2f0c562c28408839aaa9671150",
+      "new": "05ef43f9b03094cf20db3675bcb1d6952d8977e6"
+    },
+    {
+      "old": "14f2ea2aa3c7f5d6aad89e8ec1c19c2a59943d5f",
+      "old_subject": "Measure and document task record allocation reduction",
+      "new_subject": "docs(verification): measure and document task record allocation reduction",
+      "tree": "c6e159001db3b9283a88fb2d585377dab286128e",
+      "new": "1a0473981a356222083dc3fc0e7da9fea57b111c"
+    },
+    {
+      "old": "6c210010423edbe642d58c9c2678825eada038b9",
+      "old_subject": "Validate task tail before authorizing cached appends",
+      "new_subject": "docs(verification): validate task tail before authorizing cached appends",
+      "tree": "72b061f2dd74e86e0bf4fbaaf2717451d215b327",
+      "new": "f69660eb281693a9968ac8a1579bb2d5ef312bbb"
+    },
+    {
+      "old": "838505a67a0bbe4e5eaf3e4d10e7ef8be1703679",
+      "old_subject": "Record cached task append corruption regression evidence",
+      "new_subject": "docs(verification): record cached task append corruption regression evidence",
+      "tree": "93c2c5b282d2790a676edbfaa3031cbbfe118222",
+      "new": "1d1685fe56fcc8ec797bbd20caa72deff83267dd"
+    },
+    {
+      "old": "2e360b05d9af768511ebc24591efaecec941980c",
+      "old_subject": "Wait for saga worker completion with a bounded wall deadline",
+      "new_subject": "docs(runtime): wait for saga worker completion with a bounded wall deadline",
+      "tree": "cf10aef90d9c26f38e786edfe98e18ad6e2e8ef5",
+      "new": "87dc5eb1ace63776cc3202fd1afd289624ca24ec"
+    },
+    {
+      "old": "b82cb2130048062677730a3e7272226c86505af4",
+      "old_subject": "Document delayed-worker saga fixture regression and qualification",
+      "new_subject": "docs(runtime): document delayed-worker saga fixture regression and qualification",
+      "tree": "bc5166ee847313175d0bde6d94d6db7e32950340",
+      "new": "94388c159aaf8691f64de0e7389de3eb06446d86"
+    },
+    {
+      "old": "0870849363b3cf51ba37dfbb9bd49b01cee0250b",
+      "old_subject": "Borrow task reconstruction columns and reuse verified digest",
+      "new_subject": "docs(verification): borrow task reconstruction columns and reuse verified digest",
+      "tree": "fd47e78911af9fa9d5644189ccbba482159130ee",
+      "new": "7595717951a49b0edd99644c376d2bb983154e64"
+    },
+    {
+      "old": "756724d8edc814743f45f6af115fb4a9f3818565",
+      "old_subject": "Measure full task reconstruction latency and allocation traffic",
+      "new_subject": "docs(verification): measure full task reconstruction latency and allocation traffic",
+      "tree": "e8098c67f8ad4b796b469f9c0beb972cb18ea919",
+      "new": "2e791a5a3dc8bd95cd05c4fd7bcfb652c8f0e77e"
+    },
+    {
+      "old": "f6a4b4c44bf8884899ffde429f24f8569953c2ac",
+      "old_subject": "Consume verified task blobs while SQLite row bytes are borrowed",
+      "new_subject": "docs(sqlite): consume verified task blobs while SQLite row bytes are borrowed",
+      "tree": "16d724370b5fae1b05bc1d3f7d05b29fff30d3bb",
+      "new": "fae702e853bf20fcf77f2c97d1ca40ea11a46ef8"
+    },
+    {
+      "old": "cd2e0c6404a78e520d2fd5f70997a11d01f15222",
+      "old_subject": "Measure task blob copies and authorization replay allocation gains",
+      "new_subject": "docs(verification): measure task blob copies and authorization replay allocation gains",
+      "tree": "b66d1d5b23365ffe1869a789ba5a126dff6dd152",
+      "new": "80e8ea931da197d83c46b4fcf4e3fc15edd58222"
+    },
+    {
+      "old": "908af7ba2d9402f6ade9ca8e08a922c24ced5f57",
+      "old_subject": "Validate fixed generation digests and cache authorization head query",
+      "new_subject": "docs(verification): validate fixed generation digests and cache authorization head query",
+      "tree": "8ec4f934da34bf0681558ff70bf9e5813d6d3e7b",
+      "new": "39167197bf13ee5d0fe6fa906298c359c7a35bb6"
+    },
+    {
+      "old": "9a1e80338b581600691f41ef6a7cb39e4f2255c9",
+      "old_subject": "Document authority metadata validation and statement-cache tradeoffs",
+      "new_subject": "docs(verification): document authority metadata validation and statement-cache tradeoffs",
+      "tree": "8ad1724f6f460c40fa26edf7d7554e75e9410f3e",
+      "new": "d0f5ad8be3c75557842061fa8f3aaee203d3dbe5"
+    },
+    {
+      "old": "51b67d9c05c752b335d688caa9ead14d1bc97b91",
+      "old_subject": "perf(sqlite): avoid hashing verified duplicate task blobs twice",
+      "new_subject": "perf(sqlite): avoid hashing verified duplicate task blobs twice",
+      "tree": "dfc0067835236a3545541beb749f88cbc7567ca9",
+      "new": "6942d86eec1073a9b03dffec5162a027b2aa5fd2"
+    },
+    {
+      "old": "50856b001f81978daea5044947557a26429d9740",
+      "old_subject": "docs(perf): record reused task blob commit measurements",
+      "new_subject": "docs(perf): record reused task blob commit measurements",
+      "tree": "de17862e40498351cdaaaccadcede311599ed273",
+      "new": "4871b91c4480695d821b31be6339e2fd1ab74fd3"
+    },
+    {
+      "old": "f0c68ce565d6d6e640449da27c061dab35683578",
+      "old_subject": "fix(sqlite): invalidate task projections after external commits",
+      "new_subject": "fix(sqlite): invalidate task projections after external commits",
+      "tree": "8e5fc8f7011c24a9f935e77c35f7ecbe9fbc86c3",
+      "new": "0d9144ceebfd6b7caceb1cc06c560079b6d085e0"
+    },
+    {
+      "old": "05cd3d0124b85d33a796281941850a8169cdbb98",
+      "old_subject": "docs(sqlite): qualify external task cache invalidation and replay costs",
+      "new_subject": "docs(sqlite): qualify external task cache invalidation and replay costs",
+      "tree": "15a8637b0763ef5307211ed332c9a56ff3a5a0b6",
+      "new": "062bb938adff2c5bef0a88cf1605a76a37612644"
+    },
+    {
+      "old": "f583fe9c6955fb4f0bfbaa5dd59756d9db85485a",
+      "old_subject": "perf(sqlite): reuse identical blob verification within task replay",
+      "new_subject": "perf(sqlite): reuse identical blob verification within task replay",
+      "tree": "2f6b119ae0b2f465b39823a5371a3beee98c2da2",
+      "new": "4e97a1a453f56c5b44bc73d79067c9420cab633c"
+    },
+    {
+      "old": "bd187069a30b0c3113089c83260c4b961db45ebe",
+      "old_subject": "docs(perf): qualify replay verification reuse and remaining costs",
+      "new_subject": "docs(perf): qualify replay verification reuse and remaining costs",
+      "tree": "3a680ea2186f679913c6da62e7a159e9d7604a9a",
+      "new": "c0bc3a44b17194fa8336a1ea7253fe063a0f4354"
+    },
+    {
+      "old": "7433d8de3e2c0707ce9a6378da91b7e11a5ebd06",
+      "old_subject": "perf(sqlite): avoid decoding repeated canonical scopes during replay",
+      "new_subject": "perf(sqlite): avoid decoding repeated canonical scopes during replay",
+      "tree": "40682162e7f346499ed7c2d403da7204bdaaaef1",
+      "new": "e2ae45281a44e9e6e62b7a5469c7585169f2677b"
+    },
+    {
+      "old": "47c4a259e8a8c2bc23d848e36ff4ffb797c219a0",
+      "old_subject": "docs(perf): qualify replay scope decoding and preserve trial evidence",
+      "new_subject": "docs(perf): qualify replay scope decoding and preserve trial evidence",
+      "tree": "1f2fccd7bddc332af78dec334f60af32ab80d3b6",
+      "new": "751c9d8efcb3ec21b071902ce66c15de0b6bc343"
+    },
+    {
+      "old": "91cdfcfae6c3942914cd4161f83ab3ed4c7d9895",
+      "old_subject": "perf(sqlite): reuse scoped statements throughout task replay",
+      "new_subject": "perf(sqlite): reuse scoped statements throughout task replay",
+      "tree": "d66627e442d90f4c393dbf0c431c95008257e6a2",
+      "new": "d787a3dc7a9e9b20a5b2300b5de1b29e35c05017"
+    },
+    {
+      "old": "4bb1f8394030600a306e86b6c5bffaae550da54d",
+      "old_subject": "docs(perf): qualify task replay statement reuse and scope isolation",
+      "new_subject": "docs(perf): qualify task replay statement reuse and scope isolation",
+      "tree": "bcc8d9a293dc558d91521bf0f853ceb72b483aa6",
+      "new": "0a4a33cecbb671496e1dd71f42ce757c86effc99"
+    },
+    {
+      "old": "28e1db72baf12280e4dfcf8e9a476a19caf47f29",
+      "old_subject": "fix(sqlite): retain existing blob usage on first task append",
+      "new_subject": "fix(sqlite): retain existing blob usage on first task append",
+      "tree": "71d4e1f9ab31ccba9c00d7e7890037625e63db64",
+      "new": "f9a407aa9609d45e3e2eafaba1f9ef3950a8fce9"
+    },
+    {
+      "old": "eaa920ad8a2ecd458a18087cdecf1adad07cb1f6",
+      "old_subject": "docs(verification): qualify first-append retained blob accounting",
+      "new_subject": "docs(verification): qualify first-append retained blob accounting",
+      "tree": "a9b53bc95f787794044e8371c073f88a902b8c71",
+      "new": "c450d9fb4160a0d9bf5d8f5a1380eea3df6db7f0"
+    },
+    {
+      "old": "af26363e74206c31d06d5c922dbd6873f520e16b",
+      "old_subject": "fix(sqlite): enforce generation bounds on stop confirmation",
+      "new_subject": "fix(sqlite): enforce generation bounds on stop confirmation",
+      "tree": "da5c8a6b0e9a5206ed19bd880f97103a03fdebb9",
+      "new": "0921a70e758e43d8e0985fb15b89c722847b78c6"
+    },
+    {
+      "old": "a0a7a6c69b04cca7a1056ab5eecf65df16db40f2",
+      "old_subject": "docs(verification): qualify stop-confirmation generation policy",
+      "new_subject": "docs(verification): qualify stop-confirmation generation policy",
+      "tree": "56682496905a2805c63909816dfccce5c8a7342f",
+      "new": "b0a027fd28d8f8ce7f8eccbe806dab16e11a1382"
+    },
+    {
+      "old": "58e237f91028ecebb167de2a41075bc7357443de",
+      "old_subject": "fix(sqlite): contain panics while disposing canceled job results",
+      "new_subject": "fix(sqlite): contain panics while disposing canceled job results",
+      "tree": "8e4aae4a58eb44302a82468cce28d2e43162fa3c",
+      "new": "bb826c195d73386439d896151215eacd2c375abe"
+    },
+    {
+      "old": "8e4e2254182282fb9ae79a52bd8b17cc8cede68a",
+      "old_subject": "docs(verification): qualify canceled result cleanup and claim latency",
+      "new_subject": "docs(verification): qualify canceled result cleanup and claim latency",
+      "tree": "3190109f53cc015b0d6db675a2de782349588e17",
+      "new": "26398d503b4ffaf06ad65c36720655da769db019"
+    },
+    {
+      "old": "14c4342e94094ab81fe87cbc7873b8424ad6aa49",
+      "old_subject": "fix(sqlite): contain rejected callback cleanup panics",
+      "new_subject": "fix(sqlite): contain rejected callback cleanup panics",
+      "tree": "42e8ff9c5ce331b0948a7dcf88ad47cef8691a38",
+      "new": "79fd6b6dbbbb521ef5ee5daf1fea71bf6a2865dd"
+    },
+    {
+      "old": "4b63eac65464123cce5bff3665e59272608a4244",
+      "old_subject": "docs(verification): qualify rejected callback cleanup and claim latency",
+      "new_subject": "docs(verification): qualify rejected callback cleanup and claim latency",
+      "tree": "11f4b01340260b41d1f6543a455e42bececbe150",
+      "new": "ef81af254dd116feef88d719342463c8873a4995"
+    },
+    {
+      "old": "1fb0849ccb691e941530e7119a9382aa52ea83b3",
+      "old_subject": "perf(sqlite): reuse lease update statements across claim batches",
+      "new_subject": "perf(sqlite): reuse lease update statements across claim batches",
+      "tree": "880ce9c0ce9953531e253d44fb43d5176d35f699",
+      "new": "c42718707426fe4d7a83636c4a5810e8bb20a8ea"
+    },
+    {
+      "old": "0a8bb67393becd1d22108db948ab4e83fd35f6a7",
+      "old_subject": "docs(perf): qualify claim update reuse on tmpfs and btrfs",
+      "new_subject": "docs(perf): qualify claim update reuse on tmpfs and btrfs",
+      "tree": "fb4a728b149883d9a9f02d25194e1ea7c7bc30ab",
+      "new": "759c359a5d2cf77426592dd3a8a942ea0a30a5f3"
+    },
+    {
+      "old": "d84111a202d40c15bfcc8935d2581126e4b8f76b",
+      "old_subject": "perf(sqlite): borrow claim record bytes during decoding",
+      "new_subject": "perf(sqlite): borrow claim record bytes during decoding",
+      "tree": "b9251f6a4b8da1af766f7d680708c6c9ff1fbcce",
+      "new": "10073fa1f4dc328ad35435c224cb26752e088022"
+    },
+    {
+      "old": "7608a47201e07b6509aca530731745bd919b5f2d",
+      "old_subject": "docs(perf): verify claim allocation savings and latency",
+      "new_subject": "docs(perf): verify claim allocation savings and latency",
+      "tree": "4374cece41adeb4c8d72a98050dddd43d6d79f9a",
+      "new": "701a7ca04d084ecf3ff8aba5d0d8ac19d15d1193"
+    },
+    {
+      "old": "e2ea47715de232ca7b5285d6aa3af7a43302c1e0",
+      "old_subject": "perf(sqlite): reuse serialization buffers across lease batches",
+      "new_subject": "perf(sqlite): reuse serialization buffers across lease batches",
+      "tree": "6ff50ca3d238c2647b19e7ca1149e9d27e658a72",
+      "new": "e86a1764f9ad55066a57bfcba103e6ac38a2becc"
+    },
+    {
+      "old": "d45b988a9ae9b2e264aacc9ef81a8d7f1812c08d",
+      "old_subject": "docs(perf): qualify reused lease encoding buffers",
+      "new_subject": "docs(perf): qualify reused lease encoding buffers",
+      "tree": "09d100d48017baa86902dd30607069c36f76071c",
+      "new": "12e471094d49c6a14976cb637eafcc50a4743c0f"
+    },
+    {
+      "old": "e40213ec54e0bc13378bd30a3819df22d73133ed",
+      "old_subject": "test(sqlite): qualify shared quota admission across workers",
+      "new_subject": "test(sqlite): qualify shared quota admission across workers",
+      "tree": "e23ffdd187cbbe0ceabd900499219fed0c0951d6",
+      "new": "3e68291d4d8013f26c1ef5e6b7dccddaaf7e9486"
+    },
+    {
+      "old": "f383d51fb03af753b2600a02e47a5efa7c208788",
+      "old_subject": "docs(sqlite): record concurrent quota qualification",
+      "new_subject": "docs(sqlite): record concurrent quota qualification",
+      "tree": "25ec42836ff6d559682ac39f8cc1bb63e5f9f26e",
+      "new": "1c47f0a45e1f695531f7953d8fe879952dfef1ab"
+    },
+    {
+      "old": "fbae67835fae4f4ab356fff43fc4e1841f9bcccb",
+      "old_subject": "perf(sqlite): borrow durable lease validation rows",
+      "new_subject": "perf(sqlite): borrow durable lease validation rows",
+      "tree": "cd097ac6d3c9770b8daa0b13b24a38e7d6f83b36",
+      "new": "0edb359a3179d6ab5dac5df8d6692d6c55a7bf71"
+    },
+    {
+      "old": "a0dbaf25dc0106882dfe886b5ae080867ed2f041",
+      "old_subject": "docs(perf): verify lease validation allocation savings",
+      "new_subject": "docs(perf): verify lease validation allocation savings",
+      "tree": "1a679586638f9924c870473608805397bbbaa8a3",
+      "new": "339e34dc070e1af31399f01d5e2139f78efab542"
+    },
+    {
+      "old": "b15936a1e2655280093cf1db57993909e3656c4a",
+      "old_subject": "perf(sqlite): borrow timer scheduling validation rows",
+      "new_subject": "perf(sqlite): borrow timer scheduling validation rows",
+      "tree": "2f6134cef45d1fd1bea9d40b72a47b8609cd2d70",
+      "new": "4629623bdb2b7f632aa8e8418abc88518a118361"
+    },
+    {
+      "old": "1ed0b333b7248022f65a13f5c00826a75df17d14",
+      "old_subject": "docs(perf): qualify timer validation allocation savings",
+      "new_subject": "docs(perf): qualify timer validation allocation savings",
+      "tree": "fc80b123d782b1aba3deff587f3a38eea54fbbe3",
+      "new": "639c932e2570696243daa8f4efa18eec33742195"
+    },
+    {
+      "old": "68c9eac2bd3c8dc5b164a1d8101c072e717e10b9",
+      "old_subject": "perf(sqlite): borrow exact commit verification rows",
+      "new_subject": "perf(sqlite): borrow exact commit verification rows",
+      "tree": "d53b965d831aecbeb09ce3e1aac4cf95272abc32",
+      "new": "14493337fadde87f9fca6f945b23642ea53f721f"
+    },
+    {
+      "old": "feb2234ef4c27f502c4790f767530be2773cf665",
+      "old_subject": "docs(perf): verify exact commit allocation savings",
+      "new_subject": "docs(perf): verify exact commit allocation savings",
+      "tree": "1ca4c9d02de2877985e412bb96e7956d23482699",
+      "new": "10842ff8d5072c1e8277370b2ca53735aaf456d3"
+    },
+    {
+      "old": "3f8e1abf41491f06f8966eead1eb913b39bbef5e",
+      "old_subject": "perf(sqlite): verify canonical duplicate inputs without decoding",
+      "new_subject": "perf(sqlite): verify canonical duplicate inputs without decoding",
+      "tree": "c4110daf65f8372f71014f51d99b96c3bad199b4",
+      "new": "101ca9f72c3a26443bcac46d106be28d98e8bb19"
+    },
+    {
+      "old": "693223b6a88392c1af11a162c7c84e5055a45502",
+      "old_subject": "docs(perf): qualify duplicate input admission latency",
+      "new_subject": "docs(perf): qualify duplicate input admission latency",
+      "tree": "449b7ac55ce0473cf8459328beae72ea9097c6c4",
+      "new": "2f8133ef6781ef81313fe51e4d7359408f2b4fd7"
+    },
+    {
+      "old": "a34c789cb52c07c9e4054013ecbe9b698dfc4bb5",
+      "old_subject": "test(sqlite): qualify concurrent admission and commit histories",
+      "new_subject": "test(sqlite): qualify concurrent admission and commit histories",
+      "tree": "c09f631ada1fbb1a4a9910564dfcdc2e57235c8d",
+      "new": "e7ef898e9dff20434032fd80c01b5183e2cbe8c0"
+    },
+    {
+      "old": "0506449983da1c89ad5bd19392e76f0e8e2a3487",
+      "old_subject": "docs(sqlite): record concurrent admission qualification",
+      "new_subject": "docs(sqlite): record concurrent admission qualification",
+      "tree": "ff61392b7e8687691b0e9be8892c667c0f6d5eee",
+      "new": "1d22bc86f4fe3afe98c20a312ace10dcf7a06df8"
+    },
+    {
+      "old": "170531404a21775c457d3ea4ba5f2ab339432f6e",
+      "old_subject": "perf(sqlite): borrow discovery rows and allocate results lazily",
+      "new_subject": "perf(sqlite): borrow discovery rows and allocate results lazily",
+      "tree": "d31af84910f0330e00f154d584d10ad082af7eda",
+      "new": "807b98b5e9e66f12bbd49b56e8b833159a11019d"
+    },
+    {
+      "old": "794914678621a18f44f770d261b0bd052974f51f",
+      "old_subject": "docs(perf): qualify pending discovery latency and allocation savings",
+      "new_subject": "docs(perf): qualify pending discovery latency and allocation savings",
+      "tree": "ddccc6909f833581398e973c102cd8461b8c92f9",
+      "new": "5ae83417db28dccab64d130d776c9e5490bfd377"
+    },
+    {
+      "old": "1272fd44d97f0eab2724175709fe445cd7e144c9",
+      "old_subject": "perf(sqlite): reserve replay pages from validated frontier",
+      "new_subject": "perf(sqlite): reserve replay pages from validated frontier",
+      "tree": "0cdc1940d8db0f479422d7754cd5e3e3d3af3e8c",
+      "new": "483298293132aeedc26d3541974ccb90cc561026"
+    },
+    {
+      "old": "8b6ff6d46497ac2cc95472b743ace0da41c4cf54",
+      "old_subject": "docs: retain replay reservation qualification output",
+      "new_subject": "docs(release): retain replay reservation qualification output",
+      "tree": "a166c9e7893b917c3a99cc9c0caae616fbdfcead",
+      "new": "94fadeeb0bbbd15ab4cf89a0f66dc2df22e6d40e"
+    },
+    {
+      "old": "f15709ec8239044f41514ba63f22fc2d1ef35653",
+      "old_subject": "test(sqlite): verify maximum replay pages across workers",
+      "new_subject": "test(sqlite): verify maximum replay pages across workers",
+      "tree": "8d2d85507f3341dc7838104b745911c06a0fac73",
+      "new": "a1de3ac303dd949d930d707ca90faac8f161e8a1"
+    },
+    {
+      "old": "64fc782a5affababb792f71d2acfdfdf44fca434",
+      "old_subject": "docs: measure replay reservation latency across histories",
+      "new_subject": "docs(verification): measure replay reservation latency across histories",
+      "tree": "d2c5e59faae6c0b68c07ff1c08a45dfd3bb4ddad",
+      "new": "fa37488129101f3c008f9ca48ed5899de60e2f8f"
+    },
+    {
+      "old": "bf951100e2c3084f5a2a904035c9b3933085dcc1",
+      "old_subject": "test(sqlite): verify worker transaction panic boundaries",
+      "new_subject": "test(sqlite): verify worker transaction panic boundaries",
+      "tree": "1a4d88b897714d3a6a99a8e083ba679be26c4be5",
+      "new": "231fd0af534b61192dd571c51acfe97e561cf0db"
+    },
+    {
+      "old": "dfbdc294929019939939689209149905b833910c",
+      "old_subject": "perf(sqlite): reuse prepared task record reads",
+      "new_subject": "perf(sqlite): reuse prepared task record reads",
+      "tree": "eea0dcd9c69e678072316904ad43918377228576",
+      "new": "ae159ed6f26be0df806d2f20e4d1ea1601532291"
+    },
+    {
+      "old": "95ff198bf1238c33c2e556557c43a56643995941",
+      "old_subject": "perf(sqlite): cache prepared task blob reads",
+      "new_subject": "perf(sqlite): cache prepared task blob reads",
+      "tree": "fc69dfb4433249a1317fef4ff52ec59788c46dbb",
+      "new": "290eae63df09f9bb2aadac7d0798d4c60ca6da08"
+    },
+    {
+      "old": "34edf6d42ee1cfcc48039750d8917b3703d88c86",
+      "old_subject": "perf(sqlite): reuse retirement checks without caching answers",
+      "new_subject": "perf(sqlite): reuse retirement checks without caching answers",
+      "tree": "fbf6a10b960c723a17555c8b42e1b0373d04f5bb",
+      "new": "f8433bf1cbad6261f2b9450ace2cb584e368c44f"
+    },
+    {
+      "old": "234c23f0ab98f241219be84b12ef4143581a4285",
+      "old_subject": "test(sqlite): verify busy WAL checkpoints preserve reader history",
+      "new_subject": "test(sqlite): verify busy WAL checkpoints preserve reader history",
+      "tree": "17902e78f4681f2af680a170cb3896ea2c57ef34",
+      "new": "d4eddb63baedebeaf2264e0afff000375406dd57"
+    },
+    {
+      "old": "af30345e533bbad3edb3c5474fc1a9ce3a61774d",
+      "old_subject": "fix(sqlite): read blobs and retirement in one snapshot",
+      "new_subject": "fix(sqlite): read blobs and retirement in one snapshot",
+      "tree": "001790e13874511a1f16fc1cf9dc938e2f9d038b",
+      "new": "7c8ab1fa1440695e08a58ceda227cb29bd13e194"
+    },
+    {
+      "old": "fbba2baee58bfd09430240c24d36efd4e3b09c53",
+      "old_subject": "test(sqlite): race generation reservations against fences",
+      "new_subject": "test(sqlite): race generation reservations against fences",
+      "tree": "b89206ca07348f3f6bb300b94e270e4f9ea487d7",
+      "new": "03276b715387b3cb2f2ceef62b1caf4ccf31fc37"
+    },
+    {
+      "old": "2b5ec0511f81dbd1847670731634c940850d5395",
+      "old_subject": "perf(sqlite): document rejected task commit cache experiment",
+      "new_subject": "perf(sqlite): document rejected task commit cache experiment",
+      "tree": "e8e6ae45666611d7dda622763ef4ee51ff571887",
+      "new": "089589d0530a533f13d3fcff76c17bf822eb207d"
+    },
+    {
+      "old": "ac4dcde5484174faaa039937b6421e2bde1944fa",
+      "old_subject": "test(sqlite): race task retirement against stop confirmation",
+      "new_subject": "test(sqlite): race task retirement against stop confirmation",
+      "tree": "7b10ce43d5fadaa7727d70bd6a27a403cb9578c5",
+      "new": "3c5fc7ce379db2177cc02e05d6139708d4deac25"
+    },
+    {
+      "old": "96c43d49ab9d78a71ac5693964294a6ac5681071",
+      "old_subject": "perf(sqlite): reuse verified payload read statements",
+      "new_subject": "perf(sqlite): reuse verified payload read statements",
+      "tree": "fba36e577345b6fc903316d8ff88ad94d0bf47ed",
+      "new": "8641e952bb2a27514ddcbcc544b97a9f27c12209"
+    },
+    {
+      "old": "e41d5957bd8623dae8fb4620e1924e77c8edc291",
+      "old_subject": "perf(domain): reserve exact process scope encoding capacity",
+      "new_subject": "perf(domain): reserve exact process scope encoding capacity",
+      "tree": "11567033e68194213f980e178825e62f0176ac08",
+      "new": "064d9e4c4c983619ea18712174d536b23990ecf6"
+    },
+    {
+      "old": "5d826b94a747278f4b5aa446d46b781dcecd7452",
+      "old_subject": "bench: add paired end-to-end application workload suite",
+      "new_subject": "perf(executor): add paired end-to-end application workload suite",
+      "tree": "42d519fad023bbec0a300b9dba945fe50b3323ad",
+      "new": "a72d83d51f6bf2e23d5d23138237da044c40a4a8"
+    },
+    {
+      "old": "bbd5843c32320e47f84e58bce1161e30e53f05e0",
+      "old_subject": "bench: compare atomic and preaccepted input admission",
+      "new_subject": "perf(executor): compare atomic and preaccepted input admission",
+      "tree": "96ba031240d5302f4ec3a92d3bd5ad98d6d10964",
+      "new": "a525cbe803bf91c8ddc1af11fe5eef392a630f78"
+    },
+    {
+      "old": "d340aef997b39d4e354c2951861064ecf50b0d37",
+      "old_subject": "test(sqlite): verify acknowledgement and reclaim race histories",
+      "new_subject": "test(sqlite): verify acknowledgement and reclaim race histories",
+      "tree": "ca7d53893d26619a0cd348ad238ae5162f7b855b",
+      "new": "60cc0c4f6cf669f7601c40f5675bc25e781a1bf2"
+    },
+    {
+      "old": "cbfe5c5f0d840cbd1ad2a4ba119a5883a9ab1c13",
+      "old_subject": "test(sqlite): verify timer cancellation and acknowledgement races",
+      "new_subject": "test(sqlite): verify timer cancellation and acknowledgement races",
+      "tree": "d761742ebdc908f73ed6c2a25443f83018ff28d6",
+      "new": "79c82d97976875e1c08126afa3a4f469b36c1157"
+    },
+    {
+      "old": "cddd2165173091cd9e5a3bbd4fa91a6cb0cc8259",
+      "old_subject": "perf(sqlite): avoid cloned scopes during outcome replay",
+      "new_subject": "perf(sqlite): avoid cloned scopes during outcome replay",
+      "tree": "5be8e5cb4a222861e8a2071d7919a662f93c0d8a",
+      "new": "1a2a4719a4268811cbd031799637607560070ae0"
+    },
+    {
+      "old": "f4b0094c9f14903078b24202fe4ee8232201d750",
+      "old_subject": "test(sqlite): verify competing batches at one process frontier",
+      "new_subject": "test(sqlite): verify competing batches at one process frontier",
+      "tree": "a65081b7af698f8a128643fe7ba0557441f090d2",
+      "new": "b3e8a404f4fad2561316054dcea92d67d4877bc5"
+    },
+    {
+      "old": "865911df65ec8c8642d0bea6b2ca29b3a5bfdbc2",
+      "old_subject": "test(sqlite): verify recovery after competing commit conflicts",
+      "new_subject": "test(sqlite): verify recovery after competing commit conflicts",
+      "tree": "fcf3563d217bdf010638bdc6bdd842062e06f18d",
+      "new": "157a6fe5a46bf883a760165a1b9302ab5d991a6a"
+    },
+    {
+      "old": "a8f79b4c3ba178ba1865ea1165f9e644767afddb",
+      "old_subject": "test(sqlite): pin replay snapshot across concurrent appends",
+      "new_subject": "test(sqlite): pin replay snapshot across concurrent appends",
+      "tree": "44b6b1ba2a28d7c486717e0e16b1e91d53d932f5",
+      "new": "9787cad3d461e2500c0607471976c6ffac091678"
+    },
+    {
+      "old": "97579da3fb3d304e7317ea78250a8fab8784c7e3",
+      "old_subject": "perf(ports): avoid cloning scopes during outcome log append",
+      "new_subject": "perf(ports): avoid cloning scopes during outcome log append",
+      "tree": "b50bff5c2bc6969c6752945db825595e891efd2f",
+      "new": "6acc3a0c07e6c2a9734a27ab99900a5620b7c7f8"
+    },
+    {
+      "old": "e488365a84b3462a4b2ffa0ca5d7eb25de94b57e",
+      "old_subject": "perf(ports): avoid temporary ID sets for single outcome appends",
+      "new_subject": "perf(ports): avoid temporary ID sets for single outcome appends",
+      "tree": "100b872b77d3d611d1459c7710eb8ffe6178f4b1",
+      "new": "6f9d18c798bf19873dfe240410d879c9805de9a0"
+    },
+    {
+      "old": "5a04a54f1141c351b9a5a3b9c2d9ce30200a2699",
+      "old_subject": "test(sqlite): prove public commit cancellation and lost ACK recovery",
+      "new_subject": "test(sqlite): prove public commit cancellation and lost ACK recovery",
+      "tree": "7203c34c48e4688289969b7e527faae749729584",
+      "new": "aebeb8678a4624daf3b9242e0a76c014d91bddad"
+    },
+    {
+      "old": "2c9fb0c1d39dfb0d2e9ea8e0d585acb5b33f214a",
+      "old_subject": "perf(sqlite): move owned append batches directly into worker",
+      "new_subject": "perf(sqlite): move owned append batches directly into worker",
+      "tree": "835bfa768e24eb9d7e2c5169c025e8a3cbadc3a9",
+      "new": "13aba79f543516c6459d1767521045c835d7b372"
+    },
+    {
+      "old": "0c68fdc754c7be223b0463803029c0aa1a290416",
+      "old_subject": "test(ports): guard atomic scope validation and record rejected optimizations",
+      "new_subject": "test(ports): guard atomic scope validation and record rejected optimizations",
+      "tree": "d4b75e7cb884cbc32f35ce3944b51c2b6384f6b6",
+      "new": "46da8fb6bbf8c34fd75d03313746deebc565a224"
+    },
+    {
+      "old": "f2c0696eec5894a53350edd7442c154533e5c73d",
+      "old_subject": "perf(sqlite): reuse encoding storage across process commit records",
+      "new_subject": "perf(sqlite): reuse encoding storage across process commit records",
+      "tree": "72790d9d79c286c19cc0d887c605214a15532959",
+      "new": "0bf5ffffd83e5b85a2ef2d0b4535b04dfcc2ef47"
+    },
+    {
+      "old": "4e02668e729ca79609f42463bb4b276ca89cab26",
+      "old_subject": "test(sqlite): cover deferred process commit failures",
+      "new_subject": "test(sqlite): cover deferred process commit failures",
+      "tree": "583a646b0d87b5dac46bf43dc7fd0bd43d2dc007",
+      "new": "197f4bb5c29230f10d98ebbd11c1c0349d4727ee"
+    },
+    {
+      "old": "cf16f77bee0e867f19fbdaf8db110ea450ba967c",
+      "old_subject": "test(sqlite): protect task cache at failed commit boundary",
+      "new_subject": "test(sqlite): protect task cache at failed commit boundary",
+      "tree": "e2718674698443773774b828ec5eef9ac1316bb9",
+      "new": "5fe731f496a09343ac71bda4bb6b805dae211c4c"
+    },
+    {
+      "old": "98b8aacf3d00f1d964ba4422194b20403df54b8d",
+      "old_subject": "test(sqlite): cover retirement rollback at commit boundary",
+      "new_subject": "test(sqlite): cover retirement rollback at commit boundary",
+      "tree": "82066f034356e9357096666d6f16bcd7c3ac18cc",
+      "new": "4cc7ca069564045dc1dcb4a6c104f13f023a0cd7"
+    },
+    {
+      "old": "c909967d1413df2858afec7f4ea5af8eacc7d9b4",
+      "old_subject": "perf(domain): reserve exact canonical effect-key capacity",
+      "new_subject": "perf(domain): reserve exact canonical effect-key capacity",
+      "tree": "1c60fb08e29e4324a8a6f6e969afe89f55985336",
+      "new": "c3eee6bcd8e0b1704bb6d95b049445980fe20153"
+    },
+    {
+      "old": "459780941807379174f15b4c3a79a321d9cb758a",
+      "old_subject": "test(sqlite): cover outbox failures at commit boundary",
+      "new_subject": "test(sqlite): cover outbox failures at commit boundary",
+      "tree": "420e57be04820a22feb74ebb3b994014a462270b",
+      "new": "307fb1e517d25c1f2174fd88ea23e4b2b0b7e201"
+    },
+    {
+      "old": "4fd5916a3a40c300f9f3975d0492f69ef5fcde5d",
+      "old_subject": "test(sqlite): verify timer state across commit failures",
+      "new_subject": "test(sqlite): verify timer state across commit failures",
+      "tree": "61b8ff037434d37d1c75a96a51d73f1c1b3a6f85",
+      "new": "2cc693e248d3b0bf45c198af2ab0ad9f140b1dc9"
+    },
+    {
+      "old": "6f391231456d766bc3003c87a453ee4cba58c857",
+      "old_subject": "perf(ports): compare timer claim scopes without cloning",
+      "new_subject": "perf(ports): compare timer claim scopes without cloning",
+      "tree": "f6282cd8de2b5049bf2683801e8a36849000d06b",
+      "new": "d4263be3b3b8eed5678f21c6c368b29f4e62f27b"
+    },
+    {
+      "old": "7deff215827c90afdd0c9abda5431033590410fa",
+      "old_subject": "perf(sqlite): validate claimed row scopes without copying",
+      "new_subject": "perf(sqlite): validate claimed row scopes without copying",
+      "tree": "d1575bf23ba347ce45e4b4c7c1788f8e8645ed98",
+      "new": "0734ba1f92e16db46df2f04c01c05805754c7e1f"
+    },
+    {
+      "old": "00b79aaf84e59ce1a74fd2c6b75bd5dc099c0650",
+      "old_subject": "perf(domain): encode action effect keys without identity clones",
+      "new_subject": "perf(domain): encode action effect keys without identity clones",
+      "tree": "047db1d81ff2ff0696be8757e856f9e2749cc3fc",
+      "new": "3811f3430207189e77a8a9ee8727a8753d75e624"
+    },
+    {
+      "old": "be823698205af8fdbbc8f855d95667375b0a12ff",
+      "old_subject": "perf(executor): reserve timer input identity buffers",
+      "new_subject": "perf(executor): reserve timer input identity buffers",
+      "tree": "90d95309ca9277f64ce511ccaea3794022e5add3",
+      "new": "7ceb5f5970fa1b61e83000d77b3f174a08ea27e4"
+    },
+    {
+      "old": "c69cebc8594094f80fee54d5fdc9c88bb7ef3f1d",
+      "old_subject": "perf(executor): index duplicate identities in large lease batches",
+      "new_subject": "perf(executor): index duplicate identities in large lease batches",
+      "tree": "405df99a97e322a5922ee21e2944a86785d7ca28",
+      "new": "71c98a781df7dd657aa32e9542f9ca4523b5e188"
+    },
+    {
+      "old": "9fa82f60c39288b3512c1f1ece35077fb9b3b5cc",
+      "old_subject": "test(executor): cover durable partial timer-batch recovery",
+      "new_subject": "test(executor): cover durable partial timer-batch recovery",
+      "tree": "80b883f595d5e3ac091fb54d2aa1dc90daeefcf9",
+      "new": "a63d1a6cec19621d3744a62ff6b0315e877bad06"
+    },
+    {
+      "old": "a44da2ece54056bddd07ff69a3700610aa107ebe",
+      "old_subject": "bench(executor): isolate service probes and record rejected hex optimization",
+      "new_subject": "perf(executor): isolate service probes and record rejected hex optimization",
+      "tree": "92f88b679ea22faa93385674546a9a887599947c",
+      "new": "5a81c293ee844e1c0b5405b2586d763ce1c438c0"
+    },
+    {
+      "old": "42e09f852e6d745123a4f0d44796a1a00c8baed9",
+      "old_subject": "bench(executor): measure complete durable timer workflows",
+      "new_subject": "perf(executor): measure complete durable timer workflows",
+      "tree": "557dbff3999fe9f20d0072e05bec6141e9bade0e",
+      "new": "cb049e1fee13b79213e3e47879373dcf1d61d1c1"
+    },
+    {
+      "old": "704688d5ec28eca0d277165e8a365d7d52edab3f",
+      "old_subject": "docs(perf): distinguish durable timer storage and CPU costs",
+      "new_subject": "docs(perf): distinguish durable timer storage and CPU costs",
+      "tree": "5bce029a308c49d7ebc7af22438d44e6815b5df2",
+      "new": "41430a11246ea7cd27cbe82f1d386bc05f467033"
+    },
+    {
+      "old": "8c11d33030c38075421a03f8f17f513d6dfe0d3d",
+      "old_subject": "perf(sqlite): let exact payload retries avoid writer contention",
+      "new_subject": "perf(sqlite): let exact payload retries avoid writer contention",
+      "tree": "564bf995cd5e717084c6d246c2570ac313e26284",
+      "new": "37d319c3bd25583d15bb56a02ad91b21ac7e12d9"
+    },
+    {
+      "old": "27ed119f2ad4522f5634a1d1b958d1e749e59ee5",
+      "old_subject": "Avoid writer admission for validated inbox retries",
+      "new_subject": "perf(sqlite): avoid writer admission for validated inbox retries",
+      "tree": "40f3a9a0025f76ca630c5478dde0e33c3dca7784",
+      "new": "d40ee613d4b18a8c7485d0f1c5ff384c61d98a57"
+    },
+    {
+      "old": "15ba4e4e2a119af8d74fd5796af6f05ef567b797",
+      "old_subject": "Record focused repeat of inbox scheduling regression",
+      "new_subject": "docs(perf): record the inbox scheduling regression follow-up",
+      "tree": "fb7476f6ccab253128b9d5c9b612c96b215d5745",
+      "new": "e6f4598c4fb0c036bb31fc23b42276317d7500ab"
+    },
+    {
+      "old": "d1c60df17ffb05960fde6279025ec1c1529b2302",
+      "old_subject": "Test commit retry encoding and size-bound compatibility",
+      "new_subject": "test(sqlite): verify commit retry encodings and record size limits",
+      "tree": "9ca834e77a51a589994ec43f9e9048793040b679",
+      "new": "cc335598c28dd9962f1e062f8f9d1c9ec2a32eeb"
+    },
+    {
+      "old": "7278eca1a164cf44918f63a1ae9e0b3188d8ad08",
+      "old_subject": "Fix seeded inbox race test for read-only duplicate retries",
+      "new_subject": "fix(sqlite): allow seeded inbox retries to complete before lock release",
+      "tree": "83506b606bf15383100328f9c915bf98c2791943",
+      "new": "f34a7815de00e9aa954eca7b065b8a8c3eace1da"
+    }
+  ]
+}

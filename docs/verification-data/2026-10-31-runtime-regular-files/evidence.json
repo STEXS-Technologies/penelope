@@ -1,0 +1,35 @@
+{
+  "baseline": "212c816f49832f0ee11f03a6c6c6cc8fd3903965",
+  "source": "a7ecf96d7e63874568131ad7f50b3a39803fd72d",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/image.rs": "8936ed62e319ec19ffdd77be51299263cea749b3a514adb26675b114352d8ece",
+    "crates/penelope-process-runtime/src/registry.rs": "421cdee501047158e706df958d9b04b58593793e843fbb0d175baf64f9dc2ef4",
+    "crates/penelope-process-runtime/tests/runtime.rs": "7ab33da6a5b9e49ef231fb5e1e3439e15401a8634a1fbb79062e035416647f73",
+    "crates/penelope-process-runtime/tests/support/filesystem_paths.rs": "c6e85c48bfb846db5fc9701bc76177fe8109d0bb0d94ce97efafc5ccdd65bce8"
+  },
+  "repetitions_per_case_per_toolchain": 25,
+  "cases": 8,
+  "isolated_executions": 400,
+  "executed_binaries": {
+    "stable": {
+      "path": "target/debug/deps/runtime-fc67005e4e738a2c",
+      "sha256": "6bba04e7ea1b88799786bbbdbef2e4544640a3fcdf6ebac3d715745d3e588a33"
+    },
+    "msrv": {
+      "path": "target/worker-audit-msrv/debug/deps/runtime-f2cb0137fabcb2d5",
+      "sha256": "6b894cbb3c9600c394cb13b3a95ea03005faa272997304e376ed5cea1c176787"
+    }
+  },
+  "artifact_sha256": {
+    "baseline-final.log.gz": "2d5a352e3ab2521353c1e1d4221ed3846548590ff3e6adde59a713282f51fa0b",
+    "baseline-fixtures.patch": "66568438228fae768e126083141106b7c9cf0dc4d48c99a321b87886a79c1fd2",
+    "clippy.log.gz": "cb64018c63721f35bf8371bc02d977f3ee80bb9ceccb26aa758d206c6211142f",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "f0ba057bd5f228944c29e85c2a83501bf5b7132bec06a96b7ae546f51291c654",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "0635ef3882c790c129da71f6532d7d708e6d15e1c18e05857c90fedaa0be09a9",
+    "repeat.py": "526add472435152c9b08209e484a1b62d955093016326253719b9fa4cde37d9b",
+    "repeated.jsonl.gz": "e8026bc71c437252d2aa5b75934b2e38ed2dff711cd1dd8701ccfc18845e7e28",
+    "workspace.log.gz": "10c9d4ea91a6efc98ed721570e9d2ff1d8bcb08678f94a697d3c97f7be4ed702"
+  }
+}

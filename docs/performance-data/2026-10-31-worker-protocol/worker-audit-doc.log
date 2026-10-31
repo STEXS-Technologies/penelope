@@ -1,0 +1,16 @@
+ Documenting penelope-core v0.3.0 (/home/ac/projects/penelope/crates/penelope-core)
+    Checking penelope-domain v0.3.0 (/home/ac/projects/penelope/crates/penelope-domain)
+ Documenting penelope-domain v0.3.0 (/home/ac/projects/penelope/crates/penelope-domain)
+ Documenting penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+    Checking penelope-ports v0.3.0 (/home/ac/projects/penelope/crates/penelope-ports)
+    Checking penelope-intent v0.3.0 (/home/ac/projects/penelope/crates/penelope-intent)
+ Documenting penelope-ports v0.3.0 (/home/ac/projects/penelope/crates/penelope-ports)
+ Documenting penelope-intent v0.3.0 (/home/ac/projects/penelope/crates/penelope-intent)
+    Checking penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Checking penelope-statechronicle v0.3.0 (/home/ac/projects/penelope/crates/penelope-statechronicle)
+ Documenting penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+ Documenting penelope-statechronicle v0.3.0 (/home/ac/projects/penelope/crates/penelope-statechronicle)
+ Documenting penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+ Documenting penelope v0.3.0 (/home/ac/projects/penelope/crates/penelope)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.20s
+   Generated /home/ac/projects/penelope/target/doc/penelope/index.html and 8 other files

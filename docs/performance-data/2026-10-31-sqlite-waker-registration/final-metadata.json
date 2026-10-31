@@ -1,0 +1,12 @@
+{
+  "pairs": 20,
+  "warmups": 1,
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "binary_sha256": {
+    "baseline": "36e6464b0814543191cd342a91721c5a2834d3823d4a67d8938e9cfc11ca5fea",
+    "candidate": "6bbbe5e8168a80257b225210da0ab09a5fbdca16fd3173487b6efc9c52ae9367"
+  },
+  "scope": "Public OutboxStore::claim future while clock intentionally blocks worker. SQLite setup, release and completion excluded from per-poll times. Host workloads, CPU frequency and OS caches uncontrolled."
+}

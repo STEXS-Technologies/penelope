@@ -1,0 +1,21 @@
+{
+  "source_parent": "bbd5843c32320e47f84e58bce1161e30e53f05e0",
+  "sources_sha256": {
+    "crates/penelope-sqlite/tests/process.rs": "84a8eb96659da9f294166b7670dd2473794835dd3fb9c7c10b2714792d0e0b69",
+    "crates/penelope-sqlite/tests/support/outbox_race.rs": "874010558543b4626dc45213ff38acb63876225d33a4330abece871fcc06a401",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-sqlite/src/leases.rs": "33afbb84adb4391b06d860a747ce9a71e97eb4be97d900a3da9fe47564a6e640"
+  },
+  "logs_sha256": {
+    "stable.txt": "20c7d427354e9959e67f696127411ec3d19958815c7e0738d08e76d6a2254138",
+    "msrv.txt": "6aeeaff93e751ed1a4074eed0212df610544c5ca5608991b0fd09b6e1dfe3dd6",
+    "clippy.txt": "d1becdc6d99d188de9725814d67154ef8ae5057dfcddd6128f1353aae093ee2f",
+    "negative-control.txt": "109b10132aa190bd40bd316afeda7f94d943c34ef292702c5004eea4f25f83c5",
+    "repeated-stable.txt": "d4b04b61acf62b6e389c95ace037d9ef077c4cc0dc1c85ccf570395e5dd74b1d",
+    "repeated-1.85.0.txt": "12a6f80754e6e9275673c1dbee3d72d36c7b1ae196687c71ae67a532b72d55bf"
+  },
+  "repeats_per_toolchain": 20,
+  "races_per_repeat": 16,
+  "total_repeated_races": 640,
+  "negative_control": "Temporarily omitted outbox_lease validation in OutboxStore::acknowledge; test failed, then restored production source before qualification repeats."
+}

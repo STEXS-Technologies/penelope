@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Repeated pure-engine restart, timer-fault, and public-boundary fuzz drill.
 #
-# This is deliberately not a deployment/database chaos test: Penelope ships no
-# infrastructure adapter. It makes the library-side failure evidence repeatable
-# until an outer composition root can run the corresponding durable drills.
+# This campaign covers library transitions and bounded public-boundary fuzzing.
+# SQLite fuzz targets use real private databases; actual adapter process-kill
+# suites run separately in workspace tests. This is not a deployment chaos test.
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

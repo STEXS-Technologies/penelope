@@ -40,6 +40,26 @@ jobs:
       - run: cargo run -p penelope --example trade_manual_review --locked
       - run: cargo run -p penelope --example trade_competing_lock --locked
       - run: cargo run -p penelope-executor --example recoverable_task --locked
+      - run: ./scripts/run-executor-saga-example.sh
+      - run: ./scripts/run-supervised-saga-example.sh
+
+  statechronicle-conformance:
+    name: Optional StateChronicle signed-event conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Sibling workspaces prevent Cargo from inheriting Penelope metadata for upstream crates.
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: penelope-conformance
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: STEXS-Technologies/statechronicle
+          ref: ae3d94bc22c7835eaa3fdcd766e3c117929c12bb
+          path: statechronicle-upstream
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+      - run: rustup toolchain install 1.99.0 --profile minimal
+      - run: python3 penelope-conformance/scripts/run-statechronicle-conformance.py statechronicle-upstream
 
   msrv:
     name: Minimum supported Rust
@@ -65,6 +85,8 @@ jobs:
         with:
           targets: riscv32imafc-unknown-none-elf
       - run: rustc --version
+      - run: cargo test -p penelope-core --test task_allocations --no-default-features --locked
+      - run: cargo test -p penelope-core --test task_allocations --features serde --locked
       - run: cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
       - run: cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none-elf --locked
 

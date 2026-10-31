@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/worker-audit-msrv/debug/deps/penelope_sqlite-3b64f145c1236517)
+
+running 1 test
+retirement_committed_during_read=true pinned_blob=true later_conflict=true reopened=true
+test tasks::blob_snapshot_tests::blob_read_and_external_retirement_share_one_snapshot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.01s
+

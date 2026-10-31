@@ -1,0 +1,21 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.65s
+     Running unittests src/lib.rs (target/debug/deps/penelope_sqlite-f950664ad0365ea6)
+
+running 1 test
+
+thread 'tasks::blob_snapshot_tests::blob_read_and_external_retirement_share_one_snapshot' (477654) panicked at crates/penelope-sqlite/src/task_blob_snapshot_tests.rs:119:5:
+assertion `left == right` failed: a read pinned before retirement must return its verified blob
+  left: Err(Corrupt)
+ right: Ok(4)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tasks::blob_snapshot_tests::blob_read_and_external_retirement_share_one_snapshot ... FAILED
+
+failures:
+
+failures:
+    tasks::blob_snapshot_tests::blob_read_and_external_retirement_share_one_snapshot
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p penelope-sqlite --lib`

@@ -1,0 +1,7 @@
+{
+  "crates/penelope-sqlite/src/process.rs": "bca3920df69d27be67992f294b7ae44ae227c4f0e59d802375c0ee2545eb41f1",
+  "crates/penelope-sqlite/src/process_commit_boundary_tests.rs": "d8735389eb13179b4db4a1d17148f8e2c6d66dc7e0209207e88393833e3439be",
+  "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+  "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d"
+}

@@ -1,0 +1,26 @@
+{
+  "cpu": 0,
+  "campaigns": 2,
+  "blocks_per_campaign": 12,
+  "processes_per_block": 4,
+  "warmup_per_profile": 16,
+  "sizes": [
+    0,
+    32,
+    4096,
+    1048576
+  ],
+  "corrupt": [
+    false,
+    true
+  ],
+  "iterations": {
+    "small": 1000,
+    "1048576": 128
+  },
+  "storage": "project qualification-temp on btrfs",
+  "binary_sha256": {
+    "baseline": "bb6d77f47280818cafced6c244b46a5de3fae531d3a852a0168f40effe83eb70",
+    "candidate": "8d1f579a9d2d1396fac8f0e8b001f24e07da4efac597ea889d4ae4bf5fbb063b"
+  }
+}

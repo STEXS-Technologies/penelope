@@ -1,0 +1,6 @@
+{
+  "baseline-latency": "7785bb6d7e7ad84229c633942f6e6d21bdff702b2a6c984a9202ff602cf33b34",
+  "baseline-allocations": "fd8fa9a49f510fe3fb97b6600f8c83e9023a6bdd56f7703a6a732f08d118007a",
+  "candidate-latency": "1e46171ef847313264ea0e9a67fc7c2225d235d6aece345540c3cf66e3316863",
+  "candidate-allocations": "56681daa3151d5a7f0524411bd79dff16f5ce3606f59f32c88e3da857b583429"
+}

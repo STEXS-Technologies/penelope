@@ -1,0 +1,11 @@
+{
+  "baseline-leases.rs": "5f2dcce7f0fc824516b0d23bcf1e20ff65e373a553a328a3d56251c25e25721b",
+  "baseline-lease_claim": "3dae5a4852b95a320d5ae1009f5923577fb70d5e50c41017324c5887de757069",
+  "baseline-lease_batch": "6adb9418316d28e4ec35ea042f3d0c2734ecc71bd1bb095a3531cbad889f696b",
+  "candidate-leases.rs": "cad48df9438e1f85a419d13f2a5f86d56e32ed3de841dcce49eb683c89d739b5",
+  "candidate-lease_claim": "c8869d29811199dd467eff693a3ec8b105e4ccffb00eb80c143da6e9894d2f1c",
+  "candidate-lease_batch": "39c24e0593f25ab6ed854cdfcb727dc2086723852063b6f9a479c8daa4434b21",
+  "lease_contracts.rs": "3758eccf35e5f135f0155f867e85215230a505951f2e82f35f66c3eb3b899a2b",
+  "lease_claim.rs": "495288104c6301ea90a4b133af3ec341df85b2f44633bf28471a6eabf4324c88",
+  "lease_batch.rs": "6e1d835098a89c87c773441c60cf39bfca68e73172d1a00c065a69ad0b3915f5"
+}

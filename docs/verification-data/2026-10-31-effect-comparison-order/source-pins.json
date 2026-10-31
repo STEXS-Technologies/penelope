@@ -1,0 +1,9 @@
+{
+  "baseline": "d6a4072dd06b2f4f4b453f63b990fc022a79d343",
+  "candidate": "ae8279e66093809ae722a12d2448449c70c570d3",
+  "build_candidate_parent_note": "Build metadata records parent HEAD during uncommitted experiment; source hash identifies the exact compiled candidate.",
+  "compilers": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  }
+}

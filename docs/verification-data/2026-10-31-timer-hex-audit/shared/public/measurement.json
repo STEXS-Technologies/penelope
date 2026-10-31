@@ -1,0 +1,11 @@
+{
+  "timing_start": 1793459338.0185463,
+  "timing_end": 1793459345.0964963,
+  "allocation_start": 1793459345.1039944,
+  "allocation_end": 1793459345.134068,
+  "cpu": 0,
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "ordinary_processes": 48,
+  "allocation_processes": 4
+}

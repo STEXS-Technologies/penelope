@@ -1,0 +1,85 @@
+diff --git a/crates/penelope-process-runtime/src/io_tests.rs b/crates/penelope-process-runtime/src/io_tests.rs
+index a3c4476..204c6a7 100644
+--- a/crates/penelope-process-runtime/src/io_tests.rs
++++ b/crates/penelope-process-runtime/src/io_tests.rs
+@@ -205,3 +205,80 @@ fn startup_parts_cannot_reset_budget_after_each_positive_write() {
+     );
+     assert!(output.bytes.len() < 4);
+ }
++
++struct TransientWriter {
++    kind: ErrorKind,
++    retries_per_chunk: usize,
++    remaining: usize,
++    attempts: usize,
++    bytes: Vec<u8>,
++}
++impl Write for TransientWriter {
++    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
++        self.attempts = self.attempts.saturating_add(1);
++        if self.remaining > 0 {
++            self.remaining = self.remaining.saturating_sub(1);
++            return Err(self.kind.into());
++        }
++        let chunk = bytes.get(..bytes.len().min(2)).unwrap();
++        self.bytes.extend_from_slice(chunk);
++        self.remaining = self.retries_per_chunk;
++        Ok(chunk.len())
++    }
++    fn flush(&mut self) -> io::Result<()> {
++        Ok(())
++    }
++}
++fn retry_burst(kind: ErrorKind, retries_per_chunk: usize) {
++    let mut output = TransientWriter {
++        kind,
++        retries_per_chunk,
++        remaining: retries_per_chunk,
++        attempts: 0,
++        bytes: Vec::new(),
++    };
++    send_parts(&mut output, &[b"abcd", b"efgh"], Duration::from_secs(1)).unwrap();
++    assert_eq!(output.bytes, b"abcdefgh");
++    assert_eq!(
++        output.attempts,
++        retries_per_chunk.saturating_add(1).saturating_mul(4)
++    );
++}
++#[test]
++fn interrupted_bursts_preserve_bytes_across_short_writes_and_parts() {
++    retry_burst(ErrorKind::Interrupted, 4);
++}
++#[test]
++fn would_block_bursts_preserve_bytes_across_short_writes_and_parts() {
++    retry_burst(ErrorKind::WouldBlock, 2);
++}
++struct AlwaysInterrupted {
++    attempts: usize,
++}
++impl Write for AlwaysInterrupted {
++    fn write(&mut self, _bytes: &[u8]) -> io::Result<usize> {
++        self.attempts = self.attempts.saturating_add(1);
++        Err(ErrorKind::Interrupted.into())
++    }
++    fn flush(&mut self) -> io::Result<()> {
++        Ok(())
++    }
++}
++#[test]
++fn continuous_interruptions_do_not_reset_the_write_deadline() {
++    let mut output = AlwaysInterrupted { attempts: 0 };
++    let deadline = Instant::now()
++        .checked_add(Duration::from_millis(2))
++        .unwrap();
++    assert_eq!(
++        send_until(&mut output, b"a", deadline),
++        Err(TaskPortError::Runtime)
++    );
++    let attempts = output.attempts;
++    println!("interrupted attempts before deadline: {attempts}");
++    assert_eq!(
++        send_until(&mut output, b"b", deadline),
++        Err(TaskPortError::Runtime)
++    );
++    assert_eq!(output.attempts, attempts);
++}

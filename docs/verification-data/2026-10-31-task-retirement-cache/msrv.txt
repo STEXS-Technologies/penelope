@@ -1,0 +1,193 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
+     Running unittests src/lib.rs (target/worker-audit-msrv/debug/deps/penelope_sqlite-3b64f145c1236517)
+
+running 34 tests
+test process::encode_tests::failed_or_oversized_encoding_cannot_contaminate_a_later_value ... ok
+test process::encode_tests::reused_encoding_matches_json_at_exact_size_boundaries ... ok
+test process::fault_tests::crash_worker ... ok
+test process::fault_tests::lease_clock_tests::clock_failure_and_expiry_overflow_release_the_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::expired_outbox_lease_is_reclaimed_using_time_after_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::new_outbox_claim_samples_clock_after_contended_writer_lock ... ok
+test process::fault_tests::process_death_never_splits_atomic_saga_commit ... ok
+test schema::tests::inbox::sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test schema::tests::migration_process_helper ... ok
+test schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test task_decode::tests::replay_scope_decoder_matches_core_json_forms_and_mutated_records ... ok
+test task_decode::tests::scope_encoding_bound_covers_every_digest_byte_and_fails_on_short_buffers ... ok
+test task_decode::tests::scratch_reuse_preserves_shorter_records_and_owned_results ... ok
+test tasks::fault_tests::blob_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::crash_worker ... ok
+test tasks::fault_tests::head_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::process_kill_at_each_transaction_boundary_preserves_atomicity ... ok
+test tasks::fault_tests::record_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::key_tests::array_and_legacy_keys_bind_as_identical_sqlite_blobs ... ok
+test tasks::key_tests::fixed_scope_keys_preserve_all_legacy_bytes ... ok
+test worker::panic_tests::canceled_result_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::disconnected_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::full_queue_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::nested_result_destructor_cannot_abort_worker_or_strand_accepted_work ... ok
+test worker::panic_tests::notification_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::operation_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::tests::only_latest_registration_is_woken_after_repeated_polls_and_cancellation ... ok
+test worker::tests::panicking_waker_cannot_strand_accepted_work_or_discard_committed_result ... ok
+test worker::tests::queue_exhaustion_is_immediate_and_cancellation_does_not_undo_commits ... ok
+test worker::tests::replacing_executor_waker_runs_destructor_without_completion_lock ... ok
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... ok
+test worker::waker_tests::cloning_executor_waker_can_complete_response_without_lock_or_lost_result ... ok
+test worker::waker_tests::panicking_clone_or_temporary_waker_drop_preserves_unpoisoned_result ... ok
+test worker::waker_tests::repeated_pending_polls_reuse_registration_without_cloning_executor_waker ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.61s
+
+     Running tests/process.rs (target/worker-audit-msrv/debug/deps/process-15d0132fd4f8bfad)
+
+running 61 tests
+test canonical_source_cannot_advance_under_another_input_identity ... ok
+test claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok
+test claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok
+test claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok
+test claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok
+test claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok
+test commit_integrity::later_commits_and_delivery_ack_do_not_invalidate_an_exact_original_retry ... ok
+test commit_integrity::receipt_reconstruction_rejects_missing_and_substituted_constituents ... ok
+test commit_integrity::retry_rejects_damaged_consumption_and_source_bindings ... ok
+test committed_receipt_cannot_mask_missing_authoritative_records ... ok
+test concurrent_quota::concurrent_new_processes_share_the_scope_admission_limit ... ok
+test concurrent_quota::concurrent_ports_share_the_exact_process_byte_budget ... ok
+test durable_atomic_commit_inbox_outbox_and_exact_retry ... ok
+test durable_timer_claims_redeliver_until_exact_acknowledgement ... ok
+test inbox_and_atomic_commit_share_bounded_usage_and_exact_payload_identity ... ok
+test inbox_concurrency::admission_and_commit_races_preserve_identity_consumption_and_source_binding ... ok
+test inbox_concurrency::next_frontier_rejects_consumed_inputs_and_reused_sources_during_admission ... ok
+test inbox_index::inbox_index_collision_rolls_back_version_and_rows_until_repaired ... ok
+test inbox_index::inbox_index_page_limit_failure_preserves_version_and_pending_rows ... ok
+test inbox_index::next_unsupported_schema_rejects_healthy_database_without_row_changes ... ok
+test inbox_index::version_five_upgrade_preserves_pending_inputs_receipts_and_live_leases ... ok
+test inbox_validation::duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection ... ok
+test inbox_validation::stored_record_limit_bounds_noncanonical_duplicate_encodings ... ok
+test lease_contracts::cancellation_fences_a_live_timer_lease_and_rescheduling_cannot_resurrect_it ... ok
+test lease_contracts::clock_overflow_cannot_create_an_unbounded_lease ... ok
+test lease_contracts::corrupted_pending_records_block_claims_and_cancellation ... ok
+test lease_contracts::damaged_index_bindings_never_return_an_unpersisted_lease ... ok
+test lease_contracts::exhausted_or_corrupt_lease_counters_and_clock_overflow_preserve_pending_work ... ok
+test lease_contracts::exhausted_tokens_and_delivery_attempts_roll_back_without_claiming_work ... ok
+test lease_contracts::expired_or_nonextending_renewals_cannot_hide_pending_work ... ok
+test lease_contracts::ignored_acknowledgement_is_not_reported_as_durable_success ... ok
+test lease_contracts::ignored_lease_update_rolls_back_tokens_and_returns_no_authority ... ok
+test lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work ... ok
+test lease_contracts::lease_completion_rejects_damaged_durable_evidence ... ok
+test lease_contracts::renewal_invalidates_the_old_envelope_and_survives_connection_reconstruction ... ok
+test lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok
+test lease_encoding::variable_length_lease_bytes_remain_exact_across_reclaim_and_reopen ... ok
+test locked_database_does_not_block_the_callers_future_poll ... ok
+test missing_or_corrupt_durable_outcomes_never_become_an_empty_log ... ok
+test outbox_expiry_redelivery_renewal_and_substitution_are_fenced ... ok
+test payload_columns::empty_and_maximum_payloads_survive_corruption_repair_and_reopen ... ok
+test payload_columns::payload_row_validation_preserves_owned_reads_retry_errors_and_usage ... ok
+test pending_inbox::discovery_is_bounded_scoped_repeatable_and_only_atomic_commit_consumes_inputs ... ok
+test pending_inbox::discovery_rejects_corrupt_misindexed_and_oversized_inputs_without_consuming_them ... ok
+test pending_inbox::warmed_discovery_tracks_admission_and_consumption_on_other_workers ... ok
+test process_frontier::frontier_query_uses_scoped_indexes_as_history_grows ... ok
+test process_frontier::inconsistent_frontiers_reject_pages_retries_and_appends_until_repaired ... ok
+test process_frontier::unknown_and_inbox_only_scopes_remain_empty_with_other_history_present ... ok
+test receipt_reconstruction_after_reopen_does_not_duplicate_history ... ok
+test record_limits::raising_record_limit_preserves_commit_retry_replay_and_reopen ... ok
+test replay_cache::maximum_pages_refresh_across_workers_and_reject_corrupted_last_rows ... ok
+test replay_cache::warm_replay_rebinds_requests_recovers_from_corruption_and_sees_new_commits ... ok
+test replay_columns::replay_column_validation_and_owned_results_survive_warm_statement_reuse ... ok
+test replay_payload_limits_are_atomic_and_checked_before_stored_copy ... ok
+test replay_payloads_survive_reopen_are_scoped_and_detect_corruption ... ok
+test separate_connections_cannot_both_claim_one_outbox_action ... ok
+test suppressed_process_writes::ignored_process_commit_writes_cannot_return_partial_success ... ok
+test suppressed_process_writes::ignored_process_service_writes_preserve_state_and_recover ... ok
+test timer_validation::warmed_timer_operations_reject_changed_evidence_without_writes ... ok
+test transaction_failure_cannot_leave_inbox_outcomes_or_actions ... ok
+test version_three_upgrade_preserves_process_records_and_adds_payload_storage ... ok
+
+test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.83s
+
+     Running tests/tasks.rs (target/worker-audit-msrv/debug/deps/tasks-ee5dec5ca39b184c)
+
+running 42 tests
+test atomic_blob_history_commit_and_reopen ... ok
+test authority_columns::authorization_head_query_rebinds_scope_and_observes_repairs_and_ddl ... ok
+test authority_columns::generation_identity_columns_validate_in_every_durable_state ... ok
+test authorizations_reject_uncommitted_and_substituted_requests ... ok
+test cache_usage::committed_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::committed_cache_rejects_lower_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_lower_usage_until_repaired ... ok
+test concurrent_connections_choose_one_cas_winner ... ok
+test distinct_processes_arbitrate_and_recover_after_unacknowledged_commit ... ok
+test explicit_head_rebuild_validates_log_and_blobs ... ok
+test failed_schema_upgrade_rolls_back_schema_and_version ... ok
+test fence_before_dispatch_prevents_delayed_start_after_reconstruction ... ok
+test fencing_survives_reopen_and_blocks_delayed_start ... ok
+test gaps_corrupt_bytes_missing_head_and_future_schema_fail_closed ... ok
+test head_rebuild_cannot_hide_a_missing_committed_tail ... ok
+test lock_contention_is_bounded_and_does_not_accept_input ... ok
+test retirement_preserves_fences_and_prevents_resurrection ... ok
+test schema_upgrade_preserves_v1_task_bytes ... ok
+test scope_quota_rolls_back_blob_and_record_together ... ok
+test sqlite_process_worker ... ok
+test structural_integrity_check_reports_constraint_corruption_and_recovery ... ok
+test successor_is_blocked_until_predecessor_termination_is_confirmed ... ok
+test suppressed_task_writes::ignored_task_authority_writes_cannot_grant_or_fence_a_generation ... ok
+test suppressed_task_writes::ignored_task_commit_writes_roll_back_blobs_heads_and_records ... ok
+test suppressed_task_writes::ignored_task_head_repair_cannot_populate_a_false_cache ... ok
+test suppressed_task_writes::ignored_task_retirement_writes_roll_back_partial_deletion ... ok
+test task_append_frontier::appends_reject_damaged_frontiers_for_warm_rebuilt_and_cold_projections ... ok
+test task_blob_columns::blob_read_rebuild_and_duplicate_commit_preserve_validation ... ok
+test task_blob_columns::empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen ... ok
+test task_cache_revision::cached_appends_reject_external_history_damage_before_writing ... ok
+test task_cache_revision::external_transactions_rebind_cache_after_lock_failure_commit_and_rollback ... ok
+test task_cache_revision::unrelated_scope_damage_and_schema_changes_do_not_poison_healthy_appends ... ok
+test task_columns::task_record_columns_preserve_validation_and_owned_results ... ok
+test task_confirm_bounds::stop_confirmation_rejects_out_of_policy_rows_without_mutation ... ok
+test task_confirm_bounds::valid_confirmations_survive_last_attempt_retirement_and_reopen ... ok
+test task_frontier::cached_frontier_query_rebinds_scope_and_observes_new_tail ... ok
+test task_frontier::reads_reject_inconsistent_frontiers_without_mutation ... ok
+test task_orphan_usage::first_append_accounts_for_orphans_at_exact_quota_across_warm_and_cold_statements ... ok
+test task_replay_memo::repeated_references_reject_changed_metadata_and_recheck_durable_bytes ... ok
+test task_statement_cache::statement_reuse_keeps_scope_bindings_and_observes_delete_repair_and_schema_changes ... ok
+test transaction_failure_after_blob_insert_rolls_back_everything ... ok
+
+test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.20s
+

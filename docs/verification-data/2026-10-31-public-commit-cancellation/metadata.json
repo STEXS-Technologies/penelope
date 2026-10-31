@@ -1,0 +1,35 @@
+{
+  "source_parent": "e488365a84b3462a4b2ffa0ca5d7eb25de94b57e",
+  "test_source": "crates/penelope-sqlite/tests/support/inbox_concurrency.rs",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "28ff49095218b73e3eed9763181f340795d2187658cbc269daa1a824331a8af5",
+    "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+    "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+    "crates/penelope-sqlite/tests/process.rs": "ca336cd4ad6e25eee31c5b510be9321f6d17ea5ac63df0d3ae7f7288204c88b6",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-ports/src/implementation.rs": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e",
+    "crates/penelope-domain/src/implementation.rs": "835dd448b9ec2b01f601751ed5709a2fa68565bbba4bc6c1a69c62c27fac6b07",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+    "crates/penelope-sqlite/tests/support/inbox_concurrency.rs": "835e4aead1fbc356016ebe2a8fe7c47bcd060280282654e9ab4c3bb89a506835"
+  },
+  "unchanged_sources": [
+    "crates/penelope-sqlite/src/process.rs",
+    "crates/penelope-sqlite/src/worker.rs",
+    "crates/penelope-sqlite/src/schema.rs",
+    "crates/penelope-sqlite/tests/process.rs",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs",
+    "crates/penelope-ports/src/implementation.rs",
+    "crates/penelope-domain/src/implementation.rs",
+    "Cargo.lock"
+  ],
+  "stable_rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "msrv_rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+  "focused_repeats_per_toolchain": 20,
+  "cases_per_repeat": 16,
+  "focused_cancellation_cases": 640,
+  "qualification_counts_per_toolchain": {
+    "unit": 36,
+    "process": 67,
+    "tasks": 45
+  }
+}

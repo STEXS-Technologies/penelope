@@ -1,0 +1,51 @@
+{
+  "parent": "7deff215827c90afdd0c9abda5431033590410fa",
+  "runtime_sources": {
+    "baseline": {
+      "crates/penelope-domain/src/implementation.rs": "115a4ccba62aa51ae3eaad50ec9c6ac5348a731ecd2a3edb5b577e50bed17371",
+      "crates/penelope-sqlite/src/leases.rs": "8ecef768c129c2ad4ca246bb09cee80e7f7ae52c25cd23baf4da86cabd00a9eb",
+      "crates/penelope-sqlite/src/process.rs": "bca3920df69d27be67992f294b7ae44ae227c4f0e59d802375c0ee2545eb41f1",
+      "crates/penelope-executor/src/services.rs": "ca12e1c70a398f6f5b7f4ecbf329d62186a9ddab46b4d9165046c4b650481d20"
+    },
+    "candidate": {
+      "crates/penelope-domain/src/implementation.rs": "6a6dbcb7306305bce4d145e0f0e479ed5d4d14c0b2702de09cae79124502d1bb",
+      "crates/penelope-sqlite/src/leases.rs": "a1b595731f98352aaf2759fd97db8f883b9c6073829d2dcd4451ca100bb20b67",
+      "crates/penelope-sqlite/src/process.rs": "7c04143fc482edacc5afde2734144a4c7d585f4e753db2053791bc84beb26ed8",
+      "crates/penelope-executor/src/services.rs": "ed21cf9d38f94d5806eba6ce329e56a745af00957b15f6cd808b79a880d7094a"
+    }
+  },
+  "harness_sha256": {
+    "baseline": {
+      "crates/penelope-domain/benches/action_effect_key.rs": "61849cd6624f71168fd2ee8c153c3c4d7feb0d87dcfc11b9b031dce167b024b8",
+      "crates/penelope-domain/benches/action_effect_allocations.rs": "35b68755fd24ec1a0801da73c09932698bb02886da5997046d8969d25f392608",
+      "crates/penelope-domain/tests/effect_key_encoding.rs": "d150c336838cc98f77b51902da6a0b8f8022f2c7a7606907f0f2f04912842ca0",
+      "crates/penelope-domain/tests/action_effect_allocations.rs": "4e101bd4d50aaa648dd8141a69f9df606ee683eefdc3cd883223c7e595772d2b"
+    },
+    "candidate": {
+      "crates/penelope-domain/benches/action_effect_key.rs": "79408a20c8c85d3268f053e352964aee84ee9cb50bd6670f3be1cf0298422ed2",
+      "crates/penelope-domain/benches/action_effect_allocations.rs": "fa82b4dcaf34b14b7632b8e0a6fd4417b320a8452648341b480f65587074ce95",
+      "crates/penelope-domain/tests/effect_key_encoding.rs": "cc985b19b59881dec3849b28dffd28c0c3436f81539a8a0a6bc995811ee371f3",
+      "crates/penelope-domain/tests/action_effect_allocations.rs": "5f0a651e5307e7e60ac9b0aa15e57a7fdb320917c4fed850bd53816d4b34e42b"
+    }
+  },
+  "binaries": {
+    "baseline-action_effect_key": "4e5c214255fbd23038e76d3c277cf7475d37a3087508a23300fa4182f6f27e30",
+    "baseline-action_effect_allocations": "2917a90b1ff7c77b60248763970e01441faad560ba0e99e0756910bebba87a8e",
+    "baseline-lease_claim_profiles": "306944a02f2fd72cba60ac520ccfffaaf109f1ba31c7649f5208c660df770108",
+    "baseline-lease_claim_profile_allocations": "3520c4309ff1e522dd5ac3be5e9362b7e7725da9f312be44600e64863820ca1b",
+    "candidate-action_effect_key": "1e086fb9f4d165d5e899764195ce0be3bf745781f34b885add33fad7728ba662",
+    "candidate-action_effect_allocations": "701886d385999087336e19f2f3274ae54ce84c1940be7e8d8c01068b05fff997",
+    "candidate-lease_claim_profiles": "84da0691bd756b5fb887e059ffadaeaa5ec95cb579db4c608220c616e4112e85",
+    "candidate-lease_claim_profile_allocations": "08ec5670589a9abb5acb4fe2d8eb17090d58f97fa362f6a06b2502775aa57437"
+  },
+  "common_sha256": {
+    "crates/penelope-domain/tests/support/effect_key_fixture.rs": "83105533f4c9fc433cf88f09be5e8c1aebbda44e5f9d6c97367ae17319a12c3b",
+    "crates/penelope-domain/tests/support/action_effect_fixture.rs": "28b0cb4a1cd625a0bb3465cef587ccc7352d588c224746e59c1c23cfc7a0c8ad",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-sqlite/benches/lease_claim_profiles.rs": "9afb0e53d4bd58fe875d90261fccb30d48a6cd64d455d24e75cd13ea4d3cea1c",
+    "crates/penelope-sqlite/benches/lease_claim_profile_allocations.rs": "387c743e83dc131f2c07e93e65736d78b6be8ba1ee1873a3d0c2ee093fccc3d0",
+    "crates/penelope-sqlite/benches/support/lease_claim_fixture.rs": "a382ed33ae32fa463afc01b81feb51f77fcc501ec25e9498d3805034128ec053",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

@@ -1,0 +1,6 @@
+{
+  "baseline-inbox_accept": "73e3078919b50cbff4d51012fd37c0d680c6de0a92fea253b66d7d6145850fb1",
+  "baseline-inbox_accept_allocations": "2458c6ed6e06c5802d3761aa6a11541bf0a58ef1af908e1c09c6be1ec64d90a4",
+  "candidate-inbox_accept": "828b876ede6ab1d02d00ac9d10b47bf511aac5901d721cc0e23face84f822e71",
+  "candidate-inbox_accept_allocations": "9410f3fe165027cd765ec224c7838d6c6f43f88cb42af3e97e6f8eda2b826b12"
+}

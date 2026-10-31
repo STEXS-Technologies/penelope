@@ -1,0 +1,30 @@
+{
+  "toolchain": "stable",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "source_sha256": {
+    "crates/penelope-executor/tests/timer_batch_recovery.rs": "ddae554bef8c44578f85b05f9b86cb42e2e1882da433f56c978034151483a047",
+    "crates/penelope-executor/tests/support/timer_batch_faults.rs": "8ef7d6db910044bdff706dd22d06eef28876d8d58946ea3a0d5969d4ea8c49bd",
+    "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+    "crates/penelope-executor/src/services.rs": "01c17fa051446b7bc0337687e9aaaa3fb25271cc68cb980abf8e54503e41bf4e",
+    "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06",
+    "crates/penelope-executor/src/lease_batch_index.rs": "1f8aa0ceef2335b00aa40211d7cf9e4a26635819a290d232b31dd8302b536d5f",
+    "crates/penelope-sqlite/src/leases.rs": "a1b595731f98352aaf2759fd97db8f883b9c6073829d2dcd4451ca100bb20b67",
+    "crates/penelope-sqlite/src/process.rs": "7c04143fc482edacc5afde2734144a4c7d585f4e753db2053791bc84beb26ed8",
+    "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "runs": [
+    {
+      "repeat": 0,
+      "log": "stable-0.txt",
+      "cases": 48,
+      "verified": true
+    },
+    {
+      "repeat": 1,
+      "log": "stable-1.txt",
+      "cases": 48,
+      "verified": true
+    }
+  ]
+}

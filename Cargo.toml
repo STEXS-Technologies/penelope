@@ -8,6 +8,8 @@ members = [
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
+    "crates/penelope-sqlite",
+    "crates/penelope-process-runtime",
     "fuzz",
 ]
 default-members = [
@@ -18,10 +20,12 @@ default-members = [
     "crates/penelope",
     "crates/penelope-ports",
     "crates/penelope-statechronicle",
+    "crates/penelope-sqlite",
+    "crates/penelope-process-runtime",
 ]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.85"
 license = "MIT OR Apache-2.0"
@@ -40,13 +44,13 @@ thiserror = { version = "2.0.18", default-features = false }
 
 # Internal hexagonal layers. `penelope-statechronicle` is an adapter boundary,
 # not a client implementation; infrastructure belongs in a consuming platform.
-penelope-core = { version = "0.2.0", path = "crates/penelope-core" }
-penelope-domain = { version = "0.2.0", path = "crates/penelope-domain" }
-penelope-intent = { version = "0.2.0", path = "crates/penelope-intent" }
-penelope-executor = { version = "0.2.0", path = "crates/penelope-executor" }
-penelope = { version = "0.2.0", path = "crates/penelope" }
-penelope-ports = { version = "0.2.0", path = "crates/penelope-ports" }
-penelope-statechronicle = { version = "0.2.0", path = "crates/penelope-statechronicle" }
+penelope-core = { version = "0.3.0", path = "crates/penelope-core" }
+penelope-domain = { version = "0.3.0", path = "crates/penelope-domain" }
+penelope-intent = { version = "0.3.0", path = "crates/penelope-intent" }
+penelope-executor = { version = "0.3.0", path = "crates/penelope-executor" }
+penelope = { version = "0.3.0", path = "crates/penelope" }
+penelope-ports = { version = "0.3.0", path = "crates/penelope-ports" }
+penelope-statechronicle = { version = "0.3.0", path = "crates/penelope-statechronicle" }
 
 [workspace.lints.rust]
 rust_2024_prelude_collisions = "warn"

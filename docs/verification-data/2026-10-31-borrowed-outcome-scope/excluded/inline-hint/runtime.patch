@@ -1,0 +1,30 @@
+--- a/crates/penelope-domain/src/implementation.rs
++++ b/crates/penelope-domain/src/implementation.rs
+@@ -1100,9 +1100,15 @@
+     /// # Errors
+     ///
+     /// Returns a typed error when the schema or scope is invalid.
++    #[inline]
+     pub fn validate_for_scope(&self, expected: &ProcessScope) -> Result<(), DomainError> {
+         self.validate()?;
+-        if self.scope() == *expected {
++        if self.tenant_id == expected.tenant_id
++            && self.process_id == expected.process_id
++            && self.definition_id == expected.definition_id
++            && self.definition_version == expected.definition_version
++            && self.definition_digest == expected.definition_digest
++        {
+             Ok(())
+         } else {
+             Err(DomainError::OutcomeScopeMismatch)
+--- a/crates/penelope-sqlite/src/process.rs
++++ b/crates/penelope-sqlite/src/process.rs
+@@ -404,7 +404,7 @@
+                 let sequence: i64 = row.get(0).map_err(|error| db_error(&error))?;
+                 let bytes = column_bytes(row,1,limits.max_record_bytes).map_err(|error| db_error(&error))?; let checksum = column_bytes(row,2,32).map_err(|error| db_error(&error))?;
+                 let outcome: ProcessOutcome = decode(bytes,checksum)?;
+-                if sequence != integer(expected)? || outcome.sequence != expected || outcome.scope() != request.scope || outcome.validate().is_err() || expected >= next { return Err(PortError::Invariant); }
++                if sequence != integer(expected)? || outcome.sequence != expected || outcome.validate_for_scope(&request.scope).is_err() || expected >= next { return Err(PortError::Invariant); }
+                 expected = expected.checked_add(1).ok_or(PortError::Invariant)?;
+                 if outcomes.is_empty() {
+                     outcomes.reserve_exact(usize::try_from(required).map_err(|_overflow| PortError::Invariant)?);

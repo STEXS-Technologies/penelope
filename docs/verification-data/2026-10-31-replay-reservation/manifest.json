@@ -1,0 +1,14 @@
+{
+  "baseline_commit": "794914678621a18f44f770d261b0bd052974f51f",
+  "candidate_source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "c0d2a59d740f5885a80fb282846cdaf8171b99aa5cfe960959b3c9a3c1ca0797",
+    "crates/penelope-sqlite/benches/process_replay_allocations.rs": "e13669216bcd478b489dbd9fe7644be41ea5c411998614c6c88c5846ad05b639",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "28280ee0e9c1d4956b04d2a6e85ed57b6e9fe65a9d11d4ffb9052e665a66daec"
+  },
+  "baseline_process_sha256": "e0605377f6372f2c9101188a5b11ed7ecba9a397eb348420996af08422378b47",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= TMPDIR=$PWD/target/qualification-temp cargo bench -p penelope-sqlite --bench process_replay_allocations",
+  "processes_per_revision": 1,
+  "samples_per_profile_per_revision": 16,
+  "profiles": 5
+}

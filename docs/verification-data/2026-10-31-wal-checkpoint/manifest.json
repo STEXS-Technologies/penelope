@@ -1,0 +1,19 @@
+{
+  "baseline_commit": "34edf6d42ee1cfcc48039750d8917b3703d88c86",
+  "test": "wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/lifecycle.rs": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+    "crates/penelope-sqlite/tests/tasks.rs": "9dc9398c83137d52dfcf7b8e68e2c252e7b5eb38e7fac10ce0a4821cc73546d7",
+    "crates/penelope-sqlite/tests/support/wal_checkpoint.rs": "d901a16907ef57b07059e6b12c49d309faf77c6d5a397027da4de38fbf495c0d"
+  },
+  "control": "In WalCheckpoint construction in checkpoint_wal, replace busy: row.get(0)? with busy: 0. Restore lifecycle.rs after running the targeted test.",
+  "control_exit": 101,
+  "qualification_exits": {
+    "stable_tasks": 0,
+    "msrv_tasks": 0,
+    "clippy": 0,
+    "format": 0,
+    "layers": 0,
+    "graph": 0
+  }
+}

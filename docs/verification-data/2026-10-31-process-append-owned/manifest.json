@@ -1,0 +1,22 @@
+{
+  "allocations.jsonl.gz": "fff9ab3d8bfda588c8ee2f603e79d06b4ae8b686ff1772839ffbe9a61898669a",
+  "baseline-build.txt.gz": "f707915fcbcde4ed6fa188636f03ac96f6de7dbe92f85217ddadb1df02dc1c40",
+  "baseline-tests.txt.gz": "ce5f378cb338ca06f83f3db39edb0710edf4238da31d2a5134953de9ff60c035",
+  "candidate-build.txt.gz": "0de980cdb0425cbb6a840f22414e7b0dae6031ad90ac60a7bb462e5421d738a4",
+  "candidate-tests.txt.gz": "61e22cfff6096d3253377f3e65a041c57ed25e70298796877ed28b5d12fe2b62",
+  "clippy.txt.gz": "451170b05aeac4eda2ad04660fd8debac554f25a1a7ac382eb503404fc8c5db1",
+  "compare.py": "610f3d764c5f7d38f75acfc8f818857c46a452d30d64fb59ca14298a1bc65047",
+  "copy-negative-control.py": "ce85f8f49f663e9098d75f9d73a3a5d9eaad12f31112a745e21c1cf2c4644c00",
+  "copy-negative-control.txt.gz": "96a05e15f8631c460297abeae2d2ec311f85f065db1d3b89a7e04237322a1911",
+  "graphify.txt.gz": "17e38dc629535b98c572894e928840c105cd84ab7cc77a53667a0b743d29f56e",
+  "metadata.json": "6f588d102c1adfc2cac8b9b1e0ce8dd656bab4364728a0157e52e8c4b103023f",
+  "msrv-check.txt.gz": "4e94d6e8d25576be26c9ffd2df03f9725d805648fb4edaf9629c04b7f1a70e87",
+  "msrv.txt.gz": "f54fc70ceede15f8d14c9ebb96fde60b5fbb7b48c0d33616e9641a8d178a54f0",
+  "negative-control.txt.gz": "649ca3ad68906c2eb606a446d01639e3314253832a7ff104a6261df43e9327a6",
+  "runtime.patch.gz": "3b4de428c7ba680a4abb300429d9101c9735684b4e174e28704ae2bbe882f356",
+  "source-hashes.json": "f283f0c7384f76d022a6d656dadbd319b72762ef0741a8228831cb52c2b97ea5",
+  "stable.txt.gz": "6e3f877dd6a117897513caa6aacf40be48d3d649742c1ba871eac66fd88ef5d8",
+  "static-checks.txt.gz": "9891222c4644c34f5fb798898a5c7483e16d9f7166d59d6556c0f9765b5d14dd",
+  "summary.json": "458c2c889abbc192240af3c9f6bd01121efcdd1a24deb2be0a7ae7d47aba4631",
+  "verify.py": "7b0e88d383ff6f04cad455075dc076126e4f3c2980a77251027b666bcced7d4d"
+}

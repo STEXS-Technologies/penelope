@@ -1,0 +1,71 @@
+{
+  "record": {
+    "paired_mean_percent": 0.3977621347182186,
+    "bootstrap_95_percent": [
+      -4.599741679806046,
+      6.456942313887587
+    ],
+    "mean_ns_per_read": {
+      "baseline": 9068.554458333334,
+      "candidate": 9039.164083333333
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        3,
+        0,
+        1272
+      ],
+      "candidate": [
+        1,
+        0,
+        192
+      ]
+    }
+  },
+  "padded": {
+    "paired_mean_percent": -0.4878585838632692,
+    "bootstrap_95_percent": [
+      -3.7398902140669694,
+      1.4776853818631266
+    ],
+    "mean_ns_per_read": {
+      "baseline": 11685.345125,
+      "candidate": 11546.506625
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        3,
+        0,
+        4320
+      ],
+      "candidate": [
+        1,
+        0,
+        192
+      ]
+    }
+  },
+  "end": {
+    "paired_mean_percent": -2.033250417949101,
+    "bootstrap_95_percent": [
+      -6.466580112867887,
+      1.3375287594395076
+    ],
+    "mean_ns_per_read": {
+      "baseline": 6095.174,
+      "candidate": 5891.976625
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        1,
+        0,
+        192
+      ],
+      "candidate": [
+        1,
+        0,
+        192
+      ]
+    }
+  }
+}

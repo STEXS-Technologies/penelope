@@ -1,0 +1,402 @@
+[
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 0,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 1,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 2,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 3,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 4,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 5,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 6,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 7,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 8,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "stable",
+    "repeat": 9,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "f8060da4e5b8a71d8b6cec92ae1a4678709c104b21834b19c74db3f35ef85215",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 0,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 1,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 2,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 3,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 4,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 5,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 6,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 7,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 8,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "baseline",
+    "compiler": "1.85.0",
+    "repeat": 9,
+    "dispatch_allocations": 246,
+    "stdout": "Real runtime allocations: supervisor dispatch=246\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "b37ba42abf2e6941e509bcb30b226f2066b12db335bed583ca22f9287ee9d5f3",
+    "source_sha256": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 0,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 1,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 2,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 3,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 4,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 5,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 6,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 7,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 8,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "stable",
+    "repeat": 9,
+    "dispatch_allocations": 244,
+    "stdout": "Real runtime allocations: supervisor dispatch=244\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "d579c835056508bca53414dee9926a406ed2eb7cf8505df1488752186683a717",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 0,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 1,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 2,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 3,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 4,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 5,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 6,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 7,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 8,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  },
+  {
+    "variant": "candidate",
+    "compiler": "1.85.0",
+    "repeat": 9,
+    "dispatch_allocations": 245,
+    "stdout": "Real runtime allocations: supervisor dispatch=245\nReal runtime allocations: repeated public fences=[16, 16, 16]\nReal runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0\nProtocol allocations: proposal=0, valid request=2, pinned-bound rejection=1\n",
+    "stderr": "",
+    "binary_sha256": "e424c88d12ff2f3476ee7e086996429fcb8c46ac9f6f19818299f5cdad433e4e",
+    "source_sha256": "a5d91e7d0d854cf03f0ecb15960728de6ca19bceca91f149ce1407ebd0c4d870"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "cpu": 0,
+  "pairs": 24,
+  "warmup": 16,
+  "iterations": 250,
+  "start_utc": "2026-10-31T05:14:00Z",
+  "note": "Each variant runs ordinary allocator latency, then a separate Rust allocation traffic probe. AB/BA alternating pairs. No other agent-owned builds/tests during measurement."
+}

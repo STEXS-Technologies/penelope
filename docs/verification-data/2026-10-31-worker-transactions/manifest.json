@@ -1,0 +1,10 @@
+{
+  "baseline_commit": "64fc782a5affababb792f71d2acfdfdf44fca434",
+  "test": "worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+    "crates/penelope-sqlite/src/worker_transaction_tests.rs": "32608c070ac58adad4fffba1d2376cc9cdbb385354c0d9554e96bc02ee456e11"
+  },
+  "control": "Replace contain_panic(|| operation(connection)).unwrap_or(Err(PortError::Unavailable)) with operation(connection) in DatabaseWorker::run. Outer worker containment remains; queued work succeeds but the panicking response remains unresolved. Restore worker.rs afterward.",
+  "control_exit": 101
+}

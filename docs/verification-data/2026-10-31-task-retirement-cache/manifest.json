@@ -1,0 +1,29 @@
+{
+  "baseline_commit": "95ff198bf1238c33c2e556557c43a56643995941",
+  "comparison": "Replace only src/tasks.rs; hold expanded test, benchmark and all other runtime sources identical.",
+  "snapshot_sha256": {
+    "baseline-tasks.txt": "f02024f1af45c91968b4be96062cac0ec5bc2bffdc3f07479121e124b629846f",
+    "candidate-tasks.txt": "6467c2fbd6eca661db555917ea87048b64e645dfbcff25783c171d26004d94bd",
+    "retirement-test.txt": "c67fe51b4fc4149ed84ec5549792bd3ca1303c3f3834e1ccc9e32306478459ab"
+  },
+  "benchmark_source_sha256": {
+    "crates/penelope-sqlite/benches/task_reads.rs": "02f459b156cccbd51017c48ef87e6ff1f5dd28256e04ee0d52e1a4743b6dff2c",
+    "crates/penelope-sqlite/benches/task_read_allocations.rs": "1dcd25ef9de8f0b6de2ebe2616300f98c39e7dcabf9b332967ffc3b6502c16fd",
+    "crates/penelope-sqlite/benches/support/task_read_fixture.rs": "bb3abfd3626541a301092cd8060fe28e8cf5c90c9d165145de3a3fdd2c45f790",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "test_source_sha256": "e58d532b17d50296ab6eee4222d3eb190443401acffabc1b05d35b447427609b",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux 7.2.9-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Sat Oct  3 18:35:12 UTC 2026",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "control": "Replace retirement SELECT predicate scope=?1 with scope=?1 AND 0, leaving its binding intact. Restore production source after test.",
+  "control_exit": 101,
+  "qualification_exits": {
+    "workspace_tests": 0,
+    "sqlite_msrv_lib_integration": 0,
+    "clippy": 0,
+    "format": 0,
+    "layers": 0,
+    "graph": 0
+  }
+}

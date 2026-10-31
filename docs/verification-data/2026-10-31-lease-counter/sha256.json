@@ -1,0 +1,11 @@
+{
+  "ci.json": "8711af258df7dadfb21ba19bafde5167de4fb6748827d62eaa2463822403ca1e",
+  "metadata.json": "f0f608bc86aa76a2c95007f064813b78ee4be5e06c804bbea728d22c4d8e2059",
+  "sqlite-counter-clippy.log": "b4df9f381790b73463e077c57736f74393a2387c04ad0c12a8ce6de90b683da6",
+  "sqlite-counter-fuzz-10000.log": "e19934bf48ebf2be5d29607d1832a85785c36312ee856ca4dc94248a94d6fa99",
+  "sqlite-counter-fuzz.log": "2ae7ec54d3a53462e5092552040fec920b260053e0fb9f57b639b5c8c1ef7c9b",
+  "sqlite-counter-graph.log": "d3db2acccc0982bfdda2d7b37f2ec4832eaba64de1cdba7b5d9e4bb7d426cc4c",
+  "sqlite-counter-msrv.log": "2a43cd24b68b34b1a15e11c5e4fb13806d3226362d5a57e622468cdfa0ae4280",
+  "sqlite-counter-old-regression.log": "d49190b57d862b71bb3b776bdbeed03e2dcbf5b6de309ee32b297d1fbff9b2df",
+  "sqlite-counter-tests.log": "9d3d67c6c542c162d4b6f5a42cd08b50c918be7a0c9ad4c851f51690c1421ab5"
+}

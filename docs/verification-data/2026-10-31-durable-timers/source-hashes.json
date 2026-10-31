@@ -1,0 +1,11 @@
+{
+  "scripts/benchmark-durable-timers.py": "89119ce29d33acf0aac60ccce67c8c417377b034b6d5a478def2a426d4bb4694",
+  "crates/penelope-executor/benches/durable_timer_workload.rs": "76cf94b632be63f0df935caefa6475381155cdcde4e506786e6c4cfd92edc637",
+  "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d",
+  "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+  "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+  "crates/penelope-executor/Cargo.toml": "b9be532e750bc7768029e4ab094c59efdeeea6f3ae3c2bed66148c5d85d56250",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "docs/performance-durable-timers-2026-10-31.md": "6b6c21790d1571172c808d64242263b3d30725dea3db75323db597a4e5311d15",
+  "docs/application-workloads.md": "5bb795a21fcbc51ea920819d3bab82327a76b388a49532e0b682bc1b5186d452"
+}

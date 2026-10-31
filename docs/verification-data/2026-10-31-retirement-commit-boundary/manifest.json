@@ -1,0 +1,21 @@
+{
+  "clippy.txt.gz": "ce450b9140139a7c38f316b165d09063a020236c498671e2cd5818cc94546426",
+  "fmt.txt.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+  "graph.txt.gz": "02be3025c32d0b7062d254a559e1fa4257cd2a9c4dfe357c998daaf628a7d494",
+  "layers.txt.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+  "metadata.json": "fe0ea933876bf9c3cf209802e4627296d24333c481fb332cb1a3149de7b1ccf1",
+  "msrv-repetitions.json": "c72c28eeefdd71da35a13208bada1bce5407cf473ae35cab250e4dd9eec6faf2",
+  "msrv-repetitions.txt.gz": "8605ac92f6b7d7c689e7b1b972174ce6d4bf46b13d061b870b15a4d59bd37bbd",
+  "msrv-sqlite.txt.gz": "6a1c8595281ec00c1da4ce3927fb74ed4045d7cbbaf27a37de2e92a295bd6456",
+  "negative-ack.txt.gz": "accf36804234374b6be4d6299c8ebc87a5d31b634ba7023331f6e9e4a8559d8d",
+  "negative-rollback.txt.gz": "006f27ef0cb7473aff64d760b1a12f6f8a4c52dfbf6d8287914d5f71fa175616",
+  "negative-scope.txt.gz": "b54a4d0f8bf26cf06f6fc4d63c497091cd7813cf2d38e2d1e653f0ef6538be6d",
+  "negative.py": "19cc9ab4711c73069ca03050af79696684e76dd9183fe7bcba95bd4fa5cad408",
+  "qualification.json": "856a94af37d3fb0c2c466a3caef97f07527af38edd429972462672982af9c001",
+  "repeat.py": "14a641681485090df06c4647c88915e3e8c92e7dcef676db1fae3a46872a6165",
+  "source-hashes.json": "a81369931940c4d4296571271681a4df143b8aa00931de5491ef62c0629f7cd4",
+  "stable-repetitions.json": "67341130c58167c6e8765567fd430e8761e444fa9c6e765be2fd9c2575908f10",
+  "stable-repetitions.txt.gz": "6cf59306e82f6b5bdf669b30ffd486b2dbf457eb78e592f9e1d79e629e55a582",
+  "stable-workspace.txt.gz": "e156a06f4195926416f47b2b49450b5483c64823d192c1126a4388b7812cdd53",
+  "verify.py": "a0b9cf7cf1b7ebf21a371d0fda02f015459c60ebbfdfc2a8f30829fe8871e001"
+}

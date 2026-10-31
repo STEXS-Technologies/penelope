@@ -6,10 +6,10 @@
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
 
+use super::identifier_text::IdentifierText;
 use core::fmt;
 use core::str::FromStr;
 
-use serde::de::Error as _;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
@@ -174,7 +174,7 @@ macro_rules! identifier {
     ($name:ident, $prefix:literal, $error_variant:ident, $docs:literal) => {
         #[doc = $docs]
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-        pub struct $name(String);
+        pub struct $name(IdentifierText);
 
         impl $name {
             /// Parses and validates the canonical prefixed identifier.
@@ -186,21 +186,22 @@ macro_rules! identifier {
             /// control character.
             pub fn new(value: String) -> Result<Self, DomainError> {
                 if validate_identifier($prefix, &value) {
-                    Ok(Self(value))
+                    Ok(Self(IdentifierText::from(value)))
                 } else {
                     Err(DomainError::$error_variant)
                 }
             }
 
             /// Returns the canonical wire representation.
+            #[inline]
             pub fn as_str(&self) -> &str {
-                &self.0
+                self.0.as_str()
             }
         }
 
         impl fmt::Display for $name {
             fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str(&self.0)
+                formatter.write_str(self.0.as_str())
             }
         }
 
@@ -208,7 +209,11 @@ macro_rules! identifier {
             type Err = DomainError;
 
             fn from_str(value: &str) -> Result<Self, Self::Err> {
-                Self::new(String::from(value))
+                if validate_identifier($prefix, value) {
+                    Ok(Self(IdentifierText::from(value)))
+                } else {
+                    Err(DomainError::$error_variant)
+                }
             }
         }
 
@@ -224,20 +229,19 @@ macro_rules! identifier {
             type Error = DomainError;
 
             fn try_from(value: &str) -> Result<Self, Self::Error> {
-                Self::new(String::from(value))
+                value.parse()
             }
         }
 
         impl Serialize for $name {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-                serializer.serialize_str(&self.0)
+                serializer.serialize_str(self.0.as_str())
             }
         }
 
         impl<'de> Deserialize<'de> for $name {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-                let value = String::deserialize(deserializer)?;
-                Self::new(value).map_err(D::Error::custom)
+                super::identifier_serde::deserialize(deserializer)
             }
         }
     };
@@ -362,6 +366,8 @@ pub enum ProcessInputKind {
     TimerFired,
     /// An authorized manual-review decision.
     ManualResolution,
+    /// A verified recoverable-task result delivered through the saga inbox.
+    TaskEffectResult,
 }
 
 /// Typed append-only process outcome category.
@@ -697,7 +703,16 @@ impl ProcessScope {
     /// text or serialized JSON.
     #[must_use]
     pub fn canonical_bytes(&self) -> Vec<u8> {
-        let mut bytes = Vec::new();
+        // Four two-byte identifier lengths and one 32-byte definition digest.
+        let capacity = [
+            self.tenant_id.as_str().len(),
+            self.process_id.as_str().len(),
+            self.definition_id.as_str().len(),
+            self.definition_version.as_str().len(),
+        ]
+        .into_iter()
+        .fold(40_usize, usize::saturating_add);
+        let mut bytes = Vec::with_capacity(capacity);
         encode_identifier(&mut bytes, self.tenant_id.as_str());
         encode_identifier(&mut bytes, self.process_id.as_str());
         encode_identifier(&mut bytes, self.definition_id.as_str());
@@ -766,23 +781,51 @@ impl EffectKey {
     /// attempt, so two distinct effects cannot collide by concatenation.
     #[must_use]
     pub fn canonical_bytes(&self) -> Vec<u8> {
-        let mut bytes = Vec::new();
-        encode_identifier(&mut bytes, self.tenant_id.as_str());
-        encode_identifier(&mut bytes, self.process_id.as_str());
-        encode_identifier(&mut bytes, self.definition_id.as_str());
-        encode_identifier(&mut bytes, self.definition_version.as_str());
-        bytes.extend_from_slice(&self.definition_digest.0);
-        encode_identifier(&mut bytes, self.step_id.as_str());
-        bytes.extend_from_slice(&self.attempt.to_be_bytes());
-        bytes.push(match self.kind {
-            ProcessActionKind::CanonicalCommand => 0,
-            ProcessActionKind::Timer => 1,
-            ProcessActionKind::ExternalEffect => 2,
-            ProcessActionKind::ManualReview => 3,
-        });
-        bytes.extend_from_slice(&self.payload_digest.0);
-        bytes
+        canonical_effect_key_bytes(
+            [
+                self.tenant_id.as_str(),
+                self.process_id.as_str(),
+                self.definition_id.as_str(),
+                self.definition_version.as_str(),
+                self.step_id.as_str(),
+            ],
+            &self.definition_digest,
+            self.attempt,
+            self.kind,
+            &self.payload_digest,
+        )
     }
+}
+
+#[inline(always)]
+fn canonical_effect_key_bytes(
+    identifiers: [&str; 5],
+    definition_digest: &ContentDigest,
+    attempt: u32,
+    kind: ProcessActionKind,
+    payload_digest: &ContentDigest,
+) -> Vec<u8> {
+    // Five two-byte identifier lengths, two digests, attempt and kind.
+    let capacity = identifiers
+        .into_iter()
+        .fold(79_usize, |size, id| size.saturating_add(id.len()));
+    let mut bytes = Vec::with_capacity(capacity);
+    let [tenant, process, definition, version, step] = identifiers;
+    encode_identifier(&mut bytes, tenant);
+    encode_identifier(&mut bytes, process);
+    encode_identifier(&mut bytes, definition);
+    encode_identifier(&mut bytes, version);
+    bytes.extend_from_slice(&definition_digest.0);
+    encode_identifier(&mut bytes, step);
+    bytes.extend_from_slice(&attempt.to_be_bytes());
+    bytes.push(match kind {
+        ProcessActionKind::CanonicalCommand => 0,
+        ProcessActionKind::Timer => 1,
+        ProcessActionKind::ExternalEffect => 2,
+        ProcessActionKind::ManualReview => 3,
+    });
+    bytes.extend_from_slice(&payload_digest.0);
+    bytes
 }
 
 /// A canonical-state command submitted through an adapter port.
@@ -844,42 +887,52 @@ pub struct ManualReview {
     pub evidence_digest: ContentDigest,
 }
 
-fn canonical_serialize<T: Serialize>(value: &T) -> Result<Vec<u8>, CanonicalEncodingError> {
-    serde_json::to_vec(value).map_err(|_serialization_error| CanonicalEncodingError::Serialization)
+fn canonical_serialize<T: Serialize>(
+    value: &T,
+    initial_capacity: usize,
+) -> Result<Vec<u8>, CanonicalEncodingError> {
+    let mut bytes = Vec::with_capacity(initial_capacity);
+    serde_json::to_writer(&mut bytes, value)
+        .map_err(|_serialization_error| CanonicalEncodingError::Serialization)?;
+    Ok(bytes)
 }
 
 macro_rules! canonical_wire_impl {
-    ($($ty:ty),+ $(,)?) => {
+    ($($ty:ty => $capacity:expr),+ $(,)?) => {
         $(
             impl CanonicalWireBytes for $ty {
                 fn canonical_wire_bytes(&self) -> Result<Vec<u8>, CanonicalEncodingError> {
-                    canonical_serialize(self)
+                    canonical_serialize(self, $capacity)
                 }
             }
         )+
     };
 }
 
+// Initial allocation hints, not wire-size limits: the writer grows normally
+// for long identifiers, larger arrays and future admitted values. Small scalars
+// avoid the serializer's default 128-byte allocation; common records avoid its
+// repeated 128 -> 256 -> 512 growth. No second sizing/serialization pass.
 canonical_wire_impl!(
-    ContentDigest,
-    LogicalTime,
-    ProcessInputKind,
-    ProcessOutcomeKind,
-    ProcessActionKind,
-    CausationId,
-    OutcomeActor,
-    ProcessOutcomeFact,
-    ProcessDefinition,
-    DefinitionMigration,
-    ProcessInput,
-    ProcessInputEnvelope,
-    ProcessOutcome,
-    ProcessScope,
-    ProcessAction,
-    EffectKey,
-    CanonicalCommand,
-    CanonicalEvent,
-    ManualReview,
+    ContentDigest => 129,
+    LogicalTime => 20,
+    ProcessInputKind => 32,
+    ProcessOutcomeKind => 32,
+    ProcessActionKind => 32,
+    CausationId => 128,
+    OutcomeActor => 128,
+    ProcessOutcomeFact => 256,
+    ProcessDefinition => 256,
+    DefinitionMigration => 512,
+    ProcessInput => 256,
+    ProcessInputEnvelope => 256,
+    ProcessOutcome => 512,
+    ProcessScope => 256,
+    ProcessAction => 512,
+    EffectKey => 512,
+    CanonicalCommand => 512,
+    CanonicalEvent => 512,
+    ManualReview => 512,
 );
 
 impl ProcessDefinition {
@@ -1077,7 +1130,12 @@ impl ProcessOutcome {
     /// Returns a typed error when the schema or scope is invalid.
     pub fn validate_for_scope(&self, expected: &ProcessScope) -> Result<(), DomainError> {
         self.validate()?;
-        if self.scope() == *expected {
+        if self.tenant_id == expected.tenant_id
+            && self.process_id == expected.process_id
+            && self.definition_id == expected.definition_id
+            && self.definition_version == expected.definition_version
+            && self.definition_digest == expected.definition_digest
+        {
             Ok(())
         } else {
             Err(DomainError::OutcomeScopeMismatch)
@@ -1127,6 +1185,27 @@ impl ProcessAction {
             self.definition_id.clone(),
             self.definition_version.clone(),
             self.definition_digest,
+        )
+    }
+
+    /// Encodes this action's semantic effect key without cloning its identifiers.
+    ///
+    /// Produces the same canonical bytes as `self.effect_key().canonical_bytes()`.
+    /// Action identity is excluded; scope, step, attempt, kind and payload are included.
+    #[must_use]
+    pub fn canonical_effect_key_bytes(&self) -> Vec<u8> {
+        canonical_effect_key_bytes(
+            [
+                self.tenant_id.as_str(),
+                self.process_id.as_str(),
+                self.definition_id.as_str(),
+                self.definition_version.as_str(),
+                self.step_id.as_str(),
+            ],
+            &self.definition_digest,
+            self.attempt,
+            self.kind,
+            &self.payload_digest,
         )
     }
 
@@ -1611,6 +1690,17 @@ mod tests {
             ),
             Err(DefinitionMigrationError::NoOp)
         );
+    }
+
+    proptest::proptest! {
+        #[test]
+        fn allocation_hint_does_not_change_encoding_or_bound_output(
+            values in proptest::collection::vec(proptest::prelude::any::<String>(), 0..64),
+            hint in 0_usize..1024,
+        ) {
+            proptest::prop_assert_eq!(canonical_serialize(&values, hint).unwrap(),
+                serde_json::to_vec(&values).unwrap());
+        }
     }
 
     #[test]

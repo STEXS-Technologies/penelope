@@ -1,0 +1,14 @@
+{
+  "parent": "c69cebc8594094f80fee54d5fdc9c88bb7ef3f1d",
+  "stable_workspace": 0,
+  "msrv_executor_tests": 0,
+  "msrv_executor_all_targets": 0,
+  "workspace_clippy": 0,
+  "fmt": 0,
+  "layers": 0,
+  "graph": 0,
+  "production_unchanged": true,
+  "explicit_cases": 192,
+  "consumed_timer_inputs": 13920,
+  "negative_controls": 6
+}

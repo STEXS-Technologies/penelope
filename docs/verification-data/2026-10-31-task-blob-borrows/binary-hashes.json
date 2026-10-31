@@ -1,0 +1,10 @@
+{
+  "baseline-reconstruction-latency": "c5004b5d164b89faee416575c77193a87d4019c5f7099c6e6ab62f9b183a964d",
+  "baseline-reconstruction-allocations": "e4283aa8dfc4e288dbe538ac1f37e5fcdc662be1a79424fce3a228f554ab9ded",
+  "baseline-blob-latency": "c676f499aad3f1ba3cfd05476c2695b75d568c22b88ee4b757184cc8f6e246cc",
+  "baseline-blob-allocations": "c71cf3d4f6b0f42e59d35a51bff6c1113d0223a91fb9f06e57ade73e2a52219b",
+  "candidate-reconstruction-latency": "954597b91c8d520aef9213645178b393ca3699bf44706737a87011433e734843",
+  "candidate-reconstruction-allocations": "04c9bf20d82e26457289e52ef5c252ac3434d38b08a1fb169b25b1bbbf638363",
+  "candidate-blob-latency": "017500de26a3d8ff495f6b4edfe744d302b0ded89766dba736f958797bd6493a",
+  "candidate-blob-allocations": "8e26814b573ede4a4aca8518796718c66bebb595a3e7973f5f15e65b70784518"
+}

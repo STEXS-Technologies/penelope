@@ -1,0 +1,17 @@
+{
+  "baseline_commit": "794914678621a18f44f770d261b0bd052974f51f",
+  "candidate_commit": "f15709ec8239044f41514ba63f22fc2d1ef35653",
+  "comparison": "Only src/process.rs replaced with pinned baseline/current bytes; all other runtime, benchmark and test sources held current and identical.",
+  "source_sha256": {
+    "crates/penelope-sqlite/benches/process_replay.rs": "a4438db2664cd5546b1d9e06cefbffb18efd0629c2982d5515e041f0801102e6",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "28280ee0e9c1d4956b04d2a6e85ed57b6e9fe65a9d11d4ffb9052e665a66daec"
+  },
+  "snapshot_sha256": {
+    "baseline-process.txt": "e0605377f6372f2c9101188a5b11ed7ecba9a397eb348420996af08422378b47",
+    "candidate-process.txt": "c0d2a59d740f5885a80fb282846cdaf8171b99aa5cfe960959b3c9a3c1ca0797"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux 7.2.9-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Sat Oct  3 18:35:12 UTC 2026",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "analysis": "Geometric candidate/baseline ratio within balanced four-process blocks; deterministic 20000-resample block bootstrap; per-profile 95% intervals, no multiple-comparison adjustment."
+}

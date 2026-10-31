@@ -1,0 +1,782 @@
+warning: output filename collision at /home/ac/projects/penelope/target/debug/examples/saga_recoverable_task
+  |
+  = note: the example target `saga_recoverable_task` in package `penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)` has the same output filename as the example target `saga_recoverable_task` in package `penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)`
+  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
+  = help: consider changing their names to be unique or compiling them separately
+warning: output filename collision at /home/ac/projects/penelope/target/debug/examples/saga_recoverable_task.dwp
+  |
+  = note: the example target `saga_recoverable_task` in package `penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)` has the same output filename as the example target `saga_recoverable_task` in package `penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)`
+  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
+  = help: consider changing their names to be unique or compiling them separately
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+   Compiling penelope-process-runtime v0.3.0 (/home/ac/projects/penelope/crates/penelope-process-runtime)
+   Compiling penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.90s
+     Running unittests src/lib.rs (target/debug/deps/penelope-16f73d953c86e6d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_core-e3aeeb18c73fea52)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_allocations.rs (target/debug/deps/task_allocations-cf4aceb20c6dd0c7)
+{"path":"pure_checkpoint_recovery","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"effect_reconciliation_recovery","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"undersized_workspace","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"checkpoint_migration","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+{"path":"independent_completion","allocations":0,"reallocations":0,"deallocations":0,"requested_bytes":0}
+     Running unittests src/lib.rs (target/debug/deps/penelope_domain-7051abdfec6217c5)
+
+running 17 tests
+test entry::identifier_serde::tests::invalid_utf8_and_noncanonical_text_stay_rejected ... ok
+test entry::identifier_serde::tests::visitor_preserves_borrowed_owned_and_byte_string_admission ... ok
+test entry::identifier_text::tests::boundary_lengths_and_multibyte_text_round_trip ... ok
+test entry::identifier_text::tests::storage_preserves_string_semantics ... ok
+test entry::implementation::tests::allocation_hint_does_not_change_encoding_or_bound_output ... ok
+test entry::implementation::tests::canonical_bytes_are_deterministic_and_bind_effect_semantics ... ok
+test entry::implementation::tests::canonical_definition_digest_is_reproducible_and_rejects_tampering ... ok
+test entry::implementation::tests::canonical_scope_validation_bounds_and_deduplicates_resources ... ok
+test entry::implementation::tests::definition_compatibility_fails_closed_on_identity_and_semantic_changes ... ok
+test entry::implementation::tests::definition_migration_binds_identity_and_destination_digest ... ok
+test entry::implementation::tests::definition_validation_bounds_and_deduplicates_steps ... ok
+test entry::implementation::tests::deserialization_preserves_identifier_validation ... ok
+test entry::implementation::tests::effect_key_binds_every_semantic_effect_coordinate ... ok
+test entry::implementation::tests::every_public_wire_value_has_deterministic_canonical_bytes ... ok
+test entry::implementation::tests::identifiers_reject_ambiguous_storage_and_log_characters ... ok
+test entry::implementation::tests::invalid_identifiers_report_their_typed_error_variant ... ok
+test entry::implementation::tests::outcome_scope_validation_rejects_cross_process_records ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+
+     Running tests/golden_wire.rs (target/debug/deps/golden_wire-a7af88884602eb0c)
+
+running 2 tests
+test process_input_category_discriminants_preserve_existing_variants ... ok
+test wire_fixtures_are_immutable_and_typed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/identifier_allocations.rs (target/debug/deps/identifier_allocations-6156ce67ee31871d)
+All 16 identifier types: short borrowed parse/JSON decode/clone zero allocations; long parse/clone one allocation; unchanged value size
+     Running tests/identifier_contract.rs (target/debug/deps/identifier_contract-5ba59a96192e68d7)
+
+running 1 test
+test public_identifiers_preserve_admission_wire_and_traits ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_executor-5c104f3430eae505)
+
+running 39 tests
+test entry::engine::tests::a_projection_rejects_a_definition_with_different_pinned_semantics ... ok
+test entry::engine::tests::authorized_manual_resolution_replays_compensation_or_cancellation ... ok
+test entry::engine::tests::crash_after_every_trade_event_replays_to_the_same_compensated_state ... ok
+test entry::engine::tests::decide_rejects_a_result_without_a_replayed_projection ... ok
+test entry::engine::tests::decide_routes_typed_start_and_result_inputs_without_side_effects ... ok
+test entry::engine::tests::escalated_decision_builds_a_scope_pinned_manual_review_request ... ok
+test entry::engine::tests::exhausted_retry_policy_escalates_without_a_new_action ... ok
+test entry::engine::tests::external_saga_inputs_always_require_an_accepted_input_record ... ok
+test entry::engine::tests::graph_definition_validates_references_reachability_and_terminal_edges ... ok
+test entry::engine::tests::input_to_event_preserves_the_exact_immutable_input_identity ... ok
+test entry::engine::tests::known_terminal_failure_compensates_succeeded_steps_in_lifo_order ... ok
+test entry::engine::tests::linear_definition_rejects_duplicate_and_oversized_steps ... ok
+test entry::engine::tests::live_transitions_and_event_replay_converge ... ok
+test entry::engine::tests::ordered_replay_rejects_a_sequence_gap_before_applying_events ... ok
+test entry::engine::tests::outcome_batch_binds_accepted_input_to_the_event_input_identity ... ok
+test entry::engine::tests::outcome_plan_requires_every_observed_and_planned_lifecycle_fact_in_order ... ok
+test entry::engine::tests::replay_rebuilds_the_final_projection_from_immutable_events ... ok
+test entry::engine::tests::replay_rejects_a_duplicate_accepted_input_identity ... ok
+test entry::engine::tests::replay_rejects_a_second_start_record ... ok
+test entry::engine::tests::replay_rejects_a_start_event_with_different_pinned_semantics ... ok
+test entry::engine::tests::result_for_a_different_action_cannot_advance_the_saga ... ok
+test entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy ... ok
+test entry::engine::tests::retry_backoff_is_deterministic_exponential_and_capped ... ok
+test entry::engine::tests::retry_backoff_plans_replayable_due_timer_and_rejects_early_or_duplicate_fire ... ok
+test entry::engine::tests::retry_backoff_rejects_invalid_bounds_and_due_time_overflow ... ok
+test entry::engine::tests::retry_cannot_reuse_an_issued_action_identity ... ok
+test entry::engine::tests::retry_creates_a_new_attempt_for_the_same_step ... ok
+test entry::engine::tests::retry_deadline_allows_its_boundary_and_escalates_after_it ... ok
+test entry::engine::tests::retry_jitter_is_seeded_bounded_and_replayable ... ok
+test entry::engine::tests::retry_schedule_input_preserves_the_jitter_seed_in_its_replay_event ... ok
+test entry::engine::tests::success_plans_ordered_steps_then_completes ... ok
+test entry::engine::tests::terminal_projection_preserves_reference_fields ... ok
+test entry::engine::tests::unknown_result_escalates_instead_of_blind_retry ... ok
+test entry::graph::tests::graph_escalates_unknown_without_following_an_edge ... ok
+test entry::graph::tests::graph_rejects_result_for_wrong_action ... ok
+test entry::graph::tests::graph_replay_rejects_oversized_logs_before_allocating_tracking_state ... ok
+test entry::graph::tests::graph_start_result_and_replay_converge ... ok
+test entry::graph::tests::ordered_graph_replay_rejects_sequence_gaps ... ok
+test graph_outcomes::tests::graph_outcome_plan_checks_order_scope_causation_and_sequence ... ok
+
+test result: ok. 39 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/architecture.rs (target/debug/deps/architecture-9ba9190998974dda)
+
+running 5 tests
+test every_public_newtype_has_an_explicit_fuzz_invocation ... ok
+test fuzz_inventory_counts_executed_calls_and_ignores_imports ... ok
+test module_entry_files_contain_only_declarations_and_exports ... ok
+test module_rule_rejects_implementations_and_inline_modules ... ok
+test public_type_inventory_accepts_only_static_thread_local_declarations ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/definition_allocations.rs (target/debug/deps/definition_allocations-ceb663567c14a494)
+Linear definition admission: zero allocations for valid and duplicate fixtures across the sorting threshold, short and long identifiers
+     Running tests/graph_validation_parity.rs (target/debug/deps/graph_validation_parity-781abb53d7981560)
+
+running 5 tests
+test arbitrary_graphs_preserve_exact_validation_errors ... ok
+test bounds_references_duplicate_keys_and_disconnected_cycles_preserve_errors ... ok
+test every_bounded_source_and_outcome_key_rejects_duplicates_with_original_precedence ... ok
+test maximum_size_branching_graph_preserves_reachability_through_cycles ... ok
+test reachable_chains_cycles_and_reordered_steps_remain_valid ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.39s
+
+     Running tests/linear_validation_parity.rs (target/debug/deps/linear_validation_parity-f2ac265f16933144)
+
+running 4 tests
+test arbitrary_definitions_preserve_exact_errors_and_source_order ... ok
+test boundaries_and_mixed_invalid_fields_preserve_error_precedence ... ok
+test strictly_descending_ids_do_not_bypass_forward_or_compensation_retry_limits ... ok
+test unique_definitions_and_injected_duplicates_preserve_admission ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/supervisor_error_compat.rs (target/debug/deps/supervisor_error_compat-e5e0679e4425666b)
+
+running 1 test
+test hosted_error_path_variant_imports_conversions_and_exhaustive_match_still_compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_adversarial.rs (target/debug/deps/task_adversarial-46a92de4482946cf)
+
+running 8 tests
+test cooldown_cannot_be_bypassed_and_checkpoint_substitution_cannot_authorize_restart ... ok
+test history_and_attempt_quotas_fail_closed_before_new_authorization ... ok
+test invalid_definitions_and_incompatible_intents_never_become_pending ... ok
+test migration_rejects_foreign_task_wrong_schema_and_oversized_checkpoint ... ok
+test pending_observations_and_wrong_reconciliation_evidence_do_not_advance_history ... ok
+test poisoned_restore_corrupt_journal_and_runtime_failure_never_claim_completion ... ok
+test premature_faults_completion_and_reconciliation_are_rejected ... ok
+test valid_replay_survives_every_prefix_and_corrupt_history_is_rejected ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_audit.rs (target/debug/deps/task_audit-0ae8e9d6b3160af6)
+
+running 7 tests
+test foreign_or_stale_late_observations_cannot_fence_the_current_generation ... ok
+test forwarded_pending_observation_at_timeout_stops_execution ... ok
+test last_history_slot_is_reserved_for_stopping_the_generation ... ok
+test oversized_reports_stop_execution_even_when_the_buffer_is_truncated ... ok
+test persisted_input_schema_reaches_the_runtime_before_computation ... ok
+test quota_fence_failure_poisoning_never_acknowledges_a_checkpoint ... ok
+test restart_without_a_terminal_history_slot_never_dispatches ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_concurrency.rs (target/debug/deps/task_concurrency-8b3d1b75a938b0dd)
+
+running 3 tests
+test competing_intents_cannot_dispatch_after_a_cas_conflict ... ok
+test delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction ... ok
+test many_competing_supervisors_commit_and_dispatch_exactly_one_execution ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/task_contracts.rs (target/debug/deps/task_contracts-d0317b01b93a5d9f)
+
+running 5 tests
+test checkpoint_upgrade_requires_explicit_application_authorized_import ... ok
+test malformed_history_is_rejected_without_mutating_projection ... ok
+test quotas_and_deadline_are_checked_before_new_execution ... ok
+test task_wire_v1_fixture_is_immutable ... ok
+test time_arithmetic_near_u64_max_preserves_fault_observation_and_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control.rs (target/debug/deps/task_control-9943156567b7db6d)
+
+running 9 tests
+test ambiguous_commit_poisoning_matches_hosted_profile ... ok
+test checkpoint_proposals_require_poll_storage_larger_than_final_output ... ok
+test insufficient_workspace_does_not_commit_start_and_can_be_retried ... ok
+test lazy_dispatch_workspace_is_unused_for_wait_fault_and_recovery_decisions ... ok
+test portable_and_hosted_histories_match_through_checkpoint_and_completion ... ok
+test reconstruction_and_restart_match_hosted_profile ... ok
+test single_buffer_poll_records_timeout_without_dispatch_or_poll_storage ... ok
+test standalone_workspace_validation_admits_the_largest_declared_proposal ... ok
+test undersized_poll_workspace_preserves_worker_progress ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_control_failures.rs (target/debug/deps/task_control_failures-ed0ba3d30da039da)
+
+running 8 tests
+test corrupt_input_and_checkpoint_reads_poison_dispatch_before_user_code ... ok
+test foreign_input_admission_leaves_no_durable_mutation_and_allows_correct_retry ... ok
+test interruption_receipt_ambiguity_is_resolved_only_by_authoritative_replay ... ok
+test invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch ... ok
+test restore_read_and_clock_failures_neither_fence_nor_append ... ok
+test stale_observation_preserves_running_state_and_poll_at_deadline_records_timeout ... ok
+test unconfirmed_quota_fence_poisoning_precedes_the_proposal_error ... ok
+test zero_schema_live_output_is_fenced_without_commit_or_acknowledgement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_effect_bridge.rs (target/debug/deps/task_effect_bridge-e502db02d5813a6a)
+
+running 2 tests
+test existing_effect_identity_survives_task_crash_without_changing_saga_records ... ok
+test typed_binding_rejects_each_substituted_dispatch_coordinate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_newtypes.rs (target/debug/deps/task_newtypes-e19e449f9aaab225)
+
+running 2 tests
+test scoped_identity_roles_preserve_exact_content_and_wire_values ... ok
+test task_counters_reject_wire_overflow_and_arithmetic_never_wraps ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_process_crash.rs (target/debug/deps/task_process_crash-8392054d316005ed)
+
+running 3 tests
+test crash_worker ... ok
+test killed_process_recovers_only_committed_checkpoint ... ok
+test valid_json_corruption_is_rejected_by_journal_integrity_before_replay ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/task_recovery.rs (target/debug/deps/task_recovery-f8e2c0ea963578c2)
+
+running 14 tests
+test checkpoint_commit_ack_loss_is_recovered_from_committed_boundary ... ok
+test committed_checkpoint_resumes_computation_after_supervisor_crash ... ok
+test corrupt_checkpoint_fails_closed_before_task_code_runs ... ok
+test crash_after_start_commit_before_dispatch_is_reconstructed_without_success ... ok
+test effect_interruption_requires_evidence_and_unknown_never_restarts ... ok
+test failed_runtime_checkpoint_acknowledgement_requires_replay_of_committed_checkpoint ... ok
+test independent_completion_evidence_commits_bytes_without_reexecution ... ok
+test no_commit_or_lost_acknowledgement_never_dispatches ... ok
+test oversized_input_migration_and_reconciled_output_are_rejected_before_commit ... ok
+test regressed_clock_is_rejected_before_runtime_poll_consumes_progress ... ok
+test repeated_faults_are_bounded_by_generation_quota ... ok
+test seeded_checkpoint_crash_and_persistence_chaos ... ok
+test stale_generation_and_foreign_scope_leave_state_unchanged ... ok
+test timeout_late_results_and_fence_failure_do_not_claim_success ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/task_security.rs (target/debug/deps/task_security-b87ef1b5d9dbead4)
+
+running 3 tests
+test all_recovery_modes_preserve_ambiguity_for_interrupted_effects ... ok
+test definition_fingerprint_pins_every_permission_and_budget_field ... ok
+test task_wire_rejects_unknown_duplicate_overflow_and_wrong_shape_fields ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_sqlite_recovery.rs (target/debug/deps/task_sqlite_recovery-bf21fd7b12ab041e)
+
+running 3 tests
+test process_death_rolls_back_or_recovers_the_whole_checkpoint_transaction ... ok
+test separate_database_connections_arbitrate_one_intent_and_reject_corruption ... ok
+test sqlite_crash_worker ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/task_verified_result.rs (target/debug/deps/task_verified_result-f44d9010990fbd8d)
+
+running 3 tests
+test effectful_completion_requires_matching_independent_evidence ... ok
+test pure_completion_requires_exact_output_and_resolved_application_meaning ... ok
+test result_relay_maps_to_both_engines_with_one_delivery_identity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_intent-35470f41fbcd36df)
+
+running 2 tests
+test entry::implementation::tests::parse_accepts_a_constructed_process_input ... ok
+test entry::implementation::tests::parse_rejects_malformed_typed_input ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_ports-5fea71be185ca5fb)
+
+running 38 tests
+test entry::implementation::tests::action_dispatch_receipt_is_bound_to_the_exact_action ... ok
+test entry::implementation::tests::atomic_commit_receipt_is_bound_to_sequence_and_input_semantics ... ok
+test entry::implementation::tests::atomic_commit_rejects_an_oversized_action_batch ... ok
+test entry::implementation::tests::atomic_commit_rejects_an_oversized_outcome_batch ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_action_effect_key ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_action_identity ... ok
+test entry::implementation::tests::atomic_commit_rejects_duplicate_outcome_identity ... ok
+test entry::implementation::tests::atomic_commit_rejects_outcomes_from_different_definitions ... ok
+test entry::implementation::tests::atomic_commit_rejects_outgoing_action_from_another_definition ... ok
+test entry::implementation::tests::atomic_commit_rejects_outgoing_action_from_another_process ... ok
+test entry::implementation::tests::atomic_commit_requires_accepted_input_causation ... ok
+test entry::implementation::tests::atomic_commit_requires_contiguous_outcomes_in_one_scope ... ok
+test entry::implementation::tests::authorization_decisions_fail_closed_without_message_matching ... ok
+test entry::implementation::tests::authorization_matrix_requires_distinct_principals_for_high_value_actions ... ok
+test entry::implementation::tests::canonical_source_event_key_requires_a_canonical_inbox_input ... ok
+test entry::implementation::tests::canonical_submit_receipt_is_bound_to_the_exact_command_action ... ok
+test entry::implementation::tests::definition_registration_receipt_is_bound_to_identity_version_and_digest ... ok
+test entry::implementation::tests::external_effect_deadline_is_inclusive_and_fail_closed_after_expiry ... ok
+test entry::implementation::tests::external_effect_evidence_requires_the_exact_action_and_effect_key ... ok
+test entry::implementation::tests::inbox_receipt_is_bound_to_the_exact_submitted_input ... ok
+test entry::implementation::tests::manual_review_audit_entry_is_scope_bound_and_expiry_checked ... ok
+test entry::implementation::tests::manual_review_operations_require_the_pinned_scope_and_dual_control ... ok
+test entry::implementation::tests::manual_review_receipt_is_bound_to_the_exact_case ... ok
+test entry::implementation::tests::migration_registration_receipt_is_bound_to_migration_identity ... ok
+test entry::implementation::tests::outbox_claim_request_rejects_an_oversized_batch ... ok
+test entry::implementation::tests::outbox_lease_expiry_is_checked_at_logical_boundary ... ok
+test entry::implementation::tests::outbox_lease_rejects_a_cross_scope_claim ... ok
+test entry::implementation::tests::outbox_record_requires_valid_action_and_bounded_attempt ... ok
+test entry::implementation::tests::outcome_log_append_is_atomic_and_rejects_reorder_scope_and_duplicates ... ok
+test entry::implementation::tests::outcome_replay_pages_are_bounded_scope_pinned_and_contiguous ... ok
+test entry::implementation::tests::quota_requests_are_typed_bounded_and_fail_closed ... ok
+test entry::implementation::tests::reconciliation_rejects_committed_evidence_for_another_action ... ok
+test entry::implementation::tests::reconciliation_rejects_evidence_for_another_action ... ok
+test entry::implementation::tests::reconciliation_requires_the_action_scope_and_valid_committed_evidence ... ok
+test entry::implementation::tests::reconciliation_window_only_allows_retry_after_horizon ... ok
+test entry::implementation::tests::redacted_diagnostics_are_bounded_and_never_require_message_matching ... ok
+test entry::implementation::tests::timer_claim_lease_requires_due_time_scope_owner_and_expiry ... ok
+test entry::implementation::tests::timer_schedule_requires_a_schema_valid_timer_action ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/atomic_commit_faults.rs (target/debug/deps/atomic_commit_faults-0515ac943f665cf9)
+
+running 1 test
+test injected_failure_at_every_atomic_boundary_has_no_visible_partial_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/atomic_validation_parity.rs (target/debug/deps/atomic_validation_parity-deb08ddba18347c0)
+
+running 2 tests
+test shared_step_payloads_and_later_invalid_scopes_preserve_effect_identity ... ok
+test validation_preserves_all_effect_coordinates_and_error_precedence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+
+     Running tests/ports_conformance.rs (target/debug/deps/ports_conformance-74108169b48cb6d5)
+
+running 2 tests
+test authorization_operation_discriminants_preserve_existing_variants ... ok
+test every_port_is_object_safe_send_sync_callable_and_fail_closed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_process_runtime-0630a7813abe3acd)
+
+running 29 tests
+test registry::tests::all_manifest_lengths_match_the_bounded_legacy_reader ... ok
+test registry::tests::fixed_header_matches_legacy_wire_for_varied_bindings ... ok
+test registry::tests::manifest_read_retries_interruptions_and_collects_short_reads ... ok
+test registry::tests::read_errors_before_or_after_a_complete_manifest_are_runtime_errors ... ok
+test runtime::fence_tests::impossible_saved_pids_are_corruption_without_signaling ... ok
+test runtime::fence_tests::kernel_identity_parser_preserves_command_delimiters_and_rejects_bad_start_times ... ok
+test runtime::fence_tests::pidfd_wait_accepts_readiness_even_with_an_expired_deadline ... ok
+test runtime::fence_tests::pidfd_wait_expiry_or_permanent_error_does_not_retry_or_claim_readiness ... ok
+test runtime::fence_tests::pidfd_wait_retries_interruption_and_empty_returns_with_remaining_budget ... ok
+test runtime::fence_tests::pidfd_wait_timeout_does_not_claim_a_live_child_has_exited ... ok
+test runtime::fence_tests::stale_start_time_cannot_signal_a_reused_pid ... ok
+test runtime::fence_tests::unrepresentable_fence_deadline_preserves_error_after_signaling_owned_child ... ok
+test runtime::io_tests::bounded_send_rejects_a_final_positive_write_finishing_after_deadline ... ok
+test runtime::io_tests::bounded_send_rejects_expiry_despite_continuous_positive_progress ... ok
+test runtime::io_tests::bounded_send_rejects_zero_permanent_error_and_expired_retry ... ok
+test runtime::io_tests::bounded_send_retries_transient_errors_without_duplicate_or_missing_bytes ... ok
+test runtime::io_tests::continuous_interruptions_do_not_reset_the_write_deadline ... ok
+test runtime::io_tests::eof_without_a_complete_frame_preserves_terminal_fault_classification ... ok
+test runtime::io_tests::execution_identity_preserves_legacy_encoding_and_generation_boundaries ... ok
+test runtime::io_tests::exit_between_empty_read_and_status_check_cannot_discard_queued_completion ... ok
+test runtime::io_tests::fixed_start_header_matches_legacy_wire_for_varied_bindings_and_lengths ... ok
+test runtime::io_tests::frame_number_rejects_truncation_and_offset_overflow ... ok
+test runtime::io_tests::interrupted_bursts_preserve_bytes_across_short_writes_and_parts ... ok
+test runtime::io_tests::startup_parts_cannot_reset_budget_after_each_positive_write ... ok
+test runtime::io_tests::startup_parts_share_deadline_and_expired_parts_do_not_write ... ok
+test runtime::io_tests::would_block_bursts_preserve_bytes_across_short_writes_and_parts ... ok
+test sandbox::tests::invalid_spawn_budgets_do_not_execute_a_command_or_mutate_manifest ... ok
+test sandbox::tests::isolated_child_setup_helper ... ok
+test sandbox::tests::isolated_setup_persists_kernel_identity_and_bounds_and_rejects_invalid_parent_or_file ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.35s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-fc67005e4e738a2c)
+
+running 67 tests
+test checkpoint_requires_exact_commit_ack_before_completion ... ok
+test checkpoint_state::independent_checkpoint_gate_controls_real_worker_ack_and_reconstruction ... ok
+test committed_dispatch_recovers_task_intent_in_shared_and_separate_databases ... ok
+test concurrency::competing_supervisor_helper ... ok
+test concurrency::two_supervisor_processes_admit_one_real_worker_and_replay_one_completion ... 
+running 1 test
+test concurrency::competing_supervisor_helper ... 
+running 1 test
+test concurrency::competing_supervisor_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.03s
+
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.03s
+
+ok
+test corrupt_registry_blocks_fence_until_evidence_is_restored ... ok
+test corrupt_scope_and_oversized_frames_cannot_complete ... ok
+test cpu_budget_is_enforced_by_kernel_without_supervisor_polling ... ok
+test exit_zero_without_result_is_not_completion ... ok
+test fence_contracts::each_registry_binding_and_partial_identity_blocks_fence_until_repaired ... ok
+test fence_contracts::externally_reaped_worker_can_still_be_fenced_by_original_runtime ... ok
+test fence_contracts::reconstructed_fence_reaps_worker_after_original_runtime_is_dropped ... ok
+test fence_contracts::registry_symlink_is_not_followed_and_lock_timeout_does_not_confirm_termination ... ok
+test filesystem_paths::filesystem_case_helper ... ok
+test filesystem_paths::manifest_fifo_with_writer_is_rejected_and_repairable ... ok
+test filesystem_paths::manifest_fifo_without_writer_is_rejected_and_repairable ... ok
+test filesystem_paths::registry_lock_fifo_is_rejected_and_repairable ... ok
+test filesystem_paths::worker_directory_is_rejected ... ok
+test filesystem_paths::worker_fifo_with_writer_is_rejected ... ok
+test filesystem_paths::worker_fifo_without_writer_is_rejected ... ok
+test filesystem_paths::worker_procfd_regular_image_remains_valid ... ok
+test filesystem_paths::worker_symlink_to_regular_image_remains_valid ... ok
+test fragmented_completion_survives_exit_and_truncated_completion_faults ... ok
+test kernel_address_space_limit_allows_small_and_rejects_large_allocations ... ok
+test kernel_blocks_process_filesystem_network_limit_and_descriptor_escape_syscalls ... ok
+test killed_supervisor_reconstructs_and_fences_without_clean_shutdown ... 
+running 1 test
+test supervisor_crash_helper ... ok
+test launch_contracts::expired_startup_write_poisoning_requires_reconstruction_and_fences_worker ... ok
+test launch_contracts::invalid_runtime_limits_are_rejected_before_any_worker_can_start ... ok
+test launch_contracts::live_capacity_does_not_reject_the_exact_reserved_start_retry ... ok
+test launch_contracts::sealed_worker_survives_replacement_of_its_source_file ... ok
+test launch_contracts::wrong_architecture_truncated_and_dynamic_images_are_rejected ... ok
+test maximum_completion_and_acknowledged_checkpoint_remain_valid ... ok
+test maximum_frames_reject_coalesced_trailing_bytes ... ok
+test restored_runtime_fences_live_generation_and_rejects_delayed_start ... ok
+test sagas::cancellation::completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process ... ok
+test sagas::full_graph_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::full_linear_saga_replays_real_task_result_from_shared_and_separate_stores ... ok
+test sagas::killed_coordinators_recover_effectful_sagas_at_reconciliation_boundaries ... ok
+test sagas::killed_coordinators_recover_linear_and_graph_sagas_at_durable_boundaries ... ok
+test sagas::reconciled_graph_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test sagas::reconciled_linear_saga_blocks_unknown_then_requires_independent_result_evidence ... ok
+test sagas::saga_completion_waits_for_a_delayed_real_worker ... ok
+test sagas::services::authorized_timer_driver_replays_lost_ack_with_stable_payload_and_input ... ok
+test sagas::services::denied_dispatch_cannot_claim_work_and_allowed_claim_is_exactly_scoped ... ok
+test sagas::services::graph_timer::discovered_graph_timer_selects_one_retry_task_and_replays_terminal_state ... ok
+test sagas::services::graph_timer::timer_delivery_reconstruction_consumes_one_input ... ok
+test sagas::services::outbox_driver_rejects_forged_receipt_and_recovers_after_expired_ack ... ok
+test sagas::services::reconciliation_preserves_unknown_and_never_executes_an_effect ... ok
+test sagas::services::service_faults::ambiguous_timer_payload_and_inbox_receipts_recover_without_a_second_identity ... ok
+test sagas::services::service_faults::malformed_outbox_batches_never_dispatch_or_acknowledge ... ok
+test sagas::services::service_faults::malformed_timer_batches_never_write_payloads_accept_inputs_or_acknowledge ... ok
+test sagas::services::task_driver_authorizes_before_starting_or_polling_worker ... ok
+test sagas::services::timer_saga::discovered_timer_commits_one_retry_task_and_replays_terminal_saga ... ok
+test sagas::services::timer_saga::timer_crash::killed_timer_coordinators_recover_delivery_and_decision ... ok
+test sagas::services::timer_saga::timer_crash::timer_delivery_reconstruction_consumes_one_input ... ok
+test static_worker_completes_only_after_durable_input_and_start ... ok
+test supervisor_crash_helper ... ok
+test unacknowledged_checkpoint_cannot_advance_worker ... ok
+test unloadable_bootstrap_cannot_complete_and_reconstruction_fences_its_generation ... ok
+test worker_protocol::advertised_lengths_are_rejected_before_reading_or_allocating_payloads ... ok
+test worker_protocol::checkpoint_ack_requires_exact_magic_digest_and_complete_frame ... ok
+test worker_protocol::metadata_definition_schema_input_and_definition_limits_are_enforced ... ok
+test worker_protocol::proposals_bind_kind_scope_generation_schema_and_bytes_and_surface_pipe_errors ... ok
+test worker_protocol::scope_hash_matches_legacy_wire_encoding_for_varied_scopes ... ok
+test worker_protocol::start_packet_preserves_full_metadata_input_and_optional_checkpoint ... ok
+test worker_protocol::task_limits_and_schema_are_rejected_before_any_payload_read ... ok
+test worker_protocol::truncated_packets_and_substituted_envelopes_fail_closed ... ok
+
+test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.77s
+
+     Running tests/worker_protocol_allocations.rs (target/debug/deps/worker_protocol_allocations-a82a770d0af80f99)
+Real runtime allocations: supervisor dispatch=252
+Real runtime allocations: repeated public fences=[9, 9, 9]
+Real runtime allocations: pending/checkpoint poll=0, committed checkpoint ACK=0
+Protocol allocations: proposal=0, valid request=2, pinned-bound rejection=1
+     Running unittests src/lib.rs (target/debug/deps/penelope_sqlite-b440e53c9a59e321)
+
+running 34 tests
+test process::encode_tests::failed_or_oversized_encoding_cannot_contaminate_a_later_value ... ok
+test process::encode_tests::reused_encoding_matches_json_at_exact_size_boundaries ... ok
+test process::fault_tests::crash_worker ... ok
+test process::fault_tests::lease_clock_tests::clock_failure_and_expiry_overflow_release_the_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::expired_outbox_lease_is_reclaimed_using_time_after_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::new_outbox_claim_samples_clock_after_contended_writer_lock ... ok
+test process::fault_tests::process_death_never_splits_atomic_saga_commit ... ok
+test schema::tests::inbox::sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test schema::tests::migration_process_helper ... ok
+test schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... 
+running 1 test
+test schema::tests::migration_process_helper ... ok
+test task_decode::tests::replay_scope_decoder_matches_core_json_forms_and_mutated_records ... ok
+test task_decode::tests::scope_encoding_bound_covers_every_digest_byte_and_fails_on_short_buffers ... ok
+test task_decode::tests::scratch_reuse_preserves_shorter_records_and_owned_results ... ok
+test tasks::fault_tests::blob_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::crash_worker ... ok
+test tasks::fault_tests::head_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::process_kill_at_each_transaction_boundary_preserves_atomicity ... ok
+test tasks::fault_tests::record_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::key_tests::array_and_legacy_keys_bind_as_identical_sqlite_blobs ... ok
+test tasks::key_tests::fixed_scope_keys_preserve_all_legacy_bytes ... ok
+test worker::panic_tests::canceled_result_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::disconnected_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::full_queue_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::nested_result_destructor_cannot_abort_worker_or_strand_accepted_work ... ok
+test worker::panic_tests::notification_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::operation_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::tests::only_latest_registration_is_woken_after_repeated_polls_and_cancellation ... ok
+test worker::tests::panicking_waker_cannot_strand_accepted_work_or_discard_committed_result ... ok
+test worker::tests::queue_exhaustion_is_immediate_and_cancellation_does_not_undo_commits ... ok
+test worker::tests::replacing_executor_waker_runs_destructor_without_completion_lock ... ok
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... ok
+test worker::waker_tests::cloning_executor_waker_can_complete_response_without_lock_or_lost_result ... ok
+test worker::waker_tests::panicking_clone_or_temporary_waker_drop_preserves_unpoisoned_result ... ok
+test worker::waker_tests::repeated_pending_polls_reuse_registration_without_cloning_executor_waker ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.54s
+
+     Running tests/process.rs (target/debug/deps/process-32db73d32384d57a)
+
+running 61 tests
+test canonical_source_cannot_advance_under_another_input_identity ... ok
+test claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok
+test claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok
+test claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok
+test claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok
+test claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok
+test commit_integrity::later_commits_and_delivery_ack_do_not_invalidate_an_exact_original_retry ... ok
+test commit_integrity::receipt_reconstruction_rejects_missing_and_substituted_constituents ... ok
+test commit_integrity::retry_rejects_damaged_consumption_and_source_bindings ... ok
+test committed_receipt_cannot_mask_missing_authoritative_records ... ok
+test concurrent_quota::concurrent_new_processes_share_the_scope_admission_limit ... ok
+test concurrent_quota::concurrent_ports_share_the_exact_process_byte_budget ... ok
+test durable_atomic_commit_inbox_outbox_and_exact_retry ... ok
+test durable_timer_claims_redeliver_until_exact_acknowledgement ... ok
+test inbox_and_atomic_commit_share_bounded_usage_and_exact_payload_identity ... ok
+test inbox_concurrency::admission_and_commit_races_preserve_identity_consumption_and_source_binding ... ok
+test inbox_concurrency::next_frontier_rejects_consumed_inputs_and_reused_sources_during_admission ... ok
+test inbox_index::inbox_index_collision_rolls_back_version_and_rows_until_repaired ... ok
+test inbox_index::inbox_index_page_limit_failure_preserves_version_and_pending_rows ... ok
+test inbox_index::next_unsupported_schema_rejects_healthy_database_without_row_changes ... ok
+test inbox_index::version_five_upgrade_preserves_pending_inputs_receipts_and_live_leases ... ok
+test inbox_validation::duplicate_admission_preserves_encodings_conflicts_and_corruption_rejection ... ok
+test inbox_validation::stored_record_limit_bounds_noncanonical_duplicate_encodings ... ok
+test lease_contracts::cancellation_fences_a_live_timer_lease_and_rescheduling_cannot_resurrect_it ... ok
+test lease_contracts::clock_overflow_cannot_create_an_unbounded_lease ... ok
+test lease_contracts::corrupted_pending_records_block_claims_and_cancellation ... ok
+test lease_contracts::damaged_index_bindings_never_return_an_unpersisted_lease ... ok
+test lease_contracts::exhausted_or_corrupt_lease_counters_and_clock_overflow_preserve_pending_work ... ok
+test lease_contracts::exhausted_tokens_and_delivery_attempts_roll_back_without_claiming_work ... ok
+test lease_contracts::expired_or_nonextending_renewals_cannot_hide_pending_work ... ok
+test lease_contracts::ignored_acknowledgement_is_not_reported_as_durable_success ... ok
+test lease_contracts::ignored_lease_update_rolls_back_tokens_and_returns_no_authority ... ok
+test lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work ... ok
+test lease_contracts::lease_completion_rejects_damaged_durable_evidence ... ok
+test lease_contracts::renewal_invalidates_the_old_envelope_and_survives_connection_reconstruction ... ok
+test lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok
+test lease_encoding::variable_length_lease_bytes_remain_exact_across_reclaim_and_reopen ... ok
+test locked_database_does_not_block_the_callers_future_poll ... ok
+test missing_or_corrupt_durable_outcomes_never_become_an_empty_log ... ok
+test outbox_expiry_redelivery_renewal_and_substitution_are_fenced ... ok
+test payload_columns::empty_and_maximum_payloads_survive_corruption_repair_and_reopen ... ok
+test payload_columns::payload_row_validation_preserves_owned_reads_retry_errors_and_usage ... ok
+test pending_inbox::discovery_is_bounded_scoped_repeatable_and_only_atomic_commit_consumes_inputs ... ok
+test pending_inbox::discovery_rejects_corrupt_misindexed_and_oversized_inputs_without_consuming_them ... ok
+test pending_inbox::warmed_discovery_tracks_admission_and_consumption_on_other_workers ... ok
+test process_frontier::frontier_query_uses_scoped_indexes_as_history_grows ... ok
+test process_frontier::inconsistent_frontiers_reject_pages_retries_and_appends_until_repaired ... ok
+test process_frontier::unknown_and_inbox_only_scopes_remain_empty_with_other_history_present ... ok
+test receipt_reconstruction_after_reopen_does_not_duplicate_history ... ok
+test record_limits::raising_record_limit_preserves_commit_retry_replay_and_reopen ... ok
+test replay_cache::maximum_pages_refresh_across_workers_and_reject_corrupted_last_rows ... ok
+test replay_cache::warm_replay_rebinds_requests_recovers_from_corruption_and_sees_new_commits ... ok
+test replay_columns::replay_column_validation_and_owned_results_survive_warm_statement_reuse ... ok
+test replay_payload_limits_are_atomic_and_checked_before_stored_copy ... ok
+test replay_payloads_survive_reopen_are_scoped_and_detect_corruption ... ok
+test separate_connections_cannot_both_claim_one_outbox_action ... ok
+test suppressed_process_writes::ignored_process_commit_writes_cannot_return_partial_success ... ok
+test suppressed_process_writes::ignored_process_service_writes_preserve_state_and_recover ... ok
+test timer_validation::warmed_timer_operations_reject_changed_evidence_without_writes ... ok
+test transaction_failure_cannot_leave_inbox_outcomes_or_actions ... ok
+test version_three_upgrade_preserves_process_records_and_adds_payload_storage ... ok
+
+test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.79s
+
+     Running tests/tasks.rs (target/debug/deps/tasks-f6ac9dd09acf5441)
+
+running 42 tests
+test atomic_blob_history_commit_and_reopen ... ok
+test authority_columns::authorization_head_query_rebinds_scope_and_observes_repairs_and_ddl ... ok
+test authority_columns::generation_identity_columns_validate_in_every_durable_state ... ok
+test authorizations_reject_uncommitted_and_substituted_requests ... ok
+test cache_usage::committed_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::committed_cache_rejects_lower_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_higher_usage_until_repaired ... ok
+test cache_usage::rebuilt_cache_rejects_lower_usage_until_repaired ... ok
+test concurrent_connections_choose_one_cas_winner ... ok
+test distinct_processes_arbitrate_and_recover_after_unacknowledged_commit ... ok
+test explicit_head_rebuild_validates_log_and_blobs ... ok
+test failed_schema_upgrade_rolls_back_schema_and_version ... ok
+test fence_before_dispatch_prevents_delayed_start_after_reconstruction ... ok
+test fencing_survives_reopen_and_blocks_delayed_start ... ok
+test gaps_corrupt_bytes_missing_head_and_future_schema_fail_closed ... ok
+test head_rebuild_cannot_hide_a_missing_committed_tail ... ok
+test lock_contention_is_bounded_and_does_not_accept_input ... ok
+test retirement_preserves_fences_and_prevents_resurrection ... ok
+test schema_upgrade_preserves_v1_task_bytes ... ok
+test scope_quota_rolls_back_blob_and_record_together ... ok
+test sqlite_process_worker ... ok
+test structural_integrity_check_reports_constraint_corruption_and_recovery ... ok
+test successor_is_blocked_until_predecessor_termination_is_confirmed ... ok
+test suppressed_task_writes::ignored_task_authority_writes_cannot_grant_or_fence_a_generation ... ok
+test suppressed_task_writes::ignored_task_commit_writes_roll_back_blobs_heads_and_records ... ok
+test suppressed_task_writes::ignored_task_head_repair_cannot_populate_a_false_cache ... ok
+test suppressed_task_writes::ignored_task_retirement_writes_roll_back_partial_deletion ... ok
+test task_append_frontier::appends_reject_damaged_frontiers_for_warm_rebuilt_and_cold_projections ... ok
+test task_blob_columns::blob_read_rebuild_and_duplicate_commit_preserve_validation ... ok
+test task_blob_columns::empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen ... ok
+test task_cache_revision::cached_appends_reject_external_history_damage_before_writing ... ok
+test task_cache_revision::external_transactions_rebind_cache_after_lock_failure_commit_and_rollback ... ok
+test task_cache_revision::unrelated_scope_damage_and_schema_changes_do_not_poison_healthy_appends ... ok
+test task_columns::task_record_columns_preserve_validation_and_owned_results ... ok
+test task_confirm_bounds::stop_confirmation_rejects_out_of_policy_rows_without_mutation ... ok
+test task_confirm_bounds::valid_confirmations_survive_last_attempt_retirement_and_reopen ... ok
+test task_frontier::cached_frontier_query_rebinds_scope_and_observes_new_tail ... ok
+test task_frontier::reads_reject_inconsistent_frontiers_without_mutation ... ok
+test task_orphan_usage::first_append_accounts_for_orphans_at_exact_quota_across_warm_and_cold_statements ... ok
+test task_replay_memo::repeated_references_reject_changed_metadata_and_recheck_durable_bytes ... ok
+test task_statement_cache::statement_reuse_keeps_scope_bindings_and_observes_delete_repair_and_schema_changes ... ok
+test transaction_failure_after_blob_insert_rolls_back_everything ... ok
+
+test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.39s
+
+     Running unittests src/lib.rs (target/debug/deps/penelope_statechronicle-36c4be679f35f273)
+
+running 8 tests
+test entry::implementation::tests::duplicate_resources_in_expected_scope_are_rejected_before_correlation ... ok
+test entry::implementation::tests::duplicate_resources_in_received_evidence_are_rejected_before_correlation ... ok
+test entry::implementation::tests::expectation_can_be_derived_from_a_validated_command ... ok
+test entry::implementation::tests::expectation_rejects_a_command_from_another_tenant ... ok
+test entry::implementation::tests::verified_event_binding_pins_source_and_rejects_substituted_digest ... ok
+test entry::implementation::tests::verified_event_requires_full_correlation ... ok
+test entry::implementation::tests::wrong_action_cannot_advance_a_saga ... ok
+test entry::implementation::tests::wrong_committed_result_digest_cannot_advance_a_saga ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_checkpoint.rs (target/debug/deps/task_checkpoint-d34432f987b096d7)
+
+running 5 tests
+test combined_verification_invokes_the_verifier_and_propagates_failure ... ok
+test invalid_records_do_not_invoke_the_independent_verifier ... ok
+test migrated_checkpoint_verification_binds_the_new_blob_and_generation ... ok
+test returned_evidence_must_match_every_scope_generation_and_blob_coordinate ... ok
+test verified_checkpoint_state_cannot_be_reused_across_generation_or_scope ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_core
+
+running 4 tests
+test crates/penelope-core/src/task/identities.rs - task::identities (line 10) - compile fail ... ok
+test crates/penelope-core/src/task/identities.rs - task::identities (line 14) - compile fail ... ok
+test crates/penelope-core/src/task/identities.rs - task::identities (line 18) - compile fail ... ok
+test crates/penelope-core/src/task/identities.rs - task::identities (line 6) - compile fail ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+   Doc-tests penelope_domain
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_executor
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_intent
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_ports
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_process_runtime
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_sqlite
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests penelope_statechronicle
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

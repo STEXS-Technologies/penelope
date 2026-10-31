@@ -1,0 +1,25 @@
+{
+  "parent": "98b8aacf3d00f1d964ba4422194b20403df54b8d",
+  "source": "crates/penelope-domain/src/implementation.rs",
+  "sources": {
+    "baseline": "835dd448b9ec2b01f601751ed5709a2fa68565bbba4bc6c1a69c62c27fac6b07",
+    "candidate": "115a4ccba62aa51ae3eaad50ec9c6ac5348a731ecd2a3edb5b577e50bed17371"
+  },
+  "binaries": {
+    "baseline-effect_key_encoding": "49cb28e67de1bfbe294ad98894e5a1433f7cbe222869bc71c2256296753e0a56",
+    "baseline-effect_key_allocations": "d92c58397cb40dc286fb0377143c7a329c3e71d230d51bfab9213f12668e2f97",
+    "baseline-lease_completion_allocations": "80903b792088f396508158312d6c6ecb7b4672a905b576b2c60f84ff71d8f0dd",
+    "candidate-effect_key_encoding": "d7b63e1c2683ed76aa90b813e2590aa211deac8c500e719be69a4d57c04f80d5",
+    "candidate-effect_key_allocations": "1f4cb66e7dd0c90111200fe61f519d43f7c7a47b3b7c982ea6f12793fd91aa66",
+    "candidate-lease_completion_allocations": "0d6683000926b86a6c05896d755d27f859825e76ff7698b5f7eb5c2a4ddb7ceb"
+  },
+  "harness_sha256": {
+    "crates/penelope-domain/benches/effect_key_encoding.rs": "03f8b9876c5f16c501609b1bf241354f1f7163ff76e9de2d43b2c6eeb92f6831",
+    "crates/penelope-domain/benches/effect_key_allocations.rs": "f2472fb1a87bbdbcb758a63a66eea0ba1ce0afc9257f37595f2aa03954b9607b",
+    "crates/penelope-domain/tests/support/effect_key_fixture.rs": "83105533f4c9fc433cf88f09be5e8c1aebbda44e5f9d6c97367ae17319a12c3b",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-sqlite/benches/lease_completion_allocations.rs": "d2f86d1e5dd2d9c0b8e01b119106a28a8c78cbc72bfc04ac8d95b79dd08e581f",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

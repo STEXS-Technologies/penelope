@@ -1,0 +1,54 @@
+{
+  "binary_sha256": {
+    "baseline": "56681daa3151d5a7f0524411bd79dff16f5ce3606f59f32c88e3da857b583429",
+    "candidate": "8d5ea67d26e867962f9b0c29b9db3d3d4761803dc97aacf819ce954fa119181c"
+  },
+  "traffic": {
+    "baseline": {
+      "record": [
+        [
+          1,
+          0,
+          192
+        ]
+      ],
+      "padded": [
+        [
+          1,
+          0,
+          192
+        ]
+      ],
+      "end": [
+        [
+          1,
+          0,
+          192
+        ]
+      ]
+    },
+    "candidate": {
+      "record": [
+        [
+          1,
+          0,
+          192
+        ]
+      ],
+      "padded": [
+        [
+          1,
+          0,
+          192
+        ]
+      ],
+      "end": [
+        [
+          1,
+          0,
+          192
+        ]
+      ]
+    }
+  }
+}

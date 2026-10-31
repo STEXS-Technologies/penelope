@@ -1,0 +1,33 @@
+{
+  "parent": "6f391231456d766bc3003c87a453ee4cba58c857",
+  "pre_port": "4fd5916a3a40c300f9f3975d0492f69ef5fcde5d",
+  "sources": {
+    "pre-port": {
+      "crates/penelope-sqlite/src/leases.rs": "33afbb84adb4391b06d860a747ce9a71e97eb4be97d900a3da9fe47564a6e640",
+      "crates/penelope-ports/src/implementation.rs": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e"
+    },
+    "baseline": {
+      "crates/penelope-sqlite/src/leases.rs": "33afbb84adb4391b06d860a747ce9a71e97eb4be97d900a3da9fe47564a6e640",
+      "crates/penelope-ports/src/implementation.rs": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5"
+    },
+    "candidate": {
+      "crates/penelope-sqlite/src/leases.rs": "8ecef768c129c2ad4ca246bb09cee80e7f7ae52c25cd23baf4da86cabd00a9eb",
+      "crates/penelope-ports/src/implementation.rs": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5"
+    }
+  },
+  "binaries": {
+    "pre-port-lease_claim_profiles": "d25751f75b4149b81cfc4becb1c69778fb4b6f8416f164972456df8a6fea219b",
+    "pre-port-lease_claim_profile_allocations": "3c36d058395fec7df4a83f0b5f8a27a75c48416b50ae0e11966497d0bb22c562",
+    "baseline-lease_claim_profiles": "10028beff0df9fec7fe1e2a9e7b47f1c09da6d64eb0766bd5a2b737381db3110",
+    "baseline-lease_claim_profile_allocations": "3c2f319510b8efbafbaa4f62423f7fb8485c14e6e2bc434c73ddfaa81c5453bd",
+    "candidate-lease_claim_profiles": "306944a02f2fd72cba60ac520ccfffaaf109f1ba31c7649f5208c660df770108",
+    "candidate-lease_claim_profile_allocations": "3520c4309ff1e522dd5ac3be5e9362b7e7725da9f312be44600e64863820ca1b"
+  },
+  "harness_sha256": {
+    "crates/penelope-sqlite/benches/lease_claim_profiles.rs": "9afb0e53d4bd58fe875d90261fccb30d48a6cd64d455d24e75cd13ea4d3cea1c",
+    "crates/penelope-sqlite/benches/lease_claim_profile_allocations.rs": "387c743e83dc131f2c07e93e65736d78b6be8ba1ee1873a3d0c2ee093fccc3d0",
+    "crates/penelope-sqlite/benches/support/lease_claim_fixture.rs": "a382ed33ae32fa463afc01b81feb51f77fcc501ec25e9498d3805034128ec053",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

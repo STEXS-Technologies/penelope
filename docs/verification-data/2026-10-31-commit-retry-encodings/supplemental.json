@@ -1,0 +1,41 @@
+{
+  "no-std": {
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "penelope-core",
+      "--no-default-features",
+      "--locked"
+    ],
+    "exit_code": 0
+  },
+  "no-std-serde": {
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "penelope-core",
+      "--no-default-features",
+      "--features",
+      "serde",
+      "--locked"
+    ],
+    "exit_code": 0
+  },
+  "focused": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "-p",
+      "penelope-sqlite",
+      "--test",
+      "process",
+      "commit_retry_encodings",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 0
+  }
+}
