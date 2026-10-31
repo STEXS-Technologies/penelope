@@ -91,3 +91,7 @@ harness = false
 [[bench]]
 name = "task_blob_allocations"
 harness = false
+
+[[bench]]
+name = "task_blob_commits"
+harness = false

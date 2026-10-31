@@ -47,6 +47,14 @@ fn blob_read_rebuild_and_duplicate_commit_preserve_validation() {
         }
         let tables = ["task_records", "task_heads", "task_blobs"];
         let before = write_snapshot::snapshot(&connection, &tables);
+        // Even if the stored row also contains "wrong", equal buffers must not
+        // bypass the caller's digest verification.
+        assert_eq!(
+            journal.commit(&checkpoint, Some(b"wrong")),
+            Err(TaskPortError::Corrupt),
+            "unverified caller case={name}"
+        );
+        assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
         let mut buffer = [0xa5; 16];
         let result = journal.read_blob(scope(), reference, &mut buffer);
         if valid {
@@ -120,6 +128,7 @@ fn empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen() {
         let bytes = vec![7; size];
         let mut definition = definition();
         definition.budget.max_input_bytes = 1048576;
+        definition.recovery.max_checkpoint_bytes = 1048576;
         let mut scope = scope();
         scope.definition = definition.fingerprint();
         scope.input = TaskInputDigest::from_digest(Digest::of(&bytes));
@@ -144,6 +153,37 @@ fn empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen() {
         let mut journal =
             SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
         journal.commit(&record, Some(&bytes)).unwrap();
+        let mut projection = TaskProjection::new(scope, definition).unwrap();
+        projection.apply(&record).unwrap();
+        let started = projection
+            .propose(
+                TaskExecutionEvent::Started,
+                TaskGeneration::new(1),
+                TaskTick::new(1),
+            )
+            .unwrap();
+        journal.commit(&started, None).unwrap();
+        projection.apply(&started).unwrap();
+        let checkpoint = projection
+            .propose(
+                TaskExecutionEvent::CheckpointCommitted {
+                    checkpoint: reference,
+                },
+                projection.generation(),
+                TaskTick::new(2),
+            )
+            .unwrap();
+        assert_eq!(journal.commit(&checkpoint, Some(&bytes)), Ok(checkpoint));
+        projection.apply(&checkpoint).unwrap();
+        let next = projection
+            .propose(
+                TaskExecutionEvent::CheckpointCommitted {
+                    checkpoint: reference,
+                },
+                projection.generation(),
+                TaskTick::new(3),
+            )
+            .unwrap();
         let mut buffer = vec![0xa5; size + 7];
         assert_eq!(journal.read_blob(scope, reference, &mut buffer), Ok(size));
         assert_eq!(&buffer[..size], bytes);
@@ -153,6 +193,13 @@ fn empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen() {
         connection
             .execute("UPDATE task_blobs SET bytes=?1", [vec![8; size.max(1)]])
             .unwrap();
+        let tables = ["task_records", "task_heads", "task_blobs"];
+        let before = write_snapshot::snapshot(&connection, &tables);
+        assert_eq!(
+            journal.commit(&next, Some(&bytes)),
+            Err(TaskPortError::Corrupt)
+        );
+        assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
         buffer.fill(0xa5);
         assert_eq!(
             journal.read_blob(scope, reference, &mut buffer),
@@ -164,6 +211,7 @@ fn empty_and_maximum_blob_buffers_survive_corruption_repair_and_reopen() {
             .execute("UPDATE task_blobs SET bytes=?1", [&bytes])
             .unwrap();
         journal.rebuild_head(scope).unwrap();
+        assert_eq!(journal.commit(&next, Some(&bytes)), Ok(next));
         assert_eq!(journal.read_blob(scope, reference, &mut buffer), Ok(size));
         assert_eq!(buffer, held);
         drop(journal);
