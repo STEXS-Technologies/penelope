@@ -20,6 +20,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Reject non-regular Linux worker images, registry manifests and lock files
+  through nonblocking opens and descriptor type checks, avoiding FIFO hangs.
+
 - Reap reconstructed Linux workers through their identity-checked pidfds and
   allow fencing after another host reaper consumed the exact stopped child.
 - Enforce one Linux startup-frame write deadline across all frame parts,
