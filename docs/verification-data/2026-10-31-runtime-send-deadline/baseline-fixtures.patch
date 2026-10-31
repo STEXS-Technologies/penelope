@@ -1,6 +1,6 @@
 --- a/crates/penelope-process-runtime/src/io_tests.rs
 +++ b/crates/penelope-process-runtime/src/io_tests.rs
-@@ -141,3 +141,38 @@
+@@ -141,3 +141,37 @@
          }
      }
  }
@@ -38,4 +38,3 @@
 +        Err(TaskPortError::Runtime)
 +    );
 +}
-+
