@@ -81,3 +81,70 @@ fn unrepresentable_fence_deadline_preserves_error_after_signaling_owned_child() 
     // from durable evidence can confirm the process is now gone.
     stop_identity(identity, Duration::from_secs(1)).unwrap();
 }
+
+#[test]
+fn pidfd_wait_timeout_does_not_claim_a_live_child_has_exited() {
+    let mut child = Command::new("sleep").arg("60").spawn().unwrap();
+    let pid = Pid::from_raw(i32::try_from(child.id()).unwrap()).unwrap();
+    let fd = pidfd_open(pid, PidfdFlags::empty()).unwrap();
+    let deadline = Instant::now()
+        .checked_add(Duration::from_millis(5))
+        .unwrap();
+    let waited = wait_for_exit(&fd, deadline);
+    let expired = Instant::now() >= deadline;
+    let immediate = wait_for_exit(&fd, Instant::now());
+    let still_live = child.try_wait().unwrap().is_none();
+    child.kill().unwrap();
+    child.wait().unwrap();
+    assert_eq!(waited, Err(TaskPortError::Runtime));
+    assert!(expired);
+    assert_eq!(immediate, Err(TaskPortError::Runtime));
+    assert!(still_live);
+}
+
+#[test]
+fn pidfd_wait_accepts_readiness_even_with_an_expired_deadline() {
+    let mut child = Command::new("sleep").arg("60").spawn().unwrap();
+    let pid = Pid::from_raw(i32::try_from(child.id()).unwrap()).unwrap();
+    let fd = pidfd_open(pid, PidfdFlags::empty()).unwrap();
+    child.kill().unwrap();
+    let deadline = Instant::now().checked_add(Duration::from_secs(1)).unwrap();
+    let stopped = wait_for_exit(&fd, deadline);
+    let already_ready = wait_for_exit(&fd, Instant::now());
+    child.wait().unwrap();
+    assert_eq!(stopped, Ok(()));
+    assert_eq!(already_ready, Ok(()));
+}
+
+#[test]
+fn pidfd_wait_retries_interruption_and_empty_returns_with_remaining_budget() {
+    for first in [Err(rustix::io::Errno::INTR), Ok(false)] {
+        let mut response = Some(first);
+        let mut timeouts = Vec::new();
+        let deadline = Instant::now().checked_add(Duration::from_secs(1)).unwrap();
+        let waited = wait_until_ready(deadline, |timeout| {
+            timeouts.push(Duration::try_from(*timeout).unwrap());
+            response.take().unwrap_or(Ok(true))
+        });
+        assert_eq!(waited, Ok(()));
+        assert_eq!(timeouts.len(), 2);
+        assert!(timeouts.last().unwrap() <= timeouts.first().unwrap());
+    }
+}
+
+#[test]
+fn pidfd_wait_expiry_or_permanent_error_does_not_retry_or_claim_readiness() {
+    let future = Instant::now().checked_add(Duration::from_secs(1)).unwrap();
+    for (error, deadline) in [
+        (rustix::io::Errno::INTR, Instant::now()),
+        (rustix::io::Errno::BADF, future),
+    ] {
+        let mut attempts = 0_u32;
+        let waited = wait_until_ready(deadline, |_timeout| {
+            attempts = attempts.saturating_add(1);
+            Err(error)
+        });
+        assert_eq!(waited, Err(TaskPortError::Runtime));
+        assert_eq!(attempts, 1);
+    }
+}
