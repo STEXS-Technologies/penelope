@@ -1,0 +1,22 @@
+{
+  "pairs": 5,
+  "fence_samples": 16,
+  "dispatch_samples": 8,
+  "warmups_per_binary": 1,
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "binary_sha256": {
+    "baseline": {
+      "fence": "20cfd788bad4c704b853f5c6bafdddeab240730ad22eae7da67946438d9a0e2b",
+      "fence-remote": "20cfd788bad4c704b853f5c6bafdddeab240730ad22eae7da67946438d9a0e2b",
+      "dispatch": "cb70d46382f72d79818b5f63c030b69151bbfc80eb89162381eee29e0fc22c00"
+    },
+    "candidate": {
+      "fence": "b62ec178b289641f6501a6d4424a1ff3dc1f42dbcafc7379b8ba56394860f3b4",
+      "fence-remote": "b62ec178b289641f6501a6d4424a1ff3dc1f42dbcafc7379b8ba56394860f3b4",
+      "dispatch": "3b245b19289f9c846eb3f314e180989721753d2d1cdb007d3630752bd1d79073"
+    }
+  },
+  "scope": "Process medians paired by alternating execution order. Fresh local WAL/FULL fixtures. Own compilation/tests excluded from timing; host load, frequency and cache state uncontrolled."
+}

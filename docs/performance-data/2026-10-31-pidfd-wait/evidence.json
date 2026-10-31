@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "initial_baseline_revision": "441cd3aeea42339776d799a747df87f27ab32dc1",
+  "baseline_revision": "f31a8520c445b22d2b481d70b8a5478abb188e02",
+  "candidate_revision": "c889898d16374b6e66e364ac2b5fc7a0cbf94119",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/runtime.rs": "89ceab7ab064f26949595114a541c24896923bc7a6b30bdb2bd8bd1e56af0df3",
+    "crates/penelope-process-runtime/src/fence_tests.rs": "422ce4951c98f73f866852cbb3f874c224ede1da1340c2bb17f9abd4de7ba74a",
+    "crates/penelope-process-runtime/benches/fence.rs": "80b3a1e9214cab657dac71b2e1ca71bb6f391429cf635dd080e078e0ff0ee30f",
+    "crates/penelope-process-runtime/benches/support/fence.rs": "a48d0a0fcd1ad255eed26cc66d636f38703f4f05780f1a896444cb86dd9a4245",
+    "crates/penelope-process-runtime/benches/support/dispatch.rs": "57ca56f9fc966775d8b2afe06a3ed2bb5fd945b86599fe9876f3d95261c76f9c",
+    "crates/penelope-process-runtime/tests/fixtures/worker.c": "85480f26549769f358186b73e4b62dbb74a7112821f1bc67a3d4f5a2624414a3",
+    "crates/penelope-process-runtime/Cargo.toml": "cdaf3e90dce5235947a05581a5ea29109bb45535b87e167987748ac456a10295",
+    "Cargo.lock": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb"
+  },
+  "c_compiler": "cc (GCC) 15.3.1 20260722 (Red Hat 15.3.1-1)",
+  "final_pairs": 20,
+  "initial_pairs": 5,
+  "affinity_pilot_pairs": 5,
+  "final_samples_per_fence_profile": 32,
+  "final_samples_per_dispatch_profile": 16,
+  "repeated_test_processes": 900,
+  "commands": [
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= RUST_TEST_THREADS=1 cargo test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= RUST_TEST_THREADS=1 CARGO_TARGET_DIR=target/worker-audit-msrv cargo +1.85.0 test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz -- -D warnings",
+    "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo fmt --all -- --check",
+    "bash scripts/check-layer-boundaries.sh",
+    "graphify update .",
+    "python3 target/compare-fence-wait.py --output target/fence-wait-final --pairs 20 --samples 32 --dispatch-samples 16",
+    "python3 target/repeat-fence-wait-final.py target/fence-wait-workspace-final.log target/fence-wait-repeat-stable-final.jsonl",
+    "python3 target/repeat-fence-wait-final.py target/fence-wait-msrv-final.log target/fence-wait-repeat-msrv-final.jsonl",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_TARGET_DIR=target/worker-audit-msrv PENELOPE_FENCE_WORKER_CPU=1 taskset -c 0 cargo +1.85.0 bench -p penelope-process-runtime --bench fence"
+  ],
+  "scope": "Public Linux fence latency under local SQLite WAL/FULL authority. Parent CPU0, live/repeated worker optionally CPU1; exited control remains inherited CPU0. Dispatch controls inherit CPU0. Source frozen before final timing; own project builds/tests excluded during timing. Host load, frequency and caches uncontrolled. Pilot candidate uses simpler blocking poll; final candidate adds budgeted EINTR retry. No universal application slowdown claim.",
+  "artifact_sha256": {
+    "affinity-pilot/metadata.json": "b946fe25d0ca94f8bd8fd1e451a3f39e8bcd47f3798198ba9c9e1fc5d7cf5913",
+    "affinity-pilot/processes.jsonl.gz": "735950d514c9724bc416fc9cd2d72f5b4ca8ce4f6af548f4de85cbbf26f194ee",
+    "affinity-pilot/summary.json": "0367cbffc976709fc3e3ea06d4cc7e2f753b438bb892ccbe57f3322ba3c7a822",
+    "compare-initial.py": "3177d77cd1808d052099dcb3155ff2e9303f8b741208ae2010f785c040152c10",
+    "compare.py": "833ddedcf0cba9db4974c0ed812215dc33eea07f25ddb4bc8b9abf21a43739f0",
+    "final/metadata.json": "4cdf46e7d34cd017dbef3ba46c87860f9a5861ef5961e4b47b3a53f5470d308a",
+    "final/processes.jsonl.gz": "ae43c3a13ac8d200d9c67e35988913fa2bdc2d79f99ccbe5c21f58d7e017047b",
+    "final/summary.json": "56828010448d108506b6ae81e695d0385d41580b7d6e7acb94f2c174cf665690",
+    "initial/metadata.json": "6747cc3f1df1309bf19dd655f830c63b5516e07639fa7f1e157c14dda0cfb308",
+    "initial/processes.jsonl.gz": "abc2b192bf60f1a79488f81ae849615f1e17a79cb19792070158346362782901",
+    "initial/summary.json": "e29e31234ed3859a26d6b2cf8332317c29c1d6be4adf8a0cd426db7f417ddc55",
+    "pilot-candidate.patch": "7ce5ed1409dfe39e084ec3378b562ed2921c77ad6cb3a8828936ebbbe20bc50b",
+    "previous-ci.json": "b851e96a2be7b3f729bea473422aebb29c024985ba1831eccbc5f38d14747a78",
+    "repeat.py": "13e36275a8758f83ddf98688881bbc1c71ca277a39aa4edc9fda7d9b258336b0",
+    "validation/clippy.log.gz": "a093050371ed97a0d5da54e5588211e30acb634ed61ea3573afc0f14cbcd3b76",
+    "validation/fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "validation/graph.log.gz": "d2cd82d181a40c59d3f91f1774c4bbebb2a118124d16da2483d9d7bed9f83ab0",
+    "validation/layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "validation/msrv-remote.log.gz": "5ec38c64195a34a2453de4dd7b05df6b73f8ab3766a89ede1948a8ac9a4ece1a",
+    "validation/msrv.log.gz": "602b1b8c795fc5349d42f2581b0ba1c16814546ecf8a0079dbe6c4dbf138f5ed",
+    "validation/repeat-msrv.jsonl.gz": "f768f584d064ad80a255cc99edf609163e5c910bbb17a4c3d61fea284739f78b",
+    "validation/repeat-stable.jsonl.gz": "e43841ef1b9447388c1877106189978528a995f9ae7dfe6e186d3f4d7e83d306",
+    "validation/workspace.log.gz": "c7117ea12e4f52f23333ec478dcb1d6e46c81b1277af6a229b06ca64d69a50e0",
+    "verify.py": "2352612becdc0067c995e4189930ca726163f727d6d7f35c7a7b908ec256208d"
+  },
+  "toolchains": {
+    "1.99.0": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "repeated_binary_sha256": {
+    "target/debug/deps/penelope_process_runtime-0630a7813abe3acd": "ab4ba27053333009e53ae7e77cc97f917de02c64a5d69873c9d1b5a0017d169b",
+    "target/debug/deps/runtime-fc67005e4e738a2c": "89a72c2c87d70936cd138f3edda9b8b8eecbbf8259a676824711640e0a721c48",
+    "target/worker-audit-msrv/debug/deps/penelope_process_runtime-68cf58304cf62634": "013c5d3ee7097b5236dfd97b611ee3e74e04f8e7b3365af31fa29644d9e64fa1",
+    "target/worker-audit-msrv/debug/deps/runtime-f2cb0137fabcb2d5": "e77993167d53f586a747ef13070f12026ab2b092112e4b744d40706e64b21054"
+  }
+}
