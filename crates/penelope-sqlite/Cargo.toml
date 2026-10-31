@@ -99,3 +99,7 @@ harness = false
 [[bench]]
 name = "lease_completion_allocations"
 harness = false
+
+[[bench]]
+name = "process_commit_allocations"
+harness = false
