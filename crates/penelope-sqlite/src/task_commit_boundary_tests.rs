@@ -270,3 +270,224 @@ fn deferred_first_intent_failure_cannot_publish_a_head_or_input_blob() {
         "deferred_first_intent_cases={cases} no_premature_head=true no_retained_blob=true repaired_constraint_retry=true reopen=true"
     );
 }
+
+fn scope_snapshot(journal: &SqliteTaskJournal, scope: TaskScope) -> write_snapshot::Snapshot {
+    let identity = rusqlite::types::Value::Blob(key(scope).to_vec());
+    write_snapshot::snapshot(&journal.connection, &TABLES)
+        .into_iter()
+        .map(|(table, rows)| {
+            (
+                table,
+                rows.into_iter()
+                    .filter(|row| row.first() == Some(&identity))
+                    .collect(),
+            )
+        })
+        .collect()
+}
+#[test]
+fn deferred_retirement_failure_restores_history_then_preserves_reopened_tombstone() {
+    let mut cases = 0;
+    for mode in ["warm", "cold", "other"] {
+        for identity in [None, Some(Digest([9; 32]))] {
+            for shared_output in [false, true] {
+                let directory = tempfile::tempdir().unwrap();
+                let path = directory.path().join("retirement-boundary.db");
+                let mut journal = open_journal(&path);
+                let other = TaskProjection::new(scope(true), definition()).unwrap();
+                journal.commit(&intent(&other), Some(b"input")).unwrap();
+                let mut projection = TaskProjection::new(scope(false), definition()).unwrap();
+                let first = intent(&projection);
+                journal.commit(&first, Some(b"input")).unwrap();
+                projection.apply(&first).unwrap();
+                let started = projection
+                    .propose(
+                        TaskExecutionEvent::Started,
+                        TaskGeneration::new(1),
+                        TaskTick::new(1),
+                    )
+                    .unwrap();
+                journal.commit(&started, None).unwrap();
+                projection.apply(&started).unwrap();
+                let start = TaskStart {
+                    scope: scope(false),
+                    generation: projection.generation(),
+                    definition: definition(),
+                    execution_deadline: projection.execution_deadline(),
+                    input_schema: 1,
+                    input: b"input",
+                    checkpoint: None,
+                };
+                if let Some(execution) = identity {
+                    assert_eq!(
+                        journal.reserve_start(start, execution),
+                        Ok(StartReservation::Reserved)
+                    );
+                }
+                let output = if shared_output {
+                    b"input".as_slice()
+                } else {
+                    b"done".as_slice()
+                };
+                let complete = projection
+                    .propose(
+                        TaskExecutionEvent::Completed {
+                            output: reference(output),
+                        },
+                        projection.generation(),
+                        TaskTick::new(2),
+                    )
+                    .unwrap();
+                journal.commit(&complete, Some(output)).unwrap();
+                projection.apply(&complete).unwrap();
+                assert_eq!(
+                    journal.begin_fence(scope(false), projection.generation()),
+                    Ok(identity)
+                );
+                journal
+                    .confirm_stopped(scope(false), projection.generation(), identity)
+                    .unwrap();
+                match mode {
+                    "warm" => assert_eq!(journal.cache.unwrap().0.scope(), scope(false)),
+                    "cold" => journal = open_journal(&path),
+                    "other" => journal.rebuild_head(scope(true)).unwrap(),
+                    _ => panic!("invalid retirement cache mode"),
+                }
+                let before = write_snapshot::snapshot(&journal.connection, &TABLES);
+                let unrelated = scope_snapshot(&journal, scope(true));
+                journal.connection.execute_batch("CREATE TEMP TABLE retirement_parent(value INTEGER PRIMARY KEY); CREATE TEMP TABLE retirement_child(value INTEGER REFERENCES retirement_parent(value) DEFERRABLE INITIALLY DEFERRED)").unwrap();
+                let calls = Arc::new(AtomicUsize::new(0));
+                let observed = calls.clone();
+                journal
+                    .connection
+                    .create_scalar_function(
+                        "retirement_deleted",
+                        3,
+                        FunctionFlags::SQLITE_UTF8,
+                        move |context| {
+                            let empty = context.get::<i64>(0)? == 0
+                                && context.get::<i64>(1)? == 0
+                                && context.get::<i64>(2)? == 0;
+                            observed.fetch_add(if empty { 1 } else { 10 }, Ordering::SeqCst);
+                            Ok(0_i64)
+                        },
+                    )
+                    .unwrap();
+                journal.connection.execute_batch("CREATE TEMP TRIGGER retirement_commit_fail AFTER DELETE ON main.task_heads BEGIN INSERT INTO retirement_child VALUES(7); SELECT retirement_deleted((SELECT count(*) FROM task_records WHERE scope=OLD.scope),(SELECT count(*) FROM task_blobs WHERE scope=OLD.scope),(SELECT count(*) FROM task_heads WHERE scope=OLD.scope)); END").unwrap();
+                assert_eq!(
+                    journal.retire_task(scope(false), projection.next_sequence()),
+                    Err(TaskPortError::Conflict)
+                );
+                assert_eq!(
+                    calls.load(Ordering::SeqCst),
+                    1,
+                    "all target history must be deleted inside the failing transaction"
+                );
+                assert!(journal.connection.is_autocommit());
+                assert!(journal.cache.is_none());
+                assert_eq!(
+                    write_snapshot::snapshot(&journal.connection, &TABLES),
+                    before
+                );
+                let children: i64 = journal
+                    .connection
+                    .query_row("SELECT count(*) FROM retirement_child", [], |row| {
+                        row.get(0)
+                    })
+                    .unwrap();
+                assert_eq!(children, 0);
+                assert_eq!(
+                    journal.read(scope(false), TaskSequence::ZERO),
+                    Ok(Some(first))
+                );
+                assert_eq!(
+                    journal.read(scope(false), complete.sequence),
+                    Ok(Some(complete))
+                );
+                let mut restored = [0_u8; 64];
+                let size = journal
+                    .read_blob(scope(false), reference(output), &mut restored)
+                    .unwrap();
+                assert_eq!(restored.get(..size), Some(output));
+                journal
+                    .connection
+                    .execute("INSERT INTO retirement_parent VALUES(7)", [])
+                    .unwrap();
+                let receipt = journal
+                    .retire_task(scope(false), projection.next_sequence())
+                    .unwrap();
+                assert_eq!(calls.load(Ordering::SeqCst), 2);
+                assert_eq!(receipt.scope, scope(false));
+                assert_eq!(receipt.next_sequence, projection.next_sequence());
+                assert_eq!(
+                    receipt.last_record_digest,
+                    Digest::of(&serde_json::to_vec(&complete).unwrap())
+                );
+                let tombstone: (u32, Vec<u8>) = journal
+                    .connection
+                    .query_row(
+                        "SELECT next_sequence,last_digest FROM task_retirements WHERE scope=?1",
+                        [key(scope(false))],
+                        |row| Ok((row.get(0)?, row.get(1)?)),
+                    )
+                    .unwrap();
+                assert_eq!(
+                    tombstone,
+                    (
+                        receipt.next_sequence.get(),
+                        receipt.last_record_digest.0.to_vec()
+                    )
+                );
+                assert_eq!(scope_snapshot(&journal, scope(true)), unrelated);
+                let remaining:(i64,i64,i64) = journal.connection.query_row("SELECT (SELECT count(*) FROM task_records WHERE scope=?1),(SELECT count(*) FROM task_blobs WHERE scope=?1),(SELECT count(*) FROM task_heads WHERE scope=?1)",[key(scope(false))],|row|Ok((row.get(0)?,row.get(1)?,row.get(2)?))).unwrap();
+                assert_eq!(remaining, (0, 0, 0));
+                let authority: (Option<Vec<u8>>, i64) = journal
+                    .connection
+                    .query_row(
+                        "SELECT execution,state FROM runtime_generations WHERE scope=?1",
+                        [key(scope(false))],
+                        |row| Ok((row.get(0)?, row.get(1)?)),
+                    )
+                    .unwrap();
+                assert_eq!(authority, (identity.map(|value| value.0.to_vec()), 2));
+                let after = write_snapshot::snapshot(&journal.connection, &TABLES);
+                drop(journal);
+                let mut reopened = open_journal(&path);
+                assert_eq!(
+                    reopened.read(scope(false), TaskSequence::ZERO),
+                    Err(TaskPortError::Conflict)
+                );
+                assert_eq!(
+                    reopened.commit(&first, Some(b"input")),
+                    Err(TaskPortError::Conflict)
+                );
+                assert!(reopened.reserve_start(start, Digest([9; 32])).is_err());
+                assert_eq!(
+                    reopened.retire_task(scope(false), projection.next_sequence()),
+                    Err(TaskPortError::Conflict)
+                );
+                assert_eq!(
+                    reopened.confirm_stopped(
+                        scope(false),
+                        projection.generation(),
+                        Some(Digest([7; 32]))
+                    ),
+                    Err(TaskPortError::Conflict)
+                );
+                assert_eq!(
+                    reopened.confirm_stopped(scope(false), projection.generation(), identity),
+                    Ok(())
+                );
+                assert_eq!(
+                    write_snapshot::snapshot(&reopened.connection, &TABLES),
+                    after
+                );
+                cases += 1;
+            }
+        }
+    }
+    assert_eq!(cases, 12);
+    println!(
+        "deferred_retirement_cases={cases} staged_deletions_observed=true rollback=true same_trigger_retry=true unrelated_scope_preserved=true stopped_identity_preserved=true reopened_tombstone=true"
+    );
+}
