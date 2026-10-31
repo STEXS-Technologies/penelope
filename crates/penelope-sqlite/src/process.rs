@@ -268,11 +268,16 @@ pub(crate) fn commit_process(
     {
         return Err(PortError::QuotaExceeded);
     }
+    // Reuse one record buffer across both loops. SQLite consumes each encoding
+    // synchronously before the next clear; each record retains its size limit.
+    let mut record_bytes = Vec::with_capacity(128);
     let mut added = 0_u64;
     for outcome in &commit.outcomes {
-        let bytes = encode(outcome, limits.max_record_bytes)?;
+        encode_into(outcome, limits.max_record_bytes, &mut record_bytes)?;
         added = added
-            .checked_add(u64::try_from(bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?)
+            .checked_add(
+                u64::try_from(record_bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?,
+            )
             .ok_or(PortError::QuotaExceeded)?;
         execute_one(
             &transaction,
@@ -281,18 +286,20 @@ pub(crate) fn commit_process(
                 key,
                 integer(outcome.sequence)?,
                 outcome.outcome_id.as_str(),
-                bytes,
-                Digest::of(&bytes).0.as_slice()
+                record_bytes,
+                Digest::of(&record_bytes).0.as_slice()
             ],
         )
         .map_err(port_error)?;
     }
     for action in &commit.actions {
-        let bytes = encode(action, limits.max_record_bytes)?;
+        encode_into(action, limits.max_record_bytes, &mut record_bytes)?;
         added = added
-            .checked_add(u64::try_from(bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?)
+            .checked_add(
+                u64::try_from(record_bytes.len()).map_err(|_overflow| PortError::QuotaExceeded)?,
+            )
             .ok_or(PortError::QuotaExceeded)?;
-        execute_one(&transaction,"INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.effect_key().canonical_bytes(),bytes,Digest::of(&bytes).0.as_slice()]).map_err(port_error)?;
+        execute_one(&transaction,"INSERT INTO process_actions(scope,action_id,effect_key,action,checksum) VALUES (?1,?2,?3,?4,?5)", params![key,action.action_id.as_str(),action.effect_key().canonical_bytes(),record_bytes,Digest::of(&record_bytes).0.as_slice()]).map_err(port_error)?;
     }
     let total = u64::try_from(used)
         .map_err(|_negative| PortError::Invariant)?

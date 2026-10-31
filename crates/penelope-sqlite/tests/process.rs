@@ -664,3 +664,6 @@ mod inbox_concurrency;
 
 #[path = "support/append_outcomes.rs"]
 mod append_outcomes;
+
+#[path = "support/commit_encoding.rs"]
+mod commit_encoding;

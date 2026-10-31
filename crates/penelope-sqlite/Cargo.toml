@@ -127,3 +127,15 @@ harness = false
 [[test]]
 name = "process_append_allocations"
 harness = false
+
+[[bench]]
+name = "process_encoding"
+harness = false
+
+[[bench]]
+name = "process_encoding_allocations"
+harness = false
+
+[[test]]
+name = "process_encoding_allocations"
+harness = false
