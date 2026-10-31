@@ -1587,7 +1587,12 @@ impl TimerLease {
         self.timer
             .validate()
             .map_err(|_timer_error| PortError::Invariant)?;
-        if self.timer.action.scope() != request.scope
+        let action = &self.timer.action;
+        if action.tenant_id != request.scope.tenant_id
+            || action.process_id != request.scope.process_id
+            || action.definition_id != request.scope.definition_id
+            || action.definition_version != request.scope.definition_version
+            || action.definition_digest != request.scope.definition_digest
             || self.owner != request.owner
             || self.timer.due_at > request.now
         {
