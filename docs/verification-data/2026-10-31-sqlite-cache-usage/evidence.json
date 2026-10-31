@@ -1,0 +1,25 @@
+{
+  "baseline": "407759a2a0fffa5a163715ec33cb120c4f1cbc0e",
+  "source": "e6b47d2cffdca20343751d0c4ca14f1bd26b9320",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "582bc6276d3a9f4e8c02a378515043d2ea5c087ce4b0cbb583b3385f17988dc9",
+    "crates/penelope-sqlite/tests/tasks.rs": "d472f0c42d87dd2a9647fa6a5207c6e80a7d21ed56878d505a2445ad426fc1e1",
+    "crates/penelope-sqlite/tests/support/cache_usage.rs": "53c7ebaef5d12228b557eccd775476ce27eee15bc3622ac385e1b93dc8f607da"
+  },
+  "baseline_false_acknowledgements": 4,
+  "repeated_recovery_cases": 200,
+  "artifact_sha256": {
+    "baseline-final.log.gz": "1e38a5b73a60e4d3e4b622bd30fbb6bc0cc27f7e4b6e6a22f5e2120d4c99a543",
+    "baseline-fixtures.patch": "9743ae8a2544021690ea9a4fc89fd8a594c58a2f6418d219ae2ea0dda24046ba",
+    "clippy-final.log.gz": "ee7dd098b33a7d0bc48c362a524ca0094ed98fb2cb80a7ac183fd790fefc1b43",
+    "fixed.log.gz": "3d3448a1263b9a1c300f1b36165b1aafdb0c391205d4034ba2e3077a54dd18d2",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "8392fa506b86f266465e6e8af16e061f84d8f092ccbfeb0b240d066716ffd674",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "43b38221d20f9649553f0a363405c1d71651ce4726ab121fe8374ac29b261730",
+    "repeat.py": "cdfd022a06c5e34ceeb3a6fcc5234d703a3d11f6cc9686e7b9a185b2aaf4d5ef",
+    "repeated.jsonl.gz": "11ffad15339c3c63b51dd563995855c731727163a8c287b97f699d09ee8ec9a2",
+    "verify.py": "130bd0d54c742cc6c758ac07c427cc853a68b6f9ff3d2d63e792ed45f65f2d15",
+    "workspace.log.gz": "12b8cdbbde2684767dade1bac3b4c2542e65cc32ef7e83751451bfb275272927"
+  }
+}
