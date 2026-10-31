@@ -1,0 +1,24 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.08s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... FAILED
+
+failures:
+
+---- timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal stdout ----
+
+thread 'timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal' (881406) panicked at crates/penelope-sqlite/tests/support/timer_cancel_race.rs:77:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test process`

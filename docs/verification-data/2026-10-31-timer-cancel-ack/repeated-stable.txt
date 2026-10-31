@@ -1,0 +1,179 @@
+Run 1/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.38s
+
+Run 2/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.37s
+
+Run 3/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.38s
+
+Run 4/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.38s
+
+Run 5/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.37s
+
+Run 6/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.38s
+
+Run 7/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.40s
+
+Run 8/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.40s
+
+Run 9/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.43s
+
+Run 10/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.59s
+
+Run 11/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.60s
+
+Run 12/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.94s
+
+Run 13/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.37s
+
+Run 14/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.31s
+
+Run 15/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.31s
+
+Run 16/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.30s
+
+Run 17/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.31s
+
+Run 18/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.30s
+
+Run 19/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.30s
+
+Run 20/20
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test timer_cancel_race::cancellation_racing_acknowledgement_keeps_the_timer_terminal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.33s
