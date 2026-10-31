@@ -42,3 +42,7 @@ harness = false
 [[test]]
 name = "worker_protocol_allocations"
 harness = false
+
+[[bench]]
+name = "fence"
+harness = false
