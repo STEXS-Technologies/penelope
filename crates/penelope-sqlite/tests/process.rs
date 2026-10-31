@@ -625,3 +625,6 @@ mod record_limits;
 
 #[path = "support/process_frontier.rs"]
 mod process_frontier;
+
+#[path = "support/replay_cache.rs"]
+mod replay_cache;
