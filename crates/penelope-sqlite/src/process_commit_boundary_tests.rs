@@ -356,3 +356,200 @@ fn deferred_inbox_failure_rolls_back_admission_and_usage_before_retry() {
         "deferred_inbox_cases={cases} final_insert_observed=true rollback=true same_worker_retry=true reopen=true"
     );
 }
+
+#[test]
+fn deferred_outbox_commit_failure_preserves_tokens_envelopes_and_retry() {
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    enum Operation {
+        Claim,
+        Acknowledge,
+        Renew,
+    }
+    use Operation::{Acknowledge, Claim, Renew};
+    let mut cases = 0;
+    for long in [false, true] {
+        for count in [1_u16, 4] {
+            for operation in [Claim, Acknowledge, Renew] {
+                let directory = tempfile::tempdir().unwrap();
+                let path = directory.path().join("outbox-commit-boundary.db");
+                let stages = Arc::new(Mutex::new(Vec::new()));
+                let adapter = adapter(&path, stages.clone());
+                let committed = batch(long, 0, u64::from(count), true);
+                wait(ProcessStore::commit(&adapter, &committed)).unwrap();
+                let request = OutboxClaimRequest::new(
+                    committed.outcomes.first().unwrap().scope().clone(),
+                    "pri_boundary".parse().unwrap(),
+                    NonZeroU16::new(count).unwrap(),
+                )
+                .unwrap();
+                let initial = if operation == Claim {
+                    Vec::new()
+                } else {
+                    wait(OutboxStore::claim(&adapter, &request)).unwrap()
+                };
+                let connection = Connection::open(&path).unwrap();
+                let before = write_snapshot::snapshot(&connection, &TABLES);
+                let (column, stage, writes) = match operation {
+                    Claim => ("lease", "NEW.attempt", usize::from(count)),
+                    Acknowledge => ("acknowledged", "NEW.acknowledged", 1),
+                    Renew => ("lease", "NEW.expires_at", 1),
+                };
+                connection.execute_batch(&format!(
+                    "CREATE TRIGGER boundary_outbox AFTER UPDATE OF {column} ON process_actions BEGIN INSERT INTO boundary_child VALUES(7); SELECT boundary_stage({stage}); END"
+                )).unwrap();
+                let failed = match operation {
+                    Claim => wait(OutboxStore::claim(&adapter, &request)).map(|_leases| ()),
+                    Acknowledge => wait(OutboxStore::acknowledge(
+                        &adapter,
+                        initial.first().unwrap(),
+                        LogicalTime(100),
+                    )),
+                    Renew => wait(OutboxStore::renew(
+                        &adapter,
+                        initial.first().unwrap(),
+                        LogicalTime(100),
+                        LogicalTime(120),
+                    ))
+                    .map(|_lease| ()),
+                };
+                assert_eq!(failed, Err(PortError::Conflict), "{operation:?}");
+                let expected_stage = if operation == Renew { 120 } else { 1 };
+                assert_eq!(*stages.lock().unwrap(), vec![expected_stage; writes]);
+                assert_clean(&adapter);
+                assert_eq!(write_snapshot::snapshot(&connection, &TABLES), before);
+
+                // Repair the deferred constraint without removing the trigger:
+                // the same writes must execute again and now commit normally.
+                connection
+                    .execute("INSERT INTO boundary_parent VALUES(7)", [])
+                    .unwrap();
+                let mut leases = match operation {
+                    Claim => wait(OutboxStore::claim(&adapter, &request)).unwrap(),
+                    Acknowledge => {
+                        wait(OutboxStore::acknowledge(
+                            &adapter,
+                            initial.first().unwrap(),
+                            LogicalTime(100),
+                        ))
+                        .unwrap();
+                        initial.clone()
+                    }
+                    Renew => {
+                        let renewed = wait(OutboxStore::renew(
+                            &adapter,
+                            initial.first().unwrap(),
+                            LogicalTime(100),
+                            LogicalTime(120),
+                        ))
+                        .unwrap();
+                        let mut leases = initial.clone();
+                        *leases.first_mut().unwrap() = renewed;
+                        leases
+                    }
+                };
+                assert_eq!(leases.len(), usize::from(count));
+                assert_eq!(*stages.lock().unwrap(), vec![expected_stage; writes * 2]);
+                let children: i64 = connection
+                    .query_row("SELECT count(*) FROM boundary_child", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(children, i64::try_from(writes).unwrap());
+                let next: i64 = connection
+                    .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(next, i64::from(count) + 1);
+                for (index, lease) in leases.iter().enumerate() {
+                    assert_eq!(
+                        lease.token,
+                        OutboxLeaseToken::new(
+                            std::num::NonZeroU64::new(u64::try_from(index).unwrap() + 1).unwrap()
+                        )
+                    );
+                    assert_eq!(lease.record.delivery_attempt, 0);
+                    let (encoded, attempt, expires, acknowledged): (Vec<u8>, u32, i64, bool) = connection
+                        .query_row(
+                            "SELECT lease,attempt,expires_at,acknowledged FROM process_actions WHERE scope=?1 AND action_id=?2",
+                            params![committed.outcomes.first().unwrap().scope().canonical_bytes(), lease.record.action.action_id.as_str()],
+                            |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
+                        ).unwrap();
+                    assert_eq!(
+                        encoded,
+                        encode(lease, SqliteLimits::default().max_record_bytes).unwrap()
+                    );
+                    assert_eq!(attempt, 1);
+                    assert_eq!(
+                        expires,
+                        if operation == Renew && index == 0 {
+                            120
+                        } else {
+                            110
+                        }
+                    );
+                    assert_eq!(acknowledged, operation == Acknowledge && index == 0);
+                }
+                let after = write_snapshot::snapshot(&connection, &TABLES);
+                for ((table, previous), (same_table, current)) in before.iter().zip(&after) {
+                    assert_eq!(table, same_table);
+                    if ![
+                        "process_actions",
+                        "lease_counter",
+                        "boundary_parent",
+                        "boundary_child",
+                    ]
+                    .contains(&table.as_str())
+                    {
+                        assert_eq!(current, previous, "unrelated table {table}");
+                    }
+                }
+                drop(adapter);
+                let reopened = SqliteProcessStore::open(
+                    &path,
+                    SqliteLimits::default(),
+                    Arc::new(Clock),
+                    10,
+                    16,
+                )
+                .unwrap();
+                assert!(
+                    wait(OutboxStore::claim(&reopened, &request))
+                        .unwrap()
+                        .is_empty()
+                );
+                assert_eq!(write_snapshot::snapshot(&connection, &TABLES), after);
+                if operation == Renew {
+                    assert_eq!(
+                        wait(OutboxStore::acknowledge(
+                            &reopened,
+                            initial.first().unwrap(),
+                            LogicalTime(100),
+                        )),
+                        Err(PortError::Conflict)
+                    );
+                    assert_eq!(write_snapshot::snapshot(&connection, &TABLES), after);
+                }
+                // Reopening uses a new connection without the test SQL function.
+                // Preserve the successful snapshot before removing only the fault trigger.
+                connection
+                    .execute_batch("DROP TRIGGER boundary_outbox")
+                    .unwrap();
+                for lease in leases.drain(..) {
+                    wait(OutboxStore::acknowledge(
+                        &reopened,
+                        &lease,
+                        LogicalTime(100),
+                    ))
+                    .unwrap();
+                }
+                assert!(
+                    wait(OutboxStore::claim(&reopened, &request))
+                        .unwrap()
+                        .is_empty()
+                );
+                cases += 1;
+            }
+        }
+    }
+    assert_eq!(cases, 12);
+    println!(
+        "deferred_outbox_cases={cases} all_writes_observed=true full_rollback=true tokens_preserved=true same_worker_retry=true reopen=true"
+    );
+}

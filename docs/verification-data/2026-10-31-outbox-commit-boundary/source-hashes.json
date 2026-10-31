@@ -1,0 +1,17 @@
+{
+  "crates/penelope-sqlite/src/authority.rs": "cf784bce3c532e86e99e7d55ce0110b3091646e4108443a1a03b060578c05571",
+  "crates/penelope-sqlite/src/inbox.rs": "72996f4b67968939eba29e5dea69e0a6b42997b96495ca938a90c765e894ec34",
+  "crates/penelope-sqlite/src/leases.rs": "33afbb84adb4391b06d860a747ce9a71e97eb4be97d900a3da9fe47564a6e640",
+  "crates/penelope-sqlite/src/lib.rs": "55e3b0aecce79519eb099f2d1f95fc364d9a4a966d6471518afb8b1348d857f0",
+  "crates/penelope-sqlite/src/lifecycle.rs": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+  "crates/penelope-sqlite/src/payloads.rs": "29fded3f9932ab2a4687f9b4f1630c2e2a44eb9216c7c6a70e5bea30e4ef28b4",
+  "crates/penelope-sqlite/src/process.rs": "bca3920df69d27be67992f294b7ae44ae227c4f0e59d802375c0ee2545eb41f1",
+  "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+  "crates/penelope-sqlite/src/task_decode.rs": "c2c7918c4cabb2b7a2b00e6563ee9d1e6ea69e225ca82145703ef8f1e77e5c87",
+  "crates/penelope-sqlite/src/tasks.rs": "d52cb00c638cda01a8ac2b2cb823020500664a262d11d6388847aac33ec4abb0",
+  "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+  "crates/penelope-sqlite/src/process_commit_boundary_tests.rs": "03974653ea7b2f0d3da9350c8ba6d618e144da8c7e07a2dd1ff6b72bbe28b69b",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+  "crates/penelope-sqlite/Cargo.toml": "e92af4a3e0e881dc7e9ccb0b231a525d493b11dcc5dfab8835822a77a3aa5ef9",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+}
