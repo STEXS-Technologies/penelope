@@ -1,0 +1,115 @@
+{
+  "baseline_revision": "c34107fd770e03b71797a22e820d446fe3ebddc7",
+  "candidate_revision": "8231e0aab8fda2d9c7de576b3a7215016be75e17",
+  "baseline_reproduction": [
+    "Check out the baseline in an isolated worktree, then git apply baseline-fixtures.patch.",
+    "cargo test -p penelope-sqlite --test process ignored_process -- --nocapture (expected: 2 failed tests exposing 12 false-success cases)",
+    "cargo test -p penelope-sqlite --test tasks ignored_task -- --nocapture (expected: 4 failed tests exposing 11 false-success cases)"
+  ],
+  "baseline_fixture_check": "A separate temporary Git index verified that baseline-fixtures.patch applies cleanly to the baseline and reproduces all five final test-source files byte-for-byte.",
+  "baseline_false_successes": {
+    "process": [
+      "\"inbox: Ok(()), unchanged=false\",",
+      "\"payload: Ok(()), unchanged=false\",",
+      "\"schedule: Ok(()), unchanged=false\",",
+      "\"cancel: Ok(()), unchanged=true\",",
+      "\"process_usage/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_usage/UPDATE: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_sources/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_outcomes/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_actions/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_heads/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_commits/INSERT: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\",",
+      "\"process_inbox/UPDATE: Ok(AtomicProcessCommitReceipt { committed_through_sequence: 0, duplicate_input: false }), unchanged=false\","
+    ],
+    "task": [
+      "\"missing=false: Ok(()), unchanged=true\",",
+      "\"missing=true: Ok(()), unchanged=true\",",
+      "\"reserve: Ok(()), unchanged=true\",",
+      "\"fence-reserved: Ok(()), unchanged=true\",",
+      "\"task_heads/INSERT/append=false: Ok(()), unchanged=false\",",
+      "\"task_records/INSERT/append=false: Ok(()), unchanged=false\",",
+      "\"task_records/INSERT/append=true: Ok(()), unchanged=false\",",
+      "\"task_retirements/INSERT: Ok(()), unchanged=false\",",
+      "\"task_records/DELETE: Ok(()), unchanged=false\",",
+      "\"task_blobs/DELETE: Ok(()), unchanged=false\",",
+      "\"task_heads/DELETE: Ok(()), unchanged=false\","
+    ]
+  },
+  "new_single_row_guards": {
+    "process.rs": 9,
+    "leases.rs": 2,
+    "payloads.rs": 1,
+    "tasks.rs": 3,
+    "authority.rs": 2,
+    "lifecycle.rs": 1
+  },
+  "retirement_postcondition": "Scoped EXISTS over task_records, task_blobs and task_heads after variable-size deletion and before commit.",
+  "matrix_cases": {
+    "process_atomic": 9,
+    "process_services": 4,
+    "task_commit": 5,
+    "task_head_repair": 2,
+    "task_authority": 3,
+    "task_retirement": 4
+  },
+  "checks": {
+    "workspace": "cargo test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "msrv": "cargo +1.85.0 test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "clippy": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz -- -D warnings",
+    "authority_fuzz": "cargo +nightly fuzz run fuzz_sqlite_task_authority -- -runs=10000 -seed=11",
+    "process_fuzz": "cargo +nightly fuzz run fuzz_sqlite_process -- -runs=10000 -seed=11",
+    "other": [
+      "cargo fmt --all -- --check",
+      "bash scripts/check-layer-boundaries.sh",
+      "graphify update ."
+    ]
+  },
+  "environment": {
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "TMPDIR": "/home/ac/projects/penelope/target/qualification-temp",
+    "MSRV_CARGO_TARGET_DIR": "target/worker-audit-msrv"
+  },
+  "toolchains": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+    "nightly": "rustc 1.99.0-nightly (7608eb7b0 2026-08-05)\nbinary: rustc\ncommit-hash: 7608eb7b07eaf93f16d7cf5bcb2098eca87503df\ncommit-date: 2026-08-05\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0-nightly\nLLVM version: 23.1.0\n"
+  },
+  "fuzz_scope": "Existing normal-operation/reopen models: <=256-byte admitted inputs, up to 16 generated prefix operations plus deterministic suffix; larger inputs are rejected by the targets. Corpus mutation runs are complementary to the deterministic ignored-write matrix, not ignored-write fuzzing. Retained final corpora support input replay. Authority initial corpus was not captured separately. Process initial corpus was captured before execution and matches the 1088-file initialization log. Thread scheduling can affect feedback and mutation paths despite a fixed seed.",
+  "performance_scope": "No timing comparison. Single-row guards add no SQL statement. Retirement adds one scoped existence query. Historical application-overhead and full-release qualification are unchanged.",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/authority.rs": "bf2e33779a43e5b4664b046b64b67306c41bbb9332f00a54669b9bb40b702bbf",
+    "crates/penelope-sqlite/src/leases.rs": "e960fb9025b6fdde8ae53226ddb4bda68f42eb3274e2aaedc50be77563de8f04",
+    "crates/penelope-sqlite/src/lifecycle.rs": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+    "crates/penelope-sqlite/src/payloads.rs": "0e8569c8c93cb9174bbab3c15b0aca2d04be88595f31fe18dd690ca7caf644b6",
+    "crates/penelope-sqlite/src/process.rs": "9872ce0473f54761714ab1e0a0157aff272902fd4e435dbda471f232aa61da8d",
+    "crates/penelope-sqlite/src/schema.rs": "2ffa90d2198164aca566c2d6f952aec0e126b4d43a6ea34e6db01df1a26c2cbc",
+    "crates/penelope-sqlite/src/tasks.rs": "87a53c500da758eff5923ab0af16c1f1312808c75ea8455030355a0918943689",
+    "crates/penelope-sqlite/tests/process.rs": "11620cd91e0154e20ce9d188aa9e33180b5a8ece0855fbaf63c10dedee36f9fb",
+    "crates/penelope-sqlite/tests/support/suppressed_process_writes.rs": "503f0da2861047545db165334ff8fdff0448709b480c34081bbfa62644ae0721",
+    "crates/penelope-sqlite/tests/support/suppressed_task_writes.rs": "5c23267d8828d52e3e9f9b0c836a7cc8014572a9f1918550639ac0f6bcbe61fe",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-sqlite/tests/tasks.rs": "bad8a976d6561e6fcf82e19df370e2dd895a2eb0e5a361535f1444976f59919f",
+    "Cargo.toml": "275450a6396a5e5cc37f188e47a082e2a94f4714ce0de1f57a6fac9fee839133",
+    "Cargo.lock": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb",
+    "crates/penelope-sqlite/Cargo.toml": "b0404707a3eca8fd0e87755be4fc4ecca42bde63ad47a4ac8316b273f6f98357"
+  },
+  "artifact_sha256": {
+    "authority-final-corpus.tar.gz": "27a55c3c005e2d6369492ea9100a86c3a70a613372d78ea8c3441308f5738e39",
+    "baseline-fixtures.patch": "b0cfdb84122edcb1e5a8e517cfc0cccae5689453fdabebca092f40f6e5cbe2e5",
+    "corpus-members.json": "7afea30a386c40a0e4e86d65ebd603728f82f4aa4cb73e6271fb5d8500e19b72",
+    "previous-ci.json": "2c89918957afcdc313e09ef1ee5c2ad2d5ea63504dd6deaf12679c9d6986877a",
+    "process-final-corpus.tar.gz": "b21d6b7d02747c9b9e3703f499843c1267e0ec089115b59209cc023d101531ef",
+    "process-initial-corpus.tar.gz": "8ea544eb25601c6a41c03299f279be4a391a659aeeb00a472f3ec92d87acc04c",
+    "sqlite-suppressed-fuzz-authority.log.gz": "f9f3d39a5d63f4bb861a1702f2976e194e640db7cec605c8e75e0c9f3b5cfabb",
+    "sqlite-suppressed-fuzz-process.log.gz": "e786866b50cdd4a2f4d6a8dd5fc3c4ae9dae026e9e2f7c65606c1ddbf1cd6f6f",
+    "sqlite-suppressed-process-baseline.log.gz": "9cb49c8549fcf8831188fd005697322eb57894207d634701a6c17d9981a1a07f",
+    "sqlite-suppressed-process-fixed.log.gz": "dd5c4f36c4af0856499b9e6efcdf538b655de675ca54586f6dacfc9a4ebb3300",
+    "sqlite-suppressed-task-baseline.log.gz": "86f1d9964d55c11665e75e69b13adca60041369435a0d37448d4f5dfad6a9e65",
+    "sqlite-suppressed-task-fixed.log.gz": "3d6bbe9133511216a78ac148eccd55a3753621a4b892e351c10acfdc8cf761c1",
+    "sqlite-suppressed-workspace-clippy.log.gz": "9f319b3ee037444c543a2f216b7bd480bd5689f28a28d65e9438852acdcf0b25",
+    "sqlite-suppressed-workspace-msrv.log.gz": "4f8f679438112f3f7883595444c28b95c02019d4f6050970293018354ccf5c01",
+    "sqlite-suppressed-workspace-stable.log.gz": "6e0aec69a4720084c44681122a3ee425ffa983fcbbe5ec9e0c6a10aaec0af742"
+  }
+}

@@ -93,6 +93,14 @@ waker and 27.69% more when registrations change on every poll. Both profiles,
 the preliminary round and source-scoped checks are retained; these are pending
 poll measurements with the database worker intentionally blocked.
 
+The [required SQLite write audit](verification-sqlite-required-writes-2026-10-31.md)
+at 8231e0a checks 18 single-row mutations and verifies complete scoped retirement.
+The old-source matrix exposes 23 false-success cases; all 27 fault cases now
+reject and roll back correctly, then recover after fault removal. Stable/MSRV
+workspace suites, strict Clippy and 10,000 iterations of each SQLite operation
+model pass. Retained logs, a baseline fixture patch and corpus snapshots scope
+this reliability follow-up independently of historical full-release evidence.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |
