@@ -9,6 +9,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Wait on Linux worker pidfd readiness instead of one-millisecond polling
+  sleeps, retrying interrupted waits within the existing deadline.
 - Add an isolated pending-task polling benchmark; retain an audit of four
   rejected controller optimizations without changing production behavior.
 - Reuse SQLite response waker registrations during repeated pending polls.

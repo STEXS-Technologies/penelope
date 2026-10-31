@@ -1,0 +1,20 @@
+{
+  "pairs": 5,
+  "fence_samples": 16,
+  "dispatch_samples": 8,
+  "warmups_per_binary": 1,
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "binary_sha256": {
+    "baseline": {
+      "fence": "1309b3a98039133553147c2d972ff470546f8212fb4e22f02a9d9f0f9af2f25f",
+      "dispatch": "cb70d46382f72d79818b5f63c030b69151bbfc80eb89162381eee29e0fc22c00"
+    },
+    "candidate": {
+      "fence": "2de58838a757b96c9dee5466fc1f92b2c8041de84d3edc1f83ed523a9f950cca",
+      "dispatch": "3b245b19289f9c846eb3f314e180989721753d2d1cdb007d3630752bd1d79073"
+    }
+  },
+  "scope": "Process medians paired by alternating execution order. Fresh local WAL/FULL fixtures. Own compilation/tests excluded from timing; host load, frequency and cache state uncontrolled."
+}
