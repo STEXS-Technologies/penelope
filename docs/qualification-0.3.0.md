@@ -84,6 +84,15 @@ pass. The fixed comparison measures 82.76–98.39% less validation time for its
 existing-workload controls remain disclosed. No application-wide slowdown or
 full historical release requalification claim is made.
 
+The [SQLite registration follow-up](performance-sqlite-waker-registration-2026-10-31.md)
+at 1ccebdc moves executor cloning and destruction outside completion locks and
+preserves results across registration callback unwinding. Final SQLite suites
+pass on stable/MSRV, with 1,400 worker-test executions covering 6,400 queue cases.
+The 20-pair public-port poll comparison measures 23.81% less time with a stable
+waker and 27.69% more when registrations change on every poll. Both profiles,
+the preliminary round and source-scoped checks are retained; these are pending
+poll measurements with the database worker intentionally blocked.
+
 ## Evidence and disposition
 
 | Area | Checked implementation and evidence | Disposition |

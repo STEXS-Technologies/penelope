@@ -9,12 +9,15 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Reuse SQLite response waker registrations during repeated pending polls.
 - Build Linux execution identities and checkpoint acknowledgements with fixed
   stack buffers. Checkpoint ACKs now allocate zero times after setup, verified
   with a real protected worker and a durably committed checkpoint.
 
 ### Fixed
 
+- Clone and destroy SQLite response wakers outside completion locks, preserving
+  ready results if executor callbacks unwind during registration.
 - Linux worker responses at the maximum payload size now reject a trailing
   byte available in the same pipe read, matching smaller response handling.
   Each active response buffer reserves one additional byte; valid maximum-size
