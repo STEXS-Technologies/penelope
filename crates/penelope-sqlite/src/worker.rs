@@ -137,9 +137,17 @@ impl DatabaseWorker {
                     let _wake_result = contain_panic(|| waker.wake());
                 }
             }))
-            .map_err(|error| match error {
-                std::sync::mpsc::TrySendError::Full(_) => PortError::QuotaExceeded,
-                std::sync::mpsc::TrySendError::Disconnected(_) => PortError::Unavailable,
+            .map_err(|error| {
+                let (admission_error, rejected) = match error {
+                    std::sync::mpsc::TrySendError::Full(job) => (PortError::QuotaExceeded, job),
+                    std::sync::mpsc::TrySendError::Disconnected(job) => {
+                        (PortError::Unavailable, job)
+                    }
+                };
+                // Rejection owns the callback too. Captured application values
+                // must not unwind past the known admission error on cleanup.
+                let _cleanup_result = contain_panic(|| drop(rejected));
+                admission_error
             })?;
         Ok(Response { completion })
     }

@@ -145,11 +145,11 @@ fn notification_panic_payload_destructor_cannot_strand_accepted_work() {
     }
 }
 
-struct CanceledResult {
+struct PanickingDrop {
     drops: Arc<AtomicUsize>,
     nested: bool,
 }
-impl Drop for CanceledResult {
+impl Drop for PanickingDrop {
     fn drop(&mut self) {
         self.drops.fetch_add(1, Ordering::SeqCst);
         if self.nested {
@@ -178,7 +178,7 @@ fn canceled_result_scenarios(nested: bool) {
                         connection
                             .execute("INSERT INTO writes VALUES (1)", [])
                             .map_err(|_database| PortError::Unavailable)?;
-                        Ok(CanceledResult {
+                        Ok(PanickingDrop {
                             drops: result_drops,
                             nested,
                         })
@@ -234,4 +234,112 @@ fn canceled_result_destructor_cannot_strand_accepted_work() {
 #[test]
 fn nested_result_destructor_cannot_abort_worker_or_strand_accepted_work() {
     canceled_result_scenarios(true);
+}
+
+#[test]
+fn full_queue_cleanup_returns_admission_error_without_unwinding() {
+    let mut unexpected = Vec::new();
+    for nested in [false, true] {
+        let initial_connection = Connection::open_in_memory().unwrap();
+        initial_connection
+            .execute_batch("CREATE TABLE writes(value INTEGER)")
+            .unwrap();
+        let worker = DatabaseWorker::new(initial_connection, 1).unwrap();
+        let (entered, started) = std::sync::mpsc::channel();
+        let (release, resume) = std::sync::mpsc::channel();
+        let active = worker
+            .run(move |connection| {
+                entered.send(()).unwrap();
+                resume.recv_timeout(Duration::from_secs(5)).unwrap();
+                connection
+                    .execute("INSERT INTO writes VALUES (1)", [])
+                    .map_err(|_database| PortError::Unavailable)?;
+                Ok(1_u32)
+            })
+            .unwrap();
+        started.recv_timeout(Duration::from_secs(5)).unwrap();
+        let queued = worker
+            .run(|connection| {
+                connection
+                    .execute("INSERT INTO writes VALUES (2)", [])
+                    .map_err(|_database| PortError::Unavailable)?;
+                connection
+                    .query_row("SELECT count(*) FROM writes", [], |row| {
+                        row.get::<_, u32>(0)
+                    })
+                    .map_err(|_database| PortError::Unavailable)
+            })
+            .unwrap();
+        let drops = Arc::new(AtomicUsize::new(0));
+        let calls = Arc::new(AtomicUsize::new(0));
+        let called = calls.clone();
+        let captured = PanickingDrop {
+            drops: drops.clone(),
+            nested,
+        };
+        // This caller boundary observes whether admission itself unwinds. It
+        // also safely disposes old-code panic payloads in the control run.
+        let observed = contain_panic(|| {
+            worker
+                .run(move |_connection| {
+                    called.fetch_add(1, Ordering::SeqCst);
+                    drop(captured);
+                    Ok(())
+                })
+                .err()
+        });
+        assert_eq!(drops.load(Ordering::SeqCst), 1);
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+        release.send(()).unwrap();
+        assert_eq!(wait(active), Ok(1));
+        assert_eq!(wait(queued), Ok(2));
+        assert_eq!(wait(worker.run(|_connection| Ok(7)).unwrap()), Ok(7));
+        println!(
+            "full nested={nested} unwound={} dropped_once=true not_executed=true accepted_progress=true",
+            observed.is_err()
+        );
+        if observed != Ok(Some(PortError::QuotaExceeded)) {
+            unexpected.push(format!("nested={nested} observed={observed:?}"));
+        }
+    }
+    assert!(unexpected.is_empty(), "{}", unexpected.join("\n"));
+}
+
+#[test]
+fn disconnected_cleanup_returns_admission_error_without_unwinding() {
+    let mut unexpected = Vec::new();
+    for nested in [false, true] {
+        let (sender, receiver) = sync_channel::<Job>(1);
+        drop(receiver);
+        let worker = DatabaseWorker {
+            sender,
+            capacity: 1,
+        };
+        let drops = Arc::new(AtomicUsize::new(0));
+        let calls = Arc::new(AtomicUsize::new(0));
+        let called = calls.clone();
+        let captured = PanickingDrop {
+            drops: drops.clone(),
+            nested,
+        };
+        let observed = contain_panic(|| {
+            worker
+                .run(move |_connection| {
+                    called.fetch_add(1, Ordering::SeqCst);
+                    drop(captured);
+                    Ok(())
+                })
+                .err()
+        });
+        assert_eq!(drops.load(Ordering::SeqCst), 1);
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+        println!(
+            "disconnected nested={nested} unwound={} dropped_once=true not_executed=true",
+            observed.is_err()
+        );
+        if observed != Ok(Some(PortError::Unavailable)) {
+            unexpected.push(format!("nested={nested} observed={observed:?}"));
+        }
+    }
+    assert!(unexpected.is_empty(), "{}", unexpected.join("\n"));
 }
