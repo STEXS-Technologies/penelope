@@ -99,14 +99,45 @@ fn task_record_columns_preserve_validation_and_owned_results() {
             assert_eq!(result, Err(TaskPortError::Corrupt), "case={name}");
         }
         assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
+        let rebuilt = journal.rebuild_head(scope());
+        if valid {
+            assert_eq!(rebuilt, Ok(()), "rebuild case={name}");
+            let Value::Blob(stored_bytes) = &bytes else {
+                panic!("valid fixture must be a BLOB")
+            };
+            let (next, digest, used): (u32, Vec<u8>, u64) = connection
+                .query_row(
+                    "SELECT next_sequence,last_digest,bytes_used FROM task_heads",
+                    [],
+                    |row| {
+                        Ok((
+                            row.get(0)?,
+                            row.get(1)?,
+                            u64::try_from(row.get::<_, i64>(2)?).unwrap(),
+                        ))
+                    },
+                )
+                .unwrap();
+            assert_eq!(next, 1);
+            assert_eq!(digest, Digest::of(stored_bytes).0);
+            assert_eq!(used, u64::try_from(stored_bytes.len()).unwrap() + 5);
+        } else {
+            assert_eq!(rebuilt, Err(TaskPortError::Corrupt), "rebuild case={name}");
+            assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
+        }
         connection
             .execute(
                 "UPDATE task_records SET record=?1,checksum=?2",
                 rusqlite::params![original, Digest::of(&original).0.as_slice()],
             )
             .unwrap();
+        journal.rebuild_head(scope()).unwrap();
         assert_eq!(journal.read(scope(), TaskSequence::ZERO).unwrap(), held);
         assert_eq!(held, Some(record));
+        let mut projection = TaskProjection::new(scope(), definition()).unwrap();
+        projection.apply(&record).unwrap();
+        let start = projection.next(TaskTick::new(1)).unwrap().unwrap();
+        assert_eq!(journal.commit(&start, None).unwrap(), start);
         drop(journal);
         assert_eq!(open(&path).read(scope(), TaskSequence::ZERO).unwrap(), held);
     }
