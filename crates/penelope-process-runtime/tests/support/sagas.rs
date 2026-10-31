@@ -342,22 +342,7 @@ impl Stores {
         } else {
             1
         };
-        for offset in first_offset..45 {
-            if supervisor.projection().status() == TaskStatus::Completed {
-                break;
-            }
-            let next_tick = TaskTick::new(tick + offset);
-            if supervisor.projection().status() == TaskStatus::Running {
-                supervisor.poll(next_tick).unwrap();
-            } else {
-                supervisor.advance(next_tick).unwrap();
-                if supervisor.projection().status() == TaskStatus::Running {
-                    cut("worker-start");
-                }
-            }
-            std::thread::sleep(Duration::from_millis(2));
-        }
-        assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+        complete_task(&mut supervisor, tick, first_offset);
         cut("task-complete");
         drop(supervisor);
         self.reopen();
@@ -976,3 +961,72 @@ impl ProcessAuthorizer for RelayPolicy {
 
 #[path = "cancellation.rs"]
 mod cancellation;
+
+fn complete_task(supervisor: &mut Supervisor, tick: u64, first_offset: u64) {
+    // Host scheduling must not consume the fixture's logical execution budget.
+    // Preserve its original logical transitions, then keep polling at the last
+    // tick until completion or a bounded wall-clock deadline.
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let mut offset = first_offset;
+    while supervisor.projection().status() != TaskStatus::Completed {
+        assert!(
+            Instant::now() < deadline,
+            "saga worker did not complete: {:?}",
+            supervisor.projection().status()
+        );
+        let next_tick = TaskTick::new(tick + offset);
+        if supervisor.projection().status() == TaskStatus::Running {
+            supervisor.poll(next_tick).unwrap();
+        } else {
+            supervisor.advance(next_tick).unwrap();
+            if supervisor.projection().status() == TaskStatus::Running {
+                cut("worker-start");
+            }
+        }
+        offset = offset.saturating_add(1).min(44);
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+}
+
+#[test]
+fn saga_completion_waits_for_a_delayed_real_worker() {
+    let directory = tempfile::tempdir().unwrap();
+    let definition = definition(2);
+    let input = [28, 1, 2, 3];
+    let scope = penelope_core::task::TaskScope {
+        tenant: penelope_core::task::TaskTenantId::from_digest(Digest([1; 32])),
+        task: penelope_core::task::TaskId::from_digest(Digest([2; 32])),
+        definition: definition.fingerprint(),
+        input: penelope_core::task::TaskInputDigest::from_digest(Digest::of(&input)),
+    };
+    let path = directory.path().join("delayed.db");
+    let journal = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let authority = SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
+    let runtime = Runtime::new(authority, config(directory.path())).unwrap();
+    let mut supervisor: Supervisor =
+        Supervisor::restore(journal, runtime, scope, definition, TaskTick::ZERO).unwrap();
+    supervisor.submit(&input, 1, TaskTick::ZERO).unwrap();
+    let started = Instant::now();
+    supervisor.advance(TaskTick::new(1)).unwrap();
+    complete_task(&mut supervisor, 0, 2);
+    println!(
+        "delayed-worker elapsed_ms={} status={:?}",
+        started.elapsed().as_millis(),
+        supervisor.projection().status()
+    );
+    assert!(started.elapsed() >= Duration::from_millis(250));
+    assert!(supervisor.projection().last_tick() <= TaskTick::new(44));
+    assert_eq!(
+        supervisor.projection().generation(),
+        penelope_core::task::TaskGeneration::new(1)
+    );
+    assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+    let output = supervisor.projection().output().unwrap();
+    let (mut completed_journal, _runtime) = supervisor.into_parts();
+    let mut bytes = [0; 8];
+    completed_journal
+        .read_blob(scope, output, &mut bytes)
+        .unwrap();
+    assert_eq!(u64::from_le_bytes(bytes), 6);
+}
