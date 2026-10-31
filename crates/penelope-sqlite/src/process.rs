@@ -596,3 +596,7 @@ mod fault_tests;
 #[cfg(test)]
 #[path = "process_encode_tests.rs"]
 mod encode_tests;
+
+#[cfg(test)]
+#[path = "process_snapshot_tests.rs"]
+mod snapshot_tests;
