@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "name": "baseline-lock",
+      "rejected": true,
+      "marker": "payload_retry_lock::exact_payload_retries_do_not_require_the_writer_lock"
+    },
+    {
+      "name": "byte-equality",
+      "rejected": true,
+      "marker": "payload_retry_lock::locked_payload_retries_revalidate_committed_corruption"
+    },
+    {
+      "name": "scope",
+      "rejected": true,
+      "marker": "payload_retry_lock::exact_payload_retries_do_not_require_the_writer_lock"
+    },
+    {
+      "name": "recheck",
+      "rejected": true,
+      "marker": "payloads::tests::insertion_after_read_is_rechecked_before_quota_charge"
+    }
+  ],
+  "restored_sha256": "fa03f0a0414fe5ffcc0114fcbd9bd15aca36878c8c05e25796f1d2362f407eef"
+}

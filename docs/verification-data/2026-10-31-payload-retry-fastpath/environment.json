@@ -1,0 +1,5 @@
+{
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "filesystem": "btrfs /dev/nvme0n1p3[/home]",
+  "scope": "source and binary hashes are recorded by build.py; ordinary measurements use one pinned CPU and the explicit database root in measurement.json"
+}
