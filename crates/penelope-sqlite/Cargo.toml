@@ -27,3 +27,7 @@ workspace = true
 [[bench]]
 name = "durable_store"
 harness = false
+
+[[bench]]
+name = "worker_poll"
+harness = false
