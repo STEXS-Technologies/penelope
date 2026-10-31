@@ -59,3 +59,11 @@ harness = false
 [[bench]]
 name = "pending_history"
 harness = false
+
+[[bench]]
+name = "process_payloads"
+harness = false
+
+[[bench]]
+name = "process_payload_allocations"
+harness = false
