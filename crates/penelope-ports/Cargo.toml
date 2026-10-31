@@ -41,3 +41,7 @@ harness = false
 [[test]]
 name = "outcome_log_allocations"
 harness = false
+
+[[test]]
+name = "atomic_scope_allocations"
+harness = false

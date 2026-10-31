@@ -1,0 +1,10 @@
+{
+  "crates/penelope-ports/Cargo.toml": "a9403c1bb513b92cc891be3b86201e39f61a6ff58dc0d7332fdda81d0f87f6d2",
+  "crates/penelope-ports/src/implementation.rs": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e",
+  "crates/penelope-ports/benches/atomic_validation.rs": "9d41d3b3bf48feb7b86c0d2f0bb305f94e71dcb34e35340a7af808b72a9fdfd4",
+  "crates/penelope-ports/benches/atomic_validation_allocations.rs": "d63437f02be7b31e4fce541082ae149a244841ff5f7dd1ce9a43eed180842c53",
+  "crates/penelope-ports/tests/atomic_scope_allocations.rs": "d4db50c6216ccdc1ce51cb303a9a554fbbac674e0a8a946f3c205c840fdabfb2",
+  "crates/penelope-ports/tests/atomic_outcome_scope.rs": "92384c9e4bce8ca8b7346d6fd3f7c336fbd14122064034daf91bfa1233e05a95",
+  "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+  "crates/penelope-ports/tests/support/legacy_atomic_validator.rs": "4c23a205b1d3df419c562ae4b2593b5fc71f77e1c29bbe5347c13e2c8151ceba"
+}
