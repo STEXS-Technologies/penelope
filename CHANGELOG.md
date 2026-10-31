@@ -18,6 +18,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Enforce one Linux startup-frame write deadline across all frame parts,
+  including continuous positive progress and late final writes. Checkpoint ACK
+  writes use the same expiry checks; timed-out transfers require reconstruction.
 - Reject suppressed required SQLite writes before acknowledging process/task
   commits, service updates, generation authority or head repair. Retirement
   verifies complete scoped history deletion before committing its tombstone.

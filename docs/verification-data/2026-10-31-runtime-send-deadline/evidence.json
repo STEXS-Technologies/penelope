@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "baseline_revision": "c6a260cacc36450f7dab46baddbc5e23a03fff56",
+  "source_revision": "0e8a66db4cd724c3049a2c58e9c4286fe0869328",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/runtime.rs": "2309ce064364383ede4e73c334587a03495b2e57032807b64e0bd1caeee10d04",
+    "crates/penelope-process-runtime/src/io_tests.rs": "b0d0c06e16b9a6c0259028a4d6ca05feae3f4a4622801de9b0e624c907e4949c",
+    "crates/penelope-process-runtime/tests/support/launch_contracts.rs": "642e27c7f16bcdd10d58dfb8319b28693f26dd804cecb5122f1a0680ceaa09ad"
+  },
+  "binary_sha256": {
+    "target/debug/deps/penelope_process_runtime-7dde0702e57bd989": "d0046f78621e9991f4f3569143a131aa141bf77e1aed7d634554420548667aca",
+    "target/debug/deps/runtime-f8d8979fbc3814d8": "8be743bdcb7fc1f6bc26a28b285abbcbc0d3720ab16bd930bbd496f48292a10e",
+    "target/worker-audit-msrv/debug/deps/penelope_process_runtime-68cf58304cf62634": "d71bf043fe46406a492480be970ace3cc75c88a741f570e35e6cacad6b35b175",
+    "target/worker-audit-msrv/debug/deps/runtime-f2cb0137fabcb2d5": "086bc318ac8173ab4514b01ce41da8e07e752ad53b0a1c091ac60f862afd9828"
+  },
+  "toolchains": {
+    "1.99.0": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "repeat_runs_per_compiler": 50,
+  "repeat_processes_per_compiler": 150,
+  "repeat_tests_per_compiler": 350,
+  "results": {
+    "baseline_two_regressions": "failed as expected: Ok versus Runtime",
+    "stable_workspace": "pass before added integration test; final production code",
+    "stable_runtime_final": "pass: 17 library, 55 integration, bench/example smoke",
+    "clippy_initial": "failed: test variable shadowing",
+    "clippy_final": "pass",
+    "msrv_initial": "failed: two existing coordinator crash-recovery subprocess timeouts",
+    "msrv_crash_retry": "pass: both failures serially",
+    "msrv_thread_argument": "failed: custom allocation harness rejected --test-threads=1",
+    "msrv_serial_final": "pass with RUST_TEST_THREADS=1",
+    "fmt": "pass",
+    "layers": "pass",
+    "graph": "pass"
+  },
+  "commands": [
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo test -p penelope-process-runtime --all-targets",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz -- -D warnings",
+    "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= RUST_TEST_THREADS=1 CARGO_TARGET_DIR=target/worker-audit-msrv cargo +1.85.0 test --workspace --all-targets --all-features --exclude penelope-fuzz",
+    "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo fmt --all -- --check",
+    "bash scripts/check-layer-boundaries.sh",
+    "graphify update .",
+    "python3 target/repeat-send-deadline.py target/runtime-send-deadline-fixed-final.log target/runtime-send-deadline-repeat-stable.jsonl",
+    "python3 target/repeat-send-deadline.py target/runtime-send-deadline-msrv.log target/runtime-send-deadline-repeat-msrv.jsonl"
+  ],
+  "scope": "IPC deadline/result handling, not global timing guarantees or a performance measurement; empty transfers preserve no-op behavior; initial failures retained",
+  "artifact_sha256": {
+    "baseline-fixtures.patch": "48c493bdbcac8e2cda14d371a248f1a9f7cb0b4314360d6560cbcafd3205d075",
+    "baseline.log.gz": "799c9bdeadbf7d87c0672a0d183866e7ace3e6386ab70f2a26ad5863b273811a",
+    "clippy-final.log.gz": "e6f2a8f29ffa31838f46cd14b0a1b9c5a2491af671efe8c414d88ba189dcd859",
+    "clippy-initial.log.gz": "be9a3ee451f5d62f742bfba06ea81eaca1dc5b2b3b6d9992177b33d4e7a3d5ed",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "2d3113978e7c148b816b0a691672a46490420f81f4ee6785fc59b1a4c640c2f1",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv-crash-retry.log.gz": "efbc2a9fb141040ced1efdd8fe05a1e00631e2dbe4fa56ed0a82c0f4e48c58d4",
+    "msrv-initial.log.gz": "9696632770ed7956dcf4acf2949748a2f9b7159daa5981e7d528abb018ac101f",
+    "msrv-serial-final.log.gz": "c0a0e5fe7e760f0ef167b0232fcbd26aee2008c09927fa6ca6b05a5370e87cb1",
+    "msrv-thread-argument.log.gz": "d81d5fc5e318bbe13363c72d61cb4b885871b1c7a571f549c9a8d4a40737747a",
+    "repeat-msrv.jsonl.gz": "7d826a28bd38abf494adf9f158cc73e9544c5080ec4fc129074df9997c3ddf5b",
+    "repeat-stable.jsonl.gz": "3eecbf258abd9f7a30e862882be7ca0a5a2064f29c8f1754e45a57e6815cf773",
+    "repeat.py": "64b0f134864c6cb28f308cf962e239e7165702006d7a80295aa8c800046b817d",
+    "stable-runtime-final.log.gz": "3a1de6e4bc6a524eb0253e233ff5fcd75a189574cd0238ff8f680d1bae3b3f5d",
+    "stable-workspace.log.gz": "032e112504468bb66ae52e559b52f6f5ee9f33cbb490528f3e10f279616be7f5"
+  },
+  "baseline_command": "TMPDIR=/home/ac/projects/penelope/target/qualification-temp RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo test -p penelope-process-runtime --lib bounded_send_rejects_",
+  "baseline_expected_exit": 101
+}
