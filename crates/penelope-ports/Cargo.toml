@@ -21,3 +21,11 @@ workspace = true
 [[bench]]
 name = "contract_throughput"
 harness = false
+
+[[bench]]
+name = "atomic_validation"
+harness = false
+
+[[bench]]
+name = "atomic_validation_allocations"
+harness = false
