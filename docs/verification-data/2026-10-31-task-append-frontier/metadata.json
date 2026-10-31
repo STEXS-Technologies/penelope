@@ -1,0 +1,34 @@
+{
+  "baseline": "14f2ea2",
+  "code_commit": "6c210010423edbe642d58c9c2678825eada038b9",
+  "baseline_false_successes": 4,
+  "baseline_wrong_conflicts": 2,
+  "isolated_processes": 20,
+  "fault_cases_per_process": 18,
+  "total_fault_cases": 360,
+  "prior_ci": {
+    "run": 41170064541,
+    "commit": "14f2ea2",
+    "observed_failure": "StateChronicle pure saga fixture Running instead of Completed after bounded polling",
+    "action": "Requested failed-job rerun at the same commit; outcome pending when this archive was produced."
+  },
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "a47572dc89195ac34c4bcfe7861edc84deb5998aa60f253a9fbebf0b53817dfd",
+    "crates/penelope-sqlite/tests/support/task_append_frontier.rs": "da333c018614113ad4c9c9c14cb718880ea835327ca551ecf53775daead62309"
+  },
+  "archive_sha256": {
+    "allocation-build.log.gz": "4db118985ba81492ebdd486a6b767fb6c068d9ef59d3a8c62c67d6fc47112b88",
+    "allocation-check.json": "9460695dd4137329a312a75fc0fb03c4506c802c7c4a2a778cff1966d11c869a",
+    "baseline-allocations.jsonl": "4e2f567197e019f2daf533cb54b9d866e106bb9e2d517044fee135812916bed4",
+    "baseline.log.gz": "f5e4b1752eb6949d3556b6f41b26c9878e41af31495992475c258a0422e0a404",
+    "candidate-allocations.jsonl": "4e2f567197e019f2daf533cb54b9d866e106bb9e2d517044fee135812916bed4",
+    "clippy.log.gz": "f34b7b1acfe67dfe9bb35ea216fd2db9e76515723c48b8bf14bf67aa27b86fd2",
+    "fixed.log.gz": "ee4912495ac47b1ee06d8730a7cc043821fe5af27b58a04a98fb88f2c7072f5a",
+    "graph.log.gz": "ed832c114a5f2b821c90d351e7a514a473ab4250323b611f8d35b94b304b489f",
+    "msrv.log.gz": "738d723f2f397f0a4fd3c58dddb38ccc9c988dc5facfa49d038e1e9e9c6008da",
+    "previous-ci-failure.log.gz": "93f71592654e8d8d1bca11773a02a6306eb9d076225a53aeb29a89460d7109d1",
+    "repeat.log.gz": "64651b3dcd47834ef8fc59f7d03453c5911b4185b2d9a336531f566106be284b",
+    "verify.py": "df4e2cff52f913fa1ebeb5877dd9febc9bd6e1dd4752cff577f41c56124ebb27",
+    "workspace.log.gz": "31ee2cfa7a085dd3b65bd4a93aca4b1a798f708ada52778114bf6412ad714ca3"
+  }
+}

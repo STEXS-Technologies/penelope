@@ -1,0 +1,66 @@
+{
+  "target/sqlite-scope-latency-baseline-fence": {
+    "sha256": "0d5e60efb3b0e0d10e433ef91bb74a47b24ccc615351119f7bdda8ec24f6644b",
+    "tasks_sha256": "02f0d45abab907e851c17d0fb777d1e6128db8a076fc19c08bef00efe79282e6",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/sqlite-scope-latency-baseline-dispatch": {
+    "sha256": "8a0ecad7fd3fd8ca34b055f15582a355552b9b918e32151753dc439b88e51538",
+    "tasks_sha256": "02f0d45abab907e851c17d0fb777d1e6128db8a076fc19c08bef00efe79282e6",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/sqlite-scope-latency-candidate-fence": {
+    "sha256": "d7704ffac56742f6535266724fa7c2247cbfe376e2487b80b09df9dbd172463d",
+    "tasks_sha256": "a0446621853b960cd8f38f3220b568ac69e9adc41825c5028ffb3201ac76d781",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/sqlite-scope-latency-candidate-dispatch": {
+    "sha256": "194f4cdef543698c81ac5a96da8f9b172a963791227dc58a11b265670b48f904",
+    "tasks_sha256": "a0446621853b960cd8f38f3220b568ac69e9adc41825c5028ffb3201ac76d781",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  }
+}

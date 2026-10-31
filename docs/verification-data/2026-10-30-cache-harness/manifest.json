@@ -1,0 +1,56 @@
+{
+  "qualification": false,
+  "scope": "Harness smoke and correctness only; overlapped live fuzz campaign, not qualification timing",
+  "files": [
+    {
+      "file": "cache-benchmark-python.log.gz",
+      "original_sha256": "199ba496f288116d36c62f29346d4fbf0bd75745a1c893abfcbdaa4c6d5b1033",
+      "archive_sha256": "b682e4a5afe13e69588e0a251d97ec197e6ff2fb1dbab0834d4f4ab7b49f3ddf"
+    },
+    {
+      "file": "cache-benchmark-python-all.log.gz",
+      "original_sha256": "b9726f075afa0327842ef53ceadd5728c1d050839459be9a635b03c84f9028b7",
+      "archive_sha256": "210a6573db2545a42697ccd057b29667e74582869519b0feba8eeb2989b3371f"
+    },
+    {
+      "file": "cache-benchmark-clippy.log.gz",
+      "original_sha256": "bab034759ebf746350c9acda758ac0c0a6244865c0f3654e3f3ea14a19efc9f9",
+      "archive_sha256": "98d75c31603638a41048dc03049233c3eae2636f47060c253a5a748022027b75"
+    },
+    {
+      "file": "cache-benchmark-msrv.log.gz",
+      "original_sha256": "b6aee87d711bbeae4479780ebafd3ac89176aefb8cc2bd45b52f3ee3a8832ed1",
+      "archive_sha256": "59a4f828359312897399e99e18f239c1f0266e21e3da3ce4633745222b69d661"
+    },
+    {
+      "file": "cache-benchmark-smoke.log.gz",
+      "original_sha256": "f2a0914df23cc8a260d6814c5e85cd8417de8d94d2a2675d2a79b7b37780db78",
+      "archive_sha256": "27522992565ee4f7a051e598fb62afca2465db5a5881cae2ee804466f32989b3"
+    },
+    {
+      "file": "cache-benchmark-default.log.gz",
+      "original_sha256": "fdc9a8d022e19cb23e13b3f84da9577d27aeedb4f425bd6ef2567e7a0e054fe6",
+      "archive_sha256": "8769de57f1428a2f2f7435bfe7a5d35a88d63b818d272a77941a90e6de0ad6c3"
+    },
+    {
+      "file": "cache-benchmark-layers.log.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "cache-benchmark-graph.log.gz",
+      "original_sha256": "5133af8f0b5d8ac43376ac26304728786a5ba93d0547b064f28cae5ff43e4e84",
+      "archive_sha256": "f406f7eda3dfbc8d43fa54d9cb63192f3d945e2b05d2fc3a2df66d9e91a5e7c5"
+    },
+    {
+      "file": "smoke-measurements.json.gz",
+      "original_sha256": "0daa2bb41e88be2bcf090410f70b75c27ec84d9969d5bd4c1bf8469aa687b94f",
+      "archive_sha256": "fd30457532a969751947046cc1c984a861cc6e9fd15a0c85a08155988a45c58e"
+    },
+    {
+      "file": "smoke-metadata.json.gz",
+      "original_sha256": "09b58e134d69970750498bb322dfebdb1dfce23875ce2fa61325e2ff9228d48b",
+      "archive_sha256": "461108f838b83adbccb1fa3b8933da9a36d86eef70240a6912d066e8e908aeb3"
+    }
+  ]
+}

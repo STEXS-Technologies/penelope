@@ -1,0 +1,9 @@
+{
+  "start": 1793451137.0440564,
+  "end": 1793451184.361725,
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "ordinary_processes": 48,
+  "allocation_processes": 4
+}

@@ -1,0 +1,6 @@
+{
+  "crates/penelope-executor/src/lease_batch_index.rs": "helper.rs.gz",
+  "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "fixture.rs.gz",
+  "crates/penelope-executor/tests/lease_batch_identity.rs": "identity-test.rs.gz",
+  "crates/penelope-executor/tests/lease_batch_allocations.rs": "allocation-test.rs.gz"
+}

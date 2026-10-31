@@ -1,0 +1,133 @@
+diff --git a/crates/penelope-sqlite/Cargo.toml b/crates/penelope-sqlite/Cargo.toml
+index 5cbf2d8..4f9c82c 100644
+--- a/crates/penelope-sqlite/Cargo.toml
++++ b/crates/penelope-sqlite/Cargo.toml
+@@ -31,3 +31,7 @@ harness = false
+ [[bench]]
+ name = "worker_poll"
+ harness = false
++
++[[bench]]
++name = "lease_claim"
++harness = false
+diff --git a/crates/penelope-sqlite/benches/lease_claim.rs b/crates/penelope-sqlite/benches/lease_claim.rs
+new file mode 100644
+index 0000000..e1fd977
+--- /dev/null
++++ b/crates/penelope-sqlite/benches/lease_claim.rs
+@@ -0,0 +1,93 @@
++//! Public empty-queue claim latency, including worker dispatch and transactions.
++use penelope_domain::{ContentDigest, LogicalTime, ProcessScope};
++use penelope_ports::{
++    OutboxClaimRequest, OutboxStore, PortError, TimerClaimRequest, TimerClaimStore,
++};
++use penelope_sqlite::{SqliteLeaseClock, SqliteLimits, SqliteProcessStore};
++use std::{
++    future::Future,
++    num::NonZeroU16,
++    sync::Arc,
++    task::{Context, Poll, Wake, Waker},
++    time::{Duration, Instant},
++};
++type Error = Box<dyn std::error::Error>;
++struct Clock;
++impl SqliteLeaseClock for Clock {
++    fn now(&self) -> Result<LogicalTime, PortError> {
++        Ok(LogicalTime(100))
++    }
++}
++struct ThreadWake(std::thread::Thread);
++impl Wake for ThreadWake {
++    fn wake(self: Arc<Self>) {
++        self.0.unpark();
++    }
++    fn wake_by_ref(self: &Arc<Self>) {
++        self.0.unpark();
++    }
++}
++fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
++    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
++    let mut context = Context::from_waker(&waker);
++    let mut future = Box::pin(future);
++    let deadline = Instant::now()
++        .checked_add(Duration::from_secs(10))
++        .ok_or("deadline overflow")?;
++    loop {
++        if let Poll::Ready(result) = future.as_mut().poll(&mut context) {
++            return Ok(result);
++        }
++        if Instant::now() >= deadline {
++            return Err("claim timed out".into());
++        }
++        std::thread::park_timeout(Duration::from_millis(10));
++    }
++}
++fn main() -> Result<(), Error> {
++    let directory = tempfile::tempdir()?;
++    let store = SqliteProcessStore::open(
++        &directory.path().join("claims.db"),
++        SqliteLimits::default(),
++        Arc::new(Clock),
++        100,
++        16,
++    )?;
++    let scope = ProcessScope::new(
++        "tnt_bench".parse()?,
++        "prc_bench".parse()?,
++        "def_bench".parse()?,
++        "dfv_one".parse()?,
++        ContentDigest([1; 32]),
++    );
++    let limit = NonZeroU16::new(10).ok_or("zero limit")?;
++    let outbox = OutboxClaimRequest::new(scope.clone(), "pri_bench".parse()?, limit)?;
++    let timer = TimerClaimRequest::new(scope, "pri_bench".parse()?, LogicalTime(100), limit)?;
++    for timers in [false, true] {
++        for _ in 0..100 {
++            if timers {
++                if !block_on(store.claim_due(&timer))??.is_empty() {
++                    return Err("unexpected timer".into());
++                }
++            } else if !block_on(store.claim(&outbox))??.is_empty() {
++                return Err("unexpected action".into());
++            }
++        }
++        let iterations = 2_000_u32;
++        let started = Instant::now();
++        for _ in 0..iterations {
++            if timers {
++                if !block_on(store.claim_due(&timer))??.is_empty() {
++                    return Err("unexpected timer".into());
++                }
++            } else if !block_on(store.claim(&outbox))??.is_empty() {
++                return Err("unexpected action".into());
++            }
++        }
++        println!(
++            "timers={timers} iterations={iterations} elapsed_ns={}",
++            started.elapsed().as_nanos()
++        );
++    }
++    Ok(())
++}
+diff --git a/crates/penelope-sqlite/src/leases.rs b/crates/penelope-sqlite/src/leases.rs
+index 76f673c..7a43be1 100644
+--- a/crates/penelope-sqlite/src/leases.rs
++++ b/crates/penelope-sqlite/src/leases.rs
+@@ -99,7 +99,7 @@ impl OutboxStore for SqliteProcessStore {
+             let now = clock.now()?; let expires = expiry(now,millis)?;
+             let key = request.scope.canonical_bytes();
+             let pending = {
+-                let mut statement = transaction.prepare("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
++                let mut statement = transaction.prepare_cached("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                 let mut rows = statement.query(params![key,integer(now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
+                 let mut pending = Vec::new();
+                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
+@@ -249,7 +249,7 @@ impl TimerClaimStore for SqliteProcessStore {
+             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
+             let key = request.scope.canonical_bytes();
+             let pending = {
+-                let mut statement = transaction.prepare("SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
++                let mut statement = transaction.prepare_cached("SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                 let mut rows = statement.query(params![key,integer(request.now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
+                 let mut pending = Vec::new();
+                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {

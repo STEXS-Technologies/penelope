@@ -1,0 +1,70 @@
+   Compiling cfg-if v1.0.4
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling version_check v0.9.5
+   Compiling libc v0.2.189
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling thiserror v2.0.21
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling getrandom v0.3.4
+   Compiling cpufeatures v0.2.17
+   Compiling serde_json v1.0.151
+   Compiling itoa v1.0.18
+   Compiling find-msvc-tools v0.1.12
+   Compiling memchr v2.8.3
+   Compiling bitflags v2.13.2
+   Compiling shlex v2.0.1
+   Compiling getrandom v0.4.3
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.34
+   Compiling rustix v1.1.4
+   Compiling zerocopy v0.8.57
+   Compiling linux-raw-sys v0.12.1
+   Compiling foldhash v0.2.0
+   Compiling autocfg v1.5.1
+   Compiling fastrand v2.5.0
+   Compiling once_cell v1.21.4
+   Compiling quick-error v1.2.3
+   Compiling fnv v1.0.7
+   Compiling generic-array v0.14.7
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling bit-vec v0.8.0
+   Compiling cc v1.4.6
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.16.3
+   Compiling regex-syntax v0.8.11
+   Compiling unarray v0.1.4
+   Compiling num-traits v0.2.19
+   Compiling hashbrown v0.17.1
+   Compiling bit-set v0.8.0
+   Compiling libsqlite3-sys v0.38.2
+   Compiling hashlink v0.12.2
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling wait-timeout v0.2.1
+   Compiling sha2 v0.10.9
+   Compiling rand_core v0.9.5
+   Compiling syn v3.0.5
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.5
+   Compiling syn v2.0.119
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rusqlite v0.40.2
+   Compiling rand_chacha v0.9.0
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.21
+   Compiling async-trait v0.1.92
+   Compiling proptest v1.11.0
+   Compiling penelope-core v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-core)
+   Compiling penelope-domain v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-domain)
+   Compiling penelope-ports v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-ports)
+   Compiling penelope-intent v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-intent)
+   Compiling penelope-sqlite v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-sqlite)
+   Compiling penelope-executor v0.2.0 (/home/ac/projects/penelope/target/hosted-memory-qe_zwpid/after/crates/penelope-executor)
+    Finished `release` profile [optimized] target(s) in 5.55s

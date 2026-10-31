@@ -2,8 +2,8 @@
 # Runs and structurally verifies the complete bounded public-boundary fuzz set.
 #
 # This is intentionally library-only: it checks parsers, DTO contracts, pure
-# decisions, and ports. It does not claim durable-adapter or deployment chaos
-# coverage.
+# decisions, ports, and bounded SQLite authority/process operation sequences. SQLite
+# runs use private temporary local files; this is not deployment chaos coverage.
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -41,6 +41,9 @@ fuzz_targets=(
   fuzz_task_history
   fuzz_task_supervisor
   fuzz_task_checkpoint
+  fuzz_worker_protocol
+  fuzz_sqlite_task_authority
+  fuzz_sqlite_process
 )
 
 dtos=(

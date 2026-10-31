@@ -1,0 +1,74 @@
+[
+  {
+    "campaign": 0,
+    "profile": "record",
+    "blocks": 12,
+    "baseline_ns_per_call": 8658.715191468906,
+    "candidate_ns_per_call": 7188.573405832636,
+    "change_percent": -16.978752079578058,
+    "bootstrap_95_percent": [
+      -17.419729949494855,
+      -16.51289540575824
+    ]
+  },
+  {
+    "campaign": 0,
+    "profile": "padded",
+    "blocks": 12,
+    "baseline_ns_per_call": 11194.74028734781,
+    "candidate_ns_per_call": 9691.274692272204,
+    "change_percent": -13.430106965275531,
+    "bootstrap_95_percent": [
+      -13.855337484289032,
+      -12.983462474144009
+    ]
+  },
+  {
+    "campaign": 0,
+    "profile": "end",
+    "blocks": 12,
+    "baseline_ns_per_call": 5774.680061947602,
+    "candidate_ns_per_call": 4372.979115880949,
+    "change_percent": -24.27322260332992,
+    "bootstrap_95_percent": [
+      -24.738745887101498,
+      -23.81793638465728
+    ]
+  },
+  {
+    "campaign": 1,
+    "profile": "record",
+    "blocks": 12,
+    "baseline_ns_per_call": 8684.002593377598,
+    "candidate_ns_per_call": 7191.532119787964,
+    "change_percent": -17.186435143718057,
+    "bootstrap_95_percent": [
+      -17.598785783995446,
+      -16.76083630574632
+    ]
+  },
+  {
+    "campaign": 1,
+    "profile": "padded",
+    "blocks": 12,
+    "baseline_ns_per_call": 11280.857156934462,
+    "candidate_ns_per_call": 9793.18015345257,
+    "change_percent": -13.187623801861466,
+    "bootstrap_95_percent": [
+      -13.786481057360541,
+      -12.623449098081721
+    ]
+  },
+  {
+    "campaign": 1,
+    "profile": "end",
+    "blocks": 12,
+    "baseline_ns_per_call": 5796.2946407958,
+    "candidate_ns_per_call": 4376.4063086933065,
+    "change_percent": -24.496483013630115,
+    "bootstrap_95_percent": [
+      -25.043581194549745,
+      -24.015396866836646
+    ]
+  }
+]

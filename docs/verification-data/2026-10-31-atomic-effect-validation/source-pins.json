@@ -1,0 +1,9 @@
+{
+  "baseline": "245da19ea8d8e7f11b50c7ef7f7d9983293830b7",
+  "candidate": "bc0c973cc134933727db3a3e1af98292201d99e3",
+  "candidate_parent_note": "Build metadata records uncommitted parent HEAD; exact compiled source hash identifies candidate. Both campaigns compile the same production source. Short campaign uses archived short probe sources; long campaign and final ports qualification use extended probes/corpus.",
+  "compilers": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  }
+}

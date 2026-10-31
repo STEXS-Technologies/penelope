@@ -1,0 +1,11 @@
+{
+  "baseline-worker.rs": "03d24728f5e40fce66a96a286d83a544d4beb644704c4d54a2316b8b8c457034",
+  "baseline-lease_claim": "d63e081710bfe2fd3ffcaeab2f2fb6de1c64b81891943058682e653950d0c628",
+  "baseline-lease_batch": "f23ba9c62b4432c6ab93612fe1a23bcc8fdd485100c4097d0db06b171bbe5c97",
+  "candidate-worker.rs": "76964717355a12f490ac95e49bd562d0fd6b1b9b34b29653d0c336afdcb3bacd",
+  "candidate-lease_claim": "3dae5a4852b95a320d5ae1009f5923577fb70d5e50c41017324c5887de757069",
+  "candidate-lease_batch": "6adb9418316d28e4ec35ea042f3d0c2734ecc71bd1bb095a3531cbad889f696b",
+  "worker_panic_tests.rs": "e553a5a22ba59d5abadff18a4186377b24ca23021ffdac124acbe38e6a95ce0e",
+  "lease_claim.rs": "495288104c6301ea90a4b133af3ec341df85b2f44633bf28471a6eabf4324c88",
+  "lease_batch.rs": "6e1d835098a89c87c773441c60cf39bfca68e73172d1a00c065a69ad0b3915f5"
+}

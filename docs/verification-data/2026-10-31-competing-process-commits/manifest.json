@@ -1,0 +1,29 @@
+{
+  "source_parent": "cddd2165173091cd9e5a3bbd4fa91a6cb0cc8259",
+  "sources_sha256": {
+    "crates/penelope-sqlite/tests/support/inbox_concurrency.rs": "b73ccb762b54895a09724ca0cd0ef66eebf0a2bcb47f981e0f507e2e393c1eed",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-sqlite/tests/process.rs": "ca336cd4ad6e25eee31c5b510be9321f6d17ea5ac63df0d3ae7f7288204c88b6",
+    "crates/penelope-sqlite/src/process.rs": "455d44adaa41266e16bb7427e45d6b855fb788f2aa9b76e7d79922223e51718b",
+    "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435"
+  },
+  "files_sha256": {
+    "clippy.txt.gz": "fc20073144938b19378bb1e15bec0c5fc22f37c7576f6f66529a49809c7631e1",
+    "graphify.txt.gz": "c02ade8bd75edb11b7bd21dc33570d76f3f8cca269b18403c6840f812f40dc80",
+    "negative-control.txt.gz": "7c7e75225449e31a77ca05960e57392063d1216fcf5eff9cb525e394f580839d",
+    "process-1.85.0.txt.gz": "3527b782bda82e87b3af27003f4ccca7b6feeda2bd25d3d7dec95e9022bf8a12",
+    "process-stable.txt.gz": "f011082bb9b8753cadf3274dc43d845e5cf457369e5943bd7bc84dc40ff29293",
+    "repeated-1.85.0.txt.gz": "fa7da8f0c29969c09beb5a58f27307733cf08ede4974185d2f163a54718ee20b",
+    "repeated-stable.txt.gz": "e09e6d6cffc15636116a86d5fdb0fbcd487010c37ab35cc8d223ef37e3526107",
+    "static-checks.txt.gz": "a5be443064296d8efe4b5c80cac59552db7cfecc7856e954ec0e04584c440935",
+    "summary.json": "74619f5358af8015e34e5b3047337b2886d8601d794cef09aa570e2e01143fcc",
+    "verify.py": "5096a4a2fd5857b08613d1cfb7e0596f33fe9812edc600daf29621f513d55fa7"
+  },
+  "repetitions_per_toolchain": 20,
+  "races_per_repetition": 16,
+  "toolchains": 2,
+  "new_races": 640,
+  "requests": 1280,
+  "serial_reference_histories": 1280,
+  "negative_control": "Temporarily removed digest comparison and committed-batch validation from existing-commit branch. New test caught two successes at an occupied frontier. Production source restored before qualification."
+}

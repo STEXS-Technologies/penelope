@@ -1,0 +1,65 @@
+{
+  "results": [
+    {
+      "name": "outcome-checksum",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "outcome-semantic",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "outcome-canonical-only",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "outcome-bound",
+      "test": "commit_retry_encodings::retries_bound_noncanonical_constituents_before_semantic_comparison",
+      "rejected": true
+    },
+    {
+      "name": "action-checksum",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "action-semantic",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "action-canonical-only",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "action-bound",
+      "test": "commit_retry_encodings::retries_bound_noncanonical_constituents_before_semantic_comparison",
+      "rejected": true
+    },
+    {
+      "name": "input-checksum",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "input-semantic",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "input-canonical-only",
+      "test": "commit_retry_encodings::retries_preserve_noncanonical_constituents_and_reject_changed_evidence",
+      "rejected": true
+    },
+    {
+      "name": "input-bound",
+      "test": "commit_retry_encodings::retries_bound_noncanonical_constituents_before_semantic_comparison",
+      "rejected": true
+    }
+  ],
+  "restored_sha256": "22d0497fce81556566ad5a8b16e4b99244c496c9f70f453af67a724abb3f1ade"
+}

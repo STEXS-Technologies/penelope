@@ -1,0 +1,33 @@
+{
+  "cpu": 0,
+  "pairs": 24,
+  "order": "alternating AB/BA; blob latency then allocation; reconstruction latency then allocation",
+  "start_utc": "2026-10-31T05:07:35Z",
+  "note": "No agent-owned builds/tests/graph jobs during timing. Separate ordinary allocator latency and Rust allocation traffic executables.",
+  "kernel": "7.2.9-100.fc43.x86_64",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "baseline": "756724d8edc814743f45f6af115fb4a9f3818565",
+  "blob_warmup": 16,
+  "blob_iterations": {
+    "0": 1000,
+    "32": 1000,
+    "4096": 1000,
+    "1048576": 128
+  },
+  "reconstruction_warmup": 16,
+  "reconstruction_iterations": 250,
+  "allocation_samples_per_profile_per_process": 16,
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "77b4eb3b2084c2951205a90b1872fb2b65599d31c504da5ac596e8225feecd81",
+    "crates/penelope-sqlite/tests/support/task_blob_columns.rs": "b6b3827f9f8c5656cdd0db0d900cd2e4730627a1955d77c042fc03a0c7ec4707",
+    "crates/penelope-sqlite/benches/support/task_blob_fixture.rs": "bf07435754f97b6341ac97dc67ee78edbd000d0ba30615e46dbc25f664972c01",
+    "crates/penelope-sqlite/benches/task_blobs.rs": "769563ddd68ef4d8685aaded5b64d56d9a77164a604d2072fad0cd4012ca66ca",
+    "crates/penelope-sqlite/benches/task_blob_allocations.rs": "a9c7aa757ba03a0cef8068e862f92198e7d41ae7dcd8aa99f90324e2425fb988",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02",
+    "crates/penelope-sqlite/benches/support/task_reconstruction_fixture.rs": "51ea3a7156ee38f135c6008167c8e3d3a83dc912122d306903b246b10f846974",
+    "crates/penelope-sqlite/benches/task_reconstruction.rs": "de43c4701ae22be6aea56953f75c14debb7d2e0fad4afea1cfe25747aa4bc6af",
+    "crates/penelope-sqlite/benches/task_reconstruction_allocations.rs": "d59c5993b5eeba2bab35a4ece0a384407ee0d7392cc0dc05318be0d31d13d15c"
+  },
+  "code_commit": "f6a4b4c44bf8884899ffde429f24f8569953c2ac"
+}

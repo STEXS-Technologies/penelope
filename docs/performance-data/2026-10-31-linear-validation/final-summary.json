@@ -1,0 +1,1696 @@
+{
+  "revisions": {
+    "before": "22a1926d6e9b2537f306962874574a0f446c8e8a",
+    "after": "dd3ac8d97869e7a1c9280b8d5ed66f0e7a4574b1"
+  },
+  "operations": {
+    "linear-saga start/result/complete": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 109.735875,
+        "min": 106.02325,
+        "max": 132.09695
+      },
+      "after": {
+        "median": 110.26769999999999,
+        "min": 106.10631,
+        "max": 132.89028
+      },
+      "median_delta_percent": 0.4846409617638603,
+      "paired_geometric_mean_delta_percent": 1.129782755008169,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.9081670711947685,
+        5.379851834079625
+      ]
+    },
+    "graph-saga start/result/result": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 414.80319,
+        "min": 409.37295,
+        "max": 465.44523
+      },
+      "after": {
+        "median": 423.53978,
+        "min": 406.58015,
+        "max": 456.14425
+      },
+      "median_delta_percent": 2.1062012565525423,
+      "paired_geometric_mean_delta_percent": 1.676979538996231,
+      "paired_bootstrap_percentile_95_percent": [
+        -0.49627876438447066,
+        3.603870546796331
+      ]
+    },
+    "linear-saga replay": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 224.152341,
+        "min": 219.729592,
+        "max": 252.627255
+      },
+      "after": {
+        "median": 225.92555449999998,
+        "min": 219.63539,
+        "max": 255.062743
+      },
+      "median_delta_percent": 0.7910751643677827,
+      "paired_geometric_mean_delta_percent": 0.3773811970621099,
+      "paired_bootstrap_percentile_95_percent": [
+        -1.496775357174614,
+        2.5084143548590445
+      ]
+    },
+    "parallel linear-saga start/result/complete": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 36.78542,
+        "min": 25.75689,
+        "max": 52.31628
+      },
+      "after": {
+        "median": 32.8168625,
+        "min": 26.0684675,
+        "max": 60.313115
+      },
+      "median_delta_percent": -10.788397957669105,
+      "paired_geometric_mean_delta_percent": -3.4970592937518785,
+      "paired_bootstrap_percentile_95_percent": [
+        -15.835250098242204,
+        11.092155813352054
+      ]
+    },
+    "parallel graph-saga": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 112.5574925,
+        "min": 105.4357625,
+        "max": 188.3587575
+      },
+      "after": {
+        "median": 124.3179525,
+        "min": 104.4203775,
+        "max": 193.1223925
+      },
+      "median_delta_percent": 10.448402624107867,
+      "paired_geometric_mean_delta_percent": 3.5968749418778674,
+      "paired_bootstrap_percentile_95_percent": [
+        -6.1581454540372444,
+        14.232856524695038
+      ]
+    },
+    "linear definition count=1 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.833475,
+        "min": 2.77136,
+        "max": 3.03517
+      },
+      "after": {
+        "median": 2.823455,
+        "min": 2.77146,
+        "max": 3.04198
+      },
+      "median_delta_percent": -0.3536293773546584,
+      "paired_geometric_mean_delta_percent": -0.29908655727028977,
+      "paired_bootstrap_percentile_95_percent": [
+        -1.5678062949798268,
+        0.9871154388917284
+      ]
+    },
+    "linear definition count=1 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.841095,
+        "min": 2.77075,
+        "max": 3.07745
+      },
+      "after": {
+        "median": 2.823805,
+        "min": 2.77075,
+        "max": 2.88227
+      },
+      "median_delta_percent": -0.6085681752986072,
+      "paired_geometric_mean_delta_percent": -1.1724744992753018,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.3852556058291547,
+        -0.0010270876599970545
+      ]
+    },
+    "linear definition count=1 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.78388,
+        "min": 2.77045,
+        "max": 3.28445
+      },
+      "after": {
+        "median": 2.822705,
+        "min": 2.77056,
+        "max": 2.93928
+      },
+      "median_delta_percent": 1.394636263057314,
+      "paired_geometric_mean_delta_percent": -0.31476251291199453,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.109862653189741,
+        0.9035976457041852
+      ]
+    },
+    "linear definition count=2 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.14064,
+        "min": 5.02532,
+        "max": 5.35095
+      },
+      "after": {
+        "median": 5.268885,
+        "min": 5.03162,
+        "max": 5.86494
+      },
+      "median_delta_percent": 2.494728282859726,
+      "paired_geometric_mean_delta_percent": 2.585357586964639,
+      "paired_bootstrap_percentile_95_percent": [
+        0.8150306092052483,
+        4.3367310787915
+      ]
+    },
+    "linear definition count=2 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.103415,
+        "min": 5.01369,
+        "max": 6.51279
+      },
+      "after": {
+        "median": 5.26593,
+        "min": 4.99275,
+        "max": 5.46446
+      },
+      "median_delta_percent": 3.1844363039259083,
+      "paired_geometric_mean_delta_percent": 0.1236100391390185,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.728509796036131,
+        2.442580335371841
+      ]
+    },
+    "linear definition count=2 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.114535,
+        "min": 5.03995,
+        "max": 6.96326
+      },
+      "after": {
+        "median": 5.262425,
+        "min": 5.03524,
+        "max": 5.41497
+      },
+      "median_delta_percent": 2.891562967112371,
+      "paired_geometric_mean_delta_percent": 0.317810095069812,
+      "paired_bootstrap_percentile_95_percent": [
+        -3.14725259603452,
+        2.6868953820224575
+      ]
+    },
+    "linear definition count=4 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 17.10662,
+        "min": 16.89275,
+        "max": 17.61095
+      },
+      "after": {
+        "median": 15.46996,
+        "min": 15.38374,
+        "max": 15.9352
+      },
+      "median_delta_percent": -9.567407237665881,
+      "paired_geometric_mean_delta_percent": -9.247589252740884,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.782895330320935,
+        -8.714142015319027
+      ]
+    },
+    "linear definition count=4 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 17.022855,
+        "min": 16.87402,
+        "max": 17.26147
+      },
+      "after": {
+        "median": 15.565135,
+        "min": 15.20689,
+        "max": 15.98359
+      },
+      "median_delta_percent": -8.563310913474853,
+      "paired_geometric_mean_delta_percent": -8.644144517574166,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.1897946733071,
+        -8.116498333806382
+      ]
+    },
+    "linear definition count=4 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 16.986435,
+        "min": 16.88113,
+        "max": 17.19174
+      },
+      "after": {
+        "median": 15.52917,
+        "min": 15.28104,
+        "max": 16.72463
+      },
+      "median_delta_percent": -8.578992590263933,
+      "paired_geometric_mean_delta_percent": -8.387591020609783,
+      "paired_bootstrap_percentile_95_percent": [
+        -8.995434092043379,
+        -7.5168547297477515
+      ]
+    },
+    "linear definition count=8 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 66.84943,
+        "min": 66.52339,
+        "max": 68.21315
+      },
+      "after": {
+        "median": 58.17776,
+        "min": 57.61316,
+        "max": 71.93876
+      },
+      "median_delta_percent": -12.971943066679847,
+      "paired_geometric_mean_delta_percent": -11.046225931939324,
+      "paired_bootstrap_percentile_95_percent": [
+        -13.049126488530469,
+        -8.327423992140224
+      ]
+    },
+    "linear definition count=8 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 67.020355,
+        "min": 66.53952,
+        "max": 70.63074
+      },
+      "after": {
+        "median": 58.07561,
+        "min": 57.74252,
+        "max": 72.11941
+      },
+      "median_delta_percent": -13.346310982685782,
+      "paired_geometric_mean_delta_percent": -11.663562229106072,
+      "paired_bootstrap_percentile_95_percent": [
+        -13.6637496328439,
+        -8.931326938375845
+      ]
+    },
+    "linear definition count=8 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 66.93739,
+        "min": 66.4755,
+        "max": 71.88827
+      },
+      "after": {
+        "median": 58.09084,
+        "min": 57.68381,
+        "max": 71.89468
+      },
+      "median_delta_percent": -13.216156172208082,
+      "paired_geometric_mean_delta_percent": -11.479545450915762,
+      "paired_bootstrap_percentile_95_percent": [
+        -13.586716217540031,
+        -8.67784185810187
+      ]
+    },
+    "linear definition count=9 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 84.72538,
+        "min": 84.3709,
+        "max": 95.06597
+      },
+      "after": {
+        "median": 73.730925,
+        "min": 73.44759,
+        "max": 85.06994
+      },
+      "median_delta_percent": -12.976577974628146,
+      "paired_geometric_mean_delta_percent": -12.667245338130883,
+      "paired_bootstrap_percentile_95_percent": [
+        -14.27175387309143,
+        -10.837847811243456
+      ]
+    },
+    "linear definition count=9 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 84.80087499999999,
+        "min": 84.24665,
+        "max": 87.68129
+      },
+      "after": {
+        "median": 73.86729,
+        "min": 73.1972,
+        "max": 98.53548
+      },
+      "median_delta_percent": -12.893245500120132,
+      "paired_geometric_mean_delta_percent": -10.54969744619045,
+      "paired_bootstrap_percentile_95_percent": [
+        -12.990171352077361,
+        -7.1852147587306225
+      ]
+    },
+    "linear definition count=9 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 84.80819,
+        "min": 84.23824,
+        "max": 87.41798
+      },
+      "after": {
+        "median": 73.94584,
+        "min": 73.5138,
+        "max": 103.57251
+      },
+      "median_delta_percent": -12.808137987616519,
+      "paired_geometric_mean_delta_percent": -10.293314796886005,
+      "paired_bootstrap_percentile_95_percent": [
+        -12.825008424696113,
+        -6.500326543671445
+      ]
+    },
+    "linear definition count=16 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 269.893875,
+        "min": 268.24344,
+        "max": 274.10817
+      },
+      "after": {
+        "median": 229.091645,
+        "min": 227.53534,
+        "max": 282.21975
+      },
+      "median_delta_percent": -15.117879203446162,
+      "paired_geometric_mean_delta_percent": -13.588265201352595,
+      "paired_bootstrap_percentile_95_percent": [
+        -15.279678942975556,
+        -11.207666043753942
+      ]
+    },
+    "linear definition count=16 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 269.58437,
+        "min": 267.73385,
+        "max": 276.32466
+      },
+      "after": {
+        "median": 229.16433999999998,
+        "min": 226.82196,
+        "max": 277.851
+      },
+      "median_delta_percent": -14.99346197259136,
+      "paired_geometric_mean_delta_percent": -13.862198152749416,
+      "paired_bootstrap_percentile_95_percent": [
+        -15.318027218027726,
+        -11.691216306626627
+      ]
+    },
+    "linear definition count=16 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 269.47160499999995,
+        "min": 267.83004,
+        "max": 283.01027
+      },
+      "after": {
+        "median": 228.91711,
+        "min": 226.75253,
+        "max": 252.44038
+      },
+      "median_delta_percent": -15.049635749191436,
+      "paired_geometric_mean_delta_percent": -14.532446189290681,
+      "paired_bootstrap_percentile_95_percent": [
+        -15.299537476670436,
+        -13.502951575875565
+      ]
+    },
+    "linear definition count=17 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 304.25980500000003,
+        "min": 302.01081,
+        "max": 310.77585
+      },
+      "after": {
+        "median": 78.206725,
+        "min": 77.65612,
+        "max": 95.81862
+      },
+      "median_delta_percent": -74.29607075440016,
+      "paired_geometric_mean_delta_percent": -73.89645672369087,
+      "paired_bootstrap_percentile_95_percent": [
+        -74.34905737672291,
+        -73.26333698606746
+      ]
+    },
+    "linear definition count=17 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 303.96714,
+        "min": 302.17012,
+        "max": 307.11217
+      },
+      "after": {
+        "median": 46.672975,
+        "min": 46.06495,
+        "max": 62.94157
+      },
+      "median_delta_percent": -84.64538798503021,
+      "paired_geometric_mean_delta_percent": -84.31432452274647,
+      "paired_bootstrap_percentile_95_percent": [
+        -84.65126492232731,
+        -83.78750311295026
+      ]
+    },
+    "linear definition count=17 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 303.74967,
+        "min": 301.82334,
+        "max": 307.84578
+      },
+      "after": {
+        "median": 167.87932,
+        "min": 162.36004999999997,
+        "max": 196.35577
+      },
+      "median_delta_percent": -44.73102802054072,
+      "paired_geometric_mean_delta_percent": -43.58861671656599,
+      "paired_bootstrap_percentile_95_percent": [
+        -44.72790878803889,
+        -42.18108744488024
+      ]
+    },
+    "linear definition count=32 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1070.48425,
+        "min": 1064.8083,
+        "max": 1097.9063
+      },
+      "after": {
+        "median": 138.43955,
+        "min": 136.0881,
+        "max": 181.6061
+      },
+      "median_delta_percent": -87.06757712689374,
+      "paired_geometric_mean_delta_percent": -86.6750129377758,
+      "paired_bootstrap_percentile_95_percent": [
+        -87.0772156239707,
+        -86.14434247615766
+      ]
+    },
+    "linear definition count=32 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1070.1096,
+        "min": 1063.9317,
+        "max": 1087.6405
+      },
+      "after": {
+        "median": 76.55699999999999,
+        "min": 75.7885,
+        "max": 123.1681
+      },
+      "median_delta_percent": -92.84587298347759,
+      "paired_geometric_mean_delta_percent": -92.6597723538808,
+      "paired_bootstrap_percentile_95_percent": [
+        -92.8653426363875,
+        -92.28382349019655
+      ]
+    },
+    "linear definition count=32 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1071.1761999999999,
+        "min": 1063.9857,
+        "max": 1105.0712
+      },
+      "after": {
+        "median": 520.10585,
+        "min": 513.7892,
+        "max": 691.3043
+      },
+      "median_delta_percent": -51.44535044748007,
+      "paired_geometric_mean_delta_percent": -50.344813344208085,
+      "paired_bootstrap_percentile_95_percent": [
+        -51.56090822913437,
+        -48.63321231144391
+      ]
+    },
+    "linear definition count=64 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4290.51235,
+        "min": 4249.4956,
+        "max": 4640.6587
+      },
+      "after": {
+        "median": 275.22105,
+        "min": 271.6271,
+        "max": 298.8367
+      },
+      "median_delta_percent": -93.58535700287635,
+      "paired_geometric_mean_delta_percent": -93.60198700494168,
+      "paired_bootstrap_percentile_95_percent": [
+        -93.71842992763843,
+        -93.47515453931314
+      ]
+    },
+    "linear definition count=64 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4304.5214,
+        "min": 4248.2,
+        "max": 5713.718
+      },
+      "after": {
+        "median": 142.75295,
+        "min": 140.1669,
+        "max": 180.5911
+      },
+      "median_delta_percent": -96.68365105584095,
+      "paired_geometric_mean_delta_percent": -96.7038589491905,
+      "paired_bootstrap_percentile_95_percent": [
+        -96.84629479838874,
+        -96.55306083793673
+      ]
+    },
+    "linear definition count=64 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4347.8717,
+        "min": 4257.6724,
+        "max": 5897.9832
+      },
+      "after": {
+        "median": 1126.2961500000001,
+        "min": 1110.9816,
+        "max": 1373.8478
+      },
+      "median_delta_percent": -74.09546031452582,
+      "paired_geometric_mean_delta_percent": -74.23228058416993,
+      "paired_bootstrap_percentile_95_percent": [
+        -75.42250679924013,
+        -73.1191805074824
+      ]
+    },
+    "linear definition count=128 long=false order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 17592.16475,
+        "min": 17145.8561,
+        "max": 23034.4752
+      },
+      "after": {
+        "median": 548.5057999999999,
+        "min": 543.9675,
+        "max": 598.6462
+      },
+      "median_delta_percent": -96.88210173224986,
+      "paired_geometric_mean_delta_percent": -96.92507029106318,
+      "paired_bootstrap_percentile_95_percent": [
+        -97.02727579765515,
+        -96.84445231727544
+      ]
+    },
+    "linear definition count=128 long=false order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 17609.570399999997,
+        "min": 17172.1258,
+        "max": 20382.147
+      },
+      "after": {
+        "median": 283.28065000000004,
+        "min": 278.3501,
+        "max": 328.1533
+      },
+      "median_delta_percent": -98.3913256055355,
+      "paired_geometric_mean_delta_percent": -98.39797308979337,
+      "paired_bootstrap_percentile_95_percent": [
+        -98.44530227646771,
+        -98.35294984395861
+      ]
+    },
+    "linear definition count=128 long=false order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 17429.31905,
+        "min": 17150.509,
+        "max": 18845.1829
+      },
+      "after": {
+        "median": 2443.3211,
+        "min": 2411.5537,
+        "max": 2658.6864
+      },
+      "median_delta_percent": -85.98154584817242,
+      "paired_geometric_mean_delta_percent": -86.11080594870518,
+      "paired_bootstrap_percentile_95_percent": [
+        -86.38176813321171,
+        -85.81821502050268
+      ]
+    },
+    "linear definition count=1 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.81284,
+        "min": 2.78368,
+        "max": 2.92074
+      },
+      "after": {
+        "median": 2.82371,
+        "min": 2.80933,
+        "max": 4.3431
+      },
+      "median_delta_percent": 0.3864421723240641,
+      "paired_geometric_mean_delta_percent": 2.6370446533314817,
+      "paired_bootstrap_percentile_95_percent": [
+        0.028769732488854755,
+        7.392363387634197
+      ]
+    },
+    "linear definition count=1 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.810285,
+        "min": 2.78328,
+        "max": 2.92285
+      },
+      "after": {
+        "median": 2.83002,
+        "min": 2.80963,
+        "max": 3.95424
+      },
+      "median_delta_percent": 0.702241943432802,
+      "paired_geometric_mean_delta_percent": 2.1256882694646415,
+      "paired_bootstrap_percentile_95_percent": [
+        -0.023808929506175327,
+        5.965356492885065
+      ]
+    },
+    "linear definition count=1 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 2.8120950000000002,
+        "min": 2.78328,
+        "max": 2.91253
+      },
+      "after": {
+        "median": 2.83934,
+        "min": 2.80933,
+        "max": 4.10203
+      },
+      "median_delta_percent": 0.968850625601192,
+      "paired_geometric_mean_delta_percent": 2.623144326450726,
+      "paired_bootstrap_percentile_95_percent": [
+        0.30324900162302415,
+        6.838357095816214
+      ]
+    },
+    "linear definition count=2 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.553685,
+        "min": 5.45395,
+        "max": 5.67186
+      },
+      "after": {
+        "median": 5.47228,
+        "min": 5.28131,
+        "max": 6.51559
+      },
+      "median_delta_percent": -1.465783529314324,
+      "paired_geometric_mean_delta_percent": 0.5688175773186142,
+      "paired_bootstrap_percentile_95_percent": [
+        -1.6261319734237125,
+        3.2364453164327145
+      ]
+    },
+    "linear definition count=2 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.58595,
+        "min": 5.46606,
+        "max": 5.83007
+      },
+      "after": {
+        "median": 5.564655,
+        "min": 5.29143,
+        "max": 5.94189
+      },
+      "median_delta_percent": -0.3812243217357847,
+      "paired_geometric_mean_delta_percent": -0.6294727521250437,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.1068696122899597,
+        0.8259893446689601
+      ]
+    },
+    "linear definition count=2 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 5.600075,
+        "min": 5.50915,
+        "max": 5.79851
+      },
+      "after": {
+        "median": 5.502185,
+        "min": 5.3299,
+        "max": 5.87586
+      },
+      "median_delta_percent": -1.7480123034066541,
+      "paired_geometric_mean_delta_percent": -0.9843438116717392,
+      "paired_bootstrap_percentile_95_percent": [
+        -2.520928732370237,
+        0.560233453560067
+      ]
+    },
+    "linear definition count=4 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18.85981,
+        "min": 18.68662,
+        "max": 19.35922
+      },
+      "after": {
+        "median": 17.43645,
+        "min": 17.24353,
+        "max": 28.7094
+      },
+      "median_delta_percent": -7.54705376141116,
+      "paired_geometric_mean_delta_percent": -4.427806185285374,
+      "paired_bootstrap_percentile_95_percent": [
+        -7.618362890093823,
+        0.9816469095369466
+      ]
+    },
+    "linear definition count=4 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18.838665,
+        "min": 18.68592,
+        "max": 19.42986
+      },
+      "after": {
+        "median": 17.330095,
+        "min": 17.23932,
+        "max": 24.53473
+      },
+      "median_delta_percent": -8.007839196673427,
+      "paired_geometric_mean_delta_percent": -3.5651634329007296,
+      "paired_bootstrap_percentile_95_percent": [
+        -7.407271658754194,
+        1.2961886255443218
+      ]
+    },
+    "linear definition count=4 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18.78191,
+        "min": 18.65155,
+        "max": 19.51402
+      },
+      "after": {
+        "median": 17.416015,
+        "min": 17.23492,
+        "max": 28.70969
+      },
+      "median_delta_percent": -7.27239668383034,
+      "paired_geometric_mean_delta_percent": -4.94074984738856,
+      "paired_bootstrap_percentile_95_percent": [
+        -7.834197501544315,
+        0.25849110052464647
+      ]
+    },
+    "linear definition count=8 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 74.971575,
+        "min": 74.53328,
+        "max": 78.05559
+      },
+      "after": {
+        "median": 68.23921,
+        "min": 62.50643,
+        "max": 79.64666
+      },
+      "median_delta_percent": -8.979890044993722,
+      "paired_geometric_mean_delta_percent": -8.047544660174953,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.76468558973913,
+        -6.022589385532441
+      ]
+    },
+    "linear definition count=8 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 74.93490499999999,
+        "min": 74.38038,
+        "max": 78.12802
+      },
+      "after": {
+        "median": 68.54786,
+        "min": 62.45453,
+        "max": 83.66963999999999
+      },
+      "median_delta_percent": -8.523457793133904,
+      "paired_geometric_mean_delta_percent": -7.863885933970255,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.769637139399354,
+        -5.395757808361211
+      ]
+    },
+    "linear definition count=8 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 74.96541500000001,
+        "min": 74.19874,
+        "max": 77.84418
+      },
+      "after": {
+        "median": 68.48799,
+        "min": 62.71413,
+        "max": 78.96936
+      },
+      "median_delta_percent": -8.640551112803163,
+      "paired_geometric_mean_delta_percent": -8.169366259817412,
+      "paired_bootstrap_percentile_95_percent": [
+        -10.181727818393858,
+        -5.851755495222832
+      ]
+    },
+    "linear definition count=9 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 95.344605,
+        "min": 94.46531,
+        "max": 97.64205
+      },
+      "after": {
+        "median": 86.82504,
+        "min": 80.77324000000002,
+        "max": 115.05631
+      },
+      "median_delta_percent": -8.935550155145123,
+      "paired_geometric_mean_delta_percent": -7.326637959803385,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.673311929975485,
+        -4.166064149527135
+      ]
+    },
+    "linear definition count=9 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 95.59113500000001,
+        "min": 94.72632,
+        "max": 99.90994
+      },
+      "after": {
+        "median": 87.20362,
+        "min": 80.57786,
+        "max": 106.30149
+      },
+      "median_delta_percent": -8.774364903188992,
+      "paired_geometric_mean_delta_percent": -7.701869041123389,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.618077757757918,
+        -5.369711757497859
+      ]
+    },
+    "linear definition count=9 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 95.794525,
+        "min": 94.58424,
+        "max": 97.73042
+      },
+      "after": {
+        "median": 87.1139,
+        "min": 79.65297,
+        "max": 98.04031
+      },
+      "median_delta_percent": -9.061713078069955,
+      "paired_geometric_mean_delta_percent": -9.26780270518835,
+      "paired_bootstrap_percentile_95_percent": [
+        -10.735861362587167,
+        -7.622354375317332
+      ]
+    },
+    "linear definition count=16 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 298.38730499999997,
+        "min": 284.79513,
+        "max": 305.66947
+      },
+      "after": {
+        "median": 274.32634,
+        "min": 249.97863,
+        "max": 297.8686
+      },
+      "median_delta_percent": -8.063669129623307,
+      "paired_geometric_mean_delta_percent": -8.181996737160233,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.77676438991083,
+        -6.6166784731699515
+      ]
+    },
+    "linear definition count=16 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 298.71298,
+        "min": 274.49132,
+        "max": 306.20782
+      },
+      "after": {
+        "median": 274.20215,
+        "min": 250.52318,
+        "max": 312.89235
+      },
+      "median_delta_percent": -8.205478717396208,
+      "paired_geometric_mean_delta_percent": -7.232539196115384,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.317506767266016,
+        -5.059890377157846
+      ]
+    },
+    "linear definition count=16 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 298.88842,
+        "min": 272.45217,
+        "max": 309.03889
+      },
+      "after": {
+        "median": 273.850275,
+        "min": 249.5033,
+        "max": 377.97525
+      },
+      "median_delta_percent": -8.377087677066907,
+      "paired_geometric_mean_delta_percent": -6.364738325901865,
+      "paired_bootstrap_percentile_95_percent": [
+        -9.440159788456604,
+        -2.4730537818498695
+      ]
+    },
+    "linear definition count=17 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 335.920255,
+        "min": 308.07663,
+        "max": 342.78012
+      },
+      "after": {
+        "median": 100.552975,
+        "min": 98.97843,
+        "max": 124.55057
+      },
+      "median_delta_percent": -70.0664150186478,
+      "paired_geometric_mean_delta_percent": -69.43252361235449,
+      "paired_bootstrap_percentile_95_percent": [
+        -70.1059879233892,
+        -68.56552007844321
+      ]
+    },
+    "linear definition count=17 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 336.19158000000004,
+        "min": 307.46054,
+        "max": 342.92009
+      },
+      "after": {
+        "median": 61.456955,
+        "min": 60.34836,
+        "max": 69.54634
+      },
+      "median_delta_percent": -81.71966263997452,
+      "paired_geometric_mean_delta_percent": -81.51911849173815,
+      "paired_bootstrap_percentile_95_percent": [
+        -81.81175066323814,
+        -81.16090869906077
+      ]
+    },
+    "linear definition count=17 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 336.473875,
+        "min": 307.29211,
+        "max": 342.48825
+      },
+      "after": {
+        "median": 196.539675,
+        "min": 190.37971,
+        "max": 226.34003
+      },
+      "median_delta_percent": -41.588429413724924,
+      "paired_geometric_mean_delta_percent": -40.80809846761328,
+      "paired_bootstrap_percentile_95_percent": [
+        -41.78543066011605,
+        -39.598478866848666
+      ]
+    },
+    "linear definition count=32 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1179.7435,
+        "min": 1081.6479,
+        "max": 1207.9881
+      },
+      "after": {
+        "median": 179.4504,
+        "min": 172.6307,
+        "max": 225.552
+      },
+      "median_delta_percent": -84.78903253122395,
+      "paired_geometric_mean_delta_percent": -84.49396603072367,
+      "paired_bootstrap_percentile_95_percent": [
+        -84.91621953545814,
+        -83.87992172637874
+      ]
+    },
+    "linear definition count=32 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1180.44985,
+        "min": 1079.5749,
+        "max": 1202.7971
+      },
+      "after": {
+        "median": 104.21645,
+        "min": 103.4019,
+        "max": 122.3365
+      },
+      "median_delta_percent": -91.17146315025582,
+      "paired_geometric_mean_delta_percent": -91.03090674604731,
+      "paired_bootstrap_percentile_95_percent": [
+        -91.18407906241157,
+        -90.83945923307581
+      ]
+    },
+    "linear definition count=32 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 1179.67585,
+        "min": 1080.9676,
+        "max": 1223.5693
+      },
+      "after": {
+        "median": 650.3386499999999,
+        "min": 637.4052,
+        "max": 828.8682
+      },
+      "median_delta_percent": -44.87141107449136,
+      "paired_geometric_mean_delta_percent": -43.631934127501474,
+      "paired_bootstrap_percentile_95_percent": [
+        -45.124895014519424,
+        -41.44449315704866
+      ]
+    },
+    "linear definition count=64 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4735.5211,
+        "min": 4355.6237,
+        "max": 5111.4818
+      },
+      "after": {
+        "median": 350.3287,
+        "min": 332.7162,
+        "max": 474.5573
+      },
+      "median_delta_percent": -92.60210877320344,
+      "paired_geometric_mean_delta_percent": -92.45774657678434,
+      "paired_bootstrap_percentile_95_percent": [
+        -92.67619963994933,
+        -92.18664247311004
+      ]
+    },
+    "linear definition count=64 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4763.6114,
+        "min": 4354.8953,
+        "max": 5818.5897
+      },
+      "after": {
+        "median": 199.57580000000002,
+        "min": 197.7613,
+        "max": 272.9817
+      },
+      "median_delta_percent": -95.81040972401738,
+      "paired_geometric_mean_delta_percent": -95.74462349491937,
+      "paired_bootstrap_percentile_95_percent": [
+        -95.90085047970234,
+        -95.57564168287276
+      ]
+    },
+    "linear definition count=64 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 4756.0302,
+        "min": 4350.2823,
+        "max": 5850.9352
+      },
+      "after": {
+        "median": 1478.5291,
+        "min": 1444.6636,
+        "max": 1765.9086
+      },
+      "median_delta_percent": -68.91253760331463,
+      "paired_geometric_mean_delta_percent": -68.64952604649535,
+      "paired_bootstrap_percentile_95_percent": [
+        -69.59628874623385,
+        -67.63250288884893
+      ]
+    },
+    "linear definition count=128 long=true order=ascending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18987.36735,
+        "min": 17462.9941,
+        "max": 29162.519
+      },
+      "after": {
+        "median": 756.3396,
+        "min": 744.9931,
+        "max": 838.533
+      },
+      "median_delta_percent": -96.01661680601549,
+      "paired_geometric_mean_delta_percent": -96.06302307767326,
+      "paired_bootstrap_percentile_95_percent": [
+        -96.23166651757774,
+        -95.9312753823257
+      ]
+    },
+    "linear definition count=128 long=true order=descending": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18958.41485,
+        "min": 17452.7704,
+        "max": 30207.0381
+      },
+      "after": {
+        "median": 449.25645,
+        "min": 443.852,
+        "max": 509.8085
+      },
+      "median_delta_percent": -97.63030583751573,
+      "paired_geometric_mean_delta_percent": -97.65052704810351,
+      "paired_bootstrap_percentile_95_percent": [
+        -97.75246639156585,
+        -97.57175097458266
+      ]
+    },
+    "linear definition count=128 long=true order=permuted": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 18940.7517,
+        "min": 17429.0845,
+        "max": 30303.5497
+      },
+      "after": {
+        "median": 3264.7179000000006,
+        "min": 3223.0303,
+        "max": 3895.9191
+      },
+      "median_delta_percent": -82.76352516674403,
+      "paired_geometric_mean_delta_percent": -82.73101747411606,
+      "paired_bootstrap_percentile_95_percent": [
+        -83.79476829159125,
+        -81.88415595344344
+      ]
+    },
+    "canonical DTO encoding": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 322.7262,
+        "min": 317.67989,
+        "max": 500.31834
+      },
+      "after": {
+        "median": 326.97255499999994,
+        "min": 317.80494,
+        "max": 336.78372
+      },
+      "median_delta_percent": 1.3157763453974125,
+      "paired_geometric_mean_delta_percent": -1.4915801109370552,
+      "paired_bootstrap_percentile_95_percent": [
+        -6.180104081956124,
+        1.5292614669757838
+      ]
+    },
+    "bounded outcome-log append": {
+      "samples_per_revision": 20,
+      "before": {
+        "median": 367.5623779296875,
+        "min": 355.10791015625,
+        "max": 530.799072265625
+      },
+      "after": {
+        "median": 368.809814453125,
+        "min": 356.2060546875,
+        "max": 429.604736328125
+      },
+      "median_delta_percent": 0.33938090466814064,
+      "paired_geometric_mean_delta_percent": -1.14688842371443,
+      "paired_bootstrap_percentile_95_percent": [
+        -4.26922035181413,
+        1.4660916486961173
+      ]
+    }
+  },
+  "whole_process_counters": {
+    "linear_saga": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 156132882.5,
+          "min": 155971831.0,
+          "max": 156209841.0
+        },
+        "after": {
+          "median": 156138754.5,
+          "min": 155986249.0,
+          "max": 156251701.0
+        },
+        "median_delta_percent": 0.0037608989893689326,
+        "paired_geometric_mean_delta_percent": 0.028052837456943428,
+        "paired_bootstrap_percentile_95_percent": [
+          0.00256453364432965,
+          0.05279780675118816
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 64057099.5,
+          "min": 62297699.0,
+          "max": 75597057.0
+        },
+        "after": {
+          "median": 64487281.0,
+          "min": 62008280.0,
+          "max": 76002205.0
+        },
+        "median_delta_percent": 0.6715594420568571,
+        "paired_geometric_mean_delta_percent": 1.1179674403877082,
+        "paired_bootstrap_percentile_95_percent": [
+          -2.5737250634638933,
+          4.9819783180128505
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 11.887525499999999,
+          "min": 11.523308,
+          "max": 14.20724
+        },
+        "after": {
+          "median": 11.988564499999999,
+          "min": 11.490097,
+          "max": 14.482985
+        },
+        "median_delta_percent": 0.8499582188067567,
+        "paired_geometric_mean_delta_percent": 1.0728424670535626,
+        "paired_bootstrap_percentile_95_percent": [
+          -2.8697926025901337,
+          5.214535028997968
+        ]
+      }
+    },
+    "graph_saga": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 831557508.5,
+          "min": 831374028.0,
+          "max": 831627242.0
+        },
+        "after": {
+          "median": 831558768.5,
+          "min": 831356560.0,
+          "max": 831725257.0
+        },
+        "median_delta_percent": 0.0001515228937432056,
+        "paired_geometric_mean_delta_percent": 0.0017984866096769833,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.004322905447050838,
+          0.007855769532911611
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 226926116.0,
+          "min": 223789664.0,
+          "max": 252371295.0
+        },
+        "after": {
+          "median": 229616416.0,
+          "min": 222433749.0,
+          "max": 252172295.0
+        },
+        "median_delta_percent": 1.1855400548079764,
+        "paired_geometric_mean_delta_percent": 1.7494523034797507,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.2718646242587834,
+          3.573762014233197
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 42.5096865,
+          "min": 41.844676,
+          "max": 47.718827
+        },
+        "after": {
+          "median": 43.294184,
+          "min": 41.575824,
+          "max": 46.841485
+        },
+        "median_delta_percent": 1.8454558586311842,
+        "paired_geometric_mean_delta_percent": 1.654468235053606,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.5383721876565815,
+          3.6071045001506485
+        ]
+      }
+    },
+    "replay_saga": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 2860388889.0,
+          "min": 2860207907.0,
+          "max": 2860744487.0
+        },
+        "after": {
+          "median": 2860393429.5,
+          "min": 2860183340.0,
+          "max": 2861236951.0
+        },
+        "median_delta_percent": 0.00015873715695224888,
+        "paired_geometric_mean_delta_percent": 0.002050850505884266,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.0006886149550738999,
+          0.005564555005033126
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 1206828490.5,
+          "min": 1187361300.0,
+          "max": 1331992478.0
+        },
+        "after": {
+          "median": 1214029697.5,
+          "min": 1188562671.0,
+          "max": 1339072662.0
+        },
+        "median_delta_percent": 0.5967050874823521,
+        "paired_geometric_mean_delta_percent": 0.46535739426077727,
+        "paired_bootstrap_percentile_95_percent": [
+          -1.0209707744720862,
+          2.184605878163798
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 225.042535,
+          "min": 220.836729,
+          "max": 253.433447
+        },
+        "after": {
+          "median": 226.8796565,
+          "min": 220.51523,
+          "max": 256.499503
+        },
+        "median_delta_percent": 0.8163441191239906,
+        "paired_geometric_mean_delta_percent": 0.4060393458438779,
+        "paired_bootstrap_percentile_95_percent": [
+          -1.4646684559838306,
+          2.553670893007098
+        ]
+      }
+    },
+    "parallel_linear_saga": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 601719959.5,
+          "min": 601529602.0,
+          "max": 601993215.0
+        },
+        "after": {
+          "median": 601777853.0,
+          "min": 601576099.0,
+          "max": 602137304.0
+        },
+        "median_delta_percent": 0.009621336152476623,
+        "paired_geometric_mean_delta_percent": 0.007437929906594675,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.005562951973053345,
+          0.020594824914381672
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 227406626.0,
+          "min": 224634709.0,
+          "max": 251323296.0
+        },
+        "after": {
+          "median": 228301554.0,
+          "min": 225639872.0,
+          "max": 272916153.0
+        },
+        "median_delta_percent": 0.3935364662593477,
+        "paired_geometric_mean_delta_percent": 2.235004450803993,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.0747235548032035,
+          4.904015418512633
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 42.506686,
+          "min": 41.709757,
+          "max": 47.976522
+        },
+        "after": {
+          "median": 43.197616,
+          "min": 42.077233,
+          "max": 52.339673
+        },
+        "median_delta_percent": 1.6254619332120912,
+        "paired_geometric_mean_delta_percent": 2.7365605388642606,
+        "paired_bootstrap_percentile_95_percent": [
+          0.07458051412293279,
+          5.766461481935894
+        ]
+      }
+    },
+    "parallel_graph_saga": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 3311970493.5,
+          "min": 3311758702.0,
+          "max": 3312343099.0
+        },
+        "after": {
+          "median": 3311950060.0,
+          "min": 3311671218.0,
+          "max": 3312264573.0
+        },
+        "median_delta_percent": -0.0006169589988780366,
+        "paired_geometric_mean_delta_percent": -0.0008414739669709931,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.0036353003403350012,
+          0.001859483051848545
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 900588502.0,
+          "min": 893503804.0,
+          "max": 984896442.0
+        },
+        "after": {
+          "median": 893988270.5,
+          "min": 882278171.0,
+          "max": 1200480594.0
+        },
+        "median_delta_percent": -0.7328798319479302,
+        "paired_geometric_mean_delta_percent": 1.1783005533424797,
+        "paired_bootstrap_percentile_95_percent": [
+          -2.1507146029163824,
+          5.3496057099843215
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 170.69194,
+          "min": 168.925067,
+          "max": 187.639852
+        },
+        "after": {
+          "median": 170.2460705,
+          "min": 166.709295,
+          "max": 232.869454
+        },
+        "median_delta_percent": -0.261212978187475,
+        "paired_geometric_mean_delta_percent": 1.3603569785290506,
+        "paired_bootstrap_percentile_95_percent": [
+          -2.2356094041161354,
+          5.900158750444843
+        ]
+      }
+    },
+    "definition_validation": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 36362299515.5,
+          "min": 36361056760.0,
+          "max": 36365721349.0
+        },
+        "after": {
+          "median": 9766226769.0,
+          "min": 9765927637.0,
+          "max": 9766594608.0
+        },
+        "median_delta_percent": -73.1418889918197,
+        "paired_geometric_mean_delta_percent": -73.14194408786506,
+        "paired_bootstrap_percentile_95_percent": [
+          -73.14229699601239,
+          -73.14164684069004
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 10282308698.0,
+          "min": 9931795602.0,
+          "max": 11997917321.0
+        },
+        "after": {
+          "median": 2383380935.5,
+          "min": 2323468013.0,
+          "max": 2527125652.0
+        },
+        "median_delta_percent": -76.82056622202377,
+        "paired_geometric_mean_delta_percent": -76.65354337784171,
+        "paired_bootstrap_percentile_95_percent": [
+          -77.15204548677026,
+          -76.21749072545096
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 1927.7290954999999,
+          "min": 1870.801635,
+          "max": 2276.577533
+        },
+        "after": {
+          "median": 450.4182065,
+          "min": 437.255125,
+          "max": 479.532932
+        },
+        "median_delta_percent": -76.63477676653659,
+        "paired_geometric_mean_delta_percent": -76.564672309853,
+        "paired_bootstrap_percentile_95_percent": [
+          -77.08076457646087,
+          -76.1188406222444
+        ]
+      }
+    },
+    "contract_throughput": {
+      "instructions": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 857470109.5,
+          "min": 857302576.0,
+          "max": 857589063.0
+        },
+        "after": {
+          "median": 857500608.5,
+          "min": 857284912.0,
+          "max": 857576131.0
+        },
+        "median_delta_percent": 0.0035568586778778055,
+        "paired_geometric_mean_delta_percent": 0.0037154467400179604,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.0014881602890165551,
+          0.008642890908381688
+        ]
+      },
+      "cycles": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 185415083.0,
+          "min": 182860238.0,
+          "max": 283218061.0
+        },
+        "after": {
+          "median": 188041454.5,
+          "min": 183554811.0,
+          "max": 192118092.0
+        },
+        "median_delta_percent": 1.4164821208207723,
+        "paired_geometric_mean_delta_percent": -1.4926937751108216,
+        "paired_bootstrap_percentile_95_percent": [
+          -5.842846937725646,
+          1.2798535408789096
+        ]
+      },
+      "task-clock": {
+        "samples_per_revision": 20,
+        "before": {
+          "median": 35.10898,
+          "min": 34.301484,
+          "max": 53.661576
+        },
+        "after": {
+          "median": 35.326367000000005,
+          "min": 34.352852,
+          "max": 36.413665
+        },
+        "median_delta_percent": 0.6191777716128444,
+        "paired_geometric_mean_delta_percent": -1.4335120574811049,
+        "paired_bootstrap_percentile_95_percent": [
+          -5.8130616976917615,
+          1.3477430836227764
+        ]
+      }
+    }
+  }
+}

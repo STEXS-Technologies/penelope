@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "measured_at": "2026-10-30T11:13:54.202839+00:00",
+  "revisions": {
+    "before": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+    "after": "dd9d2628bf73a658d74b2ac417aa6d8015e3d1b3"
+  },
+  "serial_cpu": 0,
+  "parallel_cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "runs": 20,
+  "warmup_processes_per_binary": 1,
+  "benchmarks": [
+    "parallel_linear_saga"
+  ],
+  "perf": {
+    "version": "perf version 7.2.9-100.fc43.x86_64",
+    "events": [
+      "task-clock",
+      "instructions",
+      "cycles",
+      "context-switches",
+      "cpu-migrations"
+    ],
+    "scope": "GNU time wrapper and benchmark, including all child threads"
+  },
+  "runner_sha256": "9b473fd4e3404eb750d1abec439d612d1f54e2227014e6c94eaff9f2376ed1ea",
+  "build_target_policy": "separate explicit target directory in each archived snapshot",
+  "order": "alternating before/after by round; fixed benchmark order within each revision",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "CARGO_TARGET_DIR": null,
+    "CARGO_PROFILE_BENCH_OPT_LEVEL": null,
+    "CARGO_PROFILE_BENCH_LTO": null,
+    "CARGO_PROFILE_BENCH_CODEGEN_UNITS": null
+  },
+  "cache_policy": "one warmup; OS caches uncontrolled; no cold-cache claim",
+  "resources": "GNU time process wall/user/system seconds and peak RSS KiB, including threads",
+  "limitations": [
+    "pure in-process workloads, no persistence or external execution",
+    "allocations and stack high-water marks not measured",
+    "RSS is whole-process peak, not incremental library memory",
+    "each revision uses its own locked dependencies; lock hashes disclosed"
+  ],
+  "sources": {
+    "before": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c"
+    },
+    "after": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c"
+    }
+  },
+  "locks": {
+    "before": "5e1cba239f7b8e81a4238a1507cc9f16e04c3789a8aca5a9d81d0e9329eb50fe",
+    "after": "461abc6e2125e821baa67d260648f85ff332c674e75db3d3fdf4d084e6b303eb"
+  },
+  "binaries": {
+    "before": {
+      "parallel_linear_saga": "6ad0b8c8085e0692a50f686b361bd21cd7701876ea6a06fcc3f1d967fd7a36ae"
+    },
+    "after": {
+      "parallel_linear_saga": "26f0368df8738965df7a66e0023dd7a9ab511081d6702cd47dc86b01076d3bcc"
+    }
+  }
+}

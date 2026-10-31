@@ -1,0 +1,43 @@
+{
+  "baseline_source": "4f1a0f39cc84974d81aaf67c48f9ecee3db41fda",
+  "candidate_source": "5966fe2b32b3b5ac53c3ed049294e20e5ab25618",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "schema_sha256": "2ffa90d2198164aca566c2d6f952aec0e126b4d43a6ea34e6db01df1a26c2cbc",
+      "binaries": {
+        "batch": {
+          "path": "target/final-index-latency-baseline-batch",
+          "sha256": "2939d973bdc75b093fbc1b196342acfcb642bcec89c02ee944e5408e3e966bae"
+        },
+        "history": {
+          "path": "target/final-index-latency-baseline-history",
+          "sha256": "35bab6c1e6593c3cfe43ad4210c5f142aed8adb21e286ddc492d3423204d3e5b"
+        }
+      }
+    },
+    "candidate": {
+      "schema_sha256": "61026736596d0729bf247b582eb03ddff7c357b93efd5aefff0723e5b94836d8",
+      "binaries": {
+        "batch": {
+          "path": "target/final-index-latency-candidate-batch",
+          "sha256": "b5d744e1c59fa2aaaf2a7b268a0b8c135f163602495185596660da279babed75"
+        },
+        "history": {
+          "path": "target/final-index-latency-candidate-history",
+          "sha256": "c9dad8368ee4aac76ae18120a790fbedb2c488783090b3ec8a85ebfb7039aaa2"
+        }
+      }
+    }
+  },
+  "benchmark_sha256": {
+    "claim_history": "5cb1c6f933302b3fdc28dad1fb35f903fbc92c7c2c3d698fa552544af8208d84",
+    "lease_batch": "6e1d835098a89c87c773441c60cf39bfca68e73172d1a00c065a69ad0b3915f5"
+  },
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 20,
+  "order": "alternating AB/BA; batch then history per variant",
+  "own_background_jobs": "no builds, tests, or graph jobs during campaign"
+}

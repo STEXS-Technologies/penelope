@@ -1,0 +1,28 @@
+{
+  "baseline_revision": "738b75bb2c945ddd22a004b20d129ea14d048fc2",
+  "baseline_countercheck": "Only restore the original Vec-based ACK construction in the candidate runtime; the zero-allocation assertion must fail with left=2, right=0. Restore candidate afterward.",
+  "checks": {
+    "stable": "cargo test -p penelope-process-runtime --lib --tests --all-features",
+    "msrv": "cargo +1.85.0 test -p penelope-process-runtime --lib --tests --all-features",
+    "clippy": "cargo clippy -p penelope-process-runtime --all-targets --all-features -- -D warnings"
+  },
+  "environment": {
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "TMPDIR": "/home/ac/projects/penelope/target/qualification-temp",
+    "MSRV_CARGO_TARGET_DIR": "target/worker-audit-msrv"
+  },
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/runtime.rs": "e3e92fd71c71512490f406379ba9ffa97a6081c14d4d574134e1aa0c7c411dad",
+    "crates/penelope-process-runtime/src/io_tests.rs": "cc2934ed83e70c704bd9dbc9030f36881b36a0e76ec7b735fe702d1ba78658c6",
+    "crates/penelope-process-runtime/tests/worker_protocol_allocations.rs": "b5745c968d6bd65dedb8d3ada54feb1f532e9dd5688cfe75af535a2785c9c882",
+    "crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs": "4333f838c64bccbaea296933affba1394dc06d7a9acb52362e92ba9ce46c55f0"
+  },
+  "artifact_sha256": {
+    "runtime-ack-baseline.log.gz": "c155be23ace3d0b2774b5e2d5420dbd61bdcb0374bc986ede1d911ffaaa5a0a2",
+    "runtime-fixed-buffers-clippy.log.gz": "fe0cbba4a74c3764a42afc9a06d1a34f65acb8847b9fa4cb18bf1b54c3530347",
+    "runtime-fixed-buffers-msrv.log.gz": "0f6c9040312ac3868756d632e4ba9b599717e27e3b12ac67e3ef99ed8a794c93",
+    "runtime-fixed-buffers-stable.log.gz": "91cd5f6183e1c62db38285b48ae9639f6234ce0510cf2fca7ec8b3b756c1b83b"
+  },
+  "scope": "Allocation counts, deterministic identity compatibility and runtime tests; no end-to-end latency or global application slowdown percentage measured."
+}

@@ -1,0 +1,77 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/worker-audit-msrv/debug/deps/penelope_sqlite-3b64f145c1236517)
+
+running 34 tests
+test process::fault_tests::crash_worker ... ok
+test process::encode_tests::failed_or_oversized_encoding_cannot_contaminate_a_later_value ... ok
+test schema::tests::migration_process_helper ... ok
+test tasks::fault_tests::crash_worker ... ok
+test process::encode_tests::reused_encoding_matches_json_at_exact_size_boundaries ... ok
+test worker::panic_tests::disconnected_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::tests::replacing_executor_waker_runs_destructor_without_completion_lock ... ok
+test worker::waker_tests::panicking_clone_or_temporary_waker_drop_preserves_unpoisoned_result ... ok
+test worker::waker_tests::cloning_executor_waker_can_complete_response_without_lock_or_lost_result ... ok
+test worker::waker_tests::repeated_pending_polls_reuse_registration_without_cloning_executor_waker ... ok
+test worker::tests::queue_exhaustion_is_immediate_and_cancellation_does_not_undo_commits ... ok
+test worker::panic_tests::full_queue_cleanup_returns_admission_error_without_unwinding ... ok
+test worker::panic_tests::operation_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test worker::panic_tests::nested_result_destructor_cannot_abort_worker_or_strand_accepted_work ... ok
+test worker::panic_tests::notification_panic_payload_destructor_cannot_strand_accepted_work ... ok
+test task_decode::tests::scratch_reuse_preserves_shorter_records_and_owned_results ... ok
+test worker::panic_tests::canceled_result_destructor_cannot_strand_accepted_work ... ok
+test worker::tests::panicking_waker_cannot_strand_accepted_work_or_discard_committed_result ... ok
+test worker::tests::only_latest_registration_is_woken_after_repeated_polls_and_cancellation ... ok
+test tasks::key_tests::array_and_legacy_keys_bind_as_identical_sqlite_blobs ... ok
+
+running 1 test
+test process::fault_tests::lease_clock_tests::new_outbox_claim_samples_clock_after_contended_writer_lock ... ok
+test process::fault_tests::lease_clock_tests::expired_outbox_lease_is_reclaimed_using_time_after_writer_lock ... ok
+test task_decode::tests::scope_encoding_bound_covers_every_digest_byte_and_fails_on_short_buffers ... ok
+test process::fault_tests::lease_clock_tests::clock_failure_and_expiry_overflow_release_the_writer_lock ... ok
+
+running 1 test
+
+running 1 test
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... ok
+
+running 1 test
+
+running 1 test
+test tasks::fault_tests::process_kill_at_each_transaction_boundary_preserves_atomicity ... ok
+
+running 1 test
+
+running 1 test
+test process::fault_tests::process_death_never_splits_atomic_saga_commit ... ok
+
+running 1 test
+test tasks::fault_tests::record_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::fault_tests::blob_reads_preserve_engine_error_categories_and_recover ... ok
+test tasks::key_tests::fixed_scope_keys_preserve_all_legacy_bytes ... ok
+test tasks::fault_tests::head_reads_preserve_engine_error_categories_and_recover ... ok
+
+running 1 test
+
+running 1 test
+
+running 1 test
+test schema::tests::inbox::sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows ... ok
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+test schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... ok
+test task_decode::tests::replay_scope_decoder_matches_core_json_forms_and_mutated_records ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.12s
+

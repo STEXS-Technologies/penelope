@@ -1,0 +1,4 @@
+   Compiling penelope-domain v0.3.0 (/home/ac/projects/penelope/crates/penelope-domain)
+   Compiling penelope-ports v0.3.0 (/home/ac/projects/penelope/crates/penelope-ports)
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `release` profile [optimized] target(s) in 2.43s

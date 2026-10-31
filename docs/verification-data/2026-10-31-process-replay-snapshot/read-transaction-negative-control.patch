@@ -1,0 +1,11 @@
+--- a/crates/penelope-sqlite/src/process.rs
++++ b/crates/penelope-sqlite/src/process.rs
+@@ -392,7 +392,7 @@
+         let request = request.clone();
+         let limits = self.limits;
+         self.worker.run(move |connection| {
+-            let transaction = connection.transaction().map_err(|error| db_error(&error))?;
++            let transaction = &*connection; // negative control: separate statement snapshots
+             let key = request.scope.canonical_bytes();
+             let next = process_head(&transaction, &key)?.map_or(0, |(next, _used)| next);
+             let next = u64::try_from(next).map_err(|_negative| PortError::Invariant)?;

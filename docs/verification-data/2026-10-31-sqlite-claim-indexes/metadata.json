@@ -1,0 +1,20 @@
+{
+  "baseline_source": "4f1a0f39cc84974d81aaf67c48f9ecee3db41fda",
+  "candidate_source": "b86a438ecb3ff5658b3551cab31043be46282d87",
+  "compiler": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "comparison": "indexed/unindexed controls in the same candidate binary, not timed baseline/candidate application runs",
+  "source_sha256": {
+    "benchmark": "9c695148d8105214aadb22c87d185ac83d4f536c8ef7f83924f9a131f96c6798",
+    "leases": "5f2dcce7f0fc824516b0d23bcf1e20ff65e373a553a328a3d56251c25e25721b",
+    "schema": "358792d2281267ca8247fa494333e68d175bf53e6a8ddff8006c5d0a37b782f9"
+  },
+  "queries": {
+    "OUTBOX": "SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3",
+    "TIMERS": "SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3"
+  }
+}

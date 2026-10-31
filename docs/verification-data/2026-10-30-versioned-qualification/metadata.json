@@ -1,0 +1,261 @@
+{
+  "candidate": "16e3e1e3e3c7038aea4f3708cb9cc519fedaf664",
+  "checks_exit": 0,
+  "measurements_exit": 0,
+  "coverage": "94.3494%",
+  "unchanged_ratchet": "94.0759%",
+  "package_archive_sha256": {
+    "penelope-0.3.0.crate": "95874e85300be742650139374ab50428120eacccaa08d530274a4d894935d2f9",
+    "penelope-core-0.3.0.crate": "ec2ae9d02d0fb02f945aa5c6c34b4e2c1b7d22731e0241ad76517ad91ea685ca",
+    "penelope-domain-0.3.0.crate": "c0b6e9018d8eb1a24405509e2a14d2a09cb2b8fca0aaad2f8503e2870571bd4a",
+    "penelope-executor-0.3.0.crate": "934bcd2f8a24ff1879c34e7edde830b977b22ca21b3ade285ae468b82cee5da6",
+    "penelope-intent-0.3.0.crate": "2e254ad825a9223992f6ca9e62aac7f27b0b802f33028458652b8e123ef1ca05",
+    "penelope-ports-0.3.0.crate": "7c244bfa92db6e26e0c2ac9d002f77d7c9fc14e551eb14aa44bb64a6cd1f80ad",
+    "penelope-process-runtime-0.3.0.crate": "2f2320e691396c6150ecfd70e5985ec3eb9282a7a30c54e0495a8fba888fbd5c",
+    "penelope-sqlite-0.3.0.crate": "cdb522cca2f95b0c2c63a2e3ad17cfd23f78fe97cc6f6463e9fdbd29191f572b",
+    "penelope-statechronicle-0.3.0.crate": "d0b8952e6f143a47d585b94cf4a0757e388b35c8aebbc67a9916bee560632f04"
+  },
+  "logs": [
+    {
+      "file": "versioned-action-pins.log.gz",
+      "original_sha256": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "archive_sha256": "553a849b1058ef3c8665e374133c8e354ea5b5980ed4d329398439a1b56ec05d"
+    },
+    {
+      "file": "versioned-audit.log.gz",
+      "original_sha256": "3004077a93a3df63d2aed74d4b3ff3670dc47777f2e450dfe4464eb783b61f9b",
+      "archive_sha256": "0ed744f458f9b87c4ac440352a8db07c3ecd467d7694c2aaba200f84d506238e"
+    },
+    {
+      "file": "versioned-chaos-runners.log.gz",
+      "original_sha256": "2f65d311068595da2b5a217d2246eec6e3f346e048a59f5669aa93319ce6774d",
+      "archive_sha256": "aef1bf26aa295fe328696de8206c2729a5cb8b8be2bada3f99213eb1f14cf4d9"
+    },
+    {
+      "file": "versioned-checks.log.gz",
+      "original_sha256": "45b2990d4bc67b4fab4ecd6eec1a17cc3d0190970104d718776f2db69cc1b6e0",
+      "archive_sha256": "72079b32f741348fa01eb01b38e97754c7749a4ab13607296eb0f0a46b97a8ea"
+    },
+    {
+      "file": "versioned-clippy.log.gz",
+      "original_sha256": "0123444f48bfec05c16a598afe1b1106b11cd2b3afd4ffbbc684e4d7aded1fa3",
+      "archive_sha256": "027ffbb07347b1bc305e30ba683a9a1df0b624ce3cfd8fb58c80ef677efe54e4"
+    },
+    {
+      "file": "versioned-coverage-ratchet.log.gz",
+      "original_sha256": "8ed9dc58be6bd56b7e48982a96b780cdec9061f095d1477199a97707047f93e9",
+      "archive_sha256": "512cba3f3513264c0a03b1b8331314f67c78af00572b30657764d8c31b985a7f"
+    },
+    {
+      "file": "versioned-coverage.log.gz",
+      "original_sha256": "d48ef26841edcda5c30c039ee841fec283aee69cf302572f6a0ccee478861e0b",
+      "archive_sha256": "a0741649017d119df0f652731fe30716ba9c4a7440557f0a9b42005db875f516"
+    },
+    {
+      "file": "versioned-deny.log.gz",
+      "original_sha256": "e9d38d0911fb24a468520ff68713c07864c8cf8ec6828526d93ed55dd728661e",
+      "archive_sha256": "79a1d8f19071e1343674cbbbe6525270fccec1071c2cbc40dcd2727adf2c7a40"
+    },
+    {
+      "file": "versioned-doctests.log.gz",
+      "original_sha256": "02880770eaf92bc358520ee023c23d43e1d0ec0bcccdb31c891733e2c29fc107",
+      "archive_sha256": "a69d52508d5374b11fd91bf19f5530c763e027500e69556bc281106cea1c14e9"
+    },
+    {
+      "file": "versioned-fmt.log.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "versioned-layers-negative.log.gz",
+      "original_sha256": "35051b05eeaec8ed11ee8bed8ef10099337f0bb6242166fe482fbd14edeacc01",
+      "archive_sha256": "e810b0313d422fea3dced488171bbc5e705279e60b51a951b3cc8bdc0562ce3b"
+    },
+    {
+      "file": "versioned-layers.log.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "versioned-measurements.log.gz",
+      "original_sha256": "2ce2c2c5e9235dd5a637b4362cf2e1af73db8d71ac949403ac5ac31854251d7a",
+      "archive_sha256": "46343291137ae251d90fc741d62f8a1717d3bf9e37f2e9ff9612c3264becfb5d"
+    },
+    {
+      "file": "versioned-msrv.log.gz",
+      "original_sha256": "6b8f1671cf5c689a11c9fe8d4a52944c8b7c2ed360aee70515eb008a1c636d32",
+      "archive_sha256": "27fab39fc2b1f464a93670d551af3537f05a271e26958eefbfdccbdda34ab575"
+    },
+    {
+      "file": "versioned-packages.log.gz",
+      "original_sha256": "4dd7b00769a7b0528eee7c6df6896dfdc477047f7be41a5998e856371595f859",
+      "archive_sha256": "8f3795ddbdd03318ff3bf54130e7b07a2a233b4a0ea8e04f2cbbd69771b76584"
+    },
+    {
+      "file": "versioned-python.log.gz",
+      "original_sha256": "cdcb244a8f195ec6a1c49be7178f80160b9915c0aadab5d5042282d5ee4e1656",
+      "archive_sha256": "feeca1812bad88b7e5d41dee7b3067c27eb7933360f12ad129731fa159cdeaaa"
+    },
+    {
+      "file": "versioned-riscv-serde.log.gz",
+      "original_sha256": "e8d0d70687efa673d5fdd79349cbd1bbe2523eacde0df519a92006dec53ef2cc",
+      "archive_sha256": "c44fb407e04ce8d11e47eb0b930915606dd3daacc47ac0f18c1eba630fe18626"
+    },
+    {
+      "file": "versioned-riscv.log.gz",
+      "original_sha256": "62f91c88e56f6b1ef1ec2537349f74d37280a3e3163c537b175313095f908632",
+      "archive_sha256": "42ffb74ca14dcace41cb9c1e8f656a463f82c8ac7954878b1666c10550cf7cd8"
+    },
+    {
+      "file": "versioned-rustdoc.log.gz",
+      "original_sha256": "564e56fc8706d879c8eeb1be4e7de97eda45afa2669c8ba882fbdd81f62043d0",
+      "archive_sha256": "073d1a82c16dead49280df210505ab5babebc878541a93f132669969e2f9c16f"
+    },
+    {
+      "file": "versioned-secrets.log.gz",
+      "original_sha256": "24959f1412f7880d6db272930542826958b51f612a95820ec0b4b1d04d4ddf55",
+      "archive_sha256": "f1a0218bcb0da091bef80e6d3689e8ffd9fb4a398713ea53f42bd8d0954029cc"
+    },
+    {
+      "file": "versioned-stable.log.gz",
+      "original_sha256": "fb5f661474a5a8b3a5f25af7b29b74edc05c87200958ac8229d68136a09be41b",
+      "archive_sha256": "814fcd8b69ee4d21a67b56290d278e6d333f6ed87b5344a6e207066f784ae372"
+    },
+    {
+      "file": "versioned-upstream.log.gz",
+      "original_sha256": "e68d2ccebf72129da5f6677bc5048f7142010bfadfa31769261f8edde22aa5c0",
+      "archive_sha256": "9cabacc598c62c0d2b04d795be225cab56c013d06b4aab05e830307f093cd53b"
+    },
+    {
+      "file": "versioned-whitespace.log.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "versioned-checks.sh.gz",
+      "original_sha256": "f7df2d2a10bd37d1a7f90368cbe68ddc1ac69ee9d7c4b5f76972f5e0f3e124ad",
+      "archive_sha256": "175c71fa274a874585524a4686cdfea360f24e77403b6735cd75633b2a6621b4"
+    },
+    {
+      "file": "versioned-measurements.sh.gz",
+      "original_sha256": "c3c08a5b65bb563f575f0fbec6db42f7d34d0aaeda56f7d15b36299c29b2d2a7",
+      "archive_sha256": "48d2a93837f6609d9fb070d542e75eeb26f97fb306096221c344e713d3282ebe"
+    },
+    {
+      "file": "versioned-checks.exit.gz",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "archive_sha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae"
+    },
+    {
+      "file": "versioned-measurements.exit.gz",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "archive_sha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae"
+    },
+    {
+      "file": "versioned-checks.process.json.gz",
+      "original_sha256": "8bebc7e851f680bb536c9be58693e770c47d6cca4fc2931c5de03391b216b0d3",
+      "archive_sha256": "8521bde1aa8fc7785c0eba9a5f144d05c0459e3058871a009d85f54a37460ca7"
+    },
+    {
+      "file": "versioned-measurements.process.json.gz",
+      "original_sha256": "e78c218cfdb1d34c63831da31c31c3cef158aaacf6b62c353219b492896e6503",
+      "archive_sha256": "cf44c2c2f199ef1c068595a72251adbad0c1914dac653891360051a283a75c88"
+    },
+    {
+      "file": "versioned-checks.log.fuzz-version-failed.gz",
+      "original_sha256": "48df04660b9d76e5bff318eb385a4d1025772e51af2d10dba468867c4d5b4773",
+      "archive_sha256": "de43fb544a66f1c3c0d2267aea9948c372da1c9d25b8d8fd1777d0c294d0d6a9"
+    },
+    {
+      "file": "versioned-checks.process.json.fuzz-version-failed.gz",
+      "original_sha256": "8a195e2d08d392c9a8c62252f4fa90868521fb796ab09e008dfe86a959c1a676",
+      "archive_sha256": "9724d56c7deafb76e82c9873433be726fe8d73f63d40c34d5d827996cf99b3cb"
+    },
+    {
+      "file": "versioned-fmt.log.fuzz-version-failed.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "versioned-stable.log.fuzz-version-failed.gz",
+      "original_sha256": "51fc383df85b0fdee3426bec28aa330bf71fa5bd670ac3928679927cd3e58998",
+      "archive_sha256": "2e9cf9d97829a845c3e39b75b9471244fd9877a4cccb889ea1ccc9d3e76087c4"
+    },
+    {
+      "file": "versioned-msrv-portable.log.gz",
+      "original_sha256": "a77269db06a603c7a4104679958ec174c14137b424ffd77943b931dafb87a6dd",
+      "archive_sha256": "0eb18503df2dc4951c52413505c00aa266378317148022bd43dbc8e13862b230"
+    },
+    {
+      "file": "versioned-msrv-portable.exit.gz",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "archive_sha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae"
+    },
+    {
+      "file": "remote-ci-16e3e1e.json.gz",
+      "original_sha256": "4bb14b41ad83da911e36f13577e00eae12a64deaa53c8312d2d1a5e5a50f3af3",
+      "archive_sha256": "74eb5f6cb09c0caa8b1a60dba0f1a2ce520a04220a9aa2426dd9095d66eb8013"
+    },
+    {
+      "file": "remote-ci-16e3e1e.log.gz",
+      "original_sha256": "f1f5e75723ecba43e6a6b7671cb6213012b663c88c03a28d858081ee3533cfeb",
+      "archive_sha256": "05f27ea394ce1f2f49d5325a45ae473b6a2b57171834b9af4d910028db434ad0"
+    },
+    {
+      "file": "remote-release-16e3e1e.json.gz",
+      "original_sha256": "85addf9b376c3990e3663718ea3fc6300ce6ec644833be350530339d2067e661",
+      "archive_sha256": "b0cead7a71e4854e10b9f7a7c3fbcd0e84ee775a9c81a2297cf867a59f2afe81"
+    },
+    {
+      "file": "remote-release-16e3e1e.log.gz",
+      "original_sha256": "ecd1e8a98dd5fd3a6df58e5a54c0f4e84ff2540b68401c94b2ec66ff98774e89",
+      "archive_sha256": "d992d0dc0926de1f08e518623e53508ddfd88059635b441f95dca8fd1563579d"
+    },
+    {
+      "file": "remote-release-1a5ab5e-failed.json.gz",
+      "original_sha256": "bc5cdd77fc7c6f283752b4b24780701d846d33414e80727a317511a905134d01",
+      "archive_sha256": "fba95e368ee303b1d2264f77eb961922cd9510b5a0a965b325a9fc60b657e1de"
+    },
+    {
+      "file": "remote-release-1a5ab5e-failed.log.gz",
+      "original_sha256": "5d585249e88429609e4e6409cb8fb29a38a427c19d655222e1758c9b3929b994",
+      "archive_sha256": "1a477da27369c0658f678cf258596e388466484b24ee1428b013d18949348105"
+    },
+    {
+      "file": "final-doc-packages.log.gz",
+      "original_sha256": "d875e646be76b108297cc0c21d3910126ee53a3146353528202ec0d572b393b0",
+      "archive_sha256": "f85e4a54fdec106141fe3a7293ab124801a05379a34bae4c20071bc888850da4"
+    },
+    {
+      "file": "release-notes-0.3.0-final.md.gz",
+      "original_sha256": "18edc9eed980d9749deb4907d8f04eed5558c3393f8f366a45e17bda794740ef",
+      "archive_sha256": "e08b61b550ca235ba0a9f18c8f56b0ea1360c995d72410dd09679602e7accfc6"
+    }
+  ],
+  "failure_retained": "First 0.3.0 metadata attempt 1a5ab5e retained old fuzz dependency constraints. Cargo rejected resolution before compilation. Fixed at candidate 16e3e1e; complete checks reran and passed.",
+  "msrv_portable": "Rust 1.85.0 core tests without default features, with/without Serde, and both RISC-V feature profiles passed.",
+  "remote": {
+    "CI": 41113165133,
+    "verification_only_release": 41113175257,
+    "publishing": "both publication jobs skipped",
+    "head": "16e3e1e3e3c7038aea4f3708cb9cc519fedaf664"
+  },
+  "final_readme_package_verification": {
+    "scope": "Reverified after crate README qualification wording updated; Rust sources, manifest versions and dependency locks unchanged from candidate.",
+    "package_archive_sha256": {
+      "penelope-0.3.0.crate": "5654888ed0251274b3c5773eee96be5ae5e3d03306366a799137496e9cc47736",
+      "penelope-core-0.3.0.crate": "ec2ae9d02d0fb02f945aa5c6c34b4e2c1b7d22731e0241ad76517ad91ea685ca",
+      "penelope-domain-0.3.0.crate": "c0b6e9018d8eb1a24405509e2a14d2a09cb2b8fca0aaad2f8503e2870571bd4a",
+      "penelope-executor-0.3.0.crate": "5fff049d6538f26f3dcc9a3761d268e48b71990256c76d0e2f432c54cd669e45",
+      "penelope-intent-0.3.0.crate": "2e254ad825a9223992f6ca9e62aac7f27b0b802f33028458652b8e123ef1ca05",
+      "penelope-ports-0.3.0.crate": "7c244bfa92db6e26e0c2ac9d002f77d7c9fc14e551eb14aa44bb64a6cd1f80ad",
+      "penelope-process-runtime-0.3.0.crate": "18cf29473f9182221ee966fc2f6fe575975daae6749e08d0ae3e8bfe8de3175c",
+      "penelope-sqlite-0.3.0.crate": "6a4ab5a515c3a1c40892e197c505611225fb97769d1b178e199482fa19f2689b",
+      "penelope-statechronicle-0.3.0.crate": "d0b8952e6f143a47d585b94cf4a0757e388b35c8aebbc67a9916bee560632f04"
+    },
+    "readme_sha256": {
+      "crates/penelope-sqlite/README.md": "47c261dfebd22c80f7aca29b209437f428c8e546aafd9e48b4b63d2b31eedcd3",
+      "crates/penelope-process-runtime/README.md": "9113c397ae3f54cd0836fb545d8facba2faa29f82e43bc5466c9fb4bd7964854"
+    }
+  }
+}

@@ -1,0 +1,500 @@
+REPEAT 0
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.36s
+
+REPEAT 1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.34s
+
+REPEAT 2
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.35s
+
+REPEAT 3
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.36s
+
+REPEAT 4
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.33s
+
+REPEAT 5
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.32s
+
+REPEAT 6
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.32s
+
+REPEAT 7
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.36s
+
+REPEAT 8
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.37s
+
+REPEAT 9
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.34s
+
+REPEAT 10
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.34s
+
+REPEAT 11
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.38s
+
+REPEAT 12
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.40s
+
+REPEAT 13
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.44s
+
+REPEAT 14
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.35s
+
+REPEAT 15
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.40s
+
+REPEAT 16
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.49s
+
+REPEAT 17
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.40s
+
+REPEAT 18
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.40s
+
+REPEAT 19
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... case=0 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=0 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=0 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=1 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=2 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=3 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=4 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=5 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=6 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+case=1 round=7 model=retire-first stopped_identity_preserved=true retirement_tombstone_durable=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.43s
+

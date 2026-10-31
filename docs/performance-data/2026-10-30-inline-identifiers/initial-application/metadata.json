@@ -1,0 +1,36 @@
+{
+  "started_utc": "2026-10-30T21:49:15.333423+00:00",
+  "revisions": {
+    "before": "46c0ab178b97c86044ac3cbe47b826a17e703c41",
+    "after": "719cc07c1c95d757153d3519175c600dc8585463"
+  },
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "affinity": [
+    0
+  ],
+  "process_pairs_per_identifier_size": 4,
+  "within_process_rounds": 40,
+  "warmups_per_work_size": 100,
+  "scope": "one-step in-memory linear saga, short and long identifiers; no I/O or durability",
+  "sources": {
+    "before": "407f3cf9196dc0800b4b5cc3991c436a7bb2eaaef85acc9d050c7950398b1dd9",
+    "after": "407f3cf9196dc0800b4b5cc3991c436a7bb2eaaef85acc9d050c7950398b1dd9"
+  },
+  "binaries": {
+    "before": "c65c219c4195793af41e4a00a2fbf4206043dd78052534586007d5f979597592",
+    "after": "00d20f05f5a53d20858b998d485ae8fc4d1a22aa632ad569ca0818d2853e5813"
+  },
+  "locks": {
+    "before": "987d79e0c05ca6d7dbf657accf11ec05eff366da031fae27cbbd531ed5359505",
+    "after": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb"
+  },
+  "build_environment": {
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null
+  },
+  "finished_utc": "2026-10-30T21:50:19.865744+00:00"
+}

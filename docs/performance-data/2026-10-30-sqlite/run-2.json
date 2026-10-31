@@ -1,0 +1,100 @@
+{
+  "cache": "OS cache is uncontrolled; warm and reopened-connection runs only",
+  "checkpoint_payload": "one deduplicated immutable 64-byte blob",
+  "journal_mode": "WAL",
+  "process": {
+    "claim_to_ack_without_external_execution": {
+      "p50_ns": 1302868,
+      "p95_ns": 1848714,
+      "p99_ns": 3055305,
+      "samples": 128
+    },
+    "commits": {
+      "p50_ns": 823342,
+      "p95_ns": 1122840,
+      "p99_ns": 1741566,
+      "samples": 128
+    },
+    "exact_retry_after_ack": {
+      "p50_ns": 53503,
+      "p95_ns": 72059,
+      "p99_ns": 75436,
+      "samples": 128
+    }
+  },
+  "schema": 1,
+  "sqlite_version": "3.53.2",
+  "synchronous": "FULL",
+  "tasks": [
+    {
+      "checkpoint_append": {
+        "p50_ns": 670856,
+        "p95_ns": 1358025,
+        "p99_ns": 1358025,
+        "samples": 14
+      },
+      "new_database_open_ns": 5053908,
+      "payload_bytes": 64,
+      "records": 16,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 386728,
+        "p95_ns": 511719,
+        "p99_ns": 511719,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 255524,
+        "p95_ns": 367320,
+        "p99_ns": 367320,
+        "samples": 10
+      }
+    },
+    {
+      "checkpoint_append": {
+        "p50_ns": 663142,
+        "p95_ns": 813462,
+        "p99_ns": 1084897,
+        "samples": 126
+      },
+      "new_database_open_ns": 4339948,
+      "payload_bytes": 64,
+      "records": 128,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 2321808,
+        "p95_ns": 2933370,
+        "p99_ns": 2933370,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 2084378,
+        "p95_ns": 2265058,
+        "p99_ns": 2265058,
+        "samples": 10
+      }
+    },
+    {
+      "checkpoint_append": {
+        "p50_ns": 634907,
+        "p95_ns": 828963,
+        "p99_ns": 1464791,
+        "samples": 510
+      },
+      "new_database_open_ns": 4533302,
+      "payload_bytes": 64,
+      "records": 512,
+      "reopen_and_record_and_blob_replay": {
+        "p50_ns": 8989015,
+        "p95_ns": 9591859,
+        "p99_ns": 9591859,
+        "samples": 10
+      },
+      "warm_record_and_blob_replay": {
+        "p50_ns": 8339308,
+        "p95_ns": 8386630,
+        "p99_ns": 8386630,
+        "samples": 10
+      }
+    }
+  ],
+  "total_wall_ns": 985486871
+}

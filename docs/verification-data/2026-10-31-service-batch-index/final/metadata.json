@@ -1,0 +1,28 @@
+{
+  "parent": "be823698205af8fdbbc8f855d95667375b0a12ff",
+  "runtime_sources": {
+    "baseline": {
+      "crates/penelope-executor/src/services.rs": "68eda7b2c889f93bbca0a9edf66d1b7e6a79ad7815cc3b3a30900329c4e0e482"
+    },
+    "candidate": {
+      "crates/penelope-executor/src/services.rs": "01c17fa051446b7bc0337687e9aaaa3fb25271cc68cb980abf8e54503e41bf4e"
+    }
+  },
+  "common_sha256": {
+    "crates/penelope-executor/src/lease_batch_index.rs": "1f8aa0ceef2335b00aa40211d7cf9e4a26635819a290d232b31dd8302b536d5f",
+    "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "6ad25aa4ce1e3cd301acc22740a20caa832f28c9be0595d1456adc7a6557274e",
+    "crates/penelope-executor/tests/lease_batch_identity.rs": "d5d720562d34717a1bcce19d4e2a3bbb42ade156c5c40914266df68bde22efe0",
+    "crates/penelope-executor/tests/lease_batch_allocations.rs": "620fe82f07fc62fe15cd8d5f0bbd793980e1a73c700f0d35377f914da15675e3",
+    "crates/penelope-executor/benches/lease_batch_services.rs": "f4b8fad11c1fe748a227da3a9fc94c9141080e4669f0959c666994ce639b2157",
+    "crates/penelope-executor/benches/lease_batch_service_allocations.rs": "76cbd586ee6c17c61420308a586ae701577ae27a8ba63bc2cb3fbf6e4be3db70",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "binaries": {
+    "baseline-lease_batch_services": "7a84f06c5f58476bb54f1d48823fee991ac24c567560e0054eaca314f22557f8",
+    "baseline-lease_batch_service_allocations": "084c0748f02e786eb7d46a605cfb947faca58aac3d62a2d385dc312b70064a96",
+    "candidate-lease_batch_services": "f3e5629ab8bbe8210500ddcaf21e6a443ae11aa8d0137e052c197c49f91138cc",
+    "candidate-lease_batch_service_allocations": "7d5176087f9b20d04806ca92e23d6883b7609abdecc980ae609a4f1810c98415"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

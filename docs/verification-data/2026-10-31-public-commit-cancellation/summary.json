@@ -1,0 +1,16 @@
+{
+  "toolchains": {
+    "stable": {
+      "repetitions": 20,
+      "cases": 320,
+      "forced_sql_rollbacks": 160
+    },
+    "msrv": {
+      "repetitions": 20,
+      "cases": 320,
+      "forced_sql_rollbacks": 160
+    }
+  },
+  "focused_cancellation_cases": 640,
+  "forced_sql_rollbacks": 320
+}

@@ -1,0 +1,20 @@
+--- a/crates/penelope-core/src/task/control.rs
++++ b/crates/penelope-core/src/task/control.rs
+@@ -333,6 +333,17 @@
+                 return Err(error.into());
+             }
+         };
++        // Preflight has already checked health, phase, tick and deadline.
++        // Pending observations still require the runtime's scope and generation.
++        if matches!(observation.progress, RuntimeProgress::Pending) {
++            if observation.scope != self.projection.scope() {
++                return Err(TaskError::ScopeMismatch.into());
++            }
++            if observation.generation != self.projection.generation() {
++                return Err(TaskError::StaleGeneration.into());
++            }
++            return Ok(false);
++        }
+         self.observe(observation, buffer, tick)
+     }
+ 

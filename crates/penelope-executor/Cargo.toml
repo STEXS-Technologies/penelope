@@ -16,6 +16,9 @@ serde = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
+tempfile = "3"
+async-trait.workspace = true
+penelope-sqlite = { version = "0.3.0", path = "../penelope-sqlite" }
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 syn = { version = "2", features = ["full", "visit"] }
 proptest = { workspace = true }
@@ -43,3 +46,51 @@ harness = false
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "application_overhead"
+harness = false
+
+[[bench]]
+name = "definition_validation"
+harness = false
+
+[[test]]
+name = "definition_allocations"
+harness = false
+
+[[bench]]
+name = "task_poll"
+harness = false
+
+[[bench]]
+name = "application_workloads"
+harness = false
+
+[[bench]]
+name = "timer_input"
+harness = false
+
+[[bench]]
+name = "timer_input_allocations"
+harness = false
+
+[[test]]
+name = "timer_input_allocations"
+harness = false
+
+[[bench]]
+name = "lease_batch_services"
+harness = false
+
+[[bench]]
+name = "lease_batch_service_allocations"
+harness = false
+
+[[test]]
+name = "lease_batch_allocations"
+harness = false
+
+[[bench]]
+name = "durable_timer_workload"
+harness = false

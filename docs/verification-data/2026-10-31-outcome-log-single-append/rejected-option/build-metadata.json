@@ -1,0 +1,24 @@
+{
+  "source_parent": "97579da3fb3d304e7317ea78250a8fab8784c7e3",
+  "sources": {
+    "baseline": {
+      "crates/penelope-ports/src/implementation.rs": "30332adc17f5e1ba1ae508143baf0e510db9080972906c093cf16153a8ef730d"
+    },
+    "candidate": {
+      "crates/penelope-ports/src/implementation.rs": "837fb76949ff59107ea2afff07cd3015ab6dfdde2dafde26f5557de065be5090"
+    }
+  },
+  "binaries": {
+    "baseline-outcome_log": "4547a1af7715f0e99d40e1316c8f6202fca8d18b93e2cab1bb0f233b4bd11684",
+    "baseline-outcome_log_allocations": "015d9709238a6a36fec7c876f5b98e088f0cd0d6b97e23ddf381085420a66055",
+    "candidate-outcome_log": "7488d0d5950474c1a8ef3ebe34aaef43741aaef2e09548e20c834a84b222c981",
+    "candidate-outcome_log_allocations": "1187f9525ab9a258052bd6b6a43cde430101bb6a15e7d3c9ebbc21d74e2b3d80"
+  },
+  "harness_sha256": {
+    "crates/penelope-ports/benches/outcome_log.rs": "54e2ca6bc50b78c395fc39cdf1dd8375fc2808a5176b7556b72985b70a88f038",
+    "crates/penelope-ports/benches/outcome_log_allocations.rs": "0e9b44189d4969cf3e3a34abee604b30c46e95be781748b3315492c79eae8b64",
+    "crates/penelope-ports/benches/support/outcome_log_fixture.rs": "0d78e962023ec36a31ebe7bb8e0a7089e86f88f30c395fa84647de1fe460f911",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

@@ -1,0 +1,15 @@
+{
+  "baseline": "ffd6838207299a4b67c83e6261881e3bbdfb92bc",
+  "candidate": "8dad8edd4e1b42dfe410bde6727d6da24cd3e8f3",
+  "compilers": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "1.85.0": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "baseline_cargo_exit_codes": [
+    101,
+    101
+  ],
+  "baseline_child_failure": "SIGABRT (6), as reported by cargo",
+  "repeated_processes": 100,
+  "scenarios": 400
+}

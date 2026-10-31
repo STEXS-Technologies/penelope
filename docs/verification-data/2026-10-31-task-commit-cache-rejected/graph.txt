@@ -1,0 +1,16 @@
+Re-extracting code files in . (no LLM needed)...
+[graphify watch] 4367 file(s) not classified (no supported extension or shebang), skipped: .gitignore, .ignore, 0-after.jsonl.gz, 0-before.jsonl.gz, 1-after.jsonl.gz, 1-before.jsonl.gz (+4361 more)
+  AST extraction: 100/457 uncached files (21%) [32 workers]
+  AST extraction: 200/457 uncached files (43%) [32 workers]
+  AST extraction: 300/457 uncached files (65%) [32 workers]
+  AST extraction: 400/457 uncached files (87%) [32 workers]
+  AST extraction: 457/457 uncached files (100%) [32 workers]
+  warning: 1 source file(s) produced zero nodes and are absent from the graph: Cargo.toml. A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+[graphify] backed up curated graph (4 files) -> 2026-10-31/
+Graph has 7569 nodes (above 5000 limit). Building aggregated community view...
+graph.html written (aggregated: 346 community nodes, 1062 cross-community edges)
+Tip: run with --obsidian for full node-level detail.
+[graphify watch] Rebuilt: 7569 nodes, 16589 edges, 346 communities
+[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out
+Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
+Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.

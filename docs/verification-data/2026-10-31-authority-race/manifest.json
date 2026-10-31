@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "af30345e533bbad3edb3c5474fc1a9ce3a61774d",
+  "runtime_authority_sha256": "cf784bce3c532e86e99e7d55ce0110b3091646e4108443a1a03b060578c05571",
+  "test_snapshot_sha256": "3a5342a981d6d0cf1f83fef23ba044616d5c350150be077cb3b18e41a8bb3aa9",
+  "parent_test_source_sha256": "bf70644467542f0405d41e1df82998c4018b2a864d4f31366bd12047091a2426",
+  "control": "In reserve_start, replace Some(_) => return Err(TaskPortError::Conflict) with Some(_) => StartReservation::Reserved. Restore authority.rs afterward.",
+  "control_exit": 101,
+  "qualification_exits": {
+    "stable_task_suite": 0,
+    "msrv_task_suite": 0,
+    "strict_workspace_clippy": 0,
+    "format": 0,
+    "layers": 0,
+    "graph": 0
+  }
+}

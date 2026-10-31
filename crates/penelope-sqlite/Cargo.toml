@@ -1,0 +1,153 @@
+[package]
+name = "penelope-sqlite"
+description = "Optional single-host SQLite persistence adapter for Penelope."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+penelope-core = { workspace = true, features = ["serde"] }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde_json.workspace = true
+serde.workspace = true
+async-trait.workspace = true
+penelope-domain.workspace = true
+penelope-ports.workspace = true
+
+[dev-dependencies]
+rusqlite = { version = "0.40.2", features = ["bundled", "functions"] }
+tempfile = "3"
+
+[lints]
+workspace = true
+
+[[bench]]
+name = "durable_store"
+harness = false
+
+[[bench]]
+name = "worker_poll"
+harness = false
+
+[[bench]]
+name = "lease_claim"
+harness = false
+
+[[bench]]
+name = "lease_batch"
+harness = false
+
+[[bench]]
+name = "claim_selection"
+harness = false
+
+[[bench]]
+name = "claim_history"
+harness = false
+
+[[bench]]
+name = "process_replay"
+harness = false
+
+[[bench]]
+name = "process_replay_allocations"
+harness = false
+
+[[bench]]
+name = "pending_history"
+harness = false
+
+[[bench]]
+name = "process_payloads"
+harness = false
+
+[[bench]]
+name = "process_payload_allocations"
+harness = false
+
+[[bench]]
+name = "task_reads"
+harness = false
+
+[[bench]]
+name = "task_read_allocations"
+harness = false
+
+[[bench]]
+name = "task_reconstruction"
+harness = false
+
+[[bench]]
+name = "task_reconstruction_allocations"
+harness = false
+
+[[bench]]
+name = "task_blobs"
+harness = false
+
+[[bench]]
+name = "task_blob_allocations"
+harness = false
+
+[[bench]]
+name = "task_blob_commits"
+harness = false
+
+[[bench]]
+name = "lease_completion_allocations"
+harness = false
+
+[[bench]]
+name = "process_commit_allocations"
+harness = false
+
+[[bench]]
+name = "inbox_accept_allocations"
+harness = false
+
+[[bench]]
+name = "inbox_accept"
+harness = false
+
+[[bench]]
+name = "pending_inputs"
+harness = false
+
+[[bench]]
+name = "pending_input_allocations"
+harness = false
+
+[[bench]]
+name = "process_append_allocations"
+harness = false
+
+[[test]]
+name = "process_append_allocations"
+harness = false
+
+[[bench]]
+name = "process_encoding"
+harness = false
+
+[[bench]]
+name = "process_encoding_allocations"
+harness = false
+
+[[test]]
+name = "process_encoding_allocations"
+harness = false
+
+[[bench]]
+name = "lease_claim_profiles"
+harness = false
+
+[[bench]]
+name = "lease_claim_profile_allocations"
+harness = false
+
+[[test]]
+name = "lease_claim_profile_allocations"
+harness = false

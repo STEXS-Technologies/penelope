@@ -1,0 +1,12 @@
+{
+  "0": {
+    "before_median_ns": 441.208635,
+    "after_median_ns": 333.71469,
+    "change_percent": -24.36351795336009
+  },
+  "1": {
+    "before_median_ns": 700.679443359375,
+    "after_median_ns": 370.3253173828125,
+    "change_percent": -47.147683453177244
+  }
+}

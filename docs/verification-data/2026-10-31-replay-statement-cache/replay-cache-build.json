@@ -1,0 +1,24 @@
+{
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "pre_frontier": {
+      "pin": "837265bfc82658a6d1fe02e4776372fe4673d805",
+      "source_sha256": "8350410f91c1c6421ff23dfe18dc2d0e26abd78abf668ee20b54a91762c432be",
+      "binary_sha256": "fe0b6a335d7f6b84913c896b315b6dc22e2ba51a8b9a28eed9a72c9e20040ea7",
+      "path": "target/replay-cache-pre_frontier"
+    },
+    "frontier": {
+      "pin": "465b6b267afe68796e21e133f971d5ad8796cbc9",
+      "source_sha256": "83e3470dfd73df6d53ef5189b16f52f8d257075d7df51c6e9ae39af4f8487cfd",
+      "binary_sha256": "5f8094994bbcd2066e3a01ee60d94b73f650a0be1445bce0370d7c812c159ada",
+      "path": "target/replay-cache-frontier"
+    },
+    "cached": {
+      "pin": null,
+      "source_sha256": "32d3d824a159d9c272b216875fef3f28299f478b20b89701e88544412cd011e6",
+      "binary_sha256": "ed36fa4bfae97f974f109bd00f09b713080c0d972055a2f02f24eb9ce47a698b",
+      "path": "target/replay-cache-cached"
+    }
+  },
+  "fixture_sha256": "c021d7dca1d6d7a130419b4d9142a6c180e2695ab47d8e046e47f2e9e4d43489"
+}

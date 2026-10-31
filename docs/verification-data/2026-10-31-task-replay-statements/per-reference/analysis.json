@@ -1,0 +1,579 @@
+{
+  "latency": [
+    {
+      "kind": "commits",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 0,
+      "pairs": 24,
+      "baseline_ns": 29191.471354166668,
+      "candidate_ns": 32067.086588541668,
+      "change_percent": 9.46409513464098,
+      "ci95": [
+        -0.8964771978970532,
+        24.77525156740415
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 32,
+      "pairs": 24,
+      "baseline_ns": 28528.759765625,
+      "candidate_ns": 32457.236979166668,
+      "change_percent": 13.481474623578253,
+      "ci95": [
+        -1.3185940092397674,
+        39.65938093762326
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 4096,
+      "pairs": 24,
+      "baseline_ns": 32403.625651041668,
+      "candidate_ns": 32172.840169270832,
+      "change_percent": -0.08469777584939614,
+      "ci95": [
+        -3.1644382850924817,
+        3.1508522484510926
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 1048576,
+      "pairs": 24,
+      "baseline_ns": 495253.107421875,
+      "candidate_ns": 516868.3997395833,
+      "change_percent": 4.248530802796419,
+      "ci95": [
+        0.8227162402128415,
+        9.603625763893671
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": true,
+      "alternating": false,
+      "reformatted": false,
+      "key": 0,
+      "pairs": 24,
+      "baseline_ns": 139845.65397135416,
+      "candidate_ns": 149962.82356770834,
+      "change_percent": 6.474232053965368,
+      "ci95": [
+        -1.6593410196996061,
+        20.494934123551886
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": true,
+      "alternating": false,
+      "reformatted": false,
+      "key": 32,
+      "pairs": 24,
+      "baseline_ns": 146775.302734375,
+      "candidate_ns": 165610.5771484375,
+      "change_percent": 15.285337544020667,
+      "ci95": [
+        -6.745652816353195,
+        55.16845573994063
+      ]
+    },
+    {
+      "kind": "commits",
+      "external": true,
+      "alternating": false,
+      "reformatted": false,
+      "key": 4096,
+      "pairs": 24,
+      "baseline_ns": 146002.1083984375,
+      "candidate_ns": 208037.30989583334,
+      "change_percent": 43.51436399849257,
+      "ci95": [
+        -4.347805196274351,
+        135.21759901848168
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 2,
+      "pairs": 24,
+      "baseline_ns": 20987.068333333333,
+      "candidate_ns": 18074.918,
+      "change_percent": -11.00357659471782,
+      "ci95": [
+        -20.517663252258895,
+        2.8085641495121365
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 16,
+      "pairs": 24,
+      "baseline_ns": 38601.44383333333,
+      "candidate_ns": 36762.702,
+      "change_percent": -4.757346301505084,
+      "ci95": [
+        -13.952346131949398,
+        7.926844770312975
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": false,
+      "key": 128,
+      "pairs": 24,
+      "baseline_ns": 150628.333,
+      "candidate_ns": 167615.65383333334,
+      "change_percent": 9.78638652348247,
+      "ci95": [
+        -1.8507787894348882,
+        26.423293490580484
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": false,
+      "key": 2,
+      "pairs": 24,
+      "baseline_ns": 21555.883,
+      "candidate_ns": 30679.97366666667,
+      "change_percent": 25.498376220877308,
+      "ci95": [
+        -22.594421558233233,
+        116.11723191922538
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": false,
+      "key": 16,
+      "pairs": 24,
+      "baseline_ns": 60636.475666666665,
+      "candidate_ns": 42736.350333333336,
+      "change_percent": -29.67469473313834,
+      "ci95": [
+        -35.4795144457464,
+        -22.033493622897005
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": false,
+      "key": 128,
+      "pairs": 24,
+      "baseline_ns": 366935.6585,
+      "candidate_ns": 227026.20166666666,
+      "change_percent": -38.44321654890656,
+      "ci95": [
+        -41.38940517833401,
+        -34.70306974387265
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": true,
+      "key": 2,
+      "pairs": 24,
+      "baseline_ns": 27324.1385,
+      "candidate_ns": 28451.317833333334,
+      "change_percent": -6.02469413014381,
+      "ci95": [
+        -15.460842471028476,
+        6.238540017091393
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": true,
+      "key": 16,
+      "pairs": 24,
+      "baseline_ns": 74632.57033333334,
+      "candidate_ns": 68404.43233333333,
+      "change_percent": -5.1730819819036125,
+      "ci95": [
+        -11.830848376077284,
+        1.9276550806135226
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": false,
+      "reformatted": true,
+      "key": 128,
+      "pairs": 24,
+      "baseline_ns": 426341.55683333334,
+      "candidate_ns": 460584.37466666667,
+      "change_percent": 8.377027164915894,
+      "ci95": [
+        -2.2975592776954827,
+        26.623105453906007
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": true,
+      "key": 2,
+      "pairs": 24,
+      "baseline_ns": 26391.459333333332,
+      "candidate_ns": 22067.5015,
+      "change_percent": -11.528905606110202,
+      "ci95": [
+        -20.271818039284362,
+        -0.3540470738273446
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": true,
+      "key": 16,
+      "pairs": 24,
+      "baseline_ns": 93684.66516666667,
+      "candidate_ns": 79980.71916666666,
+      "change_percent": -15.064771831847347,
+      "ci95": [
+        -21.976293517367967,
+        -4.0258431785847995
+      ]
+    },
+    {
+      "kind": "reconstruction",
+      "external": false,
+      "alternating": true,
+      "reformatted": true,
+      "key": 128,
+      "pairs": 24,
+      "baseline_ns": 649996.6035,
+      "candidate_ns": 506583.4725,
+      "change_percent": -22.339360783591694,
+      "ci95": [
+        -24.736664074232802,
+        -19.435118941544783
+      ]
+    }
+  ],
+  "allocations": [
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 2,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 2,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        4,
+        0,
+        376
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 16,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 16,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        5,
+        0,
+        456
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 128,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": false,
+      "history": 128,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        5,
+        0,
+        456
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 2,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 2,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        4,
+        0,
+        376
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 16,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 16,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        18,
+        0,
+        1496
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 128,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": false,
+      "history": 128,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        130,
+        0,
+        10456
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 2,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 2,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        4,
+        0,
+        376
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 16,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 16,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        5,
+        0,
+        456
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 128,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": false,
+      "reformatted": true,
+      "history": 128,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        5,
+        0,
+        456
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 2,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 2,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        4,
+        0,
+        376
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 16,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 16,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        18,
+        0,
+        1496
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 128,
+      "variant": "baseline",
+      "samples": 384,
+      "metrics": [
+        1,
+        0,
+        96
+      ]
+    },
+    {
+      "alternating": true,
+      "reformatted": true,
+      "history": 128,
+      "variant": "candidate",
+      "samples": 384,
+      "metrics": [
+        130,
+        0,
+        10456
+      ]
+    }
+  ]
+}

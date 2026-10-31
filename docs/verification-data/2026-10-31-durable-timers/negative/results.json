@@ -1,0 +1,28 @@
+{
+  "results": [
+    {
+      "name": "result",
+      "rejected": true,
+      "marker": "durable business result differs"
+    },
+    {
+      "name": "truncated",
+      "rejected": true,
+      "marker": "business computation differs"
+    },
+    {
+      "name": "identity",
+      "rejected": true,
+      "marker": "timer identity differs from legacy"
+    },
+    {
+      "name": "not-due",
+      "rejected": true,
+      "marker": "incomplete timer delivery"
+    }
+  ],
+  "restored_sha256": {
+    "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+    "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d"
+  }
+}

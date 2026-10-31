@@ -1,0 +1,32 @@
+[
+  {
+    "test": "entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy",
+    "elapsed_seconds": 300.2420524399786,
+    "batches": 1387,
+    "cases_per_batch": 10000,
+    "requested_cases": 13870000,
+    "first_seed": 1,
+    "last_seed": 1387,
+    "log": "/tmp/penelope-properties-2223a31/entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log"
+  },
+  {
+    "test": "entry::engine::tests::live_transitions_and_event_replay_converge",
+    "elapsed_seconds": 300.3299761119997,
+    "batches": 945,
+    "cases_per_batch": 10000,
+    "requested_cases": 9450000,
+    "first_seed": 1,
+    "last_seed": 945,
+    "log": "/tmp/penelope-properties-2223a31/entry-engine-tests-live_transitions_and_event_replay_converge.log"
+  },
+  {
+    "test": "seeded_checkpoint_crash_and_persistence_chaos",
+    "elapsed_seconds": 303.7109049150022,
+    "batches": 75,
+    "cases_per_batch": 10000,
+    "requested_cases": 750000,
+    "first_seed": 1,
+    "last_seed": 75,
+    "log": "/tmp/penelope-properties-2223a31/seeded_checkpoint_crash_and_persistence_chaos.log"
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "contract_throughput:0": {
+    "operation": "canonical DTO encoding",
+    "before_median_ns": 342.683225,
+    "after_median_ns": 328.44345,
+    "median_change_percent": -4.155375565874286,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -7.718977170686303,
+    "whole_process_cycles_change_percent": -3.8518960419229087,
+    "whole_process_task-clock_change_percent": -4.0293539141212475
+  },
+  "contract_throughput:1": {
+    "operation": "bounded outcome-log append",
+    "before_median_ns": 369.99853515625,
+    "after_median_ns": 363.324462890625,
+    "median_change_percent": -1.8038104563864121,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -7.718977170686303,
+    "whole_process_cycles_change_percent": -3.8518960419229087,
+    "whole_process_task-clock_change_percent": -4.0293539141212475
+  },
+  "graph_saga:0": {
+    "operation": "graph-saga start/result/result",
+    "before_median_ns": 496.47432,
+    "after_median_ns": 503.556605,
+    "median_change_percent": 1.4265158769944053,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -0.0010627899058590629,
+    "whole_process_cycles_change_percent": 1.4513700837567312,
+    "whole_process_task-clock_change_percent": 1.339638651022912
+  },
+  "identifier_decode:0": {
+    "operation": "identifier JSON decode short",
+    "before_median_ns": 37.285975,
+    "after_median_ns": 33.755250000000004,
+    "median_change_percent": -9.469311182019503,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -4.711252613683358,
+    "whole_process_cycles_change_percent": -0.8193969111897514,
+    "whole_process_task-clock_change_percent": -1.0791712322058888
+  },
+  "identifier_decode:1": {
+    "operation": "identifier JSON decode escaped",
+    "before_median_ns": 59.359795,
+    "after_median_ns": 56.030555,
+    "median_change_percent": -5.608577320726926,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -4.711252613683358,
+    "whole_process_cycles_change_percent": -0.8193969111897514,
+    "whole_process_task-clock_change_percent": -1.0791712322058888
+  },
+  "identifier_decode:2": {
+    "operation": "identifier JSON decode long",
+    "before_median_ns": 127.651055,
+    "after_median_ns": 132.7953,
+    "median_change_percent": 4.029927523904919,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -4.711252613683358,
+    "whole_process_cycles_change_percent": -0.8193969111897514,
+    "whole_process_task-clock_change_percent": -1.0791712322058888
+  },
+  "linear_saga:0": {
+    "operation": "linear-saga start/result/complete",
+    "before_median_ns": 113.462285,
+    "after_median_ns": 109.10691,
+    "median_change_percent": -3.838610336465542,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -0.026205290381275947,
+    "whole_process_cycles_change_percent": -3.077402265243989,
+    "whole_process_task-clock_change_percent": -2.8275147951047797
+  },
+  "parallel_graph_saga:0": {
+    "operation": "parallel graph-saga",
+    "before_median_ns": 158.95237874999998,
+    "after_median_ns": 156.55401625000002,
+    "median_change_percent": -1.5088559975387938,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": -0.000333069978741829,
+    "whole_process_cycles_change_percent": -5.659168916179269,
+    "whole_process_task-clock_change_percent": -5.770999875862981
+  },
+  "parallel_linear_saga:0": {
+    "operation": "parallel linear-saga start/result/complete",
+    "before_median_ns": 33.30399,
+    "after_median_ns": 36.34016,
+    "median_change_percent": 9.116535286012262,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": 0.008879008546225364,
+    "whole_process_cycles_change_percent": -0.45617069676958666,
+    "whole_process_task-clock_change_percent": -0.907170561992221
+  },
+  "replay_saga:0": {
+    "operation": "linear-saga replay",
+    "before_median_ns": 224.564988,
+    "after_median_ns": 226.1312255,
+    "median_change_percent": 0.6974540038271693,
+    "pairs": 20,
+    "whole_process_instructions_change_percent": 0.0008847387499955062,
+    "whole_process_cycles_change_percent": 0.9110994635712855,
+    "whole_process_task-clock_change_percent": 0.5394464616047978
+  }
+}

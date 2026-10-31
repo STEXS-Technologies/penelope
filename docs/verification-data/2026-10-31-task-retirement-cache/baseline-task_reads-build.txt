@@ -1,0 +1,3 @@
+    Blocking waiting for file lock on package cache
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `release` profile [optimized] target(s) in 0.26s

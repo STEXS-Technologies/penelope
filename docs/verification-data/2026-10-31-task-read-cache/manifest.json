@@ -1,0 +1,20 @@
+{
+  "baseline_commit": "bf951100e2c3084f5a2a904035c9b3933085dcc1",
+  "comparison": "Replace only src/tasks.rs; hold every other runtime, test and benchmark source identical.",
+  "snapshot_sha256": {
+    "baseline-tasks.txt": "1087400eafe4049ca31dedf1a83449467d37355bb44728e5ed8ea346ed598438",
+    "candidate-tasks.txt": "98e94dfd6fc5b6acab80a079405da32689e16d74d6bfe294fd7df65015545383"
+  },
+  "benchmark_source_sha256": {
+    "crates/penelope-sqlite/benches/task_read_allocations.rs": "1dcd25ef9de8f0b6de2ebe2616300f98c39e7dcabf9b332967ffc3b6502c16fd",
+    "crates/penelope-sqlite/benches/task_reads.rs": "02f459b156cccbd51017c48ef87e6ff1f5dd28256e04ee0d52e1a4743b6dff2c",
+    "crates/penelope-sqlite/benches/support/task_read_fixture.rs": "bb3abfd3626541a301092cd8060fe28e8cf5c90c9d165145de3a3fdd2c45f790",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux 7.2.9-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Sat Oct  3 18:35:12 UTC 2026",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "allocation_processes_per_revision": 4,
+  "allocation_samples_per_profile_per_process": 16,
+  "bootstrap": "20000 deterministic block-bootstrap resamples; geometric per-block candidate/baseline ratios; per-profile 95% intervals, no multiplicity correction"
+}

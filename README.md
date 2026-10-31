@@ -25,8 +25,10 @@ checkpoints and explicit recovery permissions.
 - Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
   operator workflows.
 
-The engine is pure and deterministic. Your application supplies the durable
-adapters and workers through the ports. Penelope never guesses whether an
+The engine is pure and deterministic. Your application selects durable
+adapters and workers through the ports. The optional
+[`penelope-sqlite`](crates/penelope-sqlite/README.md) crate provides a local
+task journal and saga inbox/outbox/timer persistence. Penelope never guesses whether an
 ambiguous payment, trade, or canonical mutation succeeded.
 
 ## The programming model
@@ -68,12 +70,18 @@ distinct newtypes, preventing accidental substitution across these boundaries.
 Penelope never infers completion from a crash or timeout. Interrupted operations
 with external effects require independent reconciliation; unknown evidence does
 not authorize a restart. Application logic defines valid checkpoints, effect
-boundaries and result correctness. There is no instruction-level continuation,
-scheduler, OS integration or storage implementation in the library.
+boundaries and result correctness. The task core does not provide instruction-level continuation or an OS scheduler. Storage
+integrations live in optional adapter packages.
 
 The `penelope-core` task contracts, projection and synchronous ports compile
 without `std` or `alloc`. Select that crate directly for the portable decision
 profile; the existing facade, saga crates and async ports remain hosted.
+`TaskControl` accepts a complete caller-owned `TaskWorkspace`, or dispatch-only
+buffers through `advance_with_buffers` and a later `poll_with_buffer`. Poll
+storage must fit the larger of the declared checkpoint and output sizes; a full
+workspace validates all capacities before dispatch. `advance_with_workspace`
+accepts a `TaskDispatchWorkspace` provider, borrowing or initializing its storage
+only for a start/restart transition.
 
 ```bash
 cargo run -p penelope-executor --example recoverable_task --locked
@@ -107,9 +115,9 @@ Custom StateChronicle domains require explicit schema migration and do not
 automatically provide transactions across resources. Existing history encodings
 and exhaustive Rust enum matches have distinct compatibility requirements.
 See the [integration boundaries](docs/RELEASE.md#integration-boundaries) for
-durability, task safety and portable-versus-hosted responsibilities. The SQLite
-recovery fixture is a dev-dependency used only by Penelope's own tests; it does
-not enter consumer debug or release builds.
+durability, task safety and portable-versus-hosted responsibilities. The original
+SQLite recovery fixture remains test-only. The separate optional SQLite adapter
+is compiled when an application selects it.
 
 ## Start building
 
@@ -117,7 +125,7 @@ Add the facade crate to your application:
 
 ```toml
 [dependencies]
-penelope = "0.2.0"
+penelope = "0.3.0"
 ```
 
 Run the included workflows to see the public API:
@@ -135,8 +143,11 @@ cargo run -p penelope --example trade_competing_lock --locked
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
-boundary, `0.2.0` release procedure and protocol review. This branch prepares
-0.2.0; registry availability follows publication.
+boundary, release procedure and protocol review. The 0.3.0 candidate adds optional
+SQLite and [Linux process runtime](crates/penelope-process-runtime/README.md)
+packages for the documented single-host profile. See the
+[qualification evidence and limits](docs/verification-2026-10-30.md), including
+the explicit performance exception and source-compatibility changes.
 
 Use the [pull request template](.github/pull_request_template.md) when proposing
 changes, and follow the [validation commands](docs/RELEASE.md#validation).

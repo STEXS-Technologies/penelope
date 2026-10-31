@@ -1,0 +1,27 @@
+{
+  "parent": "42e09f852e6d745123a4f0d44796a1a00c8baed9",
+  "binary_sha256": "f46379ac151d654fed22c9c417467c984549a705e82e4d9c205728ca64aa9c07",
+  "no_production_changes": true,
+  "btrfs_profile": {
+    "database_root": "/home/ac/projects/penelope/target/durable-timer-affinity/databases",
+    "cpus": [
+      0
+    ],
+    "reopen": false,
+    "command": [
+      "strace",
+      "-f",
+      "-c",
+      "-w",
+      "-e",
+      "trace=fdatasync,fsync,futex,pwrite64,pread64"
+    ],
+    "scope": "whole process, including database creation and final verification; instrumented, not ordinary timing"
+  },
+  "tmpfs_profile": {
+    "database_root": "/tmp",
+    "cpus": "unrestricted inherited process affinity",
+    "reopen": true,
+    "scope": "exploratory run initially used default temporary directory; later inspection confirmed TMPDIR unset and /tmp tmpfs; differs from the Btrfs configuration and is not a matched filesystem speed comparison"
+  }
+}

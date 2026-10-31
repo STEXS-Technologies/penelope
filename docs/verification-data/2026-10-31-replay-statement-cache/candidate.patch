@@ -1,0 +1,337 @@
+diff --git a/crates/penelope-sqlite/Cargo.toml b/crates/penelope-sqlite/Cargo.toml
+index 14b1bda..e478b7b 100644
+--- a/crates/penelope-sqlite/Cargo.toml
++++ b/crates/penelope-sqlite/Cargo.toml
+@@ -47,3 +47,7 @@ harness = false
+ [[bench]]
+ name = "claim_history"
+ harness = false
++
++[[bench]]
++name = "process_replay"
++harness = false
+diff --git a/crates/penelope-sqlite/benches/process_replay.rs b/crates/penelope-sqlite/benches/process_replay.rs
+new file mode 100644
+index 0000000..ef30865
+--- /dev/null
++++ b/crates/penelope-sqlite/benches/process_replay.rs
+@@ -0,0 +1,188 @@
++//! Public replay latency at selected history sizes and page cursors.
++//! Population uses typed public commits; validation is outside the timed region.
++use penelope_domain::*;
++use penelope_ports::*;
++use penelope_sqlite::{SqliteLeaseClock, SqliteLimits, SqliteProcessStore};
++use std::{
++    future::Future,
++    num::NonZeroU16,
++    sync::Arc,
++    task::{Context, Poll, Wake, Waker},
++    time::{Duration, Instant},
++};
++type Error = Box<dyn std::error::Error>;
++struct Clock;
++impl SqliteLeaseClock for Clock {
++    fn now(&self) -> Result<LogicalTime, PortError> {
++        Ok(LogicalTime(100))
++    }
++}
++struct ThreadWake(std::thread::Thread);
++impl Wake for ThreadWake {
++    fn wake(self: Arc<Self>) {
++        self.0.unpark();
++    }
++    fn wake_by_ref(self: &Arc<Self>) {
++        self.0.unpark();
++    }
++}
++fn block_on<T>(future: impl Future<Output = T>) -> Result<T, Error> {
++    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
++    let mut context = Context::from_waker(&waker);
++    let mut future = Box::pin(future);
++    let deadline = Instant::now()
++        .checked_add(Duration::from_secs(10))
++        .ok_or("deadline overflow")?;
++    loop {
++        if let Poll::Ready(result) = future.as_mut().poll(&mut context) {
++            return Ok(result);
++        }
++        if Instant::now() >= deadline {
++            return Err("replay timed out".into());
++        }
++        std::thread::park_timeout(Duration::from_millis(10));
++    }
++}
++fn populate(
++    store: &SqliteProcessStore,
++    scope: &ProcessScope,
++    count: u32,
++) -> Result<Vec<ProcessOutcome>, Error> {
++    let input = ProcessInput::new(
++        scope.tenant_id.clone(),
++        scope.process_id.clone(),
++        "inp_start".parse()?,
++        ProcessInputKind::CanonicalEvent,
++        ContentDigest([2; 32]),
++    );
++    let mut outcomes = Vec::new();
++    for sequence in 0..count {
++        outcomes.push(ProcessOutcome::new(
++            scope.clone(),
++            u64::from(sequence),
++            ProcessOutcomeFact::new(
++                format!("out_{sequence:06}").parse()?,
++                CausationId::Input(input.input_id.clone()),
++                OutcomeActor::System,
++                LogicalTime(1),
++                if sequence == 0 {
++                    ProcessOutcomeKind::Started
++                } else {
++                    ProcessOutcomeKind::ActionPlanned
++                },
++                ContentDigest([3; 32]),
++            ),
++        ));
++    }
++    let mut start = 0_u64;
++    for batch in outcomes.chunks(128) {
++        let commit = AtomicProcessCommit::new(
++            start,
++            if start == 0 {
++                Some(input.clone())
++            } else {
++                None
++            },
++            batch.to_vec(),
++            Vec::new(),
++        )?;
++        block_on(ProcessStore::commit(store, &commit))??.validate_for(&commit)?;
++        start = start
++            .checked_add(u64::try_from(batch.len())?)
++            .ok_or("sequence overflow")?;
++    }
++    Ok(outcomes)
++}
++fn verify(
++    page: &OutcomeReplayPage,
++    request: &OutcomeReplayRequest,
++    history: &[ProcessOutcome],
++) -> Result<(), Error> {
++    page.validate()?;
++    let expected: Vec<_> = history
++        .iter()
++        .filter(|outcome| outcome.sequence >= request.from_sequence)
++        .take(usize::from(request.limit.get()))
++        .cloned()
++        .collect();
++    let next = request
++        .from_sequence
++        .checked_add(u64::try_from(expected.len())?)
++        .ok_or("sequence overflow")?;
++    let continuation = if next < u64::try_from(history.len())? {
++        Some(next)
++    } else {
++        None
++    };
++    if page.scope != request.scope
++        || page.from_sequence != request.from_sequence
++        || page.outcomes != expected
++        || page.next_sequence != continuation
++    {
++        return Err("incorrect replay page".into());
++    }
++    Ok(())
++}
++fn main() -> Result<(), Error> {
++    for count in [1_u32, 128, 4096] {
++        let directory = tempfile::tempdir()?;
++        let path = directory.path().join("replay.db");
++        let store =
++            SqliteProcessStore::open(&path, SqliteLimits::default(), Arc::new(Clock), 10, 16)?;
++        let scope = ProcessScope::new(
++            "tnt_bench".parse()?,
++            "prc_bench".parse()?,
++            "def_bench".parse()?,
++            "dfv_one".parse()?,
++            ContentDigest([1; 32]),
++        );
++        let history = populate(&store, &scope, count)?;
++        let last = count.checked_sub(1).ok_or("empty fixture")?;
++        let past = count.checked_add(17).ok_or("cursor overflow")?;
++        for (profile, from, limit) in [
++            ("first", 0, 1),
++            ("last", last, 1),
++            ("end", count, 1),
++            ("past", past, 1),
++            ("page", 0, 128),
++        ] {
++            let request = OutcomeReplayRequest::new(
++                scope.clone(),
++                u64::from(from),
++                NonZeroU16::new(limit).ok_or("zero page")?,
++            )?;
++            for _ in 0..100 {
++                verify(
++                    &block_on(store.read_outcomes(&request))??,
++                    &request,
++                    &history,
++                )?;
++            }
++            let mut elapsed_ns = 0_u128;
++            for _ in 0..1000 {
++                let started = Instant::now();
++                let page = block_on(store.read_outcomes(&request))??;
++                elapsed_ns = elapsed_ns
++                    .checked_add(started.elapsed().as_nanos())
++                    .ok_or("duration overflow")?;
++                verify(&page, &request, &history)?;
++            }
++            println!(
++                "{}",
++                serde_json::json!({"history":count,"profile":profile,"from":from,"limit":limit,"iterations":1000,"elapsed_ns":elapsed_ns})
++            );
++        }
++        let connection = rusqlite::Connection::open_with_flags(
++            &path,
++            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
++        )?;
++        let retained: u32 =
++            connection.query_row("SELECT count(*) FROM process_outcomes", [], |row| {
++                row.get(0)
++            })?;
++        if retained != count {
++            return Err("history changed during replay".into());
++        }
++    }
++    Ok(())
++}
+diff --git a/crates/penelope-sqlite/src/process.rs b/crates/penelope-sqlite/src/process.rs
+index 1e0fb77..2ea84d3 100644
+--- a/crates/penelope-sqlite/src/process.rs
++++ b/crates/penelope-sqlite/src/process.rs
+@@ -377,7 +377,7 @@ impl ProcessStore for SqliteProcessStore {
+             let key = request.scope.canonical_bytes();
+             let next = process_head(&transaction, &key)?.map_or(0, |(next, _used)| next);
+             let next = u64::try_from(next).map_err(|_negative| PortError::Invariant)?;
+-            let mut statement = transaction.prepare("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
++            let mut statement = transaction.prepare_cached("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
+             let mut rows = statement.query(params![key,integer(request.from_sequence)?,request.limit.get()]).map_err(|error| db_error(&error))?;
+             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
+             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
+diff --git a/crates/penelope-sqlite/tests/process.rs b/crates/penelope-sqlite/tests/process.rs
+index 1985ba3..b035b33 100644
+--- a/crates/penelope-sqlite/tests/process.rs
++++ b/crates/penelope-sqlite/tests/process.rs
+@@ -625,3 +625,6 @@ mod record_limits;
+ 
+ #[path = "support/process_frontier.rs"]
+ mod process_frontier;
++
++#[path = "support/replay_cache.rs"]
++mod replay_cache;
+diff --git a/crates/penelope-sqlite/tests/support/replay_cache.rs b/crates/penelope-sqlite/tests/support/replay_cache.rs
+new file mode 100644
+index 0000000..686dad8
+--- /dev/null
++++ b/crates/penelope-sqlite/tests/support/replay_cache.rs
+@@ -0,0 +1,101 @@
++//! Warm replay statements must bind every request and reread authoritative rows.
++use super::*;
++fn check(adapter: &SqliteProcessStore, expected: &[ProcessOutcome], from: u64, limit: u16) {
++    let request =
++        OutcomeReplayRequest::new(expected[0].scope(), from, NonZeroU16::new(limit).unwrap())
++            .unwrap();
++    let page = block_on(adapter.read_outcomes(&request)).unwrap();
++    page.validate().unwrap();
++    let selected: Vec<_> = expected
++        .iter()
++        .filter(|outcome| outcome.sequence >= from)
++        .take(usize::from(limit))
++        .cloned()
++        .collect();
++    let next = from + u64::try_from(selected.len()).unwrap();
++    assert_eq!(page.scope, request.scope);
++    assert_eq!(page.from_sequence, from);
++    assert_eq!(page.outcomes, selected);
++    assert_eq!(
++        page.next_sequence,
++        if next < u64::try_from(expected.len()).unwrap() {
++            Some(next)
++        } else {
++            None
++        }
++    );
++}
++#[test]
++fn warm_replay_rebinds_requests_recovers_from_corruption_and_sees_new_commits() {
++    let directory = tempfile::tempdir().unwrap();
++    let path = directory.path().join("replay-cache.db");
++    let adapter = store(&path, clock());
++    let mut first = commit(false);
++    let mut second_outcome = first.outcomes[0].clone();
++    second_outcome.sequence = 1;
++    second_outcome.outcome_id = id("out_second");
++    second_outcome.kind = ProcessOutcomeKind::ActionPlanned;
++    first.outcomes.push(second_outcome);
++    let mut other = commit(false);
++    other.input.as_mut().unwrap().process_id = id("prc_other");
++    other.outcomes[0].process_id = id("prc_other");
++    other.actions[0].process_id = id("prc_other");
++    block_on(ProcessStore::commit(&adapter, &first)).unwrap();
++    block_on(ProcessStore::commit(&adapter, &other)).unwrap();
++    for _ in 0..3 {
++        check(&adapter, &first.outcomes, 1, 1);
++        check(&adapter, &other.outcomes, 0, 2);
++        check(&adapter, &first.outcomes, 0, 1);
++        check(&adapter, &first.outcomes, 99, 2);
++        check(&adapter, &first.outcomes, 0, 2);
++    }
++    let connection = Connection::open(&path).unwrap();
++    let key = first.outcomes[0].scope().canonical_bytes();
++    let original: Vec<u8> = connection
++        .query_row(
++            "SELECT checksum FROM process_outcomes WHERE scope=?1 AND sequence=0",
++            [&key],
++            |row| row.get(0),
++        )
++        .unwrap();
++    connection
++        .execute(
++            "UPDATE process_outcomes SET checksum=zeroblob(32) WHERE scope=?1 AND sequence=0",
++            [&key],
++        )
++        .unwrap();
++    assert_eq!(
++        block_on(adapter.read_outcomes(&replay())),
++        Err(PortError::Invariant)
++    );
++    check(&adapter, &other.outcomes, 0, 1);
++    check(&adapter, &first.outcomes, 1, 1);
++    connection
++        .execute(
++            "UPDATE process_outcomes SET checksum=?2 WHERE scope=?1 AND sequence=0",
++            rusqlite::params![key, original],
++        )
++        .unwrap();
++    check(&adapter, &first.outcomes, 0, 2);
++    connection
++        .execute_batch("CREATE INDEX replay_test_index ON process_outcomes(scope,sequence)")
++        .unwrap();
++    check(&adapter, &first.outcomes, 0, 1);
++    connection
++        .execute_batch("DROP INDEX replay_test_index")
++        .unwrap();
++    check(&adapter, &other.outcomes, 0, 2);
++    let mut appended = first.outcomes[1].clone();
++    appended.sequence = 2;
++    appended.outcome_id = id("out_third");
++    let next = AtomicProcessCommit::new(2, None, vec![appended.clone()], Vec::new()).unwrap();
++    block_on(ProcessStore::commit(&adapter, &next))
++        .unwrap()
++        .validate_for(&next)
++        .unwrap();
++    first.outcomes.push(appended);
++    check(&adapter, &first.outcomes, 1, 1);
++    check(&adapter, &first.outcomes, 2, 2);
++    check(&adapter, &first.outcomes, 0, 3);
++    check(&adapter, &other.outcomes, 0, 1);
++}

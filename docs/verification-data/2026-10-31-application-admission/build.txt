@@ -1,0 +1,2 @@
+   Compiling penelope-executor v0.3.0 (/home/ac/projects/penelope/crates/penelope-executor)
+    Finished `release` profile [optimized] target(s) in 0.80s

@@ -1,0 +1,24 @@
+{
+  "cpu": 0,
+  "campaigns": 2,
+  "blocks_per_campaign": 8,
+  "processes_per_block": 4,
+  "sizes": [
+    0,
+    32,
+    4096,
+    1048576
+  ],
+  "cases": [
+    "duplicate",
+    "read",
+    "missing",
+    "corrupt_read",
+    "corrupt_put"
+  ],
+  "storage": "project qualification-temp on btrfs",
+  "binary_sha256": {
+    "baseline": "a8ebe4b2929f9eab5d9a6125d06288aa0ec23d651fe74e6fb7d64d8a3fbab4b3",
+    "candidate": "fd2e1dab74b5c882ee300f86df6fa1e85f62c8c9462f89d18e821809a8912052"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "git_head": "e41d5957bd8623dae8fb4620e1924e77c8edc291",
+  "git_status": " M Cargo.lock\n M crates/penelope-executor/Cargo.toml\n?? .codex/\n?? .opencode/\n?? AGENTS.md\n?? crates/penelope-executor/benches/application_workloads.rs\n?? crates/penelope-executor/benches/support/\n?? crates/penelope-executor/tests/application_workloads.rs\n?? docs/application-workloads.md\n?? docs/performance-application-workloads-2026-10-31.md\n?? docs/verification-data/2026-10-31-application-workloads/\n?? graphify-out/\n?? scripts/application_workloads_summary.py\n?? scripts/benchmark-application-workloads.py\n?? scripts/tests/test_application_workloads_summary.py\n",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "repeats": 4,
+  "rounds": 8,
+  "iterations": 4,
+  "work": [
+    4096,
+    65536,
+    1048576
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "mix": {
+    "linear": 1,
+    "graph": 1,
+    "retry": 1,
+    "replay": 1,
+    "durable": 1,
+    "durable_replay": 1
+  },
+  "cpu_affinity": {
+    "1": [
+      0
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "database_root": "/home/ac/projects/penelope/target/application-workloads-reference-final/databases",
+  "binary_sha256": "50f9dca01f4aaec583885fd5fc50b9fd9848113e20434ff4e4bde8b5eaaafec5",
+  "source_sha256": {
+    "crates/penelope-executor/benches/application_workloads.rs": "0a2bb3321729339decd396bf1c6b631887891539e280a8687c698f255e0e19c1",
+    "crates/penelope-executor/benches/support/application_workloads/storage.rs": "fd323d591af3751fd04eb4e63e49effce7e5b1081d06f1e1c2ee18ba8146a072",
+    "crates/penelope-executor/benches/support/application_workloads/workflow.rs": "fd6dd2fc226109a0ecc76af8b01ead85a564a52206e19493d42b75227faf1963",
+    "scripts/benchmark-application-workloads.py": "2efbb1f71ad4233f0e3a3874fd175fd3264c01d766c28c29c54795197a2fccce",
+    "scripts/application_workloads_summary.py": "e5816559f541bb173c7cd3c5533956445aee36bb12ed56d650d442b7a3b524df",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "scope": "synthetic business work versus additional orchestration/reliability services; not every Penelope path or a consuming application",
+  "filesystem": "btrfs /dev/nvme0n1p3[/home]"
+}

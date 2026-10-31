@@ -1,0 +1,79 @@
+{
+  "created_utc": "2026-10-30T22:22:46.560609+00:00",
+  "baseline": "2276030fb6f68654fee9bbba8fe8b16b32bb824b",
+  "optimized": "53734a1d1ceedb971a18c2b108558b6725fbe568",
+  "runtime_fix": "5262cb2142357ed510d61c67893cb668113753bd",
+  "campaigns": {
+    "main": {
+      "pairs_per_benchmark": 20,
+      "benchmarks": 7,
+      "process_records": 280
+    },
+    "pre_inline_control": {
+      "pairs": 20,
+      "process_records": 40,
+      "limitation": "wide baseline timing spread; retained as descriptive, not a precise old-baseline parity proof"
+    }
+  },
+  "checks": {
+    "workspace_all_targets_all_features": {
+      "1.99.0": "pass",
+      "1.85.0": "pass"
+    },
+    "domain_properties": {
+      "properties": 3,
+      "requested_cases_per_property_per_toolchain": 10000,
+      "toolchains": [
+        "1.99.0",
+        "1.85.0"
+      ],
+      "result": "pass"
+    },
+    "canonical_wire": "eight golden fixtures compare exact bytes with previous serde_json::to_vec path; generic allocation-hint property and DTO fuzz parity assertions pass",
+    "allocation_profile": "short borrowed JSON identifier decode zero allocations, common outcome encoding one allocation; all 16 identifier types checked",
+    "runtime_regressions": "EOF-gating deterministic unit cases plus fragmented success and truncated-payload fault cases",
+    "runtime_stress": {
+      "repetitions_per_test_per_toolchain": 50,
+      "tests": [
+        "sealed_worker_survives_replacement_of_its_source_file",
+        "fragmented_completion_survives_exit_and_truncated_completion_faults"
+      ],
+      "toolchains": [
+        "1.99.0",
+        "1.85.0"
+      ],
+      "result": "pass"
+    },
+    "fuzz": {
+      "targets": [
+        "fuzz_identifiers",
+        "fuzz_dtos",
+        "fuzz_worker_protocol"
+      ],
+      "inputs_per_target": 100000,
+      "seed": 6,
+      "result": "pass"
+    },
+    "strict_clippy": "pass",
+    "workspace_doctests": "pass",
+    "fmt": "pass",
+    "layer_checks": "pass",
+    "graphify_update": "complete"
+  },
+  "ci": {
+    "runtime_fix": {
+      "run": 41136619735,
+      "result": "all seven jobs success"
+    },
+    "combined_source": {
+      "run": 41137052190,
+      "result": "all seven jobs success"
+    }
+  },
+  "previous_failed_ci": {
+    "run": 41134711571,
+    "revision": "94fd3cb",
+    "failure": "Stable sealed-source replacement test observed Faulted instead of Completed; queued observation / process exit race fixed at 5262cb2"
+  },
+  "abandoned_experiment": "Changing borrowed long-string storage construction from Box::from to String::from(...).into_boxed_str() did not improve the paired decode pilot. Exact one-line patch and all 40 process samples are retained; change was reverted."
+}

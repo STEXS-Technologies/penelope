@@ -1,0 +1,45 @@
+{
+  "processes": 20,
+  "test_executions": 40,
+  "gated_races": 160,
+  "admitted_requests": 320,
+  "successful_results": 220,
+  "conflict_results": 100,
+  "serial_reference_states": 320,
+  "reopened_duplicate_results": 220,
+  "reopened_conflict_results": 100,
+  "first_matching_serial_models": {
+    "duplicate-admission": [
+      5,
+      15
+    ],
+    "admission-commit": [
+      0,
+      20
+    ],
+    "duplicate-commit": [
+      14,
+      6
+    ],
+    "conflicting-admission": [
+      10,
+      10
+    ],
+    "shared-input-across-definitions": [
+      17,
+      3
+    ],
+    "shared-source-across-definitions": [
+      16,
+      4
+    ],
+    "consumed-input-at-next-frontier": [
+      20,
+      0
+    ],
+    "reused-source-at-next-frontier": [
+      20,
+      0
+    ]
+  }
+}

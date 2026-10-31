@@ -1,0 +1,36 @@
+{
+  "baseline_revision": "0645672bfa98fae791247553441bd6be9374d3cf",
+  "pairs_per_candidate": 8,
+  "warmup_processes_per_binary": 1,
+  "warmup_outputs_retained": false,
+  "cpu": 0,
+  "binaries": {
+    "baseline": "f13805aea139168b0f3a60d3ab7a173deb28ee3214bc28c910a105b4a7f2f9c7",
+    "candidate": "45b8aa2200046f2c816f28002cad9c4f4ac7bb69f1252b5edf1ce6b53cd1dd7b",
+    "inline": "4d10e86d8027a34a980495b37b995f9107ed9e56c3e25692c4516f7325de9cae",
+    "pending": "1e5737974926635858dfbd9152447704aac683c9a68e65b9863803b9b7955a05",
+    "match": "89e66a37aaef0f3a3d0d74015110c11e8c2010b7fd3a4dcf01266dd77f767ccf"
+  },
+  "limitations": "Exploratory pilots, not confirmatory application slowdown measurements. Host workloads, CPU frequency and caches uncontrolled. Warmup outputs not retained. Candidate sources reconstructed by patches against baseline. All production candidates rejected.",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+  "benchmark_sha256": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+  "artifact_sha256": {
+    "clippy.log.gz": "3cda600dd77fad2d23707e8bb304c5b5d5b69bd739dc43a4029f9523e327dc0b",
+    "factored.patch": "faf8b9fb844f33be70f2848c35c1865246d1cea5471fd1cfb30283a200885140",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "73f0bedf769c61515777362a7a5a5dedbd9bc6c46c4840c49f401792a5f02f7f",
+    "inline.patch": "00a0fc01aeeca527d21460ec8dc9f789c79ca372cfd9693bcd92824c34ad61ed",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "879a2e956ba8640b5fc0b759f32741e5f53c9e82331b9b8b9bc44feaf77d2e60",
+    "pending-equality.patch": "ffd3c21a94f8cf709923adbfad64293ee815c1a04392ea0e3a9319b314ccb561",
+    "pending-match.patch": "3ca9aa5dd3f23352e1d89a619e7749b6d80c79dcc0dcaac91761488310e8a943",
+    "stable.log.gz": "57422f0911768d1f83a7105930bb2711e67b6788fce6a454a42c0b4ff5e0cf94",
+    "summarize.py": "6be614f29eb86b07ef4f52b61c98389238ee604f9eedc925e53ab1047f93d4ba",
+    "summary.json": "dd86aa7ef098911d82f81f12d42026980be2bb969359919d74069955044a5b08",
+    "task-poll-inline-pilot.json.gz": "1b47cd9856412fccd2c2c6c0fd1e1c3e000c9b55d94ff584c4cadec361edf068",
+    "task-poll-match-pilot.json.gz": "38de6305eeb3b280ee84b8d8e70790e0dc2eeba13b8c6b67831c3a5aa20bef29",
+    "task-poll-pending-pilot.json.gz": "d5e06489d02013e1174db9c936c8b71c2436e705767246327067e6e4ed870baf",
+    "task-poll-pilot.json.gz": "5488ba7de94053b4c9961642cb09d4065df5ea3a8a8bb7bf88cae3ee5fb68233"
+  }
+}

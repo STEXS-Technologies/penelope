@@ -1,0 +1,48 @@
+[package]
+name = "penelope-process-runtime"
+description = "Optional Linux static single-process worker supervision for Penelope."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+penelope-core = { workspace = true, features = ["serde"] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[target.'cfg(all(target_os = "linux", target_arch = "x86_64"))'.dependencies]
+libc = "0.2"
+rustix = { version = "1.1", features = ["fs", "process", "thread", "event", "pipe"] }
+seccompiler = "0.4"
+
+[dev-dependencies]
+async-trait.workspace = true
+tempfile = "3"
+penelope-sqlite = { version = "0.3.0", path = "../penelope-sqlite" }
+penelope-executor.workspace = true
+penelope-domain.workspace = true
+penelope-ports.workspace = true
+penelope-statechronicle.workspace = true
+
+[lints]
+workspace = true
+
+[[bench]]
+name = "dispatch"
+harness = false
+
+[[bench]]
+name = "worker_protocol"
+harness = false
+
+[[test]]
+name = "worker_protocol_allocations"
+harness = false
+
+[[bench]]
+name = "fence"
+harness = false

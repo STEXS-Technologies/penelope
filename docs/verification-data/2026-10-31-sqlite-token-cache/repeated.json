@@ -1,0 +1,402 @@
+[
+  {
+    "compiler": "stable",
+    "repeat": 0,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 1,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 2,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 3,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 4,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 5,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.02s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 6,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 7,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 8,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.02s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 9,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 10,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 11,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.02s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 12,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 13,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 14,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 15,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 16,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 17,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 18,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 19,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 20,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 21,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 22,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 23,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "repeat": 24,
+    "binary": "target/debug/deps/process-32db73d32384d57a",
+    "binary_sha256": "d189e08eda4892458d5128c50f1cd850378c5d658c7fce0711acbfc8bfed104c",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 0,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 1,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 2,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 3,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 4,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 5,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 6,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 7,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 8,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 9,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 10,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 11,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 12,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 13,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 14,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 15,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 16,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 17,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 18,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 19,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 20,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 21,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 22,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 23,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "repeat": 24,
+    "binary": "target/worker-audit-msrv/debug/deps/process-be9e3768d32ef2e5",
+    "binary_sha256": "d4a47bb77c1717a287a0db1276ae2f9be67d3077d3e1944e5672a40e161442fa",
+    "stdout": "\nrunning 1 test\ntest lease_contracts::warmed_token_statements_preserve_batch_rollback_retry_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.03s\n\n",
+    "stderr": ""
+  }
+]

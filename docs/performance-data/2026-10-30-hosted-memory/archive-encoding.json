@@ -1,0 +1,293 @@
+{
+  "encoding": "gzip; original bytes retained on decompression; profiling and measurement JSON unchanged",
+  "files": [
+    {
+      "original_path": "capacity-4096/run-1-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-1-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "4d974d771618bc9dcecd85d41c2788a361c67b6ea00b80048efb6b78fa5837f5",
+      "archived_sha256": "281ec4bf74102f17a2b54c0d156d2a02d73bcafb5b541da55f7df75b44de1bab"
+    },
+    {
+      "original_path": "capacity-4096/run-1-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-1-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "79df250f48cf1fb9771f492af683b4360d359338cf15dacc1d5e3ed695d08031",
+      "archived_sha256": "7b15fc9fb7d1630bfc582776af4e892626c780c329df1f73978722fb98ca8864"
+    },
+    {
+      "original_path": "capacity-4096/run-1-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-1-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "57bd297cb9c297355f59c8393b2922537cf910ebbaf21dafded5f365d2423f0c",
+      "archived_sha256": "a9f1017aa41ced4d1b21628c36662b25d65f0c2f77dcb8d33982a607b95212e3"
+    },
+    {
+      "original_path": "capacity-4096/run-1-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-1-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "606f2cb5050f34701cb02f25f34db795578ea3ef5240552f06673f373b1e6f21",
+      "archived_sha256": "1aea8a224b1da9944c672408095d680117ec59bfb985e2b913fb9310a4693bb9"
+    },
+    {
+      "original_path": "capacity-4096/run-1-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-1-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "447cf142818ba29c3cff201fa1fe31aa3916dd10a20d7b4839cfa80b7ff4afc7",
+      "archived_sha256": "669297232f9eefe6af6308ac1029d46cad470125c7e35305238f4b4cb80285db"
+    },
+    {
+      "original_path": "capacity-4096/run-1-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-1-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "83cf02c48f8f21028e586525eee92ad0c1d3f73402a98dc38a51b116a88bff6a",
+      "archived_sha256": "5f91f26c4b71652848fbcf5fd2a00bf5e6c7a632e08b8902df203d81281ad15c"
+    },
+    {
+      "original_path": "capacity-4096/run-1-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-1-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "d16f586f43372d2c4468f5fcac60763f7d06b62e119a92ea0f4510b0f4fbc7cf",
+      "archived_sha256": "469cb6ee8c36b96cad26da5f859e1bdb2a532cb95016b6dc2f5ba7e32a7eea38"
+    },
+    {
+      "original_path": "capacity-4096/run-1-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-1-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "63232c458d95f95ad25c1a73a207b06ed1e9c6485818f74e6c27239c50bfdd6f",
+      "archived_sha256": "4dbd957b7926c5d2d6129eec3bd882f2788a68578581ba251ea251c6080c49e7"
+    },
+    {
+      "original_path": "capacity-4096/run-2-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-2-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "c333c238e92cee446379de060fe2a4527960d19ec2eadcc3fc6457062d0a25b2",
+      "archived_sha256": "6e7218209c16e05c409aca18679c4318c1526cd1e5248060859dae4717e5bcaf"
+    },
+    {
+      "original_path": "capacity-4096/run-2-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-2-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "741d89621f37a04bb9ec2b1f2c091bc6a7145849fd3a43c9095de3a17965f5a6",
+      "archived_sha256": "fda7485fba6f907527f1b7acb832a604f07a293732175225b42bc874abdd3a62"
+    },
+    {
+      "original_path": "capacity-4096/run-2-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-2-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "b55d0a6d5a79c23fde280506e28b0aec14fb1dfb6bc0534fed033403df897e34",
+      "archived_sha256": "5a39cc0cf4a0825688c0466eeab16dc27c2969503c024dfcc0bd900a72c1df86"
+    },
+    {
+      "original_path": "capacity-4096/run-2-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-2-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "31fc73c4b38dbccbad957641c7dd4953971d0e1888eab2836a6ba8f2b43e73a5",
+      "archived_sha256": "1823fbaa56cce70a0ad31df3254ebe32cd03d589f47999e76c6418e67f77518b"
+    },
+    {
+      "original_path": "capacity-4096/run-2-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-2-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "f885fd2cf0c2ec275f580a91ff74e80c67d388f3021512f5159fd026b831ba0c",
+      "archived_sha256": "462d8a5bb309f7f95bdf570a0575705fac9438f3fa6a8cb7595849f52dc12c76"
+    },
+    {
+      "original_path": "capacity-4096/run-2-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-2-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "db6dbddbe1ce735a507ded1943f73e48897fe60ce2e00b225e9dfd85d289786e",
+      "archived_sha256": "276ada3a524cd836a65646f60910e50fced0ebadd2463f13e52763aac7d02089"
+    },
+    {
+      "original_path": "capacity-4096/run-2-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-2-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "1af5f059dd5d09ec135e9e62c7a890f35b0923b669a10b0390b5eb87252cf85e",
+      "archived_sha256": "4e7e810e4c59341de163af6100f9ed699dd7bb89a7fd2ff1e48e501a213952c8"
+    },
+    {
+      "original_path": "capacity-4096/run-2-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-2-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "000605fd092c6cf5230a85a27598e162d9fe611b1b7575f480e8cacca3c51856",
+      "archived_sha256": "1b41f1ada6671f834c8f8bac71deaee552ded0dd0520f9f8ee0c976c09d373d7"
+    },
+    {
+      "original_path": "capacity-4096/run-3-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-3-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "8f6c71ae2e11ad9a323a930bfe69dd088ff8060b84c649f3792b35403cfa8089",
+      "archived_sha256": "64bbffa1609813b1f5a64077a02145bae429fe4a804e3b45fff03c82328848ff"
+    },
+    {
+      "original_path": "capacity-4096/run-3-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-3-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "d792e83490b23c565779a5b296090c72ca3d3dcdcd9a553cf46c2cf7d1e26bd9",
+      "archived_sha256": "5fb363817f58f4eb5dd63dab0041c8f4366963bdc1188bab839c4b7555e6f6f1"
+    },
+    {
+      "original_path": "capacity-4096/run-3-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-3-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "84008d7e490641019500f154b31b15ade0e24b15d47bb3153fd1a6443b8e53f4",
+      "archived_sha256": "f9035d0e2733186cd48497276368b808f616cdf13e4f109406fa6a57c049f3fd"
+    },
+    {
+      "original_path": "capacity-4096/run-3-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-3-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "f8f7984f78f7f3855b962e15da49833146dfe8cce656b26e01c30d13214a8578",
+      "archived_sha256": "ebf0b1dff3aa8362acc341ea109fb02913af1d5a2c6f7084e97c0cd8ab61fbb8"
+    },
+    {
+      "original_path": "capacity-4096/run-3-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-3-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "5aab8d4d71662df2466f2b3db89958ef01cebff08ce3cba4f4b02b225e20cc96",
+      "archived_sha256": "9e1b5f444e7a197c739fd63f938e38ef20c07772ad2ffa759d7b5935ae3f1199"
+    },
+    {
+      "original_path": "capacity-4096/run-3-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-4096/run-3-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "964620b4013742e1e111c311e1e05bed79d8f6f3a435a6372a060f93b0335926",
+      "archived_sha256": "960b3cfc9aa000d72dcfa07390132b31c92b6deeb67f3871c076365b120ebf2f"
+    },
+    {
+      "original_path": "capacity-4096/run-3-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-4096/run-3-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "6dce4a3b799f583615778f188174801ed375387dd9183a93a6c13651e7f67459",
+      "archived_sha256": "4c14fe6f1b2194a76be024369a4d3349920e21dbabe266cbad6a9136f8affc2f"
+    },
+    {
+      "original_path": "capacity-4096/run-3-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-4096/run-3-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "35f50c71db05579382fd5a59959c54d098d88f7372474cf1536b00380d37009b",
+      "archived_sha256": "7bca01441d06f55c65d32232c14514644c96a88138abe43925fc16452bc20e4c"
+    },
+    {
+      "original_path": "capacity-65536/run-1-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-1-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "a533a9c8880b8adcd5ebf256b8e8c62118de3ff5903357e2878372f4ecb2a3da",
+      "archived_sha256": "e014901f7fe19d4a1d88ab1725421e882205122efc6a5c1598e25fd4a22ff7d6"
+    },
+    {
+      "original_path": "capacity-65536/run-1-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-1-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "d6125b1627b5d1fd3f5e20d2aef21970eae8d06c625250541ec6608915a37392",
+      "archived_sha256": "bc202b5a46d114bca363dd7c231313d1d3e433ddad3896f063b50664eb59b8c7"
+    },
+    {
+      "original_path": "capacity-65536/run-1-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-1-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "c7da50006e2d11036318e8cff1df3e1380cea57f3d437fb69a438391e2f2191a",
+      "archived_sha256": "2b2764988a5adf0ff2bd3ffbd34ce9678f4448ddf557c705b2cd29dd0954e539"
+    },
+    {
+      "original_path": "capacity-65536/run-1-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-1-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "c85694a875ace7f89f551aa1190d7590cffd495f71e0a25fa185f31028a46fc1",
+      "archived_sha256": "d7a0625dc749b5bedd6f21c5558d756d178cac4bdc8ac8354a8f6d375535aa0f"
+    },
+    {
+      "original_path": "capacity-65536/run-1-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-1-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "edef44ceb0e1babd8522e71b486e21415a93c2feee5bd2262ac130820face21d",
+      "archived_sha256": "0ea7ef3c7cd718a6949e54b292e28936fa8e8e7d83827665de07d504440883d6"
+    },
+    {
+      "original_path": "capacity-65536/run-1-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-1-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "6d56b2eb016e4cfae953d277d0186c5972103e8d98cfc18668115bb64cfc523d",
+      "archived_sha256": "20582ae8d07ab6221298b1763e208f8c21b8e121659aa36280c0f05db1e1d966"
+    },
+    {
+      "original_path": "capacity-65536/run-1-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-1-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "7c8560d534e3592a27975771d272d6ca94b6f0a1dc81b60d98e8f1ed41c3ab26",
+      "archived_sha256": "a703d459c71b66c8de89040d21139c8c96fe843fd803039ec921ae57df275b55"
+    },
+    {
+      "original_path": "capacity-65536/run-1-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-1-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "7f1b8f3642da33a888bb008d8951b42778e354159ad5bfedcb11b262cc7786c5",
+      "archived_sha256": "17fad05365ad465323e9c8a6aeac048e184e828d7da0547b33b5e0e9e08d828a"
+    },
+    {
+      "original_path": "capacity-65536/run-2-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-2-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "791d1b2c91f26213a83bc03fda7a85f53970b5421fffb1ed4ce6305478450be7",
+      "archived_sha256": "fa6d64d3c6e8ac9906f89566851ff68b5d8f66c6ca6ffa302c2e70b346472233"
+    },
+    {
+      "original_path": "capacity-65536/run-2-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-2-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "a7556c5a3cd9592fc3525ca6e1a0f4903452bcd22713a34221ea8a62ae329b7d",
+      "archived_sha256": "ca8d32dedbf27fa710881a3b287506a48525434bcb414a50011be0b8f568f8a1"
+    },
+    {
+      "original_path": "capacity-65536/run-2-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-2-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "a5d0fd651fe2cdabfdd2acd73cb2b60baba9025e9a0897461d9352e5fb19bcd7",
+      "archived_sha256": "e8dcbf30d377368892a72469776bc751dc111ff48cfe35272d123dec96b98835"
+    },
+    {
+      "original_path": "capacity-65536/run-2-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-2-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "9f2b4c8d578380ddc71aed09ba6f352f72cc6221b4d466899b62d17699a110b3",
+      "archived_sha256": "4fc247ad47830c568d59de87f087c50cc88ac34bb3448a8c0d6d88fb4b318196"
+    },
+    {
+      "original_path": "capacity-65536/run-2-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-2-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "6e41d6e5af0a3de51ae24f69d8564a3fc542e5a6f88cdec0083e1ae27aa1a8dc",
+      "archived_sha256": "a6c8f2c7e66c6957f2ee476eb79ae7f776a5ec27d582092ba810b4a14d1abc12"
+    },
+    {
+      "original_path": "capacity-65536/run-2-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-2-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "b4f46113dfb9e3d5a3b0daeb2d071bf25f1ea450e102735839f6232acfc8fa37",
+      "archived_sha256": "c4bd25ab4aeca25a4c8d8d29c3da4e362bc53ca1cb14a656410e687dbdb5a4cc"
+    },
+    {
+      "original_path": "capacity-65536/run-2-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-2-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "6254b609179f13def8cb84ed53a62eb848d8b9f0c885b450c55663d21bd03aaa",
+      "archived_sha256": "8943b56223720803c74c670ab90e6208e40fde577734b3097bdf43d92f83acb4"
+    },
+    {
+      "original_path": "capacity-65536/run-2-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-2-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "8b2c9ea9fe5a239cdeae98f20834c7d3bd154f39d47ac9226312dff6e07303a0",
+      "archived_sha256": "d0c3976d11360b11fbd809ec6e925482a3112993fe8995f773c2bf17d7bb8da7"
+    },
+    {
+      "original_path": "capacity-65536/run-3-after-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-3-after-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "9eb3b3397bf9cae39a283ff3015222dc89849ce7e78815b156f870c91575cf13",
+      "archived_sha256": "6035d23cb6c23736d60bc18e9f6e1b49a076b8cf530a18f335717f1734ea45eb"
+    },
+    {
+      "original_path": "capacity-65536/run-3-after-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-3-after-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "13273ccc964fe1411eff7f0284ae705a10f4979b422121f5bf02d52eed4d23cc",
+      "archived_sha256": "db36feece2fcd99fa3e81069976e001e34336a7eb4622c646ea3469cdda7219d"
+    },
+    {
+      "original_path": "capacity-65536/run-3-after-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-3-after-stack_baseline-stack.stderr.gz",
+      "original_sha256": "f30b226e280fd3825345d16e49a4c819a7f11fa3e30924bf43601b75be2aa22e",
+      "archived_sha256": "1ca7a382422e2768c20bf498a1b47bb46f33f388ade941aa45bfd3a735f38c6d"
+    },
+    {
+      "original_path": "capacity-65536/run-3-after-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-3-after-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "a30e19ff5fba69b20a343b8d0110b789dacff98eeffdcff63052c701a8eca32d",
+      "archived_sha256": "f153db9260dec181f0ff80015596ceb88a844dfb9b46652132d4aff4b2144938"
+    },
+    {
+      "original_path": "capacity-65536/run-3-before-effect_reconciliation_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-3-before-effect_reconciliation_recovery-stack.stderr.gz",
+      "original_sha256": "b4b0d782a9de933355e20a0cf6bf80ed40c8e868d3623ab0c96a9992048d7257",
+      "archived_sha256": "5e486220b8bfdd3682832c97d117bb1f0525e5752bf4cbe715d7287eaa5803d8"
+    },
+    {
+      "original_path": "capacity-65536/run-3-before-pure_checkpoint_recovery-stack.stderr",
+      "archived_path": "capacity-65536/run-3-before-pure_checkpoint_recovery-stack.stderr.gz",
+      "original_sha256": "eeb91e71764783be30c3870e6780ddfb442c278e726eb2d776441d3e2e22c67f",
+      "archived_sha256": "4adc02e3f77442b58720b5a8496c7ca2c2dd57fb34862e836eb2c07c85e9bad7"
+    },
+    {
+      "original_path": "capacity-65536/run-3-before-stack_baseline-stack.stderr",
+      "archived_path": "capacity-65536/run-3-before-stack_baseline-stack.stderr.gz",
+      "original_sha256": "563f0fe7ca09d138ed512749ba7bd6597d2c8689c3d2e9842c58d260f2361702",
+      "archived_sha256": "feb7571270e897044011be7d44c14cc85d865e5ff7fdd818bca85aaf812cb3db"
+    },
+    {
+      "original_path": "capacity-65536/run-3-before-stack_positive_control-stack.stderr",
+      "archived_path": "capacity-65536/run-3-before-stack_positive_control-stack.stderr.gz",
+      "original_sha256": "3f16fba382d0383dfaed88c0e8b5fcd31f274f06c6e796dc6b046d0acb2fe22d",
+      "archived_sha256": "0cbc1416350615b22e37742af131672ac50a3babb6f8f4dde446943cf6fdc947"
+    }
+  ]
+}
