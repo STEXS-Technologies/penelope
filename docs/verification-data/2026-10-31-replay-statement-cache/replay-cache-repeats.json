@@ -1,0 +1,102 @@
+[
+  {
+    "compiler": "stable",
+    "run": 0,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 1,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 2,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 3,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 4,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 5,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 6,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 7,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 8,
+    "returncode": 0
+  },
+  {
+    "compiler": "stable",
+    "run": 9,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 0,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 1,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 2,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 3,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 4,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 5,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 6,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 7,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 8,
+    "returncode": 0
+  },
+  {
+    "compiler": "msrv",
+    "run": 9,
+    "returncode": 0
+  }
+]
