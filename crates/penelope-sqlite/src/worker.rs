@@ -435,3 +435,7 @@ mod waker_tests;
 #[cfg(test)]
 #[path = "worker_panic_tests.rs"]
 mod panic_tests;
+
+#[cfg(test)]
+#[path = "worker_transaction_tests.rs"]
+mod transaction_tests;
