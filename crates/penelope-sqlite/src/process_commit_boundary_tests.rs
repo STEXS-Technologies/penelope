@@ -553,3 +553,243 @@ fn deferred_outbox_commit_failure_preserves_tokens_envelopes_and_retry() {
         "deferred_outbox_cases={cases} all_writes_observed=true full_rollback=true tokens_preserved=true same_worker_retry=true reopen=true"
     );
 }
+
+#[test]
+fn deferred_timer_commit_failure_preserves_usage_tokens_and_terminal_state() {
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    enum Operation {
+        Schedule,
+        Cancel,
+        Claim,
+        Acknowledge,
+    }
+    use Operation::{Acknowledge, Cancel, Claim, Schedule};
+    let mut cases = 0;
+    for long in [false, true] {
+        for count in [1_u16, 4] {
+            for operation in [Schedule, Cancel, Claim, Acknowledge] {
+                let directory = tempfile::tempdir().unwrap();
+                let path = directory.path().join("timer-commit-boundary.db");
+                let stages = Arc::new(Mutex::new(Vec::new()));
+                let adapter = adapter(&path, stages.clone());
+                let mut committed = batch(long, 0, u64::from(count), true);
+                for action in &mut committed.actions {
+                    action.kind = ProcessActionKind::Timer;
+                }
+                wait(ProcessStore::commit(&adapter, &committed)).unwrap();
+                let timers: Vec<_> = committed
+                    .actions
+                    .iter()
+                    .map(|action| TimerSchedule {
+                        action: action.clone(),
+                        due_at: LogicalTime(100),
+                    })
+                    .collect();
+                for (index, timer) in timers.iter().enumerate() {
+                    if operation != Schedule || index != 0 {
+                        wait(TimerScheduler::schedule(&adapter, timer)).unwrap();
+                    }
+                }
+                let request = TimerClaimRequest::new(
+                    committed.outcomes.first().unwrap().scope().clone(),
+                    "pri_boundary".parse().unwrap(),
+                    LogicalTime(100),
+                    NonZeroU16::new(count).unwrap(),
+                )
+                .unwrap();
+                let initial = if matches!(operation, Cancel | Acknowledge) {
+                    wait(TimerClaimStore::claim_due(&adapter, &request)).unwrap()
+                } else {
+                    Vec::new()
+                };
+                let perform = |store: &SqliteProcessStore| match operation {
+                    Schedule => wait(TimerScheduler::schedule(store, timers.first().unwrap()))
+                        .map(|()| initial.clone()),
+                    Cancel => wait(TimerScheduler::cancel(store, timers.first().unwrap()))
+                        .map(|()| initial.clone()),
+                    Claim => wait(TimerClaimStore::claim_due(store, &request)),
+                    Acknowledge => wait(TimerClaimStore::acknowledge(
+                        store,
+                        initial.first().unwrap(),
+                        LogicalTime(100),
+                    ))
+                    .map(|()| initial.clone()),
+                };
+                let connection = Connection::open(&path).unwrap();
+                let used_before: i64 = connection
+                    .query_row("SELECT bytes_used FROM process_usage", [], |row| row.get(0))
+                    .unwrap();
+                let before = write_snapshot::snapshot(&connection, &TABLES);
+                let (event, stage, expected_stage, writes) = match operation {
+                    Schedule => ("INSERT", "NEW.due_at", 100, 1),
+                    Cancel => ("UPDATE OF state", "NEW.state", 2, 1),
+                    Claim => ("UPDATE OF lease", "NEW.attempt", 1, usize::from(count)),
+                    Acknowledge => ("UPDATE OF state", "NEW.state", 1, 1),
+                };
+                connection.execute_batch(&format!(
+                    "CREATE TRIGGER boundary_timer AFTER {event} ON process_timers BEGIN INSERT INTO boundary_child VALUES(7); SELECT boundary_stage({stage}); END"
+                )).unwrap();
+                assert_eq!(perform(&adapter), Err(PortError::Conflict), "{operation:?}");
+                assert_eq!(*stages.lock().unwrap(), vec![expected_stage; writes]);
+                assert_clean(&adapter);
+                assert_eq!(write_snapshot::snapshot(&connection, &TABLES), before);
+                connection
+                    .execute("INSERT INTO boundary_parent VALUES(7)", [])
+                    .unwrap();
+                let leases = perform(&adapter).unwrap();
+                assert_eq!(*stages.lock().unwrap(), vec![expected_stage; writes * 2]);
+                let children: i64 = connection
+                    .query_row("SELECT count(*) FROM boundary_child", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(children, i64::try_from(writes).unwrap());
+                let used_after: i64 = connection
+                    .query_row("SELECT bytes_used FROM process_usage", [], |row| row.get(0))
+                    .unwrap();
+                let expected_charge = if operation == Schedule {
+                    i64::try_from(
+                        encode(
+                            timers.first().unwrap(),
+                            SqliteLimits::default().max_record_bytes,
+                        )
+                        .unwrap()
+                        .len(),
+                    )
+                    .unwrap()
+                        + 128
+                } else {
+                    0
+                };
+                assert_eq!(
+                    used_after,
+                    used_before + expected_charge,
+                    "quota must charge exact timer bytes once"
+                );
+                let claimed = operation != Schedule;
+                assert_eq!(leases.len(), if claimed { usize::from(count) } else { 0 });
+                let next: i64 = connection
+                    .query_row("SELECT next_token FROM lease_counter", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(next, if claimed { i64::from(count) + 1 } else { 1 });
+                for (index, timer) in timers.iter().enumerate() {
+                    let (encoded, attempt, expires, state): (Option<Vec<u8>>, u32, Option<i64>, u32) = connection.query_row(
+                        "SELECT lease,attempt,expires_at,state FROM process_timers WHERE scope=?1 AND action_id=?2",
+                        params![request.scope.canonical_bytes(), timer.action.action_id.as_str()],
+                        |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
+                    ).unwrap();
+                    if let Some(lease) = leases.get(index) {
+                        assert_eq!(&lease.timer, timer);
+                        assert_eq!(
+                            lease.token,
+                            OutboxLeaseToken::new(
+                                std::num::NonZeroU64::new(u64::try_from(index).unwrap() + 1)
+                                    .unwrap()
+                            )
+                        );
+                        assert_eq!(
+                            encoded,
+                            Some(encode(lease, SqliteLimits::default().max_record_bytes).unwrap())
+                        );
+                        assert_eq!(lease.lease_expires_at, LogicalTime(110));
+                    } else {
+                        assert!(encoded.is_none());
+                    }
+                    assert_eq!(attempt, u32::from(claimed));
+                    assert_eq!(expires, claimed.then_some(110));
+                    let expected_state = if index == 0 {
+                        match operation {
+                            Cancel => 2,
+                            Acknowledge => 1,
+                            Schedule | Claim => 0,
+                        }
+                    } else {
+                        0
+                    };
+                    assert_eq!(state, expected_state);
+                }
+                let after = write_snapshot::snapshot(&connection, &TABLES);
+                for ((table, previous), (same_table, current)) in before.iter().zip(&after) {
+                    assert_eq!(table, same_table);
+                    let changed_usage = operation == Schedule && table == "process_usage";
+                    if !changed_usage
+                        && ![
+                            "process_timers",
+                            "lease_counter",
+                            "boundary_parent",
+                            "boundary_child",
+                        ]
+                        .contains(&table.as_str())
+                    {
+                        assert_eq!(current, previous, "unrelated table {table}");
+                    }
+                }
+                drop(adapter);
+                let reopened = SqliteProcessStore::open(
+                    &path,
+                    SqliteLimits::default(),
+                    Arc::new(Clock),
+                    10,
+                    16,
+                )
+                .unwrap();
+                if operation == Schedule {
+                    wait(TimerScheduler::schedule(&reopened, timers.first().unwrap())).unwrap();
+                } else {
+                    assert!(
+                        wait(TimerClaimStore::claim_due(&reopened, &request))
+                            .unwrap()
+                            .is_empty()
+                    );
+                }
+                assert_eq!(write_snapshot::snapshot(&connection, &TABLES), after);
+                if operation == Cancel {
+                    assert_eq!(
+                        wait(TimerClaimStore::acknowledge(
+                            &reopened,
+                            initial.first().unwrap(),
+                            LogicalTime(100)
+                        )),
+                        Err(PortError::Conflict)
+                    );
+                    assert_eq!(write_snapshot::snapshot(&connection, &TABLES), after);
+                }
+                connection
+                    .execute_batch("DROP TRIGGER boundary_timer")
+                    .unwrap();
+                let current = if operation == Schedule {
+                    wait(TimerClaimStore::claim_due(&reopened, &request)).unwrap()
+                } else {
+                    leases
+                };
+                assert_eq!(current.len(), usize::from(count));
+                for (index, lease) in current.iter().enumerate() {
+                    if operation != Cancel || index != 0 {
+                        wait(TimerClaimStore::acknowledge(
+                            &reopened,
+                            lease,
+                            LogicalTime(100),
+                        ))
+                        .unwrap();
+                    }
+                }
+                let terminal: i64 = connection
+                    .query_row(
+                        "SELECT count(*) FROM process_timers WHERE state IN (1,2)",
+                        [],
+                        |row| row.get(0),
+                    )
+                    .unwrap();
+                assert_eq!(terminal, i64::from(count));
+                assert!(
+                    wait(TimerClaimStore::claim_due(&reopened, &request))
+                        .unwrap()
+                        .is_empty()
+                );
+                cases += 1;
+            }
+        }
+    }
+    assert_eq!(cases, 16);
+    println!(
+        "deferred_timer_cases={cases} all_writes_observed=true full_rollback=true usage_exact=true tokens_preserved=true same_worker_retry=true reopen=true"
+    );
+}
