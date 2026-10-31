@@ -6,17 +6,6 @@ use crate::{
 use penelope_core::task::{runtime::*, *};
 use rusqlite::{OptionalExtension, TransactionBehavior, params};
 
-fn execution_id(bytes: Option<Vec<u8>>) -> Result<Option<Digest>, TaskPortError> {
-    bytes
-        .map(|bytes| {
-            bytes
-                .try_into()
-                .map(Digest)
-                .map_err(|_invalid| TaskPortError::Corrupt)
-        })
-        .transpose()
-}
-
 impl TaskGenerationAuthority for SqliteTaskJournal {
     fn reserve_start(
         &mut self,
@@ -73,7 +62,7 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
             .map_err(|error| sql_error(&error))?;
         let result = match stored {
             Some((id, 0)) => {
-                if execution_id(id)? != Some(execution) {
+                if id != Some(execution) {
                     return Err(TaskPortError::Conflict);
                 }
                 StartReservation::AlreadyReserved
@@ -129,7 +118,7 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
                 |row| crate::tasks::optional_digest(row, 0),
             )
             .map_err(|error| sql_error(&error))?;
-        let result = execution_id(id)?;
+        let result = id;
         transaction.commit().map_err(|error| sql_error(&error))?;
         Ok(result)
     }
@@ -143,7 +132,7 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
         if scope.definition != self.definition.fingerprint() {
             return Err(TaskPortError::Conflict);
         }
-        let changed = self.connection.execute("UPDATE runtime_generations SET state=2 WHERE scope=?1 AND generation=?2 AND execution IS ?3 AND state IN (1,2)", params![key(scope), generation.get(), execution.map(|id| id.0.to_vec())]).map_err(|error| sql_error(&error))?;
+        let changed = self.connection.execute("UPDATE runtime_generations SET state=2 WHERE scope=?1 AND generation=?2 AND execution IS ?3 AND state IN (1,2)", params![key(scope), generation.get(), execution.as_ref().map(|id| id.0.as_slice())]).map_err(|error| sql_error(&error))?;
         if changed != 1 {
             return Err(TaskPortError::Conflict);
         }

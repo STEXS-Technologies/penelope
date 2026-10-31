@@ -493,11 +493,14 @@ impl TaskJournal for SqliteTaskJournal {
 pub(crate) fn optional_digest(
     row: &rusqlite::Row<'_>,
     index: usize,
-) -> rusqlite::Result<Option<Vec<u8>>> {
+) -> rusqlite::Result<Option<Digest>> {
     if matches!(row.get_ref(index)?, rusqlite::types::ValueRef::Null) {
         return Ok(None);
     }
-    copy_column(row, index, 32).map(Some)
+    let digest = column_bytes(row, index, 32)?
+        .try_into()
+        .map_err(|_invalid| rusqlite::Error::InvalidQuery)?;
+    Ok(Some(Digest(digest)))
 }
 
 fn nonnegative(row: &rusqlite::Row<'_>, index: usize) -> rusqlite::Result<u64> {
@@ -515,15 +518,25 @@ pub(crate) fn authorized_projection(
     limits: SqliteLimits,
 ) -> Result<TaskProjection, TaskPortError> {
     let (projection, digest, used) = reconstruct(connection, scope, definition, limits)?;
-    match head(connection, scope)? {
-        Some((next, checksum, bytes))
-            if next == projection.next_sequence().get()
-                && checksum == digest.0
-                && bytes == used =>
-        {
-            Ok(projection)
-        }
-        _ => Err(TaskPortError::Corrupt),
+    // Compare the digest while borrowed. Maintenance keeps its separate head
+    // decoder so an otherwise valid frontier can still have its digest repaired.
+    let matches = connection
+        .prepare_cached(
+            "SELECT next_sequence,last_digest,bytes_used FROM task_heads WHERE scope=?1",
+        )
+        .map_err(|error| sql_error(&error))?
+        .query_row([key(scope)], |row| {
+            let next: u32 = row.get(0)?;
+            let checksum = column_bytes(row, 1, 32)?;
+            let bytes = nonnegative(row, 2)?;
+            Ok(next == projection.next_sequence().get() && checksum == digest.0 && bytes == used)
+        })
+        .optional()
+        .map_err(|error| sql_error(&error))?;
+    if matches == Some(true) {
+        Ok(projection)
+    } else {
+        Err(TaskPortError::Corrupt)
     }
 }
 
