@@ -1,0 +1,20 @@
+{
+  "lease_batch_services": {
+    "profiles": 72,
+    "timer_profiles": 36,
+    "outbox_profiles": 36,
+    "cargo_bench_argument": true,
+    "same_checksums_and_allocations": true,
+    "invalid_options_rejected": 3,
+    "binary_sha256": "98fe9760892c35a23296db4c0c2d13b4b7ba80bf09cba1e85f80d9b3044cf624"
+  },
+  "lease_batch_service_allocations": {
+    "profiles": 72,
+    "timer_profiles": 36,
+    "outbox_profiles": 36,
+    "cargo_bench_argument": true,
+    "same_checksums_and_allocations": true,
+    "invalid_options_rejected": 3,
+    "binary_sha256": "a7af86aff0ea078f7f1dddb3321edb8a8e13d76c2f7802230f5d902d0ea5c1af"
+  }
+}

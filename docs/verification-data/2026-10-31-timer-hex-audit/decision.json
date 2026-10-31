@@ -1,0 +1,13 @@
+{
+  "parent": "9fa82f60c39288b3512c1f1ece35077fb9b3b5cc",
+  "decision": "reject-runtime-encoder",
+  "reason": "Normal-build outbox control regressions persist; aligned diagnostic does not qualify normal builds.",
+  "experiments": {
+    "shared": "timer-input-hex-shared",
+    "frames": "timer-input-hex-frames",
+    "isolated": "timer-input-hex",
+    "aligned": "timer-input-hex-aligned"
+  },
+  "candidate_sha256": "440019bd97ef06aee569ab0ef389b07ff0e655b75ec2a5d381e844244b97f143",
+  "baseline_runtime_restored": true
+}
