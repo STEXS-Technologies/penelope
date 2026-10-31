@@ -9,6 +9,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Add an isolated pending-task polling benchmark; retain an audit of four
+  rejected controller optimizations without changing production behavior.
 - Reuse SQLite response waker registrations during repeated pending polls.
 - Build Linux execution identities and checkpoint acknowledgements with fixed
   stack buffers. Checkpoint ACKs now allocate zero times after setup, verified
