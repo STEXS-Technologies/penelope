@@ -57,3 +57,7 @@ harness = false
 [[test]]
 name = "definition_allocations"
 harness = false
+
+[[bench]]
+name = "task_poll"
+harness = false
