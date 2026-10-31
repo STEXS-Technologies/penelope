@@ -9,12 +9,8 @@ use penelope_core::task::{
     TaskGeneration, TaskStatus,
     runtime::{TaskClock, TaskJournal, TaskRuntime},
 };
-use penelope_domain::{
-    CanonicalWireBytes, ContentDigest, LogicalTime, PrincipalId, ProcessInput, ProcessInputKind,
-    ProcessScope,
-};
+use penelope_domain::{LogicalTime, PrincipalId, ProcessScope};
 use penelope_ports::{payloads::ProcessPayloadStore, *};
-use std::fmt::Write as _;
 
 async fn authorize(
     authorizer: &impl ProcessAuthorizer,
@@ -159,33 +155,9 @@ pub struct TimerDrainError {
     pub source: PortError,
 }
 
-/// Stable timer inbox input and durable payload. Delivery attempt, lease token
-/// and current time are deliberately excluded so redelivery is immutable.
-fn timer_input(lease: &TimerLease) -> Result<(ProcessInput, Vec<u8>), PortError> {
-    let bytes = lease
-        .timer
-        .canonical_wire_bytes()
-        .map_err(|_invalid| PortError::Invariant)?;
-    let mut key = b"penelope.timer-input.v1\0".to_vec();
-    key.extend_from_slice(&lease.timer.action.canonical_effect_key_bytes());
-    key.extend_from_slice(lease.timer.action.action_id.as_str().as_bytes());
-    let digest = ContentDigest::sha256(&key);
-    let mut identity = String::from("inp_timer_");
-    for byte in digest.0 {
-        write!(identity, "{byte:02x}").map_err(|_format| PortError::Invariant)?;
-    }
-    let action = &lease.timer.action;
-    let input = ProcessInput::new(
-        action.tenant_id.clone(),
-        action.process_id.clone(),
-        identity
-            .try_into()
-            .map_err(|_invalid| PortError::Invariant)?,
-        ProcessInputKind::TimerFired,
-        ContentDigest::sha256(&bytes),
-    );
-    Ok((input, bytes))
-}
+#[path = "timer_input.rs"]
+mod timer_identity;
+use timer_identity::timer_input;
 
 /// Drains one authorized bounded timer claim into durable inbox acceptance.
 /// Persisted payload and a validated inbox receipt precede timer ACK. Acceptance
