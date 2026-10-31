@@ -1,0 +1,12 @@
+{
+  "baseline": "837265bfc82658a6d1fe02e4776372fe4673d805",
+  "candidate": "b746d3e1382b3e78be0cab1f3884ee2b7c693f2c",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "83e3470dfd73df6d53ef5189b16f52f8d257075d7df51c6e9ae39af4f8487cfd",
+    "crates/penelope-sqlite/tests/process.rs": "35f1df509617232a7d6c3996fa676052be9599e6d3e4cff71c3cee29f88f4adc",
+    "crates/penelope-sqlite/tests/support/process_frontier.rs": "ef3b10656a2fc95e2597858fec2898079305b5b442691c4d40df1690bdb7abc0"
+  },
+  "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+  "timing_claim": false
+}
