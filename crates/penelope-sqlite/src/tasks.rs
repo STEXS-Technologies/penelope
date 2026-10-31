@@ -342,18 +342,18 @@ impl TaskJournal for SqliteTaskJournal {
         reject_retired(&transaction, scope)?;
         let head = checked_head(&transaction, scope)?;
         let stored = transaction
-            .query_row(
+            .prepare_cached(
                 "SELECT record,checksum FROM task_records WHERE scope=?1 AND sequence=?2",
-                params![key(scope), sequence.get()],
-                |row| {
-                    Ok(decode(
-                        column_bytes(row, 0, self.limits.max_record_bytes)?,
-                        column_bytes(row, 1, 32)?,
-                        scope,
-                        sequence,
-                    ))
-                },
             )
+            .map_err(|error| sql_error(&error))?
+            .query_row(params![key(scope), sequence.get()], |row| {
+                Ok(decode(
+                    column_bytes(row, 0, self.limits.max_record_bytes)?,
+                    column_bytes(row, 1, 32)?,
+                    scope,
+                    sequence,
+                ))
+            })
             .optional()
             .map_err(|error| sql_error(&error))?;
         match (head, stored) {
