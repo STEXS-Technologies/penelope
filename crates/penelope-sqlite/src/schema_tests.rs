@@ -142,6 +142,8 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
         "after-v2",
         "after-v3",
         "after-v4",
+        "after-outbox-index",
+        "after-v5",
         "before-commit",
         "after-commit",
     ] {
@@ -178,11 +180,17 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 4 } else { 1 },
+            if phase == "after-commit" { 5 } else { 1 },
             "{phase}"
         );
         assert_eq!(snapshot(&connection), original, "{phase}");
-        for table in ["task_retirements", "process_heads", "process_payloads"] {
+        for table in [
+            "task_retirements",
+            "process_heads",
+            "process_payloads",
+            "process_actions_pending",
+            "process_timers_due",
+        ] {
             let exists: bool = connection
                 .query_row(
                     "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE name=?1)",
@@ -236,7 +244,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             checked_connection
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            4
+            5
         );
     }
 }

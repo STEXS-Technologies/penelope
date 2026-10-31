@@ -9,6 +9,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Upgrade SQLite storage to schema version 5 with partial indexes for pending
+  outbox and due-timer selection. Retained completed rows and future timers no
+  longer force the measured selection scans; upgrades remain transactional and
+  enforce the database page limit.
+
 - Encode the fixed 60-byte Linux worker startup header on the stack, removing
   one Rust allocation from measured real supervisor dispatches on stable and
   the minimum supported Rust toolchain.

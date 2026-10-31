@@ -104,6 +104,14 @@ are rejected. Back up before an upgrade, close competing service writers and
 retain the previous database until the upgrade has been validated. Never deploy
 an older adapter against a newer schema.
 
+Schema version 5 adds partial indexes for pending outbox actions and pending
+timers ordered by due time. Completed history and future timers no longer need
+to be scanned to select a due batch. Indexes consume database pages and add
+maintenance work to inserts and acknowledgements; the database page limit still
+applies during upgrade. A failed upgrade rolls back both indexes and the schema
+version. Pending but unexpired leases can still require scanning within the
+pending index. These indexes do not implement saga-history retention.
+
 `check_integrity` checks SQLite structure. Replaying task histories also checks
 record order and referenced blob identity. On corruption, stop dispatch,
 preserve the database and WAL, and recover from authoritative backup/evidence.
