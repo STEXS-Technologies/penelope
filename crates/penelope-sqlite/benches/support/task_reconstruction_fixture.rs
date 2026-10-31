@@ -2,7 +2,8 @@
 #![allow(clippy::unwrap_used)]
 use penelope_core::task::{runtime::*, *};
 use penelope_sqlite::{SqliteLimits, SqliteTaskJournal};
-pub(super) fn run(mut sample: impl FnMut(u32, usize, &mut dyn FnMut() -> StartReservation)) {
+pub(super) fn run(mut sample: impl FnMut(u32, bool, usize, &mut dyn FnMut() -> StartReservation)) {
+    let alternating = std::env::var_os("PENELOPE_BENCH_ALTERNATING_BLOBS").is_some();
     for count in [2_u32, 16, 128] {
         let definition = TaskDefinition {
             code: Digest([3; 32]),
@@ -36,7 +37,16 @@ pub(super) fn run(mut sample: impl FnMut(u32, usize, &mut dyn FnMut() -> StartRe
             SqliteTaskJournal::open(&path, definition, SqliteLimits::default()).unwrap();
         let mut projection = TaskProjection::new(scope, definition).unwrap();
         let mut removed_bytes = 0_usize;
+        let mut latest_checkpoint = None;
         for sequence in 0..count {
+            let checkpoint_bytes = if alternating && sequence & 1 == 1 {
+                b"other".as_slice()
+            } else {
+                b"state".as_slice()
+            };
+            if sequence >= 2 {
+                latest_checkpoint = Some(checkpoint_bytes);
+            }
             let (event, blob) = match sequence {
                 0 => (
                     TaskExecutionEvent::IntentCommitted {
@@ -53,12 +63,12 @@ pub(super) fn run(mut sample: impl FnMut(u32, usize, &mut dyn FnMut() -> StartRe
                 _ => (
                     TaskExecutionEvent::CheckpointCommitted {
                         checkpoint: BlobRef {
-                            digest: Digest::of(b"state"),
+                            digest: Digest::of(checkpoint_bytes),
                             bytes: 5,
                             schema: 1,
                         },
                     },
-                    Some(b"state".as_slice()),
+                    Some(checkpoint_bytes),
                 ),
             };
             let generation = if sequence == 0 {
@@ -83,7 +93,7 @@ pub(super) fn run(mut sample: impl FnMut(u32, usize, &mut dyn FnMut() -> StartRe
             execution_deadline: projection.execution_deadline(),
             input_schema: 1,
             input: b"input",
-            checkpoint: (count > 2).then_some(b"state".as_slice()),
+            checkpoint: latest_checkpoint,
         };
         let execution = Digest([9; 32]);
         assert_eq!(
@@ -94,7 +104,7 @@ pub(super) fn run(mut sample: impl FnMut(u32, usize, &mut dyn FnMut() -> StartRe
         for _ in 0..16 {
             assert_eq!(retry(), StartReservation::AlreadyReserved);
         }
-        sample(count, removed_bytes, &mut retry);
+        sample(count, alternating, removed_bytes, &mut retry);
         assert_eq!(retry(), StartReservation::AlreadyReserved);
         drop(journal);
         let connection = rusqlite::Connection::open(&path).unwrap();

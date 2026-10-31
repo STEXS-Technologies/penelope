@@ -737,3 +737,6 @@ mod authority_columns;
 
 #[path = "support/task_cache_revision.rs"]
 mod task_cache_revision;
+
+#[path = "support/task_replay_memo.rs"]
+mod task_replay_memo;
