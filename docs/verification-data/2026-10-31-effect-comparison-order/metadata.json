@@ -1,0 +1,75 @@
+{
+  "baseline": "d6a4072dd06b2f4f4b453f63b990fc022a79d343",
+  "candidate_parent": "d6a4072dd06b2f4f4b453f63b990fc022a79d343",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "variants": {
+    "baseline": {
+      "source_sha256": "334f2cb406d9235ea47b0077a2229e796bfc92865a2c65078662c5791eb50604",
+      "binaries": {
+        "atomic_validation": {
+          "path": "target/effect-order-baseline-atomic_validation",
+          "sha256": "841a4d8e4282619eed01ce51833812bf1343f2624c1833244bb69aab71a3c379"
+        },
+        "atomic_validation_allocations": {
+          "path": "target/effect-order-baseline-atomic_validation_allocations",
+          "sha256": "888c73cb0de554d5b5139aa14132a77692a763a9ad1353386b32ea82c83196f1"
+        },
+        "claim_history": {
+          "path": "target/effect-order-baseline-claim_history",
+          "sha256": "908a716288abfbad800522b50b4cbec3ed5fc26bf5066feb270247423d1dd5b6"
+        }
+      }
+    },
+    "candidate": {
+      "source_sha256": "9b39812a2aa75673134eb9ab8e825c32094e3eabbac2c6fd499cb9d04208a35e",
+      "binaries": {
+        "atomic_validation": {
+          "path": "target/effect-order-candidate-atomic_validation",
+          "sha256": "33e3926d34151f273750511c908eb091d53f317740cdfd957883b1fb5a6ba10f"
+        },
+        "atomic_validation_allocations": {
+          "path": "target/effect-order-candidate-atomic_validation_allocations",
+          "sha256": "d41a3d787adfbd6c957637c1be1130848a868a5669b6f6326d378421c78ce7f2"
+        },
+        "claim_history": {
+          "path": "target/effect-order-candidate-claim_history",
+          "sha256": "9f23250ab5b36bd6f7c4c436454157b7c8fd3098f025de0af492abba6cc16c3a"
+        }
+      }
+    }
+  },
+  "fixture_sha256": {
+    "crates/penelope-ports/benches/atomic_validation.rs": "08b971a3dde091d135f37d3639c1bccd1e7ab0d79bf90b3afe0f0fa5a96094a6",
+    "crates/penelope-ports/benches/atomic_validation_allocations.rs": "70c1cdd13858470ecbc7110a42ff34296c691ce9d691fcf125e85f35762fef6b",
+    "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+    "crates/penelope-sqlite/benches/claim_history.rs": "5cb1c6f933302b3fdc28dad1fb35f903fbc92c7c2c3d698fa552544af8208d84"
+  },
+  "cpu": 0,
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 20,
+  "profiles": [
+    [
+      "short-step",
+      false,
+      false
+    ],
+    [
+      "short-payload",
+      false,
+      true
+    ],
+    [
+      "long-step",
+      true,
+      false
+    ],
+    [
+      "long-payload",
+      true,
+      true
+    ]
+  ],
+  "order": "alternating AB/BA; profile order short-step, short-payload, long-step, long-payload; allocations then cpu per profile, then history per variant",
+  "background": "no own builds, tests or graph jobs during timing"
+}
