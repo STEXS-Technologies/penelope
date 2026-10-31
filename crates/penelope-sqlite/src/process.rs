@@ -493,58 +493,73 @@ fn verify_committed_batch(
     if frontier.is_none_or(|next| next < expected_end) {
         return Err(PortError::Invariant);
     }
-    for outcome in &commit.outcomes {
-        let (bytes, checksum) = connection
-            .query_row(
+    {
+        let mut statement = connection
+            .prepare_cached(
                 "SELECT record,checksum FROM process_outcomes WHERE scope=?1 AND sequence=?2",
-                params![key, integer(outcome.sequence)?],
-                |row| {
-                    Ok((
-                        copy_column(row, 0, limits.max_record_bytes)?,
-                        copy_column(row, 1, 32)?,
-                    ))
-                },
             )
-            .optional()
-            .map_err(|error| db_error(&error))?
-            .ok_or(PortError::Invariant)?;
-        if decode::<ProcessOutcome>(&bytes, &checksum)? != *outcome {
-            return Err(PortError::Invariant);
+            .map_err(|error| db_error(&error))?;
+        for outcome in &commit.outcomes {
+            let mut rows = statement
+                .query(params![key, integer(outcome.sequence)?])
+                .map_err(|error| db_error(&error))?;
+            let row = rows
+                .next()
+                .map_err(|error| db_error(&error))?
+                .ok_or(PortError::Invariant)?;
+            let bytes =
+                column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
+            let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+            if decode::<ProcessOutcome>(bytes, checksum)? != *outcome {
+                return Err(PortError::Invariant);
+            }
         }
     }
-    for action in &commit.actions {
-        let (bytes, checksum) = connection
-            .query_row(
-                "SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2 AND effect_key=?3",
-                params![key, action.action_id.as_str(), action.effect_key().canonical_bytes()],
-                |row| {
-                    Ok((
-                        copy_column(row, 0, limits.max_record_bytes)?,
-                        copy_column(row, 1, 32)?,
-                    ))
-                },
-            )
-            .optional()
-            .map_err(|error| db_error(&error))?
-            .ok_or(PortError::Invariant)?;
-        if decode::<penelope_domain::ProcessAction>(&bytes, &checksum)? != *action {
-            return Err(PortError::Invariant);
+    if !commit.actions.is_empty() {
+        let mut statement = connection.prepare_cached("SELECT action,checksum FROM process_actions WHERE scope=?1 AND action_id=?2 AND effect_key=?3").map_err(|error| db_error(&error))?;
+        for action in &commit.actions {
+            let mut rows = statement
+                .query(params![
+                    key,
+                    action.action_id.as_str(),
+                    action.effect_key().canonical_bytes()
+                ])
+                .map_err(|error| db_error(&error))?;
+            let row = rows
+                .next()
+                .map_err(|error| db_error(&error))?
+                .ok_or(PortError::Invariant)?;
+            let bytes =
+                column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
+            let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+            if decode::<penelope_domain::ProcessAction>(bytes, checksum)? != *action {
+                return Err(PortError::Invariant);
+            }
         }
     }
     if let Some(input) = &commit.input {
         // Consumption is part of the committed batch: an arbitrary non-null
         // marker cannot prove this input belongs to this exact receipt.
-        let (bytes, checksum) = connection
-            .query_row(
-                "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2 AND commit_digest=?3 AND committed_through=?4",
-                params![process_key(input)?, input.input_id.as_str(), commit_digest.0.as_slice(), expected_end.checked_sub(1).ok_or(PortError::Invariant)?],
-                |row| Ok((copy_column(row, 0, limits.max_record_bytes)?, copy_column(row, 1, 32)?)),
-            )
-            .optional()
-            .map_err(|error| db_error(&error))?
-            .ok_or(PortError::Invariant)?;
-        if decode::<ProcessInput>(&bytes, &checksum)? != *input {
-            return Err(PortError::Invariant);
+        {
+            let mut statement = connection.prepare_cached("SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2 AND commit_digest=?3 AND committed_through=?4").map_err(|error| db_error(&error))?;
+            let mut rows = statement
+                .query(params![
+                    process_key(input)?,
+                    input.input_id.as_str(),
+                    commit_digest.0.as_slice(),
+                    expected_end.checked_sub(1).ok_or(PortError::Invariant)?
+                ])
+                .map_err(|error| db_error(&error))?;
+            let row = rows
+                .next()
+                .map_err(|error| db_error(&error))?
+                .ok_or(PortError::Invariant)?;
+            let bytes =
+                column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
+            let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+            if decode::<ProcessInput>(bytes, checksum)? != *input {
+                return Err(PortError::Invariant);
+            }
         }
         if let Some(source) = &commit.canonical_source_event_id {
             let bound: bool = connection.query_row(

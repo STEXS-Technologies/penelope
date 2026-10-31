@@ -36,8 +36,16 @@ fn retry_rejects_damaged_consumption_and_source_bindings() {
 #[test]
 fn receipt_reconstruction_rejects_missing_and_substituted_constituents() {
     for component in ["outcome", "action", "input", "head"] {
-        for damage in ["delete", "substitute", "checksum"] {
-            if component == "head" && damage == "checksum" {
+        for damage in [
+            "delete",
+            "substitute",
+            "checksum",
+            "payload-type",
+            "payload-size",
+            "checksum-type",
+            "checksum-size",
+        ] {
+            if component == "head" && !["delete", "substitute"].contains(&damage) {
                 continue;
             }
             let directory = tempfile::tempdir().unwrap();
@@ -48,8 +56,21 @@ fn receipt_reconstruction_rejects_missing_and_substituted_constituents() {
             second.sequence = 1;
             second.outcome_id = id("out_second");
             commit.outcomes.push(second);
+            let mut second_action = commit.actions[0].clone();
+            second_action.action_id = id("act_second");
+            second_action.step_id = id("stp_second");
+            commit.actions.push(second_action);
             block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+            let receipt = block_on(ProcessStore::commit(&adapter, &commit)).unwrap();
+            receipt.validate_for(&commit).unwrap();
+            assert!(receipt.duplicate_input);
             let connection = Connection::open(&path).unwrap();
+            // Damage the later constituent so earlier statement reuse succeeds.
+            let filter = match component {
+                "outcome" => " WHERE sequence=1",
+                "action" => " WHERE action_id='act_second'",
+                _ => "",
+            };
             let (table, column, replacement) = match component {
                 "outcome" => {
                     let mut value = commit.outcomes[0].clone();
@@ -82,7 +103,7 @@ fn receipt_reconstruction_rejects_missing_and_substituted_constituents() {
             };
             if damage == "delete" {
                 connection
-                    .execute(&format!("DELETE FROM {table}"), [])
+                    .execute(&format!("DELETE FROM {table}{filter}"), [])
                     .unwrap();
             } else if component == "head" {
                 connection
@@ -90,14 +111,36 @@ fn receipt_reconstruction_rejects_missing_and_substituted_constituents() {
                     .unwrap();
             } else if damage == "checksum" {
                 connection
-                    .execute(&format!("UPDATE {table} SET checksum=zeroblob(32)"), [])
+                    .execute(
+                        &format!("UPDATE {table} SET checksum=zeroblob(32){filter}"),
+                        [],
+                    )
+                    .unwrap();
+            } else if damage.ends_with("type") || damage.ends_with("size") {
+                let field = if damage.starts_with("checksum") {
+                    "checksum"
+                } else {
+                    column
+                };
+                let value = if damage.ends_with("type") {
+                    "'wrong SQLite storage class'".to_owned()
+                } else {
+                    let size = if field == "checksum" {
+                        33
+                    } else {
+                        u64::from(SqliteLimits::default().max_record_bytes) + 1
+                    };
+                    format!("zeroblob({size})")
+                };
+                connection
+                    .execute(&format!("UPDATE {table} SET {field}={value}{filter}"), [])
                     .unwrap();
             } else {
                 // Valid JSON and a matching checksum still cannot replace the
                 // immutable constituents of an already committed operation.
                 connection
                     .execute(
-                        &format!("UPDATE {table} SET {column}=?1,checksum=?2"),
+                        &format!("UPDATE {table} SET {column}=?1,checksum=?2{filter}"),
                         rusqlite::params![
                             replacement,
                             ContentDigest::sha256(&replacement).0.as_slice()
@@ -105,11 +148,31 @@ fn receipt_reconstruction_rejects_missing_and_substituted_constituents() {
                     )
                     .unwrap();
             }
+            let tables = [
+                "process_usage",
+                "process_heads",
+                "process_outcomes",
+                "process_inbox",
+                "process_sources",
+                "process_commits",
+                "process_actions",
+                "process_timers",
+                "process_payloads",
+                "lease_counter",
+            ];
+            let before = write_snapshot::snapshot(&connection, &tables);
             assert_eq!(
                 block_on(ProcessStore::commit(&adapter, &commit)),
                 Err(PortError::Invariant),
                 "{component}/{damage}"
             );
+            assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
+            let reopened = store(&path, clock());
+            assert_eq!(
+                block_on(ProcessStore::commit(&reopened, &commit)),
+                Err(PortError::Invariant)
+            );
+            assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
         }
     }
 }
