@@ -14,7 +14,7 @@ static u64 be(unsigned char *p) {return ((u64)p[0]<<24)|((u64)p[1]<<16)|((u64)p[
 static void copy(unsigned char *to,unsigned char *from,u64 n) {for(u64 i=0;i<n;i++)to[i]=from[i];}
 static void pause_forever(void) {long ts[2]={1,0};for(;;)call(35,(long)ts,0,0);}
 void _start(void) {
-  unsigned char start[60],scratch[512],input[64],frame[61];read_all(start,60);
+  unsigned char start[60],scratch[512],input[64],frame[118];read_all(start,60);
   u64 metadata=be(start+44),length=be(start+48),checkpoint=be(start+52);
   while(metadata){u64 n=metadata>512?512:metadata;read_all(scratch,n);metadata-=n;}
   if(length>64||checkpoint>64)finish(5);read_all(input,length);if(checkpoint)read_all(scratch,checkpoint);
@@ -54,6 +54,19 @@ void _start(void) {
   if(mode==12){frame[48]=65;write_all(frame,53);pause_forever();}
   if(mode==22){write_all(frame,20);write_all(frame+20,41);finish(0);}
   if(mode==23){write_all(frame,54);finish(0);} /* incomplete payload at EOF */
+  if(mode>=24&&mode<=27){
+    frame[44]=(mode==26||mode==27)?2:1;frame[48]=64;
+    for(u64 i=0;i<64;i++)frame[53+i]=i;
+    frame[117]=0xa5;
+    /* One atomic pipe write exposes the full frame and any trailing byte. */
+    write_all(frame,(mode==25||mode==26)?118:117);
+    if(mode==27){
+      unsigned char ack[40];read_all(ack,40);
+      if(ack[0]!='P'||ack[3]!='A')finish(9);
+      frame[44]=1;frame[48]=8;write_all(frame,61);
+    }
+    finish(0);
+  }
   write_all(frame,61);
   if(mode==5){unsigned char ack[40];read_all(ack,40);if(ack[0]!='P'||ack[3]!='A')finish(9);frame[44]=1;write_all(frame,61);}
   finish(0);
