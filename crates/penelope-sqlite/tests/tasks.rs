@@ -743,3 +743,6 @@ mod task_replay_memo;
 
 #[path = "support/task_statement_cache.rs"]
 mod task_statement_cache;
+
+#[path = "support/task_orphan_usage.rs"]
+mod task_orphan_usage;
