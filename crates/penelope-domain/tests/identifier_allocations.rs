@@ -79,6 +79,22 @@ fn main() {
         ContentDigest([3; 32]),
     );
     assert_eq!(count(|| black_box(&maximum_scope).canonical_bytes()), 1);
+    let long_outcome = ProcessOutcome::new(
+        maximum_scope.clone(),
+        0,
+        ProcessOutcomeFact::new(
+            "out_long".parse().unwrap(),
+            CausationId::Input("inp_long".parse().unwrap()),
+            OutcomeActor::System,
+            LogicalTime(0),
+            ProcessOutcomeKind::Started,
+            ContentDigest([4; 32]),
+        ),
+    );
+    assert_eq!(
+        count(|| black_box(&long_outcome).validate_for_scope(black_box(&maximum_scope))),
+        0
+    );
     let outcome = ProcessOutcome::new(
         scope,
         0,

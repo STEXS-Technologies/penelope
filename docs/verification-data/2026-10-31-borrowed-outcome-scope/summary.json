@@ -1,0 +1,846 @@
+{
+  "latency": [
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 1,
+      "profile": "end",
+      "baseline_ns": 12284.1005,
+      "candidate_ns": 12294.991999999998,
+      "change_pct": -0.05905682878971939,
+      "ci_low": -0.6534290995900969,
+      "ci_high": 0.34793829621603933
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 1,
+      "profile": "first",
+      "baseline_ns": 14817.324499999999,
+      "candidate_ns": 14925.2935,
+      "change_pct": 0.6714366689645358,
+      "ci_low": -0.17630213233575065,
+      "ci_high": 1.7406824862286292
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 1,
+      "profile": "last",
+      "baseline_ns": 14807.5125,
+      "candidate_ns": 14865.404999999999,
+      "change_pct": 0.3739491503899436,
+      "ci_low": -0.325101248598586,
+      "ci_high": 1.282479302967721
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 1,
+      "profile": "page",
+      "baseline_ns": 14801.632000000001,
+      "candidate_ns": 14898.529999999999,
+      "change_pct": 0.4329871801485263,
+      "ci_low": -0.5701084616057523,
+      "ci_high": 1.4033701280070356
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 1,
+      "profile": "past",
+      "baseline_ns": 12291.322,
+      "candidate_ns": 12370.075,
+      "change_pct": 0.26957865870453435,
+      "ci_low": -1.3629852018015127,
+      "ci_high": 1.454929277104579
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 128,
+      "profile": "end",
+      "baseline_ns": 12672.681499999999,
+      "candidate_ns": 12651.1455,
+      "change_pct": 0.20569945706826318,
+      "ci_low": -0.36642568421009314,
+      "ci_high": 0.8970222338065189
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 128,
+      "profile": "first",
+      "baseline_ns": 15213.769,
+      "candidate_ns": 15142.458,
+      "change_pct": -0.546723124039712,
+      "ci_low": -1.583775436765973,
+      "ci_high": 0.35812403913618857
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 128,
+      "profile": "last",
+      "baseline_ns": 15270.4225,
+      "candidate_ns": 15122.547,
+      "change_pct": -1.0109556285665993,
+      "ci_low": -1.3127358421452304,
+      "ci_high": -0.6175895111734057
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 128,
+      "profile": "page",
+      "baseline_ns": 266354.051,
+      "candidate_ns": 266671.9245,
+      "change_pct": 0.13254007940925377,
+      "ci_low": -0.0770032291906837,
+      "ci_high": 0.27476770037482257
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 128,
+      "profile": "past",
+      "baseline_ns": 12656.2565,
+      "candidate_ns": 12712.9295,
+      "change_pct": 0.17237131920489188,
+      "ci_low": -0.2809355912383507,
+      "ci_high": 0.6135282548337925
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 4096,
+      "profile": "end",
+      "baseline_ns": 13223.402,
+      "candidate_ns": 13317.381,
+      "change_pct": 0.3436988151097111,
+      "ci_low": -0.4034994806458659,
+      "ci_high": 1.0660474642749953
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 4096,
+      "profile": "first",
+      "baseline_ns": 15632.108499999998,
+      "candidate_ns": 15543.5965,
+      "change_pct": -0.8000797191052496,
+      "ci_low": -3.8270515502606557,
+      "ci_high": 2.246099332712179
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 4096,
+      "profile": "last",
+      "baseline_ns": 16099.465,
+      "candidate_ns": 16200.199499999999,
+      "change_pct": 0.5233357170912059,
+      "ci_low": -0.4432008793244152,
+      "ci_high": 1.2553164315199399
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 4096,
+      "profile": "page",
+      "baseline_ns": 267521.3815,
+      "candidate_ns": 267699.1935,
+      "change_pct": -0.18397010173789974,
+      "ci_low": -0.6791105252451934,
+      "ci_high": 0.20364095745459893
+    },
+    {
+      "campaign": 0,
+      "scope": "long",
+      "history": 4096,
+      "profile": "past",
+      "baseline_ns": 13228.519,
+      "candidate_ns": 13274.4055,
+      "change_pct": 0.0738788469052967,
+      "ci_low": -0.7677560975851124,
+      "ci_high": 1.0024245337890378
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 1,
+      "profile": "end",
+      "baseline_ns": 12335.497,
+      "candidate_ns": 12292.839,
+      "change_pct": -0.8410843803419801,
+      "ci_low": -2.424677490832505,
+      "ci_high": 0.42543222325495156
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 1,
+      "profile": "first",
+      "baseline_ns": 14236.914,
+      "candidate_ns": 14022.8335,
+      "change_pct": -1.059028383362602,
+      "ci_low": -1.6359177880637201,
+      "ci_high": -0.46165020365222414
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 1,
+      "profile": "last",
+      "baseline_ns": 14295.149,
+      "candidate_ns": 13978.673999999999,
+      "change_pct": -4.916231969959004,
+      "ci_low": -11.024842297759605,
+      "ci_high": -1.2127094232508013
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 1,
+      "profile": "page",
+      "baseline_ns": 14178.871500000001,
+      "candidate_ns": 14051.3985,
+      "change_pct": -1.1980013993794385,
+      "ci_low": -1.6898242538447978,
+      "ci_high": -0.6760793823645075
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 1,
+      "profile": "past",
+      "baseline_ns": 12377.579,
+      "candidate_ns": 12280.3205,
+      "change_pct": -0.3850051113575467,
+      "ci_low": -0.8693159681903307,
+      "ci_high": 0.19177966055768159
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 128,
+      "profile": "end",
+      "baseline_ns": 12626.2885,
+      "candidate_ns": 12535.471000000001,
+      "change_pct": -0.24603761780711114,
+      "ci_low": -0.8291255953509116,
+      "ci_high": 0.3366531183044221
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 128,
+      "profile": "first",
+      "baseline_ns": 14453.3415,
+      "candidate_ns": 14270.6715,
+      "change_pct": -4.304151048186896,
+      "ci_low": -9.574144904669227,
+      "ci_high": -1.1572489978128864
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 128,
+      "profile": "last",
+      "baseline_ns": 14452.3155,
+      "candidate_ns": 14321.944,
+      "change_pct": -3.2980098218413816,
+      "ci_low": -8.51496789502876,
+      "ci_high": 0.10860617687566466
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 128,
+      "profile": "page",
+      "baseline_ns": 173793.68099999998,
+      "candidate_ns": 170475.3565,
+      "change_pct": -1.9137386328326438,
+      "ci_low": -2.083627007631668,
+      "ci_high": -1.7081028795359035
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 128,
+      "profile": "past",
+      "baseline_ns": 12599.675500000001,
+      "candidate_ns": 12516.442500000001,
+      "change_pct": 0.24149176339559583,
+      "ci_low": -0.598141096986904,
+      "ci_high": 1.2555586628649325
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 4096,
+      "profile": "end",
+      "baseline_ns": 13045.409,
+      "candidate_ns": 13135.4175,
+      "change_pct": 0.008852464945225048,
+      "ci_low": -0.5682204265064248,
+      "ci_high": 0.4697116132281533
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 4096,
+      "profile": "first",
+      "baseline_ns": 14540.1095,
+      "candidate_ns": 14446.5125,
+      "change_pct": -1.9216989827108948,
+      "ci_low": -3.8276754479550488,
+      "ci_high": -0.6216158898690346
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 4096,
+      "profile": "last",
+      "baseline_ns": 15110.134,
+      "candidate_ns": 15086.491,
+      "change_pct": -0.15054234206448178,
+      "ci_low": -0.8246466828636091,
+      "ci_high": 0.4642578005576584
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 4096,
+      "profile": "page",
+      "baseline_ns": 174192.9125,
+      "candidate_ns": 170933.4895,
+      "change_pct": -2.0342939588944615,
+      "ci_low": -2.464910654625492,
+      "ci_high": -1.737275096425093
+    },
+    {
+      "campaign": 0,
+      "scope": "short",
+      "history": 4096,
+      "profile": "past",
+      "baseline_ns": 13058.02,
+      "candidate_ns": 13111.5885,
+      "change_pct": 0.4859613820397557,
+      "ci_low": 0.25867946855449925,
+      "ci_high": 0.71375853339241
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 1,
+      "profile": "end",
+      "baseline_ns": 12343.7305,
+      "candidate_ns": 12271.925,
+      "change_pct": 0.36056666848648405,
+      "ci_low": -0.3777041979679841,
+      "ci_high": 1.1500297009539375
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 1,
+      "profile": "first",
+      "baseline_ns": 14893.102,
+      "candidate_ns": 14786.921,
+      "change_pct": -1.057169637291913,
+      "ci_low": -2.8768797990919195,
+      "ci_high": 0.35276777853671454
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 1,
+      "profile": "last",
+      "baseline_ns": 14881.1,
+      "candidate_ns": 14751.04,
+      "change_pct": -0.7106121590855673,
+      "ci_low": -1.7322301205468003,
+      "ci_high": 0.3750643163019962
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 1,
+      "profile": "page",
+      "baseline_ns": 14867.445500000002,
+      "candidate_ns": 14669.0265,
+      "change_pct": -1.3982884838549716,
+      "ci_low": -2.952074579760544,
+      "ci_high": 0.04185744246521867
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 1,
+      "profile": "past",
+      "baseline_ns": 12345.275,
+      "candidate_ns": 12184.413,
+      "change_pct": -0.887756694225418,
+      "ci_low": -2.0866936872507087,
+      "ci_high": 0.4945434676922589
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 128,
+      "profile": "end",
+      "baseline_ns": 12592.859,
+      "candidate_ns": 12634.138500000001,
+      "change_pct": 0.3789617829837419,
+      "ci_low": -0.7507709445841524,
+      "ci_high": 1.746042965404559
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 128,
+      "profile": "first",
+      "baseline_ns": 15275.5425,
+      "candidate_ns": 15037.909,
+      "change_pct": -1.1895319019420287,
+      "ci_low": -2.207039280049351,
+      "ci_high": -0.027257471547192512
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 128,
+      "profile": "last",
+      "baseline_ns": 15318.7575,
+      "candidate_ns": 15095.9525,
+      "change_pct": -1.9013628530364899,
+      "ci_low": -2.822666775063925,
+      "ci_high": -1.048475431575668
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 128,
+      "profile": "page",
+      "baseline_ns": 266896.698,
+      "candidate_ns": 267088.4275,
+      "change_pct": -2.2221294031343217,
+      "ci_low": -6.234718719299833,
+      "ci_high": 0.10861545050011626
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 128,
+      "profile": "past",
+      "baseline_ns": 12587.907,
+      "candidate_ns": 12640.128499999999,
+      "change_pct": 0.6229804751245521,
+      "ci_low": -1.2009020724736994,
+      "ci_high": 2.5580431454081736
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 4096,
+      "profile": "end",
+      "baseline_ns": 13342.9275,
+      "candidate_ns": 13239.503,
+      "change_pct": -1.5380883317440313,
+      "ci_low": -2.906855632173229,
+      "ci_high": -0.0711317324308321
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 4096,
+      "profile": "first",
+      "baseline_ns": 15609.261999999999,
+      "candidate_ns": 15397.057,
+      "change_pct": -1.5231313046439898,
+      "ci_low": -2.1753905719233404,
+      "ci_high": -0.906933477080833
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 4096,
+      "profile": "last",
+      "baseline_ns": 16321.172999999999,
+      "candidate_ns": 16040.237,
+      "change_pct": -1.6659185778597134,
+      "ci_low": -2.1357009684798927,
+      "ci_high": -1.200964635390787
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 4096,
+      "profile": "page",
+      "baseline_ns": 268643.0595,
+      "candidate_ns": 265993.603,
+      "change_pct": -0.7659710783945403,
+      "ci_low": -1.3276797458886664,
+      "ci_high": -0.16362365916950156
+    },
+    {
+      "campaign": 1,
+      "scope": "long",
+      "history": 4096,
+      "profile": "past",
+      "baseline_ns": 13396.5695,
+      "candidate_ns": 13327.5295,
+      "change_pct": -1.0065031412315848,
+      "ci_low": -2.8654889228798033,
+      "ci_high": 1.0188978204523162
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 1,
+      "profile": "end",
+      "baseline_ns": 12205.2545,
+      "candidate_ns": 12336.2555,
+      "change_pct": 0.8987080621812917,
+      "ci_low": 0.2503500609569646,
+      "ci_high": 1.477762695958129
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 1,
+      "profile": "first",
+      "baseline_ns": 14086.382,
+      "candidate_ns": 14095.8505,
+      "change_pct": 0.29673169799142834,
+      "ci_low": -0.1738822973126083,
+      "ci_high": 0.730342491118538
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 1,
+      "profile": "last",
+      "baseline_ns": 14009.742,
+      "candidate_ns": 14015.288499999999,
+      "change_pct": 0.1820088350341069,
+      "ci_low": -0.2563157701915981,
+      "ci_high": 0.6110465595421539
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 1,
+      "profile": "page",
+      "baseline_ns": 14064.931499999999,
+      "candidate_ns": 14118.520499999999,
+      "change_pct": -0.13294868697287918,
+      "ci_low": -0.8552989614262938,
+      "ci_high": 0.5279046845094638
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 1,
+      "profile": "past",
+      "baseline_ns": 12209.366,
+      "candidate_ns": 12367.3635,
+      "change_pct": 0.8343372061540175,
+      "ci_low": 0.46330739067976096,
+      "ci_high": 1.2454185377404199
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 128,
+      "profile": "end",
+      "baseline_ns": 12489.948499999999,
+      "candidate_ns": 12534.808,
+      "change_pct": 0.124115523599817,
+      "ci_low": -0.5629387325842914,
+      "ci_high": 0.7388376581525056
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 128,
+      "profile": "first",
+      "baseline_ns": 14364.703000000001,
+      "candidate_ns": 14313.631,
+      "change_pct": 0.4711768690586496,
+      "ci_low": -1.6629070543492008,
+      "ci_high": 2.362276095377775
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 128,
+      "profile": "last",
+      "baseline_ns": 14405.172999999999,
+      "candidate_ns": 14336.542000000001,
+      "change_pct": 1.672410063713077,
+      "ci_low": -1.3168034971974725,
+      "ci_high": 6.436725975770441
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 128,
+      "profile": "page",
+      "baseline_ns": 173004.883,
+      "candidate_ns": 170493.0085,
+      "change_pct": -1.598620001659668,
+      "ci_low": -1.9536566243091513,
+      "ci_high": -1.2187897173260012
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 128,
+      "profile": "past",
+      "baseline_ns": 12523.1625,
+      "candidate_ns": 12521.371,
+      "change_pct": 0.6551757082054654,
+      "ci_low": -0.6004246009880935,
+      "ci_high": 1.9875809235180735
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 4096,
+      "profile": "end",
+      "baseline_ns": 13019.2035,
+      "candidate_ns": 13009.3215,
+      "change_pct": -0.04383900992778285,
+      "ci_low": -0.9953662580201398,
+      "ci_high": 0.8228789729221861
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 4096,
+      "profile": "first",
+      "baseline_ns": 14593.268,
+      "candidate_ns": 14540.8385,
+      "change_pct": -0.4606448562923167,
+      "ci_low": -1.0788314424051506,
+      "ci_high": 0.193701181731361
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 4096,
+      "profile": "last",
+      "baseline_ns": 15148.536,
+      "candidate_ns": 15063.308,
+      "change_pct": -0.4575970474451813,
+      "ci_low": -1.8553660753249097,
+      "ci_high": 0.9642337402326274
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 4096,
+      "profile": "page",
+      "baseline_ns": 173473.8825,
+      "candidate_ns": 170692.53350000002,
+      "change_pct": -1.1286879594315244,
+      "ci_low": -1.7349273240224092,
+      "ci_high": -0.29152143957186627
+    },
+    {
+      "campaign": 1,
+      "scope": "short",
+      "history": 4096,
+      "profile": "past",
+      "baseline_ns": 13042.996,
+      "candidate_ns": 12965.2395,
+      "change_pct": -0.5345145655827264,
+      "ci_low": -1.354382100545656,
+      "ci_high": 0.267401308290184
+    }
+  ],
+  "allocation": [
+    {
+      "scope": "short",
+      "profile": "first",
+      "baseline": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 1090,
+        "rows": 1
+      },
+      "candidate": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 1090,
+        "rows": 1
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "short",
+      "profile": "last",
+      "baseline": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 1090,
+        "rows": 1
+      },
+      "candidate": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 1090,
+        "rows": 1
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "short",
+      "profile": "end",
+      "baseline": {
+        "allocations": 8,
+        "reallocations": 0,
+        "requested_bytes": 826,
+        "rows": 0
+      },
+      "candidate": {
+        "allocations": 8,
+        "reallocations": 0,
+        "requested_bytes": 826,
+        "rows": 0
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "short",
+      "profile": "past",
+      "baseline": {
+        "allocations": 8,
+        "reallocations": 0,
+        "requested_bytes": 826,
+        "rows": 0
+      },
+      "candidate": {
+        "allocations": 8,
+        "reallocations": 0,
+        "requested_bytes": 826,
+        "rows": 0
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "short",
+      "profile": "page",
+      "baseline": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 34618,
+        "rows": 128
+      },
+      "candidate": {
+        "allocations": 9,
+        "reallocations": 0,
+        "requested_bytes": 34618,
+        "rows": 128
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "long",
+      "profile": "first",
+      "baseline": {
+        "allocations": 21,
+        "reallocations": 0,
+        "requested_bytes": 3104,
+        "rows": 1
+      },
+      "candidate": {
+        "allocations": 17,
+        "reallocations": 0,
+        "requested_bytes": 2592,
+        "rows": 1
+      },
+      "removed_allocations": 4,
+      "removed_requested_bytes": 512
+    },
+    {
+      "scope": "long",
+      "profile": "last",
+      "baseline": {
+        "allocations": 21,
+        "reallocations": 0,
+        "requested_bytes": 3104,
+        "rows": 1
+      },
+      "candidate": {
+        "allocations": 17,
+        "reallocations": 0,
+        "requested_bytes": 2592,
+        "rows": 1
+      },
+      "removed_allocations": 4,
+      "removed_requested_bytes": 512
+    },
+    {
+      "scope": "long",
+      "profile": "end",
+      "baseline": {
+        "allocations": 12,
+        "reallocations": 0,
+        "requested_bytes": 1816,
+        "rows": 0
+      },
+      "candidate": {
+        "allocations": 12,
+        "reallocations": 0,
+        "requested_bytes": 1816,
+        "rows": 0
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "long",
+      "profile": "past",
+      "baseline": {
+        "allocations": 12,
+        "reallocations": 0,
+        "requested_bytes": 1816,
+        "rows": 0
+      },
+      "candidate": {
+        "allocations": 12,
+        "reallocations": 0,
+        "requested_bytes": 1816,
+        "rows": 0
+      },
+      "removed_allocations": 0,
+      "removed_requested_bytes": 0
+    },
+    {
+      "scope": "long",
+      "profile": "page",
+      "baseline": {
+        "allocations": 1037,
+        "reallocations": 0,
+        "requested_bytes": 166680,
+        "rows": 128
+      },
+      "candidate": {
+        "allocations": 525,
+        "reallocations": 0,
+        "requested_bytes": 101144,
+        "rows": 128
+      },
+      "removed_allocations": 512,
+      "removed_requested_bytes": 65536
+    }
+  ]
+}

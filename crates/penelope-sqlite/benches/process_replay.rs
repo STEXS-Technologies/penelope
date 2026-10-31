@@ -2,7 +2,6 @@
 #[path = "support/process_replay_fixture.rs"]
 mod fixture;
 use fixture::{Clock, Error, block_on, populate, verify};
-use penelope_domain::*;
 use penelope_ports::*;
 use penelope_sqlite::{SqliteLimits, SqliteProcessStore};
 use std::{num::NonZeroU16, sync::Arc, time::Instant};
@@ -12,13 +11,7 @@ fn main() -> Result<(), Error> {
         let path = directory.path().join("replay.db");
         let store =
             SqliteProcessStore::open(&path, SqliteLimits::default(), Arc::new(Clock), 10, 16)?;
-        let scope = ProcessScope::new(
-            "tnt_bench".parse()?,
-            "prc_bench".parse()?,
-            "def_bench".parse()?,
-            "dfv_one".parse()?,
-            ContentDigest([1; 32]),
-        );
+        let scope = fixture::scope()?;
         let history = populate(&store, &scope, count)?;
         let last = count.checked_sub(1).ok_or("empty fixture")?;
         let past = count.checked_add(17).ok_or("cursor overflow")?;
