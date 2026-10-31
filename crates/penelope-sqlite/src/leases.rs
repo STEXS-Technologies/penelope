@@ -99,7 +99,7 @@ impl OutboxStore for SqliteProcessStore {
             let now = clock.now()?; let expires = expiry(now,millis)?;
             let key = request.scope.canonical_bytes();
             let pending = {
-                let mut statement = transaction.prepare("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                let mut statement = transaction.prepare_cached("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
                 let mut rows = statement.query(params![key,integer(now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
@@ -249,7 +249,7 @@ impl TimerClaimStore for SqliteProcessStore {
             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
             let key = request.scope.canonical_bytes();
             let pending = {
-                let mut statement = transaction.prepare("SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
+                let mut statement = transaction.prepare_cached("SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3").map_err(|error| db_error(&error))?;
                 let mut rows = statement.query(params![key,integer(request.now.0)?,request.limit.get()]).map_err(|error| db_error(&error))?;
                 let mut pending = Vec::new();
                 while let Some(row) = rows.next().map_err(|error| db_error(&error))? {

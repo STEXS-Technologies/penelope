@@ -31,3 +31,7 @@ harness = false
 [[bench]]
 name = "worker_poll"
 harness = false
+
+[[bench]]
+name = "lease_claim"
+harness = false
