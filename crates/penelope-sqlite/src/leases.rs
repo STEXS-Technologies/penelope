@@ -93,8 +93,10 @@ impl OutboxStore for SqliteProcessStore {
         let clock = self.clock.clone();
         let millis = self.lease_millis;
         self.worker.run(move |connection| {
-            let now = clock.now()?; let expires = expiry(now,millis)?;
             let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate).map_err(|error| db_error(&error))?;
+            // Lock acquisition may wait beyond a lease window. Sample trusted
+            // time only after this claim owns the writer transaction.
+            let now = clock.now()?; let expires = expiry(now,millis)?;
             let key = request.scope.canonical_bytes();
             let pending = {
                 let mut statement = transaction.prepare("SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3").map_err(|error| db_error(&error))?;
