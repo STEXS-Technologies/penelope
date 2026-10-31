@@ -1,0 +1,9 @@
+{
+  "crates/penelope-sqlite/src/process.rs": "22d0497fce81556566ad5a8b16e4b99244c496c9f70f453af67a724abb3f1ade",
+  "crates/penelope-sqlite/tests/process.rs": "10761becea102dbd152c8e7759184a9bd7a9f4b77c2872c5a474eb4506ec8e64",
+  "crates/penelope-sqlite/tests/support/commit_retry_encodings.rs": "710d3a7f24746f013b8bffb9712d196b1aaba28c1c6eae178a9a257dc6e550f1",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+  "crates/penelope-sqlite/tests/support/commit_integrity.rs": "2aea4d14a58f601bad3b51db5bd2b9b5ee34a0a98b19d720c7987925a239d464",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "docs/reliability-commit-retry-encodings-2026-10-31.md": "e31fc52205813fc1ff876a14d29b914cb69e12e23d787ce72f85b7d44376f6d3"
+}
