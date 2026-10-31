@@ -619,3 +619,6 @@ mod write_snapshot;
 
 #[path = "support/claim_indexes.rs"]
 mod claim_indexes;
+
+#[path = "support/record_limits.rs"]
+mod record_limits;
