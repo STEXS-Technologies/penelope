@@ -1,0 +1,21 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+test retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone ... 
+thread 'retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone' (621834) panicked at crates/penelope-sqlite/tests/support/retirement_race.rs:44:5:
+assertion `left == right` failed
+  left: Ok(TaskRetirement { scope: TaskScope { tenant: TaskTenantId(Digest([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])), task: TaskId(Digest([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])), definition: TaskDefinitionFingerprint(Digest([120, 134, 123, 59, 251, 253, 180, 27, 131, 87, 198, 128, 7, 112, 201, 36, 65, 58, 8, 8, 172, 111, 110, 34, 192, 64, 58, 76, 168, 85, 98, 219])), input: TaskInputDigest(Digest([201, 108, 109, 91, 232, 208, 138, 18, 231, 181, 205, 193, 178, 7, 250, 107, 36, 48, 151, 76, 134, 128, 61, 136, 145, 103, 94, 118, 253, 153, 44, 32])) }, next_sequence: TaskSequence(3), last_record_digest: Digest([13, 15, 124, 139, 192, 141, 38, 184, 85, 41, 213, 134, 143, 51, 120, 103, 7, 158, 197, 176, 19, 178, 40, 213, 15, 149, 225, 42, 191, 187, 68, 172]) })
+ right: Err(Conflict)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    retirement_race::retirement_racing_stop_confirmation_preserves_identity_and_tombstone
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test tasks`

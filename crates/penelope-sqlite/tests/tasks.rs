@@ -805,3 +805,6 @@ mod wal_checkpoint;
 
 #[path = "support/authority_race.rs"]
 mod authority_race;
+
+#[path = "support/retirement_race.rs"]
+mod retirement_race;
