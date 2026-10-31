@@ -1,0 +1,8 @@
+{
+  "baseline-leases.rs": "f99d80fcc279b7cbd5a2ac1b87e2a2faa68837478a706f3861639ffce91ef1d4",
+  "candidate-leases.rs": "f09ead8e4689fa257c9fe3c5f9187fec2658fc9e0501b55a47ea49963d0bcb59",
+  "probe.rs": "e6f05edb62230c9f9bf322987bfc5f89158bc26366c33077744b8c0b01cd6050",
+  "allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02",
+  "lease_contracts.rs": "782964440aad3c6456d63eb70cc5fcfe05a7898474fe4c5da7030a1cdc2d5fdc",
+  "Cargo.toml": "dc809be48d26e6a1818af7c6bf59f2a6b3a82906476743d6abce4500f33ae91a"
+}
