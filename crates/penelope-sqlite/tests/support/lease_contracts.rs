@@ -363,6 +363,12 @@ fn lease_completion_rejects_damaged_durable_evidence() {
     for timer in [false, true] {
         for field in [
             "checksum",
+            "checksum-type",
+            "checksum-oversize",
+            "lease-type",
+            "lease-oversize",
+            "payload-type",
+            "payload-oversize",
             "payload",
             "expiry",
             "missing-expiry",
@@ -402,6 +408,31 @@ fn lease_completion_rejects_damaged_durable_evidence() {
             };
             let connection = Connection::open(&path).unwrap();
             match field {
+                "checksum-type" | "checksum-oversize" | "lease-type" | "lease-oversize"
+                | "payload-type" | "payload-oversize" => {
+                    let column = if field.starts_with("checksum") {
+                        "checksum"
+                    } else if field.starts_with("lease") {
+                        "lease"
+                    } else if timer {
+                        "timer"
+                    } else {
+                        "action"
+                    };
+                    let value = if field.ends_with("type") {
+                        "'wrong SQLite storage class'".to_owned()
+                    } else {
+                        let length = if column == "checksum" {
+                            33
+                        } else {
+                            u64::from(SqliteLimits::default().max_record_bytes) + 1
+                        };
+                        format!("zeroblob({length})")
+                    };
+                    connection
+                        .execute(&format!("UPDATE {table} SET {column}={value}"), [])
+                        .unwrap();
+                }
                 "checksum" => {
                     connection
                         .execute(&format!("UPDATE {table} SET checksum=zeroblob(32)"), [])
