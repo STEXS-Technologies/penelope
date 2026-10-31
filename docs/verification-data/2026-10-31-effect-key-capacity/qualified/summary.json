@@ -1,0 +1,874 @@
+{
+  "latency": [
+    {
+      "campaign": 0,
+      "profile": "heap-first",
+      "kind": 0,
+      "baseline_ns": 109.04344,
+      "candidate_ns": 19.659705000000002,
+      "change_pct": -82.12088052957498,
+      "ci_low": -82.31889259750399,
+      "ci_high": -81.9228290983563
+    },
+    {
+      "campaign": 0,
+      "profile": "heap-first",
+      "kind": 1,
+      "baseline_ns": 94.309055,
+      "candidate_ns": 19.690215000000002,
+      "change_pct": -79.00852754718346,
+      "ci_low": -79.29809817204209,
+      "ci_high": -78.71335311628793
+    },
+    {
+      "campaign": 0,
+      "profile": "heap-first",
+      "kind": 2,
+      "baseline_ns": 102.72913,
+      "candidate_ns": 19.818055,
+      "change_pct": -80.68989903404483,
+      "ci_low": -80.7857911421537,
+      "ci_high": -80.58234767819226
+    },
+    {
+      "campaign": 0,
+      "profile": "heap-first",
+      "kind": 3,
+      "baseline_ns": 84.93298,
+      "candidate_ns": 19.66281,
+      "change_pct": -76.90163785611787,
+      "ci_low": -77.05484986318373,
+      "ci_high": -76.73890219070275
+    },
+    {
+      "campaign": 0,
+      "profile": "inline-limit",
+      "kind": 0,
+      "baseline_ns": 101.037515,
+      "candidate_ns": 60.428155000000004,
+      "change_pct": -39.99322370748259,
+      "ci_low": -40.54923215781791,
+      "ci_high": -39.399366139128546
+    },
+    {
+      "campaign": 0,
+      "profile": "inline-limit",
+      "kind": 1,
+      "baseline_ns": 92.861605,
+      "candidate_ns": 60.44574,
+      "change_pct": -34.88032783980404,
+      "ci_low": -35.831785749133864,
+      "ci_high": -33.933563356303715
+    },
+    {
+      "campaign": 0,
+      "profile": "inline-limit",
+      "kind": 2,
+      "baseline_ns": 96.553645,
+      "candidate_ns": 60.49985,
+      "change_pct": -35.58212093174755,
+      "ci_low": -38.40565769330815,
+      "ci_high": -30.059861889551065
+    },
+    {
+      "campaign": 0,
+      "profile": "inline-limit",
+      "kind": 3,
+      "baseline_ns": 104.03846,
+      "candidate_ns": 60.92793,
+      "change_pct": -40.374076589945325,
+      "ci_low": -41.579160245563564,
+      "ci_high": -38.79570906602243
+    },
+    {
+      "campaign": 0,
+      "profile": "maximum",
+      "kind": 0,
+      "baseline_ns": 103.59650500000001,
+      "candidate_ns": 21.790014999999997,
+      "change_pct": -78.9155882138132,
+      "ci_low": -79.30763523804181,
+      "ci_high": -78.58082128054834
+    },
+    {
+      "campaign": 0,
+      "profile": "maximum",
+      "kind": 1,
+      "baseline_ns": 95.392945,
+      "candidate_ns": 21.833,
+      "change_pct": -76.66583320978117,
+      "ci_low": -77.20662387196936,
+      "ci_high": -76.11023183743804
+    },
+    {
+      "campaign": 0,
+      "profile": "maximum",
+      "kind": 2,
+      "baseline_ns": 83.82719,
+      "candidate_ns": 21.82424,
+      "change_pct": -73.93584649727697,
+      "ci_low": -74.40659828852722,
+      "ci_high": -73.48484482228957
+    },
+    {
+      "campaign": 0,
+      "profile": "maximum",
+      "kind": 3,
+      "baseline_ns": 84.05614,
+      "candidate_ns": 22.096615,
+      "change_pct": -73.36486527196635,
+      "ci_low": -73.98960274921937,
+      "ci_high": -72.55349715539154
+    },
+    {
+      "campaign": 0,
+      "profile": "mixed",
+      "kind": 0,
+      "baseline_ns": 137.08855,
+      "candidate_ns": 33.468895,
+      "change_pct": -75.0534304582248,
+      "ci_low": -75.6124567205771,
+      "ci_high": -74.18337757149176
+    },
+    {
+      "campaign": 0,
+      "profile": "mixed",
+      "kind": 1,
+      "baseline_ns": 156.469565,
+      "candidate_ns": 33.57716,
+      "change_pct": -78.34054746413496,
+      "ci_low": -78.73083307605819,
+      "ci_high": -77.73347766724223
+    },
+    {
+      "campaign": 0,
+      "profile": "mixed",
+      "kind": 2,
+      "baseline_ns": 144.892585,
+      "candidate_ns": 33.431775,
+      "change_pct": -77.08914101989063,
+      "ci_low": -77.23182852481443,
+      "ci_high": -76.9455592962948
+    },
+    {
+      "campaign": 0,
+      "profile": "mixed",
+      "kind": 3,
+      "baseline_ns": 139.663975,
+      "candidate_ns": 33.439944999999994,
+      "change_pct": -76.06299408201969,
+      "ci_low": -76.26360486988467,
+      "ci_high": -75.8699320500303
+    },
+    {
+      "campaign": 0,
+      "profile": "short",
+      "kind": 0,
+      "baseline_ns": 128.29856,
+      "candidate_ns": 63.54293,
+      "change_pct": -50.70217344037206,
+      "ci_low": -51.46505335492173,
+      "ci_high": -49.858695212488506
+    },
+    {
+      "campaign": 0,
+      "profile": "short",
+      "kind": 1,
+      "baseline_ns": 100.11788,
+      "candidate_ns": 63.75439,
+      "change_pct": -36.143041237133744,
+      "ci_low": -36.355717341381464,
+      "ci_high": -35.92805923777597
+    },
+    {
+      "campaign": 0,
+      "profile": "short",
+      "kind": 2,
+      "baseline_ns": 115.573255,
+      "candidate_ns": 63.74377,
+      "change_pct": -45.08153950512984,
+      "ci_low": -45.332381965108276,
+      "ci_high": -44.81039156430636
+    },
+    {
+      "campaign": 0,
+      "profile": "short",
+      "kind": 3,
+      "baseline_ns": 115.746445,
+      "candidate_ns": 63.524345,
+      "change_pct": -44.873800145736546,
+      "ci_low": -45.44513901888031,
+      "ci_high": -44.11928347929066
+    },
+    {
+      "campaign": 1,
+      "profile": "heap-first",
+      "kind": 0,
+      "baseline_ns": 110.21635,
+      "candidate_ns": 19.6846,
+      "change_pct": -81.80710357201633,
+      "ci_low": -82.25728177484763,
+      "ci_high": -81.09612163990585
+    },
+    {
+      "campaign": 1,
+      "profile": "heap-first",
+      "kind": 1,
+      "baseline_ns": 94.500075,
+      "candidate_ns": 19.70524,
+      "change_pct": -79.35697588683142,
+      "ci_low": -79.49474825514247,
+      "ci_high": -79.24018201466725
+    },
+    {
+      "campaign": 1,
+      "profile": "heap-first",
+      "kind": 2,
+      "baseline_ns": 103.80626,
+      "candidate_ns": 19.749725,
+      "change_pct": -80.89715731420858,
+      "ci_low": -81.05668714109234,
+      "ci_high": -80.72467236533745
+    },
+    {
+      "campaign": 1,
+      "profile": "heap-first",
+      "kind": 3,
+      "baseline_ns": 85.28295499999999,
+      "candidate_ns": 19.628790000000002,
+      "change_pct": -76.91783930860846,
+      "ci_low": -77.1516524981403,
+      "ci_high": -76.67083903820205
+    },
+    {
+      "campaign": 1,
+      "profile": "inline-limit",
+      "kind": 0,
+      "baseline_ns": 101.147075,
+      "candidate_ns": 60.758300000000006,
+      "change_pct": -40.81301855726623,
+      "ci_low": -42.42054884540789,
+      "ci_high": -39.549018675675775
+    },
+    {
+      "campaign": 1,
+      "profile": "inline-limit",
+      "kind": 1,
+      "baseline_ns": 93.962935,
+      "candidate_ns": 60.692925,
+      "change_pct": -36.37635208243868,
+      "ci_low": -39.14466794443872,
+      "ci_high": -34.317254906697144
+    },
+    {
+      "campaign": 1,
+      "profile": "inline-limit",
+      "kind": 2,
+      "baseline_ns": 97.45082500000001,
+      "candidate_ns": 60.52695,
+      "change_pct": -39.541635330788395,
+      "ci_low": -43.0177673386907,
+      "ci_high": -37.35880459221347
+    },
+    {
+      "campaign": 1,
+      "profile": "inline-limit",
+      "kind": 3,
+      "baseline_ns": 105.21293,
+      "candidate_ns": 60.865505,
+      "change_pct": -41.180407904052586,
+      "ci_low": -47.83532842408841,
+      "ci_high": -32.803728054288094
+    },
+    {
+      "campaign": 1,
+      "profile": "maximum",
+      "kind": 0,
+      "baseline_ns": 103.93325,
+      "candidate_ns": 21.786465,
+      "change_pct": -79.27507937036931,
+      "ci_low": -80.22815325852221,
+      "ci_high": -78.31879565372964
+    },
+    {
+      "campaign": 1,
+      "profile": "maximum",
+      "kind": 1,
+      "baseline_ns": 95.58863,
+      "candidate_ns": 21.657215,
+      "change_pct": -78.15233152512447,
+      "ci_low": -78.93227516248061,
+      "ci_high": -77.37361356162876
+    },
+    {
+      "campaign": 1,
+      "profile": "maximum",
+      "kind": 2,
+      "baseline_ns": 84.90598,
+      "candidate_ns": 21.968915,
+      "change_pct": -75.01765770734933,
+      "ci_low": -75.99915016580441,
+      "ci_high": -73.88443814201835
+    },
+    {
+      "campaign": 1,
+      "profile": "maximum",
+      "kind": 3,
+      "baseline_ns": 84.370645,
+      "candidate_ns": 21.561975,
+      "change_pct": -75.13637830376067,
+      "ci_low": -75.80111419746875,
+      "ci_high": -74.6134768254569
+    },
+    {
+      "campaign": 1,
+      "profile": "mixed",
+      "kind": 0,
+      "baseline_ns": 136.855595,
+      "candidate_ns": 33.462990000000005,
+      "change_pct": -75.52576185306152,
+      "ci_low": -76.09939703388387,
+      "ci_high": -74.98398005186174
+    },
+    {
+      "campaign": 1,
+      "profile": "mixed",
+      "kind": 1,
+      "baseline_ns": 157.934145,
+      "candidate_ns": 33.533175,
+      "change_pct": -79.22655217630748,
+      "ci_low": -79.95398133958625,
+      "ci_high": -78.72028109946461
+    },
+    {
+      "campaign": 1,
+      "profile": "mixed",
+      "kind": 2,
+      "baseline_ns": 145.83561,
+      "candidate_ns": 33.637919999999994,
+      "change_pct": -76.9533474806906,
+      "ci_low": -77.38607666830397,
+      "ci_high": -76.45485783538531
+    },
+    {
+      "campaign": 1,
+      "profile": "mixed",
+      "kind": 3,
+      "baseline_ns": 140.67979,
+      "candidate_ns": 33.59619,
+      "change_pct": -76.0741256777021,
+      "ci_low": -76.69611508922294,
+      "ci_high": -75.37861333679939
+    },
+    {
+      "campaign": 1,
+      "profile": "short",
+      "kind": 0,
+      "baseline_ns": 131.35757,
+      "candidate_ns": 63.45396,
+      "change_pct": -51.42430303804086,
+      "ci_low": -51.765817524337066,
+      "ci_high": -51.1195667297491
+    },
+    {
+      "campaign": 1,
+      "profile": "short",
+      "kind": 1,
+      "baseline_ns": 99.96519,
+      "candidate_ns": 63.520939999999996,
+      "change_pct": -35.989209507386235,
+      "ci_low": -36.52748231955583,
+      "ci_high": -35.41954395589729
+    },
+    {
+      "campaign": 1,
+      "profile": "short",
+      "kind": 2,
+      "baseline_ns": 115.754105,
+      "candidate_ns": 63.303169999999994,
+      "change_pct": -46.39987950942149,
+      "ci_low": -49.30757085702288,
+      "ci_high": -44.153504422343126
+    },
+    {
+      "campaign": 1,
+      "profile": "short",
+      "kind": 3,
+      "baseline_ns": 116.62920500000001,
+      "candidate_ns": 63.15067,
+      "change_pct": -47.14153261928172,
+      "ci_low": -49.6359192179526,
+      "ci_high": -45.63548304898322
+    }
+  ],
+  "allocation": [
+    {
+      "profile": "heap-first",
+      "kind": 0,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 383
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 194
+      }
+    },
+    {
+      "profile": "heap-first",
+      "kind": 1,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 383
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 194
+      }
+    },
+    {
+      "profile": "heap-first",
+      "kind": 2,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 383
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 194
+      }
+    },
+    {
+      "profile": "heap-first",
+      "kind": 3,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 383
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 194
+      }
+    },
+    {
+      "profile": "inline-limit",
+      "kind": 0,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 368
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 189
+      }
+    },
+    {
+      "profile": "inline-limit",
+      "kind": 1,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 368
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 189
+      }
+    },
+    {
+      "profile": "inline-limit",
+      "kind": 2,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 368
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 189
+      }
+    },
+    {
+      "profile": "inline-limit",
+      "kind": 3,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 368
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 189
+      }
+    },
+    {
+      "profile": "maximum",
+      "kind": 0,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 1958
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 719
+      }
+    },
+    {
+      "profile": "maximum",
+      "kind": 1,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 1958
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 719
+      }
+    },
+    {
+      "profile": "maximum",
+      "kind": 2,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 1958
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 719
+      }
+    },
+    {
+      "profile": "maximum",
+      "kind": 3,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 1958
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 719
+      }
+    },
+    {
+      "profile": "mixed",
+      "kind": 0,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 6,
+        "requested_bytes": 1016
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 321
+      }
+    },
+    {
+      "profile": "mixed",
+      "kind": 1,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 6,
+        "requested_bytes": 1016
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 321
+      }
+    },
+    {
+      "profile": "mixed",
+      "kind": 2,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 6,
+        "requested_bytes": 1016
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 321
+      }
+    },
+    {
+      "profile": "mixed",
+      "kind": 3,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 6,
+        "requested_bytes": 1016
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 321
+      }
+    },
+    {
+      "profile": "short",
+      "kind": 0,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 248
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 124
+      }
+    },
+    {
+      "profile": "short",
+      "kind": 1,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 248
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 124
+      }
+    },
+    {
+      "profile": "short",
+      "kind": 2,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 248
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 124
+      }
+    },
+    {
+      "profile": "short",
+      "kind": 3,
+      "baseline": {
+        "allocations": 1,
+        "reallocations": 4,
+        "requested_bytes": 248
+      },
+      "candidate": {
+        "allocations": 1,
+        "reallocations": 0,
+        "requested_bytes": 124
+      }
+    }
+  ],
+  "public_allocation": [
+    {
+      "case": "outbox_ack",
+      "baseline": {
+        "allocations": {
+          "min": 10,
+          "median": 10.0,
+          "max": 10
+        },
+        "reallocations": {
+          "min": 6,
+          "median": 6.0,
+          "max": 6
+        },
+        "requested_bytes": {
+          "min": 1828,
+          "median": 1828.0,
+          "max": 1828
+        }
+      },
+      "candidate": {
+        "allocations": {
+          "min": 10,
+          "median": 10.0,
+          "max": 10
+        },
+        "reallocations": {
+          "min": 2,
+          "median": 2.0,
+          "max": 2
+        },
+        "requested_bytes": {
+          "min": 1700,
+          "median": 1700.0,
+          "max": 1700
+        }
+      }
+    },
+    {
+      "case": "outbox_renew",
+      "baseline": {
+        "allocations": {
+          "min": 11,
+          "median": 11.0,
+          "max": 11
+        },
+        "reallocations": {
+          "min": 8,
+          "median": 8.0,
+          "max": 8
+        },
+        "requested_bytes": {
+          "min": 3260,
+          "median": 3260.0,
+          "max": 3260
+        }
+      },
+      "candidate": {
+        "allocations": {
+          "min": 11,
+          "median": 11.0,
+          "max": 11
+        },
+        "reallocations": {
+          "min": 4,
+          "median": 4.0,
+          "max": 4
+        },
+        "requested_bytes": {
+          "min": 3132,
+          "median": 3132.0,
+          "max": 3132
+        }
+      }
+    },
+    {
+      "case": "timer_ack",
+      "baseline": {
+        "allocations": {
+          "min": 9,
+          "median": 9.0,
+          "max": 9
+        },
+        "reallocations": {
+          "min": 2,
+          "median": 2.0,
+          "max": 2
+        },
+        "requested_bytes": {
+          "min": 1596,
+          "median": 1596.0,
+          "max": 1596
+        }
+      },
+      "candidate": {
+        "allocations": {
+          "min": 9,
+          "median": 9.0,
+          "max": 9
+        },
+        "reallocations": {
+          "min": 2,
+          "median": 2.0,
+          "max": 2
+        },
+        "requested_bytes": {
+          "min": 1596,
+          "median": 1596.0,
+          "max": 1596
+        }
+      }
+    },
+    {
+      "case": "timer_schedule",
+      "baseline": {
+        "allocations": {
+          "min": 8,
+          "median": 8.0,
+          "max": 8
+        },
+        "reallocations": {
+          "min": 0,
+          "median": 0.0,
+          "max": 0
+        },
+        "requested_bytes": {
+          "min": 666,
+          "median": 666.0,
+          "max": 666
+        }
+      },
+      "candidate": {
+        "allocations": {
+          "min": 8,
+          "median": 8.0,
+          "max": 8
+        },
+        "reallocations": {
+          "min": 0,
+          "median": 0.0,
+          "max": 0
+        },
+        "requested_bytes": {
+          "min": 666,
+          "median": 666.0,
+          "max": 666
+        }
+      }
+    },
+    {
+      "case": "timer_cancel",
+      "baseline": {
+        "allocations": {
+          "min": 7,
+          "median": 7.0,
+          "max": 7
+        },
+        "reallocations": {
+          "min": 0,
+          "median": 0.0,
+          "max": 0
+        },
+        "requested_bytes": {
+          "min": 530,
+          "median": 530.0,
+          "max": 530
+        }
+      },
+      "candidate": {
+        "allocations": {
+          "min": 7,
+          "median": 7.0,
+          "max": 7
+        },
+        "reallocations": {
+          "min": 0,
+          "median": 0.0,
+          "max": 0
+        },
+        "requested_bytes": {
+          "min": 530,
+          "median": 530.0,
+          "max": 530
+        }
+      }
+    }
+  ],
+  "timed_encodings": 96000000
+}

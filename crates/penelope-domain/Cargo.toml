@@ -27,3 +27,11 @@ workspace = true
 [[bench]]
 name = "identifier_decode"
 harness = false
+
+[[bench]]
+name = "effect_key_encoding"
+harness = false
+
+[[bench]]
+name = "effect_key_allocations"
+harness = false
