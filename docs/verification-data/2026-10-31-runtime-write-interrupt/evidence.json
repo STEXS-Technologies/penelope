@@ -1,0 +1,33 @@
+{
+  "baseline": "fecc2faebfe6a42137fb1590115f7884ccecb872",
+  "source": "ce36ba723ec4dda20f00255723f02882abd1b6d6",
+  "source_sha256": {
+    "crates/penelope-process-runtime/src/runtime.rs": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d",
+    "crates/penelope-process-runtime/src/io_tests.rs": "bd57a47d5dbc23d46868d58e644e4597a1563675b6890b7e67c59514e9071a73"
+  },
+  "runtime_sha256": {
+    "baseline": "89ceab7ab064f26949595114a541c24896923bc7a6b30bdb2bd8bd1e56af0df3",
+    "fixed": "934cdfeda70b91fa5c7cf6c57927ac0b5b15d4826b1a16ff54cc5c704f84878d"
+  },
+  "traced_executions": 60,
+  "artifact_sha256": {
+    "baseline-fixtures.patch": "52c1f8bcc475e6c2c46f29c5024f994ff705cb2644dc868a4df26021de6e0c45",
+    "build-baseline-1.85.0.log.gz": "87e4e8f00d5350584aac0ecfcea66d1c13c255af96d9267ddbdfddbf35b897a6",
+    "build-baseline-stable.log.gz": "ab873b36650a47f5e1639703397b2484a9d30fbe1d372a92fb5bc54a7f0cd390",
+    "build-fixed-1.85.0.log.gz": "216508642836776904f057dbe5e6b55bb510800a44e2816c34e69890feae46d2",
+    "build-fixed-stable.log.gz": "a58a8156f33f13972728a1b2dd7dd6d4d95494ba9f0330ad1ee9a45e1338e135",
+    "clippy-final.log.gz": "4ed32104a5300b33ef26012f20256f2d444dae20644ae3f39c9e48334a1bc8e9",
+    "clippy.log.gz": "de98532a26714e476ffbec9d725830c97aaa4f05ed1896862ef703282ffd8680",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "f7dcc8fe8b8b842639df8481ea393a3bcbad32c0a1d555fc5fa5b9a2d1801122",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "b3f14b9a4bf40a7591a2de9b661609fe7043ef1b738be85ef426f42789fbe386",
+    "pilot.log.gz": "d84668bd9743d9e695d33562d32353f580c32c6ec6a8586453cc4d59312cac9a",
+    "processes.jsonl.gz": "7b1b95ebf1d6a490e34287b1dda0232b71f1cab026270581c9e8e1f74edf68fa",
+    "trace.log.gz": "cab22cc0703fd9dd08b3fed715411b16cce06f8c8285fd67ede9f1211674370a",
+    "trace.py": "801b112405d8e7d56ad40c4acb666c4c32ee50c4d189b6c910a0da8c2a3832b6",
+    "traces.jsonl.gz": "30d2d44ae917b275c40f5c5b5cfd84f71480f09d31ba7d1e2d7eb9c78c9f9a1b",
+    "verify.py": "318a969b73887139bee32b70e49d6ca9f25ca90c6274d725728c3b5383b3b1cd",
+    "workspace.log.gz": "bdf23f79b970d219f314fd9647118737733712106355940809270fa47f8b3544"
+  }
+}
