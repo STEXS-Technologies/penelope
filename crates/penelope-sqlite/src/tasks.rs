@@ -397,7 +397,7 @@ impl TaskJournal for SqliteTaskJournal {
         reject_retired(&transaction, record.scope)?;
         let stored_head = checked_head(&transaction, record.scope)?;
         let version = data_version(&transaction)?;
-        let mut projection = match (&self.cache, &stored_head) {
+        let (mut projection, retained_used) = match (&self.cache, &stored_head) {
             (
                 Some((cached, last, cached_used, cached_version)),
                 Some((next, checksum, stored_used)),
@@ -407,7 +407,7 @@ impl TaskJournal for SqliteTaskJournal {
                 && cached_used == stored_used
                 && *cached_version == version =>
             {
-                *cached
+                (*cached, *stored_used)
             }
             _ => {
                 let (projection, last, used) =
@@ -420,7 +420,7 @@ impl TaskJournal for SqliteTaskJournal {
                     None if projection.next_sequence() == TaskSequence::ZERO => {}
                     _ => return Err(TaskPortError::Corrupt),
                 }
-                projection
+                (projection, used)
             }
         };
         projection
@@ -458,9 +458,10 @@ impl TaskJournal for SqliteTaskJournal {
             (None, None) => {}
             _ => return Err(TaskPortError::Corrupt),
         }
-        let used = stored_head
-            .as_ref()
-            .map_or(0, |(_, _, used)| *used)
+        // A scope without a head may already contain retained blobs. Preserve
+        // the reconstructed usage, including a deduplicated input blob, rather
+        // than charging only bytes inserted by this first append.
+        let used = retained_used
             .checked_add(added)
             .ok_or(TaskPortError::Exhausted)?;
         if used > self.limits.max_scope_bytes {
