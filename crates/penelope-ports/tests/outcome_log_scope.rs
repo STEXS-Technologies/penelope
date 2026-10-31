@@ -57,6 +57,11 @@ fn every_scope_component_is_checked_before_sequence_without_mutating_the_log() {
                     Component::Digest => changed.definition_digest = ContentDigest([17; 32]),
                 }
                 assert_eq!(
+                    log.append(std::slice::from_ref(changed)),
+                    Err(OutcomeLogValidationError::ScopeMismatch)
+                );
+                assert_eq!(log, before);
+                assert_eq!(
                     log.append(&bad),
                     Err(OutcomeLogValidationError::ScopeMismatch)
                 );
@@ -75,4 +80,64 @@ fn every_scope_component_is_checked_before_sequence_without_mutating_the_log() {
             }
         }
     }
+}
+
+#[test]
+fn single_and_batch_appends_share_duplicate_tracking_through_the_replay_bound() {
+    let scope = ProcessScope::new(
+        "tnt_stream".parse().unwrap(),
+        "prc_stream".parse().unwrap(),
+        "def_stream".parse().unwrap(),
+        "dfv_stream".parse().unwrap(),
+        ContentDigest([9; 32]),
+    );
+    let history: Vec<_> = (0..penelope_ports::MAX_OUTCOMES_PER_REPLAY_LOG)
+        .map(|sequence| outcome(&scope, u64::try_from(sequence).unwrap()))
+        .collect();
+    let mut log = OutcomeLog::new(scope.clone());
+    for (rank, batch) in history.chunks(3).enumerate() {
+        // Alternate single and multi-item appends against one shared ID index.
+        log.append(batch.get(..1).unwrap()).unwrap();
+        if [0, 1, 42, 1364].contains(&rank) {
+            let before = log.clone();
+            let mut duplicate = outcome(&scope, log.next_sequence());
+            duplicate.outcome_id = batch.first().unwrap().outcome_id.clone();
+            assert_eq!(
+                log.append(&[duplicate]),
+                Err(OutcomeLogValidationError::DuplicateOutcomeId)
+            );
+            assert_eq!(log, before);
+            let mut invalid_batch = batch.get(1..).unwrap().to_vec();
+            invalid_batch.last_mut().unwrap().outcome_id =
+                batch.first().unwrap().outcome_id.clone();
+            assert_eq!(
+                log.append(&invalid_batch),
+                Err(OutcomeLogValidationError::DuplicateOutcomeId)
+            );
+            assert_eq!(log, before);
+        }
+        log.append(batch.get(1..).unwrap()).unwrap();
+        if [0, 1, 42, 1364].contains(&rank) {
+            let before = log.clone();
+            let mut duplicate = outcome(&scope, log.next_sequence());
+            duplicate.outcome_id = batch.last().unwrap().outcome_id.clone();
+            assert_eq!(
+                log.append(&[duplicate]),
+                Err(OutcomeLogValidationError::DuplicateOutcomeId)
+            );
+            assert_eq!(log, before);
+            log = serde_json::from_slice(&serde_json::to_vec(&log).unwrap()).unwrap();
+            assert_eq!(log, before);
+        }
+    }
+    assert_eq!(log.outcomes(), history);
+    let rebuilt = OutcomeLog::from_ordered(scope.clone(), &history).unwrap();
+    assert_eq!(log, rebuilt);
+    assert_eq!(log.append(&[]), Ok(()));
+    assert_eq!(log, rebuilt);
+    assert_eq!(
+        log.append(&[outcome(&scope, log.next_sequence())]),
+        Err(OutcomeLogValidationError::LimitExceeded)
+    );
+    assert_eq!(log, rebuilt);
 }

@@ -25,4 +25,16 @@ fn main() {
             fixture.checksum
         );
     }
+    // Both persistent containers have spare capacity after two inline outcomes.
+    // The next single append needs no temporary duplicate set or owned strings.
+    let fixture = fixture::Fixture::new(9, 8, 3).unwrap();
+    let mut log = OutcomeLog::new(fixture.scope.clone());
+    log.append(fixture.outcomes.get(..2).unwrap()).unwrap();
+    let (result, allocations, reallocations, _) =
+        allocator::measure(|| log.append(fixture.outcomes.get(2..).unwrap()));
+    result.unwrap();
+    assert_eq!(allocations, 0, "single append allocated a temporary set");
+    assert_eq!(reallocations, 0);
+    fixture.verify(&log).unwrap();
+    println!("single_append_allocations=0 verified=true");
 }
