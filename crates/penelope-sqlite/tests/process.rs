@@ -634,3 +634,6 @@ mod replay_columns;
 
 #[path = "support/inbox_index.rs"]
 mod inbox_index;
+
+#[path = "support/payload_columns.rs"]
+mod payload_columns;

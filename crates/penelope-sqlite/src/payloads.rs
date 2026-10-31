@@ -2,7 +2,7 @@ use crate::{
     SqliteProcessStore,
     process::{charge_process, db_error, port_error, scope_process_key},
     schema::execute_one,
-    tasks::copy_column,
+    tasks::column_bytes,
 };
 use async_trait::async_trait;
 use penelope_domain::{ContentDigest, ProcessScope};
@@ -39,12 +39,15 @@ impl ProcessPayloadStore for SqliteProcessStore {
                     .query_row(
                         "SELECT bytes FROM process_payloads WHERE scope=?1 AND digest=?2",
                         params![key, digest.0.as_slice()],
-                        |row| copy_column(row, 0, limits.max_blob_bytes),
+                        |row| {
+                            column_bytes(row, 0, limits.max_blob_bytes)
+                                .map(|stored| stored == bytes.as_slice())
+                        },
                     )
                     .optional()
                     .map_err(|error| db_error(&error))?;
                 if let Some(stored) = stored {
-                    if stored != bytes {
+                    if !stored {
                         return Err(PortError::Invariant);
                     }
                 } else {
@@ -90,19 +93,23 @@ impl ProcessPayloadStore for SqliteProcessStore {
         let limit = self.limits.max_blob_bytes;
         self.worker
             .run(move |connection| {
-                let bytes = connection
+                connection
                     .query_row(
                         "SELECT bytes FROM process_payloads WHERE scope=?1 AND digest=?2",
                         params![scope.canonical_bytes(), digest.0.as_slice()],
-                        |row| copy_column(row, 0, limit),
+                        |row| {
+                            let bytes = column_bytes(row, 0, limit)?;
+                            // Invalid stored content has the same corruption
+                            // classification as an invalid BLOB type or size.
+                            if ContentDigest::sha256(bytes) != digest {
+                                return Err(rusqlite::Error::InvalidQuery);
+                            }
+                            Ok(bytes.to_vec())
+                        },
                     )
                     .optional()
                     .map_err(|error| db_error(&error))?
-                    .ok_or(PortError::Invariant)?;
-                if ContentDigest::sha256(&bytes) != digest {
-                    return Err(PortError::Invariant);
-                }
-                Ok(bytes)
+                    .ok_or(PortError::Invariant)
             })?
             .await
     }
