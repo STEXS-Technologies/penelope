@@ -1,0 +1,17 @@
+{
+  "baseline_source": "5c032a202ae91682d1698b54b9dbdc74c95db4d2",
+  "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": 0,
+  "cpu_model": "model name\t: AMD Ryzen 9 7950X 16-Core Processor",
+  "pairs": 20,
+  "warmup_per_metric": 100,
+  "iterations_per_metric": 2000,
+  "order": "alternating AB/BA",
+  "binary_sha256": {
+    "baseline": "facba4a65dcc089056010ca4087c0dc7e7909d5b934cb3aaf721c50d28afdabe",
+    "candidate": "6d2c54afb3c7b18534a79490dcfa7c7aeb29129b04e3aadb436d27042f85b07b"
+  },
+  "notes": "Both binaries compiled from the same benchmark before cargo fmt; only production difference is prepare -> prepare_cached for two selection statements. No other own build, test, or graph jobs ran during campaign.",
+  "candidate_source": "e812c0758b40c50017c70f722b769202af414a33"
+}
