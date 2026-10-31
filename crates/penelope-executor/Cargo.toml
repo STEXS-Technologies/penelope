@@ -16,6 +16,7 @@ serde = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
+tempfile = "3"
 async-trait.workspace = true
 penelope-sqlite = { version = "0.3.0", path = "../penelope-sqlite" }
 rusqlite = { version = "0.40.2", features = ["bundled"] }
@@ -60,4 +61,8 @@ harness = false
 
 [[bench]]
 name = "task_poll"
+harness = false
+
+[[bench]]
+name = "application_workloads"
 harness = false

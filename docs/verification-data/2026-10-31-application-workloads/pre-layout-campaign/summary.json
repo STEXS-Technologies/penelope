@@ -1,0 +1,681 @@
+{
+  "schema": 1,
+  "profiles": [
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 29845.25,
+      "penelope_median_ns_per_workflow": 32064.5,
+      "paired_added_median_ns_per_workflow": 2181.5,
+      "overhead_percent": 6.235895395778092,
+      "process_bootstrap_95_percent": [
+        4.721679170526776,
+        7.9735553167795015
+      ],
+      "penelope_median_workflows_per_second": 31187.138424113895
+    },
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 14919.0,
+      "penelope_median_ns_per_workflow": 17212.0,
+      "paired_added_median_ns_per_workflow": 2289.5,
+      "overhead_percent": 16.26510132256244,
+      "process_bootstrap_95_percent": [
+        15.129661677802703,
+        17.530780036603463
+      ],
+      "penelope_median_workflows_per_second": 58099.00069718801
+    },
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 33574.75,
+      "penelope_median_ns_per_workflow": 36058.5,
+      "paired_added_median_ns_per_workflow": 2466.0,
+      "overhead_percent": 7.302483152907718,
+      "process_bootstrap_95_percent": [
+        6.951662875828883,
+        7.590410375040216
+      ],
+      "penelope_median_workflows_per_second": 27732.712120581833
+    },
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 29842.75,
+      "penelope_median_ns_per_workflow": 33296.875,
+      "paired_added_median_ns_per_workflow": 3447.0,
+      "overhead_percent": 12.25896308221952,
+      "process_bootstrap_95_percent": [
+        11.088611548672953,
+        13.642946298421277
+      ],
+      "penelope_median_workflows_per_second": 30032.84842796809
+    },
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 29852.75,
+      "penelope_median_ns_per_workflow": 48968023.0,
+      "paired_added_median_ns_per_workflow": 48938167.75,
+      "overhead_percent": 176454.63954718938,
+      "process_bootstrap_95_percent": [
+        155300.21083307473,
+        198826.0454760998
+      ],
+      "penelope_median_workflows_per_second": 20.421490163080506
+    },
+    {
+      "workers": 1,
+      "work": 4096,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 29855.25,
+      "penelope_median_ns_per_workflow": 51223843.75,
+      "paired_added_median_ns_per_workflow": 51193925.875,
+      "overhead_percent": 171427.938469352,
+      "process_bootstrap_95_percent": [
+        153172.14199247592,
+        185594.44999421097
+      ],
+      "penelope_median_workflows_per_second": 19.52215856507254
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 479515.75,
+      "penelope_median_ns_per_workflow": 482588.0,
+      "paired_added_median_ns_per_workflow": 2795.375,
+      "overhead_percent": 0.5813303046368598,
+      "process_bootstrap_95_percent": [
+        0.43998122967253744,
+        0.6734789869599738
+      ],
+      "penelope_median_workflows_per_second": 2072.160932306647
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 239679.625,
+      "penelope_median_ns_per_workflow": 242222.0,
+      "paired_added_median_ns_per_workflow": 2422.125,
+      "overhead_percent": 1.0002650077246074,
+      "process_bootstrap_95_percent": [
+        0.8131624423866085,
+        1.1978400962030775
+      ],
+      "penelope_median_workflows_per_second": 4128.444154535921
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 539472.875,
+      "penelope_median_ns_per_workflow": 542252.0,
+      "paired_added_median_ns_per_workflow": 2846.75,
+      "overhead_percent": 0.45409126999501703,
+      "process_bootstrap_95_percent": [
+        0.23951793893095372,
+        0.7185077507802242
+      ],
+      "penelope_median_workflows_per_second": 1844.16101738675
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 479453.0,
+      "penelope_median_ns_per_workflow": 482937.375,
+      "paired_added_median_ns_per_workflow": 3516.75,
+      "overhead_percent": 0.7155143336238228,
+      "process_bootstrap_95_percent": [
+        0.5689671919976279,
+        0.8280069944308225
+      ],
+      "penelope_median_workflows_per_second": 2070.6618534131885
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 487667.75,
+      "penelope_median_ns_per_workflow": 50387426.75,
+      "paired_added_median_ns_per_workflow": 49903649.125,
+      "overhead_percent": 9621.587432466682,
+      "process_bootstrap_95_percent": [
+        7901.207973155317,
+        10954.441729115384
+      ],
+      "penelope_median_workflows_per_second": 19.84622086302512
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 482606.625,
+      "penelope_median_ns_per_workflow": 52571301.0,
+      "paired_added_median_ns_per_workflow": 51998568.875,
+      "overhead_percent": 9993.964445367339,
+      "process_bootstrap_95_percent": [
+        8086.817900000324,
+        12500.342695407006
+      ],
+      "penelope_median_workflows_per_second": 19.02178528927789
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7665336.5,
+      "penelope_median_ns_per_workflow": 7667877.75,
+      "paired_added_median_ns_per_workflow": 3783.625,
+      "overhead_percent": 0.061260363771722885,
+      "process_bootstrap_95_percent": [
+        -0.08398364123105818,
+        0.20671550430370172
+      ],
+      "penelope_median_workflows_per_second": 130.41418142066755
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 3822903.75,
+      "penelope_median_ns_per_workflow": 3819768.875,
+      "paired_added_median_ns_per_workflow": 2789.25,
+      "overhead_percent": 0.014893219653567064,
+      "process_bootstrap_95_percent": [
+        -0.20085505331081197,
+        0.2107140286981439
+      ],
+      "penelope_median_workflows_per_second": 261.7959443946723
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 8617442.0,
+      "penelope_median_ns_per_workflow": 8621950.75,
+      "paired_added_median_ns_per_workflow": 5041.0,
+      "overhead_percent": 0.22077522103354,
+      "process_bootstrap_95_percent": [
+        -0.010402427648442004,
+        0.4524873563676106
+      ],
+      "penelope_median_workflows_per_second": 115.98303319002373
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7668872.0,
+      "penelope_median_ns_per_workflow": 7677171.75,
+      "paired_added_median_ns_per_workflow": 4255.75,
+      "overhead_percent": 0.19272617084031152,
+      "process_bootstrap_95_percent": [
+        -0.10130333347467702,
+        0.5318482362085366
+      ],
+      "penelope_median_workflows_per_second": 130.2563017428912
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7793907.5,
+      "penelope_median_ns_per_workflow": 60097588.625,
+      "paired_added_median_ns_per_workflow": 52424359.375,
+      "overhead_percent": 711.825737844256,
+      "process_bootstrap_95_percent": [
+        577.995669040738,
+        843.2995865626879
+      ],
+      "penelope_median_workflows_per_second": 16.63960273414381
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7744001.0,
+      "penelope_median_ns_per_workflow": 56516819.25,
+      "paired_added_median_ns_per_workflow": 48620207.0,
+      "overhead_percent": 705.3477736733183,
+      "process_bootstrap_95_percent": [
+        603.2986152677665,
+        845.6734524412958
+      ],
+      "penelope_median_workflows_per_second": 17.693847836279286
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 11248.9375,
+      "penelope_median_ns_per_workflow": 11801.875,
+      "paired_added_median_ns_per_workflow": 764.90625,
+      "overhead_percent": 8.463992957681695,
+      "process_bootstrap_95_percent": [
+        6.443209695985108,
+        10.523140009820304
+      ],
+      "penelope_median_workflows_per_second": 84732.29889318434
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7619.75,
+      "penelope_median_ns_per_workflow": 8381.8125,
+      "paired_added_median_ns_per_workflow": 815.625,
+      "overhead_percent": 9.783236930506039,
+      "process_bootstrap_95_percent": [
+        4.834692481969517,
+        16.403699784787083
+      ],
+      "penelope_median_workflows_per_second": 119305.93770738727
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 12325.6875,
+      "penelope_median_ns_per_workflow": 12812.28125,
+      "paired_added_median_ns_per_workflow": 831.9375,
+      "overhead_percent": 1.940618833692562,
+      "process_bootstrap_95_percent": [
+        -1.572345078906621,
+        5.578963316022046
+      ],
+      "penelope_median_workflows_per_second": 78050.11305071063
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 11125.875,
+      "penelope_median_ns_per_workflow": 12412.75,
+      "paired_added_median_ns_per_workflow": 1172.5625,
+      "overhead_percent": 15.968080117592084,
+      "process_bootstrap_95_percent": [
+        9.761811203600184,
+        22.720754584779858
+      ],
+      "penelope_median_workflows_per_second": 80562.32502870033
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 37991.875,
+      "penelope_median_ns_per_workflow": 23880779.78125,
+      "paired_added_median_ns_per_workflow": 23842332.34375,
+      "overhead_percent": 78413.74275350712,
+      "process_bootstrap_95_percent": [
+        56536.063252767475,
+        145571.45756972604
+      ],
+      "penelope_median_workflows_per_second": 41.8746795188468
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 29563.0625,
+      "penelope_median_ns_per_workflow": 19389378.78125,
+      "paired_added_median_ns_per_workflow": 19373555.375,
+      "overhead_percent": 84775.7113297961,
+      "process_bootstrap_95_percent": [
+        80375.48564728399,
+        87503.99618303757
+      ],
+      "penelope_median_workflows_per_second": 51.57462811377042
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 124285.5625,
+      "penelope_median_ns_per_workflow": 124981.90625,
+      "paired_added_median_ns_per_workflow": 702.53125,
+      "overhead_percent": 0.5288020751046857,
+      "process_bootstrap_95_percent": [
+        -6.141839878411698,
+        7.673536680920759
+      ],
+      "penelope_median_workflows_per_second": 8001.158167644767
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 63803.96875,
+      "penelope_median_ns_per_workflow": 64577.03125,
+      "paired_added_median_ns_per_workflow": 620.875,
+      "overhead_percent": -3.3542589406032586,
+      "process_bootstrap_95_percent": [
+        -10.924087024440846,
+        4.595400533045946
+      ],
+      "penelope_median_workflows_per_second": 15485.382041312096
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 139558.53125,
+      "penelope_median_ns_per_workflow": 140668.8125,
+      "paired_added_median_ns_per_workflow": 980.625,
+      "overhead_percent": -1.694498688728429,
+      "process_bootstrap_95_percent": [
+        -5.06766445106647,
+        1.6862316593271949
+      ],
+      "penelope_median_workflows_per_second": 7108.896294976543
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 123884.46875,
+      "penelope_median_ns_per_workflow": 125440.9375,
+      "paired_added_median_ns_per_workflow": 1163.21875,
+      "overhead_percent": 4.367402074266414,
+      "process_bootstrap_95_percent": [
+        -8.482782811007064,
+        13.71485701644734
+      ],
+      "penelope_median_workflows_per_second": 7971.879196135632
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 367077.71875,
+      "penelope_median_ns_per_workflow": 22235336.15625,
+      "paired_added_median_ns_per_workflow": 21983175.90625,
+      "overhead_percent": 7835.313171275281,
+      "process_bootstrap_95_percent": [
+        7320.279755445207,
+        8532.796877313107
+      ],
+      "penelope_median_workflows_per_second": 44.97345994559726
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 267912.28125,
+      "penelope_median_ns_per_workflow": 24996598.59375,
+      "paired_added_median_ns_per_workflow": 24781956.875,
+      "overhead_percent": 8408.572538721712,
+      "process_bootstrap_95_percent": [
+        7659.363191560881,
+        9053.800891785218
+      ],
+      "penelope_median_workflows_per_second": 40.005442990552886
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "linear",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 1932935.25,
+      "penelope_median_ns_per_workflow": 1930906.65625,
+      "paired_added_median_ns_per_workflow": 1618.09375,
+      "overhead_percent": 1.3844297956898972,
+      "process_bootstrap_95_percent": [
+        0.0130557112789964,
+        3.8716894019730255
+      ],
+      "penelope_median_workflows_per_second": 517.8914251308723
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "graph",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 967510.59375,
+      "penelope_median_ns_per_workflow": 966966.40625,
+      "paired_added_median_ns_per_workflow": 721.65625,
+      "overhead_percent": 1.7223857481941502,
+      "process_bootstrap_95_percent": [
+        0.03192742938602609,
+        4.031379065131791
+      ],
+      "penelope_median_workflows_per_second": 1034.1620903647604
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "retry",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 2172669.3125,
+      "penelope_median_ns_per_workflow": 2172579.75,
+      "paired_added_median_ns_per_workflow": 2141.9375,
+      "overhead_percent": 0.2932676888885747,
+      "process_bootstrap_95_percent": [
+        -1.6369942220924856,
+        1.9748468976765978
+      ],
+      "penelope_median_workflows_per_second": 460.28229803762093
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 1932434.625,
+      "penelope_median_ns_per_workflow": 1937705.75,
+      "paired_added_median_ns_per_workflow": 1679.53125,
+      "overhead_percent": -0.6082968081388792,
+      "process_bootstrap_95_percent": [
+        -3.712458212280121,
+        2.7177929672388927
+      ],
+      "penelope_median_workflows_per_second": 516.0742285045085
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "durable",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 2590546.8125,
+      "penelope_median_ns_per_workflow": 25719821.34375,
+      "paired_added_median_ns_per_workflow": 23134809.34375,
+      "overhead_percent": 937.3589431102943,
+      "process_bootstrap_95_percent": [
+        874.2779542971334,
+        1004.5241987716332
+      ],
+      "penelope_median_workflows_per_second": 38.88051890543179
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "case": "durable_replay",
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 2374857.34375,
+      "penelope_median_ns_per_workflow": 26761379.46875,
+      "paired_added_median_ns_per_workflow": 24602463.3125,
+      "overhead_percent": 1045.2152131347236,
+      "process_bootstrap_95_percent": [
+        957.2293780790037,
+        1156.6792672124618
+      ],
+      "penelope_median_workflows_per_second": 37.36728150235034
+    }
+  ],
+  "weighted_estimates": [
+    {
+      "workers": 1,
+      "work": 4096,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 28149.0,
+      "penelope_median_ns_per_workflow": 16480404.0625,
+      "paired_added_median_ns_per_workflow": 16452286.5,
+      "overhead_percent": 62676.119512483056,
+      "process_bootstrap_95_percent": [
+        59188.97129431073,
+        66368.36831563838
+      ],
+      "penelope_median_workflows_per_second": 60.67812392266702
+    },
+    {
+      "workers": 1,
+      "work": 65536,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 453123.625,
+      "penelope_median_ns_per_workflow": 18208817.6875,
+      "paired_added_median_ns_per_workflow": 17758243.645833336,
+      "overhead_percent": 3948.855438315258,
+      "process_bootstrap_95_percent": [
+        3082.3305367069047,
+        5080.542742095468
+      ],
+      "penelope_median_workflows_per_second": 54.91844759841165
+    },
+    {
+      "workers": 1,
+      "work": 1048576,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 7195907.625,
+      "penelope_median_ns_per_workflow": 24034705.8125,
+      "paired_added_median_ns_per_workflow": 16810493.5,
+      "overhead_percent": 272.83782496919343,
+      "process_bootstrap_95_percent": [
+        213.72683055609042,
+        359.7905679001485
+      ],
+      "penelope_median_workflows_per_second": 41.60650052475029
+    },
+    {
+      "workers": 4,
+      "work": 4096,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 19767.536458333332,
+      "penelope_median_ns_per_workflow": 7274956.578125,
+      "paired_added_median_ns_per_workflow": 7245873.963541666,
+      "overhead_percent": 42859.54622368587,
+      "process_bootstrap_95_percent": [
+        28952.515628328605,
+        69072.23788468061
+      ],
+      "penelope_median_workflows_per_second": 137.45786511041052
+    },
+    {
+      "workers": 4,
+      "work": 65536,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 183578.4114583333,
+      "penelope_median_ns_per_workflow": 7857757.916666666,
+      "paired_added_median_ns_per_workflow": 7711757.041666666,
+      "overhead_percent": 4313.337728158047,
+      "process_bootstrap_95_percent": [
+        4198.767443525014,
+        4436.07485378895
+      ],
+      "penelope_median_workflows_per_second": 127.2627651049104
+    },
+    {
+      "workers": 4,
+      "work": 1048576,
+      "samples": 32,
+      "process_blocks": 4,
+      "direct_median_ns_per_workflow": 2025780.515625,
+      "penelope_median_ns_per_workflow": 10063938.265625,
+      "paired_added_median_ns_per_workflow": 8045905.848958334,
+      "overhead_percent": 404.1479121701536,
+      "process_bootstrap_95_percent": [
+        383.22445056859686,
+        425.30662506176714
+      ],
+      "penelope_median_workflows_per_second": 99.36467947301117
+    }
+  ],
+  "mix": {
+    "linear": 1,
+    "graph": 1,
+    "retry": 1,
+    "replay": 1,
+    "durable": 1,
+    "durable_replay": 1
+  }
+}
