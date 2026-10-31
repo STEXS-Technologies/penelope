@@ -1,0 +1,8 @@
+{
+  "baseline": "336326af298f48e429caf8ac3e16e6d1126ffff5657405becd8286ea3b9a0560",
+  "uncached": "bbceeb4a8b7bf44c4347833f147981b9da3ff7e604c9b58a5ed186c0e36ebcbd",
+  "cached": "99609a16d8d0c3534fcf1fb2fd83e8ab6aa522ea79680ca7901e4b5e364d0abb",
+  "baseline-tasks.rs": "fda7840727311c0487984750a0ba01d693d7bf96aeccc1d4aaaffa0ee0e63b8a",
+  "uncached-tasks.rs": "e583d2674f46950807d3e43009b166efd4b6b306d67d6fc28d44ef3839e546e1",
+  "cached-tasks.rs": "146b69f2818ee38b1fd7f677019cf1ae99427c3eb514c4e5c3ab66e8ad450074"
+}
