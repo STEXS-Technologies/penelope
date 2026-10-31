@@ -94,8 +94,11 @@ impl ProcessPayloadStore for SqliteProcessStore {
         self.worker
             .run(move |connection| {
                 connection
-                    .query_row(
+                    .prepare_cached(
                         "SELECT bytes FROM process_payloads WHERE scope=?1 AND digest=?2",
+                    )
+                    .map_err(|error| db_error(&error))?
+                    .query_row(
                         params![scope.canonical_bytes(), digest.0.as_slice()],
                         |row| {
                             let bytes = column_bytes(row, 0, limit)?;

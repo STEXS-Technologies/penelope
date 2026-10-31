@@ -1,0 +1,7 @@
+{
+  "crates/penelope-sqlite/src/payloads.rs": "29fded3f9932ab2a4687f9b4f1630c2e2a44eb9216c7c6a70e5bea30e4ef28b4",
+  "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+  "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+  "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514",
+  "crates/penelope-sqlite/tests/support/payload_columns.rs": "d9753b8231db6edc7c072b03931e9f85a5da05cb1009ff8f79f78ed15594b55b"
+}
