@@ -646,3 +646,6 @@ mod concurrent_quota;
 
 #[path = "support/timer_validation.rs"]
 mod timer_validation;
+
+#[path = "support/inbox_validation.rs"]
+mod inbox_validation;

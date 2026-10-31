@@ -135,25 +135,34 @@ fn accept_input(
     input.validate().map_err(|_invalid| PortError::Invariant)?;
     let bytes = encode(input, limits.max_record_bytes)?;
     let key = process_key(input)?;
-    let stored = connection
-        .query_row(
-            "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2",
-            params![key, input.input_id.as_str()],
-            |row| {
-                Ok((
-                    copy_column(row, 0, limits.max_record_bytes)?,
-                    copy_column(row, 1, 32)?,
-                ))
-            },
-        )
-        .optional()
-        .map_err(|error| db_error(&error))?;
-    if let Some((stored, checksum)) = stored {
-        let decoded: ProcessInput = decode(&stored, &checksum)?;
-        if decoded != *input {
-            return Err(PortError::Conflict);
+    {
+        let mut statement = connection
+            .prepare_cached(
+                "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2",
+            )
+            .map_err(|error| db_error(&error))?;
+        let mut rows = statement
+            .query(params![key, input.input_id.as_str()])
+            .map_err(|error| db_error(&error))?;
+        if let Some(row) = rows.next().map_err(|error| db_error(&error))? {
+            let stored =
+                column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
+            let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+            // Equal bytes were just produced from the validated input. Verify
+            // their durable checksum without allocating another decoded input.
+            if stored == bytes.as_slice() {
+                if Digest::of(stored).0.as_slice() != checksum {
+                    return Err(PortError::Invariant);
+                }
+                return Ok(true);
+            }
+            // Preserve semantic equality for valid noncanonical JSON encodings.
+            let decoded: ProcessInput = decode(stored, checksum)?;
+            if decoded != *input {
+                return Err(PortError::Conflict);
+            }
+            return Ok(true);
         }
-        return Ok(true);
     }
     let count: u32 = connection
         .query_row(
