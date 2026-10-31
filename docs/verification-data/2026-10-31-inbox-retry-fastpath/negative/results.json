@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "name": "baseline-lock",
+      "rejected": true,
+      "marker": "inbox_validation::duplicate_admission_validates_evidence_without_the_writer_lock"
+    },
+    {
+      "name": "checksum",
+      "rejected": true,
+      "marker": "inbox_validation::duplicate_admission_validates_evidence_without_the_writer_lock"
+    },
+    {
+      "name": "semantic",
+      "rejected": true,
+      "marker": "inbox_validation::duplicate_admission_validates_evidence_without_the_writer_lock"
+    },
+    {
+      "name": "scope",
+      "rejected": true,
+      "marker": "inbox_retry_lock::pending_and_consumed_retries_preserve_quota_scope_and_committed_state"
+    },
+    {
+      "name": "recheck",
+      "rejected": true,
+      "marker": "process::inbox_retry_tests::concurrent_admission_is_rechecked_before_quota_charge"
+    }
+  ],
+  "restored_sha256": "22d0497fce81556566ad5a8b16e4b99244c496c9f70f453af67a724abb3f1ade"
+}

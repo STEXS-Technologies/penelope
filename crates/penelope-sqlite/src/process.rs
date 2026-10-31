@@ -135,39 +135,62 @@ fn accept_input(
     input.validate().map_err(|_invalid| PortError::Invariant)?;
     let bytes = encode(input, limits.max_record_bytes)?;
     let key = process_key(input)?;
-    {
-        let mut statement = connection
-            .prepare_cached(
-                "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2",
-            )
-            .map_err(|error| db_error(&error))?;
-        let mut rows = statement
-            .query(params![key, input.input_id.as_str()])
-            .map_err(|error| db_error(&error))?;
-        if let Some(row) = rows.next().map_err(|error| db_error(&error))? {
-            let stored =
-                column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
-            let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
-            // Equal bytes were just produced from the validated input. Verify
-            // their durable checksum without allocating another decoded input.
-            if stored == bytes.as_slice() {
-                if Digest::of(stored).0.as_slice() != checksum {
-                    return Err(PortError::Invariant);
-                }
-                return Ok(true);
-            }
-            // Preserve semantic equality for valid noncanonical JSON encodings.
-            let decoded: ProcessInput = decode(stored, checksum)?;
-            if decoded != *input {
-                return Err(PortError::Conflict);
+    accept_encoded_input(connection, input, &key, &bytes, limits)
+}
+
+/// Inspect current committed evidence without changing admission/consumption state.
+fn existing_input_matches(
+    connection: &Connection,
+    input: &ProcessInput,
+    key: &[u8],
+    bytes: &[u8],
+    limits: SqliteLimits,
+) -> Result<bool, PortError> {
+    let mut statement = connection
+        .prepare_cached(
+            "SELECT input,checksum FROM process_inbox WHERE process_key=?1 AND input_id=?2",
+        )
+        .map_err(|error| db_error(&error))?;
+    let mut rows = statement
+        .query(params![key, input.input_id.as_str()])
+        .map_err(|error| db_error(&error))?;
+    if let Some(row) = rows.next().map_err(|error| db_error(&error))? {
+        let stored =
+            column_bytes(row, 0, limits.max_record_bytes).map_err(|error| db_error(&error))?;
+        let checksum = column_bytes(row, 1, 32).map_err(|error| db_error(&error))?;
+        // Equal bytes were just produced from the validated input. Verify
+        // their durable checksum without allocating another decoded input.
+        if stored == bytes {
+            if Digest::of(stored).0.as_slice() != checksum {
+                return Err(PortError::Invariant);
             }
             return Ok(true);
         }
+        // Preserve semantic equality for valid noncanonical JSON encodings.
+        let decoded: ProcessInput = decode(stored, checksum)?;
+        if decoded != *input {
+            return Err(PortError::Conflict);
+        }
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// Recheck prepared input under the caller's transaction before inserting it.
+fn accept_encoded_input(
+    connection: &Connection,
+    input: &ProcessInput,
+    key: &[u8],
+    bytes: &[u8],
+    limits: SqliteLimits,
+) -> Result<bool, PortError> {
+    if existing_input_matches(connection, input, key, bytes, limits)? {
+        return Ok(true);
     }
     let count: u32 = connection
         .query_row(
             "SELECT count(*) FROM process_inbox WHERE process_key=?1",
-            [&key],
+            [key],
             |row| row.get(0),
         )
         .map_err(|error| db_error(&error))?;
@@ -176,7 +199,7 @@ fn accept_input(
     }
     charge_process(
         connection,
-        &key,
+        key,
         u64::try_from(bytes.len())
             .map_err(|_overflow| PortError::QuotaExceeded)?
             .saturating_add(128),
@@ -189,7 +212,7 @@ fn accept_input(
             key,
             input.input_id.as_str(),
             bytes,
-            Digest::of(&bytes).0.as_slice()
+            Digest::of(bytes).0.as_slice()
         ],
     )
     .map_err(port_error)?;
@@ -443,11 +466,22 @@ impl Inbox for SqliteProcessStore {
         let limits = self.limits;
         self.worker
             .run(move |connection| {
-                let transaction = connection
-                    .transaction_with_behavior(TransactionBehavior::Immediate)
-                    .map_err(|error| db_error(&error))?;
-                let duplicate = accept_input(&transaction, &input, limits)?;
-                transaction.commit().map_err(|error| db_error(&error))?;
+                let bytes = encode(&input, limits.max_record_bytes)?;
+                let key = process_key(&input)?;
+                let duplicate = if existing_input_matches(connection, &input, &key, &bytes, limits)?
+                {
+                    true
+                } else {
+                    let transaction = connection
+                        .transaction_with_behavior(TransactionBehavior::Immediate)
+                        .map_err(|error| db_error(&error))?;
+                    // Another admission can commit after the read above. Recheck
+                    // under the writer lock before charging or inserting.
+                    let duplicate =
+                        accept_encoded_input(&transaction, &input, &key, &bytes, limits)?;
+                    transaction.commit().map_err(|error| db_error(&error))?;
+                    duplicate
+                };
                 Ok(InboxAcceptanceReceipt {
                     tenant_id: input.tenant_id,
                     process_id: input.process_id,
@@ -620,3 +654,7 @@ mod snapshot_tests;
 #[cfg(test)]
 #[path = "process_commit_boundary_tests.rs"]
 mod commit_boundary_tests;
+
+#[cfg(test)]
+#[path = "inbox_retry_tests.rs"]
+mod inbox_retry_tests;
