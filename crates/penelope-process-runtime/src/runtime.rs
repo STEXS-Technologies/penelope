@@ -114,12 +114,10 @@ fn send_until(
         match writer.write(bytes.get(offset..).ok_or(TaskPortError::Corrupt)?) {
             Ok(0) => return Err(TaskPortError::Runtime),
             Ok(count) => offset = offset.checked_add(count).ok_or(TaskPortError::Runtime)?,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
-                ) =>
-            {
+            // Interruption does not imply pipe backpressure. Retry under the
+            // same deadline without adding the WouldBlock backoff.
+            Err(error) if error.kind() == std::io::ErrorKind::Interrupted => continue,
+            Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
                 if Instant::now() >= deadline {
                     return Err(TaskPortError::Runtime);
                 }

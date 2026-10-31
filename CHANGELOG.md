@@ -9,6 +9,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Retry interrupted Linux startup/ACK writes immediately within their existing
+  deadline, keeping the one-millisecond backoff for actual pipe backpressure.
+
 - Use fixed buffers for Linux registry manifest encoding and reads, removing
   five Rust allocations from each measured repeated public fence. A follow-up
   paired benchmark measured a 2.20% repeated-fence latency reduction; full
