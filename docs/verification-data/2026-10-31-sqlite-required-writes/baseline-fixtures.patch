@@ -1,0 +1,483 @@
+diff --git a/crates/penelope-sqlite/tests/process.rs b/crates/penelope-sqlite/tests/process.rs
+index d5c3765..12a3750 100644
+--- a/crates/penelope-sqlite/tests/process.rs
++++ b/crates/penelope-sqlite/tests/process.rs
+@@ -611,3 +611,8 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
+ 
+ #[path = "support/commit_integrity.rs"]
+ mod commit_integrity;
++
++#[path = "support/suppressed_process_writes.rs"]
++mod suppressed_process_writes;
++#[path = "support/write_snapshot.rs"]
++mod write_snapshot;
+diff --git a/crates/penelope-sqlite/tests/tasks.rs b/crates/penelope-sqlite/tests/tasks.rs
+index e15d77b..4cc6120 100644
+--- a/crates/penelope-sqlite/tests/tasks.rs
++++ b/crates/penelope-sqlite/tests/tasks.rs
+@@ -711,3 +711,8 @@ fn structural_integrity_check_reports_constraint_corruption_and_recovery() {
+         .unwrap();
+     journal.check_integrity().unwrap();
+ }
++
++#[path = "support/suppressed_task_writes.rs"]
++mod suppressed_task_writes;
++#[path = "support/write_snapshot.rs"]
++mod write_snapshot;
+diff --git a/crates/penelope-sqlite/tests/support/write_snapshot.rs b/crates/penelope-sqlite/tests/support/write_snapshot.rs
+new file mode 100644
+index 0000000..789c320
+--- /dev/null
++++ b/crates/penelope-sqlite/tests/support/write_snapshot.rs
+@@ -0,0 +1,24 @@
++//! Logical row snapshots for transaction rollback fault tests.
++use rusqlite::{Connection, types::Value};
++pub(super) type Snapshot = Vec<(String, Vec<Vec<Value>>)>;
++pub(super) fn snapshot(connection: &Connection, tables: &[&str]) -> Snapshot {
++    tables
++        .iter()
++        .map(|table| {
++            let mut statement = connection
++                .prepare(&format!("SELECT * FROM {table} ORDER BY rowid"))
++                .unwrap();
++            let columns = statement.column_count();
++            let rows = statement
++                .query_map([], |row| {
++                    (0..columns)
++                        .map(|column| row.get::<_, Value>(column))
++                        .collect::<rusqlite::Result<Vec<_>>>()
++                })
++                .unwrap()
++                .collect::<rusqlite::Result<Vec<_>>>()
++                .unwrap();
++            ((*table).to_owned(), rows)
++        })
++        .collect()
++}
+diff --git a/crates/penelope-sqlite/tests/support/suppressed_process_writes.rs b/crates/penelope-sqlite/tests/support/suppressed_process_writes.rs
+new file mode 100644
+index 0000000..c15b32b
+--- /dev/null
++++ b/crates/penelope-sqlite/tests/support/suppressed_process_writes.rs
+@@ -0,0 +1,154 @@
++//! A suppressed required write must roll back the whole public operation.
++use super::write_snapshot::snapshot;
++use super::*;
++use penelope_ports::payloads::ProcessPayloadStore;
++const TABLES: &[&str] = &[
++    "process_usage",
++    "process_inbox",
++    "process_sources",
++    "process_outcomes",
++    "process_actions",
++    "process_heads",
++    "process_commits",
++    "process_payloads",
++    "process_timers",
++    "lease_counter",
++];
++#[test]
++fn ignored_process_commit_writes_cannot_return_partial_success() {
++    let mut failures = Vec::new();
++    for (table, operation) in [
++        ("process_usage", "INSERT"),
++        ("process_usage", "UPDATE"),
++        ("process_inbox", "INSERT"),
++        ("process_sources", "INSERT"),
++        ("process_outcomes", "INSERT"),
++        ("process_actions", "INSERT"),
++        ("process_heads", "INSERT"),
++        ("process_commits", "INSERT"),
++        ("process_inbox", "UPDATE"),
++    ] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-commit.db");
++        let adapter = store(&path, clock());
++        if operation == "UPDATE" && table == "process_usage" {
++            block_on(adapter.put_payload(&scope(), ContentDigest::sha256(b"seed"), b"seed"))
++                .unwrap();
++        }
++        let candidate = commit(false).with_canonical_source_event(id("cev_suppressed"));
++        let connection = Connection::open(&path).unwrap();
++        let before = snapshot(&connection, TABLES);
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON {table} BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = block_on(ProcessStore::commit(&adapter, &candidate));
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(PortError::Invariant) || !unchanged {
++            failures.push(format!(
++                "{table}/{operation}: {result:?}, unchanged={unchanged}"
++            ));
++            continue;
++        }
++        block_on(ProcessStore::commit(&adapter, &candidate))
++            .unwrap()
++            .validate_for(&candidate)
++            .unwrap();
++        assert!(
++            block_on(ProcessStore::commit(&adapter, &candidate))
++                .unwrap()
++                .duplicate_input
++        );
++        let reopened = store(&path, clock());
++        assert_eq!(
++            block_on(reopened.read_outcomes(&replay()))
++                .unwrap()
++                .outcomes,
++            candidate.outcomes
++        );
++        assert_eq!(block_on(reopened.claim(&claim())).unwrap().len(), 1);
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}
++#[test]
++fn ignored_process_service_writes_preserve_state_and_recover() {
++    let mut failures = Vec::new();
++    for (mode, table, operation) in [
++        ("inbox", "process_inbox", "INSERT"),
++        ("payload", "process_payloads", "INSERT"),
++        ("schedule", "process_timers", "INSERT"),
++        ("cancel", "process_timers", "UPDATE"),
++    ] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-service.db");
++        let adapter = store(&path, clock());
++        let candidate = commit(true);
++        let timer = TimerSchedule {
++            action: candidate.actions[0].clone(),
++            due_at: LogicalTime(100),
++        };
++        let input = candidate.input.as_ref().unwrap();
++        if mode == "schedule" || mode == "cancel" {
++            block_on(ProcessStore::commit(&adapter, &candidate)).unwrap();
++        }
++        let lease = if mode == "cancel" {
++            block_on(adapter.schedule(&timer)).unwrap();
++            Some(
++                block_on(adapter.claim_due(&timer_claim(100)))
++                    .unwrap()
++                    .remove(0),
++            )
++        } else {
++            None
++        };
++        let digest = ContentDigest::sha256(b"payload");
++        let perform = || match mode {
++            "inbox" => block_on(adapter.accept(input)).map(|_receipt| ()),
++            "payload" => {
++                block_on(adapter.put_payload(&scope(), digest, b"payload")).map(|_digest| ())
++            }
++            "schedule" => block_on(adapter.schedule(&timer)),
++            _ => block_on(adapter.cancel(&timer)),
++        };
++        let connection = Connection::open(&path).unwrap();
++        let before = snapshot(&connection, TABLES);
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON {table} BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = perform();
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(PortError::Invariant) || !unchanged {
++            failures.push(format!("{mode}: {result:?}, unchanged={unchanged}"));
++            continue;
++        }
++        perform().unwrap();
++        perform().unwrap();
++        let reopened = store(&path, clock());
++        match mode {
++            "inbox" => assert!(block_on(reopened.accept(input)).unwrap().duplicate),
++            "payload" => assert_eq!(
++                block_on(reopened.read_payload(&scope(), digest)).unwrap(),
++                b"payload"
++            ),
++            "schedule" => assert_eq!(
++                block_on(reopened.claim_due(&timer_claim(100)))
++                    .unwrap()
++                    .len(),
++                1
++            ),
++            _ => {
++                assert!(
++                    block_on(reopened.claim_due(&timer_claim(1000)))
++                        .unwrap()
++                        .is_empty()
++                );
++                assert_eq!(
++                    block_on(TimerClaimStore::acknowledge(
++                        &reopened,
++                        lease.as_ref().unwrap(),
++                        LogicalTime(100)
++                    )),
++                    Err(PortError::Conflict)
++                );
++            }
++        }
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}
+diff --git a/crates/penelope-sqlite/tests/support/suppressed_task_writes.rs b/crates/penelope-sqlite/tests/support/suppressed_task_writes.rs
+new file mode 100644
+index 0000000..817e06a
+--- /dev/null
++++ b/crates/penelope-sqlite/tests/support/suppressed_task_writes.rs
+@@ -0,0 +1,261 @@
++//! Suppressed writes cannot authorize execution or acknowledge missing history.
++use super::write_snapshot::snapshot;
++use super::*;
++const TABLES: &[&str] = &[
++    "task_heads",
++    "task_records",
++    "task_blobs",
++    "runtime_generations",
++    "task_retirements",
++];
++fn completed(journal: &mut SqliteTaskJournal) -> TaskProjection {
++    let mut projection = committed_start(journal);
++    let record = projection
++        .propose(
++            TaskExecutionEvent::Completed {
++                output: BlobRef {
++                    digest: Digest::of(b"done"),
++                    bytes: 4,
++                    schema: 1,
++                },
++            },
++            projection.generation(),
++            TaskTick::new(2),
++        )
++        .unwrap();
++    journal.commit(&record, Some(b"done")).unwrap();
++    projection.apply(&record).unwrap();
++    projection
++}
++#[test]
++fn ignored_task_commit_writes_roll_back_blobs_heads_and_records() {
++    let mut failures = Vec::new();
++    for (table, operation, append, expected) in [
++        ("task_heads", "INSERT", false, TaskPortError::Corrupt),
++        ("task_records", "INSERT", false, TaskPortError::Corrupt),
++        ("task_records", "INSERT", true, TaskPortError::Corrupt),
++        ("task_blobs", "INSERT", false, TaskPortError::Corrupt),
++        ("task_heads", "UPDATE", true, TaskPortError::Conflict),
++    ] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-task-commit.db");
++        let mut journal = open(&path);
++        let record = if append {
++            let projection = committed_start(&mut journal);
++            projection
++                .propose(
++                    TaskExecutionEvent::Completed {
++                        output: BlobRef {
++                            digest: Digest::of(b"done"),
++                            bytes: 4,
++                            schema: 1,
++                        },
++                    },
++                    projection.generation(),
++                    TaskTick::new(2),
++                )
++                .unwrap()
++        } else {
++            intent()
++        };
++        let blob: &[u8] = if append { b"done" } else { b"input" };
++        let connection = Connection::open(&path).unwrap();
++        let before = snapshot(&connection, TABLES);
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON {table} BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = journal.commit(&record, Some(blob));
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(expected) || !unchanged {
++            failures.push(format!(
++                "{table}/{operation}/append={append}: {:?}, unchanged={unchanged}",
++                result.map(|_record| ())
++            ));
++            continue;
++        }
++        assert_eq!(journal.commit(&record, Some(blob)).unwrap(), record);
++        assert_eq!(
++            journal.commit(&record, Some(blob)),
++            Err(TaskPortError::Conflict)
++        );
++        assert_eq!(
++            open(&path).read(scope(), record.sequence).unwrap(),
++            Some(record)
++        );
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}
++#[test]
++fn ignored_task_head_repair_cannot_populate_a_false_cache() {
++    let mut failures = Vec::new();
++    for missing in [false, true] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-rebuild.db");
++        let mut journal = open(&path);
++        let projection = committed_start(&mut journal);
++        let connection = Connection::open(&path).unwrap();
++        if missing {
++            connection.execute("DELETE FROM task_heads", []).unwrap();
++        } else {
++            connection
++                .execute("UPDATE task_heads SET last_digest=zeroblob(32)", [])
++                .unwrap();
++        }
++        let before = snapshot(&connection, TABLES);
++        let operation = if missing { "INSERT" } else { "UPDATE" };
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON task_heads BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = journal.rebuild_head(scope());
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(TaskPortError::Corrupt) || !unchanged {
++            failures.push(format!(
++                "missing={missing}: {result:?}, unchanged={unchanged}"
++            ));
++            continue;
++        }
++        journal.rebuild_head(scope()).unwrap();
++        journal.rebuild_head(scope()).unwrap();
++        assert!(
++            open(&path)
++                .read(
++                    scope(),
++                    TaskSequence::new(projection.next_sequence().get().checked_sub(1).unwrap())
++                )
++                .unwrap()
++                .is_some()
++        );
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}
++#[test]
++fn ignored_task_authority_writes_cannot_grant_or_fence_a_generation() {
++    let mut failures = Vec::new();
++    for mode in ["reserve", "fence-missing", "fence-reserved"] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-authority.db");
++        let mut journal = open(&path);
++        let projection = committed_start(&mut journal);
++        let execution = Digest([9; 32]);
++        if mode == "fence-reserved" {
++            journal
++                .reserve_start(request(&projection), execution)
++                .unwrap();
++        }
++        let connection = Connection::open(&path).unwrap();
++        let before = snapshot(&connection, TABLES);
++        let operation = if mode == "fence-reserved" {
++            "UPDATE"
++        } else {
++            "INSERT"
++        };
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON runtime_generations BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = if mode == "reserve" {
++            journal
++                .reserve_start(request(&projection), execution)
++                .map(|_reservation| ())
++        } else {
++            journal
++                .begin_fence(scope(), projection.generation())
++                .map(|_execution| ())
++        };
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(TaskPortError::Corrupt) || !unchanged {
++            failures.push(format!("{mode}: {result:?}, unchanged={unchanged}"));
++            continue;
++        }
++        if mode == "reserve" {
++            assert_eq!(
++                journal
++                    .reserve_start(request(&projection), execution)
++                    .unwrap(),
++                StartReservation::Reserved
++            );
++            assert_eq!(
++                open(&path)
++                    .reserve_start(request(&projection), execution)
++                    .unwrap(),
++                StartReservation::AlreadyReserved
++            );
++        } else {
++            let id = journal
++                .begin_fence(scope(), projection.generation())
++                .unwrap();
++            assert_eq!(
++                id,
++                if mode == "fence-reserved" {
++                    Some(execution)
++                } else {
++                    None
++                }
++            );
++            assert_eq!(
++                open(&path).reserve_start(request(&projection), execution),
++                Err(TaskPortError::Conflict)
++            );
++            journal
++                .confirm_stopped(scope(), projection.generation(), id)
++                .unwrap();
++            journal
++                .confirm_stopped(scope(), projection.generation(), id)
++                .unwrap();
++        }
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}
++#[test]
++fn ignored_task_retirement_writes_roll_back_partial_deletion() {
++    let mut failures = Vec::new();
++    for (table, operation, condition) in [
++        ("task_retirements", "INSERT", ""),
++        ("task_records", "DELETE", "WHEN OLD.sequence=0"),
++        ("task_blobs", "DELETE", "WHEN OLD.bytes=X'696e707574'"),
++        ("task_heads", "DELETE", ""),
++    ] {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("suppressed-retirement.db");
++        let mut journal = open(&path);
++        let projection = completed(&mut journal);
++        journal
++            .begin_fence(scope(), projection.generation())
++            .unwrap();
++        journal
++            .confirm_stopped(scope(), projection.generation(), None)
++            .unwrap();
++        let connection = Connection::open(&path).unwrap();
++        let before = snapshot(&connection, TABLES);
++        connection.execute_batch(&format!("CREATE TRIGGER suppress BEFORE {operation} ON {table} {condition} BEGIN SELECT RAISE(IGNORE); END;")).unwrap();
++        let result = journal
++            .retire_task(scope(), projection.next_sequence())
++            .map(|_retirement| ());
++        let unchanged = snapshot(&connection, TABLES) == before;
++        connection.execute_batch("DROP TRIGGER suppress").unwrap();
++        if result != Err(TaskPortError::Corrupt) || !unchanged {
++            failures.push(format!(
++                "{table}/{operation}: {result:?}, unchanged={unchanged}"
++            ));
++            continue;
++        }
++        assert_eq!(
++            journal
++                .retire_task(scope(), projection.next_sequence())
++                .unwrap()
++                .next_sequence,
++            projection.next_sequence()
++        );
++        for retired_table in ["task_heads", "task_records", "task_blobs"] {
++            let remaining: u32 = connection
++                .query_row(
++                    &format!("SELECT count(*) FROM {retired_table}"),
++                    [],
++                    |row| row.get(0),
++                )
++                .unwrap();
++            assert_eq!(remaining, 0);
++        }
++        assert_eq!(
++            open(&path).read(scope(), TaskSequence::ZERO),
++            Err(TaskPortError::Conflict)
++        );
++    }
++    assert!(failures.is_empty(), "{failures:#?}");
++}

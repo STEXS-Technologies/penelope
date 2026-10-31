@@ -16,6 +16,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Reject suppressed required SQLite writes before acknowledging process/task
+  commits, service updates, generation authority or head repair. Retirement
+  verifies complete scoped history deletion before committing its tombstone.
 - Clone and destroy SQLite response wakers outside completion locks, preserving
   ready results if executor callbacks unwind during registration.
 - Linux worker responses at the maximum payload size now reject a trailing
