@@ -1,0 +1,42 @@
+{
+  "baseline": {
+    "False": {
+      "allocations": 9,
+      "reallocations": 1,
+      "requested_bytes": 1084,
+      "samples": 128
+    },
+    "True": {
+      "allocations": 9,
+      "reallocations": 1,
+      "requested_bytes": 1084,
+      "samples": 128
+    }
+  },
+  "candidate": {
+    "False": {
+      "allocations": 8,
+      "reallocations": 1,
+      "requested_bytes": 968,
+      "samples": 128
+    },
+    "True": {
+      "allocations": 8,
+      "reallocations": 1,
+      "requested_bytes": 968,
+      "samples": 128
+    }
+  },
+  "savings": {
+    "False": {
+      "allocations": 1,
+      "reallocations": 0,
+      "requested_bytes": 116
+    },
+    "True": {
+      "allocations": 1,
+      "reallocations": 0,
+      "requested_bytes": 116
+    }
+  }
+}
