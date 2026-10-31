@@ -25,6 +25,8 @@ void _start(void) {
   if(mode==4){call(41,2,1,0);finish(6);}
   if(mode==7)finish(0);
   if(mode==9)pause_forever();
+  /* Deliberately outlast the saga fixture's former ~90 ms polling window. */
+  if(mode==28){long ts[2]={0,300000000};call(35,(long)ts,0,0);}
   if(mode==10){
     /* Ordinary anonymous memory works; RLIMIT_AS rejects a reservation above
        the configured 64 MiB even without touching pages or supervisor polls. */
