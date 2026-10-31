@@ -121,7 +121,22 @@ fn run_seeded_case(
     ]
     .map(|(adapter, operation)| {
         let admitted = admitted.clone();
+        let seeded_duplicate = matches!(
+            &operation,
+            Operation::Accept(input)
+                if seed.and_then(|batch| batch.input.as_ref()) == Some(input.as_ref())
+        );
         std::thread::spawn(move || {
+            if seeded_duplicate {
+                // Exact retries read committed evidence without writer admission.
+                // Require completion before telling the lock holder to proceed;
+                // the worker may finish before or after its future's first poll.
+                let result = block_on(operation.apply(&adapter));
+                assert_eq!(result, Ok(Receipt::Input(true)));
+                println!("seeded_duplicate_completed_before_writer_release=true");
+                admitted.send(()).unwrap();
+                return result;
+            }
             let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
             let mut context = Context::from_waker(&waker);
             let mut future = Box::pin(operation.apply(&adapter));
