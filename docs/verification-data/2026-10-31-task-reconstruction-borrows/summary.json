@@ -1,0 +1,71 @@
+{
+  "2": {
+    "paired_mean_percent": -3.0670743825037983,
+    "bootstrap_95_percent": [
+      -3.845762049645561,
+      -2.2045230273814953
+    ],
+    "mean_ns_per_read": {
+      "baseline": 22538.278,
+      "candidate": 21842.948333333334
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        7,
+        0,
+        1681
+      ],
+      "candidate": [
+        3,
+        0,
+        69
+      ]
+    }
+  },
+  "16": {
+    "paired_mean_percent": -6.61025406162249,
+    "bootstrap_95_percent": [
+      -8.362608577570533,
+      -5.367171408374126
+    ],
+    "mean_ns_per_read": {
+      "baseline": 77800.10316666667,
+      "candidate": 72538.33383333334
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        49,
+        0,
+        11479
+      ],
+      "candidate": [
+        17,
+        0,
+        139
+      ]
+    }
+  },
+  "128": {
+    "paired_mean_percent": -5.749771777438461,
+    "bootstrap_95_percent": [
+      -10.008354080367644,
+      -0.3029801715996126
+    ],
+    "mean_ns_per_read": {
+      "baseline": 520746.49716666667,
+      "candidate": 488857.84116666665
+    },
+    "allocation_traffic_alloc_realloc_bytes": {
+      "baseline": [
+        385,
+        0,
+        90047
+      ],
+      "candidate": [
+        129,
+        0,
+        699
+      ]
+    }
+  }
+}
