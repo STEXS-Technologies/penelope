@@ -398,6 +398,7 @@ impl ProcessStore for SqliteProcessStore {
             let next = u64::try_from(next).map_err(|_negative| PortError::Invariant)?;
             let mut statement = transaction.prepare_cached("SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3").map_err(|error| db_error(&error))?;
             let mut rows = statement.query(params![key,integer(request.from_sequence)?,request.limit.get()]).map_err(|error| db_error(&error))?;
+            let required = next.saturating_sub(request.from_sequence).min(u64::from(request.limit.get()));
             let mut outcomes = Vec::new(); let mut expected = request.from_sequence;
             while let Some(row) = rows.next().map_err(|error| db_error(&error))? {
                 let sequence: i64 = row.get(0).map_err(|error| db_error(&error))?;
@@ -405,9 +406,11 @@ impl ProcessStore for SqliteProcessStore {
                 let outcome: ProcessOutcome = decode(bytes,checksum)?;
                 if sequence != integer(expected)? || outcome.sequence != expected || outcome.scope() != request.scope || outcome.validate().is_err() || expected >= next { return Err(PortError::Invariant); }
                 expected = expected.checked_add(1).ok_or(PortError::Invariant)?;
+                if outcomes.is_empty() {
+                    outcomes.reserve_exact(usize::try_from(required).map_err(|_overflow| PortError::Invariant)?);
+                }
                 outcomes.push(outcome);
             }
-            let required = next.saturating_sub(request.from_sequence).min(u64::from(request.limit.get()));
             if u64::try_from(outcomes.len()).ok() != Some(required) { return Err(PortError::Invariant); }
             OutcomeReplayPage::new(request.scope,request.from_sequence,outcomes, if expected < next { Some(expected) } else { None }).map_err(|_invalid| PortError::Invariant)
         })?.await
