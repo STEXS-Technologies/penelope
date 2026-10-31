@@ -1,0 +1,16 @@
+{
+  "baseline-tasks.rs": "d8e59e268fe4f7a1bcdf85e32c1349523428888d550c64d0ce3628a3ed33c49d",
+  "baseline-lib.rs": "af608cb2969e2131b0d48ec503cc9ab05c91830a5c2d6db3da430863054ceede",
+  "baseline-Cargo.toml": "66e295d75bb70e32b4d0d73cdad0b20eb69c1047c750ac4d10d817518fd8d187",
+  "baseline-task_blob_commits": "85f395e42266ea7a6f12e9afed21a540523d892f35db9521f27a388a85ac7dd3",
+  "baseline-task_reconstruction": "a8e8e48e50db6afa9dbb8e19dfe9c40bedd5acd666c40818afd72e0b02b85b40",
+  "baseline-task_reconstruction_allocations": "512893ee62942a8bf15d7330e44ffdb4ca0ea0437794531531df02947b776fda",
+  "candidate-tasks.rs": "79185457dd95ce184f4334e1641afd2541220062596e1f2a46b6f60a6b84c4ea",
+  "candidate-lib.rs": "dfc3cfaf0b8d0b62da460ed5fc4c4b86820e1eec20b20d656461e45518c71e62",
+  "candidate-Cargo.toml": "66e295d75bb70e32b4d0d73cdad0b20eb69c1047c750ac4d10d817518fd8d187",
+  "candidate-task_blob_commits": "1ae1132bcc971dea81f2fe170fa588feb06db6652c667fc23d14540e573df289",
+  "candidate-task_reconstruction": "e15bf03735659cfec83f5cca8a4218c17053a90adcd62af12fd0867a12ef55c1",
+  "candidate-task_reconstruction_allocations": "5aa3e14235eef4f91bea3e17555b0ea2eba08fe157aed30958533605c9a583e7",
+  "candidate-task_decode.rs": "c2c7918c4cabb2b7a2b00e6563ee9d1e6ea69e225ca82145703ef8f1e77e5c87",
+  "candidate-task_decode_tests.rs": "eda2513e0578101399c4dfc9d043633d9c8f254a5d8b527402aa039801955401"
+}
