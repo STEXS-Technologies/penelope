@@ -58,3 +58,15 @@ The Cargo benchmark's default invocation is a small correctness smoke run, not t
 ## Coverage limits
 
 This suite covers representative normal, parallel, immediate-retry, replay and SQLite workflows. It does not cover every Penelope API or promise an application-wide slowdown. Protected Linux worker startup/IPC/checkpoints/fencing, timer backoff, manual review, compensation, external network/database effects, authorization services, shared-store writer contention, true crash recovery, allocation/RSS peaks and OS-page-cache-cold reads require separate scenarios. Existing dispatch, task-journal, memory and fault-injection benchmarks remain complementary evidence, not interchangeable overhead percentages.
+
+## Atomic admission option
+
+```sh
+python3 scripts/benchmark-application-workloads.py --admission atomic
+```
+
+The default remains `--admission preaccepted`, preserving the original separate inbox acceptance step. Atomic admission omits that call and supplies the input directly to `AtomicProcessCommit`. The existing adapter accepts and consumes the input together with its outcomes/actions inside the same WAL/FULL transaction. The two modes produce identical successful durable rows and results. Atomic admission removes one separate transaction per input: nine transactions for this eight-step workflow.
+
+Choose preacceptance when a durable pending input and a separate ingress receipt must survive a later decision-commit failure. In atomic mode there is no independently committed pending input if that commit fails; the producer must retain/redeliver the request until the atomic commit is acknowledged. Fault tests exercise this difference and successful retry after reopening. This is an application integration choice using an existing port contract, not weaker SQLite durability or a change to the production adapter.
+
+Use `python3 scripts/benchmark-application-admission.py` for a balanced two-campaign comparison of both modes in the two durable cases. It retains raw rows and computes block-bootstrap intervals; `--summarize-only DIRECTORY` validates/recomputes an existing comparison. The main workload runner records the selected admission mode, and its summarizer rejects mixed-mode samples. Archived reference figures remain pinned to their original source version and preaccepted mode.

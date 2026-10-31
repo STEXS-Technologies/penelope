@@ -1,4 +1,4 @@
-use super::{Error, id};
+use super::{Admission, Error, id};
 use penelope_domain::*;
 use penelope_executor::engine::*;
 use penelope_ports::{payloads::ProcessPayloadStore, *};
@@ -49,9 +49,10 @@ pub struct Storage {
     store: Option<SqliteProcessStore>,
     pending: Option<OutboxLease>,
     next_sequence: u64,
+    admission: Admission,
 }
 impl Storage {
-    pub fn new() -> Result<Self, Error> {
+    pub fn new(admission: Admission) -> Result<Self, Error> {
         let directory = tempfile::tempdir()?;
         let store = SqliteProcessStore::open(
             &directory.path().join("workflow.db"),
@@ -65,6 +66,7 @@ impl Storage {
             store: Some(store),
             pending: None,
             next_sequence: 0,
+            admission,
         })
     }
     fn store(&self) -> Result<&SqliteProcessStore, Error> {
@@ -110,9 +112,9 @@ impl Storage {
             ProcessInputKind::CanonicalEvent,
             digest,
         );
-        let accepted = wait(store.accept(&input))?;
-        if accepted.duplicate {
-            return Err("unexpected duplicate input".into());
+        if self.admission == Admission::Preaccepted {
+            let accepted = wait(store.accept(&input))?;
+            accepted.validate_for(&input)?;
         }
         let mut facts = Vec::new();
         for (offset, kind) in event
@@ -140,6 +142,9 @@ impl Storage {
         )?;
         let receipt = wait(store.commit(&commit))?;
         receipt.validate_for(&commit)?;
+        if receipt.duplicate_input != (self.admission == Admission::Preaccepted) {
+            return Err("unexpected input admission receipt".into());
+        }
         self.next_sequence = receipt.committed_through_sequence + 1;
         Ok(())
     }
@@ -283,6 +288,115 @@ mod tests {
         storage.reopen()?;
         if storage.events(&scope).is_ok() {
             return Err("missing durable business result was accepted".into());
+        }
+        Ok(())
+    }
+    #[test]
+    fn admission_modes_preserve_identical_completed_rows() -> Result<(), super::Error> {
+        use super::*;
+        fn snapshot(storage: &Storage) -> Result<Vec<Vec<Vec<rusqlite::types::Value>>>, Error> {
+            let connection =
+                rusqlite::Connection::open(storage.directory.path().join("workflow.db"))?;
+            let mut result = Vec::new();
+            for table in [
+                "process_usage",
+                "process_heads",
+                "process_outcomes",
+                "process_inbox",
+                "process_sources",
+                "process_commits",
+                "process_actions",
+                "process_timers",
+                "process_payloads",
+                "lease_counter",
+            ] {
+                let mut statement =
+                    connection.prepare(&format!("SELECT * FROM {table} ORDER BY rowid"))?;
+                let columns = statement.column_count();
+                let rows = statement
+                    .query_map([], |row| {
+                        (0..columns)
+                            .map(|column| row.get(column))
+                            .collect::<Result<Vec<rusqlite::types::Value>, _>>()
+                    })?
+                    .collect::<Result<Vec<_>, _>>()?;
+                result.push(rows);
+            }
+            Ok(result)
+        }
+        let mut expected = None;
+        for admission in [Admission::Preaccepted, Admission::Atomic] {
+            let mut fixture = crate::workload::Fixture::with_admission(
+                crate::workload::Case::DurableReplay,
+                admission,
+            )?;
+            let result = fixture.run(crate::workload::Case::DurableReplay, 3, 64)?;
+            let rows = snapshot(fixture.storage.as_ref().ok_or("missing storage")?)?;
+            if let Some(previous) = &expected {
+                if previous != &(result, rows.clone()) {
+                    return Err("admission modes changed final rows or result".into());
+                }
+            } else {
+                expected = Some((result, rows));
+            }
+        }
+        Ok(())
+    }
+    #[test]
+    fn failed_atomic_admission_rolls_back_input_while_preacceptance_remains_durable()
+    -> Result<(), super::Error> {
+        use super::*;
+        for admission in [Admission::Preaccepted, Admission::Atomic] {
+            let mut fixture = crate::workload::Fixture::with_admission(
+                crate::workload::Case::Durable,
+                admission,
+            )?;
+            let scope = ProcessScope::new(
+                id("tnt_workload")?,
+                id("prc_failed_admission")?,
+                fixture.linear.definition_id.clone(),
+                fixture.linear.definition_version.clone(),
+                fixture.linear.definition_digest,
+            );
+            let input = LinearSagaInput::Start {
+                input_id: id("inp_start")?,
+                action_id: id("act_0")?,
+            };
+            let decision = decide(
+                &fixture.linear,
+                None,
+                scope.tenant_id.clone(),
+                scope.process_id.clone(),
+                &input,
+            )?;
+            let event = input.to_event(&fixture.linear);
+            let storage = fixture.storage.as_mut().ok_or("missing storage")?;
+            let connection =
+                rusqlite::Connection::open(storage.directory.path().join("workflow.db"))?;
+            connection.execute_batch("CREATE TRIGGER reject_outcome BEFORE INSERT ON process_outcomes BEGIN SELECT RAISE(ABORT,'injected outcome failure'); END;")?;
+            if storage.commit(&scope, &decision, &event, None).is_ok() {
+                return Err("injected commit failure was ignored".into());
+            }
+            let counts:(u32,u32,u32,u32,u32) = connection.query_row("SELECT (SELECT count(*) FROM process_inbox),(SELECT count(*) FROM process_outcomes),(SELECT count(*) FROM process_commits),(SELECT count(*) FROM process_heads),(SELECT count(*) FROM process_actions)",[],|row|Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?,row.get(4)?)))?;
+            let expected_input = u32::from(admission == Admission::Preaccepted);
+            if counts != (expected_input, 0, 0, 0, 0) {
+                return Err("failed admission left unexpected rows".into());
+            }
+            storage.reopen()?;
+            connection.execute_batch("DROP TRIGGER reject_outcome;")?;
+            storage.commit(&scope, &decision, &event, None)?;
+            let (events, value) = storage.events(&scope)?;
+            if events != vec![event] || value.is_some() {
+                return Err("reopened admission retry differs".into());
+            }
+            let consumed: u32 = connection.query_row(
+                "SELECT count(*) FROM process_inbox WHERE commit_digest IS NOT NULL",
+                [],
+                |row| row.get(0),
+            )?;
+            if consumed != 1 {
+                return Err("input was not consumed exactly once".into());
+            }
         }
         Ok(())
     }

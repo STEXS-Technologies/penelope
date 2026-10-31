@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "campaigns": 2,
+  "blocks": 6,
+  "rounds": 2,
+  "iterations": 4,
+  "work": 65536,
+  "workers": 1,
+  "cases": [
+    "durable",
+    "durable_replay"
+  ],
+  "cpu": 0,
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "git_head": "5d826b94a747278f4b5aa446d46b781dcecd7452",
+  "binary_sha256": "a43d51c67d464027adfb005a8b5b47d17717aeff7aeb29e901ae5795b9e750a7",
+  "source_sha256": {
+    "scripts/benchmark-application-admission.py": "dc6b5bbb6cd22f1003c6b1c55e28cc95b479a775edd8ae034638d4364180e4e5",
+    "scripts/benchmark-application-workloads.py": "223f7e71c740416382d4d412d3999668ae3ca16c2a9df9a4475051f460f8e3e6",
+    "scripts/application_workloads_summary.py": "585a47866824004344f9b323528ff3199c91ab3bf3d3064c6cc5bbded6740df1",
+    "crates/penelope-executor/benches/application_workloads.rs": "26e8d8d8db964c914160a28da3c279c16000fadae6702e9de725cb8dc6a94cd5",
+    "crates/penelope-executor/benches/support/application_workloads/storage.rs": "1fe4e880ad573ca5ef5e4d02134e9070addab6ac79092858b66b28a17002f895",
+    "crates/penelope-executor/benches/support/application_workloads/workflow.rs": "dfc8f1debfff3fa2173ceb78a40415d323975ad0a4a0addc572b920715f76fa3",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "filesystem": "btrfs /dev/nvme0n1p3[/home]"
+}

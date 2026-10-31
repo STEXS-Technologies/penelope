@@ -1,0 +1,50 @@
+[
+  {
+    "campaign": 0,
+    "case": "durable",
+    "blocks": 6,
+    "preaccepted_ns_per_workflow": 47281863.18110774,
+    "atomic_ns_per_workflow": 37104619.43427606,
+    "change_percent": -21.52462500864013,
+    "block_bootstrap_95_percent": [
+      -27.17644005850412,
+      -15.844442914657474
+    ]
+  },
+  {
+    "campaign": 0,
+    "case": "durable_replay",
+    "blocks": 6,
+    "preaccepted_ns_per_workflow": 49925314.72665361,
+    "atomic_ns_per_workflow": 37590656.01329111,
+    "change_percent": -24.70622124446498,
+    "block_bootstrap_95_percent": [
+      -32.33308641276461,
+      -18.5158340873756
+    ]
+  },
+  {
+    "campaign": 1,
+    "case": "durable",
+    "blocks": 6,
+    "preaccepted_ns_per_workflow": 47880779.01734618,
+    "atomic_ns_per_workflow": 36912594.79283552,
+    "change_percent": -22.90728022728519,
+    "block_bootstrap_95_percent": [
+      -30.997563093537313,
+      -10.31951694328663
+    ]
+  },
+  {
+    "campaign": 1,
+    "case": "durable_replay",
+    "blocks": 6,
+    "preaccepted_ns_per_workflow": 49158465.18623881,
+    "atomic_ns_per_workflow": 41860600.06257149,
+    "change_percent": -14.845591895554753,
+    "block_bootstrap_95_percent": [
+      -21.571037699939783,
+      -7.841549080258435
+    ]
+  }
+]
