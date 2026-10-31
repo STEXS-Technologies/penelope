@@ -1,0 +1,17 @@
+{
+  "candidate": "47f58fbdb3f32dfb0f31fbf26433c780727c743f",
+  "baseline": "ec4399f0cc27698a63b7c9ac23e408b0b6557785",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/process.rs": "853efe5dde341800e1626956b99d9c6aa988d98c8b090a36e864b5e0f54e4ba2",
+    "crates/penelope-sqlite/src/tasks.rs": "39276a8ef1457c70f78e25c1a8682ad197f739453abd68bbd521423477672706",
+    "crates/penelope-sqlite/benches/process_replay.rs": "a4438db2664cd5546b1d9e06cefbffb18efd0629c2982d5515e041f0801102e6",
+    "crates/penelope-sqlite/benches/process_replay_allocations.rs": "e13669216bcd478b489dbd9fe7644be41ea5c411998614c6c88c5846ad05b639",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "28280ee0e9c1d4956b04d2a6e85ed57b6e9fe65a9d11d4ffb9052e665a66daec",
+    "crates/penelope-sqlite/tests/support/replay_columns.rs": "37d183c2ea408083a9dffef85b31372e9fae8b32e740e669801968d386ac0125",
+    "crates/penelope-sqlite/tests/process.rs": "273e030727d41643ec9672bbe27c08766b1d46bcb2ddb8bfd9f6231931e5a8a8",
+    "crates/penelope-sqlite/Cargo.toml": "b5432fa5947732e27d4018c5e6fc4e439067e890c31d04a29ed9b11e0bcc3609"
+  },
+  "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+  "timing_scope": "single CPU, public adapter replay latency; separate Rust allocation traffic counts, excludes SQLite C allocations; not overall application overhead"
+}
