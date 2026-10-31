@@ -96,6 +96,8 @@ const fn reference(record: &TaskRecord) -> Option<BlobRef> {
     }
 }
 
+const BLOB_QUERY: &str = "SELECT bytes FROM task_blobs WHERE scope=?1 AND digest=?2";
+
 fn with_verified_blob<T>(
     connection: &Connection,
     scope: TaskScope,
@@ -106,18 +108,30 @@ fn with_verified_blob<T>(
     if blob.bytes > limit {
         return Err(TaskPortError::Exhausted);
     }
-    connection
-        .query_row(
-            "SELECT bytes FROM task_blobs WHERE scope=?1 AND digest=?2",
-            params![key(scope), blob.digest.0.as_slice()],
-            |row| {
-                let bytes = column_bytes(row, 0, limit)?;
-                Ok(blob
-                    .verify(bytes, blob.schema)
-                    .map_err(|_invalid| TaskPortError::Corrupt)
-                    .and_then(|()| consume(bytes)))
-            },
-        )
+    let mut statement = connection
+        .prepare(BLOB_QUERY)
+        .map_err(|error| sql_error(&error))?;
+    with_verified_statement(&mut statement, scope, blob, limit, consume)
+}
+
+fn with_verified_statement<T>(
+    statement: &mut rusqlite::Statement<'_>,
+    scope: TaskScope,
+    blob: BlobRef,
+    limit: u32,
+    consume: impl FnOnce(&[u8]) -> Result<T, TaskPortError>,
+) -> Result<T, TaskPortError> {
+    if blob.bytes > limit {
+        return Err(TaskPortError::Exhausted);
+    }
+    statement
+        .query_row(params![key(scope), blob.digest.0.as_slice()], |row| {
+            let bytes = column_bytes(row, 0, limit)?;
+            Ok(blob
+                .verify(bytes, blob.schema)
+                .map_err(|_invalid| TaskPortError::Corrupt)
+                .and_then(|()| consume(bytes)))
+        })
         .optional()
         .map_err(|error| sql_error(&error))?
         .ok_or(TaskPortError::Corrupt)?
@@ -131,7 +145,7 @@ pub(crate) fn reconstruct(
 ) -> Result<(TaskProjection, Digest, u64), TaskPortError> {
     let mut projection =
         TaskProjection::new(scope, definition).map_err(|_invalid| TaskPortError::Corrupt)?;
-    let mut statement = connection.prepare("SELECT sequence,record,checksum FROM task_records WHERE scope=?1 ORDER BY sequence LIMIT ?2").map_err(|error| sql_error(&error))?;
+    let mut statement = connection.prepare_cached("SELECT sequence,record,checksum FROM task_records WHERE scope=?1 ORDER BY sequence LIMIT ?2").map_err(|error| sql_error(&error))?;
     let mut rows = statement
         .query(params![
             key(scope),
@@ -144,6 +158,11 @@ pub(crate) fn reconstruct(
     // reuse its verification here, but never across scopes or replay calls.
     let mut verified_blob = None;
     let mut decoder = crate::task_decode::Decoder::new(scope);
+    // Hold the blob statement through the replay. Checking it out for every
+    // reference would allocate a new rusqlite cache key on every use.
+    let mut blob_statement = connection
+        .prepare_cached(BLOB_QUERY)
+        .map_err(|error| sql_error(&error))?;
     while let Some(row) = rows.next().map_err(|error| sql_error(&error))? {
         if projection.next_sequence().get() >= limits.max_history_records {
             return Err(TaskPortError::Exhausted);
@@ -157,9 +176,13 @@ pub(crate) fn reconstruct(
             .apply(&record)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
         if let Some(blob) = reference(&record).filter(|blob| Some(*blob) != verified_blob) {
-            with_verified_blob(connection, scope, blob, limits.max_blob_bytes, |_bytes| {
-                Ok(())
-            })?;
+            with_verified_statement(
+                &mut blob_statement,
+                scope,
+                blob,
+                limits.max_blob_bytes,
+                |_bytes| Ok(()),
+            )?;
             verified_blob = Some(blob);
         }
         // decode verified this checksum against the exact encoded bytes.
@@ -173,11 +196,9 @@ pub(crate) fn reconstruct(
             .ok_or(TaskPortError::Exhausted)?;
     }
     let blob_bytes: u64 = connection
-        .query_row(
-            "SELECT COALESCE(SUM(length(bytes)),0) FROM task_blobs WHERE scope=?1",
-            [key(scope)],
-            |row| nonnegative(row, 0),
-        )
+        .prepare_cached("SELECT COALESCE(SUM(length(bytes)),0) FROM task_blobs WHERE scope=?1")
+        .map_err(|error| sql_error(&error))?
+        .query_row([key(scope)], |row| nonnegative(row, 0))
         .map_err(|error| sql_error(&error))?;
     used = used
         .checked_add(blob_bytes)

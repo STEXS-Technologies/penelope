@@ -740,3 +740,6 @@ mod task_cache_revision;
 
 #[path = "support/task_replay_memo.rs"]
 mod task_replay_memo;
+
+#[path = "support/task_statement_cache.rs"]
+mod task_statement_cache;
