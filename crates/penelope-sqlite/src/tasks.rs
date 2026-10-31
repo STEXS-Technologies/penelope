@@ -93,7 +93,7 @@ fn read_bytes(
             |row| copy_column(row, 0, limit),
         )
         .optional()
-        .map_err(|_invalid| TaskPortError::Corrupt)?
+        .map_err(|error| sql_error(&error))?
         .ok_or(TaskPortError::Corrupt)?;
     blob.verify(&bytes, blob.schema)
         .map_err(|_invalid| TaskPortError::Corrupt)?;
@@ -164,7 +164,7 @@ fn head(
             |row| Ok((row.get(0)?, copy_column(row, 1, 32)?, nonnegative(row, 2)?)),
         )
         .optional()
-        .map_err(|_invalid| TaskPortError::Corrupt)
+        .map_err(|error| sql_error(&error))
 }
 
 impl SqliteTaskJournal {
@@ -262,7 +262,7 @@ impl TaskJournal for SqliteTaskJournal {
                 },
             )
             .optional()
-            .map_err(|_invalid| TaskPortError::Corrupt)?;
+            .map_err(|error| sql_error(&error))?;
         match (head, stored) {
             (Some((next, _, _)), Some((bytes, checksum))) if sequence.get() < next => {
                 decode(&bytes, &checksum, scope, sequence).map(Some)
