@@ -1,0 +1,11 @@
+{
+  "analysis.txt.gz": "2e775f989bab427e86e03462706d92a1aa3f49ba05bccde81e92711bb03e03ee",
+  "analyze.py": "bdce7e5e0369e8589926f48dff53cdc2ed356f1c4b99f6c3ccd95c7acd1af106",
+  "driver.txt.gz": "dae9db50f5a8a73254c78c396d3df2a9c9faa1f6e6fc5150a6a7f30c1c64bfed",
+  "measure.py": "ed78fd62d9570dbade2827973605585b4ee5aa95899ee150ab7a90905c9af7cc",
+  "measurement.json": "a4c58926468d81d16dbf0f5891f5a2756276b739d199f0485a922b138902059c",
+  "raw.jsonl.gz": "2eb210dab1134606d10a81dd713279f7956fa2cc4f2b38d894e6831630484e78",
+  "source-hashes.json": "cfab99f33247603444a28aa65675ca601d839e9c6f33ea1f1fee4a62cbc9c42a",
+  "summary.json.gz": "fe79f5b3ef36affcbbcc97cb26bcc25670a8aad1f4a81a6fb94021b36cea4196",
+  "verify.py": "8b5a34d9fe5ae4b11132799c515a16401512ef0a623aa44781345c1181953383"
+}
