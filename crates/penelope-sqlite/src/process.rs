@@ -616,3 +616,7 @@ mod encode_tests;
 #[cfg(test)]
 #[path = "process_snapshot_tests.rs"]
 mod snapshot_tests;
+
+#[cfg(test)]
+#[path = "process_commit_boundary_tests.rs"]
+mod commit_boundary_tests;
