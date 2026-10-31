@@ -1,6 +1,7 @@
 //! Deferred constraints distinguish COMMIT failure from an earlier statement abort.
 #![allow(clippy::unwrap_used, clippy::panic, clippy::arithmetic_side_effects)]
 use super::*;
+use crate::write_snapshot;
 use penelope_domain::*;
 use rusqlite::functions::FunctionFlags;
 use std::{
@@ -10,8 +11,6 @@ use std::{
     task::{Context, Poll, Wake, Waker},
     time::{Duration, Instant},
 };
-#[path = "../tests/support/write_snapshot.rs"]
-mod write_snapshot;
 const TABLES: [&str; 12] = [
     "process_usage",
     "process_heads",

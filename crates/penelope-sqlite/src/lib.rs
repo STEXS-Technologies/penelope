@@ -17,3 +17,8 @@ pub use lifecycle::{TaskRetirement, WalCheckpoint};
 pub use process::{SqliteLeaseClock, SqliteProcessStore};
 pub use schema::SqliteLimits;
 pub use tasks::SqliteTaskJournal;
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+#[path = "../tests/support/write_snapshot.rs"]
+mod write_snapshot;

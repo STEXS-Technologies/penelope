@@ -629,3 +629,7 @@ mod key_tests;
 #[cfg(test)]
 #[path = "task_blob_snapshot_tests.rs"]
 mod blob_snapshot_tests;
+
+#[cfg(test)]
+#[path = "task_commit_boundary_tests.rs"]
+mod commit_boundary_tests;
