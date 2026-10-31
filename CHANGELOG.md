@@ -32,6 +32,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Include the validated byte charge in SQLite task append-cache checks,
+  rejecting changed quota counters until explicit head repair.
+
 - Preserve SQLite task head, record and blob read error categories: unavailable
   storage and exhausted capacity no longer masquerade as database corruption.
 

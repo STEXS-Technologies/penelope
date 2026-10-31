@@ -716,3 +716,6 @@ fn structural_integrity_check_reports_constraint_corruption_and_recovery() {
 mod suppressed_task_writes;
 #[path = "support/write_snapshot.rs"]
 mod write_snapshot;
+
+#[path = "support/cache_usage.rs"]
+mod cache_usage;
