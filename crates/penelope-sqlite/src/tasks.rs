@@ -10,7 +10,7 @@ pub struct SqliteTaskJournal {
     pub(crate) connection: Connection,
     pub(crate) definition: TaskDefinition,
     pub(crate) limits: SqliteLimits,
-    pub(crate) cache: Option<(TaskProjection, Digest)>,
+    pub(crate) cache: Option<(TaskProjection, Digest, u64)>,
 }
 
 pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
@@ -230,7 +230,7 @@ impl SqliteTaskJournal {
             ],
         )?;
         transaction.commit().map_err(|error| sql_error(&error))?;
-        self.cache = Some((projection, last));
+        self.cache = Some((projection, last, used));
         Ok(())
     }
 }
@@ -319,10 +319,11 @@ impl TaskJournal for SqliteTaskJournal {
         reject_retired(&transaction, record.scope)?;
         let stored_head = head(&transaction, record.scope)?;
         let mut projection = match (&self.cache, &stored_head) {
-            (Some((cached, last)), Some((next, checksum, _)))
+            (Some((cached, last, cached_used)), Some((next, checksum, stored_used)))
                 if cached.scope() == record.scope
                     && cached.next_sequence().get() == *next
-                    && last.0.as_slice() == checksum =>
+                    && last.0.as_slice() == checksum
+                    && cached_used == stored_used =>
             {
                 *cached
             }
@@ -413,7 +414,7 @@ impl TaskJournal for SqliteTaskJournal {
             ],
         )?;
         transaction.commit().map_err(|error| sql_error(&error))?;
-        self.cache = Some((projection, digest));
+        self.cache = Some((projection, digest, used));
         Ok(*record)
     }
 
