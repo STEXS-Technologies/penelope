@@ -49,17 +49,45 @@ fn header(
     generation: TaskGeneration,
     execution: Digest,
     boot: Digest,
-) -> Vec<u8> {
-    let mut bytes = Vec::with_capacity(172);
-    bytes.extend_from_slice(b"PNLREG01");
-    bytes.extend_from_slice(&execution.0);
-    bytes.extend_from_slice(&scope_digest(scope).0);
-    bytes.extend_from_slice(&generation.get().to_be_bytes());
-    bytes.extend_from_slice(&scope.definition.digest().0);
-    bytes.extend_from_slice(&boot.0);
-    bytes.resize(172, 0);
+) -> [u8; 172] {
+    let mut bytes = [0; 172];
+    let mut remaining = bytes.as_mut_slice();
+    for part in [
+        b"PNLREG01".as_slice(),
+        &execution.0,
+        &scope_digest(scope).0,
+        &generation.get().to_be_bytes(),
+        &scope.definition.digest().0,
+        &boot.0,
+    ] {
+        let (destination, tail) = remaining.split_at_mut(part.len());
+        destination.copy_from_slice(part);
+        remaining = tail;
+    }
     bytes
 }
+fn read_manifest(mut source: impl Read) -> Result<[u8; 172], TaskPortError> {
+    // One extra byte preserves oversized-manifest rejection without allocation.
+    let mut bytes = [0; 173];
+    let mut filled = 0_usize;
+    loop {
+        let remaining = bytes.get_mut(filled..).ok_or(TaskPortError::Corrupt)?;
+        if remaining.is_empty() {
+            return Err(TaskPortError::Corrupt);
+        }
+        match source.read(remaining) {
+            Ok(0) => break,
+            Ok(read) => filled = filled.checked_add(read).ok_or(TaskPortError::Corrupt)?,
+            Err(error) if error.kind() == std::io::ErrorKind::Interrupted => continue,
+            Err(_read) => return Err(TaskPortError::Runtime),
+        }
+    }
+    if filled != 172 {
+        return Err(TaskPortError::Corrupt);
+    }
+    raw(&bytes, 0)
+}
+
 impl Registry {
     pub(crate) fn open(root: &Path, timeout: Duration) -> Result<Self, TaskPortError> {
         if timeout.is_zero() || timeout > Duration::from_secs(30) {
@@ -164,13 +192,7 @@ impl Registry {
         {
             return Err(TaskPortError::Corrupt);
         }
-        let mut bytes = Vec::new();
-        file.take(173)
-            .read_to_end(&mut bytes)
-            .map_err(|_read| TaskPortError::Runtime)?;
-        if bytes.len() != 172 {
-            return Err(TaskPortError::Corrupt);
-        }
+        let bytes = read_manifest(file)?;
         let boot = Digest(raw(&bytes, 108)?);
         let expected = header(scope, generation, execution, boot);
         let offset =
@@ -190,3 +212,7 @@ impl Registry {
         Ok(Some(SavedExecution { identity, boot }))
     }
 }
+
+#[cfg(test)]
+#[path = "registry_tests.rs"]
+mod tests;
