@@ -5,12 +5,23 @@ use std::path::Path;
 
 /// Synchronous WAL/FULL journal pinned to one task definition. A connection
 /// caches one validated scope; switching scopes or observing another writer's
-/// head triggers bounded replay. No history scan occurs on uncontended append.
+/// commit triggers bounded replay, even if the head is unchanged. No history
+/// scan occurs on uncontended append.
 pub struct SqliteTaskJournal {
     pub(crate) connection: Connection,
     pub(crate) definition: TaskDefinition,
     pub(crate) limits: SqliteLimits,
-    pub(crate) cache: Option<(TaskProjection, Digest, u64)>,
+    pub(crate) cache: Option<(TaskProjection, Digest, u64, i64)>,
+}
+
+// Sample inside BEGIN IMMEDIATE, while no other writer can commit. Values
+// belong to this connection; its own commits do not advance this counter.
+fn data_version(connection: &Connection) -> Result<i64, TaskPortError> {
+    connection
+        .prepare_cached("PRAGMA main.data_version")
+        .map_err(|error| sql_error(&error))?
+        .query_row([], |row| row.get(0))
+        .map_err(|error| sql_error(&error))
 }
 
 pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
@@ -282,8 +293,9 @@ impl SqliteTaskJournal {
                 sql_integer(used)?
             ],
         )?;
+        let version = data_version(&transaction)?;
         transaction.commit().map_err(|error| sql_error(&error))?;
-        self.cache = Some((projection, last, used));
+        self.cache = Some((projection, last, used, version));
         Ok(())
     }
 }
@@ -358,12 +370,16 @@ impl TaskJournal for SqliteTaskJournal {
             .map_err(|error| sql_error(&error))?;
         reject_retired(&transaction, record.scope)?;
         let stored_head = checked_head(&transaction, record.scope)?;
+        let version = data_version(&transaction)?;
         let mut projection = match (&self.cache, &stored_head) {
-            (Some((cached, last, cached_used)), Some((next, checksum, stored_used)))
-                if cached.scope() == record.scope
-                    && cached.next_sequence().get() == *next
-                    && last == checksum
-                    && cached_used == stored_used =>
+            (
+                Some((cached, last, cached_used, cached_version)),
+                Some((next, checksum, stored_used)),
+            ) if cached.scope() == record.scope
+                && cached.next_sequence().get() == *next
+                && last == checksum
+                && cached_used == stored_used
+                && *cached_version == version =>
             {
                 *cached
             }
@@ -461,7 +477,7 @@ impl TaskJournal for SqliteTaskJournal {
             ],
         )?;
         transaction.commit().map_err(|error| sql_error(&error))?;
-        self.cache = Some((projection, digest, used));
+        self.cache = Some((projection, digest, used, version));
         Ok(*record)
     }
 

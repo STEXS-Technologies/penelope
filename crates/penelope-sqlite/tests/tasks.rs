@@ -734,3 +734,6 @@ mod task_blob_columns;
 
 #[path = "support/authority_columns.rs"]
 mod authority_columns;
+
+#[path = "support/task_cache_revision.rs"]
+mod task_cache_revision;
