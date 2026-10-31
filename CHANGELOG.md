@@ -9,6 +9,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Build fixed-width SQLite task scope keys on the stack. Repeated public-fence
+  probes use 16 Rust allocations instead of 24; paired timing intervals still
+  include zero, so no wall-clock speedup is established.
+
 - Retry interrupted Linux startup/ACK writes immediately within their existing
   deadline, keeping the one-millisecond backoff for actual pipe backpressure.
 
