@@ -130,17 +130,22 @@ pub(crate) fn reconstruct(
             return Err(TaskPortError::Exhausted);
         }
         let sequence: u32 = row.get(0).map_err(|_invalid| TaskPortError::Corrupt)?;
-        let bytes = copy_column(row, 1, limits.max_record_bytes)
+        let bytes = column_bytes(row, 1, limits.max_record_bytes)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
-        let checksum = copy_column(row, 2, 32).map_err(|_invalid| TaskPortError::Corrupt)?;
-        let record = decode(&bytes, &checksum, scope, TaskSequence::new(sequence))?;
+        let checksum = column_bytes(row, 2, 32).map_err(|_invalid| TaskPortError::Corrupt)?;
+        let record = decode(bytes, checksum, scope, TaskSequence::new(sequence))?;
         projection
             .apply(&record)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
         if let Some(blob) = reference(&record) {
             read_bytes(connection, scope, blob, limits.max_blob_bytes)?;
         }
-        last = Digest::of(&bytes);
+        // decode verified this checksum against the exact encoded bytes.
+        last = Digest(
+            checksum
+                .try_into()
+                .map_err(|_invalid| TaskPortError::Corrupt)?,
+        );
         used = used
             .checked_add(u64::try_from(bytes.len()).map_err(|_invalid| TaskPortError::Exhausted)?)
             .ok_or(TaskPortError::Exhausted)?;
