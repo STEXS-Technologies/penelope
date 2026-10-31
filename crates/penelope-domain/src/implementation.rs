@@ -781,33 +781,51 @@ impl EffectKey {
     /// attempt, so two distinct effects cannot collide by concatenation.
     #[must_use]
     pub fn canonical_bytes(&self) -> Vec<u8> {
-        // Five two-byte identifier lengths, two digests, attempt and kind.
-        let capacity = [
-            self.tenant_id.as_str().len(),
-            self.process_id.as_str().len(),
-            self.definition_id.as_str().len(),
-            self.definition_version.as_str().len(),
-            self.step_id.as_str().len(),
-        ]
-        .into_iter()
-        .fold(79_usize, usize::saturating_add);
-        let mut bytes = Vec::with_capacity(capacity);
-        encode_identifier(&mut bytes, self.tenant_id.as_str());
-        encode_identifier(&mut bytes, self.process_id.as_str());
-        encode_identifier(&mut bytes, self.definition_id.as_str());
-        encode_identifier(&mut bytes, self.definition_version.as_str());
-        bytes.extend_from_slice(&self.definition_digest.0);
-        encode_identifier(&mut bytes, self.step_id.as_str());
-        bytes.extend_from_slice(&self.attempt.to_be_bytes());
-        bytes.push(match self.kind {
-            ProcessActionKind::CanonicalCommand => 0,
-            ProcessActionKind::Timer => 1,
-            ProcessActionKind::ExternalEffect => 2,
-            ProcessActionKind::ManualReview => 3,
-        });
-        bytes.extend_from_slice(&self.payload_digest.0);
-        bytes
+        canonical_effect_key_bytes(
+            [
+                self.tenant_id.as_str(),
+                self.process_id.as_str(),
+                self.definition_id.as_str(),
+                self.definition_version.as_str(),
+                self.step_id.as_str(),
+            ],
+            &self.definition_digest,
+            self.attempt,
+            self.kind,
+            &self.payload_digest,
+        )
     }
+}
+
+#[inline(always)]
+fn canonical_effect_key_bytes(
+    identifiers: [&str; 5],
+    definition_digest: &ContentDigest,
+    attempt: u32,
+    kind: ProcessActionKind,
+    payload_digest: &ContentDigest,
+) -> Vec<u8> {
+    // Five two-byte identifier lengths, two digests, attempt and kind.
+    let capacity = identifiers
+        .into_iter()
+        .fold(79_usize, |size, id| size.saturating_add(id.len()));
+    let mut bytes = Vec::with_capacity(capacity);
+    let [tenant, process, definition, version, step] = identifiers;
+    encode_identifier(&mut bytes, tenant);
+    encode_identifier(&mut bytes, process);
+    encode_identifier(&mut bytes, definition);
+    encode_identifier(&mut bytes, version);
+    bytes.extend_from_slice(&definition_digest.0);
+    encode_identifier(&mut bytes, step);
+    bytes.extend_from_slice(&attempt.to_be_bytes());
+    bytes.push(match kind {
+        ProcessActionKind::CanonicalCommand => 0,
+        ProcessActionKind::Timer => 1,
+        ProcessActionKind::ExternalEffect => 2,
+        ProcessActionKind::ManualReview => 3,
+    });
+    bytes.extend_from_slice(&payload_digest.0);
+    bytes
 }
 
 /// A canonical-state command submitted through an adapter port.
@@ -1167,6 +1185,27 @@ impl ProcessAction {
             self.definition_id.clone(),
             self.definition_version.clone(),
             self.definition_digest,
+        )
+    }
+
+    /// Encodes this action's semantic effect key without cloning its identifiers.
+    ///
+    /// Produces the same canonical bytes as `self.effect_key().canonical_bytes()`.
+    /// Action identity is excluded; scope, step, attempt, kind and payload are included.
+    #[must_use]
+    pub fn canonical_effect_key_bytes(&self) -> Vec<u8> {
+        canonical_effect_key_bytes(
+            [
+                self.tenant_id.as_str(),
+                self.process_id.as_str(),
+                self.definition_id.as_str(),
+                self.definition_version.as_str(),
+                self.step_id.as_str(),
+            ],
+            &self.definition_digest,
+            self.attempt,
+            self.kind,
+            &self.payload_digest,
         )
     }
 

@@ -35,3 +35,15 @@ harness = false
 [[bench]]
 name = "effect_key_allocations"
 harness = false
+
+[[bench]]
+name = "action_effect_key"
+harness = false
+
+[[bench]]
+name = "action_effect_allocations"
+harness = false
+
+[[test]]
+name = "action_effect_allocations"
+harness = false
