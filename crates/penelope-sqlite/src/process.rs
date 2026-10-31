@@ -44,14 +44,24 @@ pub(crate) fn integer(value: u64) -> Result<i64, PortError> {
     i64::try_from(value).map_err(|_overflow| PortError::QuotaExceeded)
 }
 pub(crate) fn encode<T: Serialize>(value: &T, limit: u32) -> Result<Vec<u8>, PortError> {
-    let bytes = serde_json::to_vec(value).map_err(|_codec| PortError::Invariant)?;
+    let mut bytes = Vec::with_capacity(128);
+    encode_into(value, limit, &mut bytes)?;
+    Ok(bytes)
+}
+pub(crate) fn encode_into<T: Serialize>(
+    value: &T,
+    limit: u32,
+    bytes: &mut Vec<u8>,
+) -> Result<(), PortError> {
+    bytes.clear();
+    serde_json::to_writer(&mut *bytes, value).map_err(|_codec| PortError::Invariant)?;
     if u32::try_from(bytes.len())
         .ok()
         .is_none_or(|size| size > limit)
     {
         return Err(PortError::QuotaExceeded);
     }
-    Ok(bytes)
+    Ok(())
 }
 pub(crate) fn decode<T: DeserializeOwned>(bytes: &[u8], checksum: &[u8]) -> Result<T, PortError> {
     if Digest::of(bytes).0.as_slice() != checksum {
@@ -553,3 +563,7 @@ fn verify_committed_batch(
 #[cfg(test)]
 #[path = "process_fault_tests.rs"]
 mod fault_tests;
+
+#[cfg(test)]
+#[path = "process_encode_tests.rs"]
+mod encode_tests;
