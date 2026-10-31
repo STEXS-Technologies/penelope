@@ -4,7 +4,7 @@
 #[path = "support/application_workloads/workflow.rs"]
 mod workload;
 use std::{hint::black_box, time::Instant};
-use workload::{Case, Error, Fixture, kernel};
+use workload::{Admission, Case, Error, Fixture, kernel};
 
 #[derive(Clone, Copy)]
 struct Config {
@@ -12,6 +12,7 @@ struct Config {
     rounds: u32,
     iterations: u32,
     workers: u32,
+    admission: Admission,
 }
 fn run_worker(
     fixture: &mut Fixture,
@@ -40,7 +41,13 @@ fn measure(case: Case, managed: bool, config: Config) -> Result<(u128, u64), Err
     // Open/migrate databases before timing. Reopening for recovery is timed.
     // Baseline execution does not open an idle SQLite worker.
     let mut fixtures: Vec<_> = (0..config.workers)
-        .map(|_| Fixture::new(if managed { case } else { Case::Linear }))
+        .map(|_| {
+            if managed && config.admission == Admission::Atomic {
+                Fixture::with_admission(case, config.admission)
+            } else {
+                Fixture::new(if managed { case } else { Case::Linear })
+            }
+        })
         .collect::<Result<_, _>>()?;
     let began = Instant::now();
     let checksum = if config.workers == 1 {
@@ -79,6 +86,7 @@ fn main() -> Result<(), Error> {
         rounds: 2,
         iterations: 2,
         workers: 1,
+        admission: Admission::Preaccepted,
     };
     let mut selected = None;
     let mut arguments = std::env::args().skip(1);
@@ -93,6 +101,7 @@ fn main() -> Result<(), Error> {
             "--iterations" => config.iterations = value.parse()?,
             "--workers" => config.workers = value.parse()?,
             "--case" => selected = Some(Case::parse(&value)?),
+            "--admission" => config.admission = Admission::parse(&value)?,
             _ => return Err(format!("unknown option: {argument}").into()),
         }
     }
@@ -128,7 +137,7 @@ fn main() -> Result<(), Error> {
             println!(
                 "{}",
                 serde_json::json!({
-                    "schema":1,"case":case.name(),"work":config.work,"round":round,
+                    "schema":1,"case":case.name(),"admission":config.admission.name(),"work":config.work,"round":round,
                     "iterations_per_worker":config.iterations,"workers":config.workers,
                     "workflows":config.iterations*config.workers,"calls_per_workflow":case.calls(),
                     "direct_ns":direct.0,"penelope_ns":managed.0,"checksum":direct.1,

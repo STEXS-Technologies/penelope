@@ -12,6 +12,27 @@ where
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Admission {
+    Preaccepted,
+    Atomic,
+}
+impl Admission {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Preaccepted => "preaccepted",
+            Self::Atomic => "atomic",
+        }
+    }
+    pub fn parse(value: &str) -> Result<Self, Error> {
+        match value {
+            "preaccepted" => Ok(Self::Preaccepted),
+            "atomic" => Ok(Self::Atomic),
+            _ => Err("unknown admission mode".into()),
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Case {
     Linear,
     Graph,
@@ -73,6 +94,9 @@ pub struct Fixture {
 }
 impl Fixture {
     pub fn new(case: Case) -> Result<Self, Error> {
+        Self::with_admission(case, Admission::Preaccepted)
+    }
+    pub fn with_admission(case: Case, admission: Admission) -> Result<Self, Error> {
         let steps = (0..8)
             .map(|index| {
                 Ok(StepPlan::canonical_command(
@@ -153,7 +177,7 @@ impl Fixture {
             linear,
             graph,
             storage: if case.durable() {
-                Some(Storage::new()?)
+                Some(Storage::new(admission)?)
             } else {
                 None
             },

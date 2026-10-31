@@ -16,7 +16,8 @@ def summarize(rows, metadata):
         key = (row["repeat"], row["workers"], row["work"], row["case"], row["round"])
         if key not in expected or key in observed:
             raise ValueError(f"unexpected or duplicate sample: {key}")
-        if (row["schema"] != 1 or row["verified"] is not True
+        if (row.get("admission", "preaccepted") != metadata.get("admission", "preaccepted")
+            or row["schema"] != 1 or row["verified"] is not True
             or row["calls_per_workflow"] != CASES[row["case"]]
             or row["iterations_per_worker"] != metadata["iterations"]
             or row["workflows"] != row["workers"] * metadata["iterations"]

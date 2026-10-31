@@ -19,6 +19,10 @@ class SummaryTests(unittest.TestCase):
         substituted=copy.deepcopy(self.rows);substituted[0]['checksum']=8
         for rows in [self.rows[1:],self.rows+[self.rows[0]],bad,substituted]:
             with self.assertRaises(ValueError):summarize(rows,self.metadata)
+    def test_mixed_admission_modes_fail(self):
+        mixed=copy.deepcopy(self.rows)
+        mixed[0]['admission']='atomic'
+        with self.assertRaises(ValueError):summarize(mixed,self.metadata)
     def test_invalid_mix_fails(self):
         self.metadata['mix']={case:0 for case in CASES}
         with self.assertRaises(ValueError):summarize(self.rows,self.metadata)

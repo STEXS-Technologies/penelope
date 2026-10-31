@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--iterations", type=int, default=4)
     parser.add_argument("--work", type=integers, default=[4096,65536,1048576])
     parser.add_argument("--workers", type=integers, default=[1,4])
+    parser.add_argument("--admission", choices=["preaccepted","atomic"], default="preaccepted")
     parser.add_argument("--mix", type=Path, help="JSON case weights; default equal workflow counts across all six cases")
     args = parser.parse_args()
     if not (2 <= args.repeats <= 32 and 2 <= args.rounds <= 64 and args.rounds % 2 == 0 and 1 <= args.iterations <= 1024):
@@ -46,7 +47,7 @@ def main():
         built = subprocess.run(command,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=log,text=True,check=True)
     binary = next(Path(item["executable"]) for line in built.stdout.splitlines() if (item:=json.loads(line)).get("executable") and item.get("target",{}).get("name")=="application_workloads")
     sources = [ROOT/"crates/penelope-executor/benches/application_workloads.rs",*sorted((ROOT/"crates/penelope-executor/benches/support/application_workloads").glob("*.rs")),Path(__file__),ROOT/"scripts/application_workloads_summary.py",ROOT/"Cargo.lock"]
-    metadata = {"schema":1,"git_head":subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),"git_status":subprocess.check_output(["git","status","--short"],cwd=ROOT,text=True),"rustc":subprocess.check_output(["rustc","--version"],text=True).strip(),"platform":platform.platform(),"repeats":args.repeats,"rounds":args.rounds,"iterations":args.iterations,"work":args.work,"workers":args.workers,"mix":mix,"cpu_affinity":{str(n):available[:n] for n in args.workers},"database_root":str(output/"databases"),"binary_sha256":hashlib.sha256(binary.read_bytes()).hexdigest(),"source_sha256":{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},"scope":"synthetic business work versus additional orchestration/reliability services; not every Penelope path or a consuming application"}
+    metadata = {"schema":1,"admission":args.admission,"git_head":subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),"git_status":subprocess.check_output(["git","status","--short"],cwd=ROOT,text=True),"rustc":subprocess.check_output(["rustc","--version"],text=True).strip(),"platform":platform.platform(),"repeats":args.repeats,"rounds":args.rounds,"iterations":args.iterations,"work":args.work,"workers":args.workers,"mix":mix,"cpu_affinity":{str(n):available[:n] for n in args.workers},"database_root":str(output/"databases"),"binary_sha256":hashlib.sha256(binary.read_bytes()).hexdigest(),"source_sha256":{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},"scope":"synthetic business work versus additional orchestration/reliability services; not every Penelope path or a consuming application"}
     if platform.system()=="Linux":
         metadata["filesystem"] = subprocess.check_output(["findmnt","-T",str(output),"-n","-o","FSTYPE,SOURCE"],text=True).strip()
     (output/"metadata.json").write_text(json.dumps(metadata,indent=2)+"\n")
@@ -57,7 +58,7 @@ def main():
             configs=[(workers,work) for workers in args.workers for work in args.work]
             if repeat%2: configs.reverse()
             for workers,work in configs:
-                command=[str(binary),"--workers",str(workers),"--work",str(work),"--rounds",str(args.rounds),"--iterations",str(args.iterations)]
+                command=[str(binary),"--workers",str(workers),"--work",str(work),"--rounds",str(args.rounds),"--iterations",str(args.iterations),"--admission",args.admission]
                 if platform.system()=="Linux":command=["taskset","-c",",".join(map(str,available[:workers])),*command]
                 result=subprocess.run(command,cwd=ROOT,env=env,stdout=subprocess.PIPE,text=True,check=True)
                 samples=[json.loads(line) for line in result.stdout.splitlines()]
