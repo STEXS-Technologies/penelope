@@ -175,6 +175,32 @@ fn head(
         .map_err(|error| sql_error(&error))
 }
 
+// Check the retained tail in the same read snapshot, even for cursors beyond
+// the head. MAX uses the scoped primary key; this does not replay the history.
+fn read_head(connection: &Connection, scope: TaskScope) -> Result<Option<u32>, TaskPortError> {
+    let (next, checksum, used, last): (Option<u32>, Option<bool>, Option<i64>, Option<u32>) = connection
+        .prepare_cached("SELECT head.next_sequence,head.last_digest,head.bytes_used,(SELECT max(sequence) FROM task_records WHERE scope=?1) FROM (SELECT 1) LEFT JOIN task_heads AS head ON head.scope=?1")
+        .map_err(|error| sql_error(&error))?
+        .query_row([key(scope)], |row| {
+            let checksum = if row.get_ref(1)? == rusqlite::types::ValueRef::Null {
+                None
+            } else {
+                Some(column_bytes(row, 1, 32)?.len() == 32)
+            };
+            Ok((row.get(0)?, checksum, row.get(2)?, row.get(3)?))
+        })
+        .map_err(|error| sql_error(&error))?;
+    match (next, checksum, used, last) {
+        (None, None, None, None) => Ok(None),
+        (Some(next), Some(true), Some(used), Some(last))
+            if next > 0 && used >= 0 && last.checked_add(1) == Some(next) =>
+        {
+            Ok(Some(next))
+        }
+        _ => Err(TaskPortError::Corrupt),
+    }
+}
+
 impl SqliteTaskJournal {
     /// Opens/migrates a local database, enforcing WAL/FULL and bounded admission.
     /// # Errors
@@ -257,7 +283,7 @@ impl TaskJournal for SqliteTaskJournal {
             .transaction()
             .map_err(|error| sql_error(&error))?;
         reject_retired(&transaction, scope)?;
-        let head = head(&transaction, scope)?;
+        let head = read_head(&transaction, scope)?;
         let stored = transaction
             .query_row(
                 "SELECT record,checksum FROM task_records WHERE scope=?1 AND sequence=?2",
@@ -272,24 +298,11 @@ impl TaskJournal for SqliteTaskJournal {
             .optional()
             .map_err(|error| sql_error(&error))?;
         match (head, stored) {
-            (Some((next, _, _)), Some((bytes, checksum))) if sequence.get() < next => {
+            (Some(next), Some((bytes, checksum))) if sequence.get() < next => {
                 decode(&bytes, &checksum, scope, sequence).map(Some)
             }
-            (Some((next, _, _)), None) if sequence.get() >= next => Ok(None),
-            (None, None) => {
-                let exists: bool = transaction
-                    .query_row(
-                        "SELECT EXISTS(SELECT 1 FROM task_records WHERE scope=?1)",
-                        [key(scope)],
-                        |row| row.get(0),
-                    )
-                    .map_err(|error| sql_error(&error))?;
-                if exists {
-                    Err(TaskPortError::Corrupt)
-                } else {
-                    Ok(None)
-                }
-            }
+            (Some(next), None) if sequence.get() >= next => Ok(None),
+            (None, None) => Ok(None),
             _ => Err(TaskPortError::Corrupt),
         }
     }
