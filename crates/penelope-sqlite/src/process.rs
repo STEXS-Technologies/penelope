@@ -374,13 +374,22 @@ impl ProcessStore for SqliteProcessStore {
         if outcomes.len() > MAX_OUTCOMES_PER_ATOMIC_COMMIT {
             return Err(PortError::QuotaExceeded);
         }
-        if outcomes.iter().any(|outcome| outcome.scope() != *scope) {
+        if outcomes
+            .iter()
+            .any(|outcome| outcome.validate_for_scope(scope).is_err())
+        {
             return Err(PortError::Invariant);
         }
         let commit =
             AtomicProcessCommit::new(expected_sequence, None, outcomes.to_vec(), Vec::new())
                 .map_err(|_invalid| PortError::Invariant)?;
-        ProcessStore::commit(self, &commit).await.map(|_receipt| ())
+        // This freshly validated request is already owned. Move it into the
+        // worker instead of cloning it again through the borrowed commit API.
+        let limits = self.limits;
+        self.worker
+            .run(move |connection| commit_process(connection, &commit, limits))?
+            .await
+            .map(|_receipt| ())
     }
     async fn read_outcomes(
         &self,
