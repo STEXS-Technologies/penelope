@@ -1,0 +1,13 @@
+{
+  "baseline": {
+    "address": "0x250c0",
+    "binary_sha256": "1ab1ab74fb08d521e529686df2a816286706b904387a9758b6b9bab3a9936f6a",
+    "normalized_sha256": "ad28ef2482f74475f284d432e6eff27dc90dbc072a77c66e627cc51bfbb88026"
+  },
+  "candidate": {
+    "address": "0x24ea0",
+    "binary_sha256": "2b0ac5c895616125099f95b68a69e7246e2e61ec477184036f5d4c1fbb42e4d9",
+    "normalized_sha256": "ad28ef2482f74475f284d432e6eff27dc90dbc072a77c66e627cc51bfbb88026"
+  },
+  "normalized_equal": true
+}

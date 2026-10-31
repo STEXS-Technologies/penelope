@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "name": "nibble-order",
+      "rejected": true,
+      "marker": "timer hex compatibility/allocation failure"
+    },
+    {
+      "name": "uppercase",
+      "rejected": true,
+      "marker": "timer hex compatibility/allocation failure"
+    },
+    {
+      "name": "byte-order",
+      "rejected": true,
+      "marker": "timer hex compatibility/allocation failure"
+    },
+    {
+      "name": "leading-zero",
+      "rejected": true,
+      "marker": "timer hex compatibility/allocation failure"
+    },
+    {
+      "name": "extra-allocation",
+      "rejected": true,
+      "marker": "timer hex compatibility/allocation failure"
+    }
+  ],
+  "restored_sha256": "440019bd97ef06aee569ab0ef389b07ff0e655b75ec2a5d381e844244b97f143"
+}

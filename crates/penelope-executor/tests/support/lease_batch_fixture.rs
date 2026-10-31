@@ -221,22 +221,31 @@ impl Fixture {
             acknowledgements: Mutex::new(Vec::with_capacity(batch)),
         }
     }
+    // Keep service-specific async polling frames separate in mixed-path probes.
+    #[inline(never)]
+    pub fn invoke_timers(&self, ports: &Ports) -> Result<Output, Error> {
+        Ok(Output::Timers(run(drain_timers(
+            ports,
+            ports,
+            ports,
+            &self.timer_request,
+            ports,
+        ))?))
+    }
+    #[inline(never)]
+    pub fn invoke_outbox(&self, ports: &Ports) -> Result<Output, Error> {
+        Ok(Output::Outbox(run(claim_outbox(
+            ports,
+            ports,
+            &self.outbox_request,
+            LogicalTime(100),
+        ))?))
+    }
     pub fn invoke(&self, ports: &Ports, timers: bool) -> Result<Output, Error> {
         if timers {
-            Ok(Output::Timers(run(drain_timers(
-                ports,
-                ports,
-                ports,
-                &self.timer_request,
-                ports,
-            ))?))
+            self.invoke_timers(ports)
         } else {
-            Ok(Output::Outbox(run(claim_outbox(
-                ports,
-                ports,
-                &self.outbox_request,
-                LogicalTime(100),
-            ))?))
+            self.invoke_outbox(ports)
         }
     }
     pub fn verify(&self, ports: &Ports, output: &Output) -> Result<ContentDigest, Error> {
