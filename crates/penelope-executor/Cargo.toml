@@ -90,3 +90,7 @@ harness = false
 [[test]]
 name = "lease_batch_allocations"
 harness = false
+
+[[bench]]
+name = "durable_timer_workload"
+harness = false
