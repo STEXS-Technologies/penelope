@@ -8,7 +8,8 @@ records the verified profile, evidence and limits.
 
 `LinuxProcessRuntime` supports static Linux x86-64 ELF workers running as one
 process and one thread. It requires a trusted Linux kernel with executable sealed
-memfd support (`MFD_EXEC`, Linux 6.3 or newer), seccomp filters, pidfds,
+memfd support (`MFD_EXEC`, Linux 6.3 or newer), seccomp filters, pidfds
+(including `waitid(P_PIDFD)`),
 `close_range`, procfs, and a private local registry directory. Unsupported images
 or unavailable kernel facilities fail closed. Dynamic loaders are rejected.
 
@@ -40,7 +41,12 @@ before creating a child. Before executing worker code the child durably records
 its PID, kernel start time and host boot identity. Launch and fencing share a
 registry lock. Fencing persists its tombstone first, verifies process identity,
 kills through a pidfd, and confirms termination before acknowledging the fence.
-Errors leave the generation blocked for recovery.
+Errors leave the generation blocked for recovery. When this host process is
+still the worker's parent, fencing also reaps the stopped child through its
+identity-checked pidfd, including after the original runtime was dropped.
+Workers owned by another parent are reaped by that parent. An original runtime
+can retry fencing after another host reaper has already consumed its child's
+exit status; it still requires proof that its recorded identity is stopped.
 
 Keep the registry with its corresponding database. Do not delete manifests or
 change registry paths while generations may exist. Filesystem ownership and

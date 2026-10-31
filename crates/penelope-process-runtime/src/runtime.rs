@@ -7,12 +7,17 @@ use crate::{
 use penelope_core::task::{runtime::*, *};
 use rustix::{
     fs::{OFlags, fcntl_getfl, fcntl_setfl},
-    process::{Pid, PidfdFlags, Signal, pidfd_open, pidfd_send_signal},
+    process::{
+        Pid, PidfdFlags, Signal, WaitId, WaitIdOptions, pidfd_open, pidfd_send_signal, waitid,
+    },
 };
 use std::{
     fs::File,
     io::{Read, Write},
-    os::{fd::AsRawFd, unix::process::ExitStatusExt},
+    os::{
+        fd::{AsFd, AsRawFd},
+        unix::process::ExitStatusExt,
+    },
     path::PathBuf,
     process::{Child, ChildStdin, ChildStdout, Command, ExitStatus, Stdio},
     time::{Duration, Instant},
@@ -446,6 +451,7 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
     fn fence(&mut self, scope: TaskScope, generation: TaskGeneration) -> Result<(), TaskPortError> {
         let _guard = self.registry.lock()?;
         let execution = self.authority.begin_fence(scope, generation)?;
+        let mut stopped_pid = None;
         if let Some(execution) = execution {
             if execution != execution_id(scope, generation) {
                 return Err(TaskPortError::Corrupt);
@@ -454,19 +460,22 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
                 if saved.boot == self.registry.boot {
                     if let Some(identity) = saved.identity {
                         stop_identity(identity, self.config.fence_timeout)?;
+                        stopped_pid = Some(identity.pid);
                     }
                 }
             }
         }
         if let Ok(index) = self.index(scope, generation) {
             let active = self.active.get_mut(index).ok_or(TaskPortError::Runtime)?;
-            if active
-                .child
-                .try_wait()
-                .map_err(|_wait| TaskPortError::Runtime)?
-                .is_none()
-            {
-                return Err(TaskPortError::Runtime);
+            match active.child.try_wait() {
+                Ok(Some(_status)) => {}
+                // Another runtime in this process may already have reaped the
+                // same worker through its pidfd. Accept that only after the
+                // registry identity for this exact child was proved stopped.
+                Err(error)
+                    if error.raw_os_error() == Some(libc::ECHILD)
+                        && stopped_pid == Some(active.child.id()) => {}
+                Ok(None) | Err(_) => return Err(TaskPortError::Runtime),
             }
             self.active.swap_remove(index);
         }
@@ -525,7 +534,17 @@ fn stop_identity(
                 .revents()
                 .intersects(rustix::event::PollFlags::IN | rustix::event::PollFlags::HUP)
         }) {
-            return Ok(());
+            // A dropped Child handle does not reap its process. Reconstruction
+            // in the same parent must release that zombie through the pinned
+            // pidfd, never a PID that could have been reused. Non-child workers
+            // are reaped by their own parent; readiness already proved exit.
+            return match waitid(
+                WaitId::PidFd(fd.as_fd()),
+                WaitIdOptions::EXITED | WaitIdOptions::NOHANG,
+            ) {
+                Ok(Some(_)) | Err(rustix::io::Errno::CHILD) => Ok(()),
+                Ok(None) | Err(_) => Err(TaskPortError::Runtime),
+            };
         }
         if Instant::now() >= deadline {
             return Err(TaskPortError::Runtime);

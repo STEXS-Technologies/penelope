@@ -17,7 +17,11 @@ fn stale_start_time_cannot_signal_a_reused_pid() {
     stop_identity(stale, Duration::from_secs(1)).unwrap();
     assert!(child.try_wait().unwrap().is_none());
     stop_identity(current, Duration::from_secs(1)).unwrap();
-    assert!(!child.wait().unwrap().success());
+    assert_eq!(
+        child.try_wait().unwrap_err().raw_os_error(),
+        Some(libc::ECHILD)
+    );
+    assert!(!std::path::Path::new(&format!("/proc/{}", current.pid)).exists());
     // The old identity is already stopped, even once the child has been reaped.
     stop_identity(current, Duration::from_secs(1)).unwrap();
 }
