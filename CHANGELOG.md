@@ -7,6 +7,13 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Linux worker responses at the maximum payload size now reject a trailing
+  byte available in the same pipe read, matching smaller response handling.
+  Each active response buffer reserves one additional byte; valid maximum-size
+  completions and checkpoint acknowledgements retain their existing behavior.
+
 ## [0.3.0] - 2026-10-30
 
 ### Added

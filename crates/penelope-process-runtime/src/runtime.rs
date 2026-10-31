@@ -225,7 +225,10 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
                 .max(request.definition.recovery.max_checkpoint_bytes),
         )
         .map_err(|_size| TaskPortError::Exhausted)?
+        // Read one byte beyond the largest valid frame so coalesced trailing
+        // data cannot hide behind an exactly full buffer.
         .checked_add(OBS_HEADER)
+        .and_then(|size| size.checked_add(1))
         .ok_or(TaskPortError::Exhausted)?;
         self.active.push(Active {
             scope: request.scope,

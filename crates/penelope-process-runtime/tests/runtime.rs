@@ -740,3 +740,57 @@ fn fragmented_completion_survives_exit_and_truncated_completion_faults() {
         }
     }
 }
+
+#[test]
+fn maximum_frames_reject_coalesced_trailing_bytes() {
+    for mode in [25, 26] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut supervisor = fresh(directory.path(), &[mode], 2);
+        supervisor.advance(TaskTick::new(1)).unwrap();
+        assert_eq!(
+            wait(&mut supervisor),
+            Err(SupervisorError::Port(TaskPortError::Corrupt)),
+            "mode {mode} accepted trailing data"
+        );
+        assert!(supervisor.projection().checkpoint().is_none());
+        assert!(supervisor.projection().output().is_none());
+        let projection = *supervisor.projection();
+        let (mut journal, mut runtime) = supervisor.into_parts();
+        runtime
+            .fence(projection.scope(), projection.generation())
+            .unwrap();
+        assert_eq!(
+            journal
+                .read(projection.scope(), projection.next_sequence())
+                .unwrap(),
+            None
+        );
+    }
+}
+
+#[test]
+fn maximum_completion_and_acknowledged_checkpoint_remain_valid() {
+    for mode in [24, 27] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut supervisor = fresh(directory.path(), &[mode], 2);
+        supervisor.advance(TaskTick::new(1)).unwrap();
+        wait(&mut supervisor).unwrap();
+        if mode == 27 {
+            assert!(supervisor.projection().checkpoint().is_some());
+            wait(&mut supervisor).unwrap();
+        }
+        assert_eq!(supervisor.projection().status(), TaskStatus::Completed);
+        let projection = *supervisor.projection();
+        let output = projection.output().unwrap();
+        let (mut journal, _runtime) = supervisor.into_parts();
+        let mut bytes = [0; 64];
+        journal
+            .read_blob(projection.scope(), output, &mut bytes)
+            .unwrap();
+        let length = if mode == 24 { 64 } else { 8 };
+        assert_eq!(
+            bytes.get(..length).unwrap(),
+            (0..64).collect::<Vec<u8>>().get(..length).unwrap()
+        );
+    }
+}
