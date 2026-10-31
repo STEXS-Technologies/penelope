@@ -1,0 +1,826 @@
+{
+  "latency": {
+    "0/corrupt_put": {
+      "mean_paired_change_pct": 0.3654636635407549,
+      "bootstrap95_pct": [
+        -0.1527007338560593,
+        0.8867461783583774
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10466.59775,
+        "borrowed": 10504.304541666666
+      }
+    },
+    "0/corrupt_read": {
+      "mean_paired_change_pct": 0.17844732189495893,
+      "bootstrap95_pct": [
+        -0.37226005977581966,
+        0.7511674852250794
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8582.847916666666,
+        "borrowed": 8597.595166666666
+      }
+    },
+    "0/duplicate": {
+      "mean_paired_change_pct": -0.09213147260188626,
+      "bootstrap95_pct": [
+        -0.6255027996841189,
+        0.49897259938953553
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10401.651625,
+        "borrowed": 10391.675958333333
+      }
+    },
+    "0/missing": {
+      "mean_paired_change_pct": -0.07753554588700862,
+      "bootstrap95_pct": [
+        -0.510597009471847,
+        0.3829189132515287
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8320.193125,
+        "borrowed": 8313.545541666666
+      }
+    },
+    "0/read": {
+      "mean_paired_change_pct": 0.2211121682096362,
+      "bootstrap95_pct": [
+        -0.31505634099355806,
+        0.7726849808247005
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8503.804541666666,
+        "borrowed": 8522.192125
+      }
+    },
+    "1048576/corrupt_put": {
+      "mean_paired_change_pct": -3.0985276763633274,
+      "bootstrap95_pct": [
+        -3.4437730777734155,
+        -2.7621990839299726
+      ],
+      "mean_ns_per_call": {
+        "baseline": 461340.7470703125,
+        "borrowed": 447022.8463541667
+      }
+    },
+    "1048576/corrupt_read": {
+      "mean_paired_change_pct": -3.345733624361391,
+      "bootstrap95_pct": [
+        -3.6429673403707064,
+        -3.0435338457769467
+      ],
+      "mean_ns_per_call": {
+        "baseline": 442611.2425130208,
+        "borrowed": 427789.3017578125
+      }
+    },
+    "1048576/duplicate": {
+      "mean_paired_change_pct": -3.218588744230755,
+      "bootstrap95_pct": [
+        -3.6304527331162073,
+        -2.802054030172152
+      ],
+      "mean_ns_per_call": {
+        "baseline": 476671.7952473958,
+        "borrowed": 461305.5748697917
+      }
+    },
+    "1048576/missing": {
+      "mean_paired_change_pct": 0.2626926585856948,
+      "bootstrap95_pct": [
+        -0.4030268824133598,
+        0.8791911248301254
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8306.466471354166,
+        "borrowed": 8327.588541666666
+      }
+    },
+    "1048576/read": {
+      "mean_paired_change_pct": 0.39638349087502966,
+      "bootstrap95_pct": [
+        -0.03376628175515428,
+        0.8348176069941982
+      ],
+      "mean_ns_per_call": {
+        "baseline": 443743.0390625,
+        "borrowed": 445477.1624348958
+      }
+    },
+    "32/corrupt_put": {
+      "mean_paired_change_pct": -0.3382841814014048,
+      "bootstrap95_pct": [
+        -0.8621840163505201,
+        0.19764143222227304
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10543.490958333334,
+        "borrowed": 10506.98175
+      }
+    },
+    "32/corrupt_read": {
+      "mean_paired_change_pct": -0.15244889399698147,
+      "bootstrap95_pct": [
+        -0.6579377856906099,
+        0.38976578795908434
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8607.428208333333,
+        "borrowed": 8593.829
+      }
+    },
+    "32/duplicate": {
+      "mean_paired_change_pct": -0.017095464679917072,
+      "bootstrap95_pct": [
+        -0.580442764766087,
+        0.5433099574653655
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10380.6105,
+        "borrowed": 10378.013583333333
+      }
+    },
+    "32/missing": {
+      "mean_paired_change_pct": 0.6937512138776913,
+      "bootstrap95_pct": [
+        0.19958604490120102,
+        1.184244303950921
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8351.111083333333,
+        "borrowed": 8408.847333333333
+      }
+    },
+    "32/read": {
+      "mean_paired_change_pct": 0.09159441025252679,
+      "bootstrap95_pct": [
+        -0.4035487987575248,
+        0.6040827207428379
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8531.505958333333,
+        "borrowed": 8539.088916666668
+      }
+    },
+    "4096/corrupt_put": {
+      "mean_paired_change_pct": -0.6093721383544581,
+      "bootstrap95_pct": [
+        -1.0707095197075023,
+        -0.13692569509974328
+      ],
+      "mean_ns_per_call": {
+        "baseline": 12380.700416666667,
+        "borrowed": 12304.603791666666
+      }
+    },
+    "4096/corrupt_read": {
+      "mean_paired_change_pct": -0.4172064301886991,
+      "bootstrap95_pct": [
+        -0.982216868022423,
+        0.1834649985161363
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10428.156125,
+        "borrowed": 10383.846041666668
+      }
+    },
+    "4096/duplicate": {
+      "mean_paired_change_pct": 0.09702107635449764,
+      "bootstrap95_pct": [
+        -0.42134001691411793,
+        0.6258334270990762
+      ],
+      "mean_ns_per_call": {
+        "baseline": 12268.72975,
+        "borrowed": 12280.734916666666
+      }
+    },
+    "4096/missing": {
+      "mean_paired_change_pct": 0.7237882472082457,
+      "bootstrap95_pct": [
+        0.09981648824692879,
+        1.3527038494967947
+      ],
+      "mean_ns_per_call": {
+        "baseline": 8370.003833333334,
+        "borrowed": 8430.487666666666
+      }
+    },
+    "4096/read": {
+      "mean_paired_change_pct": 0.276625074437864,
+      "bootstrap95_pct": [
+        -0.2940303144254752,
+        0.8373754872621708
+      ],
+      "mean_ns_per_call": {
+        "baseline": 10401.239958333334,
+        "borrowed": 10429.148083333333
+      }
+    }
+  },
+  "allocations": {
+    "0/corrupt_put": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          721
+        ],
+        "removed_bytes": [
+          1
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          720
+        ],
+        "removed_bytes": [
+          1
+        ]
+      }
+    },
+    "0/corrupt_read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          593
+        ],
+        "removed_bytes": [
+          1
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          1
+        ]
+      }
+    },
+    "0/duplicate": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          720
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          720
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "0/missing": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "0/read": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "1048576/corrupt_put": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          2097872
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          1049296
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      }
+    },
+    "1048576/corrupt_read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          1049168
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      }
+    },
+    "1048576/duplicate": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          2097872
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          1049296
+        ],
+        "removed_bytes": [
+          1048576
+        ]
+      }
+    },
+    "1048576/missing": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "1048576/read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          1049168
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          1049168
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "32/corrupt_put": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          784
+        ],
+        "removed_bytes": [
+          32
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          752
+        ],
+        "removed_bytes": [
+          32
+        ]
+      }
+    },
+    "32/corrupt_read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          624
+        ],
+        "removed_bytes": [
+          32
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          32
+        ]
+      }
+    },
+    "32/duplicate": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          784
+        ],
+        "removed_bytes": [
+          32
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          752
+        ],
+        "removed_bytes": [
+          32
+        ]
+      }
+    },
+    "32/missing": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "32/read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          624
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          624
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "4096/corrupt_put": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          8912
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          4816
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      }
+    },
+    "4096/corrupt_read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          4688
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      }
+    },
+    "4096/duplicate": {
+      "baseline": {
+        "allocations": [
+          8
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          8912
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          4816
+        ],
+        "removed_bytes": [
+          4096
+        ]
+      }
+    },
+    "4096/missing": {
+      "baseline": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          6
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          592
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    },
+    "4096/read": {
+      "baseline": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          4688
+        ],
+        "removed_bytes": [
+          0
+        ]
+      },
+      "borrowed": {
+        "allocations": [
+          7
+        ],
+        "reallocations": [
+          4
+        ],
+        "requested_bytes": [
+          4688
+        ],
+        "removed_bytes": [
+          0
+        ]
+      }
+    }
+  }
+}
