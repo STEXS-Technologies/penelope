@@ -728,3 +728,6 @@ mod task_columns;
 
 #[path = "support/task_append_frontier.rs"]
 mod task_append_frontier;
+
+#[path = "support/task_blob_columns.rs"]
+mod task_blob_columns;

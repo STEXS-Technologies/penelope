@@ -83,3 +83,11 @@ harness = false
 [[bench]]
 name = "task_reconstruction_allocations"
 harness = false
+
+[[bench]]
+name = "task_blobs"
+harness = false
+
+[[bench]]
+name = "task_blob_allocations"
+harness = false

@@ -85,27 +85,31 @@ const fn reference(record: &TaskRecord) -> Option<BlobRef> {
     }
 }
 
-fn read_bytes(
+fn with_verified_blob<T>(
     connection: &Connection,
     scope: TaskScope,
     blob: BlobRef,
     limit: u32,
-) -> Result<Vec<u8>, TaskPortError> {
+    consume: impl FnOnce(&[u8]) -> Result<T, TaskPortError>,
+) -> Result<T, TaskPortError> {
     if blob.bytes > limit {
         return Err(TaskPortError::Exhausted);
     }
-    let bytes = connection
+    connection
         .query_row(
             "SELECT bytes FROM task_blobs WHERE scope=?1 AND digest=?2",
             params![key(scope), blob.digest.0.as_slice()],
-            |row| copy_column(row, 0, limit),
+            |row| {
+                let bytes = column_bytes(row, 0, limit)?;
+                Ok(blob
+                    .verify(bytes, blob.schema)
+                    .map_err(|_invalid| TaskPortError::Corrupt)
+                    .and_then(|()| consume(bytes)))
+            },
         )
         .optional()
         .map_err(|error| sql_error(&error))?
-        .ok_or(TaskPortError::Corrupt)?;
-    blob.verify(&bytes, blob.schema)
-        .map_err(|_invalid| TaskPortError::Corrupt)?;
-    Ok(bytes)
+        .ok_or(TaskPortError::Corrupt)?
 }
 
 pub(crate) fn reconstruct(
@@ -138,7 +142,9 @@ pub(crate) fn reconstruct(
             .apply(&record)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
         if let Some(blob) = reference(&record) {
-            read_bytes(connection, scope, blob, limits.max_blob_bytes)?;
+            with_verified_blob(connection, scope, blob, limits.max_blob_bytes, |_bytes| {
+                Ok(())
+            })?;
         }
         // decode verified this checksum against the exact encoded bytes.
         last = Digest(
@@ -390,13 +396,13 @@ impl TaskJournal for SqliteTaskJournal {
                     added = added
                         .checked_add(u64::from(reference.bytes))
                         .ok_or(TaskPortError::Exhausted)?;
-                } else if read_bytes(
+                } else if !with_verified_blob(
                     &transaction,
                     record.scope,
                     reference,
                     self.limits.max_blob_bytes,
-                )? != bytes
-                {
+                    |stored| Ok(stored == bytes),
+                )? {
                     return Err(TaskPortError::Corrupt);
                 }
             }
@@ -468,12 +474,19 @@ impl TaskJournal for SqliteTaskJournal {
             return Err(TaskPortError::Exhausted);
         }
         reject_retired(&self.connection, scope)?;
-        let bytes = read_bytes(&self.connection, scope, blob, self.limits.max_blob_bytes)?;
-        buffer
-            .get_mut(..bytes.len())
-            .ok_or(TaskPortError::Exhausted)?
-            .copy_from_slice(&bytes);
-        Ok(bytes.len())
+        with_verified_blob(
+            &self.connection,
+            scope,
+            blob,
+            self.limits.max_blob_bytes,
+            |bytes| {
+                buffer
+                    .get_mut(..bytes.len())
+                    .ok_or(TaskPortError::Exhausted)?
+                    .copy_from_slice(bytes);
+                Ok(bytes.len())
+            },
+        )
     }
 }
 
