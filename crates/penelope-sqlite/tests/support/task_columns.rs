@@ -5,6 +5,16 @@ use rusqlite::types::Value;
 fn task_record_columns_preserve_validation_and_owned_results() {
     let record = intent();
     let original = serde_json::to_vec(&record).unwrap();
+    let text = String::from_utf8(original.clone()).unwrap();
+    let scope_text = serde_json::to_string(&record.scope).unwrap();
+    let pretty_scope = serde_json::to_string_pretty(&record.scope).unwrap();
+    let mut sequence_scope = serde_json::to_value(record).unwrap();
+    sequence_scope["scope"] = serde_json::json!([
+        record.scope.tenant,
+        record.scope.task,
+        record.scope.definition,
+        record.scope.input
+    ]);
     let mut padded = original.clone();
     assert!(padded.len() < 4096);
     padded.resize(4096, b' ');
@@ -19,6 +29,28 @@ fn task_record_columns_preserve_validation_and_owned_results() {
     let mut cases = Vec::new();
     for (name, bytes, valid) in [
         ("original", original.clone(), true),
+        (
+            "pretty-scope",
+            text.replacen(&scope_text, &pretty_scope, 1).into_bytes(),
+            true,
+        ),
+        (
+            "reordered-fields",
+            serde_json::to_vec(&serde_json::to_value(record).unwrap()).unwrap(),
+            true,
+        ),
+        (
+            "scope-sequence",
+            serde_json::to_vec(&sequence_scope).unwrap(),
+            true,
+        ),
+        (
+            "escaped-fields",
+            text.replace("\"scope\"", r#""\u0073cope""#)
+                .replace("\"tenant\"", r#""\u0074enant""#)
+                .into_bytes(),
+            true,
+        ),
         ("at-limit", padded, true),
         ("over-limit", oversized, false),
         ("empty", Vec::new(), false),

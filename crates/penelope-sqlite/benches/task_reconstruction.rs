@@ -2,7 +2,7 @@
 #[path = "support/task_reconstruction_fixture.rs"]
 mod fixture;
 fn main() {
-    fixture::run(|history, alternating, removed_bytes, retry| {
+    fixture::run(|history, alternating, reformatted, removed_bytes, retry| {
         let started = std::time::Instant::now();
         for _ in 0..250 {
             std::hint::black_box(retry());
@@ -14,7 +14,7 @@ fn main() {
         );
         println!(
             "{}",
-            serde_json::json!({"history":history,"alternating":alternating,"iterations":250,"elapsed_ns":elapsed_ns,"expected_removed_bytes":removed_bytes})
+            serde_json::json!({"history":history,"alternating":alternating,"reformatted":reformatted,"iterations":250,"elapsed_ns":elapsed_ns,"expected_removed_bytes":removed_bytes})
         );
     });
 }

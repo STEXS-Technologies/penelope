@@ -60,7 +60,7 @@ pub(crate) fn copy_column(
     column_bytes(row, index, limit).map(<[u8]>::to_vec)
 }
 
-fn decode(
+pub(crate) fn decode(
     bytes: &[u8],
     checksum: &[u8],
     scope: TaskScope,
@@ -143,6 +143,7 @@ pub(crate) fn reconstruct(
     // Replay holds one transaction snapshot. An identical full reference can
     // reuse its verification here, but never across scopes or replay calls.
     let mut verified_blob = None;
+    let mut decoder = crate::task_decode::Decoder::new(scope);
     while let Some(row) = rows.next().map_err(|error| sql_error(&error))? {
         if projection.next_sequence().get() >= limits.max_history_records {
             return Err(TaskPortError::Exhausted);
@@ -151,7 +152,7 @@ pub(crate) fn reconstruct(
         let bytes = column_bytes(row, 1, limits.max_record_bytes)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
         let checksum = column_bytes(row, 2, 32).map_err(|_invalid| TaskPortError::Corrupt)?;
-        let record = decode(bytes, checksum, scope, TaskSequence::new(sequence))?;
+        let record = decoder.decode(bytes, checksum, TaskSequence::new(sequence))?;
         projection
             .apply(&record)
             .map_err(|_invalid| TaskPortError::Corrupt)?;
