@@ -28,6 +28,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Preserve SQLite task head, record and blob read error categories: unavailable
+  storage and exhausted capacity no longer masquerade as database corruption.
+
 - Reject non-regular Linux worker images, registry manifests and lock files
   through nonblocking opens and descriptor type checks, avoiding FIFO hangs.
 
