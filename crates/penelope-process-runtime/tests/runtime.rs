@@ -794,3 +794,6 @@ fn maximum_completion_and_acknowledged_checkpoint_remain_valid() {
         );
     }
 }
+
+#[path = "support/filesystem_paths.rs"]
+mod filesystem_paths;

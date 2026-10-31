@@ -1,8 +1,9 @@
 use penelope_core::task::{Digest, runtime::TaskPortError};
 use rustix::fs::{MemfdFlags, SealFlags, fcntl_add_seals, memfd_create};
 use std::{
-    fs::File,
+    fs::{File, OpenOptions},
     io::{Read, Write},
+    os::unix::fs::OpenOptionsExt,
     path::Path,
 };
 
@@ -15,7 +16,21 @@ impl ProgramImage {
         if max_bytes == 0 || max_bytes > 64 * 1024 * 1024 {
             return Err(TaskPortError::Exhausted);
         }
-        let source = File::open(path).map_err(|_open| TaskPortError::Runtime)?;
+        // Nonblocking open avoids waiting for a FIFO peer before its type is
+        // known. Validate the opened descriptor so path replacement cannot
+        // substitute a different file between the check and the read.
+        let source = OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_NONBLOCK)
+            .open(path)
+            .map_err(|_open| TaskPortError::Runtime)?;
+        if !source
+            .metadata()
+            .map_err(|_stat| TaskPortError::Runtime)?
+            .is_file()
+        {
+            return Err(TaskPortError::Corrupt);
+        }
         let mut bytes = Vec::new();
         source
             .take(max_bytes.saturating_add(1))

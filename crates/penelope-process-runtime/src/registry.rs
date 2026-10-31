@@ -94,9 +94,16 @@ impl Registry {
             .create(true)
             .truncate(false)
             .mode(0o600)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
             .open(self.root.join("registry.lock"))
             .map_err(|_open| TaskPortError::Runtime)?;
+        if !file
+            .metadata()
+            .map_err(|_stat| TaskPortError::Runtime)?
+            .is_file()
+        {
+            return Err(TaskPortError::Corrupt);
+        }
         let deadline = Instant::now()
             .checked_add(self.timeout)
             .ok_or(TaskPortError::Runtime)?;
@@ -143,13 +150,20 @@ impl Registry {
     ) -> Result<Option<SavedExecution>, TaskPortError> {
         let file = match OpenOptions::new()
             .read(true)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
             .open(self.root.join(filename(execution)))
         {
             Ok(file) => file,
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
             Err(_open) => return Err(TaskPortError::Runtime),
         };
+        if !file
+            .metadata()
+            .map_err(|_stat| TaskPortError::Runtime)?
+            .is_file()
+        {
+            return Err(TaskPortError::Corrupt);
+        }
         let mut bytes = Vec::new();
         file.take(173)
             .read_to_end(&mut bytes)
