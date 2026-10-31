@@ -129,7 +129,10 @@ impl TaskGenerationAuthority for SqliteTaskJournal {
         generation: TaskGeneration,
         execution: Option<Digest>,
     ) -> Result<(), TaskPortError> {
-        if scope.definition != self.definition.fingerprint() {
+        if scope.definition != self.definition.fingerprint()
+            || generation == TaskGeneration::ZERO
+            || generation.get() > self.definition.recovery.max_attempts
+        {
             return Err(TaskPortError::Conflict);
         }
         let changed = self.connection.execute("UPDATE runtime_generations SET state=2 WHERE scope=?1 AND generation=?2 AND execution IS ?3 AND state IN (1,2)", params![key(scope), generation.get(), execution.as_ref().map(|id| id.0.as_slice())]).map_err(|error| sql_error(&error))?;
