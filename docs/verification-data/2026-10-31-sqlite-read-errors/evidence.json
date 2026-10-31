@@ -1,0 +1,26 @@
+{
+  "baseline": "9334383800aa84b2ff24bf2d4dd7476b15fa221a",
+  "source": "202d500a0bf29de9cc0e0d23845f0bf81c7fc0e7",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/tasks.rs": "02f0d45abab907e851c17d0fb777d1e6128db8a076fc19c08bef00efe79282e6",
+    "crates/penelope-sqlite/src/fault_tests.rs": "3d96b05a31ee07b186f1e4191895f2899c1fc71d4804ec6f9551f29b0d05560c"
+  },
+  "baseline_misclassifications": 15,
+  "fault_scenarios_per_matrix_run": 21,
+  "repeated_test_processes": 60,
+  "repeated_fault_and_recovery_cases": 420,
+  "artifact_sha256": {
+    "baseline-fixtures.patch": "c2c88840e7e1cf85f46604e6cb9db2f26d9d4fed0645d4cfddf6e211278bbb37",
+    "baseline.log.gz": "4b841d5ebbf71eeed33e6ca6f33aa75ff7f630a7a75674a753224fecf7cc3d83",
+    "clippy.log.gz": "175fb1bcdc3ce787c9b0a3b484e59bac0c09f19d19130a71f6b258d40c21fd26",
+    "fixed.log.gz": "afd73abeed580722114c47dab60980b848c54869893d88abe542c96383c6aa3a",
+    "fmt.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "graph.log.gz": "c84d99043dbfcdcc79b108f8a24170de095c042400d3790883393a07f72c5cf2",
+    "layers.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "msrv.log.gz": "cd289376576d5ebc4a9dfb9fc3f4b014e9c8cb760a9aa9664fa7b1b19dea259d",
+    "repeat.py": "512c5b35d4bca187b9848de782e8bc4dd8af3aca1bcdad934f5519714268bb46",
+    "repeated.jsonl.gz": "ced42b93e5e2aee022996a2128f45d1b87f7fe21947a6295d4d11e924b7b06cb",
+    "verify.py": "f6824c577995863e0fc081ba6f86ae3a8382638ca38b9bb89d3eb0afbf52aefa",
+    "workspace.log.gz": "03639ccc8d28ee674844600bbf697af7c9531ecb23509d0b7ceb4a2e29914f75"
+  }
+}

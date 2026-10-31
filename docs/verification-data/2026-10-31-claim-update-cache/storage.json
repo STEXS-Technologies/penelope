@@ -1,0 +1,5 @@
+{
+  "TMPDIR": null,
+  "tempdir": "/tmp",
+  "filesystem": "/tmp tmpfs tmpfs rw,nosuid,nodev,seclabel,size=32455524k,nr_inodes=1048576,inode64,usrquota\n"
+}

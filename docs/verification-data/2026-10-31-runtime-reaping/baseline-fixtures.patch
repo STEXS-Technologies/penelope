@@ -1,0 +1,95 @@
+diff --git a/crates/penelope-process-runtime/tests/support/fence_contracts.rs b/crates/penelope-process-runtime/tests/support/fence_contracts.rs
+index bb3f4d2..5e61235 100644
+--- a/crates/penelope-process-runtime/tests/support/fence_contracts.rs
++++ b/crates/penelope-process-runtime/tests/support/fence_contracts.rs
+@@ -1,7 +1,7 @@
+ //! Damaged launch evidence and lock contention must never acknowledge a fence.
+ use super::*;
+ use rustix::fs::{FlockOperation, flock};
+-use std::os::unix::fs::symlink;
++use std::os::{fd::AsFd, unix::fs::symlink};
+ 
+ fn manifest(directory: &Path) -> PathBuf {
+     std::fs::read_dir(directory.join("registry"))
+@@ -183,3 +183,81 @@ fn registry_symlink_is_not_followed_and_lock_timeout_does_not_confirm_terminatio
+         .fence(projection.scope(), projection.generation())
+         .unwrap();
+ }
++
++#[test]
++fn reconstructed_fence_reaps_worker_after_original_runtime_is_dropped() {
++    let directory = tempfile::tempdir().unwrap();
++    let mut supervisor = fresh(directory.path(), &[9], 2);
++    supervisor.advance(TaskTick::new(1)).unwrap();
++    let projection = *supervisor.projection();
++    let saved = std::fs::read(manifest(directory.path())).unwrap();
++    let pid = u32::from_be_bytes(saved.get(160..164).unwrap().try_into().unwrap());
++    let owned_pid = rustix::process::Pid::from_raw(i32::try_from(pid).unwrap()).unwrap();
++    let child_fd =
++        rustix::process::pidfd_open(owned_pid, rustix::process::PidfdFlags::empty()).unwrap();
++    let (_journal, runtime) = supervisor.into_parts();
++    drop(runtime);
++    let authority = SqliteTaskJournal::open(
++        &directory.path().join("tasks.db"),
++        projection.definition(),
++        SqliteLimits::default(),
++    )
++    .unwrap();
++    let mut recovered_runtime = Runtime::new(authority, config(directory.path())).unwrap();
++    recovered_runtime
++        .fence(projection.scope(), projection.generation())
++        .unwrap();
++    let retained_process = std::fs::read(format!("/proc/{pid}/stat")).ok();
++    // Clean up the deliberately reproduced baseline leak before asserting, so
++    // even a failing regression test cannot leave its own zombie child behind.
++    let _cleanup = rustix::process::waitid(
++        rustix::process::WaitId::PidFd(child_fd.as_fd()),
++        rustix::process::WaitIdOptions::EXITED | rustix::process::WaitIdOptions::NOHANG,
++    );
++    assert_eq!(retained_process, None, "fenced worker remained in /proc");
++    recovered_runtime
++        .fence(projection.scope(), projection.generation())
++        .unwrap();
++}
++
++#[test]
++fn externally_reaped_worker_can_still_be_fenced_by_original_runtime() {
++    let directory = tempfile::tempdir().unwrap();
++    let mut supervisor = fresh(directory.path(), &[9], 2);
++    supervisor.advance(TaskTick::new(1)).unwrap();
++    let projection = *supervisor.projection();
++    let saved = std::fs::read(manifest(directory.path())).unwrap();
++    let pid = u32::from_be_bytes(saved.get(160..164).unwrap().try_into().unwrap());
++    let owned_pid = rustix::process::Pid::from_raw(i32::try_from(pid).unwrap()).unwrap();
++    let child_fd =
++        rustix::process::pidfd_open(owned_pid, rustix::process::PidfdFlags::empty()).unwrap();
++    let (_journal, mut runtime) = supervisor.into_parts();
++    // Model another host reaper consuming this exact child's exit status.
++    rustix::process::pidfd_send_signal(&child_fd, rustix::process::Signal::KILL).unwrap();
++    assert!(
++        rustix::process::waitid(
++            rustix::process::WaitId::PidFd(child_fd.as_fd()),
++            rustix::process::WaitIdOptions::EXITED,
++        )
++        .unwrap()
++        .is_some()
++    );
++    runtime
++        .fence(projection.scope(), projection.generation())
++        .unwrap();
++    runtime
++        .fence(projection.scope(), projection.generation())
++        .unwrap();
++    assert_eq!(
++        runtime.start(TaskStart {
++            scope: projection.scope(),
++            generation: projection.generation(),
++            definition: projection.definition(),
++            execution_deadline: projection.execution_deadline(),
++            input_schema: 1,
++            input: &[9],
++            checkpoint: None,
++        }),
++        Err(TaskPortError::Conflict)
++    );
++}

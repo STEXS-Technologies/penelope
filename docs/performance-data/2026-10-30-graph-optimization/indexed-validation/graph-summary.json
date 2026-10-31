@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "benchmark": "graph_saga",
+  "revisions": {
+    "before": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+    "after": "edf11943113b7a65b80b9fae5c3ac43ebcef2da9"
+  },
+  "bootstrap_seed": 3030,
+  "bootstrap_resamples": 10000,
+  "method": "paired log-ratio geometric mean; percentile bootstrap over round pairs",
+  "limitations": "exploratory intervals; no noninferiority margin or release acceptance test",
+  "metrics": {
+    "ns_per_operation": {
+      "samples_per_revision": 40,
+      "before": {
+        "median": 1005.37648,
+        "min": 962.13108,
+        "max": 1598.7371
+      },
+      "after": {
+        "median": 852.1971149999999,
+        "min": 810.08837,
+        "max": 1313.72124
+      },
+      "median_delta_percent": -15.236020341355117,
+      "paired_geometric_mean_delta_percent": -15.350202015133346,
+      "paired_bootstrap_percentile_95_percent": [
+        -20.201010164737117,
+        -10.069325379253888
+      ]
+    },
+    "task-clock": {
+      "samples_per_revision": 40,
+      "before": {
+        "median": 101.4702745,
+        "min": 97.112316,
+        "max": 161.934763
+      },
+      "after": {
+        "median": 86.214688,
+        "min": 82.067558,
+        "max": 133.419113
+      },
+      "median_delta_percent": -15.03453752852517,
+      "paired_geometric_mean_delta_percent": -15.147018002139948,
+      "paired_bootstrap_percentile_95_percent": [
+        -19.97651882141072,
+        -9.871190269732066
+      ]
+    },
+    "instructions": {
+      "samples_per_revision": 40,
+      "before": {
+        "median": 1886568061.5,
+        "min": 1886216808.0,
+        "max": 1887096321.0
+      },
+      "after": {
+        "median": 1552154406.5,
+        "min": 1551918620.0,
+        "max": 1552452010.0
+      },
+      "median_delta_percent": -17.726031825966004,
+      "paired_geometric_mean_delta_percent": -17.726477020271183,
+      "paired_bootstrap_percentile_95_percent": [
+        -17.729852021532444,
+        -17.72325829496015
+      ]
+    },
+    "cycles": {
+      "samples_per_revision": 40,
+      "before": {
+        "median": 540294126.0,
+        "min": 516443079.0,
+        "max": 837367605.0
+      },
+      "after": {
+        "median": 457735897.0,
+        "min": 435660111.0,
+        "max": 687387367.0
+      },
+      "median_delta_percent": -15.28023811978293,
+      "paired_geometric_mean_delta_percent": -15.127171886009814,
+      "paired_bootstrap_percentile_95_percent": [
+        -19.82428361685328,
+        -10.00081854282267
+      ]
+    }
+  }
+}

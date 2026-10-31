@@ -1,0 +1,8 @@
+{"corrupt":false,"elapsed_ns":6318484,"iterations":1000,"size":0}
+{"corrupt":true,"elapsed_ns":6337802,"iterations":1000,"size":0}
+{"corrupt":false,"elapsed_ns":6501618,"iterations":1000,"size":32}
+{"corrupt":true,"elapsed_ns":6387447,"iterations":1000,"size":32}
+{"corrupt":false,"elapsed_ns":8217515,"iterations":1000,"size":4096}
+{"corrupt":true,"elapsed_ns":8210892,"iterations":1000,"size":4096}
+{"corrupt":false,"elapsed_ns":58092445,"iterations":128,"size":1048576}
+{"corrupt":true,"elapsed_ns":56011473,"iterations":128,"size":1048576}

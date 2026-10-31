@@ -1,0 +1,210 @@
+[
+  {
+    "campaign": 0,
+    "size": 0,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 6206.90011080163,
+    "candidate_ns_per_call": 4939.341553424846,
+    "change_percent": -20.421765047755446,
+    "bootstrap_95_percent": [
+      -20.75917471916976,
+      -20.039742633443243
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 0,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 6180.409498306578,
+    "candidate_ns_per_call": 4921.312603329664,
+    "change_percent": -20.372386252430324,
+    "bootstrap_95_percent": [
+      -20.84534114949176,
+      -19.968905422386975
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 6198.837915473589,
+    "candidate_ns_per_call": 4973.512239411345,
+    "change_percent": -19.767022347907677,
+    "bootstrap_95_percent": [
+      -20.049612695857228,
+      -19.456777773672922
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 32,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 6184.48162967885,
+    "candidate_ns_per_call": 4966.768801916707,
+    "change_percent": -19.689812350940286,
+    "bootstrap_95_percent": [
+      -19.942414649793175,
+      -19.450942287567646
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 8044.407007512461,
+    "candidate_ns_per_call": 6844.670588955485,
+    "change_percent": -14.913919912761516,
+    "bootstrap_95_percent": [
+      -16.572999567886793,
+      -12.705510915771058
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 4096,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 7951.970688818829,
+    "candidate_ns_per_call": 6708.539890244722,
+    "change_percent": -15.636762850779586,
+    "bootstrap_95_percent": [
+      -15.922943210514232,
+      -15.377470628614756
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 438260.25114864943,
+    "candidate_ns_per_call": 436623.0870781736,
+    "change_percent": -0.3735597892314898,
+    "bootstrap_95_percent": [
+      -0.5412480026117231,
+      -0.2037950256263487
+    ]
+  },
+  {
+    "campaign": 0,
+    "size": 1048576,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 423450.7101318775,
+    "candidate_ns_per_call": 422305.9866793054,
+    "change_percent": -0.27033216031578633,
+    "bootstrap_95_percent": [
+      -0.5679705445047982,
+      0.026662419990305476
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 6173.829461480745,
+    "candidate_ns_per_call": 4947.168310226344,
+    "change_percent": -19.86872424817831,
+    "bootstrap_95_percent": [
+      -20.312071242296085,
+      -19.45629172326709
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 0,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 6166.085229640726,
+    "candidate_ns_per_call": 4925.01989782829,
+    "change_percent": -20.127281501828147,
+    "bootstrap_95_percent": [
+      -20.67523130353374,
+      -19.601783080919624
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 6202.184977731923,
+    "candidate_ns_per_call": 4969.566445908065,
+    "change_percent": -19.87394017188135,
+    "bootstrap_95_percent": [
+      -20.364571494238856,
+      -19.498639077839254
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 32,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 6167.69098718437,
+    "candidate_ns_per_call": 4954.741028774485,
+    "change_percent": -19.666192111930357,
+    "bootstrap_95_percent": [
+      -19.963302381943343,
+      -19.32142472331404
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 8011.2133971884205,
+    "candidate_ns_per_call": 6763.884732981997,
+    "change_percent": -15.569784530320755,
+    "bootstrap_95_percent": [
+      -15.812345999271049,
+      -15.359996188727514
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 4096,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 8032.873996376319,
+    "candidate_ns_per_call": 6713.811336554214,
+    "change_percent": -16.420806057920807,
+    "bootstrap_95_percent": [
+      -18.16685065571115,
+      -15.37674524920095
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "corrupt": false,
+    "blocks": 12,
+    "baseline_ns_per_call": 437951.7792070973,
+    "candidate_ns_per_call": 436402.449438359,
+    "change_percent": -0.353767205043354,
+    "bootstrap_95_percent": [
+      -0.4441710667734642,
+      -0.26347079395668915
+    ]
+  },
+  {
+    "campaign": 1,
+    "size": 1048576,
+    "corrupt": true,
+    "blocks": 12,
+    "baseline_ns_per_call": 422993.50680609816,
+    "candidate_ns_per_call": 421514.9332648986,
+    "change_percent": -0.34954993809801954,
+    "bootstrap_95_percent": [
+      -0.4124007958395001,
+      -0.28466163518914506
+    ]
+  }
+]

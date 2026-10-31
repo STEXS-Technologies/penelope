@@ -1,0 +1,24 @@
+{
+  "source_parent": "d340aef997b39d4e354c2951861064ecf50b0d37",
+  "sources_sha256": {
+    "crates/penelope-sqlite/tests/process.rs": "a845e7c6f3f5fce77e3497ba4e74a81c573aef96cb02f698025838d1f3b4ad55",
+    "crates/penelope-sqlite/tests/support/timer_cancel_race.rs": "11657096a913f9f3450574722223579c1a41e092a8502c064ee3d5095664f4c8",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-sqlite/src/leases.rs": "33afbb84adb4391b06d860a747ce9a71e97eb4be97d900a3da9fe47564a6e640"
+  },
+  "logs_sha256": {
+    "process-stable.txt": "6402c59d43048b43f33754edf32e9dd06f2b108aedc449e63ec0835497a47977",
+    "process-1.85.0.txt": "65a07a1cb98fd09be4cfd1b8dac26bd0ef5e56ef23522ca29acf9016448016a0",
+    "repeated-stable.txt": "34976a5d0f986954ef45d0a83fed1b4f01465e81510976145f7e29c649f3c010",
+    "repeated-1.85.0.txt": "8a431927bb91ff9c1c6b1e98ecc1b67d5d1b4902a7b0514359894a00c6d30f26",
+    "negative-control.txt": "92fe0f62f4d64d54b84490d7ac78ff071b31aa1603e05c72db2f9f401b58ae94",
+    "clippy.txt": "046aedfd5c250ba76ef20bf15ab3df5b58cb08d21532e7b679cd6b59dc1fbd9e",
+    "static-checks.txt": "ae8b2e96499db594d35252c08ae4e4b9401853a634c86a30b00dd5f094447d9a",
+    "graphify.txt": "d6ed11d2775835ee7aa5ce1d0ad5262a9f1aae83dff4ad834a35ebe25e43431e"
+  },
+  "repetitions_per_toolchain": 20,
+  "races_per_repetition": 16,
+  "total_extra_raced_histories": 640,
+  "serial_reference_histories_in_extra_repetitions": 80,
+  "negative_control": "Temporarily removed AND state IN (0,1) from timer_lease query. New test rejected acknowledged state 1 in place of cancelled state 2. Production source restored before qualification."
+}

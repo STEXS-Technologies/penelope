@@ -1,0 +1,24 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+     Running tests/process.rs (target/debug/deps/process-258b40e9e26dba7a)
+
+running 1 test
+test lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work ... FAILED
+
+failures:
+
+---- lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work stdout ----
+
+thread 'lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work' (3422292) panicked at crates/penelope-sqlite/tests/support/lease_contracts.rs:673:9:
+assertion `left == right` failed
+  left: Ok(())
+ right: Err(Invariant)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    lease_contracts::ignored_token_counter_update_returns_no_lease_and_preserves_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test process`

@@ -1,0 +1,296 @@
+[
+  {
+    "external_commit": false,
+    "size": 0,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 28075.77734375,
+    "after_ns": 28295.556640625,
+    "change_percent": 1.013181591803794,
+    "ci95": [
+      -0.9073119328713302,
+      3.136157359707334
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 0,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 28075.77734375,
+    "after_ns": 28666.613606770832,
+    "change_percent": 1.9060984511102164,
+    "ci95": [
+      -0.24674467838294994,
+      4.333816375515776
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 0,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 28295.556640625,
+    "after_ns": 28666.613606770832,
+    "change_percent": 1.170914278065576,
+    "ci95": [
+      -1.9314045773173305,
+      4.719018440484725
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 32,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 27506.073567708332,
+    "after_ns": 28280.675130208332,
+    "change_percent": 2.317766345739097,
+    "ci95": [
+      0.12377662369213117,
+      5.212311397134598
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 32,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 27506.073567708332,
+    "after_ns": 27825.543619791668,
+    "change_percent": 1.3863713081887248,
+    "ci95": [
+      -0.802293582030902,
+      4.456037261747757
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 32,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 28280.675130208332,
+    "after_ns": 27825.543619791668,
+    "change_percent": -0.5473848330650497,
+    "ci95": [
+      -3.9804097599115615,
+      2.978876340504854
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 4096,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 29562.1826171875,
+    "after_ns": 29860.9541015625,
+    "change_percent": 1.1957720536495908,
+    "ci95": [
+      -0.191374526763989,
+      2.5863317531124563
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 4096,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 29562.1826171875,
+    "after_ns": 30042.236653645832,
+    "change_percent": 1.9249250107943188,
+    "ci95": [
+      -0.2725015078830319,
+      4.152572808914334
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 4096,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 29860.9541015625,
+    "after_ns": 30042.236653645832,
+    "change_percent": 0.7439677934314917,
+    "ci95": [
+      -1.0583118269654928,
+      2.8033501904487115
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 1048576,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 492297.8763020833,
+    "after_ns": 492324.0237630208,
+    "change_percent": 0.055877565540222086,
+    "ci95": [
+      -0.6021630033396267,
+      0.5776488205653412
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 1048576,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 492297.8763020833,
+    "after_ns": 492971.3942057292,
+    "change_percent": 0.1762127572531816,
+    "ci95": [
+      -0.46773840570332964,
+      0.8741415931948623
+    ]
+  },
+  {
+    "external_commit": false,
+    "size": 1048576,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 492324.0237630208,
+    "after_ns": 492971.3942057292,
+    "change_percent": 0.1292894479406804,
+    "ci95": [
+      -0.42343750918951195,
+      0.7606835909665525
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 0,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 37303.750651041664,
+    "after_ns": 199731.99088541666,
+    "change_percent": 439.6141262272332,
+    "ci95": [
+      420.73458772587145,
+      452.82214313008876
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 0,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 37303.750651041664,
+    "after_ns": 134831.21614583334,
+    "change_percent": 264.1542675387927,
+    "ci95": [
+      252.86534460474465,
+      271.1339538198017
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 0,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 199731.99088541666,
+    "after_ns": 134831.21614583334,
+    "change_percent": -32.44106734396869,
+    "ci95": [
+      -33.23979075465457,
+      -31.758548126059953
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 32,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 36808.252278645836,
+    "after_ns": 199559.80696614584,
+    "change_percent": 443.51522348405496,
+    "ci95": [
+      431.28146825327656,
+      457.10097620666863
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 32,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 36808.252278645836,
+    "after_ns": 133664.04361979166,
+    "change_percent": 264.51763597478794,
+    "ci95": [
+      255.1609614153569,
+      270.93326253250507
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 32,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 199559.80696614584,
+    "after_ns": 133664.04361979166,
+    "change_percent": -32.88074555786442,
+    "ci95": [
+      -34.1487659464869,
+      -31.940211746966682
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 4096,
+    "before": "pre_guard",
+    "after": "baseline",
+    "blocks": 24,
+    "before_ns": 39718.507161458336,
+    "after_ns": 204659.775390625,
+    "change_percent": 415.66054484111226,
+    "ci95": [
+      408.32447074614373,
+      425.1138614173772
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 4096,
+    "before": "pre_guard",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 39718.507161458336,
+    "after_ns": 139448.98567708334,
+    "change_percent": 251.72881473125804,
+    "ci95": [
+      245.21717576382466,
+      256.7139660827056
+    ]
+  },
+  {
+    "external_commit": true,
+    "size": 4096,
+    "before": "baseline",
+    "after": "candidate",
+    "blocks": 24,
+    "before_ns": 204659.775390625,
+    "after_ns": 139448.98567708334,
+    "change_percent": -31.738941087194732,
+    "ci95": [
+      -32.96402780138578,
+      -30.761479408678056
+    ]
+  }
+]

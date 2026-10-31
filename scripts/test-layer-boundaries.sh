@@ -51,3 +51,52 @@ PY_KIND
   fi
 done
 printf '%s\n' 'Layer gate permits test-only infrastructure and rejects normal/build clients'
+
+for dependency_kind in normal build; do
+  python3 - "$gate_test_dir" "$dependency_kind" <<'PY_SQLITE_KIND'
+import json, sys
+from pathlib import Path
+directory, kind = Path(sys.argv[1]), sys.argv[2]
+metadata = json.loads((directory / 'baseline.json').read_text())
+package = next(p for p in metadata['packages'] if p['name'] == 'penelope-executor')
+dependency = next(d for d in package['dependencies'] if d['name'] == 'penelope-sqlite')
+dependency['kind'] = None if kind == 'normal' else kind
+(directory / 'metadata.json').write_text(json.dumps(metadata))
+PY_SQLITE_KIND
+  if ./scripts/check-layer-boundaries.sh > "$gate_test_dir/result.txt" 2>&1; then
+    printf 'gate incorrectly admitted executor %s SQLite adapter dependency\n' "$dependency_kind" >&2
+    exit 1
+  elif ! grep -Fq 'SQLite adapter dependency must remain dev-only' "$gate_test_dir/result.txt"; then
+    cat "$gate_test_dir/result.txt" >&2
+    exit 1
+  fi
+done
+
+# Dedicated adapters receive dependency-specific exceptions, not a blanket
+# infrastructure exemption. Unknown packages remain infrastructure-free.
+for adapter_case in sqlite-rusqlite sqlite-sqlx unknown-rusqlite; do
+  python3 - "$gate_test_dir" "$adapter_case" <<'PY_ADAPTER'
+import json, sys
+from pathlib import Path
+directory, case = Path(sys.argv[1]), sys.argv[2]
+metadata = json.loads((directory / 'baseline.json').read_text())
+name = 'penelope-sqlite' if case.startswith('sqlite-') else 'penelope-unapproved-adapter'
+dependency = case.split('-', 1)[1]
+package = next((p for p in metadata['packages'] if p['name'] == name), None)
+if package is None:
+    package = {'name': name, 'dependencies': []}
+    metadata['packages'].append(package)
+package['dependencies'].append({'name': dependency, 'kind': None})
+(directory / 'metadata.json').write_text(json.dumps(metadata))
+PY_ADAPTER
+  if [[ "$adapter_case" == sqlite-rusqlite ]]; then
+    ./scripts/check-layer-boundaries.sh
+  elif ./scripts/check-layer-boundaries.sh > "$gate_test_dir/result.txt" 2>&1; then
+    printf 'gate incorrectly admitted %s\n' "$adapter_case" >&2
+    exit 1
+  elif ! grep -Fq 'production infrastructure dependency found' "$gate_test_dir/result.txt"; then
+    cat "$gate_test_dir/result.txt" >&2
+    exit 1
+  fi
+done
+printf '%s\n' 'Adapter allowlist permits only SQLite/rusqlite and rejects unrelated clients'

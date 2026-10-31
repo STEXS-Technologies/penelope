@@ -1,0 +1,10 @@
+{
+  "hex": "23ff3f70726f636573735f636f6d6d69747323",
+  "sha256": "8ea3beab2a3b8ff361f086e6dc3b3a4f3c88dbbe03bec27d3da99611b4517ac2",
+  "original_sha1": "7d268651837c11479fc976173ffda59acd08d8b4",
+  "failure": "Original fresh-database open failed before input-dependent database operations; /tmp quota errors observed in reproduction. Fixed input passed 10000 repetitions with local-filesystem TMPDIR. Full random campaign remains pending.",
+  "fixed_input_replay_100": "passed",
+  "fixed_input_replay_10000_on_tmp": "failed during read; strace also reported Disk quota exceeded writing its diagnostic log",
+  "fixed_input_replay_on_local_filesystem": "10000 repetitions passed exit 0 without strace; sanitizer enabled",
+  "fixed_input_replay_under_strace": "10000 input repetitions completed; process exit 1 from LeakSanitizer incompatibility with ptrace, not a clean sanitizer pass"
+}

@@ -1,0 +1,66 @@
+{
+  "target/registry-latency-baseline-fence": {
+    "sha256": "eebe5c09fb50edbdb01e48617c98ee151e7972ffea5e462657107282851d6283",
+    "registry_sha256": "421cdee501047158e706df958d9b04b58593793e843fbb0d175baf64f9dc2ef4",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/registry-latency-baseline-dispatch": {
+    "sha256": "423ecfc4abcb6b6a4e8802b9af73f55757c5f1f9bab64da9db6e77fa63a7cff4",
+    "registry_sha256": "421cdee501047158e706df958d9b04b58593793e843fbb0d175baf64f9dc2ef4",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/registry-latency-candidate-fence": {
+    "sha256": "4a5d481ae4e1bafcca3f890de7cca4e8cd8b09bbad9f5f03e95fc2e6ffb52434",
+    "registry_sha256": "ab5f405cfb99e35c1c9607f7b95fdf93f4491feaf341af85a2f51e67e0b5a879",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  },
+  "target/registry-latency-candidate-dispatch": {
+    "sha256": "2a9b0fccac2565a47ae6c5eaa6af2b0fcfc08ac40a5550098327d2663ba20828",
+    "registry_sha256": "ab5f405cfb99e35c1c9607f7b95fdf93f4491feaf341af85a2f51e67e0b5a879",
+    "command": [
+      "cargo",
+      "bench",
+      "-p",
+      "penelope-process-runtime",
+      "--bench",
+      "fence",
+      "--bench",
+      "dispatch",
+      "--no-run",
+      "--message-format=json"
+    ]
+  }
+}

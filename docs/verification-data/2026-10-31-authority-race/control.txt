@@ -1,0 +1,21 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s
+     Running tests/tasks.rs (target/debug/deps/tasks-46cb878fb81acc10)
+
+running 1 test
+
+thread 'authority_race::contending_reservations_and_fences_preserve_serial_histories_and_stop_identity' (574047) panicked at crates/penelope-sqlite/tests/support/authority_race.rs:78:5:
+assertion `left == right` failed
+  left: Ok(Reserved)
+ right: Err(Conflict)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test authority_race::contending_reservations_and_fences_preserve_serial_histories_and_stop_identity ... FAILED
+
+failures:
+
+failures:
+    authority_race::contending_reservations_and_fences_preserve_serial_histories_and_stop_identity
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 43 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p penelope-sqlite --test tasks`

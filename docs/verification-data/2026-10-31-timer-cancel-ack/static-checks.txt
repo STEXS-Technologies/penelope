@@ -1,0 +1,4 @@
+cargo fmt --all -- --check
+exit status: 0
+bash scripts/check-layer-boundaries.sh
+exit status: 0

@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/tasks.rs (target/worker-audit-msrv/debug/deps/tasks-ee5dec5ca39b184c)
+
+running 1 test
+busy=true pinned_records=2 released_records=3 truncated=true history_unchanged=true reopened=true
+test wal_checkpoint::wal_checkpoint_reports_busy_then_truncates_without_changing_task_history ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 42 filtered out; finished in 0.01s
+

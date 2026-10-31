@@ -1,0 +1,5 @@
+{
+  "TMPDIR": "/home/ac/projects/penelope/target/qualification-temp",
+  "tempdir": "/home/ac/projects/penelope/target/qualification-temp",
+  "filesystem": "/home /dev/nvme0n1p3[/home] btrfs rw,noatime,seclabel,compress=zstd:1,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/home\n"
+}

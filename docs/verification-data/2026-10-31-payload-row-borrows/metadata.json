@@ -1,0 +1,17 @@
+{
+  "candidate": "e425a04f4c468b84564c476706c31e94fdab5d05",
+  "baseline": "ea5a230e847a6eca9c088e8811c458d92fc37d87",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/payloads.rs": "5e03ab67fcbdf80cf31812df4e1ca37ebf1167c52c8bc91e5876e4ba2d975b28",
+    "crates/penelope-sqlite/Cargo.toml": "6d1e454944887b35cd725572ace64e391f2ee46768f30a8481798f303e569604",
+    "crates/penelope-sqlite/tests/process.rs": "44c75ddd51921598313cc5019f7cbd3aa33211024123ce70ef849a12b049bc78",
+    "crates/penelope-sqlite/tests/support/payload_columns.rs": "d9753b8231db6edc7c072b03931e9f85a5da05cb1009ff8f79f78ed15594b55b",
+    "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+    "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+    "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514"
+  },
+  "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+  "experiments": "initial nested-result variant, then final balanced baseline/nested/simplified comparison; original binaries retained and reused, unchanged fixture sources",
+  "timing_scope": "single CPU, public SQLite process payload latency; separate Rust allocation traffic, excludes SQLite C heap; not overall application overhead"
+}

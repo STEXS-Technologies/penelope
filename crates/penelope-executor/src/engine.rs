@@ -344,46 +344,78 @@ impl ProcessGraphDefinition {
         if self.transitions.len() > MAX_GRAPH_TRANSITIONS {
             return Err(GraphDefinitionError::TransitionLimitExceeded);
         }
-        let step_ids: BTreeSet<&StepId> = self.steps.iter().map(|step| &step.step_id).collect();
-        if step_ids.len() != self.steps.len() {
+        let mut step_ids: Vec<&StepId> = self.steps.iter().map(|step| &step.step_id).collect();
+        step_ids.sort_unstable();
+        if step_ids
+            .iter()
+            .zip(step_ids.iter().skip(1))
+            .any(|(left, right)| left == right)
+        {
             return Err(GraphDefinitionError::DuplicateStep);
         }
-        if !step_ids.contains(&self.entry_step_id) {
-            return Err(GraphDefinitionError::UnknownEntryStep);
-        }
-        let mut transition_keys = BTreeSet::new();
+        let entry_index = step_ids
+            .binary_search(&&self.entry_step_id)
+            .map_err(|_missing| GraphDefinitionError::UnknownEntryStep)?;
+        // Each bounded source step has exactly three possible outcome keys.
+        // Track them directly rather than allocating a tree of borrowed IDs.
+        let mut transition_keys = [0_u8; MAX_DEFINITION_STEPS];
         for transition in &self.transitions {
-            if !step_ids.contains(&transition.from_step) {
-                return Err(GraphDefinitionError::UnknownSourceStep);
-            }
+            let source_index = step_ids
+                .binary_search(&&transition.from_step)
+                .map_err(|_missing| GraphDefinitionError::UnknownSourceStep)?;
             if let Some(to_step) = &transition.to_step {
-                if !step_ids.contains(to_step) {
+                if step_ids.binary_search(&to_step).is_err() {
                     return Err(GraphDefinitionError::UnknownDestinationStep);
                 }
             } else if transition.on == GraphTransitionOutcome::RetryableFailure {
                 return Err(GraphDefinitionError::MissingDestination);
             }
-            if !transition_keys.insert((&transition.from_step, transition.on)) {
+            let mask = match transition.on {
+                GraphTransitionOutcome::Succeeded => 1,
+                GraphTransitionOutcome::RetryableFailure => 2,
+                GraphTransitionOutcome::TerminalFailure => 4,
+            };
+            let seen = transition_keys
+                .get_mut(source_index)
+                .ok_or(GraphDefinitionError::UnknownSourceStep)?;
+            if *seen & mask != 0 {
                 return Err(GraphDefinitionError::DuplicateTransition);
             }
+            *seen |= mask;
         }
-        let mut reachable = BTreeSet::new();
-        let mut pending = vec![&self.entry_step_id];
-        while let Some(step_id) = pending.pop() {
-            if !reachable.insert(step_id) {
-                continue;
-            }
+        let mut reachable = [false; MAX_DEFINITION_STEPS];
+        *reachable
+            .get_mut(entry_index)
+            .ok_or(GraphDefinitionError::UnknownEntryStep)? = true;
+        let mut pending = vec![entry_index];
+        while let Some(step_index) = pending.pop() {
+            let step_id = *step_ids
+                .get(step_index)
+                .ok_or(GraphDefinitionError::UnknownSourceStep)?;
             for transition in self
                 .transitions
                 .iter()
                 .filter(|edge| &edge.from_step == step_id)
             {
                 if let Some(next) = &transition.to_step {
-                    pending.push(next);
+                    let next_index = step_ids
+                        .binary_search(&next)
+                        .map_err(|_missing| GraphDefinitionError::UnknownDestinationStep)?;
+                    let reached = reachable
+                        .get_mut(next_index)
+                        .ok_or(GraphDefinitionError::UnknownDestinationStep)?;
+                    if !*reached {
+                        *reached = true;
+                        pending.push(next_index);
+                    }
                 }
             }
         }
-        if step_ids.iter().any(|step_id| !reachable.contains(step_id)) {
+        if reachable
+            .iter()
+            .take(step_ids.len())
+            .any(|reached| !reached)
+        {
             return Err(GraphDefinitionError::UnreachableStep);
         }
         Ok(())
@@ -1087,6 +1119,33 @@ pub enum EngineError {
     ManualResolutionRequiresEscalation,
 }
 
+// Keep the larger scratch frame out of the common small-definition path.
+#[inline(never)]
+fn large_linear_steps_have_duplicate_ids(steps: &[StepPlan]) -> Result<bool, EngineError> {
+    let first = steps.first().ok_or(EngineError::EmptyDefinition)?;
+    let mut storage = [&first.step_id; MAX_DEFINITION_STEPS];
+    let ids = storage
+        .get_mut(..steps.len())
+        .ok_or(EngineError::DefinitionStepLimitExceeded)?;
+    for (id, step) in ids.iter_mut().zip(steps) {
+        *id = &step.step_id;
+    }
+    // Small-sort implementations can do quadratic work on reverse input.
+    // Strict descent already proves uniqueness, without sorting or mutation.
+    if ids
+        .iter()
+        .zip(ids.iter().skip(1))
+        .all(|(left, right)| left > right)
+    {
+        return Ok(false);
+    }
+    ids.sort_unstable();
+    Ok(ids
+        .iter()
+        .zip(ids.iter().skip(1))
+        .any(|(left, right)| left == right))
+}
+
 impl LinearSagaDefinition {
     /// Validates the definition's minimum executable invariant.
     ///
@@ -1094,18 +1153,20 @@ impl LinearSagaDefinition {
     ///
     /// Returns [`EngineError::EmptyDefinition`] when no step is declared.
     pub fn validate(&self) -> Result<(), EngineError> {
-        if self.steps.is_empty() {
-            return Err(EngineError::EmptyDefinition);
-        }
-        if self.steps.len() > MAX_DEFINITION_STEPS {
-            return Err(EngineError::DefinitionStepLimitExceeded);
-        }
-        if self.steps.iter().enumerate().any(|(index, step)| {
-            self.steps
-                .iter()
-                .skip(index.saturating_add(1))
-                .any(|other_step| other_step.step_id == step.step_id)
-        }) {
+        let duplicate = match self.steps.len() {
+            0 => return Err(EngineError::EmptyDefinition),
+            // The common path needs only the empty/threshold branches, keeping
+            // both the larger scratch frame and an extra bounds branch out.
+            1..=16 => self.steps.iter().enumerate().any(|(index, step)| {
+                self.steps
+                    .iter()
+                    .skip(index.saturating_add(1))
+                    .any(|other_step| other_step.step_id == step.step_id)
+            }),
+            17..=MAX_DEFINITION_STEPS => large_linear_steps_have_duplicate_ids(&self.steps)?,
+            _ => return Err(EngineError::DefinitionStepLimitExceeded),
+        };
+        if duplicate {
             return Err(EngineError::DuplicateStepId);
         }
         if self.steps.iter().any(|step| {
@@ -1771,13 +1832,16 @@ fn terminal_projection(
     status: SagaStatus,
 ) -> LinearSagaProjection {
     LinearSagaProjection {
+        definition_id: projection.definition_id.clone(),
+        definition_version: projection.definition_version.clone(),
+        definition_digest: projection.definition_digest,
+        retry_due_at: projection.retry_due_at,
         next_step_index,
         current_attempt: projection.current_attempt,
         active_action_id: None,
         issued_action_ids: projection.issued_action_ids.clone(),
         compensable_step_indices,
         status,
-        ..projection.clone()
     }
 }
 
@@ -1793,7 +1857,9 @@ fn fresh_action_id(
 }
 
 fn issued_ids_after(projection: &LinearSagaProjection, action_id: ActionId) -> Vec<ActionId> {
-    let mut issued_action_ids = projection.issued_action_ids.clone();
+    let mut issued_action_ids =
+        Vec::with_capacity(projection.issued_action_ids.len().saturating_add(1));
+    issued_action_ids.extend_from_slice(&projection.issued_action_ids);
     issued_action_ids.push(action_id);
     issued_action_ids
 }
@@ -2040,6 +2106,59 @@ mod tests {
                     compensation: None,
                 },
             ],
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn terminal_projection_preserves_reference_fields(
+            attempt in any::<u32>(),
+            next_index in any::<usize>(),
+            due in proptest::option::of(any::<u64>()),
+            history in proptest::collection::vec(any::<bool>(), 0..128),
+            compensable in proptest::collection::vec(any::<usize>(), 0..128),
+            replacement in proptest::collection::vec(any::<usize>(), 0..128),
+            active in any::<bool>(),
+            status_index in 0_u8..6,
+        ) {
+            let status = match status_index {
+                0 => SagaStatus::Running,
+                1 => SagaStatus::Compensating,
+                2 => SagaStatus::Completed,
+                3 => SagaStatus::Escalated,
+                4 => SagaStatus::Cancelled,
+                _ => SagaStatus::Compensated,
+            };
+            let projection = LinearSagaProjection {
+                definition_id: id("def_reference"),
+                definition_version: id("dfv_reference"),
+                definition_digest: ContentDigest([42; 32]),
+                next_step_index: 17,
+                current_attempt: attempt,
+                retry_due_at: due.map(LogicalTime),
+                active_action_id: active.then(|| id("act_reference")),
+                issued_action_ids: history.into_iter().map(|second| {
+                    if second { id("act_second") } else { id("act_first") }
+                }).collect(),
+                compensable_step_indices: compensable,
+                status: SagaStatus::Running,
+            };
+            // Original expression intentionally clones overwritten fields.
+            let reference = LinearSagaProjection {
+                next_step_index: next_index,
+                current_attempt: projection.current_attempt,
+                active_action_id: None,
+                issued_action_ids: projection.issued_action_ids.clone(),
+                compensable_step_indices: replacement.clone(),
+                status,
+                ..projection.clone()
+            };
+            prop_assert_eq!(
+                terminal_projection(&projection, next_index, replacement, status), reference
+            );
+            let mut history_reference = projection.issued_action_ids.clone();
+            history_reference.push(id("act_next"));
+            prop_assert_eq!(issued_ids_after(&projection, id("act_next")), history_reference);
         }
     }
 

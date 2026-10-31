@@ -1,0 +1,562 @@
+[
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 0,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 1,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 2,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 3,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 4,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 5,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 6,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 7,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 8,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 9,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 10,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 11,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 12,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 13,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 14,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 15,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 16,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 17,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 18,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 19,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 20,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 21,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 22,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 23,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "ports",
+    "repeat": 24,
+    "binary_sha256": "ee6fc4efc48ed3a50a85c876ab96eb724e93d0771ba3bb0630dce3f51e3fd9a0",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 0,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 1,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 2,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 3,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.29s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 4,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 5,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 6,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.22s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 7,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 8,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.22s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "stable",
+    "kind": "crash",
+    "repeat": 9,
+    "binary_sha256": "a2c418260d812c65cc6896af74a6f430ce58835792ba696a8970189505b348cf",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.22s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 0,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 1,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 2,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 3,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 4,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 5,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.14s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 6,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.09s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 7,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 8,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 9,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 10,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 11,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 12,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 13,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 14,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 15,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 16,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 17,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 18,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 19,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 20,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 21,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 22,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 23,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.07s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "ports",
+    "repeat": 24,
+    "binary_sha256": "43274f75b5ac29e55319ec8a396d47494cccf6f20fbd8f3e2343e05e3defe0e3",
+    "stdout": "\nrunning 5 tests\ntest claim_indexes::index_upgrade_respects_database_page_limit_and_recovers_after_limit_increase ... ok\ntest claim_indexes::indexed_outbox_skips_acknowledged_actions_and_unexpired_leases ... ok\ntest claim_indexes::indexed_timer_claims_preserve_due_order_ties_limits_and_expiry_boundaries ... ok\ntest claim_indexes::second_index_creation_failure_rolls_back_version_first_index_and_rows ... ok\ntest claim_indexes::version_four_upgrade_preserves_live_outbox_and_timer_leases ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.08s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 0,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 1,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 2,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 3,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.23s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 4,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 5,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 6,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 7,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 8,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  },
+  {
+    "compiler": "1.85.0",
+    "kind": "crash",
+    "repeat": 9,
+    "binary_sha256": "faf4de9972f0589741f091d0ce2c7e37fe36474d3ecfcdb2e03d582bce25c648",
+    "stdout": "\nrunning 1 test\ntest schema::tests::sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences ... \nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\n\nrunning 1 test\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.24s\n\n",
+    "stderr": ""
+  }
+]

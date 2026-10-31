@@ -1,0 +1,38 @@
+{
+  "parent": "9fa82f60c39288b3512c1f1ece35077fb9b3b5cc",
+  "runtime_sources": {
+    "baseline": {
+      "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06"
+    },
+    "candidate": {
+      "crates/penelope-executor/src/timer_input.rs": "440019bd97ef06aee569ab0ef389b07ff0e655b75ec2a5d381e844244b97f143"
+    }
+  },
+  "common_sha256": {
+    "crates/penelope-executor/src/services.rs": "01c17fa051446b7bc0337687e9aaaa3fb25271cc68cb980abf8e54503e41bf4e",
+    "crates/penelope-executor/src/lease_batch_index.rs": "1f8aa0ceef2335b00aa40211d7cf9e4a26635819a290d232b31dd8302b536d5f",
+    "crates/penelope-executor/benches/timer_input.rs": "2650536fde9097d771afe6473e031546d6358645230269183ff757ab88d18f30",
+    "crates/penelope-executor/benches/timer_input_allocations.rs": "985bcd9b02f6a31299e6f8aaf388cb8778c6a3dbab68b247af8672b643e6be38",
+    "crates/penelope-executor/tests/support/timer_input_fixture.rs": "8310422d43ca8a9e197bfd1e0682d37ed79af6dfaf927d6e483fe47d0f578be7",
+    "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+    "crates/penelope-executor/tests/timer_input_identity.rs": "93a8b6e08f78d1eaea2ee1944880a38b7c46893416d421e5167323cb4fecab56",
+    "crates/penelope-executor/tests/timer_input_allocations.rs": "6f883a8a0b788dc9087efba1b660020876cd4dddf38d4d5e42bb6641f9616535",
+    "crates/penelope-executor/tests/timer_input_hex.rs": "01bb4d9bab8f87df26f55036d07ece7970b704b7a7860801df93e10714254b02",
+    "crates/penelope-executor/benches/lease_batch_services.rs": "f4b8fad11c1fe748a227da3a9fc94c9141080e4669f0959c666994ce639b2157",
+    "crates/penelope-executor/benches/lease_batch_service_allocations.rs": "76cbd586ee6c17c61420308a586ae701577ae27a8ba63bc2cb3fbf6e4be3db70",
+    "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "6ad25aa4ce1e3cd301acc22740a20caa832f28c9be0595d1456adc7a6557274e",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765"
+  },
+  "binaries": {
+    "baseline-timer_input": "450a9b7c335c25084922a4d9276578a834d68fd58f451ddaeba477c2b3ba08ea",
+    "baseline-timer_input_allocations": "687cc39793b9c2c33e197f9c239ce0e6a9e2315ce557afb6184cf115cf019c88",
+    "baseline-lease_batch_services": "f3e5629ab8bbe8210500ddcaf21e6a443ae11aa8d0137e052c197c49f91138cc",
+    "baseline-lease_batch_service_allocations": "7d5176087f9b20d04806ca92e23d6883b7609abdecc980ae609a4f1810c98415",
+    "candidate-timer_input": "48d62d4bc6f614942cf5adc6472a3bd01fc314d1cf5599fd8ae7017bb8b186c7",
+    "candidate-timer_input_allocations": "342a62c32a1c560305f7ae9e8ed04c3a330f716693ed8ac50aeffcbf8c6ca05f",
+    "candidate-lease_batch_services": "1b1caed25279f3ec7a78fcd02792eb5086b459fa3f60550e863e8196cb648d7a",
+    "candidate-lease_batch_service_allocations": "f1cd2f53beadc1a94579b07fe02966a22c8c4fabfe6594a6b261e3e342a0f272"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

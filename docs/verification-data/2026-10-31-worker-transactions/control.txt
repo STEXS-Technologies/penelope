@@ -1,0 +1,24 @@
+   Compiling penelope-sqlite v0.3.0 (/home/ac/projects/penelope/crates/penelope-sqlite)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
+     Running unittests src/lib.rs (target/debug/deps/penelope_sqlite-f950664ad0365ea6)
+
+running 1 test
+
+thread 'penelope-sqlite' (324590) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:65:25:
+injected panic at commit boundary
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work' (324589) panicked at crates/penelope-sqlite/src/worker_transaction_tests.rs:101:21:
+assertion `left == right` failed
+  left: Err(TimedOut)
+ right: Err(Unavailable)
+test worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work ... FAILED
+
+failures:
+
+failures:
+    worker::transaction_tests::transaction_panics_preserve_commit_boundary_and_drain_accepted_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 5.01s
+
+error: test failed, to rerun pass `-p penelope-sqlite --lib`

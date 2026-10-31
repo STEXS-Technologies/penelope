@@ -104,7 +104,7 @@ fuzz_target!(|data: &[u8]| {
             0 => supervisor.submit(&input, 1, tick),
             1 => supervisor.advance(tick).map(|_| ()),
             2 => supervisor.poll(tick).map(|_| ()),
-            3 | 4 | 5 => supervisor
+            3..=5 => supervisor
                 .observe(
                     TaskObservation {
                         scope: observation_scope,

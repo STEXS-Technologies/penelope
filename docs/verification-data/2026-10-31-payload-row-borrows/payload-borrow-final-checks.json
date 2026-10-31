@@ -1,0 +1,33 @@
+[
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "bash",
+      "scripts/check-layer-boundaries.sh"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "graphify",
+      "update",
+      "."
+    ],
+    "returncode": 0,
+    "stdout": "Re-extracting code files in . (no LLM needed)...\n[graphify watch] 2939 file(s) not classified (no supported extension or shebang), skipped: .gitignore, .ignore, 0-after.jsonl.gz, 0-before.jsonl.gz, 1-after.jsonl.gz, 1-before.jsonl.gz (+2933 more)\n  AST extraction: 100/301 uncached files (33%) [32 workers]\n  AST extraction: 200/301 uncached files (66%) [32 workers]\n  AST extraction: 300/301 uncached files (99%) [32 workers]\n  AST extraction: 301/301 uncached files (100%) [32 workers]\n[graphify] backed up curated graph (4 files) -> 2026-10-31/\n[graphify watch] Rebuilt: 4698 nodes, 11465 edges, 261 communities\n[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out\nCode graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.\nTip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.\n",
+    "stderr": "  warning: 1 source file(s) produced zero nodes and are absent from the graph: Cargo.toml. A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).\n[graphify watch] community set changed since labeling (235 saved labels, 261 communities now; renamed 109 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.\n"
+  }
+]

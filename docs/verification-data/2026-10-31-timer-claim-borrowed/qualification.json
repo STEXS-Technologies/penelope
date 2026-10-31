@@ -1,0 +1,26 @@
+{
+  "stable-workspace": {
+    "exit_code": 0,
+    "log": "stable-workspace.txt.gz"
+  },
+  "msrv": {
+    "exit_code": 0,
+    "log": "msrv.txt.gz"
+  },
+  "msrv-check": {
+    "exit_code": 0,
+    "log": "msrv-check.txt.gz"
+  },
+  "clippy": {
+    "exit_code": 0,
+    "log": "clippy.txt.gz"
+  },
+  "fmt": {
+    "exit_code": 0,
+    "log": "fmt.txt.gz"
+  },
+  "layers": {
+    "exit_code": 0,
+    "log": "layers.txt.gz"
+  }
+}

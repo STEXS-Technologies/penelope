@@ -1,0 +1,16 @@
+{
+  "crates/penelope-sqlite/src/process.rs": "888306d1b29a1419b3ed6fc91b798d2f98c0ac5d75378d080717aee96122d761",
+  "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+  "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+  "crates/penelope-sqlite/Cargo.toml": "0ebfa7b90a26aa810acd99f7f978aac0780f4386e81ef8d6ca39cd77685c3238",
+  "crates/penelope-sqlite/tests/process.rs": "51bf99b62e044e89c3c80b18999083fddc9bbf6625e7c2cc22e2d3ae9c80308e",
+  "crates/penelope-sqlite/tests/support/append_outcomes.rs": "0f315aca0cbe13c3f9fa9ecd794791e499047029235c6ff109857b4abb593744",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+  "crates/penelope-sqlite/tests/process_append_allocations.rs": "9e9712389cdd0a5a315350bb1d2b0adceeae6c0ba0f6ec53b5a9f9ed0498b74c",
+  "crates/penelope-domain/src/implementation.rs": "835dd448b9ec2b01f601751ed5709a2fa68565bbba4bc6c1a69c62c27fac6b07",
+  "crates/penelope-ports/src/implementation.rs": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e",
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "crates/penelope-sqlite/benches/process_append_allocations.rs": "0d24c018a88a39f2454f06ebb279f35b75d41ee92a98ed228d12647d9fada04f",
+  "crates/penelope-sqlite/benches/support/caller_allocator.rs": "e6c4179f7055f7fe2ad327e043faab0cb0df0c38ebc0a6444cb437f9badc9a27",
+  "crates/penelope-sqlite/benches/support/process_append_fixture.rs": "9aea2bb6802310b01e6496718874e0a691674c63468c71bb8eacc98b803514c2"
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "timers": false,
+    "batch": 1,
+    "samples_per_variant": 64,
+    "baseline": {
+      "allocations": [
+        14
+      ],
+      "reallocations": [
+        10
+      ],
+      "requested_bytes": [
+        3360
+      ]
+    },
+    "candidate": {
+      "allocations": [
+        14
+      ],
+      "reallocations": [
+        10
+      ],
+      "requested_bytes": [
+        3360
+      ]
+    },
+    "changes": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 0
+    }
+  },
+  {
+    "timers": false,
+    "batch": 16,
+    "samples_per_variant": 64,
+    "baseline": {
+      "allocations": [
+        74
+      ],
+      "reallocations": [
+        102
+      ],
+      "requested_bytes": [
+        32376
+      ]
+    },
+    "candidate": {
+      "allocations": [
+        59
+      ],
+      "reallocations": [
+        72
+      ],
+      "requested_bytes": [
+        18936
+      ]
+    },
+    "changes": {
+      "allocations": -15,
+      "reallocations": -30,
+      "requested_bytes": -13440
+    }
+  },
+  {
+    "timers": true,
+    "batch": 1,
+    "samples_per_variant": 64,
+    "baseline": {
+      "allocations": [
+        13
+      ],
+      "reallocations": [
+        6
+      ],
+      "requested_bytes": [
+        3152
+      ]
+    },
+    "candidate": {
+      "allocations": [
+        13
+      ],
+      "reallocations": [
+        6
+      ],
+      "requested_bytes": [
+        3152
+      ]
+    },
+    "changes": {
+      "allocations": 0,
+      "reallocations": 0,
+      "requested_bytes": 0
+    }
+  },
+  {
+    "timers": true,
+    "batch": 16,
+    "samples_per_variant": 64,
+    "baseline": {
+      "allocations": [
+        58
+      ],
+      "reallocations": [
+        38
+      ],
+      "requested_bytes": [
+        28640
+      ]
+    },
+    "candidate": {
+      "allocations": [
+        43
+      ],
+      "reallocations": [
+        8
+      ],
+      "requested_bytes": [
+        15200
+      ]
+    },
+    "changes": {
+      "allocations": -15,
+      "reallocations": -30,
+      "requested_bytes": -13440
+    }
+  }
+]

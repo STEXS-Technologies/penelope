@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/tasks.rs (target/worker-audit-msrv/debug/deps/tasks-ee5dec5ca39b184c)
+
+running 1 test
+case=0 round=0 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=1 model=fence-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=2 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=3 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=4 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=5 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=6 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=0 round=7 model=fence-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=0 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=1 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=2 model=fence-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=3 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=4 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=5 model=fence-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=6 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=1 round=7 model=reserve-first fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=0 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=1 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=2 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=3 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=4 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=5 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=6 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+case=2 round=7 model=both fenced_identity_preserved=true stopped=true delayed_start_rejected=true
+test authority_race::contending_reservations_and_fences_preserve_serial_histories_and_stop_identity ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 43 filtered out; finished in 0.57s
+

@@ -1,0 +1,55 @@
+{
+  "baseline_revision": "f168bf7921a3cad05faf5a0d068eeff0d76fe3d1",
+  "candidate_revision": "1ccebdc5e0552113c7e955ac53a86c990fad0bd8",
+  "baseline_reproducer": "Before the fix, replacing_executor_waker_runs_destructor_without_completion_lock fails because the old registration destructor observes the completion mutex locked.",
+  "benchmark_scope": "Pending polls of public OutboxStore::claim while its trusted clock blocks the worker. Two profiles: same waker, or switch between two distinct wakers every poll. Storage setup/work, release, and final response collection are untimed.",
+  "benchmark_method": "Each round: 20 alternating baseline/candidate process pairs, one process warmup per binary, CPU 0, 3000000 polls per profile. No agent compilation/tests during timed comparisons. No host-wide workload/frequency/cache control.",
+  "pilot_scope": "Same production poll code, before the final test-only additions. Rebuilding after adding tests changed executable hash, so final timing was rerun. Both complete rounds retained.",
+  "baseline_fixture_scope": "The candidate benchmark differs from the baseline fixture only in a comment and scoped manual_noop_waker lint allowance. Distinct Arc-backed wakers are required for the changing-registration profile. Regression tests were present in the working tree during the baseline build, and are excluded from the benchmark library by cfg(test).",
+  "checks": {
+    "workspace": "cargo test --workspace --all-targets --all-features --exclude penelope-fuzz passed on stable and Rust 1.85 before the final test-only additions",
+    "final_sqlite": "cargo test -p penelope-sqlite --all-targets --all-features passed on both toolchains after final test additions: 13 library + 31 process + 18 task tests and two benchmark smoke executables",
+    "clippy": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz -- -D warnings passed on final sources",
+    "stress": "100 direct unit-executable runs of worker:: per toolchain, all seven tests each run; 6400 latest-registration queue cases across both toolchains",
+    "other": [
+      "cargo fmt --all -- --check",
+      "bash scripts/check-layer-boundaries.sh",
+      "graphify update ."
+    ]
+  },
+  "environment": {
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "TMPDIR": "/home/ac/projects/penelope/target/qualification-temp",
+    "MSRV_CARGO_TARGET_DIR": "target/worker-audit-msrv"
+  },
+  "source_sha256": {
+    "crates/penelope-sqlite/src/worker.rs": "94256005c7284566375dee4997a605a7fb225263763114873a4290ab56b39f71",
+    "crates/penelope-sqlite/src/worker_waker_tests.rs": "df89ffeb49f7a6b73a133e1c3f40e9995356e315900052ca90ab474a21ee6ef6",
+    "crates/penelope-sqlite/benches/worker_poll.rs": "335b12acd911f89cedff720e34651645350690b75ddaf08791c0ad25975c8b0e",
+    "crates/penelope-sqlite/Cargo.toml": "b0404707a3eca8fd0e87755be4fc4ecca42bde63ad47a4ac8316b273f6f98357",
+    "Cargo.toml": "275450a6396a5e5cc37f188e47a082e2a94f4714ce0de1f57a6fac9fee839133",
+    "Cargo.lock": "d80c4db1ea5c85a6ad89afbaa79115a29e88c3a6f817b6542fbde37ce00764cb"
+  },
+  "artifact_sha256": {
+    "compare-sqlite-polls.py": "a257265449366012f5f747497116de5125b8855786020545f31b3562c06f0213",
+    "final-metadata.json": "3b6d48279941717d088f668ea66ad7ead64f3db0eb1c5bd4fcffba9978ac14d3",
+    "final-processes.jsonl.gz": "644aa08b720dbbf5f93f2745f1e1f6d13ee444d760869b1f6c0d29336dc92eb8",
+    "final-summary.json": "875255d5da89ddc2783a6e445994f2fe61604664fa8cb970f04f0b6114f9ee26",
+    "pilot-metadata.json": "e3cfec3af8a7752a2595c3d3579f2fd5e437d46b295237ca6691ed3b9a939799",
+    "pilot-processes.jsonl.gz": "51866d26bc07389b3dc1a5bfd851c09ae3e32da5e415924c5f249da8bbb3d495",
+    "pilot-summary.json": "de2a2a19b7b2541c04d3e3665eba7b3642cb35f91fd2df1c6375f3bebf5f5270",
+    "sqlite-waker-baseline-build.log.gz": "3921394daed4734ba75859c3a3f645f537f2c2225463c4d57e22dfcfea302f34",
+    "sqlite-waker-final-build.log.gz": "5d116b929e0ddd99fa3caee0df5641ef49719180252a49f5724a312e7b42ef55",
+    "sqlite-waker-final-msrv.log.gz": "ae9348d30c4cff24b6f6aa740a2726c800dcda2d1534a1bcd7d9e80d7c38b35c",
+    "sqlite-waker-final-stable.log.gz": "9c26a37d17a53be5065bf8276423e1df3f15354f000f4d60fa9f5c5ebb551f4e",
+    "sqlite-waker-registration-baseline.log.gz": "fe69ea6765c5f87580464262daca04921e77060450377ada54957537dab0b52a",
+    "sqlite-waker-registration-candidate.log.gz": "847921e3f387db9cc8bc0c5c505e36b6c4d90ef4ff7c75d0b2a8678825df1882",
+    "sqlite-waker-stress-msrv.log.gz": "d14ec180c9e48b80035d61f75b21e3bee9e99a0d5d3924ea9ee7bc55621144fb",
+    "sqlite-waker-stress-stable.log.gz": "8acf78dd467c7eff3fb37827e731d216d786fae06364a3b0ae6b1e8bd30ed432",
+    "sqlite-waker-workspace-clippy.log.gz": "ab6aeea0cfe543592ceab402589d941e7e0ab0983e2f121f575669e42257ca8e",
+    "sqlite-waker-workspace-msrv.log.gz": "e902800f95f6c1d87966364ffd0a45dccfb64fc87a5b55c5f34228dd8a23e66a",
+    "sqlite-waker-workspace-stable.log.gz": "f3502362b8e01bd412e871938c3d35d9ca027ec895764d3f091ecdbe45bc3107",
+    "summarize-sqlite-polls.py": "bbec6c0d1a26e23784bc93a95ab9aa61063dd95ad8015c7ae0d6a7c238b9a384"
+  }
+}

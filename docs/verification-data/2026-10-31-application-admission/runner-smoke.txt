@@ -1,0 +1,3 @@
+repeat=0 workers=1 work=64 complete
+repeat=1 workers=1 work=64 complete
+Verified 24 paired samples. Results: /home/ac/projects/penelope/target/application-admission-runner-smoke

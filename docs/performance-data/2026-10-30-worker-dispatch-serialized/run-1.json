@@ -1,0 +1,1286 @@
+{
+  "ack_endpoint": "successful host checkpoint ACK write, not a worker/application receipt",
+  "cache": "OS cache uncontrolled; fresh profile is not page-cache-cold",
+  "journal_mode": "WAL",
+  "polling": "yield_now between pending polls; monotonic whole-second task ticks",
+  "profiles": [
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 3173975,
+          "p95_ns": 3471019,
+          "p99_ns": 3916861,
+          "samples": 64
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 5568293,
+          "p95_ns": 6003904,
+          "p99_ns": 6881961,
+          "samples": 64
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 3839401,
+          "p95_ns": 4178135,
+          "p99_ns": 4592677,
+          "samples": 64
+        },
+        "intent_commit_ns": {
+          "p50_ns": 570513,
+          "p95_ns": 617082,
+          "p99_ns": 784106,
+          "samples": 64
+        },
+        "setup_ns": {
+          "p50_ns": 4032143,
+          "p95_ns": 4328847,
+          "p99_ns": 8004671,
+          "samples": 64
+        }
+      },
+      "profile": "fresh_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 3165008,
+          "dispatch_to_durable_completion_and_fence_ns": 5352225,
+          "dispatch_to_host_checkpoint_ack_ns": 3786839,
+          "index": 0,
+          "intent_commit_ns": 561475,
+          "setup_ns": 4426335,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3089461,
+          "dispatch_to_durable_completion_and_fence_ns": 5365841,
+          "dispatch_to_host_checkpoint_ack_ns": 3710111,
+          "index": 1,
+          "intent_commit_ns": 532680,
+          "setup_ns": 4012255,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3103579,
+          "dispatch_to_durable_completion_and_fence_ns": 5347175,
+          "dispatch_to_host_checkpoint_ack_ns": 3744678,
+          "index": 2,
+          "intent_commit_ns": 534623,
+          "setup_ns": 4013207,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3043222,
+          "dispatch_to_durable_completion_and_fence_ns": 5313510,
+          "dispatch_to_host_checkpoint_ack_ns": 3703378,
+          "index": 3,
+          "intent_commit_ns": 549612,
+          "setup_ns": 3894608,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3182190,
+          "dispatch_to_durable_completion_and_fence_ns": 5438251,
+          "dispatch_to_host_checkpoint_ack_ns": 3799443,
+          "index": 4,
+          "intent_commit_ns": 551196,
+          "setup_ns": 4053053,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3362259,
+          "dispatch_to_durable_completion_and_fence_ns": 5649960,
+          "dispatch_to_host_checkpoint_ack_ns": 4006844,
+          "index": 5,
+          "intent_commit_ns": 548280,
+          "setup_ns": 3997276,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3109860,
+          "dispatch_to_durable_completion_and_fence_ns": 5447980,
+          "dispatch_to_host_checkpoint_ack_ns": 3776098,
+          "index": 6,
+          "intent_commit_ns": 599118,
+          "setup_ns": 4109654,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3104320,
+          "dispatch_to_durable_completion_and_fence_ns": 5420016,
+          "dispatch_to_host_checkpoint_ack_ns": 3765057,
+          "index": 7,
+          "intent_commit_ns": 570122,
+          "setup_ns": 3962318,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3274259,
+          "dispatch_to_durable_completion_and_fence_ns": 5539156,
+          "dispatch_to_host_checkpoint_ack_ns": 3916280,
+          "index": 8,
+          "intent_commit_ns": 578197,
+          "setup_ns": 4240245,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3522619,
+          "dispatch_to_durable_completion_and_fence_ns": 5769912,
+          "dispatch_to_host_checkpoint_ack_ns": 4190620,
+          "index": 9,
+          "intent_commit_ns": 570433,
+          "setup_ns": 4124973,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3095904,
+          "dispatch_to_durable_completion_and_fence_ns": 5523576,
+          "dispatch_to_host_checkpoint_ack_ns": 3755258,
+          "index": 10,
+          "intent_commit_ns": 567477,
+          "setup_ns": 4059185,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3160529,
+          "dispatch_to_durable_completion_and_fence_ns": 6365293,
+          "dispatch_to_host_checkpoint_ack_ns": 3844962,
+          "index": 11,
+          "intent_commit_ns": 565623,
+          "setup_ns": 3954183,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3109150,
+          "dispatch_to_durable_completion_and_fence_ns": 5385359,
+          "dispatch_to_host_checkpoint_ack_ns": 3741502,
+          "index": 12,
+          "intent_commit_ns": 546426,
+          "setup_ns": 4048875,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3201168,
+          "dispatch_to_durable_completion_and_fence_ns": 5548775,
+          "dispatch_to_host_checkpoint_ack_ns": 3839401,
+          "index": 13,
+          "intent_commit_ns": 533020,
+          "setup_ns": 4032143,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3135220,
+          "dispatch_to_durable_completion_and_fence_ns": 5551189,
+          "dispatch_to_host_checkpoint_ack_ns": 3843719,
+          "index": 14,
+          "intent_commit_ns": 571535,
+          "setup_ns": 3948212,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3237759,
+          "dispatch_to_durable_completion_and_fence_ns": 5595566,
+          "dispatch_to_host_checkpoint_ack_ns": 3909567,
+          "index": 15,
+          "intent_commit_ns": 630709,
+          "setup_ns": 3938553,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3238489,
+          "dispatch_to_durable_completion_and_fence_ns": 5626565,
+          "dispatch_to_host_checkpoint_ack_ns": 3885920,
+          "index": 16,
+          "intent_commit_ns": 595010,
+          "setup_ns": 4162606,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3177561,
+          "dispatch_to_durable_completion_and_fence_ns": 5470153,
+          "dispatch_to_host_checkpoint_ack_ns": 3856884,
+          "index": 17,
+          "intent_commit_ns": 577526,
+          "setup_ns": 4086609,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3093259,
+          "dispatch_to_durable_completion_and_fence_ns": 5465935,
+          "dispatch_to_host_checkpoint_ack_ns": 3742875,
+          "index": 18,
+          "intent_commit_ns": 539683,
+          "setup_ns": 3933552,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3218832,
+          "dispatch_to_durable_completion_and_fence_ns": 5640362,
+          "dispatch_to_host_checkpoint_ack_ns": 3914546,
+          "index": 19,
+          "intent_commit_ns": 596142,
+          "setup_ns": 4097289,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3169697,
+          "dispatch_to_durable_completion_and_fence_ns": 5484841,
+          "dispatch_to_host_checkpoint_ack_ns": 3837037,
+          "index": 20,
+          "intent_commit_ns": 537469,
+          "setup_ns": 4151634,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3143456,
+          "dispatch_to_durable_completion_and_fence_ns": 5520981,
+          "dispatch_to_host_checkpoint_ack_ns": 3798301,
+          "index": 21,
+          "intent_commit_ns": 570423,
+          "setup_ns": 4106767,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3180688,
+          "dispatch_to_durable_completion_and_fence_ns": 5577100,
+          "dispatch_to_host_checkpoint_ack_ns": 3860261,
+          "index": 22,
+          "intent_commit_ns": 551827,
+          "setup_ns": 3959924,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3148204,
+          "dispatch_to_durable_completion_and_fence_ns": 5404455,
+          "dispatch_to_host_checkpoint_ack_ns": 3778623,
+          "index": 23,
+          "intent_commit_ns": 555815,
+          "setup_ns": 4431646,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3269951,
+          "dispatch_to_durable_completion_and_fence_ns": 5487186,
+          "dispatch_to_host_checkpoint_ack_ns": 3904196,
+          "index": 24,
+          "intent_commit_ns": 543029,
+          "setup_ns": 4076129,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3154607,
+          "dispatch_to_durable_completion_and_fence_ns": 5501133,
+          "dispatch_to_host_checkpoint_ack_ns": 3812078,
+          "index": 25,
+          "intent_commit_ns": 572116,
+          "setup_ns": 4076198,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3173975,
+          "dispatch_to_durable_completion_and_fence_ns": 5531091,
+          "dispatch_to_host_checkpoint_ack_ns": 3835894,
+          "index": 26,
+          "intent_commit_ns": 575282,
+          "setup_ns": 3976295,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3168424,
+          "dispatch_to_durable_completion_and_fence_ns": 5447609,
+          "dispatch_to_host_checkpoint_ack_ns": 3814012,
+          "index": 27,
+          "intent_commit_ns": 552839,
+          "setup_ns": 4170080,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3199894,
+          "dispatch_to_durable_completion_and_fence_ns": 5652385,
+          "dispatch_to_host_checkpoint_ack_ns": 3834912,
+          "index": 28,
+          "intent_commit_ns": 546406,
+          "setup_ns": 4108330,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3157523,
+          "dispatch_to_durable_completion_and_fence_ns": 5581117,
+          "dispatch_to_host_checkpoint_ack_ns": 3869449,
+          "index": 29,
+          "intent_commit_ns": 553259,
+          "setup_ns": 4107138,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3170277,
+          "dispatch_to_durable_completion_and_fence_ns": 5495782,
+          "dispatch_to_host_checkpoint_ack_ns": 3828579,
+          "index": 30,
+          "intent_commit_ns": 587204,
+          "setup_ns": 3996735,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3143255,
+          "dispatch_to_durable_completion_and_fence_ns": 5739844,
+          "dispatch_to_host_checkpoint_ack_ns": 3832597,
+          "index": 31,
+          "intent_commit_ns": 565233,
+          "setup_ns": 4054476,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3241455,
+          "dispatch_to_durable_completion_and_fence_ns": 5641033,
+          "dispatch_to_host_checkpoint_ack_ns": 3896802,
+          "index": 32,
+          "intent_commit_ns": 596162,
+          "setup_ns": 4108982,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3337982,
+          "dispatch_to_durable_completion_and_fence_ns": 5734855,
+          "dispatch_to_host_checkpoint_ack_ns": 4016564,
+          "index": 33,
+          "intent_commit_ns": 590962,
+          "setup_ns": 4028637,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3348643,
+          "dispatch_to_durable_completion_and_fence_ns": 5711910,
+          "dispatch_to_host_checkpoint_ack_ns": 4007035,
+          "index": 34,
+          "intent_commit_ns": 570513,
+          "setup_ns": 4010492,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3240543,
+          "dispatch_to_durable_completion_and_fence_ns": 5639640,
+          "dispatch_to_host_checkpoint_ack_ns": 3913584,
+          "index": 35,
+          "intent_commit_ns": 580722,
+          "setup_ns": 3908394,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3471019,
+          "dispatch_to_durable_completion_and_fence_ns": 5780172,
+          "dispatch_to_host_checkpoint_ack_ns": 4131085,
+          "index": 36,
+          "intent_commit_ns": 556335,
+          "setup_ns": 4116997,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3133737,
+          "dispatch_to_durable_completion_and_fence_ns": 5960791,
+          "dispatch_to_host_checkpoint_ack_ns": 3831956,
+          "index": 37,
+          "intent_commit_ns": 581725,
+          "setup_ns": 3986886,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3142484,
+          "dispatch_to_durable_completion_and_fence_ns": 5507495,
+          "dispatch_to_host_checkpoint_ack_ns": 3803352,
+          "index": 38,
+          "intent_commit_ns": 594759,
+          "setup_ns": 3982979,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3204293,
+          "dispatch_to_durable_completion_and_fence_ns": 5568293,
+          "dispatch_to_host_checkpoint_ack_ns": 3868407,
+          "index": 39,
+          "intent_commit_ns": 595962,
+          "setup_ns": 3971135,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3144327,
+          "dispatch_to_durable_completion_and_fence_ns": 5922807,
+          "dispatch_to_host_checkpoint_ack_ns": 3812659,
+          "index": 40,
+          "intent_commit_ns": 551817,
+          "setup_ns": 4109322,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3181048,
+          "dispatch_to_durable_completion_and_fence_ns": 5518256,
+          "dispatch_to_host_checkpoint_ack_ns": 3835613,
+          "index": 41,
+          "intent_commit_ns": 565854,
+          "setup_ns": 3963751,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3234241,
+          "dispatch_to_durable_completion_and_fence_ns": 5588020,
+          "dispatch_to_host_checkpoint_ack_ns": 3898445,
+          "index": 42,
+          "intent_commit_ns": 579691,
+          "setup_ns": 4025911,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3229292,
+          "dispatch_to_durable_completion_and_fence_ns": 5670180,
+          "dispatch_to_host_checkpoint_ack_ns": 3955676,
+          "index": 43,
+          "intent_commit_ns": 546947,
+          "setup_ns": 4201771,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3325327,
+          "dispatch_to_durable_completion_and_fence_ns": 5651984,
+          "dispatch_to_host_checkpoint_ack_ns": 3974422,
+          "index": 44,
+          "intent_commit_ns": 548521,
+          "setup_ns": 4078733,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3139678,
+          "dispatch_to_durable_completion_and_fence_ns": 5523907,
+          "dispatch_to_host_checkpoint_ack_ns": 3806287,
+          "index": 45,
+          "intent_commit_ns": 615931,
+          "setup_ns": 4052603,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3112817,
+          "dispatch_to_durable_completion_and_fence_ns": 5472909,
+          "dispatch_to_host_checkpoint_ack_ns": 3785557,
+          "index": 46,
+          "intent_commit_ns": 555944,
+          "setup_ns": 4088362,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3304688,
+          "dispatch_to_durable_completion_and_fence_ns": 5799440,
+          "dispatch_to_host_checkpoint_ack_ns": 3986225,
+          "index": 47,
+          "intent_commit_ns": 566685,
+          "setup_ns": 3971927,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3148315,
+          "dispatch_to_durable_completion_and_fence_ns": 5493488,
+          "dispatch_to_host_checkpoint_ack_ns": 3802339,
+          "index": 48,
+          "intent_commit_ns": 571264,
+          "setup_ns": 4101578,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3199554,
+          "dispatch_to_durable_completion_and_fence_ns": 5535920,
+          "dispatch_to_host_checkpoint_ack_ns": 3859599,
+          "index": 49,
+          "intent_commit_ns": 551446,
+          "setup_ns": 4014079,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3091124,
+          "dispatch_to_durable_completion_and_fence_ns": 5740735,
+          "dispatch_to_host_checkpoint_ack_ns": 3757292,
+          "index": 50,
+          "intent_commit_ns": 582405,
+          "setup_ns": 3987247,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3447553,
+          "dispatch_to_durable_completion_and_fence_ns": 6003904,
+          "dispatch_to_host_checkpoint_ack_ns": 4178135,
+          "index": 51,
+          "intent_commit_ns": 620208,
+          "setup_ns": 3982768,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3916861,
+          "dispatch_to_durable_completion_and_fence_ns": 6335816,
+          "dispatch_to_host_checkpoint_ack_ns": 4592677,
+          "index": 52,
+          "intent_commit_ns": 593688,
+          "setup_ns": 3934234,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3348843,
+          "dispatch_to_durable_completion_and_fence_ns": 5824588,
+          "dispatch_to_host_checkpoint_ack_ns": 4053695,
+          "index": 53,
+          "intent_commit_ns": 598016,
+          "setup_ns": 4018708,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3112035,
+          "dispatch_to_durable_completion_and_fence_ns": 5482386,
+          "dispatch_to_host_checkpoint_ack_ns": 3762682,
+          "index": 54,
+          "intent_commit_ns": 587576,
+          "setup_ns": 4060839,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3126704,
+          "dispatch_to_durable_completion_and_fence_ns": 5500111,
+          "dispatch_to_host_checkpoint_ack_ns": 3786559,
+          "index": 55,
+          "intent_commit_ns": 570913,
+          "setup_ns": 3998217,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3136021,
+          "dispatch_to_durable_completion_and_fence_ns": 5625593,
+          "dispatch_to_host_checkpoint_ack_ns": 3813561,
+          "index": 56,
+          "intent_commit_ns": 575112,
+          "setup_ns": 3892774,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3189705,
+          "dispatch_to_durable_completion_and_fence_ns": 5514338,
+          "dispatch_to_host_checkpoint_ack_ns": 3857305,
+          "index": 57,
+          "intent_commit_ns": 564822,
+          "setup_ns": 4265915,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3171149,
+          "dispatch_to_durable_completion_and_fence_ns": 5637346,
+          "dispatch_to_host_checkpoint_ack_ns": 3857225,
+          "index": 58,
+          "intent_commit_ns": 583497,
+          "setup_ns": 4009209,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3317351,
+          "dispatch_to_durable_completion_and_fence_ns": 5822794,
+          "dispatch_to_host_checkpoint_ack_ns": 4030099,
+          "index": 59,
+          "intent_commit_ns": 583959,
+          "setup_ns": 4328847,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3191438,
+          "dispatch_to_durable_completion_and_fence_ns": 5578863,
+          "dispatch_to_host_checkpoint_ack_ns": 3872615,
+          "index": 60,
+          "intent_commit_ns": 580823,
+          "setup_ns": 3947510,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3633733,
+          "dispatch_to_durable_completion_and_fence_ns": 6881961,
+          "dispatch_to_host_checkpoint_ack_ns": 4464799,
+          "index": 61,
+          "intent_commit_ns": 784106,
+          "setup_ns": 4286085,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3259169,
+          "dispatch_to_durable_completion_and_fence_ns": 5685098,
+          "dispatch_to_host_checkpoint_ack_ns": 3917141,
+          "index": 62,
+          "intent_commit_ns": 586865,
+          "setup_ns": 8004671,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3171571,
+          "dispatch_to_durable_completion_and_fence_ns": 5603601,
+          "dispatch_to_host_checkpoint_ack_ns": 3835053,
+          "index": 63,
+          "intent_commit_ns": 617082,
+          "setup_ns": 4024308,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "distributions": {
+        "dispatch_start_return_ns": {
+          "p50_ns": 2928230,
+          "p95_ns": 3160529,
+          "p99_ns": 5644821,
+          "samples": 64
+        },
+        "dispatch_to_durable_completion_and_fence_ns": {
+          "p50_ns": 5609231,
+          "p95_ns": 6890538,
+          "p99_ns": 8241219,
+          "samples": 64
+        },
+        "dispatch_to_host_checkpoint_ack_ns": {
+          "p50_ns": 3640847,
+          "p95_ns": 3880440,
+          "p99_ns": 6385342,
+          "samples": 64
+        },
+        "intent_commit_ns": {
+          "p50_ns": 668021,
+          "p95_ns": 790408,
+          "p99_ns": 2025495,
+          "samples": 64
+        },
+        "setup_ns": {
+          "p50_ns": 70,
+          "p95_ns": 140,
+          "p99_ns": 411,
+          "samples": 64
+        }
+      },
+      "profile": "reused_runtime_and_store",
+      "samples": [
+        {
+          "dispatch_start_return_ns": 3331419,
+          "dispatch_to_durable_completion_and_fence_ns": 5739143,
+          "dispatch_to_host_checkpoint_ack_ns": 4047093,
+          "index": 0,
+          "intent_commit_ns": 563589,
+          "setup_ns": 4166734,
+          "warmup": true
+        },
+        {
+          "dispatch_start_return_ns": 2928230,
+          "dispatch_to_durable_completion_and_fence_ns": 5361513,
+          "dispatch_to_host_checkpoint_ack_ns": 3605339,
+          "index": 1,
+          "intent_commit_ns": 637562,
+          "setup_ns": 90,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2800633,
+          "dispatch_to_durable_completion_and_fence_ns": 5198918,
+          "dispatch_to_host_checkpoint_ack_ns": 3475618,
+          "index": 2,
+          "intent_commit_ns": 627483,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2859757,
+          "dispatch_to_durable_completion_and_fence_ns": 5261249,
+          "dispatch_to_host_checkpoint_ack_ns": 3519763,
+          "index": 3,
+          "intent_commit_ns": 613937,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2819169,
+          "dispatch_to_durable_completion_and_fence_ns": 5293802,
+          "dispatch_to_host_checkpoint_ack_ns": 3504063,
+          "index": 4,
+          "intent_commit_ns": 645287,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2780976,
+          "dispatch_to_durable_completion_and_fence_ns": 5343969,
+          "dispatch_to_host_checkpoint_ack_ns": 3436913,
+          "index": 5,
+          "intent_commit_ns": 628955,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2919273,
+          "dispatch_to_durable_completion_and_fence_ns": 5667795,
+          "dispatch_to_host_checkpoint_ack_ns": 3658031,
+          "index": 6,
+          "intent_commit_ns": 657180,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2933369,
+          "dispatch_to_durable_completion_and_fence_ns": 5656483,
+          "dispatch_to_host_checkpoint_ack_ns": 3698799,
+          "index": 7,
+          "intent_commit_ns": 731174,
+          "setup_ns": 90,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2870368,
+          "dispatch_to_durable_completion_and_fence_ns": 5458019,
+          "dispatch_to_host_checkpoint_ack_ns": 3567565,
+          "index": 8,
+          "intent_commit_ns": 686477,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2885818,
+          "dispatch_to_durable_completion_and_fence_ns": 5406830,
+          "dispatch_to_host_checkpoint_ack_ns": 3568006,
+          "index": 9,
+          "intent_commit_ns": 669625,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2932057,
+          "dispatch_to_durable_completion_and_fence_ns": 5506193,
+          "dispatch_to_host_checkpoint_ack_ns": 3615739,
+          "index": 10,
+          "intent_commit_ns": 687509,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 5644821,
+          "dispatch_to_durable_completion_and_fence_ns": 8241219,
+          "dispatch_to_host_checkpoint_ack_ns": 6385342,
+          "index": 11,
+          "intent_commit_ns": 666007,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3008505,
+          "dispatch_to_durable_completion_and_fence_ns": 5636104,
+          "dispatch_to_host_checkpoint_ack_ns": 3722726,
+          "index": 12,
+          "intent_commit_ns": 653453,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2888963,
+          "dispatch_to_durable_completion_and_fence_ns": 5456376,
+          "dispatch_to_host_checkpoint_ack_ns": 3590800,
+          "index": 13,
+          "intent_commit_ns": 704592,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2976613,
+          "dispatch_to_durable_completion_and_fence_ns": 5691230,
+          "dispatch_to_host_checkpoint_ack_ns": 3699480,
+          "index": 14,
+          "intent_commit_ns": 706356,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2814710,
+          "dispatch_to_durable_completion_and_fence_ns": 7194104,
+          "dispatch_to_host_checkpoint_ack_ns": 3532517,
+          "index": 15,
+          "intent_commit_ns": 653212,
+          "setup_ns": 81,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2956164,
+          "dispatch_to_durable_completion_and_fence_ns": 5876939,
+          "dispatch_to_host_checkpoint_ack_ns": 3671997,
+          "index": 16,
+          "intent_commit_ns": 790408,
+          "setup_ns": 100,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3147574,
+          "dispatch_to_durable_completion_and_fence_ns": 6012150,
+          "dispatch_to_host_checkpoint_ack_ns": 3869028,
+          "index": 17,
+          "intent_commit_ns": 785268,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3102136,
+          "dispatch_to_durable_completion_and_fence_ns": 5976491,
+          "dispatch_to_host_checkpoint_ack_ns": 3854099,
+          "index": 18,
+          "intent_commit_ns": 686607,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3029175,
+          "dispatch_to_durable_completion_and_fence_ns": 5788718,
+          "dispatch_to_host_checkpoint_ack_ns": 3752673,
+          "index": 19,
+          "intent_commit_ns": 751693,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2816975,
+          "dispatch_to_durable_completion_and_fence_ns": 5497656,
+          "dispatch_to_host_checkpoint_ack_ns": 3570611,
+          "index": 20,
+          "intent_commit_ns": 1269474,
+          "setup_ns": 140,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2973217,
+          "dispatch_to_durable_completion_and_fence_ns": 5626485,
+          "dispatch_to_host_checkpoint_ack_ns": 3707125,
+          "index": 21,
+          "intent_commit_ns": 666438,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2905767,
+          "dispatch_to_durable_completion_and_fence_ns": 5461476,
+          "dispatch_to_host_checkpoint_ack_ns": 3583597,
+          "index": 22,
+          "intent_commit_ns": 679593,
+          "setup_ns": 130,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2866140,
+          "dispatch_to_durable_completion_and_fence_ns": 5453410,
+          "dispatch_to_host_checkpoint_ack_ns": 3600008,
+          "index": 23,
+          "intent_commit_ns": 697719,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2846992,
+          "dispatch_to_durable_completion_and_fence_ns": 5533455,
+          "dispatch_to_host_checkpoint_ack_ns": 3623373,
+          "index": 24,
+          "intent_commit_ns": 738276,
+          "setup_ns": 60,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3029535,
+          "dispatch_to_durable_completion_and_fence_ns": 5764171,
+          "dispatch_to_host_checkpoint_ack_ns": 3779325,
+          "index": 25,
+          "intent_commit_ns": 655958,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2923030,
+          "dispatch_to_durable_completion_and_fence_ns": 5620504,
+          "dispatch_to_host_checkpoint_ack_ns": 3674462,
+          "index": 26,
+          "intent_commit_ns": 705684,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2962055,
+          "dispatch_to_durable_completion_and_fence_ns": 5714645,
+          "dispatch_to_host_checkpoint_ack_ns": 3763795,
+          "index": 27,
+          "intent_commit_ns": 668021,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2918601,
+          "dispatch_to_durable_completion_and_fence_ns": 5621585,
+          "dispatch_to_host_checkpoint_ack_ns": 3640847,
+          "index": 28,
+          "intent_commit_ns": 668783,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2924563,
+          "dispatch_to_durable_completion_and_fence_ns": 5648287,
+          "dispatch_to_host_checkpoint_ack_ns": 3679131,
+          "index": 29,
+          "intent_commit_ns": 738387,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3035617,
+          "dispatch_to_durable_completion_and_fence_ns": 5929320,
+          "dispatch_to_host_checkpoint_ack_ns": 3880440,
+          "index": 30,
+          "intent_commit_ns": 719110,
+          "setup_ns": 60,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3045025,
+          "dispatch_to_durable_completion_and_fence_ns": 5843204,
+          "dispatch_to_host_checkpoint_ack_ns": 3817458,
+          "index": 31,
+          "intent_commit_ns": 712798,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3059734,
+          "dispatch_to_durable_completion_and_fence_ns": 5825380,
+          "dispatch_to_host_checkpoint_ack_ns": 3853248,
+          "index": 32,
+          "intent_commit_ns": 749288,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2945383,
+          "dispatch_to_durable_completion_and_fence_ns": 5641584,
+          "dispatch_to_host_checkpoint_ack_ns": 3734147,
+          "index": 33,
+          "intent_commit_ns": 680125,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2938840,
+          "dispatch_to_durable_completion_and_fence_ns": 5603110,
+          "dispatch_to_host_checkpoint_ack_ns": 3666647,
+          "index": 34,
+          "intent_commit_ns": 671348,
+          "setup_ns": 60,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2929392,
+          "dispatch_to_durable_completion_and_fence_ns": 5729524,
+          "dispatch_to_host_checkpoint_ack_ns": 3638092,
+          "index": 35,
+          "intent_commit_ns": 728147,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3035137,
+          "dispatch_to_durable_completion_and_fence_ns": 5725347,
+          "dispatch_to_host_checkpoint_ack_ns": 3758936,
+          "index": 36,
+          "intent_commit_ns": 680675,
+          "setup_ns": 140,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3483333,
+          "dispatch_to_durable_completion_and_fence_ns": 6136912,
+          "dispatch_to_host_checkpoint_ack_ns": 4206901,
+          "index": 37,
+          "intent_commit_ns": 2025495,
+          "setup_ns": 190,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2892661,
+          "dispatch_to_durable_completion_and_fence_ns": 5601858,
+          "dispatch_to_host_checkpoint_ack_ns": 3633623,
+          "index": 38,
+          "intent_commit_ns": 663983,
+          "setup_ns": 411,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2955021,
+          "dispatch_to_durable_completion_and_fence_ns": 5609231,
+          "dispatch_to_host_checkpoint_ack_ns": 3671286,
+          "index": 39,
+          "intent_commit_ns": 659876,
+          "setup_ns": 140,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3018775,
+          "dispatch_to_durable_completion_and_fence_ns": 5643267,
+          "dispatch_to_host_checkpoint_ack_ns": 3734518,
+          "index": 40,
+          "intent_commit_ns": 655046,
+          "setup_ns": 81,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2904464,
+          "dispatch_to_durable_completion_and_fence_ns": 5439503,
+          "dispatch_to_host_checkpoint_ack_ns": 3600779,
+          "index": 41,
+          "intent_commit_ns": 644185,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2913050,
+          "dispatch_to_durable_completion_and_fence_ns": 6890538,
+          "dispatch_to_host_checkpoint_ack_ns": 3605078,
+          "index": 42,
+          "intent_commit_ns": 612895,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2959179,
+          "dispatch_to_durable_completion_and_fence_ns": 5502165,
+          "dispatch_to_host_checkpoint_ack_ns": 3671837,
+          "index": 43,
+          "intent_commit_ns": 612183,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2927008,
+          "dispatch_to_durable_completion_and_fence_ns": 5346103,
+          "dispatch_to_host_checkpoint_ack_ns": 3603615,
+          "index": 44,
+          "intent_commit_ns": 604538,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2828307,
+          "dispatch_to_durable_completion_and_fence_ns": 5370631,
+          "dispatch_to_host_checkpoint_ack_ns": 3544742,
+          "index": 45,
+          "intent_commit_ns": 665586,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2891188,
+          "dispatch_to_durable_completion_and_fence_ns": 5443200,
+          "dispatch_to_host_checkpoint_ack_ns": 3634484,
+          "index": 46,
+          "intent_commit_ns": 652411,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2846772,
+          "dispatch_to_durable_completion_and_fence_ns": 5501974,
+          "dispatch_to_host_checkpoint_ack_ns": 3577975,
+          "index": 47,
+          "intent_commit_ns": 601122,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2930725,
+          "dispatch_to_durable_completion_and_fence_ns": 5462699,
+          "dispatch_to_host_checkpoint_ack_ns": 3671487,
+          "index": 48,
+          "intent_commit_ns": 655627,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2798489,
+          "dispatch_to_durable_completion_and_fence_ns": 5286678,
+          "dispatch_to_host_checkpoint_ack_ns": 3458345,
+          "index": 49,
+          "intent_commit_ns": 632723,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2803198,
+          "dispatch_to_durable_completion_and_fence_ns": 5430316,
+          "dispatch_to_host_checkpoint_ack_ns": 3533410,
+          "index": 50,
+          "intent_commit_ns": 618265,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2872081,
+          "dispatch_to_durable_completion_and_fence_ns": 5499199,
+          "dispatch_to_host_checkpoint_ack_ns": 3575891,
+          "index": 51,
+          "intent_commit_ns": 624347,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2879125,
+          "dispatch_to_durable_completion_and_fence_ns": 5431137,
+          "dispatch_to_host_checkpoint_ack_ns": 3599738,
+          "index": 52,
+          "intent_commit_ns": 635639,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2907890,
+          "dispatch_to_durable_completion_and_fence_ns": 5398344,
+          "dispatch_to_host_checkpoint_ack_ns": 3635557,
+          "index": 53,
+          "intent_commit_ns": 585061,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2953539,
+          "dispatch_to_durable_completion_and_fence_ns": 5474181,
+          "dispatch_to_host_checkpoint_ack_ns": 3624075,
+          "index": 54,
+          "intent_commit_ns": 644836,
+          "setup_ns": 81,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2832134,
+          "dispatch_to_durable_completion_and_fence_ns": 5498007,
+          "dispatch_to_host_checkpoint_ack_ns": 3555422,
+          "index": 55,
+          "intent_commit_ns": 646129,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2837475,
+          "dispatch_to_durable_completion_and_fence_ns": 5505501,
+          "dispatch_to_host_checkpoint_ack_ns": 3556785,
+          "index": 56,
+          "intent_commit_ns": 665466,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2930163,
+          "dispatch_to_durable_completion_and_fence_ns": 5806432,
+          "dispatch_to_host_checkpoint_ack_ns": 3755959,
+          "index": 57,
+          "intent_commit_ns": 708349,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3072759,
+          "dispatch_to_durable_completion_and_fence_ns": 5892008,
+          "dispatch_to_host_checkpoint_ack_ns": 3842096,
+          "index": 58,
+          "intent_commit_ns": 687108,
+          "setup_ns": 71,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3160529,
+          "dispatch_to_durable_completion_and_fence_ns": 5712812,
+          "dispatch_to_host_checkpoint_ack_ns": 3880260,
+          "index": 59,
+          "intent_commit_ns": 705434,
+          "setup_ns": 130,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2849617,
+          "dispatch_to_durable_completion_and_fence_ns": 5571999,
+          "dispatch_to_host_checkpoint_ack_ns": 3597112,
+          "index": 60,
+          "intent_commit_ns": 651629,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2970622,
+          "dispatch_to_durable_completion_and_fence_ns": 5931044,
+          "dispatch_to_host_checkpoint_ack_ns": 3775858,
+          "index": 61,
+          "intent_commit_ns": 672159,
+          "setup_ns": 80,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 3051949,
+          "dispatch_to_durable_completion_and_fence_ns": 5784380,
+          "dispatch_to_host_checkpoint_ack_ns": 3786258,
+          "index": 62,
+          "intent_commit_ns": 686437,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 2937758,
+          "dispatch_to_durable_completion_and_fence_ns": 5700077,
+          "dispatch_to_host_checkpoint_ack_ns": 3715441,
+          "index": 63,
+          "intent_commit_ns": 716746,
+          "setup_ns": 70,
+          "warmup": false
+        },
+        {
+          "dispatch_start_return_ns": 4159280,
+          "dispatch_to_durable_completion_and_fence_ns": 7069184,
+          "dispatch_to_host_checkpoint_ack_ns": 4984434,
+          "index": 64,
+          "intent_commit_ns": 877355,
+          "setup_ns": 80,
+          "warmup": false
+        }
+      ]
+    }
+  ],
+  "schema": 1,
+  "synchronous": "FULL",
+  "worker_code_sha256": [
+    131,
+    9,
+    177,
+    117,
+    88,
+    112,
+    110,
+    247,
+    58,
+    51,
+    76,
+    174,
+    112,
+    83,
+    52,
+    141,
+    45,
+    32,
+    61,
+    126,
+    56,
+    198,
+    149,
+    252,
+    35,
+    9,
+    34,
+    198,
+    38,
+    150,
+    54,
+    43
+  ],
+  "worker_input": [
+    5,
+    1,
+    2,
+    3
+  ],
+  "worker_output_u64": 6
+}

@@ -10,3 +10,9 @@ pub use entry::*;
 pub use penelope_core::task;
 /// Hosted asynchronous task storage boundary.
 pub mod tasks;
+
+/// Scoped durable bytes for process replay and evidence.
+pub mod payloads;
+
+/// Bounded discovery of durably accepted, unconsumed process inputs.
+pub mod inbox;

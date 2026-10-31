@@ -1,0 +1,58 @@
+--- a/crates/penelope-core/src/task/control.rs
++++ b/crates/penelope-core/src/task/control.rs
+@@ -333,7 +333,23 @@
+                 return Err(error.into());
+             }
+         };
+-        self.observe(observation, buffer, tick)
++        // Poll preflight already checked local health, phase and tick. The
++        // runtime can only borrow its own field; it cannot change the projection.
++        self.validate_observation_identity(&observation)?;
++        self.observe_admitted(observation, buffer, tick)
++    }
++
++    fn validate_observation_identity(
++        &self,
++        observation: &TaskObservation,
++    ) -> Result<(), TaskError> {
++        if observation.scope != self.projection.scope() {
++            return Err(TaskError::ScopeMismatch);
++        }
++        if observation.generation != self.projection.generation() {
++            return Err(TaskError::StaleGeneration);
++        }
++        Ok(())
+     }
+ 
+     /// Admits a trusted, scoped observation (including forwarded kernel faults).
+@@ -353,12 +369,7 @@
+         if tick < self.projection.last_tick() {
+             return Err(TaskError::InvalidOrder.into());
+         }
+-        if observation.scope != self.projection.scope() {
+-            return Err(TaskError::ScopeMismatch.into());
+-        }
+-        if observation.generation != self.projection.generation() {
+-            return Err(TaskError::StaleGeneration.into());
+-        }
++        self.validate_observation_identity(&observation)?;
+         if self.projection.status() != TaskStatus::Running {
+             return Err(TaskError::InvalidTransition.into());
+         }
+@@ -373,6 +384,16 @@
+             self.commit(&record, None)?;
+             return Err(TaskError::DeadlineExpired.into());
+         }
++        self.observe_admitted(observation, buffer, tick)
++    }
++
++    // Call only after validating controller state, tick and observation identity.
++    fn observe_admitted(
++        &mut self,
++        observation: TaskObservation,
++        buffer: &[u8],
++        tick: TaskTick,
++    ) -> Result<bool, SupervisorError> {
+         let (event, blob) = match observation.progress {
+             RuntimeProgress::Pending => return Ok(false),
+             RuntimeProgress::Fault(fault) => (TaskExecutionEvent::FaultObserved { fault }, None),

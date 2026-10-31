@@ -1,0 +1,53 @@
+{
+  "started_utc": "2026-10-30T21:37:14.423309+00:00",
+  "baseline": "f00b694833a6cc8691fd86544b78fb6079088927",
+  "optimized": "8a9e298940d68de3d3d19c152a9bbef7f0fc54a0",
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+  "kernel": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "affinity": [
+    0
+  ],
+  "process_pairs": 4,
+  "within_process_rounds": 40,
+  "warmups_per_work_size": 100,
+  "scope": "one-step in-memory linear saga; no persistence, IPC, worker isolation, or I/O",
+  "binary_sha256": {
+    "before": "718cd9336e55ab153dcbae2257ebb781d2db1691be8ec7f75841b930cb20644b",
+    "after": "70d21f3ac1591f77b96a6f151cd5d602be3512e42ec1ce1252b3a317bb703c37"
+  },
+  "source_sha256": {
+    "Cargo.lock": "987d79e0c05ca6d7dbf657accf11ec05eff366da031fae27cbbd531ed5359505",
+    "crates/penelope-executor/benches/application_overhead.rs": "dfd2632f668884e7e5e789683cf008d9256abb13afb0d0aa3bb4265da1b76cd6"
+  },
+  "finished_utc": "2026-10-30T21:37:44.222441+00:00",
+  "code_ci": {
+    "run": 41132374645,
+    "revision": "8a9e298940d68de3d3d19c152a9bbef7f0fc54a0",
+    "conclusion": "success",
+    "jobs": 7,
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/41132374645"
+  },
+  "local_checks": {
+    "all_exited_zero": true,
+    "stable_workspace_all_targets_all_features": true,
+    "msrv_executor_all_targets_all_features": true,
+    "workspace_doctests": true,
+    "strict_workspace_clippy": true,
+    "fmt": true,
+    "layer_check": true,
+    "graphify_update": true,
+    "secrets": true,
+    "reference_equivalence_property": {
+      "requested_cases_per_toolchain": 10000,
+      "toolchains": [
+        "1.99.0",
+        "1.85.0"
+      ]
+    },
+    "fuzz_linear_engine": {
+      "inputs": 100000,
+      "seed": 4
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "Cargo.lock": "86815d35c0a3febbd085b69e1aea6ec1ddd315672d92eeb53b7d7e3b047d6765",
+  "crates/penelope-sqlite/Cargo.toml": "967ff8c88eef3631745d32e4f173a31ec880d5b239d0f31e09cbcb32acece0de",
+  "crates/penelope-sqlite/tests/process.rs": "cf8924911d027f3038f2810e631bd616422a08f2b3bdbeda21ab01077f3acb86",
+  "crates/penelope-sqlite/tests/support/payload_retry_lock.rs": "9cca443c72224ee6aed43891cc306a78331df9363ff37816bdeb6dc756b99e37",
+  "crates/penelope-sqlite/tests/support/payload_columns.rs": "d9753b8231db6edc7c072b03931e9f85a5da05cb1009ff8f79f78ed15594b55b",
+  "crates/penelope-sqlite/src/payload_retry_tests.rs": "b3a586c67c489a0b4be22e2bf1b89d024fb371fe3ca3035a019431afdfddbd08",
+  "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+  "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+  "crates/penelope-sqlite/benches/support/payload_fixture.rs": "f245c1019b9394870412fd8f775844a21432dcda7d49ac209374471bb8fc4514",
+  "crates/penelope-executor/benches/durable_timer_workload.rs": "76cf94b632be63f0df935caefa6475381155cdcde4e506786e6c4cfd92edc637",
+  "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+  "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d",
+  "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+  "crates/penelope-sqlite/src/payloads.rs": "fa03f0a0414fe5ffcc0114fcbd9bd15aca36878c8c05e25796f1d2362f407eef",
+  "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+  "docs/performance-payload-retry-fastpath-2026-10-31.md": "ca4e885ff0909140f195ca514ec13044e6810e37a755d34a6507414417fda8c1"
+}

@@ -1,0 +1,117 @@
+diff --git a/crates/penelope-sqlite/src/fault_tests.rs b/crates/penelope-sqlite/src/fault_tests.rs
+index 367146a..133eecf 100644
+--- a/crates/penelope-sqlite/src/fault_tests.rs
++++ b/crates/penelope-sqlite/src/fault_tests.rs
+@@ -168,3 +168,112 @@ fn process_kill_at_each_transaction_boundary_preserves_atomicity() {
+         reopened.rebuild_head(scope()).unwrap();
+     }
+ }
++
++// SQL views/functions inject engine read errors without changing production SQL
++// or depending on filesystem failure timing. Restore each table before asserting.
++fn read_error_case(table: &str, code: i32) -> TaskPortError {
++    let directory = tempfile::tempdir().unwrap();
++    let path = directory.path().join("read-errors.db");
++    let mut store = journal(&path);
++    let reference = BlobRef {
++        digest: Digest::of(b"input"),
++        bytes: 5,
++        schema: 1,
++    };
++    let record = TaskProjection::new(scope(), definition())
++        .unwrap()
++        .propose(
++            TaskExecutionEvent::IntentCommitted {
++                definition: definition(),
++                input: reference,
++            },
++            TaskGeneration::ZERO,
++            TaskTick::ZERO,
++        )
++        .unwrap();
++    store.commit(&record, Some(b"input")).unwrap();
++    store
++        .connection
++        .create_scalar_function(
++            "fail_read",
++            1,
++            FunctionFlags::SQLITE_UTF8,
++            move |_context| -> rusqlite::Result<Vec<u8>> {
++                Err(rusqlite::Error::SqliteFailure(
++                    rusqlite::ffi::Error::new(code),
++                    None,
++                ))
++            },
++        )
++        .unwrap();
++    let columns = match table {
++        "task_heads" => "scope,next_sequence,fail_read(last_digest) AS last_digest,bytes_used",
++        "task_records" => "scope,sequence,fail_read(record) AS record,checksum",
++        "task_blobs" => "scope,digest,fail_read(bytes) AS bytes",
++        _ => panic!("unknown read fault table"),
++    };
++    store.connection.execute_batch(&format!(
++        "ALTER TABLE {table} RENAME TO saved_read_table; CREATE VIEW {table} AS SELECT {columns} FROM saved_read_table;"
++    )).unwrap();
++    let rejected = if table == "task_blobs" {
++        store
++            .read_blob(scope(), reference, &mut [0; 64])
++            .unwrap_err()
++    } else {
++        store.read(scope(), TaskSequence::ZERO).unwrap_err()
++    };
++    store
++        .connection
++        .execute_batch(&format!(
++            "DROP VIEW {table}; ALTER TABLE saved_read_table RENAME TO {table};"
++        ))
++        .unwrap();
++    // The same connection and a fresh connection must both work after the
++    // injected storage failure is removed; the committed state stays intact.
++    assert_eq!(
++        store.read(scope(), TaskSequence::ZERO).unwrap(),
++        Some(record)
++    );
++    let mut bytes = [0; 64];
++    assert_eq!(store.read_blob(scope(), reference, &mut bytes).unwrap(), 5);
++    assert_eq!(bytes.get(..5).unwrap(), b"input");
++    drop(store);
++    assert_eq!(
++        journal(&path).read(scope(), TaskSequence::ZERO).unwrap(),
++        Some(record)
++    );
++    rejected
++}
++fn read_error_matrix(table: &str) {
++    let mut failures = Vec::new();
++    for (code, expected) in [
++        (rusqlite::ffi::SQLITE_IOERR, TaskPortError::Unavailable),
++        (rusqlite::ffi::SQLITE_BUSY, TaskPortError::Unavailable),
++        (rusqlite::ffi::SQLITE_LOCKED, TaskPortError::Unavailable),
++        (rusqlite::ffi::SQLITE_FULL, TaskPortError::Exhausted),
++        (rusqlite::ffi::SQLITE_TOOBIG, TaskPortError::Exhausted),
++        (rusqlite::ffi::SQLITE_CORRUPT, TaskPortError::Corrupt),
++        (rusqlite::ffi::SQLITE_NOTADB, TaskPortError::Corrupt),
++    ] {
++        let actual = read_error_case(table, code);
++        println!(
++            "{table} SQLite code {code}: {actual:?}, expected {expected:?}; repair/reopen passed"
++        );
++        if actual != expected {
++            failures.push((code, actual, expected));
++        }
++    }
++    assert!(failures.is_empty(), "{table}: {failures:?}");
++}
++#[test]
++fn head_reads_preserve_engine_error_categories_and_recover() {
++    read_error_matrix("task_heads");
++}
++#[test]
++fn record_reads_preserve_engine_error_categories_and_recover() {
++    read_error_matrix("task_records");
++}
++#[test]
++fn blob_reads_preserve_engine_error_categories_and_recover() {
++    read_error_matrix("task_blobs");
++}

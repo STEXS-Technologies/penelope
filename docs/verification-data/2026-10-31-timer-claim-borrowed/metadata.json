@@ -1,0 +1,21 @@
+{
+  "parent": "4fd5916a3a40c300f9f3975d0492f69ef5fcde5d",
+  "source": "crates/penelope-ports/src/implementation.rs",
+  "sources": {
+    "baseline": "85e28929b798778a57bcacc9dcd532631940020bb8d420f2855391e0082d870e",
+    "candidate": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5"
+  },
+  "binaries": {
+    "baseline-timer_claim_validation": "7d08be4d1b50081452a260adabfa68389c9f3ae319ce7cdeb5880e6a3cdbb9e2",
+    "baseline-timer_claim_allocations": "3af08efb20e09d574c18deed27a01c3c25faa70046a7a72e6062bdb2ed461009",
+    "candidate-timer_claim_validation": "aba389298f3a61b9555a381e0f04ed133bd222c9ba08f778ffd01df932a55b00",
+    "candidate-timer_claim_allocations": "e01b052884021880dbff6c8186a7818cf688c6ff7219b59f3465827cf1ebb4b7"
+  },
+  "harness_sha256": {
+    "crates/penelope-ports/benches/timer_claim_validation.rs": "04efec680b9a16ffd97569a482b0b50bbc6ed523b0fd5a5bbbc24b188891f0ff",
+    "crates/penelope-ports/benches/timer_claim_allocations.rs": "0de57019e8b2addda0d7daf381a5e781bb7aae5f5d8d111e4863920ce96ab021",
+    "crates/penelope-ports/tests/support/timer_claim_fixture.rs": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

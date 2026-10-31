@@ -1,0 +1,323 @@
+{
+  "recorded_utc": "2026-10-30T12:01:42.242881+00:00",
+  "tested_rust_revision": "2223a31457c3561b0f393fd88a3c93cf253a5b5c",
+  "documentation_revision": "0350d877aafd38dc5062daf323fede6407b15e2b",
+  "scope": "Current source checks; not a tagged release or complete 0.3.0 qualification. Documentation and a shell comment changed during checks; Rust sources and lockfiles stayed unchanged.",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+  "msrv": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7",
+  "advisory_db_revision": "2295466c4e9df26647fd67d8fa1c705ac2fc7f81",
+  "publish_order": [
+    "penelope-core",
+    "penelope-domain",
+    "penelope-intent",
+    "penelope-ports",
+    "penelope-sqlite",
+    "penelope-executor",
+    "penelope-statechronicle",
+    "penelope",
+    "penelope-process-runtime"
+  ],
+  "archives_sha256": {
+    "penelope-0.2.0.crate": "8c11f5655c5f88b4deba488dbfa75e797f426c446a1bf85e783881d65c26e3cd",
+    "penelope-core-0.2.0.crate": "916cdb9bb1d8c5a13d894fdb7c6717be5132afc6cf4e5dd603d2b0563774eaea",
+    "penelope-domain-0.2.0.crate": "bc684746301df15f0931a0e845387037f26bf4819ed04eb4abaa2d3a44977a78",
+    "penelope-executor-0.2.0.crate": "73ab4fbbc1f1d9b5a8eebc0ef679c5bf028d161649297d0a4f80b19126400721",
+    "penelope-intent-0.2.0.crate": "929cdf6b1c3b226b6b9599154839e4d2d8f5496b0216d10e191b412253d49711",
+    "penelope-ports-0.2.0.crate": "a778f5e183071abc73143867cda0cb0eb3a087673b7c354472fd25abafa6bbee",
+    "penelope-process-runtime-0.2.0.crate": "d61dad358b16fd5a5e261c56e194933fb035273280e31d2258e408dcb6bc1166",
+    "penelope-sqlite-0.2.0.crate": "2e125611259af53d9f2eb1f60f7abab766fae6fb35da58952d54f4e32500627a",
+    "penelope-statechronicle-0.2.0.crate": "8f1d9dc6378b2bd7fe302eff607a8df78d412f7dfa5e89d55ea7f9a8a5d0586b"
+  },
+  "logs": {
+    "workspace-all-targets": {
+      "file": "workspace-all-targets.log.gz",
+      "uncompressed_sha256": "b72f064ecc84d82c8f0324104c3fea44e4f97cc7f5b60d7f304b21f7ecf5d997",
+      "compressed_sha256": "7fe3043f65921180c1ee3e25d638b143a10de0e2180a804c184ebbb84b167a96"
+    },
+    "msrv-all-targets": {
+      "file": "msrv-all-targets.log.gz",
+      "uncompressed_sha256": "3937ff2df1659e76069bf1d81a03894e5f36900af7fff11f4bbb41fa168c05ff",
+      "compressed_sha256": "c35219dc7adc7f4d436c6dd5f25d84a020cfac5e23d99b4a9a6d681d600023e0"
+    },
+    "doctests": {
+      "file": "doctests.log.gz",
+      "uncompressed_sha256": "f65f8dc297bfd4de3bb310aaea90dc2981aecef2a746c6910d834e8874cbd2e5",
+      "compressed_sha256": "27ef419eb5980b29c47d6b327a727cbacac2495ac892f39bc97a0e33acf14641"
+    },
+    "clippy": {
+      "file": "clippy.log.gz",
+      "uncompressed_sha256": "48c5cf18e0abefd5326a4cfd6fbb20d01ce2983020ec31b04eedc242460021f8",
+      "compressed_sha256": "1de64696ff9f18204e97f400262dd48c7256ed1fd20c60a1f0a3f188b94cd6d7"
+    },
+    "rustdoc": {
+      "file": "rustdoc.log.gz",
+      "uncompressed_sha256": "c01c4fa4347abd079c4ccaf78fd35898824ea8c985ace9ab68652fa85a62276b",
+      "compressed_sha256": "39704ba81be7d47e0a4a6adfd9a2b1d07de8e0ff0181910481c79bd0b61f061a"
+    },
+    "riscv": {
+      "file": "riscv.log.gz",
+      "uncompressed_sha256": "75b5fda76503143a7c531f3a1501ebae90797463dbe77f689d764ef271da123c",
+      "compressed_sha256": "d7f99bea8ad7b68498d7210661c890b24e79600f9b05c083ae35332947475647"
+    },
+    "portable": {
+      "file": "portable.log.gz",
+      "uncompressed_sha256": "de31ff093ac5c2c3bd2226eb8aab9d45f44120b3054dce9fdf10ccc84df9c6e6",
+      "compressed_sha256": "f2293d86bae1bd7bcdb82fc4d21c2a133a8f87a6e7a84727fbb25b2c3738804d"
+    },
+    "audit": {
+      "file": "audit.log.gz",
+      "uncompressed_sha256": "3004077a93a3df63d2aed74d4b3ff3670dc47777f2e450dfe4464eb783b61f9b",
+      "compressed_sha256": "0ed744f458f9b87c4ac440352a8db07c3ecd467d7694c2aaba200f84d506238e"
+    },
+    "deny": {
+      "file": "deny.log.gz",
+      "uncompressed_sha256": "4608112b22f103f40a662a33e6ab5f74c447b5b7c3018bda195d74fe23319ea2",
+      "compressed_sha256": "56953c48dea557c7117fccf7ce066a36051e060f9ff32dbf3613c2da169fdfd5"
+    },
+    "packages": {
+      "file": "packages.log.gz",
+      "uncompressed_sha256": "4b62cc2f220de8220da727088e373c094beb7fce8a2e8269b8256fc768ee6dda",
+      "compressed_sha256": "59ace7ba00ef7b4596474a5f0c3acbe30bb8832acd6728a0b783e696675109ee"
+    },
+    "coverage": {
+      "file": "coverage.log.gz",
+      "uncompressed_sha256": "6410d4943e8c8b50e239bc5466578daad3ae4dabd832322f7df8fc94935d586c",
+      "compressed_sha256": "f22610ad0ad694b8e879bb9016d87efef7328ce99fb062ef755d472f3f41759d"
+    },
+    "upstream-conformance": {
+      "file": "upstream-conformance.log.gz",
+      "uncompressed_sha256": "d9bc9d706222998735a07b4cd1cf8b6eddcf8fd4504a5dd0e7cc12ca3a5a52a5",
+      "compressed_sha256": "952697356f92dbe01e39cb58a54bcfb5a10a08d408de8d6fe1ff5a397756f586"
+    },
+    "property-campaign": {
+      "file": "property-campaign.log.gz",
+      "uncompressed_sha256": "bc3d2e0d392575a753bc44c783e10cf9921e52a28f5938d0df0156e71aa40530",
+      "compressed_sha256": "829c1a36fdb6686bb5907842f020f2e8279c544295f8dffcaca895defed4132a"
+    },
+    "chaos-incomplete": {
+      "file": "chaos-incomplete.log.gz",
+      "uncompressed_sha256": "451db84f32c06ed172bb5ce307e272a95980467866253235c3e5dd1023ba03fd",
+      "compressed_sha256": "f581cfe834c0ae332f2a65a19403c286f92b235d2117c6a2ba89565857f3d2c9"
+    },
+    "authority-repro-100": {
+      "file": "authority-repro-100.log.gz",
+      "uncompressed_sha256": "1309304e9e2f1589796aaf0d3d21ba8db22f695a9e3f16ad9df737aef0355308",
+      "compressed_sha256": "b6e4db5aa55c9faab380239b57f719577d4ce55cd16bb88dd5429507566642bc"
+    },
+    "authority-repro-tmp-quota": {
+      "file": "authority-repro-tmp-quota.log.gz",
+      "uncompressed_sha256": "3af5173f078b547cca1602c17751554b0532c0f00bbb1b1fd72e2221cb4b16f1",
+      "compressed_sha256": "e44d9ff3fff81dec1cd9ae44a46bf2d2ba4c3a8468a04e92b76096242ed446ba"
+    },
+    "property-seeded_checkpoint_crash_and_persistence_chaos": {
+      "file": "property-seeded_checkpoint_crash_and_persistence_chaos.log.gz",
+      "uncompressed_sha256": "2913db9a17b6b803b8d731bc1a4a8e89e413772ba4086e4cf3b82eacf009c386",
+      "compressed_sha256": "45c559d8a895226b90a69782fe9b166dda7cc84218e4fc8363d3af6a1f8ab303"
+    },
+    "property-entry-engine-tests-live_transitions_and_event_replay_converge": {
+      "file": "property-entry-engine-tests-live_transitions_and_event_replay_converge.log.gz",
+      "uncompressed_sha256": "5302edc11c147ce73b5300f7d7a296297d9d5626cdb99bfd99d76c3c0bdb069e",
+      "compressed_sha256": "aed7a3abb49ce54d4b634731f0a72167200c3a185f4ae26d35ca93d5226babc0"
+    },
+    "property-entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy": {
+      "file": "property-entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log.gz",
+      "uncompressed_sha256": "79e891e7973603defc2bb2b18f6383ca87b7102bdd5e54f27825d42fd14c9e89",
+      "compressed_sha256": "832ba5dd17b09223b3d5f5e6da58d1245ae0df7679d89770349d9ab686b96746"
+    },
+    "supervisor-concurrency": {
+      "file": "supervisor-concurrency.log.gz",
+      "uncompressed_sha256": "db547a7b81c9c6842cf751fe484950a1e5ec2e465150ec8dd9cc86f482e37187",
+      "compressed_sha256": "aa48ff6adde47e340fbda3705d549188a35775d193a76b5c92252b76a4a767dd"
+    },
+    "supervisor-concurrency-msrv": {
+      "file": "supervisor-concurrency-msrv.log.gz",
+      "uncompressed_sha256": "b5956c77b567dc98193b051f2224054f035f14e9d5156d92d40d3074f5032994",
+      "compressed_sha256": "28b496b3131105f70404419d3c2a4ff70885d4031fcf20b1c885542c18cf35c2"
+    },
+    "supervisor-concurrency-clippy": {
+      "file": "supervisor-concurrency-clippy.log.gz",
+      "uncompressed_sha256": "295eb90fcc8f002b3b0be0065acc1f863d41541e5ed3924da23b575d2d8f4cc6",
+      "compressed_sha256": "2754d925252911d10b8a167d2344801a18a9694fb7844c3044db25840335aad3"
+    },
+    "runtime-with-concurrency": {
+      "file": "runtime-with-concurrency.log.gz",
+      "uncompressed_sha256": "96e82e8260128213e17c32920fd1b77275908a8d0cf25ee976554bd40a39b75d",
+      "compressed_sha256": "1758d467fc72258879c9cc100e9c92aec87052eb57a825bd92c24b5b3c8d8a68"
+    },
+    "semver-baseline": {
+      "file": "semver-baseline.log.gz",
+      "uncompressed_sha256": "849c1da8a6f64e722d274b857661de18663a1a7add9b052c64b5f126b1114b27",
+      "compressed_sha256": "f349756c16897cc143b50d2d0a3142256127e946ad4d8b1d6cab9b8fd41c6802"
+    },
+    "semver-after-discriminants": {
+      "file": "semver-after-discriminants.log.gz",
+      "uncompressed_sha256": "971b083172bf88dfa9cf73f980a31b67bf184f5b2e3197c2d0882d2452465146",
+      "compressed_sha256": "32e93b1cd4015e5c93d207cb18709286bb8ca0fadc834dc454228948b18ed27a"
+    },
+    "domain-discriminants": {
+      "file": "domain-discriminants.log.gz",
+      "uncompressed_sha256": "832e119198238307cdd778a645d01ee0e1f69e0b7f8ec105005fc85862050462",
+      "compressed_sha256": "d93352f4359152e194a9dc9f93b94a17cf6abae50dc3cd545e80bbadf1be3b0d"
+    },
+    "domain-discriminants-msrv": {
+      "file": "domain-discriminants-msrv.log.gz",
+      "uncompressed_sha256": "b8d0329ea5b5f7aa3a06b429c9b78f936e63f5c3ae25a7b32abb5f903fbcc936",
+      "compressed_sha256": "f9870ea34e7dbdd1d57391b2a37a92639b836713b74d0d4e1bb4d6faf80b0bb5"
+    },
+    "ports-discriminants": {
+      "file": "ports-discriminants.log.gz",
+      "uncompressed_sha256": "08511536f13ce1ca40bdd9cfb8e112d52aecd6105b7a52892cfd6469781d156e",
+      "compressed_sha256": "65ac6a325a1d8b7a5e5ea928d24d9bb8e2a199f31e29cbc5fa21e22ca54183d8"
+    },
+    "ports-discriminants-msrv": {
+      "file": "ports-discriminants-msrv.log.gz",
+      "uncompressed_sha256": "37cef73f4e217ebfe407c398f6902e37c4355398013c94003ca14816ef6dc3c9",
+      "compressed_sha256": "5f02ec85e7aa11cd7241690e612c05f43a22f98a34697593dcdadb1b5377ab4a"
+    },
+    "workspace-discriminants": {
+      "file": "workspace-discriminants.log.gz",
+      "uncompressed_sha256": "ce8b1b74cfc4f20bf87b31905ee89d40864b7feecf0b0443e16129dcd6ab658d",
+      "compressed_sha256": "14df09e52f88eb3aabd284549e453c0eb4e3eda29f045cb4180de453348030c6"
+    },
+    "clippy-discriminants": {
+      "file": "clippy-discriminants.log.gz",
+      "uncompressed_sha256": "44a0542b730dc19a22c04b84753edf6c7741cef0720b264d5ea880686490b53c",
+      "compressed_sha256": "45fc3abc908e85cc1ee98f093426385908e2e2e83c9715a57f0551225843c4d6"
+    },
+    "supervisor-error-compat": {
+      "file": "supervisor-error-compat.log.gz",
+      "uncompressed_sha256": "e3e9d21e8d336f8979032782846b064424e90d34f594f9e74924f99ee62f3390",
+      "compressed_sha256": "e077d29893a73a4a8390ebedd33d20a3e6678edac7b19e7f7cdb95398766056d"
+    },
+    "supervisor-error-compat-msrv": {
+      "file": "supervisor-error-compat-msrv.log.gz",
+      "uncompressed_sha256": "181d28b054e99449aeffda7c9b74599a57830dc39b32c248b44864a8fdba8541",
+      "compressed_sha256": "9db980d25b8b3a739d0d5a1893cc52a835b9f747b9f920dae30091bc8e78b806"
+    },
+    "supervisor-error-compat-clippy": {
+      "file": "supervisor-error-compat-clippy.log.gz",
+      "uncompressed_sha256": "6e451ebed7cbe327c3a7ec7c1c173cc3bc6cd2ebb728f21d98cf8e532345dd36",
+      "compressed_sha256": "a634ee68427930ff15b3a184e1c9d9e85d050155b0c89f9fc622444c62a4c326"
+    },
+    "migration-sigkill": {
+      "file": "migration-sigkill.log.gz",
+      "uncompressed_sha256": "1658a8eed330c5e6d2b69ccca619b2e13dd8196ae2945c0f5dad0b4d23ed6317",
+      "compressed_sha256": "3427c00b8cb13b508b2d03c3cc7e325ca3f34522b784fcc2b09e8963a49f74c2"
+    },
+    "migration-sigkill-msrv": {
+      "file": "migration-sigkill-msrv.log.gz",
+      "uncompressed_sha256": "03470ed65101fda1467e9290d2184f0efb9b94df83698a81c0f1027131cd4f95",
+      "compressed_sha256": "982cd9ca609ee50a38587c126ed6cdb9b6158cb4035dd85d84361471d32612d5"
+    },
+    "migration-clippy": {
+      "file": "migration-clippy.log.gz",
+      "uncompressed_sha256": "7aa20619641b97a989a03c10666a97256705a80a0cecff31fb4e1a82087ecca4",
+      "compressed_sha256": "0b438d79af97307090412b0fb46bf3d7f319f76412432651884861c68910f328"
+    },
+    "migration-all-targets": {
+      "file": "migration-all-targets.log.gz",
+      "uncompressed_sha256": "9a829153dd54af00baa6009d1e73db6ac73121e4bcc3f1aa57cfaab8116d292d",
+      "compressed_sha256": "ede56ae6b34cbd33997f1e9231321cf122b1bd8103fbb590245a6bbfc955fd62"
+    },
+    "coverage-migration": {
+      "file": "coverage-migration.log.gz",
+      "uncompressed_sha256": "6155ef4897dd7fa8b53a34919deed5ee6c7b85eafe1079608bd61fcc7d97f131",
+      "compressed_sha256": "0fff1ae003c1e92d342fbf66060937b001f9b69852cea372b93dffa52d101476"
+    },
+    "authority-repro-10000": {
+      "file": "authority-repro-10000.log.gz",
+      "uncompressed_sha256": "6c3731aa1e2be28dbed780677c7dd906e4206cff06396eaf322614eac0029df4",
+      "compressed_sha256": "169b50134f75b1efb09b8fddfefbd3e505cf5f8b3917cda232c12c5044cf40c5"
+    },
+    "authority-repro-syscalls": {
+      "file": "authority-repro-syscalls.log.gz",
+      "uncompressed_sha256": "244cb0924e478150c8dbc089c1303cda227802743179324c1c90df83c3403b21",
+      "compressed_sha256": "66a2374e07bb8946e3058ddafff5d6c15409e3eda604918127fa00339a82a187"
+    },
+    "authority-repro-10000-native": {
+      "file": "authority-repro-10000-native.log.gz",
+      "uncompressed_sha256": "cda7b92a05ee1d91d09ba70f0a028ce24f93b8f3df3702de4edf671b370c5b40",
+      "compressed_sha256": "24bfbd057d8838d96ffa3076d287c5f2764b82f4301c5c56da9fc0591738c965"
+    },
+    "chaos-local-filesystem": {
+      "file": "chaos-local-filesystem.log.gz",
+      "uncompressed_sha256": "a6f217029125ce60dae0c84523e45b59b8d034318f445b3ac8e5bd4b44a98c11",
+      "compressed_sha256": "f4d8eea92251393eaf0be22267193c4db5b21a21b3b913443f0b3f462bc81985"
+    },
+    "migration-all-targets-msrv": {
+      "file": "migration-all-targets-msrv.log.gz",
+      "uncompressed_sha256": "a2a4edbdc9b74fb31f3083463ef5f31cba65afb28646d6d11848d020f57669f9",
+      "compressed_sha256": "99d18cb7468ffa75b87be6d6c78e6322c42dd8636ca1b1e59b08ee22f8b91c59"
+    }
+  },
+  "campaigns_pending": [
+    "Three-iteration chaos campaign must restart after hosted performance fix; local-filesystem restart was intentionally stopped with signal 15 before completion"
+  ],
+  "property_campaign": {
+    "status": "passed",
+    "duration_seconds_per_property": 300,
+    "cases_per_batch": 10000,
+    "summary": "property-summary.json"
+  },
+  "chaos_campaign": {
+    "status": "failed",
+    "iteration": 1,
+    "target": "fuzz_sqlite_task_authority",
+    "input": "authority-failure-input.json",
+    "not_passed": true
+  },
+  "real_supervisor_concurrency": {
+    "result": "passed",
+    "test": "concurrency::two_supervisor_processes_admit_one_real_worker_and_replay_one_completion",
+    "source_sha256": "3509daab2872c0a22414ca737c1282a9524835aa4c89a4c65b8f8466b4fabadd",
+    "toolchains": [
+      "1.99.0",
+      "1.85.0"
+    ],
+    "validation": "runtime all-targets and strict all-target Clippy passed; production Rust sources unchanged"
+  },
+  "source_compatibility": {
+    "checker": "cargo-semver-checks 0.51.0",
+    "baseline": "edcc5b423e4919f51e4aa2cb820d9de68a684145",
+    "release_type": "patch",
+    "features": "all",
+    "scope": "seven original packages; new adapter packages and fuzz excluded",
+    "before": "failed: shifted legacy discriminants, exhaustive enum additions, shared error re-export",
+    "after": "failed: exhaustive enum additions and shared error re-export; no shifted discriminants",
+    "disposition": "preserve legacy variant values; document planned pre-1.0 breaking enum extensions; compile original hosted error imports/matches/conversions independently",
+    "source_sha256": {
+      "crates/penelope-domain/src/implementation.rs": "0c5410c79c994d7eaf8b5ddf40f9d657954a3cf57d6ee84ec822148aea94fca1",
+      "crates/penelope-ports/src/implementation.rs": "30c8791d85adf3b8914c5282fa96da90c4cbd73f28141b644ab2fcdbf0f6f5d8",
+      "crates/penelope-executor/tests/supervisor_error_compat.rs": "52fed46e009469dc9ffcb657442a9aa42f522f3fd5fcc752e4059692f13a1380"
+    }
+  },
+  "schema_migration_crash": {
+    "result": "passed",
+    "cuts": [
+      "before-transaction",
+      "after-begin",
+      "after-v2",
+      "after-v3",
+      "after-v4",
+      "before-commit",
+      "after-commit"
+    ],
+    "mechanism": "SIGKILL child, reopen real WAL/FULL database, check original-or-final schema and immutable records/blob/fence state, finish migration, reject delayed start",
+    "source_sha256": {
+      "crates/penelope-sqlite/src/schema.rs": "02510f9e4595ee7e339d9558a9ea3d547e8fadf093feed56f48745400fb164bd",
+      "crates/penelope-sqlite/src/schema_tests.rs": "0d05fe3ca2f8000597016c26da989753558269efb0d9a809b2eab05301ccb759"
+    },
+    "coverage_lines": {
+      "count": 9370,
+      "covered": 8815,
+      "percent": 94.07684098185699
+    },
+    "production_hooks": false,
+    "validation": "all-target SQLite tests on Rust 1.99.0 and 1.85.0, strict all-target Clippy, coverage ratchet"
+  },
+  "authority_reproduction": {
+    "fixed_input_native_10000": "passed exit 0, sanitizer enabled, local-filesystem TMPDIR",
+    "fixed_input_traced_10000": "all input repetitions completed without monitored syscall failure; exit 1 because LeakSanitizer rejects ptrace; not a clean sanitizer pass",
+    "original_quota_failure": "retained; full random campaign still required"
+  }
+}
