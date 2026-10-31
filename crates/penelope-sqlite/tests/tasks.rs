@@ -802,3 +802,6 @@ mod task_confirm_bounds;
 
 #[path = "support/wal_checkpoint.rs"]
 mod wal_checkpoint;
+
+#[path = "support/authority_race.rs"]
+mod authority_race;
