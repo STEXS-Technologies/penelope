@@ -110,3 +110,34 @@ fn validation_preserves_all_effect_coordinates_and_error_precedence() {
         assert_eq!(batch.validate(), legacy::validate(&batch), "case {case}");
     }
 }
+
+#[test]
+fn shared_step_payloads_and_later_invalid_scopes_preserve_effect_identity() {
+    for long in [false, true] {
+        let mut batch = fixture::commit_with_identifiers(128, long);
+        fixture::vary_payloads(&mut batch);
+        assert_eq!(batch.validate(), Ok(()));
+        assert_eq!(batch.validate(), legacy::validate(&batch));
+        batch.actions[127].payload_digest = batch.actions[0].payload_digest;
+        assert_eq!(
+            batch.validate(),
+            Err(CommitValidationError::DuplicateActionEffectKey)
+        );
+        assert_eq!(batch.validate(), legacy::validate(&batch));
+        for coordinate in 0..5 {
+            let mut invalid_scope = batch.clone();
+            match coordinate {
+                0 => invalid_scope.actions[127].tenant_id = "tnt_other".parse().unwrap(),
+                1 => invalid_scope.actions[127].process_id = "prc_other".parse().unwrap(),
+                2 => invalid_scope.actions[127].definition_id = "def_other".parse().unwrap(),
+                3 => invalid_scope.actions[127].definition_version = "dfv_other".parse().unwrap(),
+                _ => invalid_scope.actions[127].definition_digest = ContentDigest([5; 32]),
+            }
+            assert_eq!(
+                invalid_scope.validate(),
+                Err(CommitValidationError::ActionScopeMismatch)
+            );
+            assert_eq!(invalid_scope.validate(), legacy::validate(&invalid_scope));
+        }
+    }
+}
