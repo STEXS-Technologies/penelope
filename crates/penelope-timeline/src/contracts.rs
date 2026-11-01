@@ -46,6 +46,20 @@ pub trait SnapshotStore<State> {
     -> Result<StateAnchor, Self::Error>;
 }
 
+/// Snapshot adapter that additionally binds the restore to the canonical live head.
+/// A correction import at the same step is not automatically the accepted live state.
+pub trait LiveSnapshotStore<State>: SnapshotStore<State> {
+    /// Restores the exact state published with `expected`; refuses tentative imports.
+    /// # Errors
+    /// Rejects an anchor that is not canonical for that head, or any restore failure.
+    fn restore_current(
+        &self,
+        expected: TimelineHead,
+        anchor: StateAnchor,
+        scratch: &mut State,
+    ) -> Result<StateAnchor, Self::Error>;
+}
+
 /// Immutable verified input access. Implementations must verify bytes/content
 /// against the descriptor before returning; a digest alone does not admit trust.
 pub trait InputStore<Input> {

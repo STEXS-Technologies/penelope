@@ -47,9 +47,9 @@ advance finality implicitly.
 
 Consumers must authenticate corrections, validate authority ordering, establish
 anchor lineage and snapshot completeness, pin immutable payloads to their
-descriptors and retain the whole consistency domain. This first API admits only
-anchors and resolved input descriptors on the current branch. It does not yet
-resolve ancestor branches or prove trust from a digest.
+descriptors and retain the whole consistency domain. The core API admits
+anchors and resolved input descriptors on the current branch. The optional history
+adapter resolves ancestor aliases before planning; no digest proves trust.
 
 ## Verification and remaining implementation
 
@@ -60,7 +60,7 @@ and counter exhaustion. Newtype constructor/arithmetic checks are registered in
 the existing fuzz inventory. RISC-V checks keep the module allocation-free and
 `no_std`; no performance percentage is claimed.
 
-The next implementation adds a bounded metadata projection with non-reused branch
+The implementation includes a bounded metadata projection with non-reused branch
 reservations, authority epoch/sequence ordering and independently advancing effect
 finality. The new optional `penelope-timeline` crate owns isolated scratch replay,
 bounded staged intents and consuming candidate validation. `LiveTimeline` publishes
@@ -76,8 +76,25 @@ readers, aborted-branch ABA, new live input during replay, authority/finality
 separation, lost handoff ACKs, mismatched receipts and destructor panic after a
 coherent publication. These tests do not complete the release qualification.
 
-Remaining work includes bounded snapshot/input retention and lineage resolution;
-independently versioned timeline records and fixtures; concrete durable handoff,
+`FixedHistory` provides fixed-capacity input versions, full snapshots and immutable
+branch lineage. Imported corrections do not overwrite canonical parent facts or
+become live snapshots. Children inherit inputs and only the unchanged state prefix;
+corrected inputs and state anchors remain explicitly bound. Payload content and
+charges are checked on admission and read. Capture checks slot and byte quotas
+before cloning; the base model API still requires no `Clone`.
+
+`PinnedReplaySession` holds an immutable history borrow across yields. Safe Rust
+prevents mutation or eviction while pinned. Eviction requires a complete floor
+anchor for every retained branch; branch retirement rejects live and depended-on
+ancestors. There is no implicit eviction on capacity exhaustion. This conservative
+profile buffers new inputs outside the store while replay is pinned.
+`materialize_branch` copies a selected branch into an independent bounded store
+with complete available anchors and resolved input versions. It preserves consumed
+branch IDs, checks all charges before cloning and leaves the source untouched.
+Owners can replace history after readers release it and other candidates retire,
+reclaiming old ancestry without silently invalidating a retained branch.
+
+Remaining work includes independently versioned timeline records and fixtures; concrete durable handoff,
 simulation and non-game samples; comprehensive model/fuzz/performance campaigns;
 and all inherited release/package gates. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.

@@ -10,7 +10,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Optional `penelope-timeline` crate with bounded scratch replay, staged effect
-  intents, candidate validation, atomic ownership/hosted-lock publication and
+  intents, candidate validation, fixed-capacity immutable input/snapshot history,
+  branch materialization, atomic ownership/hosted-lock publication and
   separately authorized effect finality. New timeline scope, branch and revision
   identities remain independent of existing saga/task protocols. This feature
   remains under development; see [the current status](docs/timeline-foundation.md).

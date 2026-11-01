@@ -33,6 +33,15 @@ proofs. Hashes do not establish authority. This is computation replay, not rollb
 of effects already issued. Sharing interior-mutable aliases to live state violates
 the publication contract. A poisoned hosted write lock requires reconstruction.
 
-Bounded history/snapshot stores, versioned timeline records, the concrete durable
-bridge example and release qualification are still being implemented. Do not infer
+`FixedHistory` offers fixed-capacity immutable inputs and full snapshots, explicit
+byte limits, ancestry resolution and safe floor eviction. `PinnedReplaySession`
+borrows history across yields, preventing eviction while replay still depends on
+it. Corrections remain imports until selected on a child branch. Capture checks
+capacity before cloning; consumers can supply other snapshot/input adapters.
+
+`materialize_branch` copies a selected branch into independent bounded history,
+preserving consumed branch IDs so old ancestry can be reclaimed after pins and
+other candidates retire.
+
+Versioned timeline records, the concrete durable bridge example and release qualification are still being implemented. Do not infer
 persistence or arbitrary-state determinism from the current in-memory API.

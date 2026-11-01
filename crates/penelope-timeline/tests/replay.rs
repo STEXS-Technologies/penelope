@@ -90,6 +90,22 @@ impl SnapshotStore<i64> for Snapshots {
         Ok(anchor)
     }
 }
+impl LiveSnapshotStore<i64> for Snapshots {
+    fn restore_current(
+        &self,
+        expected: TimelineHead,
+        anchor: StateAnchor,
+        scratch: &mut i64,
+    ) -> Result<StateAnchor, ()> {
+        if anchor.step != expected.step()
+            || anchor.scope != expected.scope()
+            || anchor.branch != expected.branch()
+        {
+            return Err(());
+        }
+        self.restore(anchor, scratch)
+    }
+}
 struct Inputs {
     values: [u64; 3],
     wrong: bool,

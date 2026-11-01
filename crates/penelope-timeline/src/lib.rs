@@ -22,3 +22,8 @@ pub use step::*;
 mod shared;
 #[cfg(feature = "std")]
 pub use shared::*;
+
+mod history;
+mod pinned;
+pub use history::*;
+pub use pinned::*;

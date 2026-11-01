@@ -124,6 +124,11 @@ impl<'inputs> ReplayPlan<'inputs> {
             inputs,
         })
     }
+    /// Corrected input descriptor, if this plan replaces an input rather than state.
+    #[must_use]
+    pub const fn replacement_input(&self) -> Option<InputRecord> {
+        self.replacement
+    }
     /// Logical step whose state or input is corrected.
     #[must_use]
     pub const fn corrected_step(&self) -> TimelineStep {

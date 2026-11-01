@@ -48,7 +48,7 @@ pub fn prepare_live_step<M, I, S, V, const EFFECTS: usize>(
 where
     M: RewindableComputation,
     I: InputStore<M::Input>,
-    S: SnapshotStore<M::State>,
+    S: LiveSnapshotStore<M::State>,
     V: CandidateValidator<M::State>,
 {
     let mut check = TimelineProjection::<0>::new(request.expected);
@@ -62,7 +62,7 @@ where
         return Err(TimelineError::HistoryUnavailable.into());
     }
     let restored = snapshots
-        .restore(request.anchor, &mut request.scratch)
+        .restore_current(request.expected, request.anchor, &mut request.scratch)
         .map_err(StepError::Snapshot)?;
     if restored != request.anchor {
         return Err(TimelineError::InputMismatch.into());
