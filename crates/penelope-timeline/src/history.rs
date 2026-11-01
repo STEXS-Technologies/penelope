@@ -730,12 +730,28 @@ impl<
         if record.step <= self.floor {
             return Err(TimelineError::HistoryUnavailable);
         }
+        // Slot position is only a hint: imports, eviction and branch-local
+        // appends can place a different descriptor here. Verify the complete
+        // record before using it, then fall back to an exact step-filtered scan.
         let entry = self
-            .inputs
-            .iter()
-            .flatten()
-            .find(|entry| entry.record == record)
+            .input_slot_hint(record.step)
+            .filter(|entry| entry.record == record)
+            .or_else(|| {
+                self.inputs
+                    .iter()
+                    .flatten()
+                    .find(|entry| entry.record.step == record.step && entry.record == record)
+            })
             .ok_or(TimelineError::HistoryUnavailable)?;
+        self.verify_input(entry)?;
+        Ok(entry)
+    }
+    fn input_slot_hint(&self, step: TimelineStep) -> Option<&StoredInput<Input>> {
+        let offset = step.get().checked_sub(self.floor.get())?.checked_sub(1)?;
+        let index = usize::try_from(offset).ok()?;
+        self.inputs.get(index)?.as_ref()
+    }
+    fn verify_input(&self, entry: &StoredInput<Input>) -> Result<(), TimelineError> {
         if self.check_payload(
             &entry.payload,
             entry.record.digest,
@@ -744,7 +760,7 @@ impl<
         {
             return Err(TimelineError::InputMismatch);
         }
-        Ok(entry)
+        Ok(())
     }
     fn exact_anchor(&self, anchor: StateAnchor) -> Result<&StoredAnchor<State>, TimelineError> {
         self.check_scope(anchor.scope)?;
@@ -777,10 +793,18 @@ impl<
             if step > lineage.admitted_through {
                 return Err(TimelineError::HistoryUnavailable);
             }
-            if let Some(entry) = self.inputs.iter().flatten().find(|entry| {
-                entry.canonical && entry.record.branch == branch && entry.record.step == step
-            }) {
-                return self.exact_input(entry.record);
+            let canonical = |entry: &&StoredInput<Input>| {
+                entry.record.step == step && entry.record.branch == branch && entry.canonical
+            };
+            if let Some(entry) = self
+                .input_slot_hint(step)
+                .filter(canonical)
+                .or_else(|| self.inputs.iter().flatten().find(canonical))
+            {
+                // The canonical search already identified the exact immutable
+                // entry. Recheck content/charge directly instead of scanning again.
+                self.verify_input(entry)?;
+                return Ok(entry);
             }
             if let Some(record) = lineage.input_override.filter(|record| record.step == step) {
                 return self.exact_input(record);

@@ -9,6 +9,8 @@
 #![allow(dead_code)] // Each executable uses only one reporter.
 #[path = "effects_workload.rs"]
 mod effects_workload;
+#[path = "history_workload.rs"]
+mod history_workload;
 use penelope_core::task::Digest;
 use penelope_timeline::*;
 use std::{hint::black_box, time::Instant};
@@ -777,6 +779,7 @@ pub fn run(mut reporter: impl Reporter) {
     profiles::<1>(&mut reporter);
     profiles::<128>(&mut reporter);
     profiles::<512>(&mut reporter);
+    history_workload::profiles(&mut reporter);
     effects_workload::profiles::<8>(&mut reporter);
     effects_workload::profiles::<64>(&mut reporter);
     effects_workload::profiles::<512>(&mut reporter);

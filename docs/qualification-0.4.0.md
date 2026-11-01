@@ -178,3 +178,34 @@ Workspace coverage is 95.1590% against the unchanged 94.0759% threshold.
 Temporary-directory quota failures were resolved with workspace-local `TMPDIR`;
 successful reruns are archived separately from expected regression failures.
 The earlier 66-batch campaign retains its earlier source scope.
+
+## FixedHistory input lookup follow-up
+
+[The lookup qualification archive](verification-data/2026-11-01-history-lookup/manifest.json)
+covers checked step-relative slot hints, step-filtered exact fallback and direct
+verification of canonical ancestry matches. Exact stored imports retain their
+precedence over inherited aliases; full descriptor matching, scope/floor guards,
+payload digest and declared-charge checks remain required. No public storage
+layout fields, dependencies or allocation requirements change.
+
+A linear immutable-version oracle checks interleaved canonical/imported versions,
+arbitrary initial floors/branch identities, eviction and slot reuse. Counter-edge
+cases reach `u64::MAX`; mutable-payload regressions detect both content and charge
+changes on the hint and fallback paths. All 10,000 seed-411 cases pass. A separate
+temporary checkout deliberately removes only the full-record hint filter: all
+three new tests fail at runtime, with expected exit 101. That faulty source is
+never applied to the working branch.
+
+All-feature timeline tests, strict all-target Clippy, Rust 1.85 timeline tests,
+portable RISC-V default/alloc checks, strict workspace docs, compile-fail pin
+doctests, layer negative controls and fresh-registry verification of all ten
+library archives pass. The existing instrumented correction fuzzer additionally
+runs the lookup oracle; 100,000 seed-411 runs complete successfully. Workspace
+coverage is 95.1906% against the unchanged 94.0759% threshold.
+
+[The matched performance archive](timeline-performance.md#fixedhistory-lookup-follow-up)
+retains identical benchmark source, isolated binaries, three runs per version,
+all 520 profiles and zero-allocation records. Longer scalar replay windows improve
+substantially; small-window results include slight unfavorable movement. The
+original repeated 66-batch campaign retains its earlier source scope and is not
+claimed against this follow-up.

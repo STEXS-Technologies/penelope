@@ -56,6 +56,9 @@ byte limits, ancestry resolution and safe floor eviction. `PinnedReplaySession`
 borrows history across yields, preventing eviction while replay still depends on
 it. Corrections remain imports until selected on a child branch. Capture checks
 capacity before cloning; consumers can supply other snapshot/input adapters.
+Input reads try a checked step-relative slot hint before an exact scan; complete
+descriptor, content and declared-charge checks remain required. Imports, eviction
+and branch aliases can use the fallback without changing lookup semantics.
 If a payload destructor unwinds during leaf retirement, the leaf remains
 discoverable and cleanup can be retried; removed payloads remain uncharged.
 

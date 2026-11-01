@@ -377,3 +377,48 @@ stack is 2,708,560 bytes before and 2,708,592 after; sampled total is 2,710,168 
 costs, portable call-stack limits or a comparison to the older smaller workload.
 The successful runs use workspace-local `TMPDIR` and `VALGRIND_OPTS=--vgdb=no`
 after an initial host temporary-directory quota failure.
+
+## FixedHistory lookup follow-up
+
+[Matched measurements, binary/source hashes and all 520 profiles](performance-data/2026-11-01-history-lookup/manifest.json)
+compare `3de62ef` with checked input slot hints and a step-filtered exact fallback.
+Canonical ancestry resolution verifies its selected payload directly instead of
+searching for the same entry again. Every read still checks payload digest and
+declared charge; the hint must match the full requested descriptor. Imports,
+eviction, slot reuse and branch-local records may miss the hint and use scans.
+No new index fields or dependencies are added.
+
+The 45 new profiles measure read-all, descriptor collection and full correction
+through `FixedHistory`, using u64 state/inputs and no intents. Layouts are a root
+branch, a child inheriting parent input aliases, and a history initially holding
+512 inputs whose floor advances to 512-N with a complete floor snapshot. The
+512-input eviction case retains floor zero as a control. Fixture construction is
+outside timing. Full correction includes descriptor collection/scratch copy,
+planning, reservation, history plan checks, verified snapshot restore, batched
+pinned replay, validation and publication. It excludes new history admission,
+forking, snapshot capture and external I/O. These boundaries differ from the
+captured/indexed adapter profiles, so their absolute times are not interchangeable.
+
+Median of three run medians, nanoseconds per root-branch full correction:
+
+| Replayed inputs | Before | After | Reduction |
+| --- | ---: | ---: | ---: |
+| 1 | 2,105 | 2,115 | -0.475% |
+| 8 | 3,747 | 3,517 | 6.138% |
+| 32 | 12,214 | 8,356 | 31.587% |
+| 128 | 93,861 | 27,623 | 70.570% |
+| 512 | 1,275,926 | 106,195 | 91.677% |
+
+At 512 inputs, root read-all falls from 341,650 to 29,347 ns (91.410%) and
+collection from 444,799 to 27,924 ns (93.722%). Inherited full correction falls
+from 2,535,701 to 735,451 ns (70.996%); ancestry and exact imported-version
+precedence still require fallback work. Longer retained windows benefit most;
+small operations are dominated by fixed checks and measurement noise.
+
+All 520 separately instrumented operations allocate zero Rust heap bytes. The
+39 capacity-profile rows remain available; these describe object sizes, not
+per-operation stack use. No new sampled-stack claim follows from this expanded
+benchmark. Both versions use identical benchmark source and separate build
+directories, three CPU-8 runs and 1,000 samples after 16 warmups. Frequency,
+caches and scheduling remain uncontrolled; the raw archive includes unfavorable
+rows and does not establish a universal application overhead percentage.
