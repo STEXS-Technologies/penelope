@@ -440,7 +440,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-core"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "sha2",
@@ -449,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-domain"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "penelope-core",
  "serde",
@@ -460,7 +460,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-executor"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -472,7 +472,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-intent"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -482,7 +482,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-ports"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "async-trait",
  "penelope-core",
@@ -494,7 +494,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-process-runtime"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "libc",
  "penelope-core",
@@ -507,7 +507,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-sqlite"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "async-trait",
  "penelope-core",
@@ -520,7 +520,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-statechronicle"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "penelope-domain",
  "penelope-ports",
