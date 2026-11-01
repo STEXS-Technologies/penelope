@@ -279,3 +279,38 @@ retains all 560 profile rows for each run, same-binary controls, source/binary
 hashes and zero-allocation records. Snapshot paths improve, while several input
 controls move unfavorably. Same-binary variation does not establish that every
 unfavorable movement is noise or prove noninferiority across all integrations.
+
+## Detached materialization audit
+
+[The materialization qualification archive](verification-data/2026-11-01-materialization/manifest.json)
+covers direct slot construction in a fresh detached history. Source preflight,
+source resolution, exact identities, clone digest validation, per-payload limits
+and checked aggregate charge remain required. Actual clones can declare different
+sizes from their source; final accounting uses the validated clone sizes.
+
+Three new regression tests also pass against baseline production `2e83d59`.
+For each of five clone positions, they reject changed content, oversized payloads,
+aggregate quota excess and u64 overflow, while accepting and charging valid larger
+or smaller clones. A corrupt final source snapshot is refused before any clone.
+Injected clone panics at every position preserve source readability and allow
+retry. Shared test instrumentation and intentional corruption do not relax the
+consumer contract forbidding mutable aliases to admitted payloads.
+
+A detached negative control replaces only the materialized input clone integrity
+check with its declared byte length. The new clone-validation regression fails
+at runtime with expected exit 101; faulty code never enters the working branch.
+
+All-feature timeline tests with 10,000 cases per property and seed 414 pass,
+including the independent ancestry and snapshot oracles that materialize selected
+branches. Strict all-target Clippy, Rust 1.85 tests, portable RISC-V default/alloc,
+strict workspace docs, pin doctests, layer controls and fresh-registry package
+verification of all ten libraries pass. The existing instrumented correction,
+flat-history, input-ancestry and snapshot fuzz models complete 100,000 seed-414
+runs. Workspace line coverage is 95.2713%, above the unchanged 94.0759% ratchet.
+The earlier repeated 66-batch campaign retains its earlier production scope.
+
+[The corresponding performance evidence](timeline-performance.md#detached-materialization-follow-up)
+retains all 560 profiles, including unfavorable controls. All eight measured
+materialization profiles improve; all 560 instrumented operations remain free of
+Rust heap allocations. This does not prove arbitrary consumer snapshot validity,
+determinism or integration-wide speed.

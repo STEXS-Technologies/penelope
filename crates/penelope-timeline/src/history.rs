@@ -413,22 +413,62 @@ impl<
         let mut anchor = base.anchor;
         anchor.branch = branch;
         let mut result = Self::new(anchor, base.state.clone(), self.limits)?;
+        // The detached root has only its floor anchor. Fill its remaining empty
+        // slots in step order; public admission would repeatedly search them.
+        // Charge actual clones, whose declared sizes may differ from the source.
+        let mut cloned_bytes = result.bytes;
+        let mut input_slots = result.inputs.iter_mut();
+        let mut anchor_slots = result.anchors.iter_mut().skip(1);
         for offset in 1..=count {
             let step = self.materialized_step(offset)?;
             let source = self.resolve_input(branch, step)?;
             let mut record = source.record;
             record.branch = branch;
-            result.append_input(record, source.payload.clone())?;
+            let payload = source.payload.clone();
+            let input_bytes =
+                self.check_payload(&payload, record.digest, self.limits.max_input_bytes)?;
+            cloned_bytes = cloned_bytes
+                .checked_add(input_bytes)
+                .filter(|total| *total <= self.limits.max_total_bytes)
+                .ok_or(TimelineError::Capacity)?;
+            *input_slots.next().ok_or(TimelineError::Capacity)? = Some(StoredInput {
+                record,
+                payload,
+                bytes: input_bytes,
+                canonical: true,
+            });
             match self.resolve_anchor(branch, step) {
                 Ok(snapshot_source) => {
                     let mut snapshot_anchor = snapshot_source.anchor;
                     snapshot_anchor.branch = branch;
-                    result.insert_snapshot(snapshot_anchor, snapshot_source.state.clone())?;
+                    let state = snapshot_source.state.clone();
+                    let snapshot_bytes = self.check_payload(
+                        &state,
+                        snapshot_anchor.digest,
+                        self.limits.max_snapshot_bytes,
+                    )?;
+                    cloned_bytes = cloned_bytes
+                        .checked_add(snapshot_bytes)
+                        .filter(|total| *total <= self.limits.max_total_bytes)
+                        .ok_or(TimelineError::Capacity)?;
+                    *anchor_slots.next().ok_or(TimelineError::Capacity)? = Some(StoredAnchor {
+                        anchor: snapshot_anchor,
+                        state,
+                        bytes: snapshot_bytes,
+                        canonical: true,
+                    });
                 }
                 Err(TimelineError::HistoryUnavailable) => {}
                 Err(error) => return Err(error),
             }
         }
+        result.bytes = cloned_bytes;
+        result
+            .branches
+            .first_mut()
+            .and_then(Option::as_mut)
+            .ok_or(TimelineError::HistoryUnavailable)?
+            .admitted_through = through;
         result.last_branch = self.last_branch;
         Ok(result)
     }

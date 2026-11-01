@@ -527,3 +527,46 @@ reproducing the expanded benchmark on the baseline production revision.
 All 560 separately instrumented operations record zero Rust heap allocations,
 reallocations and requested bytes. All 39 capacity rows match the preceding
 archive. This round adds no index fields and makes no new stack-bound claim.
+
+## Detached materialization follow-up
+
+[The materialization archive](performance-data/2026-11-01-materialization/manifest.json)
+compares the snapshot-lookup baseline `2e83d59` with direct construction of a
+detached history. A fresh destination has one root and its floor snapshot;
+materialization fills the remaining empty slots in logical-step order instead of
+repeatedly searching for free slots and duplicates through public admission.
+This removes destination searches; source resolution still depends on configured
+history and lineage bounds. Complete source preflight remains before any clone.
+Every actual clone still receives digest, per-payload and checked aggregate-charge
+validation. The destination publishes its admitted frontier only after construction.
+
+The unchanged 560-profile workload includes eight materialization profiles:
+512 retained scalar inputs, 1/8/32/63 initial canonical snapshots, root or inherited
+branch. Their median reductions range from 21.190% to 25.952%. At 63 snapshots:
+
+| Operation | Before, ns | After, ns | Reduction |
+| --- | ---: | ---: | ---: |
+| Root materialization | 167,203 | 123,810 | 25.952% |
+| Inherited materialization | 192,213 | 148,147 | 22.926% |
+
+These are medians of three run medians, with 1,000 samples after 16 warmups per
+profile per run, pinned to CPU 8. Separate build directories and equal-length
+executable paths isolate the versions. Six runs alternate versions before
+qualification builds/tests start. The archive includes all raw rows, run ranges,
+maximum run p99 values and source/binary hashes. Frequency, scheduling, caches,
+ASLR and other host processes remain uncontrolled. There is no fresh same-binary
+control in this round; prior controls retain their earlier source scope.
+
+Some unchanged controls move unfavorably: one-input evicted read-all measures
+210 to 271 ns, and scalar one-input core append measures 40 to 50 ns. Retaining
+these results avoids claiming that every path improved or that variability
+explains every unfavorable movement. This is a materialization improvement,
+not a measured whole-game speedup or universal library overhead percentage.
+
+Materialization includes preflight, cloning and detached construction, excluding
+fixture creation, caller replacement, disposal of superseded stores, persistence
+and I/O. Arbitrary consumer Clone cost can dominate these scalar workloads.
+All 560 separately instrumented operations record zero Rust heap allocations,
+reallocations and requested bytes; consumer clones may allocate. All 39 capacity
+rows match the preceding archive. No fields or indexes are added, and this pass
+makes no new sampled-stack or worst-case call-stack claim.
