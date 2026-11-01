@@ -86,6 +86,16 @@ pub trait CandidateValidator<State> {
     fn validate(&self, state: &State, expected: TimelineHead) -> Result<(), TimelineError>;
 }
 
+/// Closures can express domain invariants without a separate validator type.
+impl<State, F> CandidateValidator<State> for F
+where
+    F: Fn(&State, TimelineHead) -> Result<(), TimelineError>,
+{
+    fn validate(&self, state: &State, expected: TimelineHead) -> Result<(), TimelineError> {
+        self(state, expected)
+    }
+}
+
 /// Optional same-baseline digest checker; no mandatory state hash on each step.
 pub struct DigestValidator<F> {
     pub expected: Digest,

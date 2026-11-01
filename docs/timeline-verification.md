@@ -32,6 +32,15 @@ reduction order. A digest mismatch rejects the candidate while preserving live
 state. These tests demonstrate detection when validation is enabled, not an
 ability to infer missing application dependencies.
 
+The correction trace also drives owned-state `apply_input` and the scoped
+correction API against the same closed-form oracle: cancellation, failed
+validation/model execution, zero-budget yields, bounded progress and retry with
+one reservation slot. The extended correction target passes 100,000 instrumented
+runs with seed 405. Dedicated replay tests cover restore/model/validator unwinds,
+ignored sink rejection, merged quotas, counter exhaustion and a retired-state
+destructor panic after coherent scoped publication. A compile-fail test checks
+the scoped handle's exclusive live-owner borrow. The quickstart runs in stable CI.
+
 ## Reproduction and failure inputs
 
 Run from the repository root:

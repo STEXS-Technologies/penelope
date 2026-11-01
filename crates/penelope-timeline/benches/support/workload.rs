@@ -360,6 +360,56 @@ fn profiles<const W: usize>(report: &mut impl Reporter) {
         assert_eq!(reference_state, expected);
         assert!(reference_ring.promote(n as u64, reference_state));
 
+        let mut owned = Live::new(head(n - 1), fixture.expected(n - 1), FX);
+        owned
+            .apply_input(
+                &Computation::<W>,
+                fixture.records[n - 1].identity,
+                &fixture.values[n - 1],
+                &validator,
+            )
+            .unwrap();
+        assert_eq!(*owned.read().1, expected);
+        report.sample(
+            "owned_apply_input",
+            W,
+            n,
+            || Live::new(head(n - 1), fixture.expected(n - 1), FX),
+            |live| {
+                live.apply_input(
+                    &Computation::<W>,
+                    fixture.records[n - 1].identity,
+                    &fixture.values[n - 1],
+                    &validator,
+                )
+                .unwrap()
+            },
+        );
+        report.sample(
+            "scoped_full_correction",
+            W,
+            n,
+            || fixture.live(n),
+            |live| {
+                let mut correction = live
+                    .begin_correction(
+                        CorrectionRequest {
+                            correction: Correction::State(fixture.anchor),
+                            inputs: &fixture.records[..n],
+                            observation: observation(fixture.anchor),
+                            scratch: State([0; W]),
+                            limits: LIMITS,
+                        },
+                        &fixture,
+                    )
+                    .unwrap();
+                correction
+                    .advance(&Computation::<W>, &fixture, n as u64)
+                    .unwrap();
+                correction.publish(&validator).unwrap()
+            },
+        );
+
         report.sample(
             "core_prepare",
             W,

@@ -25,6 +25,7 @@ The public API profiles are:
 | --- | --- |
 | `core_prepare` | Validate the borrowed contiguous replay range and exact expected metadata |
 | `core_append` | Metadata-only next-input transition |
+| `owned_apply_input` | Derive/hash one input record, clone live state, compute, validate and publish without history admission |
 | `core_reserve_promote` | Prepare, reserve and publish metadata without running application state |
 | `history_append` | Admit the final input to a 512-input fixed history, including payload integrity |
 | `history_capture` | Full snapshot capture into a 65-anchor store, including integrity verification |
@@ -32,6 +33,7 @@ The public API profiles are:
 | `replay` / `replay_yield8` | Advance an already restored session, uninterrupted or with eight-step calls |
 | `promote` | Publish a previously replayed and validated candidate |
 | `full_correction` | Plan, reserve, restore, replay, validate and publish a state correction |
+| `scoped_full_correction` | The same correction through the scoped convenience handle, including automatic reservation lifecycle |
 | `input_correction` | Same full protocol, replacing input 1 with a new immutable revision |
 | `competing_corrections` | Replay/validate two candidates, publish one and refuse the stale second |
 | `missing_window_refusal` | Refuse a replay range missing its final input |

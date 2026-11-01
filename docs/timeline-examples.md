@@ -1,9 +1,10 @@
 # Rewindable computation examples
 
-These two executable consumers use the same `penelope-timeline` API with independent
+The simulation and invoice executable consumers use the same `penelope-timeline` API with independent
 domain types. No game engine, ECS, network transport or StateChronicle is required.
 
 ```bash
+cargo run -p penelope-timeline --example quickstart --locked
 cargo run -p penelope-timeline --example rewindable_simulation --locked
 cargo run -p penelope-sqlite --example optimistic_timeline --locked
 cargo test -p penelope-timeline --example rewindable_simulation --locked
@@ -14,6 +15,57 @@ Both examples run in stable CI and their acceptance tests run with the workspace
 all-target checks, including Rust 1.85.0. They assert their contracts and return typed
 errors for model, timeline and adapter failures. They are examples of consumer
 composition; their invoice/kinematics models are not exported library contracts.
+
+## Quickstart
+
+[`quickstart.rs`](../crates/penelope-timeline/examples/quickstart.rs) is the smallest
+complete consumer, using a checked integer counter. The live-input operation is:
+
+```rust,ignore
+let record = timeline.apply_input(&Counter, input_id, &5, &valid)?;
+let input = CapturedInput::new(record, 5)?;
+```
+
+The library derives scope, branch, next step, initial input revision and digest.
+It clones the owned live state, invokes the model on scratch, validates and
+publishes. The validator can be a closure. A failed computation, quota check or
+validation leaves the publication unchanged. `Clone` must produce complete,
+isolated state; the lower-level APIs remain available without that requirement.
+
+After the application admits a corrected snapshot and authority observation:
+
+```rust,ignore
+let mut correction = timeline.begin_correction(request, &snapshot)?;
+while correction.advance(&Counter, &input, 1)? == ReplayPhase::Replaying {
+    // Yield to the application's loop as needed.
+}
+correction.publish(&valid)?;
+```
+
+The handle binds the current head, plans, reserves and restores. It releases the
+reservation on drop, unsuccessful consuming publication or unwind. A step error
+permanently aborts replay; drop the handle to cancel it. Branch identities remain
+consumed. Its exclusive live-owner borrow prevents competing appends; use the
+lower-level sessions when that concurrency is required. `CapturedSnapshot` builds
+and verifies a scoped snapshot descriptor; `CapturedInput` verifies an immutable
+record/payload pair. Arrays of captured inputs implement `InputStore` too.
+
+The executable verifies `0 + 5 = 5`, then admits corrected genesis `10`, replays
+the same input and verifies `15`. It emits:
+
+```text
+quickstart: input=5 corrected_genesis=10 live=15
+```
+
+This small profile retains its input and snapshot in owned variables. The helpers
+do not automatically retain a live input, create a `FixedHistory` child, or
+transact history and live publication together. Applications needing retained
+branch histories must coordinate immutable admission, capture, fork and retirement
+as in the simulation example; a history admission failure after `apply_input`
+does not undo its successful live publication. `next_input` can derive a descriptor
+before execution when a consumer needs its own admission transaction. Payload
+size admission, source authentication, snapshot completeness and effect finality
+remain consumer responsibilities. No I/O is added to replay.
 
 ## Integer simulation
 

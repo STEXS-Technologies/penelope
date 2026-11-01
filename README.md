@@ -121,6 +121,7 @@ recovery, networking, ECS integration and arbitrary effect rollback are outside
 this release's supported profile.
 
 ```sh
+cargo run -p penelope-timeline --example quickstart --locked
 cargo run -p penelope-timeline --example rewindable_simulation --locked
 cargo run -p penelope-sqlite --example optimistic_timeline --locked
 ```
@@ -130,6 +131,12 @@ See [the API and baseline mapping](docs/timeline-foundation.md),
 [verification](docs/timeline-verification.md) and
 [performance measurements](docs/timeline-performance.md).
 Version 0.4.0 has not been tagged or published.
+
+For owned state, `LiveTimeline::apply_input` derives the next input descriptor,
+computes on an isolated clone, validates and publishes in one call. A scoped
+`begin_correction` handle supports bounded `advance` and consuming `publish`;
+dropping it cancels and releases its reservation. Closures work as validators.
+See [the quickstart and its storage boundary](docs/timeline-examples.md#quickstart).
 
 ## StateChronicle boundary
 

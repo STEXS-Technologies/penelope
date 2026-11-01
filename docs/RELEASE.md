@@ -30,6 +30,12 @@ consumer state is safe only when snapshot isolation and the whole declared
 consistency domain are honored. Missing history, stale results, incompatible
 scope/model/schema, exhausted capacity and invalid validation fail closed.
 
+The [quickstart](timeline-examples.md#quickstart) uses owned-state `apply_input`
+and a scoped correction handle that releases reservations on cancellation/error
+and unwind. Closure validators and captured input/snapshot adapters reduce setup.
+These helpers do not transact history admission or authenticate corrections;
+retained histories and concurrent candidates use the explicit lower-level profile.
+
 Authority observations and irreversible-effect finality are separate frontiers.
 Replay performs no intentional irreversible I/O. Explicitly finalized eligible
 intents cross an idempotent durable-admission boundary; uncertain external effects

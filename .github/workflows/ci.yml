@@ -41,6 +41,7 @@ jobs:
       - run: cargo run -p penelope --example trade_competing_lock --locked
       - run: cargo run -p penelope-executor --example recoverable_task --locked
       - run: cargo run -p penelope-timeline --example rewindable_simulation --locked
+      - run: cargo run -p penelope-timeline --example quickstart --locked
       - run: cargo run -p penelope-sqlite --example optimistic_timeline --locked
       - run: ./scripts/run-executor-saga-example.sh
       - run: ./scripts/run-supervised-saga-example.sh

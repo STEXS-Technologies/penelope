@@ -29,6 +29,8 @@ planning/execution/publication split:
 | Snapshot capture | Separate `SnapshotCapture::capture`; only the full-snapshot convenience adapter requires `Clone` |
 | Input storage | `InputStore::read` returns an exact `BoundInput`; `FixedHistory` handles immutable payload versions and parent aliases |
 | Live increment | `prepare_live_step` restores scratch and returns opaque `ReadyStep`; `LiveTimeline::append` publishes it with exact-head fencing |
+| Owned-state convenience | `apply_input` clones owned state and derives/computes/validates/publishes the next input; `next_input` derives a record before execution. `CapturedInput`/`CapturedSnapshot` offer small immutable adapters and closures implement `CandidateValidator` |
+| Scoped correction | `begin_correction` plans/reserves/restores and returns an exclusive handle; bounded `advance` then consuming `publish` or drop. Cleanup releases reservation slots on errors/unwind, without reusing branch IDs. History admission/fork/retirement remains explicit |
 | Correction preparation | `Correction`, `ReplayPlan::prepare`, `LiveTimeline::reserve` and optional `FixedHistory::fork` bind correction, revision, authority observation and lineage |
 | Incremental execution | `ReplaySession::begin/advance`, optionally pinned through `FixedHistory::begin_replay`; a step budget is supplied on every advance |
 | Validation | Consuming `validate` calls `CandidateValidator` and produces opaque `ReadyCandidate`; `DigestValidator` is an optional implementation |

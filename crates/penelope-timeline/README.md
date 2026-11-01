@@ -13,6 +13,18 @@ executes at most the supplied step budget, stages bounded effects and yields.
 `CandidateValidator` checks consumer invariants or same-baseline state digests.
 Only successful consuming validation produces a `ReadyCandidate`.
 
+For the owned-state convenience profile, `LiveTimeline::apply_input` derives the
+next record and computes, validates and publishes from an isolated `Clone` of
+live state. `begin_correction` returns a scoped handle: call bounded `advance`,
+then `publish`, or drop it to cancel. The reservation is released automatically
+on errors and unwind. Closures implement `CandidateValidator`; `CapturedInput`
+and `CapturedSnapshot` provide small owned adapters. Run
+`cargo run -p penelope-timeline --example quickstart --locked` in the workspace.
+These helpers do not transact history admission or authenticate authority;
+`FixedHistory` lineage/retention remains explicit. The scoped handle exclusively
+borrows the live owner. Lower-level sessions support competing publications and
+adapters without a mandatory state `Clone`.
+
 `LiveTimeline` publishes a validated state/head/intents tuple under exclusive
 ownership and checks the exact pinned revision. Abandoned branch reservations
 remain consumed. Concurrent candidates must use the same owner/lock; the first

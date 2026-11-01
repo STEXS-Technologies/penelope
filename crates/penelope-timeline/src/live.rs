@@ -27,6 +27,9 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
     pub const fn read(&self) -> (TimelineHead, &State) {
         (self.projection.head(), &self.state)
     }
+    pub(crate) const fn effect_limits(&self) -> EffectLimits {
+        self.effects.limits
+    }
     /// Tentative intents are observable for diagnostics, not dispatch eligibility.
     pub fn tentative_effects(&self) -> impl Iterator<Item = &StagedEffect<Effect>> {
         self.effects.iter()

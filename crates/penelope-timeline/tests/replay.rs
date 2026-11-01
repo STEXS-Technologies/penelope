@@ -711,3 +711,363 @@ fn retired_state_destructor_runs_after_complete_atomic_publication() {
     assert_eq!(published.revision(), TimelineRevision::new(10));
     assert_eq!(state.value, 109);
 }
+
+const fn scoped_request(records: &[InputRecord]) -> CorrectionRequest<'_, i64> {
+    CorrectionRequest {
+        correction: Correction::State(anchor()),
+        inputs: records,
+        observation: observation(1),
+        scratch: 0,
+        limits: ReplayLimits {
+            max_retained_inputs: 8,
+            max_replay_steps: 8,
+        },
+    }
+}
+
+#[test]
+fn scoped_correction_cleans_every_return_path_with_one_reservation_slot() {
+    let records = records();
+    let mut live = LiveTimeline::<i64, u64, 1, 8>::new(head(), 10, LIMITS);
+    let snapshots = Snapshots {
+        corrected: 100,
+        fail: false,
+    };
+    let reject = |_state: &i64, _head: TimelineHead| Err(TimelineError::ValidationFailed);
+    for _ in 0..4 {
+        assert!(
+            live.begin_correction(
+                scoped_request(&records),
+                &Snapshots {
+                    corrected: 100,
+                    fail: true
+                }
+            )
+            .is_err()
+        );
+        // Explicit cancellation needs no token and does not exhaust the one slot.
+        drop(
+            live.begin_correction(scoped_request(&records), &snapshots)
+                .unwrap(),
+        );
+        assert_eq!(
+            live.begin_correction(scoped_request(&records), &snapshots)
+                .unwrap()
+                .publish(&Valid),
+            Err(TimelineError::InvalidPhase)
+        );
+        let mut correction = live
+            .begin_correction(scoped_request(&records), &snapshots)
+            .unwrap();
+        assert_eq!(
+            correction.advance(&MODEL, &INPUTS, 0).unwrap(),
+            ReplayPhase::Replaying
+        );
+        assert_eq!(correction.read(), (head(), &10));
+        assert_eq!(
+            correction.advance(&MODEL, &INPUTS, 3).unwrap(),
+            ReplayPhase::ReadyToValidate
+        );
+        assert_eq!(
+            correction.publish(&reject),
+            Err(TimelineError::ValidationFailed)
+        );
+        assert_eq!(live.read(), (head(), &10));
+        assert_eq!(live.tentative_effects().count(), 0);
+    }
+    let mut correction = live
+        .begin_correction(scoped_request(&records), &snapshots)
+        .unwrap();
+    assert_eq!(
+        correction.advance(&MODEL, &INPUTS, 1).unwrap(),
+        ReplayPhase::Replaying
+    );
+    assert_eq!(
+        correction.advance(&MODEL, &INPUTS, 2).unwrap(),
+        ReplayPhase::ReadyToValidate
+    );
+    let selected = correction.publish(&Valid).unwrap();
+    assert_eq!(live.read(), (selected, &109));
+    assert_eq!(live.tentative_effects().count(), 3);
+    // Every cancelled reservation consumed an identity, even though it freed a slot.
+    assert!(selected.branch().get() > head().branch().get() + 16);
+}
+
+#[test]
+fn scoped_correction_cleans_restore_model_and_validation_unwinds() {
+    use std::panic::{AssertUnwindSafe, catch_unwind};
+    struct PanickingSnapshot;
+    impl SnapshotStore<i64> for PanickingSnapshot {
+        type Error = ();
+        #[allow(clippy::panic_in_result_fn)]
+        fn restore(&self, _anchor: StateAnchor, _state: &mut i64) -> Result<StateAnchor, ()> {
+            panic!("restore failure");
+        }
+    }
+    let records = records();
+    let snapshots = Snapshots {
+        corrected: 100,
+        fail: false,
+    };
+    let mut live = LiveTimeline::<i64, u64, 1, 8>::new(head(), 10, LIMITS);
+    assert!(
+        catch_unwind(AssertUnwindSafe(|| {
+            let _candidate = live.begin_correction(scoped_request(&records), &PanickingSnapshot);
+        }))
+        .is_err()
+    );
+    assert!(
+        catch_unwind(AssertUnwindSafe(|| {
+            let mut correction = live
+                .begin_correction(scoped_request(&records), &snapshots)
+                .unwrap();
+            let _result = correction.advance(
+                &Model {
+                    fail: false,
+                    panic: true,
+                    ignore_staging: false,
+                },
+                &INPUTS,
+                1,
+            );
+        }))
+        .is_err()
+    );
+    assert!(
+        catch_unwind(AssertUnwindSafe(|| {
+            let mut correction = live
+                .begin_correction(scoped_request(&records), &snapshots)
+                .unwrap();
+            correction.advance(&MODEL, &INPUTS, 3).unwrap();
+            let _result = correction.publish(&|_state: &i64,
+                                               _head: TimelineHead|
+             -> Result<(), TimelineError> {
+                panic!("validator failure");
+            });
+        }))
+        .is_err()
+    );
+    assert_eq!(live.read(), (head(), &10));
+    drop(
+        live.begin_correction(scoped_request(&records), &snapshots)
+            .unwrap(),
+    );
+}
+
+#[test]
+fn scoped_correction_failed_step_cannot_publish_and_releases_slot_on_drop() {
+    let records = records();
+    let snapshots = Snapshots {
+        corrected: 100,
+        fail: false,
+    };
+    let mut live = LiveTimeline::<i64, u64, 1, 0>::new(head(), 10, LIMITS);
+    let mut correction = live
+        .begin_correction(scoped_request(&records), &snapshots)
+        .unwrap();
+    assert!(correction.advance(&MODEL, &INPUTS, 1).is_err());
+    assert_eq!(correction.publish(&Valid), Err(TimelineError::InvalidPhase));
+    assert_eq!(live.read(), (head(), &10));
+    drop(
+        live.begin_correction(scoped_request(&records), &snapshots)
+            .unwrap(),
+    );
+}
+
+#[test]
+fn owned_input_application_derives_metadata_and_preserves_failure_isolation() {
+    use std::panic::{AssertUnwindSafe, catch_unwind};
+    let mut live = Live::new(head(), 10, LIMITS);
+    let identity = TimelineInputId::from_digest(Digest([88; 32]));
+    let value = 5_u64;
+    let reject = |_state: &i64, _head: TimelineHead| Err(TimelineError::ValidationFailed);
+    assert!(live.apply_input(&MODEL, identity, &value, &reject).is_err());
+    assert!(
+        live.apply_input(
+            &Model {
+                fail: true,
+                panic: false,
+                ignore_staging: false
+            },
+            identity,
+            &value,
+            &Valid
+        )
+        .is_err()
+    );
+    assert!(
+        catch_unwind(AssertUnwindSafe(|| {
+            let _result = live.apply_input(
+                &Model {
+                    fail: false,
+                    panic: true,
+                    ignore_staging: false,
+                },
+                identity,
+                &value,
+                &Valid,
+            );
+        }))
+        .is_err()
+    );
+    assert_eq!(live.read(), (head(), &10));
+    assert_eq!(live.tentative_effects().count(), 0);
+    let record = live
+        .apply_input(
+            &MODEL,
+            identity,
+            &value,
+            &|state: &i64, next: TimelineHead| {
+                assert_eq!(*state, 15);
+                assert_eq!(next.step().get(), 5);
+                assert_eq!(next.revision().get(), 10);
+                Ok(())
+            },
+        )
+        .unwrap();
+    assert_eq!(
+        record,
+        InputRecord {
+            scope: scope(),
+            branch: head().branch(),
+            step: TimelineStep::new(5),
+            identity,
+            revision: InputRevision::ZERO,
+            digest: value.digest()
+        }
+    );
+    assert_eq!(*live.read().1, 15);
+    assert_eq!(live.tentative_effects().count(), 1);
+    let mut no_effects = LiveTimeline::<i64, u64, 1, 0>::new(head(), 10, LIMITS);
+    assert!(
+        no_effects
+            .apply_input(
+                &Model {
+                    fail: false,
+                    panic: false,
+                    ignore_staging: true
+                },
+                identity,
+                &value,
+                &Valid
+            )
+            .is_err()
+    );
+    assert_eq!(no_effects.read(), (head(), &10));
+}
+
+#[test]
+fn captured_adapters_bind_scope_version_and_payload_on_every_read() {
+    use std::cell::Cell;
+    struct MutablePayload(Cell<u64>);
+    impl HistoryPayload for MutablePayload {
+        fn digest(&self) -> Digest {
+            self.0.get().digest()
+        }
+        fn byte_len(&self) -> u64 {
+            8
+        }
+    }
+    let mut record = records()[0];
+    record.digest = 2_u64.digest();
+    assert!(CapturedInput::new(record, 3_u64).is_err());
+    let input = CapturedInput::new(record, 2_u64).unwrap();
+    assert_eq!(input.record(), record);
+    assert_eq!(*input.read(record).unwrap().value, 2);
+    let inputs = [input];
+    assert_eq!(*inputs.read(record).unwrap().value, 2);
+    let mut wrong = record;
+    wrong.revision = InputRevision::new(1);
+    assert!(inputs.read(wrong).is_err());
+    let payload = MutablePayload(Cell::new(2));
+    let captured = CapturedInput::new(record, payload).unwrap();
+    // Deliberately violate the immutability contract: revalidation still refuses it.
+    captured.read(record).unwrap().value.0.set(3);
+    assert!(captured.read(record).is_err());
+    let snapshot =
+        CapturedSnapshot::capture(head(), TimelineStep::new(1), anchor().snapshot, 42_u64).unwrap();
+    let mut scratch = 0;
+    snapshot.restore(snapshot.anchor(), &mut scratch).unwrap();
+    assert_eq!(scratch, 42);
+    let mut wrong_anchor = snapshot.anchor();
+    wrong_anchor.branch = TimelineBranchId::new(99);
+    assert!(snapshot.restore(wrong_anchor, &mut scratch).is_err());
+    assert_eq!(scratch, 42);
+    assert!(
+        CapturedSnapshot::capture(head(), TimelineStep::new(5), anchor().snapshot, 42_u64).is_err()
+    );
+}
+
+#[test]
+fn scoped_publication_unwind_preserves_coherence_without_panicking_during_cleanup() {
+    let records = records();
+    let mut live = LiveTimeline::<DropState, (), 1, 8>::new(
+        head(),
+        DropState {
+            value: 10,
+            fail_drop: true,
+        },
+        LIMITS,
+    );
+    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let mut correction = live
+            .begin_correction(
+                CorrectionRequest {
+                    correction: Correction::State(anchor()),
+                    inputs: &records,
+                    observation: observation(1),
+                    scratch: DropState {
+                        value: 0,
+                        fail_drop: false,
+                    },
+                    limits: ReplayLimits {
+                        max_retained_inputs: 8,
+                        max_replay_steps: 8,
+                    },
+                },
+                &DropSnapshots,
+            )
+            .unwrap();
+        correction.advance(&DropModel, &INPUTS, 3).unwrap();
+        correction.publish(&DropValid)
+    }));
+    assert!(outcome.is_err());
+    assert_eq!(live.read().0.revision(), TimelineRevision::new(10));
+    assert_eq!(live.read().1.value, 109);
+}
+
+#[test]
+fn owned_input_rejects_merged_effect_quota_and_counter_exhaustion() {
+    let identity = TimelineInputId::from_digest(Digest([88; 32]));
+    let mut live = LiveTimeline::<i64, u64, 1, 1>::new(head(), 10, LIMITS);
+    live.apply_input(&MODEL, identity, &5, &Valid).unwrap();
+    let accepted = live.read().0;
+    assert!(live.apply_input(&MODEL, identity, &6, &Valid).is_err());
+    assert_eq!(live.read(), (accepted, &15));
+    assert_eq!(live.tentative_effects().count(), 1);
+    for exhausted in [
+        TimelineHead::new(
+            scope(),
+            head().branch(),
+            TimelineStep::new(u64::MAX),
+            head().revision(),
+            None,
+        )
+        .unwrap(),
+        TimelineHead::new(
+            scope(),
+            head().branch(),
+            head().step(),
+            TimelineRevision::new(u64::MAX),
+            None,
+        )
+        .unwrap(),
+    ] {
+        let mut exhausted_live = Live::new(exhausted, 10, LIMITS);
+        assert!(matches!(
+            exhausted_live.apply_input(&MODEL, identity, &5, &Valid),
+            Err(ApplyError::Timeline(TimelineError::CounterExhausted))
+        ));
+        assert_eq!(exhausted_live.read(), (exhausted, &10));
+    }
+}

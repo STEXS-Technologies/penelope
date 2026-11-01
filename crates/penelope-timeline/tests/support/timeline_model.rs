@@ -509,6 +509,7 @@ pub fn plans(data: &[u8]) {
 /// Real state/input corrections versus a closed-form computation, with failures
 /// injected at every chosen step and candidate effects never dispatched on replay.
 pub fn correction(data: &[u8]) {
+    scoped_correction(data);
     let mut fixture = Fixture::new(data);
     let old = fixture.live.read().0;
     let old_state = *fixture.live.read().1;
@@ -984,4 +985,106 @@ pub fn effects(data: &[u8]) {
             oracle(fixture.initial, &fixture.values)
         );
     }
+}
+
+// Exercise the convenience lifecycle against the same independent closed form.
+// This is called by the correction property and its instrumented fuzz target.
+fn scoped_correction(data: &[u8]) {
+    let count = usize::from(byte(data, 0) % 16) + 1;
+    let values: Vec<u64> = (0..count)
+        .map(|offset| u64::from(byte(data, offset + 8)))
+        .collect();
+    let initial = u64::from(byte(data, 1));
+    let mut live = LiveTimeline::<u64, u64, 1, 32>::new(head(0), initial, FX);
+    let mut captured = Vec::new();
+    for (offset, value) in values.iter().enumerate() {
+        let expected = oracle(initial, &values[..=offset]);
+        let record = live
+            .apply_input(
+                &MODEL,
+                TimelineInputId::from_digest(Digest::of(&offset.to_le_bytes())),
+                value,
+                &validator(expected),
+            )
+            .unwrap();
+        captured.push(CapturedInput::new(record, *value).unwrap());
+        assert_eq!(*live.read().1, expected);
+    }
+    struct Inputs(Vec<CapturedInput<u64>>);
+    impl InputStore<u64> for Inputs {
+        type Error = TimelineError;
+        fn read(&self, record: InputRecord) -> Result<BoundInput<'_, u64>, TimelineError> {
+            self.0.as_slice().read(record)
+        }
+    }
+    let inputs = Inputs(captured);
+    let old_head = live.read().0;
+    let old_state = *live.read().1;
+    let corrected_at = usize::from(byte(data, 3)) % (count + 1);
+    let corrected = u64::from(byte(data, 4));
+    let snapshot = CapturedSnapshot::capture(
+        old_head,
+        TimelineStep::new(u64::try_from(corrected_at).unwrap()),
+        TimelineSnapshotId::from_digest(corrected.digest()),
+        corrected,
+    )
+    .unwrap();
+    let records: Vec<_> = inputs
+        .0
+        .iter()
+        .skip(corrected_at)
+        .map(CapturedInput::record)
+        .collect();
+    let request = || CorrectionRequest {
+        correction: Correction::State(snapshot.anchor()),
+        inputs: &records,
+        observation: observation(snapshot.anchor().step, snapshot.anchor().digest, 1),
+        scratch: 0,
+        limits: LIMITS,
+    };
+    let expected = oracle(corrected, &values[corrected_at..]);
+    {
+        let mut attempt = live.begin_correction(request(), &snapshot).unwrap();
+        match byte(data, 5) % 3 {
+            0 => {
+                drop(attempt);
+            }
+            1 => {
+                attempt.advance(&MODEL, &inputs, 32).unwrap();
+                assert_eq!(
+                    attempt.publish(&validator(expected.wrapping_add(1))),
+                    Err(TimelineError::ValidationFailed)
+                );
+            }
+            2 => {
+                let failing = Model {
+                    fail_at: Some(u64::try_from(corrected_at + 1).unwrap()),
+                    duplicate_at: None,
+                };
+                if corrected_at < count {
+                    assert!(attempt.advance(&failing, &inputs, 32).is_err());
+                    assert_eq!(
+                        attempt.publish(&validator(expected)),
+                        Err(TimelineError::InvalidPhase)
+                    );
+                }
+            }
+            _ => {}
+        }
+    }
+    assert_eq!(live.read(), (old_head, &old_state));
+    // With only one slot, this also checks cleanup after every failed/cancelled job.
+    let mut correction = live.begin_correction(request(), &snapshot).unwrap();
+    let _phase = correction.advance(&MODEL, &inputs, 0).unwrap();
+    let budget = u64::from(byte(data, 7) % 4) + 1;
+    while correction.advance(&MODEL, &inputs, budget).unwrap() == ReplayPhase::Replaying {}
+    let selected = correction.publish(&validator(expected)).unwrap();
+    assert_eq!(*live.read().1, expected);
+    assert_eq!(selected.step(), old_head.step());
+    assert_eq!(
+        selected.revision(),
+        old_head.revision().checked_next().unwrap()
+    );
+    assert!(selected.branch() > old_head.branch());
+    assert_eq!(selected.effect_finalized(), None);
 }

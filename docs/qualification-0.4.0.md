@@ -13,6 +13,7 @@ own source revision and profile limits.
 | --- | --- |
 | Released foundation | [Actual baseline mapping](timeline-foundation.md#mapping-the-released-foundation); existing task/saga implementation files and fixtures are unchanged from the released tag |
 | API refinement | [Concrete public API mapping](timeline-foundation.md#public-api-refinement); separate core planning, runtime execution, consuming validation and owned publication |
+| Convenience API | Owned-state input application, scoped correction cleanup, closure validators and captured adapters; [quickstart and storage limits](timeline-examples.md#quickstart). Repeated single-slot failures/unwinds and the correction property/fuzzer exercise the convenience lifecycle |
 | Independent identity and protocol | Core timeline identities/head/projection use fixed-width typed counters and scoped model/schema identity; seven independently assembled `penelope.timeline.v1` goldens and strict decoder tests |
 | State/input indexing | `timeline_plans`, `history` and the shared model verify post-step state corrections and exact input predecessors; sparse-anchor and zero-input genesis cases exercise the runtime store |
 | Immutable lineage and anti-ABA | `FixedHistory` imports, forks and parent aliases preserve original records; projection restore retains the branch high-water mark; retire/materialize tests refuse reuse and depended-on ancestors |

@@ -27,3 +27,9 @@ mod history;
 mod pinned;
 pub use history::*;
 pub use pinned::*;
+
+mod ergonomic;
+pub use ergonomic::*;
+
+mod captured;
+pub use captured::*;
