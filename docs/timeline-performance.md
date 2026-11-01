@@ -238,3 +238,45 @@ bytes. The repeated whole-benchmark Massif profile records 951 samples, maximum
 observed stack of 2,585,416 bytes and total of 2,587,024 bytes; the separate positive
 control records 66,168 stack bytes. These samples include fixture construction,
 do not bound arbitrary consumer callbacks and are not portable worst-case bounds.
+
+## Client prediction speed audit
+
+[Three repeated runs and the allocation audit](performance-data/2026-11-01-client-prediction/manifest.json)
+cover the current production sources (unchanged from `83a51c6`). Each run uses
+1,000 samples after 16 warmups, CPU-8 affinity, the same host/compiler as above,
+and the same integer workload. Other host processes remained active; frequency,
+caches and scheduling are uncontrolled. Values below are ranges of the three
+run medians, in microseconds, rather than confidence intervals.
+
+| Complete state | One owned input at head 511 | 8-tick correction, indexed / captured | 32-tick correction, indexed / captured | 512-tick correction, indexed / captured |
+| --- | ---: | ---: | ---: | ---: |
+| 8 bytes | 0.130 | 0.761–0.781 / 1.193–1.213 | 1.914–1.954 / 4.418–4.488 | 25.129–25.209 / 331.150–342.262 |
+| 1 KiB | 0.171–0.181 | 1.002–1.042 / 1.412–1.453 | 2.656–2.725 / 5.040–5.140 | 35.678–36.471 / 343.865–346.901 |
+| 4 KiB | 0.330–0.401 | 1.863–2.024 / 2.264–2.465 | 4.979–5.400 / 7.384–7.936 | 67.260–73.072 / 377.089–384.884 |
+
+Every correction column includes planning, reservation, restore, replay with
+one-tick chunks, validation and publication. Chunks run consecutively, so this
+measures total work rather than elapsed frames. Each sample validates its result
+against the independent oracle. Raw CSVs retain p95/p99: the largest of the three
+p99 values for 512-tick indexed replay is 31.341/41.040/77.410 microseconds for the
+three state sizes; captured replay is 465.610/361.699/397.458 microseconds.
+
+The simple `CapturedInput` array performs a linear descriptor search per read
+and rechecks the input digest. Across an N-input prefix this gives quadratic
+lookup work. The indexed fixture checks the exact descriptor in constant time
+and trusts its immutable, preverified payload. Both use the same preverified
+snapshot fixture, so these differences include input hashing and lookup, rather
+than an isolated search comparison. The array contains 512 entries; a suffix
+near its end can scan a longer prefix than the cases measured here. This is a
+real scaling limitation of the convenience adapter. A prediction integration
+with long retained windows can implement an indexed `InputStore` while retaining
+exact descriptor/content integrity checks. The public API already permits that.
+
+All 376 separately instrumented profiles, including the 45 new prediction
+profiles, recorded zero Rust allocations/reallocations/requested bytes during
+the measured operation. Fixture construction and captured-array admission are
+outside timing and counting. Input history admission/capture, effects, snapshot
+admission/integrity hashing, networking, game physics, rendering and actual
+frame scheduling are excluded. These results support low measured substrate
+cost in this synthetic workload; they do not establish a universal game slowdown
+percentage or a frame-time guarantee.

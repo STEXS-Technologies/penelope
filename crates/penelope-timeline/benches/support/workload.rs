@@ -410,6 +410,53 @@ fn profiles<const W: usize>(report: &mut impl Reporter) {
             },
         );
 
+        // Prediction integrations may use the small captured-input adapter rather
+        // than an indexed store. Measure its descriptor scan and digest checks,
+        // as well as yielding once per tick, instead of extrapolating the indexed run.
+        let captured_inputs: [CapturedInput<u64>; WINDOW] = core::array::from_fn(|i| {
+            CapturedInput::new(fixture.records[i], fixture.values[i]).unwrap()
+        });
+        for (name, budget, use_captured) in [
+            ("prediction_indexed_yield1", 1, false),
+            ("prediction_captured_yield1", 1, true),
+            ("prediction_captured_batch", n, true),
+        ] {
+            report.sample(
+                name,
+                W,
+                n,
+                || fixture.live(n),
+                |live| {
+                    let mut correction = live
+                        .begin_correction(
+                            CorrectionRequest {
+                                correction: Correction::State(fixture.anchor),
+                                inputs: &fixture.records[..n],
+                                observation: observation(fixture.anchor),
+                                scratch: State([0; W]),
+                                limits: LIMITS,
+                            },
+                            &fixture,
+                        )
+                        .unwrap();
+                    loop {
+                        let phase = if use_captured {
+                            correction.advance(&Computation::<W>, &captured_inputs, budget as u64)
+                        } else {
+                            correction.advance(&Computation::<W>, &fixture, budget as u64)
+                        }
+                        .unwrap();
+                        if phase != ReplayPhase::Replaying {
+                            break;
+                        }
+                    }
+                    let published = correction.publish(&validator).unwrap();
+                    assert_eq!(*live.read().1, expected);
+                    published
+                },
+            );
+        }
+
         report.sample(
             "core_prepare",
             W,
