@@ -1,0 +1,29 @@
+{
+  "source_base": "a2823ad199ed6b1cd5afd037349ea461b9a79dc7",
+  "source_description": "Timeline production implementation at source_base; new benchmark files identified by SHA-256 below.",
+  "source_sha256": {
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "crates/penelope-timeline/Cargo.toml": "e4b6d43b8bd62fdbcea77f3e0c46abd1572f88dade692de3271a5b92298dbb17",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/workload.rs": "ee05f49e72b8108a0d1168bac3dab5c09cebf8275b8d18a22ed36e3e2476d3be",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "host": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "affinity": "CPU 8",
+  "samples_per_profile": 1000,
+  "warmups_per_profile": 16,
+  "profile": "Cargo bench release defaults, no custom RUSTFLAGS",
+  "latency_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= PENELOPE_TIMELINE_SAMPLES=1000 taskset -c 8 cargo bench -p penelope-timeline --bench timeline_operations --locked",
+  "allocation_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo bench -p penelope-timeline --bench timeline_allocations --locked",
+  "limitations": [
+    "Frequency/boost and OS caches uncontrolled",
+    "One ordered run; no confidence interval or universal percentage claim",
+    "Qualification jobs completed before isolated latency run",
+    "Timer overhead included; setup/reporting excluded",
+    "Allocation counters cover Rust System allocator only; measured operations stage no effects",
+    "Object sizes are not whole-call stack bounds"
+  ]
+}

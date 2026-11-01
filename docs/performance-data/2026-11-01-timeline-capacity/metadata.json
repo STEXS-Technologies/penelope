@@ -1,0 +1,22 @@
+{
+  "source_base": "c88f704d56775b22be32784ef2c43bc8a578b5c6",
+  "source_sha256": {
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/workload.rs": "b1aaba5ad860c4d36c19aab794b3e62510ca95b4aa7a2b2820f0eefe5a8bf58b",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "throughput_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= taskset -c 8 cargo bench -p penelope-timeline --bench timeline_throughput --locked",
+  "memory_command": "cargo bench -p penelope-timeline --bench timeline_memory --locked",
+  "cpu": "AMD Ryzen 9 7950X; CPU 8 for throughput",
+  "throughput_limitations": [
+    "Concurrent release qualification/chaos processes on the host",
+    "Fixed ordered batches, 1000 operations each, no statistical confidence claim",
+    "Input/snapshot fixtures prebuilt; full-operation batch includes LiveTimeline construction",
+    "No external I/O or effect dispatch; no staged intents in throughput model"
+  ],
+  "memory_scope": "Compile-time size_of capacity matrix, inline byte-array state and u64 inputs/effects; domain = history + live + session_capacity * replay_session; not RSS or transient stack"
+}

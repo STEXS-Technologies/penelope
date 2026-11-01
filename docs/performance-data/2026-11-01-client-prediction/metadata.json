@@ -1,0 +1,29 @@
+{
+  "base_revision": "6fa4be7bee06a8eb1072b428252d51a4f3a37774",
+  "source_sha256": {
+    "crates/penelope-timeline/benches/support/workload.rs": "bf81b125277db9795e487d90b2739b0bdfdc09e5b405139f709874df559b1b9c",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f"
+  },
+  "production_source": "All production/lock hashes match the 83a51c6 validation archive; only benchmarks and documentation changed.",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X",
+  "affinity": "CPU 8",
+  "latency_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= PENELOPE_TIMELINE_SAMPLES=1000 taskset -c 8 cargo bench -p penelope-timeline --bench timeline_operations --locked",
+  "repetitions": 3,
+  "samples_per_profile_per_repetition": 1000,
+  "warmups_per_profile": 16,
+  "allocation_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo bench -p penelope-timeline --bench timeline_allocations --locked",
+  "allocation_profiles": 376,
+  "limitations": [
+    "Synthetic integer model; 8-byte, 1-KiB and 4-KiB complete states, 1/8/32/128/512 replay ticks. Not actual engine/physics/network performance.",
+    "Setup, admitted snapshot preparation, input capture/retention, history admission, transport, rendering and frame scheduling excluded. No effects.",
+    "Same preverified snapshot fixture for all correction paths. Indexed input fixture verifies descriptors without per-read hashing; captured adapter scans full descriptors and rechecks payload digests. Difference includes both behaviors.",
+    "Captured array has 512 retained entries; replay starts at its first entry. Later suffixes in an unpruned array can scan longer prefixes.",
+    "One-tick chunks execute consecutively; no wait between simulated frames. Full latency includes planning/reservation/restore/replay/validation/publication.",
+    "Host had other active processes; frequency, scheduling and caches uncontrolled. Repeated distributions are not confidence intervals or universal slowdown percentages.",
+    "Allocations measured separately using Rust System allocator instrumentation; callback behavior can change results."
+  ]
+}

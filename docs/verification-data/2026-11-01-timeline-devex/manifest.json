@@ -1,0 +1,10 @@
+{
+  "devex-coverage.log.gz": "8adc03589ed5a512fc4b1dd15c8fc44d0565e010c8885a562cbe500947be9026",
+  "devex-fuzz-correction.log.gz": "e9e9cebd4411e17c9fc23f05a32510d3fa07b99009679dbafb56642ce4a8e817",
+  "devex-msrv-final.log.gz": "72b63452fda3ddcef096d3c8eccc35405f52e4ed1686734b377ce0445162f273",
+  "devex-package.log.gz": "6778a8c257fb1f008d68102c63be739d6d7d70051f2972dfc7835929d2e7f1ee",
+  "devex-rustdoc.log.gz": "8a09b477b0564650dff3269277df2e7485c45de0b14513f4d255de30e7f56d47",
+  "devex-tests.log.gz": "9a794858963f7eebf5e7a9a458f5512123b56c07eb9fd882f4414f2b54368c07",
+  "devex-workspace-tests.log.gz": "e4b1b45242c1be97e2318457335b7f9184eae447baa577c293ba57abb466a388",
+  "metadata.json": "2dec239f5f542a1afe0c4932be56a065bd8edfd92ed63a881ad692e8b95cab99"
+}

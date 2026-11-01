@@ -41,35 +41,35 @@ test = false
 doc = false
 
 [dependencies.penelope-domain]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-domain"
 
 [dependencies.penelope-core]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-core"
 
 [dependencies.penelope-executor]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-executor"
 
 [dependencies.penelope-statechronicle]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-statechronicle"
 
 [dependencies.penelope-ports]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-ports"
 
 [dependencies.penelope-intent]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-intent"
 
 [dependencies.penelope-process-runtime]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-process-runtime"
 
 [dependencies.penelope-sqlite]
-version = "0.3.0"
+version = "0.4.0"
 path = "../crates/penelope-sqlite"
 
 [dependencies.tempfile]
@@ -144,5 +144,45 @@ doc = false
 [[bin]]
 name = "fuzz_sqlite_process"
 path = "fuzz_targets/fuzz_sqlite_process.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_wire"
+path = "fuzz_targets/fuzz_timeline_wire.rs"
+test = false
+doc = false
+
+[dependencies.penelope-timeline]
+version = "0.4.0"
+path = "../crates/penelope-timeline"
+
+[[bin]]
+name = "fuzz_timeline_projection"
+path = "fuzz_targets/fuzz_timeline_projection.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_replay_plan"
+path = "fuzz_targets/fuzz_timeline_replay_plan.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_correction"
+path = "fuzz_targets/fuzz_timeline_correction.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_branch_promotion"
+path = "fuzz_targets/fuzz_timeline_branch_promotion.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_effects"
+path = "fuzz_targets/fuzz_timeline_effects.rs"
 test = false
 doc = false

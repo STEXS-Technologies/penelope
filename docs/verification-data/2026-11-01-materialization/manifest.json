@@ -1,0 +1,16 @@
+{
+  "clippy.log.gz": "77b09a91c74dc320e72ccab5cd834cdb349963e4a32b5ea907fabe765da2946c",
+  "clone-baseline-complete.log.gz": "5bbf10086a5276309948faa833ee3072705156608ffdf1ee2f3813df6eb0af70",
+  "clone-final.log.gz": "7ba4e7ce29c3d1de4d22e0eb109571a83cb30e43514fc4266726d515bf95c92c",
+  "coverage.log.gz": "1641c8a1f00ed216edc1830cbe3f8f1ef65de960f6e3c8693aaf99bc98b82dd1",
+  "docs.log.gz": "144aef0299b088e76cb59ec1a8045136332e95b8088dd4f07a538b7dac6eb763",
+  "doctests.log.gz": "cf579ce487774412d8f8956e0bcaaa2a5ed41977e1c2740db4b7288c84771e84",
+  "fuzz-correction.log.gz": "952b5482e2fc9411f48529da01a0f6615dedee52e87591d57b64d068a5d5a273",
+  "layers.log.gz": "ba852c1be2b6c34f2f11de0fa09a480f7f881e9579d9b1464eb9ccb3a62d9869",
+  "metadata.json": "e8ac9b1de924768a8b7ad8d06c0a8a27cac3d8c9f8033fd3f52ab5befc1af155",
+  "msrv.log.gz": "95364a4ae7600560c28bc7ec3edf8e681a8543fc066942b589d29efe45fbf860",
+  "negative-control.log.gz": "7818c93df6d4ab7da5a99a1e13fa2df97d2116f84fc707b17cf46fc7497b62e4",
+  "package.log.gz": "2fc5aa8ff4ecf5efd1dd14d537c1d378665ea273ca7d2f202a673ff992d60364",
+  "portable.log.gz": "02eee0b68aef155e9138f5610581f49a3986e548aa0e263964176862baf2e44e",
+  "timeline-tests.log.gz": "543975d7f7076eff9c6d4f144017753d941a8726b9e85f6617adedf712d31bdd"
+}

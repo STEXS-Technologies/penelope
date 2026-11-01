@@ -1,0 +1,32 @@
+[
+  {
+    "test": "entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy",
+    "elapsed_seconds": 300.111344792007,
+    "batches": 1389,
+    "cases_per_batch": 10000,
+    "requested_cases": 13890000,
+    "first_seed": 1,
+    "last_seed": 1389,
+    "log": "target/timeline-foundation/qualification-properties/entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log"
+  },
+  {
+    "test": "entry::engine::tests::live_transitions_and_event_replay_converge",
+    "elapsed_seconds": 300.11593998305034,
+    "batches": 1047,
+    "cases_per_batch": 10000,
+    "requested_cases": 10470000,
+    "first_seed": 1,
+    "last_seed": 1047,
+    "log": "target/timeline-foundation/qualification-properties/entry-engine-tests-live_transitions_and_event_replay_converge.log"
+  },
+  {
+    "test": "seeded_checkpoint_crash_and_persistence_chaos",
+    "elapsed_seconds": 301.67805140599376,
+    "batches": 75,
+    "cases_per_batch": 10000,
+    "requested_cases": 750000,
+    "first_seed": 1,
+    "last_seed": 75,
+    "log": "target/timeline-foundation/qualification-properties/seeded_checkpoint_crash_and_persistence_chaos.log"
+  }
+]

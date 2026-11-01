@@ -1,0 +1,36 @@
+{
+  "revision": "453039fc2180bf9406d3feb8d831a6c9cb89bf41",
+  "source_sha256": {
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/workload.rs": "8a416068e0e6edf5f9d81313ff2c746a79b8c46c16faa68cfb158e4e038915d2",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2",
+    "crates/penelope-timeline/src/captured.rs": "652dafc0aa71809fea716864cecd051cbd29f3d18fff91ba06606383cda3f6bd",
+    "crates/penelope-timeline/src/contracts.rs": "fac073fdd83b79acbceef9b461893be1936373b818fe16ea760c965cc2e13603",
+    "crates/penelope-timeline/src/effects.rs": "bf774d0f427f55f5ed9729a59d6b22cf485feb248b344584d61c222ba2c92457",
+    "crates/penelope-timeline/src/ergonomic.rs": "8efe42236ee739cc09d9988d9225dc0cf50c30c823a3ed6d49ad6d05c32a0e09",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "1f7d4319502a80855e237b1fce3fb8739116f37cfc20ae5297029dea4d28bbcb",
+    "crates/penelope-timeline/src/lib.rs": "62b7bfaccf4867ecc2276bcbf67365ccb4d72bd059e7863b13a69eb299c4cf52",
+    "crates/penelope-timeline/src/live.rs": "747cc05150497b6ded978a263e7b0a4262268e685192db69e243c6bca2f0f4dc",
+    "crates/penelope-timeline/src/pinned.rs": "d82b7b2596a1f2cc9674136c250eb07de08767523d4fedc1aaa8483290fb5972",
+    "crates/penelope-timeline/src/session.rs": "a39f8911a14a6f81b6c21f90415de115a16ae389ea9892e8321876c32304ec5f",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b7cac3355748277fc3762925e3d10100c1c451b835998303eadf026d22140ce4"
+  },
+  "gate_disposition": "All archived commands exited 0. The inherited full repeated chaos campaign remains running and is not included.",
+  "coverage": {
+    "actual_line_percent": 95.0459,
+    "ratchet_line_percent": 94.0759
+  },
+  "scope_notes": [
+    "Initial stable workspace run preceded the final two convenience regression tests; final timeline MSRV and coverage runs include all 19 replay tests.",
+    "Timeline all-target properties additionally ran with 1000 cases and seed 405; extended correction fuzzer ran 100000 instrumented executions, seed 405.",
+    "Other completed checks: strict timeline all-target Clippy, bare-metal default/alloc, layer positive/negative controls, action pins, quickstart execution.",
+    "Performance records are separate from correctness qualification; no release completion claimed.",
+    "User-owned configuration, graph files and downloaded blueprints are excluded."
+  ]
+}

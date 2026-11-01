@@ -1,0 +1,5 @@
+{
+  "command": "TMPDIR=<workspace>/target/qualification-temp VALGRIND_OPTS=--vgdb=no RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_TARGET_DIR=<isolated version target> python3 scripts/measure-timeline-memory.py <output>",
+  "scope": "Whole expanded allocation benchmark, including fixtures/reporting; positive 64-KiB stack control passed for both binaries. Not per-operation or portable worst-case bounds.",
+  "environment_recovery": "Initial /tmp quota failure prevented vgdb temporary file creation. Successful reruns use workspace TMPDIR and --vgdb=no. Failed attempt excluded from measurement."
+}

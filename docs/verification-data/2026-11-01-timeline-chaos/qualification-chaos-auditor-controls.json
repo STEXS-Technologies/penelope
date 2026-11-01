@@ -1,0 +1,13 @@
+{
+  "positive_complete_campaign": true,
+  "rejected_controls": [
+    "missing_final_marker",
+    "wrong_completed_count",
+    "wrong_seed",
+    "missing_instrumentation",
+    "missing_property",
+    "out_of_order_target",
+    "early_success_marker",
+    "missing_done_before_next_target"
+  ]
+}

@@ -1,6 +1,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
+use penelope_core::timeline::*;
 use penelope_domain::{
     ActionId, CanonicalCommitId, CanonicalEventId, ContentDigest, DefinitionId, DefinitionVersion,
     ExternalReferenceId, InputId, LogicalTime, MigrationId, OperationId, OutcomeId, PrincipalId,
@@ -45,6 +46,20 @@ fn identifier<T: FromStr + Serialize + DeserializeOwned + PartialEq + Debug>(
     let valid = format!("{prefix}x{suffix}");
     roundtrip(T::from_str(&valid).ok().unwrap());
     wire::<T>(data);
+}
+
+fn timeline_digest<T>(digest: Digest, make: fn(Digest) -> T, get: fn(T) -> Digest) {
+    assert_eq!(get(make(digest)), digest);
+}
+
+fn timeline_counter<T>(
+    value: u64,
+    make: fn(u64) -> T,
+    get: fn(T) -> u64,
+    next: fn(T) -> Option<T>,
+) {
+    assert_eq!(get(make(value)), value);
+    assert_eq!(next(make(value)).map(get), value.checked_add(1));
 }
 
 fuzz_target!(|data: &[u8]| {
@@ -109,6 +124,79 @@ fuzz_target!(|data: &[u8]| {
     assert_eq!(TaskSequence::new(small).get(), small);
     assert_eq!(TaskTick::new(value).get(), value);
 
+    timeline_digest::<TimelineTenantId>(
+        digest,
+        TimelineTenantId::from_digest,
+        TimelineTenantId::digest,
+    );
+    timeline_digest::<TimelineId>(digest, TimelineId::from_digest, TimelineId::digest);
+    timeline_digest::<TimelineModelId>(
+        digest,
+        TimelineModelId::from_digest,
+        TimelineModelId::digest,
+    );
+    timeline_digest::<TimelineSchemaId>(
+        digest,
+        TimelineSchemaId::from_digest,
+        TimelineSchemaId::digest,
+    );
+    timeline_digest::<TimelineInputId>(
+        digest,
+        TimelineInputId::from_digest,
+        TimelineInputId::digest,
+    );
+    timeline_digest::<TimelineSnapshotId>(
+        digest,
+        TimelineSnapshotId::from_digest,
+        TimelineSnapshotId::digest,
+    );
+    timeline_counter::<TimelineStep>(
+        value,
+        TimelineStep::new,
+        TimelineStep::get,
+        TimelineStep::checked_next,
+    );
+    timeline_counter::<TimelineRevision>(
+        value,
+        TimelineRevision::new,
+        TimelineRevision::get,
+        TimelineRevision::checked_next,
+    );
+    timeline_counter::<TimelineBranchId>(
+        value,
+        TimelineBranchId::new,
+        TimelineBranchId::get,
+        TimelineBranchId::checked_next,
+    );
+    timeline_counter::<InputRevision>(
+        value,
+        InputRevision::new,
+        InputRevision::get,
+        InputRevision::checked_next,
+    );
+
+    timeline_digest::<TimelineAuthorityId>(
+        digest,
+        TimelineAuthorityId::from_digest,
+        TimelineAuthorityId::digest,
+    );
+    timeline_digest::<TimelineEffectId>(
+        digest,
+        TimelineEffectId::from_digest,
+        TimelineEffectId::digest,
+    );
+    timeline_counter::<AuthorityEpoch>(
+        value,
+        AuthorityEpoch::new,
+        AuthorityEpoch::get,
+        AuthorityEpoch::checked_next,
+    );
+    timeline_counter::<AuthoritySequence>(
+        value,
+        AuthoritySequence::new,
+        AuthoritySequence::get,
+        AuthoritySequence::checked_next,
+    );
     macro_rules! wires { ($($type:ty),+ $(,)?) => { $(wire::<$type>(data);)+ }; }
     wires!(
         ContentDigest,

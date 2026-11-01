@@ -28,7 +28,7 @@ targets = {entry['name'] for entry in tomllib.loads(Path('fuzz/Cargo.toml').read
 assert len(calls) == 3 * (1 + len(targets)), calls
 for iteration in range(3):
     block = calls[iteration * (1 + len(targets)):(iteration + 1) * (1 + len(targets))]
-    assert block[0]['args'][0] == 'test', block
+    assert block[0]['args'][:5] == ['test', '-p', 'penelope-executor', '-p', 'penelope-timeline'], block
     assert block[0]['seed'] == str(iteration + 1), block[0]
     assert block[0]['cases'] == '2', block[0]
     assert {call['args'][3] for call in block[1:]} == targets, block

@@ -10,3 +10,6 @@ pub use entry::*;
 
 /// Allocation-free, versioned recoverable execution contracts and decisions.
 pub mod task;
+
+/// Independent timeline identities and bounded correction planning.
+pub mod timeline;

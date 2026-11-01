@@ -33,7 +33,7 @@ for iteration in $(seq 1 "${iterations}"); do
   campaign_seed="${PENELOPE_CHAOS_SEED:-$iteration}"
   printf '[%s/%s] pure transition/restart/timer drill\n' "${iteration}" "${iterations}"
   PROPTEST_CASES="${proptest_cases}" PROPTEST_RNG_SEED="${campaign_seed}" \
-    cargo test -p penelope-executor --all-targets --all-features --locked
+    cargo test -p penelope-executor -p penelope-timeline --all-targets --all-features --locked
 
   printf '[%s/%s] public-boundary malformed-input drill\n' \
     "${iteration}" "${iterations}"

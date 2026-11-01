@@ -1,0 +1,34 @@
+{
+  "baseline_revision": "11317c28ea635e1ada03584309e5e86718def93c",
+  "optimized_source_sha256": {
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "crates/penelope-timeline/src/captured.rs": "9637e69f6cf079c353bd9cd2e05af2f4d92c7b5434705ac9fc2dfc1b9d14f76f",
+    "crates/penelope-timeline/benches/support/workload.rs": "bbbe7c77fb23196707161c011d9c4c13f283b2daab23fe2bccc4e95730b79e59",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f"
+  },
+  "baseline_lookup_sha256": "652dafc0aa71809fea716864cecd051cbd29f3d18fff91ba06606383cda3f6bd",
+  "identical_benchmark_source": true,
+  "build_isolation": "Separate verified-before-build and verified-after-build Cargo target directories; distinct binary hashes retained. Earlier shared-target results were discarded.",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "affinity": "CPU 8",
+  "samples_per_profile_per_run": 1000,
+  "warmups_per_profile_per_run": 16,
+  "repetitions_per_version": 3,
+  "latency_profiles_per_run": 391,
+  "allocation_profiles": 391,
+  "latency_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_TARGET_DIR=<separate target directory for each version> PENELOPE_TIMELINE_SAMPLES=1000 taskset -c 8 cargo bench -p penelope-timeline --bench timeline_operations --locked",
+  "allocation_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_TARGET_DIR=<optimized target directory> cargo bench -p penelope-timeline --bench timeline_allocations --locked",
+  "aggregation": "Median of the three run medians; reduction=(before-after)/before*100. P99 columns are maximum run p99, not pooled percentiles.",
+  "limitations": [
+    "Baseline runs precede optimized runs; OS scheduling, frequency, caches and other processes uncontrolled. No statistical confidence interval or universal overhead claim.",
+    "Synthetic integer model, zero effects, 8-byte/1-KiB/4-KiB complete state. Fixture setup and input/snapshot capture/admission excluded. No actual engine/network/rendering workload.",
+    "Prefix profiles start at first retained input; suffix profiles retain the full 512-entry buffer and replay its final N ticks. Suffix profiles additionally use CapturedSnapshot restore integrity checking.",
+    "One-tick replay chunks execute consecutively, measuring total computation rather than time spread across actual frames.",
+    "Exact record and payload digest checks retained. Contiguous arrays use slot hints; other layouts can still require linear fallback.",
+    "All 391 separately instrumented optimized operations recorded zero Rust System allocations/reallocations/requested bytes; consumer callbacks may allocate."
+  ]
+}

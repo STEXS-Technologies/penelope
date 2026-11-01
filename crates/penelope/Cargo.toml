@@ -1,13 +1,18 @@
 [package]
 name = "penelope"
-description = "Penelope process engine: deterministic saga/process orchestration over an append-only outcome log (pure logic, no I/O)."
+description = "Deterministic saga orchestration, recoverable task execution and optional rewindable timelines."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 
+[features]
+default = []
+timeline = ["dep:penelope-timeline"]
+
 [dependencies]
+penelope-timeline = { workspace = true, optional = true }
 penelope-core = { workspace = true }
 penelope-domain = { workspace = true }
 penelope-intent = { workspace = true }

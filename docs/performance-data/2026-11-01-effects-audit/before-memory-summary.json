@@ -1,0 +1,27 @@
+{
+  "results": {
+    "control": {
+      "snapshots": 909,
+      "maximum_sampled_stack_bytes": 66168,
+      "maximum_sampled_total_bytes": 66744,
+      "executable_sha256": "82dd0fd29fc391ea37bf14ed0f865fbe6bfa183db877e9e774146fc7ba69b6b0"
+    },
+    "timeline": {
+      "snapshots": 829,
+      "maximum_sampled_stack_bytes": 2708560,
+      "maximum_sampled_total_bytes": 2710168,
+      "executable_sha256": "4adfbc76fcb2a2fbfbc7b724368904a0aa48fbaa086eaae29ed752953080f8d3"
+    }
+  },
+  "revision": "a524274b3638aeeadf1b90c83c5db207caec502b",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "valgrind": "valgrind-3.27.1",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "scope": "sampled entire hosted allocation benchmark, including fixture construction and reporting; all state sizes/horizons; no formal worst-case bound",
+  "limitations": [
+    "does not attribute stack to an individual operation",
+    "sampling can miss transient peaks",
+    "compiled red-zone usage and arbitrary consumer callbacks are not bounded",
+    "not a portable no_std call-chain bound"
+  ]
+}

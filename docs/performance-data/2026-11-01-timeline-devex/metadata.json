@@ -1,0 +1,40 @@
+{
+  "revision": "453039fc2180bf9406d3feb8d831a6c9cb89bf41",
+  "source_sha256": {
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/workload.rs": "8a416068e0e6edf5f9d81313ff2c746a79b8c46c16faa68cfb158e4e038915d2",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2",
+    "crates/penelope-timeline/src/captured.rs": "652dafc0aa71809fea716864cecd051cbd29f3d18fff91ba06606383cda3f6bd",
+    "crates/penelope-timeline/src/contracts.rs": "fac073fdd83b79acbceef9b461893be1936373b818fe16ea760c965cc2e13603",
+    "crates/penelope-timeline/src/effects.rs": "bf774d0f427f55f5ed9729a59d6b22cf485feb248b344584d61c222ba2c92457",
+    "crates/penelope-timeline/src/ergonomic.rs": "8efe42236ee739cc09d9988d9225dc0cf50c30c823a3ed6d49ad6d05c32a0e09",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "1f7d4319502a80855e237b1fce3fb8739116f37cfc20ae5297029dea4d28bbcb",
+    "crates/penelope-timeline/src/lib.rs": "62b7bfaccf4867ecc2276bcbf67365ccb4d72bd059e7863b13a69eb299c4cf52",
+    "crates/penelope-timeline/src/live.rs": "747cc05150497b6ded978a263e7b0a4262268e685192db69e243c6bca2f0f4dc",
+    "crates/penelope-timeline/src/pinned.rs": "d82b7b2596a1f2cc9674136c250eb07de08767523d4fedc1aaa8483290fb5972",
+    "crates/penelope-timeline/src/session.rs": "a39f8911a14a6f81b6c21f90415de115a16ae389ea9892e8321876c32304ec5f",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b7cac3355748277fc3762925e3d10100c1c451b835998303eadf026d22140ce4"
+  },
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "platform": "Linux-7.2.9-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+  "affinity": "CPU 8",
+  "samples_per_profile": 1000,
+  "warmups_per_profile": 16,
+  "latency_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= PENELOPE_TIMELINE_SAMPLES=1000 taskset -c 8 cargo bench -p penelope-timeline --bench timeline_operations --locked",
+  "allocation_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo bench -p penelope-timeline --bench timeline_allocations --locked",
+  "limitations": [
+    "Single ordered run with timer overhead included; no confidence interval or noninferiority claim.",
+    "Full SQLite fuzz qualification running concurrently; benchmark pinned to CPU 8 but host load, frequency and caches uncontrolled.",
+    "No effects staged; consumer model uses complete 8-byte/1-KiB/4-KiB states.",
+    "Owned input profile excludes history admission and snapshot capture; it derives/hashes input, clones live state, computes, validates and publishes.",
+    "Scoped and low-level correction profiles use the same preverified input/snapshot adapters; hashing and FixedHistory lookup are separate profiles.",
+    "Allocation instrumentation is in a separate executable and covers Rust System allocator calls only."
+  ]
+}

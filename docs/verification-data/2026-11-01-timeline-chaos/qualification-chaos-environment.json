@@ -1,0 +1,8 @@
+{
+  "pid": 1240616,
+  "parameters": {
+    "PENELOPE_CHAOS_ITERATIONS": "3",
+    "PENELOPE_CHAOS_PROPTEST_CASES": "10000",
+    "PENELOPE_CHAOS_FUZZ_RUNS": "100000"
+  }
+}

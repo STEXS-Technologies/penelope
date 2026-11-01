@@ -1,0 +1,118 @@
+diff --git a/crates/penelope-timeline/benches/support/history_workload.rs b/crates/penelope-timeline/benches/support/history_workload.rs
+index 2983fdf..2b6d44e 100644
+--- a/crates/penelope-timeline/benches/support/history_workload.rs
++++ b/crates/penelope-timeline/benches/support/history_workload.rs
+@@ -105,3 +105,101 @@ pub fn profiles(report: &mut impl Reporter) {
+         }
+     }
+ }
++
++// Snapshot and compaction profiles use 512 retained scalar inputs and up to 65
++// anchor slots, including correction imports and a child-local prefix snapshot.
++pub fn snapshots(report: &mut impl Reporter) {
++    let fixture = Fixture::<1>::new();
++    for count in [1, 8, 32, 63] {
++        for layout in ["root", "inherited", "child_snapshot", "imported"] {
++            let mut history = fixture.history(WINDOW);
++            for i in 1..count {
++                let step = i * 8;
++                history
++                    .insert_snapshot(anchor(step, fixture.expected(step)), fixture.expected(step))
++                    .unwrap();
++            }
++            let target = (count - 1) * 8;
++            let expected = fixture.expected(target);
++            let mut selected = anchor(target, expected);
++            let mut restored_expected = expected;
++            let branch = if layout == "inherited" || layout == "child_snapshot" {
++                let complete = anchor(WINDOW, fixture.expected(WINDOW));
++                history
++                    .import_anchor(complete, fixture.expected(WINDOW))
++                    .unwrap();
++                let current = head(WINDOW);
++                let plan = ReplayPlan::prepare(
++                    current,
++                    current.revision(),
++                    Correction::State(complete),
++                    &[],
++                    LIMITS,
++                )
++                .unwrap();
++                let mut live = fixture.live(WINDOW);
++                let reserved = live.reserve(&plan, observation(complete)).unwrap();
++                history.fork(&plan, reserved).unwrap();
++                selected.branch = reserved.branch();
++                if layout == "child_snapshot" {
++                    history.insert_snapshot(selected, expected).unwrap();
++                }
++                reserved.branch()
++            } else {
++                head(WINDOW).branch()
++            };
++            if layout == "imported" {
++                restored_expected = State([1234567]);
++                selected.digest = restored_expected.digest();
++                selected.snapshot = TimelineSnapshotId::from_digest(Digest([93; 32]));
++                history.import_anchor(selected, restored_expected).unwrap();
++            }
++            let canonical = history
++                .snapshot_at(branch, TimelineStep::new(target as u64))
++                .unwrap();
++            assert_eq!(canonical.digest, expected.digest());
++            let mut checked = State([0]);
++            assert_eq!(history.restore(selected, &mut checked).unwrap(), selected);
++            assert_eq!(checked, restored_expected);
++            report.sample(
++                &format!("snapshot_at_{layout}"),
++                1,
++                count,
++                || (),
++                |()| {
++                    let found = history
++                        .snapshot_at(black_box(branch), TimelineStep::new(target as u64))
++                        .unwrap();
++                    assert_eq!(found, canonical);
++                    found
++                },
++            );
++            report.sample(
++                &format!("snapshot_restore_{layout}"),
++                1,
++                count,
++                || State([0]),
++                |scratch| {
++                    history.restore(black_box(selected), scratch).unwrap();
++                    assert_eq!(*scratch, restored_expected);
++                    *scratch
++                },
++            );
++            if layout == "root" || layout == "inherited" {
++                report.sample(
++                    &format!("history_materialize_{layout}"),
++                    1,
++                    count,
++                    || (),
++                    |()| {
++                        let detached = history.materialize_branch(branch).unwrap();
++                        assert_eq!(detached.input_count(), WINDOW);
++                        assert_eq!(detached.branch_count(), 1);
++                        assert_eq!(detached.last_branch(), history.last_branch());
++                        detached
++                    },
++                );
++            }
++        }
++    }
++}
+diff --git a/crates/penelope-timeline/benches/support/workload.rs b/crates/penelope-timeline/benches/support/workload.rs
+index afb09fe..8c58bed 100644
+--- a/crates/penelope-timeline/benches/support/workload.rs
++++ b/crates/penelope-timeline/benches/support/workload.rs
+@@ -780,6 +780,7 @@ pub fn run(mut reporter: impl Reporter) {
+     profiles::<128>(&mut reporter);
+     profiles::<512>(&mut reporter);
+     history_workload::profiles(&mut reporter);
++    history_workload::snapshots(&mut reporter);
+     effects_workload::profiles::<8>(&mut reporter);
+     effects_workload::profiles::<64>(&mut reporter);
+     effects_workload::profiles::<512>(&mut reporter);

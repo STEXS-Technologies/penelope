@@ -1,0 +1,53 @@
+{
+  "baseline_revision": "11317c28ea635e1ada03584309e5e86718def93c",
+  "source_sha256": {
+    "crates/penelope-timeline/src/captured.rs": "9637e69f6cf079c353bd9cd2e05af2f4d92c7b5434705ac9fc2dfc1b9d14f76f",
+    "crates/penelope-timeline/tests/captured_lookup.rs": "e1feda0e2de4a8c78a469c4276d62311cab311233bf32683905d41995d22103b",
+    "crates/penelope-timeline/benches/support/workload.rs": "bbbe7c77fb23196707161c011d9c4c13f283b2daab23fe2bccc4e95730b79e59"
+  },
+  "positive_gates": "All archived positive gate commands completed with terminal exit 0. Their retained logs contain passing results.",
+  "commands": {
+    "optimization-tests.log": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= PROPTEST_CASES=10000 PROPTEST_RNG_SEED=407 cargo test -p penelope-timeline --all-targets --all-features --locked",
+    "optimization-msrv.log": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= TMPDIR=<workspace>/target/qualification-temp cargo +1.85.0 test -p penelope-timeline --tests --all-features --locked",
+    "optimization-portable.log": [
+      "cargo check -p penelope-timeline --no-default-features --target riscv32imac-unknown-none-elf --locked",
+      "cargo check -p penelope-timeline --no-default-features --features alloc --target riscv32imac-unknown-none-elf --locked"
+    ],
+    "optimization-clippy.log": "cargo clippy -p penelope-timeline --all-targets --all-features --locked -- -D warnings",
+    "optimization-docs.log": [
+      "RUSTDOCFLAGS=-Dwarnings cargo doc -p penelope-timeline --all-features --no-deps --locked",
+      "cargo test -p penelope-timeline --doc --all-features --locked"
+    ],
+    "optimization-layers.log": [
+      "bash scripts/check-layer-boundaries.sh",
+      "bash scripts/test-layer-boundaries.sh"
+    ],
+    "optimization-fuzz-correction.log": "cargo +nightly fuzz run fuzz_timeline_correction -- -runs=100000 -seed=407",
+    "optimization-coverage.log": [
+      "bash scripts/run_coverage_json.sh",
+      "bash scripts/check_coverage_ratchet.sh"
+    ]
+  },
+  "new_lookup_tests": {
+    "explicit_regressions": 3,
+    "properties": 2,
+    "cases_per_property": 10000,
+    "seed": 407
+  },
+  "coverage": {
+    "line_percent": 95.0537,
+    "ratchet_percent": 94.0759
+  },
+  "fuzz": {
+    "target": "fuzz_timeline_correction",
+    "runs": 100000,
+    "seed": 407,
+    "instrumented": true
+  },
+  "scope_notes": [
+    "No public API, dependency, wire, authority, effect-finality or publication changes. Production change is confined to captured slice/array lookup.",
+    "Earlier complete 66-batch campaign predates this optimization and retains its original source scope.",
+    "Full workspace tests execute through coverage; timeline suite separately includes all targets/features and 10,000-case properties.",
+    "Timing and separate allocation evidence are in ../../performance-data/2026-11-01-captured-input-optimization/."
+  ]
+}

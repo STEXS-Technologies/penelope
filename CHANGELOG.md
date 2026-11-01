@@ -7,6 +7,47 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+Penelope adds rewindable computation alongside the saga orchestration and
+recoverable task execution available in 0.3.0. Applications can reconcile local
+predictions with admitted state or input corrections, replay on isolated scratch,
+and publish validated results. Existing saga/task v1 formats and recovery
+semantics remain unchanged.
+
+### Added
+
+- Optional `penelope-timeline` crate for bounded replay, candidate validation
+  and staged effect intents, with a default `no_std` profile and fixed buffers
+  that require no heap allocation.
+- Independent timeline scopes, logical steps, branches and revisions, correction
+  planning, and the versioned `penelope.timeline.v1` binary metadata codec.
+- Fixed-capacity immutable input and full-snapshot history with byte limits,
+  branch ancestry, pinned replay, explicit eviction and branch materialization.
+- Atomic state/head/intent publication through an exclusive owner or optional
+  hosted shared lock, with stale-candidate fencing and non-reused branch IDs.
+- Separately authorized effect finality and idempotent durable-admission
+  contracts for handing off finalized intents.
+- Owned-state input application, scoped correction cleanup, closure validators
+  and captured input/snapshot adapters, with a runnable quickstart.
+- Integer simulation and optimistic invoice examples, including SQLite handoff
+  across lost admission/delivery acknowledgements, plus client prediction tests
+  covering delayed snapshots, unacknowledged inputs and continued prediction.
+
+### Security
+
+- Timeline scope, revision, authority ordering and finalized-prefix checks
+  refuse stale or incompatible corrections before publication.
+- Correction authentication, snapshot completeness, deterministic computation
+  and effect authorization remain explicit application responsibilities.
+  Replay does not reverse already-issued external effects.
+
+### Changed
+
+- The facade exposes rewindable computation as `penelope::timeline` through the
+  optional `timeline` feature; existing users do not acquire that dependency
+  by default.
+- Release verification covers all ten library packages, with timeline portable
+  checks, examples, property/fuzz campaigns and scoped performance measurements.
+
 ## [0.3.0] - 2026-10-31
 
 ### Added
