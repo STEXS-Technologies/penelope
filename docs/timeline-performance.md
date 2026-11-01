@@ -182,3 +182,35 @@ separate allocations. General maximum storage is the sum of configured slot
 metadata, admitted payload charges, owned live/scratch states, candidate sessions
 and staged effects. Pins and retained ancestry can prevent eviction before a
 chosen floor; capacity exhaustion refuses admission rather than silently growing.
+
+## Convenience API follow-up
+
+[Raw follow-up records and source hashes](performance-data/2026-11-01-timeline-devex/manifest.json)
+measure `453039f` on the same host/compiler, with 1,000 samples after 16 warmups,
+CPU-8 affinity and a separate allocation executable. The full SQLite fuzz
+campaign was running concurrently; host frequency, scheduling and caches were
+uncontrolled. Compare the scoped and low-level APIs within this run. Differences
+from the initial binary are not evidence of a general speed improvement.
+
+| State | Owned input median / p95 / p99, ns | Scoped 512-step correction median, ns | Low-level 512-step correction median, ns |
+| --- | ---: | ---: | ---: |
+| 8 bytes | 140 / 151 / 151 | 15,641 | 15,530 |
+| 1 KiB | 211 / 221 / 231 | 24,698 | 24,307 |
+| 4 KiB | 331 / 350 / 361 | 55,548 | 55,637 |
+
+Owned input here is one new step after a 511-input head. It includes descriptor
+hashing, complete isolated state cloning, computation, validation and publication;
+fixture preparation and history admission/capture are excluded. Scoped correction
+includes planning, reservation, restore, replay, validation and publication. Both
+correction paths use the same preverified input/snapshot adapter and stage no
+effects. All 331 separately counted profiles, including the 30 new convenience
+profiles, recorded zero allocations/reallocations/requested bytes. Consumer
+`Clone`, digest and model implementations can have different allocation behavior.
+These samples do not establish statistical noninferiority or a universal overhead.
+
+The [repeated sampled stack profile](performance-data/2026-11-01-timeline-devex/memory/manifest.json)
+includes the convenience profiles and large fixture construction. Across 953
+Massif samples, maximum observed stack usage was 2,585,400 bytes and maximum total
+2,587,008 bytes. The separate 64-KiB positive control recorded 66,168 stack bytes.
+This remains a whole hosted benchmark observation, including construction
+transients, rather than a per-operation or portable worst-case stack bound.

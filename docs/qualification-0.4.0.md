@@ -78,6 +78,16 @@ versioned packaging. The passing tagged-0.3.0 release workflow is also retained
 there as foundation evidence. The repeated-chaos result remains outstanding;
 its logs are under ignored `target/timeline-foundation/qualification-*` paths.
 
+The subsequent convenience API at `453039f` has
+[separate completed gate logs and source hashes](verification-data/2026-11-01-timeline-devex/manifest.json):
+workspace tests, final timeline Rust 1.85 all-target tests, strict docs/doctests,
+1,000-case seed-405 properties, 100,000 instrumented correction runs with seed
+405, fresh-registry packaging and coverage. Coverage is 95.0459% against the same
+94.0759% ratchet. Portable default/alloc, strict timeline Clippy, layer negative
+controls and the executable quickstart also pass. The original archive retains
+its earlier revision scope. [Convenience performance and sampled-stack records](timeline-performance.md#convenience-api-follow-up)
+are separate, and do not establish a universal overhead percentage.
+
 The outstanding repeated command is the unchanged inherited release campaign:
 
 ```sh
