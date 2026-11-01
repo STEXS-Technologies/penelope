@@ -242,3 +242,40 @@ retain all 520 profiles, exact source/binary hashes and zero-allocation records.
 An unfavorable sparse-read median remains visible alongside overlapping run
 ranges. This is not a claim that every path speeds up or a new repeated 66-batch
 campaign; the original campaign retains its earlier production scope.
+
+## Snapshot lookup and materialization audit
+
+[The snapshot qualification archive](verification-data/2026-11-01-snapshot-lookup/manifest.json)
+covers logical-step filtering before full exact-anchor comparison and direct
+content/charge verification of canonical matches. Full descriptor checks and
+exact-import precedence remain required. Unlike inherited input ownership,
+canonical child snapshots can cover an inherited prefix; their lookup is retained.
+
+An independent per-branch BTreeMap tracks canonical descriptors and fixture values
+through three nested state corrections, local child snapshots on either side of
+the correction boundary, explicit imports, parent preservation, corrected-away
+anchors and detached materialized histories. Forged metadata and foreign scopes
+are refused. All 10,000 seed-413 property cases and explicit prefix cases pass.
+Admitted fixtures do not prove arbitrary consumer snapshot completeness or authority.
+
+Mutation regressions detect canonical snapshot content and declared-charge changes
+through both lookup and restore. A corrupt exact child import cannot silently
+fall back to a healthy parent, while canonical lookup retains the healthy parent
+fact. A detached negative control removes only the new canonical verification
+call; the corruption regression fails at runtime with expected exit 101. Faulty
+source never enters the working branch.
+
+All-feature timeline tests with 10,000 cases per property, strict all-target Clippy,
+Rust 1.85 timeline tests, portable RISC-V default/alloc, strict workspace docs,
+compile-fail pin doctests, layer controls and fresh-registry verification of all
+ten library archives pass. The existing instrumented correction/flat-history/
+input-ancestry fuzz models additionally execute the snapshot oracle; 100,000
+seed-413 runs complete. Workspace coverage is 95.2568% against the unchanged
+94.0759% threshold. The earlier repeated 66-batch campaign retains its earlier
+production scope and was not repeated against this change.
+
+[The speed audit](timeline-performance.md#snapshot-lookup-and-materialization-follow-up)
+retains all 560 profile rows for each run, same-binary controls, source/binary
+hashes and zero-allocation records. Snapshot paths improve, while several input
+controls move unfavorably. Same-binary variation does not establish that every
+unfavorable movement is noise or prove noninferiority across all integrations.

@@ -61,6 +61,8 @@ descriptor, content and declared-charge checks remain required. Imports, evictio
 and branch aliases can use the fallback without changing lookup semantics.
 Canonical input resolution follows inherited lineage without scanning child slots
 at or before the fork point; child appends and materialized roots use local lookup.
+Snapshot lookup filters by logical step before full exact matching and verifies
+a selected canonical entry directly, avoiding a duplicate scan.
 If a payload destructor unwinds during leaf retirement, the leaf remains
 discoverable and cleanup can be retried; removed payloads remain uncharged.
 

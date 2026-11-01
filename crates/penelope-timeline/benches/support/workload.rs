@@ -780,6 +780,7 @@ pub fn run(mut reporter: impl Reporter) {
     profiles::<128>(&mut reporter);
     profiles::<512>(&mut reporter);
     history_workload::profiles(&mut reporter);
+    history_workload::snapshots(&mut reporter);
     effects_workload::profiles::<8>(&mut reporter);
     effects_workload::profiles::<64>(&mut reporter);
     effects_workload::profiles::<512>(&mut reporter);

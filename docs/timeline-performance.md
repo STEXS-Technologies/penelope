@@ -473,3 +473,57 @@ All final rows, including unfavorable movements, remain archived.
 All 520 separately instrumented operations allocate zero Rust heap bytes. All
 39 capacity rows match the preceding baseline archive; no public fields or
 index storage were added. This round makes no new sampled-stack claim.
+
+## Snapshot lookup and materialization follow-up
+
+[Matched measurements and same-binary controls](performance-data/2026-11-01-snapshot-lookup/manifest.json)
+compare `843e333` with step-filtered exact snapshot lookup and direct verification
+of a canonical match. Resolution no longer searches again for an entry it already
+selected. Complete descriptor, digest and declared-charge checks remain required;
+exact correction imports retain their precedence. Child-local snapshots inside an
+inherited input prefix remain eligible for canonical selection.
+
+The 40 added profiles bring the workload to 560. They use 512 retained inputs,
+u64 state/payloads, zero intents and 65 snapshot slots. For these profile names,
+the count column means initial canonical snapshots (1/8/32/63), spaced at steps
+0, 8, 16 and so on. Target lookup selects the final canonical snapshot. Layouts
+cover a root, a child corrected at step 512, a child-local target snapshot inside
+that inherited prefix, and an explicit root correction import. In the imported
+layout, canonical lookup keeps the original while restore selects the import.
+Fixtures, snapshot admission and forks are outside timing. Materialization includes
+preflight, cloning and admission into a detached store, excluding caller replacement,
+disposal of superseded history, persistence and I/O. Scalar Clone costs are not
+representative of arbitrary consumer state.
+
+At 63 canonical snapshots, median of three run medians, nanoseconds:
+
+| Operation | Before | After | Reduction |
+| --- | ---: | ---: | ---: |
+| Root canonical snapshot lookup | 250 | 120 | 52.000% |
+| Root restore | 240 | 120 | 50.000% |
+| Inherited canonical lookup | 271 | 140 | 48.339% |
+| Inherited restore | 411 | 170 | 58.637% |
+| Child-local canonical lookup | 241 | 120 | 50.207% |
+| Root materialization | 176,240 | 164,337 | 6.754% |
+| Inherited materialization | 204,435 | 190,268 | 6.930% |
+
+Unfavorable input controls remain in the report: eight-input inherited read-all
+measures 1,734 to 2,214 ns, while evicted collection measures 1,363 to 1,693 ns
+at eight inputs and 5,160 to 6,583 ns at 32. Six additional runs use the identical
+baseline executable on both sides of the self-comparison. They also show control
+variation: inherited read-all(8) spans 1,644–2,184 ns, and root snapshot lookup(63)
+spans 241–381 ns. The latter remains distinct from all three optimized medians
+of 120 ns. Variability does not prove every unfavorable result is noise, and
+these measurements do not establish an improvement on every path.
+
+Final version comparisons alternate baseline/optimized runs; the supplemental
+self-comparison uses the baseline binary in every process. All use CPU 8, 1,000
+samples after 16 warmups, separate version build directories, and no concurrent
+qualification builds/tests. Frequency, scheduling, caches and ASLR remain
+uncontrolled. Run ranges and maximum run p99 values are descriptive, not confidence
+intervals. The archive retains all raw rows, source/binary hashes and a patch for
+reproducing the expanded benchmark on the baseline production revision.
+
+All 560 separately instrumented operations record zero Rust heap allocations,
+reallocations and requested bytes. All 39 capacity rows match the preceding
+archive. This round adds no index fields and makes no new stack-bound claim.

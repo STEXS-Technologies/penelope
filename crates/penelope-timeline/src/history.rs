@@ -771,14 +771,21 @@ impl<
             .anchors
             .iter()
             .flatten()
-            .find(|entry| entry.anchor == anchor)
+            .find(|entry| entry.anchor.step == anchor.step && entry.anchor == anchor)
             .ok_or(TimelineError::HistoryUnavailable)?;
-        if self.check_payload(&entry.state, anchor.digest, self.limits.max_snapshot_bytes)?
-            != entry.bytes
+        self.verify_anchor(entry)?;
+        Ok(entry)
+    }
+    fn verify_anchor(&self, entry: &StoredAnchor<State>) -> Result<(), TimelineError> {
+        if self.check_payload(
+            &entry.state,
+            entry.anchor.digest,
+            self.limits.max_snapshot_bytes,
+        )? != entry.bytes
         {
             return Err(TimelineError::InputMismatch);
         }
-        Ok(entry)
+        Ok(())
     }
     fn resolve_input(
         &self,
@@ -844,9 +851,12 @@ impl<
                 return Err(TimelineError::HistoryUnavailable);
             }
             if let Some(entry) = self.anchors.iter().flatten().find(|entry| {
-                entry.canonical && entry.anchor.branch == branch && entry.anchor.step == step
+                entry.anchor.step == step && entry.anchor.branch == branch && entry.canonical
             }) {
-                return self.exact_anchor(entry.anchor);
+                // The canonical search already selected the exact stored entry.
+                // Recheck its content/charge without performing the same scan twice.
+                self.verify_anchor(entry)?;
+                return Ok(entry);
             }
             if let Some(anchor) = lineage.state_override.filter(|anchor| anchor.step == step) {
                 return self.exact_anchor(anchor);

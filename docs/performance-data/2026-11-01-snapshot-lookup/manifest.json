@@ -1,0 +1,20 @@
+{
+  "afterx-1.csv": "4f95b36eba2294e23bb31aff2bfb69227802d49220b47703435284b8a4bfc83e",
+  "afterx-2.csv": "0839b4bbf1672f9ad64d0eb3b357a0464945ab438aa213225ddcd534f83960d3",
+  "afterx-3.csv": "f7deae434cf478caa02336c24e5db4ffbce4f5c56c4a96208f355753d4432259",
+  "allocations.csv": "9035186b243cceb475eacde51d5455cb2354a202f734759e1b9311a00e9cd230",
+  "baseline-benchmark.patch": "3dd27ad42a3324e04754c372f57ab87aea63341dc662ba5a38ac9b160c9f626b",
+  "before-1.csv": "7d93f5ddc34c48f7e36fdebe7cc30fce5ea703cdbc5b865843c640d610a720f1",
+  "before-2.csv": "c42505acc37ec39dab1e31c91b3bea73fb46b1705f51a7f696a01d21c20f1a26",
+  "before-3.csv": "80f0d83c661c4b2fc3cdbb5c1df689c269e7103139136bd35e52b76cca30aac4",
+  "capacity.csv": "ba2d7b7127af3cf0bb757bacc008bcf92bf0cefeb195389767e7dc2bb521441d",
+  "comparison.csv": "e44b14910c4e0d6c573200272b9cc23000ea16fad868f8aa29a445d2a51419f1",
+  "control-a-1.csv": "a76efaa3d8e199f2baf3a125444fcba6a1a381f96053aed3edd1f40388a6ff65",
+  "control-a-2.csv": "a4bb6bac8af373d4292a89c80e5cedd913d4dc98007daf8878d8efa01747ce9f",
+  "control-a-3.csv": "152834282049634ac95d27700ee22e28e15109a5d6734b2962d0fa2d2d318c3a",
+  "control-b-1.csv": "73c9b9a185ed4d301892eb3ea289613bde6d1057718adcab2804233df209c539",
+  "control-b-2.csv": "6d3097d38b4b461eb9d94e77087f767c6dfe70980a94adf4489438ad63ed88a4",
+  "control-b-3.csv": "7941ae721798b2ef88ff6a25484e0b191a7bb933ac77b748eeeb3bfb1272d583",
+  "metadata.json": "2cad36503f395c2ec18dc1977d11a0e9e7e33ca5ab384d4a7ef4c873ae87f633",
+  "noise-comparison.csv": "4f04ebf9ee3fd75d91b1321e2d12ed6303ab581cfc802a68dfde06913da415e6"
+}
