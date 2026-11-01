@@ -111,7 +111,10 @@ models detect omitted state dependencies, hidden mutable counters and floating-p
 reduction-order changes when digest validation is enabled. See
 [verification and reproduction](timeline-verification.md).
 
-Remaining work includes performance comparison and all inherited release/package
+The [initial performance workload and evidence](timeline-performance.md) measure
+the public API against a handwritten ring, including median/p95/p99, separate
+allocation counts, fixed object sizes, corrected inputs, yielding and contention.
+Remaining work includes whole-call stack qualification and all inherited release/package
 qualification gates. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.
 

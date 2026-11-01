@@ -21,3 +21,11 @@ workspace = true
 
 [dev-dependencies]
 proptest.workspace = true
+
+[[bench]]
+name = "timeline_operations"
+harness = false
+
+[[bench]]
+name = "timeline_allocations"
+harness = false
