@@ -18,6 +18,8 @@ penelope-domain.workspace = true
 penelope-ports.workspace = true
 
 [dev-dependencies]
+penelope-timeline.workspace = true
+thiserror.workspace = true
 rusqlite = { version = "0.40.2", features = ["bundled", "functions"] }
 tempfile = "3"
 

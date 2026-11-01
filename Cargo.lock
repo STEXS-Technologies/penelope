@@ -416,10 +416,12 @@ dependencies = [
  "penelope-core",
  "penelope-domain",
  "penelope-ports",
+ "penelope-timeline",
  "rusqlite",
  "serde",
  "serde_json",
  "tempfile",
+ "thiserror",
 ]
 
 [[package]]

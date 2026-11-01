@@ -16,6 +16,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   identities and the golden-tested `penelope.timeline.v1` binary record codec
   remain independent of existing saga/task protocols. This feature
   remains under development; see [the current status](docs/timeline-foundation.md).
+- Integer simulation and optimistic invoice examples using the same timeline API,
+  with late corrections, bounded retention and finalized-effect SQLite handoff
+  checked across lost admission/delivery acknowledgements and reopen.
 
 ## [0.3.0] - 2026-10-31
 

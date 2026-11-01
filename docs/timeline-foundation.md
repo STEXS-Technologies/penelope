@@ -12,7 +12,7 @@ mapping and the implemented foundation; it is not a release announcement.
 | Portable bounded supervision | `penelope_core::task::control::{TaskControl, TaskWorkspace}` | Timeline metadata uses a separate module; no change to task recovery |
 | Typed scope, clock and generation | Task identity newtypes, `TaskTick`, `TaskGeneration` | New timeline identity, logical step, branch and revision types; no implicit conversions |
 | Saga/task wire compatibility | Domain `golden_wire` and executor `task_contracts` fixture tests | Existing fixtures and serialized protocols remain unchanged |
-| Durable process handoff | `penelope_ports::AtomicProcessCommit`, SQLite process adapter | Future finalized-effect bridge; not yet implemented for timelines |
+| Durable process handoff | `penelope_ports::AtomicProcessCommit`, SQLite process adapter | Finalized invoice sample commits a v0.3 inbox/outcome/outbox batch and verifies retries |
 | Verified task result and effect evidence | Executor composition, verified-result and effect-bridge tests | Does not authorize speculative dispatch or reverse issued effects |
 | Optional production infrastructure | Dedicated SQLite and protected Linux runtime crates | No new infrastructure dependency in portable core |
 | Crash and fencing validation | Existing adapter/process suites and inherited CI | Gates retained; timeline concurrency testing will supplement them |
@@ -68,8 +68,9 @@ bounded staged intents and consuming candidate validation. `LiveTimeline` publis
 state/head/intents under exclusive ownership; optional `SharedTimeline` uses one
 hosted lock. Live steps run on scratch before publication and invalidate pinned
 replays. Finalized intents cross an explicit idempotent durable-admission port;
-ACK uncertainty retains the intent. This generic port is not yet the concrete
-0.3 SQLite integration example.
+ACK uncertainty retains the intent. The concrete SQLite invoice example binds
+immutable command bytes to a v0.3 atomic inbox/outcome/outbox commit and recovers
+both lost admission and delivery acknowledgements; see [the examples](timeline-examples.md).
 
 Current tests cover incremental/zero-budget replay, restore/input/model/validation
 failures, ignored effect exhaustion, caught model panics, competing candidates and
@@ -95,8 +96,13 @@ branch IDs, checks all charges before cloning and leaves the source untouched.
 Owners can replace history after readers release it and other candidates retire,
 reclaiming old ancestry without silently invalidating a retained branch.
 
-Remaining work includes independently versioned timeline records and fixtures; concrete durable handoff,
-simulation and non-game samples; comprehensive model/fuzz/performance campaigns;
+The integer simulation and optimistic invoice examples use the same timeline API
+with independent domain types. The simulation checks late state and input changes
+against a closed-form oracle, then expires/materializes history. The invoice sample
+checks delayed authority, separate finality, bounded immutable command storage,
+commit failure and two lost-ACK/reopen boundaries with a cooperating durable endpoint.
+
+Remaining work includes comprehensive model/property/fuzz/performance campaigns
 and all inherited release/package gates. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.
 

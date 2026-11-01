@@ -44,6 +44,9 @@ preserving consumed branch IDs so old ancestry can be reclaimed after pins and
 other candidates retire.
 
 The independent `penelope.timeline.v1` codec serializes metadata into caller-owned
-bytes; it does not establish a complete durable recovery image. The concrete
-durable bridge example and release qualification are still being implemented. Do not infer
-persistence or arbitrary-state determinism from the current in-memory API.
+bytes; it does not establish a complete durable recovery image. The integer
+simulation and SQLite optimistic-invoice examples demonstrate independent domains
+using the same API, including a finalized-effect bridge with two lost-ACK/reopen
+checks. See `docs/timeline-examples.md` in the repository for commands and contracts.
+Release qualification remains in progress; the in-memory API does not establish
+persistent timeline state or arbitrary-state determinism.
