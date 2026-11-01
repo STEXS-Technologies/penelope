@@ -1,11 +1,11 @@
-# Penelope release contract — 0.4.0 development
+# Penelope release contract — 0.4.0
 
 Penelope provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
 Released 0.3.0 adds optional SQLite persistence and a protected Linux
-single-process runtime. The 0.4.0 workspace adds the independent optional
+single-process runtime. Version 0.4.0 adds the independent optional
 `penelope-timeline` crate; all ten library crates use version `0.4.0`. Saga v1
 records, linear/graph decisions, task history v1 and fingerprints retain their
 existing formats. The [changelog](../CHANGELOG.md) separates unreleased work from
@@ -294,7 +294,7 @@ directory's `package` directory.
 
 For an authorized release, validate the latest `main` revision and its dated
 changelog entry, then create and push an annotated tag matching the qualified
-workspace version (for this development series, `v0.4.0` after qualification).
+workspace version (`v0.4.0` for this release).
 The release workflow verifies the tagged revision and package version, publishes the crates
 dependency-first, and creates a GitHub release from the matching changelog
 section. Missing, empty or duplicate version entries stop release verification.

@@ -18,21 +18,19 @@ composition; their invoice/kinematics models are not exported library contracts.
 
 ## Quickstart
 
-Version 0.4.0 is unreleased. Run the commands above from this checkout. To use
-the quickstart's imports in another local crate, point dependencies at your clone
-(adjust these paths relative to that crate's `Cargo.toml`):
+Run the commands above from this checkout. To use the quickstart's imports in
+an application, add:
 
 ```toml
 [dependencies]
-penelope-timeline = { path = "../penelope/crates/penelope-timeline" }
-penelope-core = { path = "../penelope/crates/penelope-core", default-features = false }
+penelope-timeline = "0.4.0"
+penelope-core = { version = "0.4.0", default-features = false }
 ```
 
 The direct timeline dependency defaults to `no_std`; enable its `std` feature for
 `SharedTimeline`. The hosted facade alternatively re-exports the API as
-`penelope::timeline` when its `timeline` feature is enabled. The released 0.3.0
-facade does not contain that feature. Consumer payloads and adapters determine
-their own allocation behavior.
+`penelope::timeline` when its `timeline` feature is enabled, starting in 0.4.0.
+Consumer payloads and adapters determine their own allocation behavior.
 
 [`quickstart.rs`](../crates/penelope-timeline/examples/quickstart.rs) is the smallest
 complete consumer, using a checked integer counter. The live-input operation is:

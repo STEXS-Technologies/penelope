@@ -7,6 +7,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-02
+
 Penelope adds rewindable computation alongside the saga orchestration and
 recoverable task execution available in 0.3.0. Applications can reconcile local
 predictions with admitted state or input corrections, replay on isolated scratch,

@@ -24,8 +24,8 @@ checkpoints and explicit recovery permissions.
 - An allocation-free `no_std` decision core with optional Serde support.
 - Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
   operator workflows.
-- Optional bounded timeline correction and scratch replay in the 0.4.0 development
-  branch, with atomic state/head publication and separate irreversible-effect finality.
+- Optional bounded timeline correction and scratch replay, with atomic state/head
+  publication and separate irreversible-effect finality.
 
 The engine is pure and deterministic. Your application selects durable
 adapters and workers through the ports. The optional
@@ -99,7 +99,7 @@ See [the architecture and release gates](docs/RELEASE.md).
 Validation includes process-kill fault injection, concurrent supervisor
 arbitration, stateful supervisor fuzzing and reproducible chaos campaigns.
 
-## Rewindable timelines (0.4.0 development)
+## Rewindable timelines (0.4.0)
 
 `penelope-timeline` maintains immutable input versions and complete state anchors,
 recomputes a corrected suffix in isolated scratch, validates it, and publishes
@@ -131,7 +131,8 @@ See [the API and baseline mapping](docs/timeline-foundation.md),
 [integration examples](docs/timeline-examples.md),
 [verification](docs/timeline-verification.md) and
 [performance measurements](docs/timeline-performance.md).
-Version 0.4.0 has not been tagged or published.
+The [0.4.0 qualification audit](docs/qualification-0.4.0.md) records validation
+evidence and the supported integration limits.
 
 For owned state, `LiveTimeline::apply_input` derives the next input descriptor,
 computes on an isolated clone, validates and publishes in one call. A scoped
@@ -163,12 +164,11 @@ is compiled when an application selects it.
 
 ## Start building
 
-Add the released facade crate to your application (the timeline feature above
-belongs to the unreleased 0.4.0 workspace):
+Add the facade crate to your application:
 
 ```toml
 [dependencies]
-penelope = "0.3.0"
+penelope = "0.4.0"
 ```
 
 Run the included workflows to see the public API:

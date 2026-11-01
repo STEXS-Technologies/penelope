@@ -1,4 +1,4 @@
-# Timeline foundation (0.4.0 development)
+# Timeline foundation (0.4.0)
 
 Baseline: released `v0.3.0`, commit
 `788c282e359477469cd805c7ea82f2da22f85a87`. The release workflow verified
@@ -156,7 +156,8 @@ includes benchmark construction temporaries; it does not assert a generic
 worst-case stack bound. The [qualification audit](qualification-0.4.0.md) retains
 passing inherited release/package gates and the completed repeated chaos campaign,
 with later optimizations qualified separately. The workspace and path-dependency
-versions target 0.4.0; version 0.4.0 has not been tagged or published.
+versions target 0.4.0. The [release contract](RELEASE.md#packaging-and-publication)
+defines tagging and publication separately from these verification records.
 
 Foundation validation uses the existing golden-wire, task-contract, adversarial
 and architecture suites, stable/Rust 1.85 core tests and doctests, strict Clippy

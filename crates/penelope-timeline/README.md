@@ -1,6 +1,6 @@
 # penelope-timeline
 
-Runtime-neutral rewindable computation for the unreleased Penelope 0.4.0.
+Runtime-neutral rewindable computation for Penelope 0.4.0.
 The default build is `no_std`; its fixed buffers require no heap allocation.
 Consumer state, clones and adapters may allocate. Enable the facade's optional
 `timeline` feature to re-export this crate; existing facade users do not acquire
@@ -77,6 +77,6 @@ simulation and SQLite optimistic-invoice examples demonstrate independent domain
 using the same API, including a finalized-effect bridge with two lost-ACK/reopen
 checks. See `docs/timeline-examples.md` in the repository for commands and contracts.
 The completed branch qualification and its source-specific follow-ups are recorded
-in `docs/qualification-0.4.0.md`. Version 0.4.0 has not been tagged or published.
+in `docs/qualification-0.4.0.md`.
 The in-memory API does not establish persistent timeline state or arbitrary-state
 determinism.

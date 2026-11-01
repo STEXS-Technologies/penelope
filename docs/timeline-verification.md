@@ -2,8 +2,8 @@
 
 This records the initial reference-model campaigns. The
 [qualification audit](qualification-0.4.0.md) records completed branch gates,
-the repeated chaos campaign and later source-specific follow-ups. Version 0.4.0
-has not been tagged or published.
+the repeated chaos campaign and later source-specific follow-ups. Tagging and
+publication follow the [release contract](RELEASE.md#packaging-and-publication).
 The model deliberately uses bounded integer computations and a cooperating mock
 durable recipient. It cannot establish determinism or authority for arbitrary
 consumer code, nor exactly-once delivery to an uncooperative endpoint.
