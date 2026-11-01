@@ -7,6 +7,12 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Initial portable timeline identities and bounded correction planning. This
+  metadata foundation does not yet execute replay or promote application state;
+  see [the development status](docs/timeline-foundation.md).
+
 ## [0.3.0] - 2026-10-31
 
 ### Added

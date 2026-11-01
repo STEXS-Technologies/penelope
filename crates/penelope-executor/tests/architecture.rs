@@ -162,7 +162,10 @@ impl<'ast> Visit<'ast> for FuzzedNewtypes {
         if let Expr::Path(function) = call.func.as_ref() {
             let segment = function.path.segments.last().unwrap();
             if let (true, syn::PathArguments::AngleBracketed(arguments)) = (
-                segment.ident == "wire" || segment.ident == "identifier",
+                matches!(
+                    segment.ident.to_string().as_str(),
+                    "wire" | "identifier" | "timeline_digest" | "timeline_counter"
+                ),
                 &segment.arguments,
             ) {
                 for argument in &arguments.args {
@@ -256,5 +259,16 @@ fn public_type_inventory_accepts_only_static_thread_local_declarations() {
             collect_newtypes(&invalid.items, &mut types);
         }))
         .is_err()
+    );
+}
+
+#[test]
+fn fuzz_inventory_counts_timeline_constructor_and_arithmetic_probes() {
+    let ast = syn::parse_file("fn target() { timeline_digest::<TimelineId>(digest, make, get); timeline_counter::<TimelineStep>(value, make, get, next); }").unwrap();
+    let mut covered = FuzzedNewtypes::default();
+    covered.visit_file(&ast);
+    assert_eq!(
+        covered.0,
+        BTreeSet::from(["TimelineId".into(), "TimelineStep".into()])
     );
 }
