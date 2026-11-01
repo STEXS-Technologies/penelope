@@ -78,3 +78,20 @@ counter!(
     "Monotonic branch reservation identity within a scope."
 );
 counter!(InputRevision, "Immutable version of a logical input.");
+
+counter!(
+    AuthorityEpoch,
+    "Application-authorized authority incarnation, independent of effect finality."
+);
+counter!(
+    AuthoritySequence,
+    "Ordered observation within one authority epoch."
+);
+digest_identity!(
+    TimelineAuthorityId,
+    "Pinned authority identity admitted by the application."
+);
+digest_identity!(
+    TimelineEffectId,
+    "Application-defined stable effect idempotency identity."
+);

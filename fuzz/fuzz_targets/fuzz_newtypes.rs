@@ -175,6 +175,28 @@ fuzz_target!(|data: &[u8]| {
         InputRevision::checked_next,
     );
 
+    timeline_digest::<TimelineAuthorityId>(
+        digest,
+        TimelineAuthorityId::from_digest,
+        TimelineAuthorityId::digest,
+    );
+    timeline_digest::<TimelineEffectId>(
+        digest,
+        TimelineEffectId::from_digest,
+        TimelineEffectId::digest,
+    );
+    timeline_counter::<AuthorityEpoch>(
+        value,
+        AuthorityEpoch::new,
+        AuthorityEpoch::get,
+        AuthorityEpoch::checked_next,
+    );
+    timeline_counter::<AuthoritySequence>(
+        value,
+        AuthoritySequence::new,
+        AuthoritySequence::get,
+        AuthoritySequence::checked_next,
+    );
     macro_rules! wires { ($($type:ty),+ $(,)?) => { $(wire::<$type>(data);)+ }; }
     wires!(
         ContentDigest,

@@ -82,3 +82,7 @@ pub use penelope_statechronicle::{
 pub use penelope_core::task;
 /// Bounded supervisor using injected journal and protected runtime adapters.
 pub use penelope_executor::task::TaskSupervisor;
+
+/// Optional rewindable computation API; no timeline dependency by default.
+#[cfg(feature = "timeline")]
+pub use penelope_timeline as timeline;

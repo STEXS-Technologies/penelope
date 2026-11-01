@@ -124,6 +124,22 @@ impl<'inputs> ReplayPlan<'inputs> {
             inputs,
         })
     }
+    /// Logical step whose state or input is corrected.
+    #[must_use]
+    pub const fn corrected_step(&self) -> TimelineStep {
+        match self.replacement {
+            Some(record) => record.step,
+            None => self.anchor.step,
+        }
+    }
+    /// Identity of the corrected state or input payload (not proof of authority).
+    #[must_use]
+    pub const fn corrected_digest(&self) -> crate::task::Digest {
+        match self.replacement {
+            Some(record) => record.digest,
+            None => self.anchor.digest,
+        }
+    }
     /// Expected atomic-publication head, including its finality frontier.
     #[must_use]
     pub const fn expected_head(&self) -> TimelineHead {

@@ -22,6 +22,7 @@ pub struct TimelineHead {
     pub(super) step: TimelineStep,
     pub(super) revision: TimelineRevision,
     pub(super) effect_finalized: Option<TimelineStep>,
+    pub(super) authority: Option<AuthorityObservation>,
 }
 
 impl TimelineHead {
@@ -46,7 +47,13 @@ impl TimelineHead {
             step,
             revision,
             effect_finalized,
+            authority: None,
         })
+    }
+    /// Latest accepted authority observation, separate from irreversible finality.
+    #[must_use]
+    pub const fn authority(self) -> Option<AuthorityObservation> {
+        self.authority
     }
     /// Immutable consistency domain.
     #[must_use]
@@ -137,6 +144,28 @@ pub enum TimelineError {
     CounterExhausted,
     #[error("effect-finalized frontier exceeds the live step")]
     InvalidFrontier,
+    #[error("candidate session is absent, aborted or already consumed")]
+    SessionUnavailable,
+    #[error("authority observation is stale or changes the pinned authority")]
+    StaleAuthority,
+    #[error("shared publication lock is poisoned; reconstruction is required")]
+    PublicationUnavailable,
+    #[error("candidate phase does not permit this operation")]
+    InvalidPhase,
+    #[error("candidate invariant or deterministic digest validation failed")]
+    ValidationFailed,
     #[error("input is not the next pinned replay record")]
     InputMismatch,
+}
+
+/// Application-authenticated ordered observation. A digest is not authentication.
+/// Admission of this value never implicitly finalizes effects.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AuthorityObservation {
+    pub scope: TimelineScope,
+    pub authority: TimelineAuthorityId,
+    pub epoch: AuthorityEpoch,
+    pub sequence: AuthoritySequence,
+    pub step: TimelineStep,
+    pub digest: Digest,
 }

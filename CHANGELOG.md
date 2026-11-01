@@ -9,9 +9,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Initial portable timeline identities and bounded correction planning. This
-  metadata foundation does not yet execute replay or promote application state;
-  see [the development status](docs/timeline-foundation.md).
+- Optional `penelope-timeline` crate with bounded scratch replay, staged effect
+  intents, candidate validation, atomic ownership/hosted-lock publication and
+  separately authorized effect finality. New timeline scope, branch and revision
+  identities remain independent of existing saga/task protocols. This feature
+  remains under development; see [the current status](docs/timeline-foundation.md).
 
 ## [0.3.0] - 2026-10-31
 

@@ -26,6 +26,7 @@ require_internal_dependencies() {
 }
 
 require_internal_dependencies penelope-core ''
+require_internal_dependencies penelope-timeline 'penelope-core'
 require_internal_dependencies penelope-domain 'penelope-core'
 require_internal_dependencies penelope-intent 'penelope-core penelope-domain'
 require_internal_dependencies penelope-ports 'penelope-core penelope-domain'
@@ -34,7 +35,7 @@ require_internal_dependencies penelope-executor 'penelope-core penelope-domain p
 require_internal_dependencies penelope-process-runtime 'penelope-core penelope-domain penelope-executor penelope-ports penelope-sqlite penelope-statechronicle'
 require_internal_dependencies penelope-sqlite 'penelope-core penelope-domain penelope-ports'
 require_internal_dependencies penelope-statechronicle 'penelope-domain penelope-ports'
-require_internal_dependencies penelope 'penelope-core penelope-domain penelope-executor penelope-intent penelope-ports penelope-statechronicle'
+require_internal_dependencies penelope 'penelope-core penelope-domain penelope-executor penelope-intent penelope-ports penelope-statechronicle penelope-timeline'
 
 if jq -e '
     .packages[] | select(.name == "penelope-executor")

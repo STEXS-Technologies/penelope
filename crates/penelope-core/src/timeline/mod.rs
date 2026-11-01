@@ -6,3 +6,6 @@ mod replay_plan;
 pub use contracts::*;
 pub use identities::*;
 pub use replay_plan::*;
+
+mod projection;
+pub use projection::*;

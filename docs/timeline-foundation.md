@@ -60,15 +60,27 @@ and counter exhaustion. Newtype constructor/arithmetic checks are registered in
 the existing fuzz inventory. RISC-V checks keep the module allocation-free and
 `no_std`; no performance percentage is claimed.
 
-Remaining work includes immutable branch reservation/lineage and transition
-projection; snapshot and payload stores; resumable scratch replay; candidate
-validation; atomic state/head promotion and competing-correction tests; effect
-intent staging, authority/finality admission and durable 0.3 handoff; bounded
-retention; independently versioned timeline records; the optional consumer crate
-and facade feature; simulation and non-game samples; complete fuzz/model and
-performance qualification. None of those paths is implied by a successful
-metadata plan. Workspace release versions remain 0.3.0 until the new consumer
-crate and its package graph are introduced.
+The next implementation adds a bounded metadata projection with non-reused branch
+reservations, authority epoch/sequence ordering and independently advancing effect
+finality. The new optional `penelope-timeline` crate owns isolated scratch replay,
+bounded staged intents and consuming candidate validation. `LiveTimeline` publishes
+state/head/intents under exclusive ownership; optional `SharedTimeline` uses one
+hosted lock. Live steps run on scratch before publication and invalidate pinned
+replays. Finalized intents cross an explicit idempotent durable-admission port;
+ACK uncertainty retains the intent. This generic port is not yet the concrete
+0.3 SQLite integration example.
+
+Current tests cover incremental/zero-budget replay, restore/input/model/validation
+failures, ignored effect exhaustion, caught model panics, competing candidates and
+readers, aborted-branch ABA, new live input during replay, authority/finality
+separation, lost handoff ACKs, mismatched receipts and destructor panic after a
+coherent publication. These tests do not complete the release qualification.
+
+Remaining work includes bounded snapshot/input retention and lineage resolution;
+independently versioned timeline records and fixtures; concrete durable handoff,
+simulation and non-game samples; comprehensive model/fuzz/performance campaigns;
+and all inherited release/package gates. The workspace and path-dependency
+versions now target 0.4.0; no 0.4 tag or publication has been requested.
 
 Foundation validation uses the existing golden-wire, task-contract, adversarial
 and architecture suites, stable/Rust 1.85 core tests and doctests, strict Clippy
