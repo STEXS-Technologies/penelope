@@ -457,6 +457,46 @@ fn profiles<const W: usize>(report: &mut impl Reporter) {
             );
         }
 
+        // A delayed server snapshot usually acknowledges an earlier prefix of
+        // the retained buffer. Include that case without pruning the array.
+        let acknowledged = WINDOW - n;
+        let snapshot = CapturedSnapshot::capture(
+            head(WINDOW),
+            TimelineStep::new(acknowledged as u64),
+            TimelineSnapshotId::from_digest(Digest([17; 32])),
+            fixture.expected(acknowledged),
+        )
+        .unwrap();
+        let suffix_expected = fixture.expected(WINDOW);
+        report.sample(
+            "prediction_captured_suffix_yield1",
+            W,
+            n,
+            || fixture.live(WINDOW),
+            |live| {
+                let mut correction = live
+                    .begin_correction(
+                        CorrectionRequest {
+                            correction: Correction::State(snapshot.anchor()),
+                            inputs: &fixture.records[acknowledged..],
+                            observation: observation(snapshot.anchor()),
+                            scratch: State([0; W]),
+                            limits: LIMITS,
+                        },
+                        &snapshot,
+                    )
+                    .unwrap();
+                while correction
+                    .advance(&Computation::<W>, &captured_inputs, 1)
+                    .unwrap()
+                    == ReplayPhase::Replaying
+                {}
+                let published = correction.publish(&Validator(suffix_expected)).unwrap();
+                assert_eq!(*live.read().1, suffix_expected);
+                published
+            },
+        );
+
         report.sample(
             "core_prepare",
             W,

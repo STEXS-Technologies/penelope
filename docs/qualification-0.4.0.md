@@ -114,8 +114,8 @@ All five timeline properties passed in each round; the runner exited 0.
 The campaign started at `5c5330c`. Production evolved through `453039f` to
 `83a51c6` during round one; rounds two and three used the final production code.
 It is not a campaign against one frozen revision. The seed-406 supplements above
-separately cover the final validator change. Production source hashes still match
-the validation archive. The verification-only release workflow on `83a51c6`
+separately cover the final validator change. At campaign completion the production source hashes matched
+the validation archive; the subsequent lookup optimization is qualified separately below. The verification-only release workflow on `83a51c6`
 [passed](https://github.com/STEXS-Technologies/penelope/actions/runs/41299678117);
 no release was published.
 
@@ -123,3 +123,24 @@ It retains all 22 fuzz targets and includes timeline properties in each round.
 Real SQLite fuzz targets use private local databases; actual process-kill and
 fencing tests remain in the workspace suites. No power-loss certification or
 production deployment qualification follows from those checks.
+
+
+## Captured-input optimization follow-up
+
+The captured-input lookup now uses a checked logical-step slot hint before its
+exact-record fallback. Full descriptor and per-read payload integrity checks
+remain required; arbitrary array order, gaps, multiple versions and mixed scopes
+are still supported. [The matched isolated-build speed audit](timeline-performance.md#captured-input-lookup-optimization)
+retains baseline and optimized sources/binary hashes and all 391 profiles.
+
+[Optimization qualification evidence](verification-data/2026-11-01-captured-input-optimization/manifest.json)
+records stable timeline all-target/all-feature tests with 10,000 cases per
+property (seed 407), two additional 10,000-case lookup properties, explicit
+counter/descriptor/corruption regressions, Rust 1.85 timeline tests, portable
+RISC-V default/alloc checks, strict Clippy/docs/doctests and layer negative
+controls. The existing instrumented correction fuzzer, including scoped captured
+input replay, completed 100,000 runs with seed 407. Workspace coverage tests pass
+at 95.0537% lines against the unchanged 94.0759% ratchet. All 391 separately
+instrumented optimized benchmark operations allocate zero Rust heap bytes.
+The earlier full repeated campaign retains its earlier source scope; it is not
+claimed as a repeated campaign against this subsequent optimization.

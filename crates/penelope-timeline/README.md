@@ -18,7 +18,9 @@ next record and computes, validates and publishes from an isolated `Clone` of
 live state. `begin_correction` returns a scoped handle: call bounded `advance`,
 then `publish`, or drop it to cancel. The reservation is released automatically
 on errors and unwind. Closures implement `CandidateValidator`; `CapturedInput`
-and `CapturedSnapshot` provide small owned adapters. Run
+and `CapturedSnapshot` provide small owned adapters. Captured-input arrays/slices
+use a checked direct slot hint for contiguous step buffers and an exact-record
+scan otherwise; both paths recheck payload integrity. Run
 `cargo run -p penelope-timeline --example quickstart --locked` in the workspace.
 These helpers do not transact history admission or authenticate authority;
 `FixedHistory` lineage/retention remains explicit. The scoped handle exclusively

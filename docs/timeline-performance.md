@@ -239,10 +239,11 @@ observed stack of 2,585,416 bytes and total of 2,587,024 bytes; the separate pos
 control records 66,168 stack bytes. These samples include fixture construction,
 do not bound arbitrary consumer callbacks and are not portable worst-case bounds.
 
-## Client prediction speed audit
+## Client prediction speed audit before optimization
 
 [Three repeated runs and the allocation audit](performance-data/2026-11-01-client-prediction/manifest.json)
-cover the current production sources (unchanged from `83a51c6`). Each run uses
+cover the pre-optimization production sources at `11317c2` (unchanged from
+`83a51c6`). Each run uses
 1,000 samples after 16 warmups, CPU-8 affinity, the same host/compiler as above,
 and the same integer workload. Other host processes remained active; frequency,
 caches and scheduling are uncontrolled. Values below are ranges of the three
@@ -268,7 +269,8 @@ and trusts its immutable, preverified payload. Both use the same preverified
 snapshot fixture, so these differences include input hashing and lookup, rather
 than an isolated search comparison. The array contains 512 entries; a suffix
 near its end can scan a longer prefix than the cases measured here. This is a
-real scaling limitation of the convenience adapter. A prediction integration
+real scaling limitation of the convenience adapter at that revision. The
+optimization below addresses contiguous buffers. A prediction integration
 with long retained windows can implement an indexed `InputStore` while retaining
 exact descriptor/content integrity checks. The public API already permits that.
 
@@ -280,3 +282,44 @@ admission/integrity hashing, networking, game physics, rendering and actual
 frame scheduling are excluded. These results support low measured substrate
 cost in this synthetic workload; they do not establish a universal game slowdown
 percentage or a frame-time guarantee.
+
+## Captured-input lookup optimization
+
+[Matched before/after records](performance-data/2026-11-01-captured-input-optimization/manifest.json)
+compare `11317c2` with the optimized captured-input lookup, using identical
+benchmarks and separate Cargo build directories. Distinct executable hashes are
+retained. Each version has three runs of 1,000 samples per profile after 16
+warmups, pinned to CPU 8. Values below are the median of the three run medians.
+Baseline runs precede optimized runs; host load, frequency and scheduling remain
+uncontrolled. These are workload-specific observations, not confidence intervals.
+
+| State | Full 512-tick correction before → after, µs | Time reduction | Final 32 ticks of a retained 512-input buffer before → after, µs | Time reduction |
+| --- | ---: | ---: | ---: | ---: |
+| 8 bytes | 337.122 → 56.619 | 83.21% | 38.194 → 3.998 | 89.53% |
+| 1 KiB | 351.309 → 63.363 | 81.96% | 39.256 → 4.899 | 87.52% |
+| 4 KiB | 381.628 → 95.465 | 74.98% | 42.703 → 8.386 | 80.36% |
+
+Both columns include planning, reservation, restore, replay in consecutive
+one-tick chunks, validation and publication. Suffix profiles additionally verify
+the captured snapshot digest on restore, identically before and after. Each
+sample checks the final state against the independent oracle. Raw records retain
+all 391 profiles and their p95/p99 values, including unchanged control paths and
+small-window results. Small prefixes show little benefit: eight-input prefix
+corrections have run-median aggregates of 1.222 → 1.263, 1.493 → 1.453 and
+2.304 → 2.384 microseconds for the three state sizes. This is not an across-the-board
+speedup claim. Normal owned-input application does not use this lookup.
+
+Arrays and slices now derive a possible slot from the requested step minus the
+first retained step. The candidate must match the entire descriptor; every read
+still checks the selected payload digest. Missing or mismatched candidates fall
+back to a step-filtered exact-record scan, so unordered, gapped, mixed-branch and
+multiple-version buffers remain supported. For contiguous prediction buffers,
+lookup is constant-time per step and linear over a complete replay. Arbitrary
+layouts retain a linear worst-case lookup. No sorting, allocation, additional
+index, constructor or application API change is required.
+
+All 391 separately counted optimized profiles record zero Rust allocations,
+reallocations and requested bytes in the measured operation. The synthetic
+integer workload, setup/history-admission exclusions, zero-effect profile and
+consumer-callback limitations of the preceding audit still apply. Transport,
+game physics, rendering and actual frame scheduling are not measured here.

@@ -1,0 +1,11 @@
+{
+  "metadata.json": "2e9eb4c90ca11c69edcb14c6f177628d477e88f8095c207d6db37aa50e1e6ed8",
+  "optimization-clippy.log.gz": "7b7bb03737bb815a4322b6b578e02f68bf2a9941fd04bafaf475b4bbb817e573",
+  "optimization-coverage.log.gz": "a1e3b78d242cc8edd4a06b57dd3b9a296256d5260af73b5dc885018a72d262fe",
+  "optimization-docs.log.gz": "239f2984cda64e3b1424bc4c9b6430b50e2186d30d59ce4b9e8e678cafc2cfc0",
+  "optimization-fuzz-correction.log.gz": "1113f843e9d8e3e350159a10db4367131c605451e32d95bbf1f745e53e1700b9",
+  "optimization-layers.log.gz": "ba852c1be2b6c34f2f11de0fa09a480f7f881e9579d9b1464eb9ccb3a62d9869",
+  "optimization-msrv.log.gz": "f99aacfc892914553e913980e52185a0b9ae73a9e37509c4607ea8b20021adbd",
+  "optimization-portable.log.gz": "8189b0271c3316c52e14a877d9a9638d313c1a340f45554d989a6370c29bfae9",
+  "optimization-tests.log.gz": "99efddb85948a735a9d44bf64e30aa4eb2cbc3f105dc026d0f2cb019b563c8d1"
+}

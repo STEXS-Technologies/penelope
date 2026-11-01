@@ -34,11 +34,28 @@ impl<Input: HistoryPayload> InputStore<Input> for CapturedInput<Input> {
         })
     }
 }
+// Ordered contiguous slices use a checked O(1) slot hint per read; other layouts
+// retain a linear fallback. Neither lookup path skips descriptor or digest checks.
 impl<Input: HistoryPayload> InputStore<Input> for [CapturedInput<Input>] {
     type Error = TimelineError;
     fn read(&self, record: InputRecord) -> Result<BoundInput<'_, Input>, TimelineError> {
-        self.iter()
-            .find(|input| input.record == record)
+        // Contiguous prediction buffers normally map logical steps directly to
+        // slots. This is only a hint: arbitrary order, gaps, branches and input
+        // revisions remain supported by the exact-descriptor fallback below.
+        let indexed = self.first().and_then(|first| {
+            record
+                .step
+                .get()
+                .checked_sub(first.record.step.get())
+                .and_then(|offset| usize::try_from(offset).ok())
+                .and_then(|offset| self.get(offset))
+                .filter(|input| input.record == record)
+        });
+        indexed
+            .or_else(|| {
+                self.iter()
+                    .find(|input| input.record.step == record.step && input.record == record)
+            })
             .ok_or(TimelineError::HistoryUnavailable)?
             .read(record)
     }
