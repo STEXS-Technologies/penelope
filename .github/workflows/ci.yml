@@ -44,6 +44,13 @@ jobs:
       - run: cargo run -p penelope-sqlite --example optimistic_timeline --locked
       - run: ./scripts/run-executor-saga-example.sh
       - run: ./scripts/run-supervised-saga-example.sh
+      - name: Preserve property regression seeds
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: property-regression-seeds
+          path: '**/proptest-regressions/**'
+          if-no-files-found: ignore
 
   statechronicle-conformance:
     name: Optional StateChronicle signed-event conformance
@@ -74,6 +81,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@3230091d7ef9483f601620abacc570c22cf44d22 # 1.85.0
       - run: rustc --version
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+      - name: Preserve MSRV property regression seeds
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: msrv-property-regression-seeds
+          path: '**/proptest-regressions/**'
+          if-no-files-found: ignore
 
   no-std:
     name: Allocation-free portable core
@@ -106,6 +120,13 @@ jobs:
       - uses: Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c # v2
       - run: cargo install cargo-fuzz --locked
       - run: PENELOPE_FUZZ_RUNS=1000 ./scripts/run_bounded_fuzz.sh
+      - name: Preserve reproducible fuzz failures
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: fuzz-failure-inputs
+          path: fuzz/artifacts/
+          if-no-files-found: ignore
 
   supply-chain:
     name: Supply-chain verification

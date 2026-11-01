@@ -42,6 +42,11 @@ fuzz_targets=(
   fuzz_task_supervisor
   fuzz_task_checkpoint
   fuzz_timeline_wire
+  fuzz_timeline_projection
+  fuzz_timeline_replay_plan
+  fuzz_timeline_correction
+  fuzz_timeline_branch_promotion
+  fuzz_timeline_effects
   fuzz_worker_protocol
   fuzz_sqlite_task_authority
   fuzz_sqlite_process
@@ -75,6 +80,8 @@ for dto in "${dtos[@]}"; do
     exit 1
   fi
 done
+
+python3 scripts/seed-timeline-corpus.py
 
 for fuzz_target in "${fuzz_targets[@]}"; do
   printf '%s malformed-input drill (%s runs)\n' "${fuzz_target}" "${fuzz_runs}"

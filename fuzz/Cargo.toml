@@ -152,3 +152,37 @@ name = "fuzz_timeline_wire"
 path = "fuzz_targets/fuzz_timeline_wire.rs"
 test = false
 doc = false
+
+[dependencies.penelope-timeline]
+version = "0.4.0"
+path = "../crates/penelope-timeline"
+
+[[bin]]
+name = "fuzz_timeline_projection"
+path = "fuzz_targets/fuzz_timeline_projection.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_replay_plan"
+path = "fuzz_targets/fuzz_timeline_replay_plan.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_correction"
+path = "fuzz_targets/fuzz_timeline_correction.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_branch_promotion"
+path = "fuzz_targets/fuzz_timeline_branch_promotion.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_timeline_effects"
+path = "fuzz_targets/fuzz_timeline_effects.rs"
+test = false
+doc = false

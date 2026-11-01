@@ -102,8 +102,17 @@ against a closed-form oracle, then expires/materializes history. The invoice sam
 checks delayed authority, separate finality, bounded immutable command storage,
 commit failure and two lost-ACK/reopen boundaries with a cooperating durable endpoint.
 
-Remaining work includes comprehensive model/property/fuzz/performance campaigns
-and all inherited release/package gates. The workspace and path-dependency
+The shared integer reference harness now exercises metadata transitions, immutable
+plan admission, state/input correction, competing promotions and partial finalized
+effect handoff through both property tests and instrumented fuzz targets. It
+compares replay against a closed-form wrapping-integer oracle, retains original
+branches, and checks intent origin and quota/failure behavior. Separate adversarial
+models detect omitted state dependencies, hidden mutable counters and floating-point
+reduction-order changes when digest validation is enabled. See
+[verification and reproduction](timeline-verification.md).
+
+Remaining work includes performance comparison and all inherited release/package
+qualification gates. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.
 
 Foundation validation uses the existing golden-wire, task-contract, adversarial
@@ -112,5 +121,6 @@ and rustdoc, bare-metal RISC-V compilation, and layer checks including negative
 controls. A 10,000-run fixed-seed newtype smoke test passes; that run is not
 coverage-instrumented and does not replace the future timeline fuzz campaigns.
 The timeline wire target separately passes 10,000 coverage-instrumented runs with
-seed 401, including mutations of all seven golden variants. Full timeline
-state-machine/effect fuzz campaigns remain outstanding.
+seed 401, including mutations of all seven golden variants. Each of the five
+timeline state-machine/effect fuzz targets also passes a 10,000-run instrumented
+campaign with deterministic boundary/deep trace seeds and mutation seed 403.
