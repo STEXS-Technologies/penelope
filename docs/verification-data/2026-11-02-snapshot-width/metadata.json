@@ -1,0 +1,46 @@
+{
+  "baseline_revision": "2e83d59103aa4f126641063d2fb3049e634c1bff",
+  "optimized_production_revision": "735f8097617d21e67f1993c99d19731c12814411",
+  "audited_source_sha256": {
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+    "crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+    "crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2",
+    "crates/penelope-timeline/src/captured.rs": "9637e69f6cf079c353bd9cd2e05af2f4d92c7b5434705ac9fc2dfc1b9d14f76f",
+    "crates/penelope-timeline/src/contracts.rs": "d73c94cf643fcc274ccc7c13ff207d09b21b4a526a05820338008b529aa6dc04",
+    "crates/penelope-timeline/src/effects.rs": "b7d6ae295c500c2dbfca0709798c32f37ae5ebbb21abc234b40f7c349d614be9",
+    "crates/penelope-timeline/src/ergonomic.rs": "80ea311b2e24fc371e52cf1d5e26e761e138f15e90fe25931c8e14bfe7b4ceb1",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "ce8f9b34d3b1718ff855f9e20606695b81227acd5f383df65d55d69f96491604",
+    "crates/penelope-timeline/src/lib.rs": "62b7bfaccf4867ecc2276bcbf67365ccb4d72bd059e7863b13a69eb299c4cf52",
+    "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+    "crates/penelope-timeline/src/pinned.rs": "5cc9f1747c75f5357bd4a98ed3622c5a3ed023aef6ea870cd1d3e577cc69d280",
+    "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b8047129a694f8aa05a4f1ae547ad5ff46b606722f396da1c38cb3629df8b32a",
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe"
+  },
+  "scope": "Benchmark expansion and qualification only; library production source unchanged from 735f809. Prior production correctness/fuzz/coverage evidence retains its original source scope. No new fuzz or coverage campaign claimed.",
+  "positive_gates": {
+    "clippy": "stable all timeline targets/features, warnings denied",
+    "msrv": "Rust 1.85 compile all-feature timeline benches",
+    "msrv-smoke": "Rust 1.85 executes all 640 profiles, 100 samples each; fixture assertions pass; not part of stable latency aggregates",
+    "timeline-tests": "all-feature timeline tests, 1000 property cases per property seed 415",
+    "allocations": "all 640 instrumented profile operations have zero allocations/reallocations/requested bytes",
+    "capacity": "all 39 type-layout rows byte-identical to prior materialization archive"
+  },
+  "fixture_checks": "Snapshot lookups and restores verify canonical/imported values for each width/layout/count. Outside timing, root/inherited materializations verify selected canonical descriptor and restored full state plus all 512 exact aliased input values. Timed materialization still verifies input_count, branch_count and branch high-water. Synthetic data does not prove arbitrary consumer state completeness or determinism.",
+  "build_environment": "TMPDIR=/home/ac/projects/penelope/target/qualification-temp; RUSTC_WRAPPER=; RUSTC_WORKSPACE_WRAPPER=",
+  "limitations": [
+    "Synthetic deterministic integer model, 512 u64 inputs and 65 snapshot slots. State lanes 1/128/512 mean 8 B/1 KiB/4 KiB; count means 1/8/32/63 initial canonical anchors, not replay length. Snapshot steps 0,8,...; child corrected at step 512. No game frame or universal library-overhead percentage.",
+    "Lookup/restore layouts cover root, inherited, child-local prefix and imported correction. Only root/inherited are materialized. Fixture creation, forks and full detached fixture verification are outside timing. Existing timed assertions remain. Caller replacement, superseded-store disposal, persistence and I/O excluded.",
+    "All 640 raw profile keys retained. Unchanged controls include unfavorable evicted read-all(8) 1613 to 2044 ns and scalar core_append(1) 40 to 50 ns. No fresh same-binary control; earlier controls retain their earlier source scope. No noninferiority claim.",
+    "Six latency runs completed before qualification builds/tests started. CPU affinity fixed; frequency, scheduling, caches, ASLR and unrelated host processes uncontrolled. Ranges and maximum run p99 are descriptive, not pooled percentiles or confidence intervals.",
+    "All 640 separately instrumented operations have zero Rust heap allocation/reallocation/requested bytes; arbitrary consumer clones and callbacks may allocate. The 39 capacity rows are unchanged. No new sampled-stack measurement or worst-case call-stack bound.",
+    "Production code is unchanged from optimized_production_revision; the baseline comparison isolates the prior materialization implementation while applying identical expanded benchmark code to both versions. This validates the existing optimization across state widths; it is not another production optimization."
+  ]
+}

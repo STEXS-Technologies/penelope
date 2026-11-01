@@ -108,8 +108,8 @@ pub fn profiles(report: &mut impl Reporter) {
 
 // Snapshot and compaction profiles use 512 retained scalar inputs and up to 65
 // anchor slots, including correction imports and a child-local prefix snapshot.
-pub fn snapshots(report: &mut impl Reporter) {
-    let fixture = Fixture::<1>::new();
+pub fn snapshots<const W: usize>(report: &mut impl Reporter) {
+    let fixture = Fixture::<W>::new();
     for count in [1, 8, 32, 63] {
         for layout in ["root", "inherited", "child_snapshot", "imported"] {
             let mut history = fixture.history(WINDOW);
@@ -149,7 +149,7 @@ pub fn snapshots(report: &mut impl Reporter) {
                 head(WINDOW).branch()
             };
             if layout == "imported" {
-                restored_expected = State([1234567]);
+                restored_expected = State([1234567; W]);
                 selected.digest = restored_expected.digest();
                 selected.snapshot = TimelineSnapshotId::from_digest(Digest([93; 32]));
                 history.import_anchor(selected, restored_expected).unwrap();
@@ -158,12 +158,12 @@ pub fn snapshots(report: &mut impl Reporter) {
                 .snapshot_at(branch, TimelineStep::new(target as u64))
                 .unwrap();
             assert_eq!(canonical.digest, expected.digest());
-            let mut checked = State([0]);
+            let mut checked = State([0; W]);
             assert_eq!(history.restore(selected, &mut checked).unwrap(), selected);
             assert_eq!(checked, restored_expected);
             report.sample(
                 &format!("snapshot_at_{layout}"),
-                1,
+                W,
                 count,
                 || (),
                 |()| {
@@ -176,9 +176,9 @@ pub fn snapshots(report: &mut impl Reporter) {
             );
             report.sample(
                 &format!("snapshot_restore_{layout}"),
-                1,
+                W,
                 count,
-                || State([0]),
+                || State([0; W]),
                 |scratch| {
                     history.restore(black_box(selected), scratch).unwrap();
                     assert_eq!(*scratch, restored_expected);
@@ -186,9 +186,25 @@ pub fn snapshots(report: &mut impl Reporter) {
                 },
             );
             if layout == "root" || layout == "inherited" {
+                // Check full detached fixture contents outside the timed region.
+                let checked_detached = history.materialize_branch(branch).unwrap();
+                assert_eq!(
+                    checked_detached.snapshot_at(branch, selected.step).unwrap(),
+                    canonical
+                );
+                let mut detached_state = State([0; W]);
+                checked_detached
+                    .restore(canonical, &mut detached_state)
+                    .unwrap();
+                assert_eq!(detached_state, expected);
+                for (descriptor, value) in fixture.records.iter().zip(&fixture.values) {
+                    let mut aliased = *descriptor;
+                    aliased.branch = branch;
+                    assert_eq!(*checked_detached.read(aliased).unwrap().value, *value);
+                }
                 report.sample(
                     &format!("history_materialize_{layout}"),
-                    1,
+                    W,
                     count,
                     || (),
                     |()| {

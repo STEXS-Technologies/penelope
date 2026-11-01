@@ -314,3 +314,31 @@ retains all 560 profiles, including unfavorable controls. All eight measured
 materialization profiles improve; all 560 instrumented operations remain free of
 Rust heap allocations. This does not prove arbitrary consumer snapshot validity,
 determinism or integration-wide speed.
+
+## Snapshot state-width qualification
+
+[The state-width qualification archive](verification-data/2026-11-02-snapshot-width/manifest.json)
+covers the expanded 640-profile benchmark with scalar, 1 KiB and 4 KiB states.
+Library production source remains `735f809`; this follow-up adds benchmark
+coverage and evidence for the existing optimization.
+
+The same benchmark source runs against baseline `2e83d59` and optimized production.
+For each state width, branch layout and snapshot count, fixture assertions verify
+canonical snapshot selection and complete restored state. Outside timing, root
+and inherited materializations additionally verify their selected canonical
+descriptor, complete state and all 512 aliased input payloads. This is a synthetic
+integer model; it does not prove arbitrary consumer completeness or determinism.
+
+Stable all-target/all-feature Clippy passes with warnings denied. Rust 1.85 both
+compiles the all-feature benchmarks and executes all 640 profiles with 100 samples
+each; those smoke measurements are excluded from the stable latency aggregates.
+All-feature timeline tests pass with 1,000 cases per property and seed 415. All
+640 instrumented operations allocate zero Rust heap bytes, and all 39 capacity
+rows match the preceding archive. Prior production fuzz, coverage and portability
+evidence retains its original source scope; no new campaign is claimed here.
+
+[The performance report](timeline-performance.md#snapshot-state-width-qualification)
+records gains across all 24 materialization profiles, with smaller relative gains
+for larger snapshots. It retains every raw control, including unfavorable
+movements. These results do not establish a universal library overhead percentage
+or a whole-game speedup.

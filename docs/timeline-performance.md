@@ -1,6 +1,6 @@
 # Timeline performance workload
 
-This is the initial reproducible 0.4.0 measurement workload. Inherited release
+This document records the reproducible 0.4.0 workload and its successive audits. Inherited release
 performance checks retain their own evidence and revision scope.
 There is no universal timeline overhead percentage: consumer computation, state
 size, history adapter, integrity checks and replay horizon change the cost.
@@ -9,7 +9,7 @@ size, history adapter, integrity checks and replay horizon change the cost.
 
 Both implementations compute `state[lane] = 3*state[lane] + input + lane`
 modulo 2^64. Complete states contain 1, 128 or 512 u64 lanes (8 bytes, 1 KiB,
-4 KiB). Captured u64 inputs have identical values and order. Every profile first
+4 KiB). Captured u64 inputs have identical values and order. Each initial comparison profile first
 checks both implementations against an independent closed-form oracle; candidate
 validation compares the complete expected state. Horizons are 1/8/32/128/512.
 
@@ -19,7 +19,7 @@ finality, intent or retained-branch protocol. Its latency is a lower bound for a
 simple local computation, not a complete alternative with equivalent guarantees.
 Comparisons therefore disclose absolute costs as well as any ratios.
 
-The public API profiles are:
+The initial public API profiles are:
 
 | Name | Measured work |
 | --- | --- |
@@ -41,9 +41,10 @@ The public API profiles are:
 `full_correction` and replay use a preverified, immutable, indexed input adapter
 and an exact complete-state snapshot adapter. They exclude `FixedHistory` scans,
 snapshot hashing, authority authentication, serialization, I/O and effect dispatch.
-The separate history profiles include their own digest checks. All profiles use
-zero staged effects. They do not measure effect-heavy models or promise that a
-whole application can allocate nothing.
+The separate history profiles include their own digest checks. Initial profiles
+use zero staged effects; later effect-storage audits below record their own
+workloads and limits. The initial comparison does not measure effect-heavy models
+or promise that a whole application can allocate nothing.
 
 ## Initial evidence, 2026-11-01
 
@@ -570,3 +571,49 @@ All 560 separately instrumented operations record zero Rust heap allocations,
 reallocations and requested bytes; consumer clones may allocate. All 39 capacity
 rows match the preceding archive. No fields or indexes are added, and this pass
 makes no new sampled-stack or worst-case call-stack claim.
+
+## Snapshot state-width qualification
+
+[The state-width archive](performance-data/2026-11-02-snapshot-width/manifest.json)
+extends snapshot lookup, restore and materialization to 8-byte, 1 KiB and 4 KiB
+states, bringing the shared workload to 640 profiles. Production source remains
+`735f809`; this follow-up checks the existing materialization optimization against
+baseline `2e83d59` using identical expanded benchmark source in both builds.
+
+All 24 materialization profile medians improve, by 11.743–28.308%. At 512 retained
+inputs and 63 initial canonical snapshots, median of three run medians:
+
+| State | Materialization | Before, ns | After, ns | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| 1 KiB | Root | 254,713 | 199,947 | 21.501% |
+| 1 KiB | Inherited | 289,239 | 227,219 | 21.442% |
+| 4 KiB | Root | 514,234 | 448,758 | 12.733% |
+| 4 KiB | Inherited | 542,980 | 479,217 | 11.743% |
+
+The smaller relative gain for larger state limits how the scalar results can be
+generalized. These are full detached-store rebuilds when the caller invokes
+`materialize_branch`; the library does not automatically rebuild history on every
+replay step. The synthetic integer model does not measure whole-game frame cost
+or arbitrary consumer Clone and integrity-hash implementations.
+
+Each width uses the same 512 scalar inputs, 65 snapshot slots, snapshot spacing
+and branch/import layouts as the preceding audit. Outside timing, the fixtures
+check the complete restored state, selected canonical descriptor and all 512
+materialized input values. The added checks run against both production versions.
+Timed regions retain the earlier assertions and exclude fixture creation, forks,
+caller replacement, disposal of superseded stores, persistence and I/O.
+
+Six alternating version runs use 1,000 samples after 16 warmups per profile,
+CPU 8, separate build directories and equal-length executable paths. Compilation
+and qualification tests start after timing completes. All raw rows, run ranges,
+maximum run p99 values, source/binary hashes and a baseline benchmark patch are
+retained. Frequency, scheduling, caches, ASLR and unrelated host activity remain
+uncontrolled. No fresh same-binary control was run for this source comparison.
+
+Unchanged controls include unfavorable movements: evicted read-all(8) measures
+1,613 to 2,044 ns, while scalar core append(1) measures 40 to 50 ns. These results
+do not establish improvement on every path or statistical noninferiority. All
+640 separately instrumented operations record zero Rust heap allocations,
+reallocations and requested bytes; arbitrary consumer clones may allocate. All
+39 capacity rows are unchanged. This pass adds no library fields and provides no
+new sampled-stack measurement or worst-case call-stack bound.
