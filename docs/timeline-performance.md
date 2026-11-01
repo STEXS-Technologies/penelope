@@ -138,7 +138,7 @@ python3 scripts/measure-timeline-memory.py target/timeline-memory-new
 ```
 
 The output directory must not already exist. The runner identifies the exact
-Cargo executable, rejects custom compiler settings, verifies the positive
+Cargo executable, rejects explicit Rust-flag/wrapper overrides, verifies the positive
 control, and fails on incomplete memory records. It does not apply a universal
 stack ceiling to a generic user model.
 

@@ -17,6 +17,32 @@ mapping and the implemented foundation; it is not a release announcement.
 | Optional production infrastructure | Dedicated SQLite and protected Linux runtime crates | No new infrastructure dependency in portable core |
 | Crash and fencing validation | Existing adapter/process suites and inherited CI | Gates retained; timeline concurrency testing will supplement them |
 
+## Public API refinement
+
+The runtime API uses concrete ownership and typed values to implement the
+planning/execution/publication split:
+
+| Responsibility | Actual public API |
+| --- | --- |
+| Computation and outputs | `RewindableComputation::{State, Input, Effect, Error}`; state changes and staged `Effect` values are the outputs, with no implicit durable dispatch |
+| Snapshot identity and read | `StateAnchor` is the scoped handle; `SnapshotStore::restore` restores exact isolated scratch; `LiveSnapshotStore::restore_current` separately binds canonical live state |
+| Snapshot capture | Separate `SnapshotCapture::capture`; only the full-snapshot convenience adapter requires `Clone` |
+| Input storage | `InputStore::read` returns an exact `BoundInput`; `FixedHistory` handles immutable payload versions and parent aliases |
+| Live increment | `prepare_live_step` restores scratch and returns opaque `ReadyStep`; `LiveTimeline::append` publishes it with exact-head fencing |
+| Correction preparation | `Correction`, `ReplayPlan::prepare`, `LiveTimeline::reserve` and optional `FixedHistory::fork` bind correction, revision, authority observation and lineage |
+| Incremental execution | `ReplaySession::begin/advance`, optionally pinned through `FixedHistory::begin_replay`; a step budget is supplied on every advance |
+| Validation | Consuming `validate` calls `CandidateValidator` and produces opaque `ReadyCandidate`; `DigestValidator` is an optional implementation |
+| Atomic publication | `LiveTimeline::promote` owns state/head/intents together; `SharedTimeline` adds a whole-publication hosted lock. There is no generic promise of atomic writes into an arbitrary external state store |
+| Finality and durable admission | Separate `observe`, `finalize_effects`, `eligible_effects` and `handoff`; a bound `EffectAdmissionReceipt` authorizes intent retirement |
+| Abort and retention | `abort`, `retire_branch`, `expire_before` and `materialize_branch`; `HistoryUnavailable` tells the application to resynchronize rather than synthesize missing history |
+
+Live publication, preparation, consuming validation and opaque ready values encode
+the lifecycle. Replay phases are `Replaying`, `ReadyToValidate` and `Aborted`;
+superseded work returns `Conflict` and becomes unusable. A resynchronization
+request is an application response to a typed refusal, not an internal scheduler.
+The entire pinned `TimelineScope` is the declared consistency domain. Consumers
+must capture all its transitive state dependencies; IDs do not establish isolation.
+
 ## Implemented metadata planning
 
 `penelope_core::timeline` provides distinct fixed-width identities, a validated
@@ -116,8 +142,9 @@ the public API against a handwritten ring, including median/p95/p99, separate
 allocation counts, fixed object sizes, corrected inputs, yielding and contention.
 Sampled hosted stack evidence includes a 64-KiB positive control and explicitly
 includes benchmark construction temporaries; it does not assert a generic
-worst-case stack bound. Remaining work includes all inherited release/package
-qualification gates. The workspace and path-dependency
+worst-case stack bound. The [qualification audit](qualification-0.4.0.md) retains
+passing inherited release/package gates and identifies the still-running repeated
+chaos campaign. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.
 
 Foundation validation uses the existing golden-wire, task-contract, adversarial

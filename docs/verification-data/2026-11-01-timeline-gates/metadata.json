@@ -1,0 +1,37 @@
+{
+  "revision": "1f1f50a5563ea98546adc7a93cf7eabed58ba609",
+  "source_sha256": {
+    "crates/penelope-core/src/timeline/contracts.rs": "716e111025c890bdd76dffbdb3ddbce588f6ef0faec2fc85029fa4a05a9e95ce",
+    "crates/penelope-core/src/timeline/identities.rs": "2def725fa0f157c9f01a21d32ae8e8dc8fd82108b8781a76d6d98dc12e090d55",
+    "crates/penelope-core/src/timeline/mod.rs": "e5fb9df688b6c614e5fb1c6a19d8fecb628715aedafa30e0c831d6bb1c77d7ce",
+    "crates/penelope-core/src/timeline/projection.rs": "e67c05237514b1e394f0d98b69ebcf1f2e8f268da44b485256b8ac5269e567bb",
+    "crates/penelope-core/src/timeline/replay_plan.rs": "7f3e0d09878a95dbf3cb139fea2974008f3d80fce4e4614a93dd7f54e4312279",
+    "crates/penelope-core/src/timeline/wire.rs": "79145a6406b1bca725e4bfbc290f0d871f34af0212987041916295f67a6599ce",
+    "crates/penelope-timeline/src/contracts.rs": "8c86b0160496b83cb2934f71260c6888adaec035d643b817e48d83b9f2a73467",
+    "crates/penelope-timeline/src/effects.rs": "bf774d0f427f55f5ed9729a59d6b22cf485feb248b344584d61c222ba2c92457",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "1f7d4319502a80855e237b1fce3fb8739116f37cfc20ae5297029dea4d28bbcb",
+    "crates/penelope-timeline/src/lib.rs": "06958c931e5b3ab1059cdb6f2653d1da7c2718624645b9b5ca91ce91e3e9425c",
+    "crates/penelope-timeline/src/live.rs": "d20d4d42c5f234258dd3fbde571fc61f86cb29e60dcaa8637535e35e096c4234",
+    "crates/penelope-timeline/src/pinned.rs": "d82b7b2596a1f2cc9674136c250eb07de08767523d4fedc1aaa8483290fb5972",
+    "crates/penelope-timeline/src/session.rs": "a39f8911a14a6f81b6c21f90415de115a16ae389ea9892e8321876c32304ec5f",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b7cac3355748277fc3762925e3d10100c1c451b835998303eadf026d22140ce4"
+  },
+  "gate_disposition": "All archived commands completed with exit 0. Repeated full chaos campaign remains running and is not covered by this archive.",
+  "scope_notes": [
+    "Initial full stable/MSRV suites and coverage measured c88f704 production code; timeline production sources are unchanged at this revision.",
+    "Additional sparse-anchor/genesis tests pass on stable/MSRV; the complete final timeline all-target suite also passes on MSRV.",
+    "Package verification includes final benchmark files and updated package descriptions.",
+    "Graph outputs and local configuration files are deliberately untracked.",
+    "Downloaded development blueprints are not included in the repository."
+  ],
+  "coverage": {
+    "actual_line_percent": 94.9863,
+    "ratchet_line_percent": 94.0759,
+    "scope": "before two additional boundary tests"
+  },
+  "pending": [
+    "Full repeated chaos campaign, three rounds of all 22 targets at 100000 runs and 10000 property cases per round."
+  ]
+}

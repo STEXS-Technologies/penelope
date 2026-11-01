@@ -44,6 +44,8 @@ models, scope and limitations. Consumer determinism, snapshot completeness,
 authority trust and effect finality are application obligations. No persistent
 timeline adapter, distributed atomic promotion, Bevy/ECS, transport or rollback
 of already-issued effects is supplied.
+The [0.4.0 branch audit](qualification-0.4.0.md) records current gate evidence and
+any remaining qualification work; no tag or publication is implied.
 
 ## Recoverable execution
 
