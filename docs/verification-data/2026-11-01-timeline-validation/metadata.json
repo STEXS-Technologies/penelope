@@ -1,0 +1,59 @@
+{
+  "revision": "83a51c6d0a30ce010e1208fd6afa8e2edba4a9b6",
+  "source_sha256": {
+    "Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "crates/penelope-core/src/timeline/contracts.rs": "716e111025c890bdd76dffbdb3ddbce588f6ef0faec2fc85029fa4a05a9e95ce",
+    "crates/penelope-core/src/timeline/identities.rs": "2def725fa0f157c9f01a21d32ae8e8dc8fd82108b8781a76d6d98dc12e090d55",
+    "crates/penelope-core/src/timeline/mod.rs": "e5fb9df688b6c614e5fb1c6a19d8fecb628715aedafa30e0c831d6bb1c77d7ce",
+    "crates/penelope-core/src/timeline/projection.rs": "55781d4b5c5ad295c42a512eecf9eaf519b1b896117bf67d38a7200d41dd708d",
+    "crates/penelope-core/src/timeline/replay_plan.rs": "7f3e0d09878a95dbf3cb139fea2974008f3d80fce4e4614a93dd7f54e4312279",
+    "crates/penelope-core/src/timeline/wire.rs": "79145a6406b1bca725e4bfbc290f0d871f34af0212987041916295f67a6599ce",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/workload.rs": "8a416068e0e6edf5f9d81313ff2c746a79b8c46c16faa68cfb158e4e038915d2",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2",
+    "crates/penelope-timeline/src/captured.rs": "652dafc0aa71809fea716864cecd051cbd29f3d18fff91ba06606383cda3f6bd",
+    "crates/penelope-timeline/src/contracts.rs": "d73c94cf643fcc274ccc7c13ff207d09b21b4a526a05820338008b529aa6dc04",
+    "crates/penelope-timeline/src/effects.rs": "bf774d0f427f55f5ed9729a59d6b22cf485feb248b344584d61c222ba2c92457",
+    "crates/penelope-timeline/src/ergonomic.rs": "8efe42236ee739cc09d9988d9225dc0cf50c30c823a3ed6d49ad6d05c32a0e09",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "1f7d4319502a80855e237b1fce3fb8739116f37cfc20ae5297029dea4d28bbcb",
+    "crates/penelope-timeline/src/lib.rs": "62b7bfaccf4867ecc2276bcbf67365ccb4d72bd059e7863b13a69eb299c4cf52",
+    "crates/penelope-timeline/src/live.rs": "747cc05150497b6ded978a263e7b0a4262268e685192db69e243c6bca2f0f4dc",
+    "crates/penelope-timeline/src/pinned.rs": "d82b7b2596a1f2cc9674136c250eb07de08767523d4fedc1aaa8483290fb5972",
+    "crates/penelope-timeline/src/session.rs": "e138ec7f1896bc3aba9aacc19b32830a0490a50ed1866ecf4a03ce135fd54fd4",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b7cac3355748277fc3762925e3d10100c1c451b835998303eadf026d22140ce4"
+  },
+  "positive_gates": "All positive gates archived here completed with exit 0; full repeated chaos remains running.",
+  "negative_control": {
+    "log": "validator-negative-control.log.gz",
+    "expected_result": "Restoring the old validator-head argument fails all_correction_validators_receive_the_exact_proposed_publication_head with nonzero test exit status. The wrapper verified this and restored the fixed source before positive gates."
+  },
+  "coverage": {
+    "actual_line_percent": 95.0471,
+    "ratchet_line_percent": 94.0759
+  },
+  "properties": {
+    "cases_per_property": 10000,
+    "seed": 406,
+    "scope": "timeline all-target/all-feature suite; five properties plus exhaustive traces"
+  },
+  "fuzz": {
+    "runs_per_target": 100000,
+    "seed": 406,
+    "targets": [
+      "fuzz_timeline_correction",
+      "fuzz_timeline_projection"
+    ],
+    "instrumented": true
+  },
+  "scope_notes": [
+    "Complete stable workspace all-target/all-feature suite; core/timeline all-target/all-feature MSRV 1.85 suite.",
+    "Core/timeline strict Clippy, strict docs/doctests, portable default and timeline alloc, fresh-registry ten-crate packaging.",
+    "Timeline validation now receives the proposed publication head; projection still independently rejects stale or consumed reservations.",
+    "Older evidence retains its own source scope. Full inherited repeated campaign is not claimed complete by this archive."
+  ]
+}

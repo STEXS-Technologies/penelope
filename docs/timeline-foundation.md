@@ -45,6 +45,11 @@ request is an application response to a typed refusal, not an internal scheduler
 The entire pinned `TimelineScope` is the declared consistency domain. Consumers
 must capture all its transitive state dependencies; IDs do not establish isolation.
 
+`BranchReservation::proposed_head` describes candidate metadata for validation.
+It is not a commit receipt: an aborted or superseded reservation can still describe
+its old proposal, but the owning projection refuses to publish it. Both new-input
+and correction validators inspect the head that would accompany their state.
+
 ## Implemented metadata planning
 
 `penelope_core::timeline` provides distinct fixed-width identities, a validated

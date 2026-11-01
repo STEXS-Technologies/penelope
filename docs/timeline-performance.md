@@ -214,3 +214,27 @@ Massif samples, maximum observed stack usage was 2,585,400 bytes and maximum tot
 2,587,008 bytes. The separate 64-KiB positive control recorded 66,168 stack bytes.
 This remains a whole hosted benchmark observation, including construction
 transients, rather than a per-operation or portable worst-case stack bound.
+
+## Proposed-head validation audit
+
+[Source-83a51c6 records](performance-data/2026-11-01-timeline-validation/manifest.json)
+repeat the workload after correction validators were aligned with the proposed
+publication head. The retained run started after other local verification/build
+jobs completed; the full SQLite fuzz campaign was still running. The same host,
+compiler, CPU-8 affinity, 1,000 samples and 16 warmups apply. The earlier preview,
+which overlapped compilation/workspace tests/coverage and showed large outliers,
+is retained separately as `loaded-latency.csv`. Host frequency, scheduling and
+caches remain uncontrolled; this is not a statistical overhead comparison.
+
+| State | Owned input median / p95 / p99, ns | Scoped 512-step correction median, ns | Low-level 512-step correction median, ns |
+| --- | ---: | ---: | ---: |
+| 8 bytes | 131 / 141 / 141 | 17,924 | 18,115 |
+| 1 KiB | 200 / 201 / 211 | 26,452 | 26,310 |
+| 4 KiB | 341 / 351 / 351 | 55,487 | 54,445 |
+
+The same adapter, zero-effect and setup-exclusion boundaries above apply. All
+331 allocation profiles again record zero allocations/reallocations/requested
+bytes. The repeated whole-benchmark Massif profile records 951 samples, maximum
+observed stack of 2,585,416 bytes and total of 2,587,024 bytes; the separate positive
+control records 66,168 stack bytes. These samples include fixture construction,
+do not bound arbitrary consumer callbacks and are not portable worst-case bounds.

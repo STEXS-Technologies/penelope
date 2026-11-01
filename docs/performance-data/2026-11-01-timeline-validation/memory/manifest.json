@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "build.stderr.gz": "889414105d55d09612aecb1237753a3caa160d1870dd4e57f492a0dd163da002",
+    "control.massif.gz": "0d669e1fac10fbf61eec594ebdd1ca96bbfeca9caf98874494890c2a50de034e",
+    "control.stderr.gz": "d220e304c03bb4326fc345d33a8bb9b636e9ea1e106d796175a114f3d0973a77",
+    "control.stdout.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "summary.json.gz": "026923a646d5090f0306a81bc75adc4eeb6537c48fc58e2215c722756fd0b527",
+    "timeline.massif.gz": "679e4d6baec8e21b73d7228071395a22fe07935e988ab8ccde206fc8fded7ade",
+    "timeline.stderr.gz": "d57030904133f4e6e9fc6bcaf546f3e1768bc363cefc57cca4376a9b79a924ea",
+    "timeline.stdout.gz": "96e83010f82166fea026a5481c8f3fa7d6481258ac4e35b0f41b9ae0dfeea34c"
+  },
+  "runner_sha256": "5a36e36746a2a60b04a0d1f146f580176860ccbd582b9a0e1edcf35e99d46c4b",
+  "positive_control_sha256": "d0d76568e483420fee53bc227d680644613e387e2faf10f25a4bd96e33932861"
+}

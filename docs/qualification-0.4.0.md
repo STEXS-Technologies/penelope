@@ -88,6 +88,17 @@ controls and the executable quickstart also pass. The original archive retains
 its earlier revision scope. [Convenience performance and sampled-stack records](timeline-performance.md#convenience-api-follow-up)
 are separate, and do not establish a universal overhead percentage.
 
+The subsequent proposed-head validation audit at `83a51c6` aligns correction
+validators with live-input validators. [Completed gate logs and source hashes](verification-data/2026-11-01-timeline-validation/manifest.json)
+include the full stable workspace, core/timeline MSRV, strict Clippy/docs/doctests,
+portable checks, packaging, 10,000-case seed-406 properties and two instrumented
+100,000-run seed-406 fuzz campaigns. The regression fails when the old validator
+argument is restored; that expected-failure negative control is labeled separately
+from positive gates. Coverage is 95.0471% against the unchanged threshold.
+[Fresh measurements](timeline-performance.md#proposed-head-validation-audit) retain
+the final run and its earlier loaded preview. This archive does not mark the full
+inherited repeated campaign complete.
+
 The outstanding repeated command is the unchanged inherited release campaign:
 
 ```sh
