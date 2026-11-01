@@ -1,0 +1,13 @@
+{
+  "terminal_exit_code": 0,
+  "terminal_evidence": "Exec session 11497 returned terminal exit_code 0, independently of the log auditor.",
+  "source_scope": {
+    "started_at": "5c5330c",
+    "round_one": "Production evolved through 453039f to 83a51c6 while round one ran.",
+    "rounds_two_and_three": "83a51c6 production sources; f57f938 changes documentation/evidence only.",
+    "supplemental_current_source": "See ../2026-11-01-timeline-validation/metadata.json for seed-406 qualification."
+  },
+  "raw_log_sha256": "9b67eecf0b25dae7f55f50463f911d642b553b13e7a5c2cf892412a889e715df",
+  "total_fuzz_executions": 6600000,
+  "release_status": "Branch qualification only; no merge, tag, publish or PR authorized."
+}

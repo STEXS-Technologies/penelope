@@ -3,8 +3,8 @@
 The implementation starts from released `v0.3.0`,
 `788c282e359477469cd805c7ea82f2da22f85a87`. This audit covers the rewindable
 timeline branch, not authorization to merge, tag or publish a release.
-The repeated full chaos campaign is still running; qualification is incomplete
-until its recorded command exits successfully. Other evidence below retains its
+The repeated full chaos campaign completed successfully with terminal exit 0.
+The local qualification gates are complete. Each evidence archive retains its
 own source revision and profile limits.
 
 ## Implementation and contract audit
@@ -75,8 +75,7 @@ and [the later memory/boundary commit `1f1f50a`](https://github.com/STEXS-Techno
 pass. [Compressed local gate logs, timed property evidence and source hashes](verification-data/2026-11-01-timeline-gates/manifest.json)
 retain the exact verification scope, including the later supplemental tests and
 versioned packaging. The passing tagged-0.3.0 release workflow is also retained
-there as foundation evidence. The repeated-chaos result remains outstanding;
-its logs are under ignored `target/timeline-foundation/qualification-*` paths.
+there as foundation evidence. The completed repeated campaign is archived below.
 
 The subsequent convenience API at `453039f` has
 [separate completed gate logs and source hashes](verification-data/2026-11-01-timeline-devex/manifest.json):
@@ -96,15 +95,29 @@ portable checks, packaging, 10,000-case seed-406 properties and two instrumented
 argument is restored; that expected-failure negative control is labeled separately
 from positive gates. Coverage is 95.0471% against the unchanged threshold.
 [Fresh measurements](timeline-performance.md#proposed-head-validation-audit) retain
-the final run and its earlier loaded preview. This archive does not mark the full
-inherited repeated campaign complete.
+the final run and its earlier loaded preview. That archive predates completion
+of the full repeated campaign.
 
-The outstanding repeated command is the unchanged inherited release campaign:
+The completed repeated command is the unchanged inherited release campaign:
 
 ```sh
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 \
 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh
 ```
+
+[The completed campaign archive](verification-data/2026-11-01-timeline-chaos/manifest.json)
+contains the compressed raw log, full audited summary, actual environment, auditor
+and its positive/negative controls. All 22 instrumented fuzz targets completed
+100,000 runs with each of seeds 1, 2 and 3: 66 batches and 6,600,000 executions.
+All five timeline properties passed in each round; the runner exited 0.
+
+The campaign started at `5c5330c`. Production evolved through `453039f` to
+`83a51c6` during round one; rounds two and three used the final production code.
+It is not a campaign against one frozen revision. The seed-406 supplements above
+separately cover the final validator change. Production source hashes still match
+the validation archive. The verification-only release workflow on `83a51c6`
+[passed](https://github.com/STEXS-Technologies/penelope/actions/runs/41299678117);
+no release was published.
 
 It retains all 22 fuzz targets and includes timeline properties in each round.
 Real SQLite fuzz targets use private local databases; actual process-kill and

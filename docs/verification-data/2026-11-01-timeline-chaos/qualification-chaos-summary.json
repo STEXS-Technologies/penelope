@@ -1,0 +1,577 @@
+{
+  "complete": true,
+  "expected_rounds": 3,
+  "expected_targets_per_round": 22,
+  "completed_target_runs": 66,
+  "active_target": null,
+  "rounds": [
+    {
+      "iteration": 1,
+      "property_results": [
+        "immutable_plan_admission",
+        "metadata_state_machine",
+        "correction_matches_closed_form",
+        "promotion_interleavings",
+        "finalized_partial_handoff"
+      ],
+      "targets": [
+        {
+          "target": "fuzz_newtypes",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 19
+        },
+        {
+          "target": "fuzz_identifiers",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_dtos",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 7
+        },
+        {
+          "target": "fuzz_linear_engine",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 8
+        },
+        {
+          "target": "fuzz_statechronicle_correlation",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_atomic_process_commit",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_canonical_reconciliation",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_manual_review_lifecycle",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_process_input_parse",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_process_control_ports",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_task_history",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_task_supervisor",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 6
+        },
+        {
+          "target": "fuzz_task_checkpoint",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_wire",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 23
+        },
+        {
+          "target": "fuzz_timeline_projection",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_timeline_replay_plan",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_correction",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 18
+        },
+        {
+          "target": "fuzz_timeline_branch_promotion",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 18
+        },
+        {
+          "target": "fuzz_timeline_effects",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 40
+        },
+        {
+          "target": "fuzz_worker_protocol",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 10
+        },
+        {
+          "target": "fuzz_sqlite_task_authority",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2777
+        },
+        {
+          "target": "fuzz_sqlite_process",
+          "requested_runs": 100000,
+          "seed": 1,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2806
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "property_results": [
+        "immutable_plan_admission",
+        "metadata_state_machine",
+        "promotion_interleavings",
+        "correction_matches_closed_form",
+        "finalized_partial_handoff"
+      ],
+      "targets": [
+        {
+          "target": "fuzz_newtypes",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 18
+        },
+        {
+          "target": "fuzz_identifiers",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_dtos",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 7
+        },
+        {
+          "target": "fuzz_linear_engine",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 7
+        },
+        {
+          "target": "fuzz_statechronicle_correlation",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_atomic_process_commit",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_canonical_reconciliation",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_manual_review_lifecycle",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_process_input_parse",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_process_control_ports",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_task_history",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_task_supervisor",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 6
+        },
+        {
+          "target": "fuzz_task_checkpoint",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_wire",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 26
+        },
+        {
+          "target": "fuzz_timeline_projection",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_timeline_replay_plan",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_correction",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 27
+        },
+        {
+          "target": "fuzz_timeline_branch_promotion",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 17
+        },
+        {
+          "target": "fuzz_timeline_effects",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 36
+        },
+        {
+          "target": "fuzz_worker_protocol",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 10
+        },
+        {
+          "target": "fuzz_sqlite_task_authority",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2655
+        },
+        {
+          "target": "fuzz_sqlite_process",
+          "requested_runs": 100000,
+          "seed": 2,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2539
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "property_results": [
+        "immutable_plan_admission",
+        "metadata_state_machine",
+        "promotion_interleavings",
+        "correction_matches_closed_form",
+        "finalized_partial_handoff"
+      ],
+      "targets": [
+        {
+          "target": "fuzz_newtypes",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 18
+        },
+        {
+          "target": "fuzz_identifiers",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_dtos",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 7
+        },
+        {
+          "target": "fuzz_linear_engine",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 7
+        },
+        {
+          "target": "fuzz_statechronicle_correlation",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_atomic_process_commit",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_canonical_reconciliation",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_manual_review_lifecycle",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_process_input_parse",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_process_control_ports",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_task_history",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 1
+        },
+        {
+          "target": "fuzz_task_supervisor",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 6
+        },
+        {
+          "target": "fuzz_task_checkpoint",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_wire",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 28
+        },
+        {
+          "target": "fuzz_timeline_projection",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2
+        },
+        {
+          "target": "fuzz_timeline_replay_plan",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 0
+        },
+        {
+          "target": "fuzz_timeline_correction",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 26
+        },
+        {
+          "target": "fuzz_timeline_branch_promotion",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 19
+        },
+        {
+          "target": "fuzz_timeline_effects",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 37
+        },
+        {
+          "target": "fuzz_worker_protocol",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 10
+        },
+        {
+          "target": "fuzz_sqlite_task_authority",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2670
+        },
+        {
+          "target": "fuzz_sqlite_process",
+          "requested_runs": 100000,
+          "seed": 3,
+          "instrumented": true,
+          "completed_runs": 100000,
+          "elapsed_seconds": 2536
+        }
+      ]
+    }
+  ],
+  "terminal_exit_requirement": "Caller must independently confirm runner exit 0.",
+  "log_sha256": "9b67eecf0b25dae7f55f50463f911d642b553b13e7a5c2cf892412a889e715df",
+  "runner_sha256": "46936214223b3699a21a80112cdd2f18bb92ea9bb714b9132b5685c40aa232c8",
+  "fuzz_runner_sha256": "d9c806799a3944042e47307b66e37921349ca7296c6599487cf1ac3a36ab66fe"
+}
