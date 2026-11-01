@@ -1,7 +1,7 @@
 //! Consumer contracts. Determinism, complete snapshots and trust are explicit obligations.
 use crate::{
-    EffectSink, InputRecord, StateAnchor, TimelineBranchId, TimelineHead, TimelineScope,
-    TimelineStep,
+    EffectSink, InputRecord, StateAnchor, TimelineBranchId, TimelineHead, TimelineRevision,
+    TimelineScope, TimelineStep,
 };
 use penelope_core::{task::Digest, timeline::TimelineError};
 use thiserror::Error;
@@ -9,6 +9,7 @@ use thiserror::Error;
 /// Context captured by the timeline; models must not consult ambient clocks or RNG.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct StepContext {
+    pub revision: TimelineRevision,
     pub scope: TimelineScope,
     pub branch: TimelineBranchId,
     pub step: TimelineStep,

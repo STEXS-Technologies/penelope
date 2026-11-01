@@ -89,6 +89,8 @@ jobs:
       - run: cargo test -p penelope-core --test task_allocations --features serde --locked
       - run: cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
       - run: cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none-elf --locked
+      - run: cargo check -p penelope-timeline --no-default-features --target riscv32imafc-unknown-none-elf --locked
+      - run: cargo check -p penelope-timeline --features alloc --target riscv32imafc-unknown-none-elf --locked
 
   fuzz:
     name: Bounded fuzzing

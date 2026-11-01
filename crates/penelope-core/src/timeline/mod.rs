@@ -9,3 +9,6 @@ pub use replay_plan::*;
 
 mod projection;
 pub use projection::*;
+
+mod wire;
+pub use wire::*;

@@ -146,3 +146,9 @@ name = "fuzz_sqlite_process"
 path = "fuzz_targets/fuzz_sqlite_process.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_timeline_wire"
+path = "fuzz_targets/fuzz_timeline_wire.rs"
+test = false
+doc = false

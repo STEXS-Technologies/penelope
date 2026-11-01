@@ -13,7 +13,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   intents, candidate validation, fixed-capacity immutable input/snapshot history,
   branch materialization, atomic ownership/hosted-lock publication and
   separately authorized effect finality. New timeline scope, branch and revision
-  identities remain independent of existing saga/task protocols. This feature
+  identities and the golden-tested `penelope.timeline.v1` binary record codec
+  remain independent of existing saga/task protocols. This feature
   remains under development; see [the current status](docs/timeline-foundation.md).
 
 ## [0.3.0] - 2026-10-31

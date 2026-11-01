@@ -220,6 +220,15 @@ fn incremental_replay_publishes_only_after_full_validation() {
     assert_eq!(promoted.revision(), TimelineRevision::new(10));
     assert_eq!(promoted.effect_finalized(), None);
     assert_eq!(live.tentative_effects().count(), 3);
+    for intent in live.tentative_effects() {
+        let record = intent.descriptor.record();
+        assert_eq!(record.branch, promoted.branch());
+        assert_eq!(record.revision, promoted.revision());
+        let encoded = TimelineRecord::Intent(record);
+        let mut buffer = [0; TIMELINE_RECORD_MAX_BYTES];
+        let len = encoded.encode(&mut buffer).unwrap();
+        assert_eq!(TimelineRecord::decode(&buffer[..len]).unwrap(), encoded);
+    }
 }
 #[test]
 fn restore_input_model_and_validator_failures_preserve_live_state() {

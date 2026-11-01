@@ -1,5 +1,5 @@
 //! Fixed-capacity tentative intents. Nothing here dispatches effects.
-use crate::{EffectLimits, StepContext, TimelineEffectId, TimelineError};
+use crate::{EffectLimits, StepContext, TimelineEffectId, TimelineError, TimelineIntentRecord};
 use penelope_core::task::Digest;
 
 /// Intent origin and stable application idempotency identity.
@@ -9,6 +9,22 @@ pub struct EffectDescriptor {
     pub identity: TimelineEffectId,
     pub digest: Digest,
     pub payload_bytes: u64,
+}
+
+impl EffectDescriptor {
+    /// Canonical metadata for the independently versioned timeline record codec.
+    #[must_use]
+    pub const fn record(self) -> TimelineIntentRecord {
+        TimelineIntentRecord {
+            scope: self.origin.scope,
+            branch: self.origin.branch,
+            step: self.origin.step,
+            revision: self.origin.revision,
+            identity: self.identity,
+            digest: self.digest,
+            payload_bytes: self.payload_bytes,
+        }
+    }
 }
 
 /// A tentative, never-dispatched effect. The model supplies bounded payload storage.

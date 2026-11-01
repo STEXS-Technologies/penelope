@@ -22,9 +22,10 @@ mapping and the implemented foundation; it is not a release announcement.
 `penelope_core::timeline` provides distinct fixed-width identities, a validated
 head, complete post-step anchor descriptors, immutable input descriptors and a
 borrowed `ReplayPlan`. It owns no application state, payload storage, heap,
-clock, scheduler, journal or runtime. Timeline metadata currently has **no wire
-format or Serde implementation**; a versioned record protocol and golden fixtures
-are still required before persisted timeline records are supported.
+clock, scheduler, journal or runtime. Its allocation-free binary record codec uses
+an independent `penelope.timeline.v1` tag and strict fixed-width parsing, protected
+by golden fixtures. See [the exact format and recovery boundary](timeline-wire-v1.md).
+The codec does not by itself provide persistent state publication or authentication.
 
 `S_t` means state after input `I_t`; step zero is the genesis anchor. A state
 correction at `t` consumes precisely `I_(t+1)..I_head`. An input correction at `k`
@@ -104,3 +105,6 @@ and architecture suites, stable/Rust 1.85 core tests and doctests, strict Clippy
 and rustdoc, bare-metal RISC-V compilation, and layer checks including negative
 controls. A 10,000-run fixed-seed newtype smoke test passes; that run is not
 coverage-instrumented and does not replace the future timeline fuzz campaigns.
+The timeline wire target separately passes 10,000 coverage-instrumented runs with
+seed 401, including mutations of all seven golden variants. Full timeline
+state-machine/effect fuzz campaigns remain outstanding.

@@ -43,5 +43,7 @@ capacity before cloning; consumers can supply other snapshot/input adapters.
 preserving consumed branch IDs so old ancestry can be reclaimed after pins and
 other candidates retire.
 
-Versioned timeline records, the concrete durable bridge example and release qualification are still being implemented. Do not infer
+The independent `penelope.timeline.v1` codec serializes metadata into caller-owned
+bytes; it does not establish a complete durable recovery image. The concrete
+durable bridge example and release qualification are still being implemented. Do not infer
 persistence or arbitrary-state determinism from the current in-memory API.

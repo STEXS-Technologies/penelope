@@ -73,6 +73,7 @@ where
     }
     let mut effects = StagedEffects::new(request.limits);
     let context = StepContext {
+        revision: check.head().revision(),
         scope: request.expected.scope(),
         branch: request.expected.branch(),
         step: request.input.step,

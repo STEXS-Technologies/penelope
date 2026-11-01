@@ -102,6 +102,10 @@ impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State,
                 return Err(TimelineError::InputMismatch.into());
             }
             let context = StepContext {
+                revision: current
+                    .revision()
+                    .checked_next()
+                    .ok_or(TimelineError::CounterExhausted)?,
                 scope: current.scope(),
                 branch: self.reservation.branch(),
                 step: record.step,

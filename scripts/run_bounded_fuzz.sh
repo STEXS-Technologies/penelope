@@ -41,6 +41,7 @@ fuzz_targets=(
   fuzz_task_history
   fuzz_task_supervisor
   fuzz_task_checkpoint
+  fuzz_timeline_wire
   fuzz_worker_protocol
   fuzz_sqlite_task_authority
   fuzz_sqlite_process
