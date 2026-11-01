@@ -1,6 +1,9 @@
 # Timeline verification
 
-This records development evidence, not completion of the 0.4.0 release checklist.
+This records the initial reference-model campaigns. The
+[qualification audit](qualification-0.4.0.md) records completed branch gates,
+the repeated chaos campaign and later source-specific follow-ups. Version 0.4.0
+has not been tagged or published.
 The model deliberately uses bounded integer computations and a cooperating mock
 durable recipient. It cannot establish determinism or authority for arbitrary
 consumer code, nor exactly-once delivery to an uncooperative endpoint.
@@ -74,11 +77,13 @@ these on failure for stable, MSRV and fuzz jobs. Replay a fuzz artifact with
 toolchain and corpus for campaign reproduction; mutation seeds alone do not
 identify a corpus that has grown across previous runs.
 
-The five instrumented state-machine targets each pass 10,000 runs with seed 403
-after deterministic corpus seeding, followed by 100,000 runs each with seed 404
+The initial five instrumented state-machine targets each passed 10,000 runs with
+seed 403 after deterministic corpus seeding, followed by 100,000 runs each with seed 404
 against the accumulated corpus. These runs used stable rustc 1.99.0 for properties
 and nightly rustc/cargo 1.99.0 for libFuzzer. Local logs are under the ignored
 `target/timeline-foundation/` directory (`model-final-seed*.log`,
 `fuzz-seeded-*.log`, `fuzz-100k-*.log`). These bounded campaigns supplement existing
 golden, resource, panic, concurrency, portable and durable-adapter tests. They are
-not a proof over arbitrary histories or a substitute for release qualification.
+not a proof over arbitrary histories. The qualification audit links the committed
+gate archives, completed repeated campaign and later optimization-specific logs;
+the local paths above describe the initial campaign's working files.

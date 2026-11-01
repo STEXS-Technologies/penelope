@@ -1,17 +1,22 @@
 # Timeline performance workload
 
-This document records the reproducible 0.4.0 workload and its successive audits. Inherited release
-performance checks retain their own evidence and revision scope.
+This document records the reproducible 0.4.0 workload and its successive audits.
+Inherited release performance checks retain their own evidence and revision scope.
 There is no universal timeline overhead percentage: consumer computation, state
 size, history adapter, integrity checks and replay horizon change the cost.
+
+The latest [state-width qualification](#snapshot-state-width-qualification) covers
+640 profiles. Earlier sections preserve their original measurements and source
+scope; their figures are not all measurements of the current implementation.
 
 ## Workload and comparison boundary
 
 Both implementations compute `state[lane] = 3*state[lane] + input + lane`
 modulo 2^64. Complete states contain 1, 128 or 512 u64 lanes (8 bytes, 1 KiB,
-4 KiB). Captured u64 inputs have identical values and order. Each initial comparison profile first
-checks both implementations against an independent closed-form oracle; candidate
-validation compares the complete expected state. Horizons are 1/8/32/128/512.
+4 KiB). Captured u64 inputs have identical values and order. Each initial comparison
+profile checks both implementations against an independent closed-form oracle;
+candidate validation compares the complete expected state. Horizons are
+1/8/32/128/512.
 
 The handwritten ring stores 512 inputs, 65 full snapshots and one current state.
 It supplies local numeric ordering and revision CAS, with no scope, authority,
@@ -19,7 +24,7 @@ finality, intent or retained-branch protocol. Its latency is a lower bound for a
 simple local computation, not a complete alternative with equivalent guarantees.
 Comparisons therefore disclose absolute costs as well as any ratios.
 
-The initial public API profiles are:
+The workload's public API profiles include:
 
 | Name | Measured work |
 | --- | --- |
@@ -37,6 +42,9 @@ The initial public API profiles are:
 | `input_correction` | Same full protocol, replacing input 1 with a new immutable revision |
 | `competing_corrections` | Replay/validate two candidates, publish one and refuse the stale second |
 | `missing_window_refusal` | Refuse a replay range missing its final input |
+
+Later sections add retained-history, snapshot selection/materialization and
+effect-buffer profiles, each with its own archived comparison boundary.
 
 `full_correction` and replay use a preverified, immutable, indexed input adapter
 and an exact complete-state snapshot adapter. They exclude `FixedHistory` scans,

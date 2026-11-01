@@ -239,8 +239,10 @@ python3 -m unittest discover -s scripts/tests
 git diff --check
 ```
 
-The [2026-10-30 verification record](verification-2026-10-30.md) retains current
-workspace/MSRV, package, supply-chain and coverage evidence with its limits.
+The [0.4.0 qualification audit](qualification-0.4.0.md) records workspace/MSRV,
+package, supply-chain, coverage and follow-up evidence with its source limits.
+The [2026-10-30 verification record](verification-2026-10-30.md) retains historical
+0.3.0 evidence at its documented revisions.
 
 Deployment adapters need their own conformance checks for transactional
 commit/CAS, durable retention, idempotent starts, persistent fencing and
@@ -249,8 +251,11 @@ power-loss behavior or production adapter implementations.
 
 The [pinned saga/contract comparison](performance-decisions-2026-10-30.md)
 records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
-revision, with raw samples and RSS/wall evidence. Its slower saga medians remain
-unresolved; it does not close the performance release gate.
+revision, with raw samples and RSS/wall evidence. Its original slower medians and
+open-gate disposition are historical. The
+[final review](performance-final-2026-10-30.md) and
+[graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+record the subsequent qualification decision and removal of the graph slowdown.
 
 The [fixed-port RISC-V stack analysis](portable-task-stack-bound-2026-10-30.md)
 provides a conservative bound for one explicit freestanding reference profile.

@@ -107,7 +107,8 @@ state, head and tentative intents together. State correction at post-step `t`
 replays `t+1..head`; replacement input `k` restores `k-1` and replays `k..head`.
 Concurrent candidates are fenced by the exact expected head revision.
 
-The default timeline crate is allocation-free `no_std`; the facade re-export
+The default timeline crate is `no_std` and its fixed buffers require no heap
+allocation; consumer state, clones and adapters may allocate. The facade re-export
 requires the optional `timeline` feature. `FixedHistory` supplies bounded owned
 storage, while applications can provide their own snapshot/input adapters without
 mandatory `Clone` or serialization. The `std` feature adds a single-lock shared

@@ -7,6 +7,21 @@ The repeated full chaos campaign completed successfully with terminal exit 0.
 The local qualification gates are complete. Each evidence archive retains its
 own source revision and profile limits.
 
+## Current verification scope
+
+The latest runtime change, `735f809`, is covered by the
+[materialization audit](#detached-materialization-audit). The subsequent
+`aecb1d5` expands benchmarks and documentation without changing library production
+source; all [seven CI jobs on that revision](https://github.com/STEXS-Technologies/penelope/actions/runs/41357643326)
+pass, including stable and Rust 1.85 workspace checks. The
+[state-width follow-up](#snapshot-state-width-qualification) records 640 measured
+profiles and their limits.
+
+The repeated 66-batch chaos campaign below retains its earlier production scope.
+Later changes have their own targeted qualification; that campaign was not rerun
+against every subsequent revision. Branch qualification does not imply a release
+or establish correctness of arbitrary consumer integrations.
+
 ## Implementation and contract audit
 
 | Area | Current implementation and evidence |

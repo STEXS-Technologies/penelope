@@ -15,10 +15,13 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   separately authorized effect finality. New timeline scope, branch and revision
   identities and the golden-tested `penelope.timeline.v1` binary record codec
   remain independent of existing saga/task protocols. This feature
-  remains under development; see [the current status](docs/timeline-foundation.md).
+  remains unreleased; see [the API scope](docs/timeline-foundation.md) and
+  [qualification evidence](docs/qualification-0.4.0.md).
 - Integer simulation and optimistic invoice examples using the same timeline API,
   with late corrections, bounded retention and finalized-effect SQLite handoff
   checked across lost admission/delivery acknowledgements and reopen.
+  A client prediction regression verifies delayed authoritative snapshots,
+  replay of unacknowledged inputs and continued prediction after publication.
 - Owned-state `apply_input`, scoped correction reservation cleanup, closure
   validators and small captured input/snapshot adapters, with a runnable quickstart.
   Input and correction validators receive the proposed state/head pair, including

@@ -15,7 +15,7 @@ mapping and the implemented foundation; it is not a release announcement.
 | Durable process handoff | `penelope_ports::AtomicProcessCommit`, SQLite process adapter | Finalized invoice sample commits a v0.3 inbox/outcome/outbox batch and verifies retries |
 | Verified task result and effect evidence | Executor composition, verified-result and effect-bridge tests | Does not authorize speculative dispatch or reverse issued effects |
 | Optional production infrastructure | Dedicated SQLite and protected Linux runtime crates | No new infrastructure dependency in portable core |
-| Crash and fencing validation | Existing adapter/process suites and inherited CI | Gates retained; timeline concurrency testing will supplement them |
+| Crash and fencing validation | Existing adapter/process suites and inherited CI | Gates retained; timeline tests add competing candidates, coherent readers and unwind checks |
 
 ## Public API refinement
 
@@ -26,7 +26,7 @@ planning/execution/publication split:
 | --- | --- |
 | Computation and outputs | `RewindableComputation::{State, Input, Effect, Error}`; state changes and staged `Effect` values are the outputs, with no implicit durable dispatch |
 | Snapshot identity and read | `StateAnchor` is the scoped handle; `SnapshotStore::restore` restores exact isolated scratch; `LiveSnapshotStore::restore_current` separately binds canonical live state |
-| Snapshot capture | Separate `SnapshotCapture::capture`; only the full-snapshot convenience adapter requires `Clone` |
+| Snapshot capture | Separate `SnapshotCapture::capture`; `FixedHistory` clones complete state, while custom adapters choose their own representation |
 | Input storage | `InputStore::read` returns an exact `BoundInput`; `FixedHistory` handles immutable payload versions and parent aliases |
 | Live increment | `prepare_live_step` restores scratch and returns opaque `ReadyStep`; `LiveTimeline::append` publishes it with exact-head fencing |
 | Owned-state convenience | `apply_input` clones owned state and derives/computes/validates/publishes the next input; `next_input` derives a record before execution. `CapturedInput`/`CapturedSnapshot` offer small immutable adapters and closures implement `CandidateValidator` |
@@ -85,7 +85,7 @@ descriptors and retain the whole consistency domain. The core API admits
 anchors and resolved input descriptors on the current branch. The optional history
 adapter resolves ancestor aliases before planning; no digest proves trust.
 
-## Verification and remaining implementation
+## Implementation and verification
 
 Exhaustive short integer histories check state and input correction indexing
 against direct reference sums. Adversarial cases cover gaps, duplicates, order,
@@ -109,7 +109,8 @@ Current tests cover incremental/zero-budget replay, restore/input/model/validati
 failures, ignored effect exhaustion, caught model panics, competing candidates and
 readers, aborted-branch ABA, new live input during replay, authority/finality
 separation, lost handoff ACKs, mismatched receipts and destructor panic after a
-coherent publication. These tests do not complete the release qualification.
+coherent publication. The [qualification audit](qualification-0.4.0.md) records
+the completed local gates and the source scope of each subsequent check.
 
 `FixedHistory` provides fixed-capacity input versions, full snapshots and immutable
 branch lineage. Imported corrections do not overwrite canonical parent facts or
@@ -125,7 +126,10 @@ ancestors. There is no implicit eviction on capacity exhaustion. This conservati
 profile buffers new inputs outside the store while replay is pinned.
 `materialize_branch` copies a selected branch into an independent bounded store
 with complete available anchors and resolved input versions. It preserves consumed
-branch IDs, checks all charges before cloning and leaves the source untouched.
+branch IDs, preflights selected source content and charges before cloning, and
+validates each actual clone's digest and charge before accepting it. A clone may
+declare a different size; checked aggregate accounting uses those actual sizes.
+The source remains untouched on refusal or clone unwind.
 Owners can replace history after readers release it and other candidates retire,
 reclaiming old ancestry without silently invalidating a retained branch.
 
@@ -150,15 +154,16 @@ allocation counts, fixed object sizes, corrected inputs, yielding and contention
 Sampled hosted stack evidence includes a 64-KiB positive control and explicitly
 includes benchmark construction temporaries; it does not assert a generic
 worst-case stack bound. The [qualification audit](qualification-0.4.0.md) retains
-passing inherited release/package gates and identifies the still-running repeated
-chaos campaign. The workspace and path-dependency
-versions now target 0.4.0; no 0.4 tag or publication has been requested.
+passing inherited release/package gates and the completed repeated chaos campaign,
+with later optimizations qualified separately. The workspace and path-dependency
+versions target 0.4.0; version 0.4.0 has not been tagged or published.
 
 Foundation validation uses the existing golden-wire, task-contract, adversarial
 and architecture suites, stable/Rust 1.85 core tests and doctests, strict Clippy
 and rustdoc, bare-metal RISC-V compilation, and layer checks including negative
 controls. A 10,000-run fixed-seed newtype smoke test passes; that run is not
-coverage-instrumented and does not replace the future timeline fuzz campaigns.
+coverage-instrumented and does not replace the separately recorded timeline fuzz
+campaigns.
 The timeline wire target separately passes 10,000 coverage-instrumented runs with
 seed 401, including mutations of all seven golden variants. Each of the five
 timeline state-machine/effect fuzz targets also passes a 10,000-run instrumented

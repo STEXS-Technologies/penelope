@@ -18,6 +18,22 @@ composition; their invoice/kinematics models are not exported library contracts.
 
 ## Quickstart
 
+Version 0.4.0 is unreleased. Run the commands above from this checkout. To use
+the quickstart's imports in another local crate, point dependencies at your clone
+(adjust these paths relative to that crate's `Cargo.toml`):
+
+```toml
+[dependencies]
+penelope-timeline = { path = "../penelope/crates/penelope-timeline" }
+penelope-core = { path = "../penelope/crates/penelope-core", default-features = false }
+```
+
+The direct timeline dependency defaults to `no_std`; enable its `std` feature for
+`SharedTimeline`. The hosted facade alternatively re-exports the API as
+`penelope::timeline` when its `timeline` feature is enabled. The released 0.3.0
+facade does not contain that feature. Consumer payloads and adapters determine
+their own allocation behavior.
+
 [`quickstart.rs`](../crates/penelope-timeline/examples/quickstart.rs) is the smallest
 complete consumer, using a checked integer counter. The live-input operation is:
 
@@ -52,7 +68,7 @@ permanently aborts replay; drop the handle to cancel it. Branch identities remai
 consumed. Its exclusive live-owner borrow prevents competing appends; use the
 lower-level sessions when that concurrency is required. `CapturedSnapshot` builds
 and verifies a scoped snapshot descriptor; `CapturedInput` verifies an immutable
-record/payload pair. Arrays of captured inputs implement `InputStore` too.
+record/payload pair. Arrays and slices of captured inputs implement `InputStore`.
 
 The executable verifies `0 + 5 = 5`, then admits corrected genesis `10`, replays
 the same input and verifies `15`. It emits:
@@ -164,7 +180,9 @@ snapshot (position 20, velocity 2). Application ACK handling selects only inputs
 publishing produces position 38, velocity 6, matching an independent server formula.
 A new local input then advances tick 7 to position 45, velocity 7 on the new branch.
 The same test covers genesis and current-tick snapshots, including zero remaining
-inputs. It uses a bounded six-entry captured-input array and no transport or engine.
+inputs. It retains six captured inputs in an array and uses no transport or engine.
+Fixture assembly and suffix selection use `Vec`; separate performance workloads
+provide allocation measurements.
 
 Run it with:
 
