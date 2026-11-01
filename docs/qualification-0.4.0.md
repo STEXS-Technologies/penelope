@@ -209,3 +209,36 @@ all 520 profiles and zero-allocation records. Longer scalar replay windows impro
 substantially; small-window results include slight unfavorable movement. The
 original repeated 66-batch campaign retains its earlier source scope and is not
 claimed against this follow-up.
+
+## Inherited input-prefix resolution
+
+[The ancestry qualification archive](verification-data/2026-11-01-ancestry-scan/manifest.json)
+covers the guard that skips a full child-local canonical input scan within its
+inherited prefix. Fork admission fixes that boundary; canonical child appends
+start strictly after it, while imports are noncanonical. Exact stored imports,
+corrected-input overrides, root lookup and post-fork child appends retain their
+existing selection and integrity checks. Snapshot resolution is unchanged.
+
+An independent canonical input-version vector for each retained branch checks
+up to five child generations of state/input corrections, child-local appends,
+unselected imported versions, parent preservation and branch materialization.
+Both explicit mixed cases and 10,000 seed-412 property cases pass. The snapshots
+are admitted fixtures; this oracle qualifies input selection, not arbitrary
+consumer state completeness or authority. A detached negative control removes
+only the fork-boundary condition: both new tests fail at runtime with expected
+exit 101, catching omitted post-fork inputs. Faulty code never enters the branch.
+
+Final-source checks include all-feature timeline tests with 10,000 cases per
+property, strict all-target Clippy, Rust 1.85 timeline tests, RISC-V default/alloc,
+strict workspace docs, compile-fail pin doctests, layer controls and fresh-registry
+verification of all ten library archives. The instrumented correction fuzzer
+retains its existing correction/flat-history models and adds the ancestry oracle;
+100,000 seed-412 runs complete. Workspace coverage is 95.1909% against the
+unchanged 94.0759% threshold. Archived `final-` logs qualify the final fallback
+guard placement; initial candidate qualification retains only its earlier scope.
+
+[Alternating performance measurements](timeline-performance.md#inherited-prefix-scan-follow-up)
+retain all 520 profiles, exact source/binary hashes and zero-allocation records.
+An unfavorable sparse-read median remains visible alongside overlapping run
+ranges. This is not a claim that every path speeds up or a new repeated 66-batch
+campaign; the original campaign retains its earlier production scope.

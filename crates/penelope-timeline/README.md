@@ -59,6 +59,8 @@ capacity before cloning; consumers can supply other snapshot/input adapters.
 Input reads try a checked step-relative slot hint before an exact scan; complete
 descriptor, content and declared-charge checks remain required. Imports, eviction
 and branch aliases can use the fallback without changing lookup semantics.
+Canonical input resolution follows inherited lineage without scanning child slots
+at or before the fork point; child appends and materialized roots use local lookup.
 If a payload destructor unwinds during leaf retirement, the leaf remains
 discoverable and cleanup can be retried; removed payloads remain uncharged.
 

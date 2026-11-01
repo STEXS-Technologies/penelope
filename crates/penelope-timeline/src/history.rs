@@ -796,13 +796,17 @@ impl<
             let canonical = |entry: &&StoredInput<Input>| {
                 entry.record.step == step && entry.record.branch == branch && entry.canonical
             };
-            if let Some(entry) = self
-                .input_slot_hint(step)
-                .filter(canonical)
-                .or_else(|| self.inputs.iter().flatten().find(canonical))
-            {
-                // The canonical search already identified the exact immutable
-                // entry. Recheck content/charge directly instead of scanning again.
+            // Forks inherit every input through the parent's admitted head.
+            // append_input can only create child canonical entries after that
+            // boundary; imports are noncanonical. Materialized roots have no
+            // parent and must search their own complete canonical input range.
+            if let Some(entry) = self.input_slot_hint(step).filter(canonical).or_else(|| {
+                if lineage.parent.is_some() && step <= lineage.inherited_through {
+                    None
+                } else {
+                    self.inputs.iter().flatten().find(canonical)
+                }
+            }) {
                 self.verify_input(entry)?;
                 return Ok(entry);
             }

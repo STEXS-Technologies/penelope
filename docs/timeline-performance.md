@@ -422,3 +422,54 @@ benchmark. Both versions use identical benchmark source and separate build
 directories, three CPU-8 runs and 1,000 samples after 16 warmups. Frequency,
 caches and scheduling remain uncontrolled; the raw archive includes unfavorable
 rows and does not establish a universal application overhead percentage.
+
+## Inherited-prefix scan follow-up
+
+[Alternating matched measurements and source/binary hashes](performance-data/2026-11-01-ancestry-scan/manifest.json)
+compare `a2afaad` with a narrower canonical-input search. A child inherits its
+parent's admitted input prefix and can append canonical inputs only after that
+fork point. Within the prefix, resolution now skips the impossible full scan of
+child-local canonical inputs and follows an explicit replacement or parent.
+The checked slot hint remains available. Materialized roots and inputs appended
+after the fork point retain local lookup; exact stored imports retain precedence.
+Snapshot resolution is unchanged: child snapshots can cover inherited steps.
+
+The benchmark source and all 520 profiles are unchanged. The inherited fixture
+uses one child and scalar u64 state/inputs; deeper chains are tested for selection
+correctness but not timed here. Full correction retains the previously documented
+collection, plan, reservation, history verification, restore, replay, validation
+and publication boundaries. Admission, fork creation, fixture construction and
+external I/O remain excluded.
+
+Median of three run medians, nanoseconds per inherited full correction:
+
+| Replayed inputs | Before | After | Reduction |
+| --- | ---: | ---: | ---: |
+| 1 | 3,006 | 2,485 | 17.332% |
+| 8 | 8,076 | 5,160 | 36.107% |
+| 32 | 26,151 | 14,478 | 44.637% |
+| 128 | 122,958 | 57,100 | 53.561% |
+| 512 | 726,996 | 270,753 | 62.757% |
+
+At 512 inherited inputs, collection falls from 177,924 to 27,022 ns (84.813%)
+and read-all from 344,906 to 189,837 ns (44.960%). Exact imported-record lookup
+can still scan configured slots. Root full correction measures 103,480 to
+102,939 ns; this does not establish a meaningful improvement on that control.
+
+An unfavorable sparse control remains visible: eight-input evicted read-all
+measures 1,563 to 2,023 ns (29.431% more). Its run medians overlap widely:
+1,553–2,064 ns before and 1,513–2,033 ns after. The corresponding complete
+correction measures 6,593 to 6,432 ns. These observations do not establish that
+every path improves or a universal application slowdown percentage.
+
+Runs alternate before/after in the archived order, use CPU 8, 1,000 samples and
+16 warmups, and run after compilation/qualification activity has stopped.
+Separate build directories and equal-length executable paths retain distinct
+binary hashes. Frequency, scheduling, caches and ASLR remain uncontrolled;
+run ranges are descriptive, not confidence intervals. The initial candidate's
+collection regressions led to guarding only the missing-hint scan fallback.
+All final rows, including unfavorable movements, remain archived.
+
+All 520 separately instrumented operations allocate zero Rust heap bytes. All
+39 capacity rows match the preceding baseline archive; no public fields or
+index storage were added. This round makes no new sampled-stack claim.
