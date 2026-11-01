@@ -32,6 +32,10 @@ publishes. The validator can be a closure. A failed computation, quota check or
 validation leaves the publication unchanged. `Clone` must produce complete,
 isolated state; the lower-level APIs remain available without that requirement.
 
+On both live input and correction paths, validators receive the proposed head:
+the exact scope, branch, step, revision, authority and finality that would accompany
+the candidate state. Validation does not establish that publication has happened.
+
 After the application admits a corrected snapshot and authority observation:
 
 ```rust,ignore

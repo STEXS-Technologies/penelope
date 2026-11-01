@@ -21,6 +21,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
   checked across lost admission/delivery acknowledgements and reopen.
 - Owned-state `apply_input`, scoped correction reservation cleanup, closure
   validators and small captured input/snapshot adapters, with a runnable quickstart.
+  Input and correction validators receive the proposed state/head pair, including
+  the candidate branch, revision and authority observation.
 
 ## [0.3.0] - 2026-10-31
 

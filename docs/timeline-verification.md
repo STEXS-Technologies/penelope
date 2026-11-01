@@ -41,6 +41,13 @@ ignored sink rejection, merged quotas, counter exhaustion and a retired-state
 destructor panic after coherent scoped publication. A compile-fail test checks
 the scoped handle's exclusive live-owner borrow. The quickstart runs in stable CI.
 
+Correction validators receive the proposed publication head, consistently with
+new-input validation. Regression tests compare every proposed field with the
+subsequently published head on low-level and scoped paths. Restoring the old
+behavior (passing the replaced head) makes the regression fail. Core tests cover
+finality preservation, the maximum revision and rejection of an aborted token:
+`BranchReservation::proposed_head` is validation metadata, not a commit receipt.
+
 ## Reproduction and failure inputs
 
 Run from the repository root:

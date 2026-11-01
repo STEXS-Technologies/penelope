@@ -1078,7 +1078,27 @@ fn scoped_correction(data: &[u8]) {
     let _phase = correction.advance(&MODEL, &inputs, 0).unwrap();
     let budget = u64::from(byte(data, 7) % 4) + 1;
     while correction.advance(&MODEL, &inputs, budget).unwrap() == ReplayPhase::Replaying {}
-    let selected = correction.publish(&validator(expected)).unwrap();
+    let selected = correction
+        .publish(&|state: &u64, proposed: TimelineHead| {
+            assert_eq!(proposed.scope(), old_head.scope());
+            assert_eq!(proposed.step(), old_head.step());
+            assert_eq!(
+                proposed.revision(),
+                old_head.revision().checked_next().unwrap()
+            );
+            assert!(proposed.branch() > old_head.branch());
+            assert_eq!(
+                proposed.authority(),
+                Some(observation(
+                    snapshot.anchor().step,
+                    snapshot.anchor().digest,
+                    1
+                ))
+            );
+            assert_eq!(proposed.effect_finalized(), old_head.effect_finalized());
+            validator(expected).validate(state, proposed)
+        })
+        .unwrap();
     assert_eq!(*live.read().1, expected);
     assert_eq!(selected.step(), old_head.step());
     assert_eq!(

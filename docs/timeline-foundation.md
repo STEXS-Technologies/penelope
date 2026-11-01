@@ -33,7 +33,7 @@ planning/execution/publication split:
 | Scoped correction | `begin_correction` plans/reserves/restores and returns an exclusive handle; bounded `advance` then consuming `publish` or drop. Cleanup releases reservation slots on errors/unwind, without reusing branch IDs. History admission/fork/retirement remains explicit |
 | Correction preparation | `Correction`, `ReplayPlan::prepare`, `LiveTimeline::reserve` and optional `FixedHistory::fork` bind correction, revision, authority observation and lineage |
 | Incremental execution | `ReplaySession::begin/advance`, optionally pinned through `FixedHistory::begin_replay`; a step budget is supplied on every advance |
-| Validation | Consuming `validate` calls `CandidateValidator` and produces opaque `ReadyCandidate`; `DigestValidator` is an optional implementation |
+| Validation | Consuming `validate` calls `CandidateValidator` with state and the proposed publication head, then produces opaque `ReadyCandidate`; live inputs use the same proposed-head semantics. `DigestValidator` is an optional implementation |
 | Atomic publication | `LiveTimeline::promote` owns state/head/intents together; `SharedTimeline` adds a whole-publication hosted lock. There is no generic promise of atomic writes into an arbitrary external state store |
 | Finality and durable admission | Separate `observe`, `finalize_effects`, `eligible_effects` and `handoff`; a bound `EffectAdmissionReceipt` authorizes intent retirement |
 | Abort and retention | `abort`, `retire_branch`, `expire_before` and `materialize_branch`; `HistoryUnavailable` tells the application to resynchronize rather than synthesize missing history |

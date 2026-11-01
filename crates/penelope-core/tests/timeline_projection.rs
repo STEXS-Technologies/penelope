@@ -260,3 +260,99 @@ fn accepted_observation_can_drive_its_own_correction_without_claiming_finality()
     assert_eq!(promoted.effect_finalized(), None);
     assert_eq!(promoted.revision(), TimelineRevision::new(11));
 }
+
+#[test]
+fn proposed_head_is_validation_metadata_and_never_a_publication_receipt() {
+    let records = records();
+    let expected = TimelineHead::new(
+        scope(),
+        head().branch(),
+        head().step(),
+        head().revision(),
+        Some(TimelineStep::ZERO),
+    )
+    .unwrap();
+    let plan = ReplayPlan::prepare(
+        expected,
+        expected.revision(),
+        Correction::State(anchor()),
+        &records,
+        ReplayLimits {
+            max_retained_inputs: 8,
+            max_replay_steps: 8,
+        },
+    )
+    .unwrap();
+    let mut projection = TimelineProjection::<1>::new(expected);
+    let reservation = projection.reserve(&plan, observation(1)).unwrap();
+    let proposed = reservation.proposed_head().unwrap();
+    assert_eq!(proposed.scope(), expected.scope());
+    assert_eq!(proposed.branch(), reservation.branch());
+    assert_eq!(proposed.step(), expected.step());
+    assert_eq!(
+        proposed.revision(),
+        expected.revision().checked_next().unwrap()
+    );
+    assert_eq!(proposed.effect_finalized(), expected.effect_finalized());
+    assert_eq!(proposed.authority(), Some(observation(1)));
+    assert_eq!(projection.head(), expected);
+    assert_eq!(projection.promotion_head(reservation).unwrap(), proposed);
+    projection.abort(reservation).unwrap();
+    // A copied descriptor cannot resurrect an aborted reservation.
+    assert_eq!(reservation.proposed_head().unwrap(), proposed);
+    assert_eq!(
+        projection.promote(reservation),
+        Err(TimelineError::SessionUnavailable)
+    );
+    let replacement = projection.reserve(&plan, observation(1)).unwrap();
+    assert_eq!(
+        projection.promote(replacement).unwrap(),
+        replacement.proposed_head().unwrap()
+    );
+}
+
+#[test]
+fn proposed_head_reaches_the_maximum_revision_without_wrapping() {
+    let records = records();
+    let expected = TimelineHead::new(
+        scope(),
+        head().branch(),
+        head().step(),
+        TimelineRevision::new(u64::MAX - 1),
+        None,
+    )
+    .unwrap();
+    let limits = ReplayLimits {
+        max_retained_inputs: 8,
+        max_replay_steps: 8,
+    };
+    let plan = ReplayPlan::prepare(
+        expected,
+        expected.revision(),
+        Correction::State(anchor()),
+        &records,
+        limits,
+    )
+    .unwrap();
+    let mut projection = TimelineProjection::<1>::new(expected);
+    let reservation = projection.reserve(&plan, observation(1)).unwrap();
+    let proposed = reservation.proposed_head().unwrap();
+    assert_eq!(proposed.revision().get(), u64::MAX);
+    assert_eq!(projection.promote(reservation).unwrap(), proposed);
+    let rebound: Vec<_> = records
+        .iter()
+        .map(|record| InputRecord {
+            branch: proposed.branch(),
+            ..*record
+        })
+        .collect();
+    let correction = Correction::State(StateAnchor {
+        branch: proposed.branch(),
+        ..anchor()
+    });
+    assert_eq!(
+        ReplayPlan::prepare(proposed, proposed.revision(), correction, &rebound, limits).err(),
+        Some(TimelineError::CounterExhausted)
+    );
+    assert_eq!(projection.head(), proposed);
+}

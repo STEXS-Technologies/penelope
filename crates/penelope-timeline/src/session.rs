@@ -132,7 +132,8 @@ impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State,
         };
         Ok(self.phase)
     }
-    /// Consumes a complete candidate after application invariant/determinism checks.
+    /// Consumes a complete candidate after application invariant/determinism checks
+    /// against the proposed publication head, rather than the replaced live head.
     /// # Errors
     /// Refuses incomplete/aborted or stale sessions and failed consumer validation.
     pub fn validate<V: CandidateValidator<State>>(
@@ -144,7 +145,7 @@ impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State,
             return Err(TimelineError::InvalidPhase);
         }
         self.plan.check_head(current)?;
-        validator.validate(&self.state, current)?;
+        validator.validate(&self.state, self.reservation.proposed_head()?)?;
         Ok(ReadyCandidate {
             reservation: self.reservation,
             replace_from: self.plan.corrected_step(),

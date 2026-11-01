@@ -81,9 +81,12 @@ pub struct BoundInput<'input, Input> {
 /// the same corrected baseline/inputs, never the old intentionally corrected state.
 pub trait CandidateValidator<State> {
     /// Checks complete domain invariants and optionally deterministic state identity.
+    /// `proposed` is the exact head that would accompany this state on successful
+    /// publication, including its new revision/branch and authority observation.
+    /// It is not evidence of commitment; publication still checks the pinned head.
     /// # Errors
     /// Rejects any unverifiable or invalid state; a rejection cannot be retried as success.
-    fn validate(&self, state: &State, expected: TimelineHead) -> Result<(), TimelineError>;
+    fn validate(&self, state: &State, proposed: TimelineHead) -> Result<(), TimelineError>;
 }
 
 /// Closures can express domain invariants without a separate validator type.
@@ -91,8 +94,8 @@ impl<State, F> CandidateValidator<State> for F
 where
     F: Fn(&State, TimelineHead) -> Result<(), TimelineError>,
 {
-    fn validate(&self, state: &State, expected: TimelineHead) -> Result<(), TimelineError> {
-        self(state, expected)
+    fn validate(&self, state: &State, proposed: TimelineHead) -> Result<(), TimelineError> {
+        self(state, proposed)
     }
 }
 

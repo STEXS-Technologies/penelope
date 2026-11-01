@@ -1071,3 +1071,47 @@ fn owned_input_rejects_merged_effect_quota_and_counter_exhaustion() {
         assert_eq!(exhausted_live.read(), (exhausted, &10));
     }
 }
+
+#[test]
+fn all_correction_validators_receive_the_exact_proposed_publication_head() {
+    use std::cell::Cell;
+    let records = records();
+    let snapshots = Snapshots {
+        corrected: 100,
+        fail: false,
+    };
+    for scoped in [false, true] {
+        let mut live = LiveTimeline::<i64, u64, 1, 8>::new(head(), 10, LIMITS);
+        let validated = Cell::new(None);
+        let validate = |state: &i64, proposed: TimelineHead| {
+            assert_eq!(*state, 109);
+            assert_eq!(proposed.scope(), head().scope());
+            assert_eq!(proposed.step(), head().step());
+            assert_eq!(
+                proposed.revision(),
+                head().revision().checked_next().unwrap()
+            );
+            assert!(proposed.branch() > head().branch());
+            assert_eq!(proposed.authority(), Some(observation(1)));
+            assert_eq!(proposed.effect_finalized(), head().effect_finalized());
+            validated.set(Some(proposed));
+            Ok(())
+        };
+        let published = if scoped {
+            let mut correction = live
+                .begin_correction(scoped_request(&records), &snapshots)
+                .unwrap();
+            correction.advance(&MODEL, &INPUTS, 3).unwrap();
+            correction.publish(&validate).unwrap()
+        } else {
+            let plan = plan(&records);
+            let token = live.reserve(&plan, observation(1)).unwrap();
+            let mut session = ReplaySession::begin(plan, token, 0, &snapshots, LIMITS).unwrap();
+            session.advance(head(), &MODEL, &INPUTS, 3).unwrap();
+            live.promote(session.validate(head(), &validate).unwrap())
+                .unwrap()
+        };
+        assert_eq!(validated.get(), Some(published));
+        assert_eq!(live.read(), (published, &109));
+    }
+}

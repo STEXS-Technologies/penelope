@@ -29,6 +29,21 @@ impl BranchReservation {
     pub const fn observation(self) -> AuthorityObservation {
         self.observation
     }
+    /// Describes the proposed publication for candidate validation. This is not
+    /// evidence that the reservation remains active or that publication occurred;
+    /// the owning projection still checks both at promotion.
+    /// # Errors
+    /// Refuses publication revision exhaustion.
+    pub fn proposed_head(self) -> Result<TimelineHead, TimelineError> {
+        let mut head = self.expected;
+        head.branch = self.branch;
+        head.revision = head
+            .revision
+            .checked_next()
+            .ok_or(TimelineError::CounterExhausted)?;
+        head.authority = Some(self.observation);
+        Ok(head)
+    }
 }
 
 /// Allocation-free metadata controller with a compile-time concurrent-session bound.
@@ -130,14 +145,7 @@ impl<const SESSIONS: usize> TimelineProjection<SESSIONS> {
         reservation: BranchReservation,
     ) -> Result<TimelineHead, TimelineError> {
         self.check_reservation(reservation)?;
-        let mut head = self.head;
-        head.branch = reservation.branch;
-        head.revision = head
-            .revision
-            .checked_next()
-            .ok_or(TimelineError::CounterExhausted)?;
-        head.authority = Some(reservation.observation);
-        Ok(head)
+        reservation.proposed_head()
     }
     /// Publishes validated candidate metadata within the consumer's state transaction.
     /// Do not call separately from the application state swap for shared readers.
