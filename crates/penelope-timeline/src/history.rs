@@ -538,6 +538,8 @@ impl<
     /// by borrowed readers cannot be removed. Consumed branch IDs are never reused.
     /// # Errors
     /// Refuses a live/dependent/unknown branch or a mismatched live scope.
+    /// If a consumer destructor unwinds, the leaf remains discoverable so cleanup
+    /// can be retried; already removed payloads remain uncharged.
     pub fn retire_branch(
         &mut self,
         branch: TimelineBranchId,
@@ -559,18 +561,18 @@ impl<
             .iter_mut()
             .find(|slot| slot.as_ref().is_some_and(|entry| entry.branch == branch))
             .ok_or(TimelineError::HistoryUnavailable)?;
-        *branch_slot = None;
         for slot in self.inputs.iter_mut() {
             if slot
                 .as_ref()
                 .is_some_and(|entry| entry.record.branch == branch)
             {
                 let bytes = slot.as_ref().map_or(0, |entry| entry.bytes);
-                let retired = slot.take();
-                self.bytes = self
+                let total = self
                     .bytes
                     .checked_sub(bytes)
                     .ok_or(TimelineError::Capacity)?;
+                let retired = slot.take();
+                self.bytes = total;
                 drop(retired);
             }
         }
@@ -580,14 +582,18 @@ impl<
                 .is_some_and(|entry| entry.anchor.branch == branch)
             {
                 let bytes = slot.as_ref().map_or(0, |entry| entry.bytes);
-                let retired = slot.take();
-                self.bytes = self
+                let total = self
                     .bytes
                     .checked_sub(bytes)
                     .ok_or(TimelineError::Capacity)?;
+                let retired = slot.take();
+                self.bytes = total;
                 drop(retired);
             }
         }
+        // Keep the leaf discoverable until all consumer destructors finish. If
+        // one unwinds, the caller can retry cleanup without stranding capacity.
+        *branch_slot = None;
         Ok(())
     }
     fn check_plan(&self, plan: &ReplayPlan<'_>) -> Result<(), TimelineError> {

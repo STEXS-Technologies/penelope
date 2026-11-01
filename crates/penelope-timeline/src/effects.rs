@@ -53,6 +53,8 @@ pub trait EffectSink {
 /// Caller-sized effect storage. Rust allocation is never required by this buffer.
 #[derive(Debug)]
 pub struct StagedEffects<Effect, const CAPACITY: usize> {
+    // Occupied slots form exactly the prefix 0..len. Append/promotion preserve
+    // this invariant; handoff fills a removed slot from the final occupied slot.
     pub(crate) slots: [Option<StagedEffect<Effect>>; CAPACITY],
     pub(crate) len: usize,
     pub(crate) bytes: u64,
@@ -69,9 +71,9 @@ impl<Effect, const CAPACITY: usize> StagedEffects<Effect, CAPACITY> {
             limits,
         }
     }
-    /// Immutable tentative intents; these are not evidence of dispatch eligibility.
+    /// Immutable tentative intents in unspecified storage order, not dispatch evidence.
     pub fn iter(&self) -> impl Iterator<Item = &StagedEffect<Effect>> {
-        self.slots.iter().flatten()
+        self.slots.iter().take(self.len).flatten()
     }
     /// Number of admitted intents.
     #[must_use]
@@ -115,14 +117,15 @@ impl<Effect, const CAPACITY: usize> StagedEffects<Effect, CAPACITY> {
         if bytes > self.limits.max_payload_bytes {
             return Err(TimelineError::Capacity);
         }
+        let len = self.len.checked_add(1).ok_or(TimelineError::Capacity)?;
         let slot = self
             .slots
-            .iter_mut()
-            .find(|slot| slot.is_none())
+            .get_mut(self.len)
+            .filter(|slot| slot.is_none())
             .ok_or(TimelineError::Capacity)?;
         *slot = Some(effect);
         self.bytes = bytes;
-        self.len = self.len.checked_add(1).ok_or(TimelineError::Capacity)?;
+        self.len = len;
         Ok(())
     }
 }

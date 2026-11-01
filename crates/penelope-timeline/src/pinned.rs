@@ -15,14 +15,15 @@ use crate::*;
 ///     let _phase = pinned.phase();
 /// }
 /// ```
-pub struct PinnedReplaySession<'store, 'inputs, Store, State, Effect, const EFFECTS: usize> {
+pub struct PinnedReplaySession<'store, 'inputs, Store: ?Sized, State, Effect, const EFFECTS: usize>
+{
     store: &'store Store,
     session: ReplaySession<'inputs, State, Effect, EFFECTS>,
 }
 impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State, Effect, EFFECTS> {
     /// Retains the input store for all subsequent replay calls.
     #[must_use]
-    pub const fn pin_inputs<Store>(
+    pub const fn pin_inputs<Store: ?Sized>(
         self,
         store: &Store,
     ) -> PinnedReplaySession<'_, 'inputs, Store, State, Effect, EFFECTS> {
@@ -32,7 +33,7 @@ impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State,
         }
     }
 }
-impl<Store, State, Effect, const EFFECTS: usize>
+impl<Store: ?Sized, State, Effect, const EFFECTS: usize>
     PinnedReplaySession<'_, '_, Store, State, Effect, EFFECTS>
 {
     /// Current candidate phase.

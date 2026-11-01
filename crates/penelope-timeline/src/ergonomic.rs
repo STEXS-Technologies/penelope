@@ -187,7 +187,7 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
     ) -> Result<ReplayPhase, ReplayError<M::Error, I::Error>>
     where
         M: RewindableComputation<State = State, Effect = Effect>,
-        I: InputStore<M::Input>,
+        I: InputStore<M::Input> + ?Sized,
     {
         self.session
             .as_mut()

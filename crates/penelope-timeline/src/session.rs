@@ -78,7 +78,7 @@ impl<'inputs, State, Effect, const EFFECTS: usize> ReplaySession<'inputs, State,
     /// aborts the candidate permanently. Live state remains untouched.
     pub fn advance<
         M: RewindableComputation<State = State, Effect = Effect>,
-        I: InputStore<M::Input>,
+        I: InputStore<M::Input> + ?Sized,
     >(
         &mut self,
         current: TimelineHead,

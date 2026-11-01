@@ -137,7 +137,9 @@ fn delayed_server_snapshot_reconciles_unacknowledged_inputs_and_prediction_conti
             .unwrap();
         let mut calls = 0;
         loop {
-            let phase = correction.advance(&Movement, &retained, 1).unwrap();
+            let phase = correction
+                .advance(&Movement, retained.as_slice(), 1)
+                .unwrap();
             calls += 1;
             // Rendering can keep the old coherent prediction until publication.
             assert_eq!(correction.read(), (predicted.0, &predicted.1));

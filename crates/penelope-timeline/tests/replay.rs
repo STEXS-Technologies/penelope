@@ -1115,3 +1115,67 @@ fn all_correction_validators_receive_the_exact_proposed_publication_head() {
         assert_eq!(live.read(), (published, &109));
     }
 }
+
+#[test]
+fn low_level_replay_pins_and_live_steps_accept_input_slices_directly() {
+    let records = records();
+    let captured: Vec<_> = records
+        .iter()
+        .map(|record| CapturedInput::new(*record, record.step.get()).unwrap())
+        .collect();
+    for pinned in [false, true] {
+        let plan = plan(&records);
+        let mut live = Live::new(head(), 10, LIMITS);
+        let reservation = live.reserve(&plan, observation(1)).unwrap();
+        let mut session = ReplaySession::<_, _, 8>::begin(
+            plan,
+            reservation,
+            0,
+            &Snapshots {
+                corrected: 100,
+                fail: false,
+            },
+            LIMITS,
+        )
+        .unwrap();
+        let ready = if pinned {
+            let mut session = session.pin_inputs(captured.as_slice());
+            session.advance(head(), &MODEL, 3).unwrap();
+            assert_eq!(*session.scratch(), 109);
+            session.validate(head(), &Valid).unwrap()
+        } else {
+            session
+                .advance(head(), &MODEL, captured.as_slice(), 3)
+                .unwrap();
+            session.validate(head(), &Valid).unwrap()
+        };
+        live.promote(ready).unwrap();
+        assert_eq!(*live.read().1, 109);
+    }
+    let mut live = Live::new(head(), 10, LIMITS);
+    let record = live
+        .next_input(TimelineInputId::from_digest(Digest([22; 32])), &5_u64)
+        .unwrap();
+    let inputs = [CapturedInput::new(record, 5_u64).unwrap()];
+    let mut current_anchor = anchor();
+    current_anchor.step = head().step();
+    let ready = prepare_live_step::<_, _, _, _, 8>(
+        LiveStepRequest {
+            expected: head(),
+            anchor: current_anchor,
+            input: record,
+            scratch: 0,
+            limits: LIMITS,
+        },
+        &MODEL,
+        inputs.as_slice(),
+        &Snapshots {
+            corrected: 10,
+            fail: false,
+        },
+        &Valid,
+    )
+    .unwrap();
+    live.append(ready).unwrap();
+    assert_eq!(*live.read().1, 15);
+}

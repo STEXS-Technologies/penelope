@@ -144,3 +144,37 @@ at 95.0537% lines against the unchanged 94.0759% ratchet. All 391 separately
 instrumented optimized benchmark operations allocate zero Rust heap bytes.
 The earlier full repeated campaign retains its earlier source scope; it is not
 claimed as a repeated campaign against this subsequent optimization.
+
+## Effect storage, unwind and slice audit
+
+[The audit archive](verification-data/2026-11-01-timeline-audit/manifest.json)
+qualifies the dense effect prefix and ordered bulk handoff described in the
+[matched performance audit](timeline-performance.md#effect-buffer-audit).
+An independent BTreeMap reference model checks interleaved append, correction,
+finality, duplicate/validation refusal, bounded handoff and failures after partial
+ACKs at capacities 0/1/8/32. Explicit tests cover bulk sorting with speculative
+intents and partial ACK retry, plus consumer destructor unwind during compacting
+and bulk handoff. Removed acknowledged intents remain uncharged on unwind.
+
+The audit also reproduces and fixes a retirement cleanup leak: branch lineage
+previously disappeared before all consumer payload destructors completed.
+Retirement now leaves the leaf discoverable until cleanup finishes; callers can
+retry after unwind. Four successive payload destructor panics preserve accounting,
+parent history and branch-ID high-water invariants. The old implementation fails
+the archived negative-control regression.
+
+Captured input slices now work directly through scoped and low-level replay,
+pinned sessions and live-step preparation. These entry points accept unsized
+`InputStore` adapters while preserving the borrow that prevents eviction.
+The old bounds fail the archived compile negative control; direct slice tests
+and existing compile-fail pin doctests pass.
+
+Completed local checks include all-feature timeline tests with 10,000 cases per
+property (seed 410), strict all-target Clippy, docs/doctests, Rust 1.85 timeline
+tests, portable RISC-V default/alloc, layer negative controls and fresh-registry
+verification of all ten library archives. The instrumented effects fuzzer now
+also runs the independent sequence model; 100,000 seed-410 runs completed.
+Workspace coverage is 95.1590% against the unchanged 94.0759% threshold.
+Temporary-directory quota failures were resolved with workspace-local `TMPDIR`;
+successful reruns are archived separately from expected regression failures.
+The earlier 66-batch campaign retains its earlier source scope.

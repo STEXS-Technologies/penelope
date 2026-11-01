@@ -323,3 +323,57 @@ reallocations and requested bytes in the measured operation. The synthetic
 integer workload, setup/history-admission exclusions, zero-effect profile and
 consumer-callback limitations of the preceding audit still apply. Transport,
 game physics, rendering and actual frame scheduling are not measured here.
+
+## Effect-buffer audit
+
+[Matched baseline/optimized measurements and source hashes](performance-data/2026-11-01-effects-audit/manifest.json)
+compare `a524274` with the audited implementation using identical expanded
+benchmarks and separate Cargo target directories. Each version has three CPU-8
+runs, 1,000 samples per profile after 16 warmups. Values below are the median of
+three run medians; reductions describe this synthetic workload, not application
+slowdown or a statistical guarantee.
+
+The 84 additional profiles exercise capacities 8/64/512 and pending counts
+0/1/8/64/512 where they fit. They measure inspection, staging, append, zero-replay
+correction that retains/discards intents, and one/all eligible handoffs. State and
+payloads are u64. The in-memory handoff adapter checks payload integrity and
+logical-step/identity ordering; database, network and external execution are
+excluded. Fixture construction is outside latency samples. A full-buffer append
+profile measures capacity refusal. The earlier 391 profiles retain their
+individual measurement boundaries.
+
+Capacity 512, nanoseconds per operation:
+
+| Operation | Pending intents | Before | After | Reduction |
+| --- | ---: | ---: | ---: | ---: |
+| Inspect intents | 8 | 220 | 20 | 90.909% |
+| Stage complete step | 64 | 25,790 | 12,955 | 49.767% |
+| Append one intent | 64 | 13,516 | 6,052 | 55.223% |
+| Correct while retaining intents | 512 | 75,236 | 21,842 | 70.969% |
+| Handoff all | 1 | 2,155 | 101 | 95.313% |
+| Handoff all | 8 | 15,260 | 912 | 94.024% |
+| Handoff all | 64 | 135,682 | 9,338 | 93.118% |
+| Handoff all | 512 | 2,096,603 | 88,551 | 95.776% |
+
+Occupied intents now form a dense prefix. Small handoffs scan only occupied
+slots; batches with at least eight eligible intents and an eight-intent budget
+sort metadata once and remove from the tail. Stable dispatch order remains step,
+then identity. Diagnostic iteration has unspecified storage order. Inline buffer
+initialization and movement still depend on configured capacity; this does not
+make every path proportional only to pending intents.
+
+All 475 separately instrumented operations record zero Rust heap allocations,
+reallocations and requested bytes. Consumer callbacks remain outside that
+promise. All 39 capacity-profile rows are identical before/after. Full-capacity
+inspection measured 241 to 251 ns (4.149% more); very short operations approach
+the timer floor. No unchanged non-effect profile with baseline median at least
+500 ns changed by more than 20%. Scheduling, frequency and caches were not
+controlled; all rows, including unfavorable ones, remain in the archive.
+
+Matched Massif runs cover the entire expanded allocation benchmark, including
+fixtures/reporting. Both pass the 64-KiB stack positive control. Maximum sampled
+stack is 2,708,560 bytes before and 2,708,592 after; sampled total is 2,710,168 and
+2,710,200 bytes. These are whole-process sampled peaks, not individual operation
+costs, portable call-stack limits or a comparison to the older smaller workload.
+The successful runs use workspace-local `TMPDIR` and `VALGRIND_OPTS=--vgdb=no`
+after an initial host temporary-directory quota failure.

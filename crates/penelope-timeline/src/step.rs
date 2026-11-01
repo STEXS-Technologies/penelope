@@ -47,7 +47,7 @@ pub fn prepare_live_step<M, I, S, V, const EFFECTS: usize>(
 ) -> Result<ReadyStep<M::State, M::Effect, EFFECTS>, StepError<M::Error, I::Error, S::Error>>
 where
     M: RewindableComputation,
-    I: InputStore<M::Input>,
+    I: InputStore<M::Input> + ?Sized,
     S: LiveSnapshotStore<M::State>,
     V: CandidateValidator<M::State>,
 {

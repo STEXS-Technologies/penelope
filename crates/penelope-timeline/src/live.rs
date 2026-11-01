@@ -30,7 +30,7 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
     pub(crate) const fn effect_limits(&self) -> EffectLimits {
         self.effects.limits
     }
-    /// Tentative intents are observable for diagnostics, not dispatch eligibility.
+    /// Tentative intents in unspecified storage order, for diagnostics rather than dispatch.
     pub fn tentative_effects(&self) -> impl Iterator<Item = &StagedEffect<Effect>> {
         self.effects.iter()
     }
@@ -92,11 +92,17 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
             .effects
             .slots
             .iter_mut()
-            .filter(|slot| slot.is_none());
-        for old in self.effects.slots.iter_mut().filter(|slot| {
-            slot.as_ref()
-                .is_some_and(|effect| effect.descriptor.origin.step < candidate.replace_from)
-        }) {
+            .skip(candidate.effects.len);
+        for old in self
+            .effects
+            .slots
+            .iter_mut()
+            .take(self.effects.len)
+            .filter(|slot| {
+                slot.as_ref()
+                    .is_some_and(|effect| effect.descriptor.origin.step < candidate.replace_from)
+            })
+        {
             if let Some(slot) = vacant.next() {
                 *slot = old.take();
             }
@@ -171,8 +177,8 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
         }
         let head = self.projection.append(step.expected, step.input)?;
         // No user callback/destructor runs until state, head and intents agree.
-        let mut vacant = step.effects.slots.iter_mut().filter(|slot| slot.is_none());
-        for old in self.effects.slots.iter_mut().filter(|slot| slot.is_some()) {
+        let mut vacant = step.effects.slots.iter_mut().skip(step.effects.len);
+        for old in self.effects.slots.iter_mut().take(self.effects.len) {
             if let Some(slot) = vacant.next() {
                 *slot = old.take();
             }
@@ -200,7 +206,8 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
             })
     }
     /// Durably admits at most `max_intents` eligible effects, retaining ambiguous ones.
-    /// Speculative or merely authority-observed steps are never submitted here.
+    /// Submission order is logical step, then stable identity, independently of
+    /// internal storage order. Speculative or merely observed steps are never submitted.
     /// # Errors
     /// Refuses a mismatched receipt or propagates admission/ACK uncertainty. Earlier
     /// confirmed intents remain admitted; every remaining intent retains its identity.
@@ -210,28 +217,70 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
         max_intents: usize,
     ) -> Result<usize, HandoffError<H::Error>> {
         let frontier = self.projection.head().effect_finalized();
-        let mut admitted = 0usize;
-        while admitted < max_intents {
-            let index = self
+        if max_intents == 0 || frontier.is_none() || self.effects.is_empty() {
+            return Ok(0);
+        }
+        // Tiny/mostly speculative batches use a scan. For larger eligible
+        // batches, order the dense prefix once and pop its minimum from the end.
+        // Sorting only moves slots: the comparator reads fixed metadata, never
+        // consumer payloads, and sort_unstable requires no heap allocation.
+        let ordered = max_intents >= 8
+            && self
+                .effects
+                .iter()
+                .filter(|effect| frontier.is_some_and(|step| effect.descriptor.origin.step <= step))
+                .take(8)
+                .count()
+                == 8;
+        if ordered {
+            let occupied = self
                 .effects
                 .slots
-                .iter()
-                .enumerate()
-                .filter_map(|(index, slot)| {
-                    slot.as_ref()
-                        .filter(|effect| {
+                .get_mut(..self.effects.len)
+                .ok_or(TimelineError::Capacity)?;
+            occupied.sort_unstable_by_key(|slot| {
+                core::cmp::Reverse(slot.as_ref().map(|effect| {
+                    (
+                        effect.descriptor.origin.step,
+                        effect.descriptor.identity.digest().0,
+                    )
+                }))
+            });
+        }
+        let mut admitted = 0usize;
+        while admitted < max_intents {
+            let index = if ordered {
+                self.effects.len.checked_sub(1).filter(|index| {
+                    self.effects
+                        .slots
+                        .get(*index)
+                        .and_then(Option::as_ref)
+                        .is_some_and(|effect| {
                             frontier.is_some_and(|step| effect.descriptor.origin.step <= step)
                         })
-                        .map(|effect| {
-                            (
-                                index,
-                                effect.descriptor.origin.step,
-                                effect.descriptor.identity.digest().0,
-                            )
-                        })
                 })
-                .min_by_key(|(_, step, identity)| (*step, *identity))
-                .map(|(index, _, _)| index);
+            } else {
+                self.effects
+                    .slots
+                    .iter()
+                    .take(self.effects.len)
+                    .enumerate()
+                    .filter_map(|(index, slot)| {
+                        slot.as_ref()
+                            .filter(|effect| {
+                                frontier.is_some_and(|step| effect.descriptor.origin.step <= step)
+                            })
+                            .map(|effect| {
+                                (
+                                    index,
+                                    effect.descriptor.origin.step,
+                                    effect.descriptor.identity.digest().0,
+                                )
+                            })
+                    })
+                    .min_by_key(|(_, step, identity)| (*step, *identity))
+                    .map(|(index, _, _)| index)
+            };
             let Some(index) = index else {
                 break;
             };
@@ -260,7 +309,11 @@ impl<State, Effect, const SESSIONS: usize, const EFFECTS: usize>
                 .bytes
                 .checked_sub(effect.descriptor.payload_bytes)
                 .ok_or(TimelineError::Capacity)?;
-            let retired = slot.take();
+            // Both indices are within the occupied prefix: index came from its
+            // iterator or checked tail, and len is its checked final index. Moving the final
+            // effect into the removed slot keeps the prefix dense without Drop.
+            self.effects.slots.swap(index, len);
+            let retired = self.effects.slots.get_mut(len).and_then(Option::take);
             self.effects.len = len;
             self.effects.bytes = bytes;
             admitted = admitted

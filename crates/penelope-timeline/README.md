@@ -20,7 +20,8 @@ then `publish`, or drop it to cancel. The reservation is released automatically
 on errors and unwind. Closures implement `CandidateValidator`; `CapturedInput`
 and `CapturedSnapshot` provide small owned adapters. Captured-input arrays/slices
 use a checked direct slot hint for contiguous step buffers and an exact-record
-scan otherwise; both paths recheck payload integrity. Run
+scan otherwise; both paths recheck payload integrity. Pass slices directly to
+scoped/low-level replay, pinned sessions and live-step preparation. Run
 `cargo run -p penelope-timeline --example quickstart --locked` in the workspace.
 These helpers do not transact history admission or authenticate authority;
 `FixedHistory` lineage/retention remains explicit. The scoped handle exclusively
@@ -40,6 +41,9 @@ effect finality are separate. Only an explicitly finalized prefix produces
 `EligibleEffect` values; `EffectHandoff` must deduplicate their scoped identity,
 verify payload bindings and reconstruct authoritative commits after ACK loss.
 A handoff receipt proves durable admission, not external execution or delivery.
+Handoff orders eligible intents by logical step and stable identity. Diagnostic
+intent iteration has unspecified storage order. Fixed buffers keep a dense
+occupied prefix; bulk handoff sorts metadata without heap allocation.
 
 The consumer owns correction authentication, authority trust, snapshot completeness,
 lineage admission, input payload integrity, state-isolation mechanics and finality
@@ -52,6 +56,8 @@ byte limits, ancestry resolution and safe floor eviction. `PinnedReplaySession`
 borrows history across yields, preventing eviction while replay still depends on
 it. Corrections remain imports until selected on a child branch. Capture checks
 capacity before cloning; consumers can supply other snapshot/input adapters.
+If a payload destructor unwinds during leaf retirement, the leaf remains
+discoverable and cleanup can be retried; removed payloads remain uncharged.
 
 `materialize_branch` copies a selected branch into independent bounded history,
 preserving consumed branch IDs so old ancestry can be reclaimed after pins and
