@@ -634,3 +634,150 @@ fn correction_import_refuses_unadmitted_future_inputs() {
     );
     assert_eq!(history.payload_bytes(), before);
 }
+
+#[test]
+fn sparse_anchor_intervals_never_substitute_an_earlier_state_for_input_replacement() {
+    let mut history = History::new(anchor(0, 0, 0, 0), 0, LIMITS).unwrap();
+    for step in 1..=4 {
+        history.append_input(input(0, step, step), step).unwrap();
+    }
+    history.insert_snapshot(anchor(0, 4, 10, 4), 10).unwrap();
+    let mut replacement = input(0, 3, 30);
+    replacement.revision = InputRevision::new(1);
+    history.import_input(replacement, 30).unwrap();
+    assert_eq!(
+        history.snapshot_at(head().branch(), TimelineStep::new(2)),
+        Err(TimelineError::HistoryUnavailable)
+    );
+    let mut scratch = [input(0, 1, 1); 16];
+    let original = history
+        .collect_inputs(
+            head().branch(),
+            TimelineStep::ZERO,
+            head().step(),
+            &mut scratch,
+        )
+        .unwrap();
+    assert!(matches!(
+        ReplayPlan::prepare(
+            head(),
+            head().revision(),
+            Correction::Input {
+                anchor: anchor(0, 0, 0, 0),
+                replacement
+            },
+            original,
+            REPLAY
+        ),
+        Err(TimelineError::HistoryUnavailable)
+    ));
+    // The application explicitly supplies the complete exact S2. This is not an
+    // implicit fallback to S0 or a fabricated snapshot between sparse anchors.
+    history.insert_snapshot(anchor(0, 2, 3, 2), 3).unwrap();
+    let predecessor = history
+        .snapshot_at(head().branch(), TimelineStep::new(2))
+        .unwrap();
+    let records = history
+        .collect_inputs(
+            head().branch(),
+            predecessor.step,
+            head().step(),
+            &mut scratch,
+        )
+        .unwrap();
+    let plan = ReplayPlan::prepare(
+        head(),
+        head().revision(),
+        Correction::Input {
+            anchor: predecessor,
+            replacement,
+        },
+        records,
+        REPLAY,
+    )
+    .unwrap();
+    let mut live = Live::new(head(), 10, EFFECTS);
+    let reservation = live
+        .reserve(
+            &plan,
+            observation(head(), replacement.step, replacement.digest, 1),
+        )
+        .unwrap();
+    history.fork(&plan, reservation).unwrap();
+    let mut replay = history
+        .begin_replay::<(), 4>(plan, reservation, 0, EFFECTS)
+        .unwrap();
+    replay.advance(head(), &Model, 1).unwrap();
+    assert_eq!(*replay.scratch(), 33);
+    assert_eq!(live.read(), (head(), &10));
+    replay.advance(head(), &Model, 1).unwrap();
+    let ready = replay.validate(head(), &Valid).unwrap();
+    live.promote(ready).unwrap();
+    assert_eq!(*live.read().1, 37);
+    assert_eq!(
+        history
+            .snapshot_at(head().branch(), head().step())
+            .unwrap()
+            .digest,
+        10_u64.digest()
+    );
+}
+
+#[test]
+fn genesis_state_correction_validates_and_publishes_without_running_an_input() {
+    let genesis = TimelineHead::new(
+        scope(),
+        TimelineBranchId::ZERO,
+        TimelineStep::ZERO,
+        TimelineRevision::ZERO,
+        None,
+    )
+    .unwrap();
+    let mut history = History::new(anchor(0, 0, 0, 0), 0, LIMITS).unwrap();
+    let corrected = anchor(0, 0, 23, 23);
+    history.import_anchor(corrected, 23).unwrap();
+    let plan = ReplayPlan::prepare(
+        genesis,
+        genesis.revision(),
+        Correction::State(corrected),
+        &[],
+        REPLAY,
+    )
+    .unwrap();
+    let mut live = Live::new(genesis, 0, EFFECTS);
+    let token = live
+        .reserve(
+            &plan,
+            observation(genesis, corrected.step, corrected.digest, 1),
+        )
+        .unwrap();
+    history.fork(&plan, token).unwrap();
+    let session = history
+        .begin_replay::<(), 4>(plan, token, 99, EFFECTS)
+        .unwrap();
+    assert_eq!(session.phase(), ReplayPhase::ReadyToValidate);
+    assert_eq!(*session.scratch(), 23);
+    assert_eq!(live.read(), (genesis, &0));
+    let ready = session
+        .validate(
+            genesis,
+            &DigestValidator {
+                expected: 23_u64.digest(),
+                digest: HistoryPayload::digest,
+            },
+        )
+        .unwrap();
+    let published = live.promote(ready).unwrap();
+    assert_eq!(published.step(), TimelineStep::ZERO);
+    assert_eq!(published.revision(), TimelineRevision::new(1));
+    assert_eq!(published.branch(), token.branch());
+    assert_eq!(*live.read().1, 23);
+    assert_eq!(
+        history
+            .snapshot_at(genesis.branch(), genesis.step())
+            .unwrap()
+            .digest,
+        0_u64.digest()
+    );
+    assert_eq!(published.effect_finalized(), None);
+}

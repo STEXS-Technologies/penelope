@@ -114,7 +114,9 @@ reduction-order changes when digest validation is enabled. See
 The [initial performance workload and evidence](timeline-performance.md) measure
 the public API against a handwritten ring, including median/p95/p99, separate
 allocation counts, fixed object sizes, corrected inputs, yielding and contention.
-Remaining work includes whole-call stack qualification and all inherited release/package
+Sampled hosted stack evidence includes a 64-KiB positive control and explicitly
+includes benchmark construction temporaries; it does not assert a generic
+worst-case stack bound. Remaining work includes all inherited release/package
 qualification gates. The workspace and path-dependency
 versions now target 0.4.0; no 0.4 tag or publication has been requested.
 

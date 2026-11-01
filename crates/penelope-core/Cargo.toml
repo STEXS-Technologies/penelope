@@ -1,6 +1,6 @@
 [package]
 name = "penelope-core"
-description = "Portable allocation-free task contracts and deterministic recovery decisions for Penelope."
+description = "Portable allocation-free task and timeline contracts and deterministic recovery decisions for Penelope."
 version.workspace = true
 edition.workspace = true
 license.workspace = true

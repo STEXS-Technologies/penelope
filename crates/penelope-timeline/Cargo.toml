@@ -29,3 +29,11 @@ harness = false
 [[bench]]
 name = "timeline_allocations"
 harness = false
+
+[[bench]]
+name = "timeline_memory"
+harness = false
+
+[[bench]]
+name = "timeline_throughput"
+harness = false

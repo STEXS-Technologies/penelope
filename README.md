@@ -24,6 +24,8 @@ checkpoints and explicit recovery permissions.
 - An allocation-free `no_std` decision core with optional Serde support.
 - Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
   operator workflows.
+- Optional bounded timeline correction and scratch replay in the 0.4.0 development
+  branch, with atomic state/head publication and separate irreversible-effect finality.
 
 The engine is pure and deterministic. Your application selects durable
 adapters and workers through the ports. The optional
@@ -97,6 +99,38 @@ See [the architecture and release gates](docs/RELEASE.md).
 Validation includes process-kill fault injection, concurrent supervisor
 arbitration, stateful supervisor fuzzing and reproducible chaos campaigns.
 
+## Rewindable timelines (0.4.0 development)
+
+`penelope-timeline` maintains immutable input versions and complete state anchors,
+recomputes a corrected suffix in isolated scratch, validates it, and publishes
+state, head and tentative intents together. State correction at post-step `t`
+replays `t+1..head`; replacement input `k` restores `k-1` and replays `k..head`.
+Concurrent candidates are fenced by the exact expected head revision.
+
+The default timeline crate is allocation-free `no_std`; the facade re-export
+requires the optional `timeline` feature. `FixedHistory` supplies bounded owned
+storage, while applications can provide their own snapshot/input adapters without
+mandatory `Clone` or serialization. The `std` feature adds a single-lock shared
+publication owner. Existing task and saga protocols keep their meaning.
+
+Consumers own correction authentication, deterministic computation, complete
+dependency capture and effect authorization. Replay stages intents without I/O.
+Only an independently effect-finalized prefix may cross the durable handoff;
+authority observations alone do not authorize dispatch. Persistent timeline
+recovery, networking, ECS integration and arbitrary effect rollback are outside
+this release's supported profile.
+
+```sh
+cargo run -p penelope-timeline --example rewindable_simulation --locked
+cargo run -p penelope-sqlite --example optimistic_timeline --locked
+```
+
+See [the API and baseline mapping](docs/timeline-foundation.md),
+[integration examples](docs/timeline-examples.md),
+[verification](docs/timeline-verification.md) and
+[performance measurements](docs/timeline-performance.md).
+Version 0.4.0 has not been tagged or published.
+
 ## StateChronicle boundary
 
 `penelope-statechronicle` provides the typed contract for canonical commands
@@ -121,7 +155,8 @@ is compiled when an application selects it.
 
 ## Start building
 
-Add the facade crate to your application:
+Add the released facade crate to your application (the timeline feature above
+belongs to the unreleased 0.4.0 workspace):
 
 ```toml
 [dependencies]
@@ -143,7 +178,7 @@ cargo run -p penelope --example trade_competing_lock --locked
 Penelope is a reusable library, not a database, broker, scheduler, or hosted
 service. Implement those adapters in your composition root or a separately
 reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
-boundary, release procedure and protocol review. The 0.3.0 candidate adds optional
+boundary, release procedure and protocol review. The released 0.3.0 adds optional
 SQLite and [Linux process runtime](crates/penelope-process-runtime/README.md)
 packages for the documented single-host profile. See the
 [qualification evidence and limits](docs/verification-2026-10-30.md), including

@@ -1,7 +1,7 @@
 # Timeline performance workload
 
-This is the initial reproducible 0.4.0 measurement workload. Whole-call stack
-qualification and inherited release performance checks remain separate work.
+This is the initial reproducible 0.4.0 measurement workload. Inherited release
+performance checks retain their own evidence and revision scope.
 There is no universal timeline overhead percentage: consumer computation, state
 size, history adapter, integrity checks and replay horizon change the cost.
 
@@ -78,6 +78,69 @@ does not grow with lifetime history. Its footprint is fully preallocated. State,
 snapshot and input buffers need not use this adapter, and snapshots need not be
 cloned or hashed every step by the base computation API. COW/delta storage is not
 implemented by this workload and has no measured advantage here.
+
+## Capacity matrix and batched throughput
+
+[Raw capacity and throughput records](performance-data/2026-11-01-timeline-capacity/manifest.json)
+supplement the original latency run. The 39-row capacity matrix varies input
+horizons 8/32/128/512, snapshot intervals 1/8, branch slots 1/2/4, concurrent
+sessions 0/2/4, intent slots 0/8/32 and inline state sizes 8/1,024/4,096 bytes.
+An input and an effect payload each occupy eight bytes. These rows report
+resident capacities even when no payload has been admitted.
+
+For each row, maximum owned domain storage in the declared inline profile is:
+`history_bytes + live_bytes + sessions * session_bytes`. Live and replay session
+sizes already include their states and bounded effect buffers; do not add those
+again. History includes all anchor/input/branch slots. Separate descriptors,
+caller input cursors, construction temporaries, application buffers and foreign
+payload allocations are outside that sum. For example, the 512-input/65-anchor,
+four-branch/four-session, 4-KiB-state profile occupies 444,800 bytes with eight
+intents per owner and 473,600 with 32. Snapshot intervals describe provisioned
+anchor capacity, not an automatic capture/eviction policy.
+
+Throughput uses one timer around each 1,000-operation batch, separately for pure
+plan preparation and full state correction. Full correction includes creation
+of a fresh live owner. Rows contain path, state words, steps, operations and
+elapsed nanoseconds; operations/second is `operations * 1e9 / elapsed_ns`.
+Both use the same prebuilt captured-input fixture. These CPU-8 batches ran while
+other qualification processes were active, so their rates are development
+observations rather than isolated throughput guarantees or regression thresholds.
+
+```sh
+cargo bench -p penelope-timeline --bench timeline_memory --locked
+taskset -c 8 cargo bench -p penelope-timeline --bench timeline_throughput --locked
+```
+
+## Sampled hosted stack footprint
+
+The [compressed Massif records and executable/tool metadata](performance-data/2026-11-01-timeline-memory/manifest.json)
+retain 749 snapshots of the complete hosted allocation benchmark at `c88f704`.
+Valgrind 3.27.1 with stack accounting sampled a maximum of 2,579,672 stack bytes
+and 2,581,280 combined heap/allocator-overhead/stack bytes. A separate explicit
+64-KiB stack positive control measured 66,168 stack bytes and passed the runner's
+minimum-size assertion.
+
+These numbers include benchmark fixture construction, repeated by-value history
+initialization/temporaries, all three state sizes, every horizon and reporting.
+They do not attribute stack to one timeline operation, bound arbitrary consumer
+callbacks, include all compiler red-zone usage or establish a portable worst-case
+call-chain bound. Sampling may miss transient peaks. The caller-owned scratch
+state itself occupies 8 / 1,024 / 4,096 bytes in these profiles. Large inline fixed
+histories require deliberate placement and sufficient construction stack; their
+zero-allocation property does not make them suitable for a small embedded stack.
+Use a different storage adapter or application-owned static/heap placement when
+that profile requires it, and qualify the actual target and compiler.
+
+Reproduce the complete measurement (requires native Valgrind and Rust):
+
+```sh
+python3 scripts/measure-timeline-memory.py target/timeline-memory-new
+```
+
+The output directory must not already exist. The runner identifies the exact
+Cargo executable, rejects custom compiler settings, verifies the positive
+control, and fails on incomplete memory records. It does not apply a universal
+stack ceiling to a generic user model.
 
 ## Reproduction
 

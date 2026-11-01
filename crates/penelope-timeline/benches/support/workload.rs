@@ -639,3 +639,46 @@ pub fn run(mut reporter: impl Reporter) {
     profiles::<128>(&mut reporter);
     profiles::<512>(&mut reporter);
 }
+
+fn throughput_profile<const W: usize>() {
+    let fixture = Fixture::<W>::new();
+    let iterations = 1000;
+    for n in [1, 8, 32, 128, 512] {
+        let expected = fixture.expected(n);
+        let validator = Validator(expected);
+        // Every full-operation batch includes fresh publication-owner creation;
+        // input metadata/payloads and the admitted snapshot are prebuilt once.
+        let start = Instant::now();
+        for _ in 0..iterations {
+            black_box(black_box(&fixture).plan(black_box(n)));
+        }
+        println!(
+            "throughput,core_prepare,{W},{n},{iterations},{}",
+            start.elapsed().as_nanos()
+        );
+        let full_start = Instant::now();
+        for _ in 0..iterations {
+            let source = black_box(&fixture);
+            let mut live = source.live(n);
+            let plan = source.plan(n);
+            let token = live.reserve(&plan, observation(source.anchor)).unwrap();
+            let mut session =
+                ReplaySession::<_, (), 0>::begin(plan, token, State([0; W]), source, FX).unwrap();
+            session
+                .advance(head(n), &Computation::<W>, source, n as u64)
+                .unwrap();
+            live.promote(session.validate(head(n), &validator).unwrap())
+                .unwrap();
+            black_box(live);
+        }
+        println!(
+            "throughput,full_correction,{W},{n},{iterations},{}",
+            full_start.elapsed().as_nanos()
+        );
+    }
+}
+pub fn throughput() {
+    throughput_profile::<1>();
+    throughput_profile::<128>();
+    throughput_profile::<512>();
+}

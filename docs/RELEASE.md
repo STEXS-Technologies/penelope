@@ -1,17 +1,49 @@
-# Penelope release contract — 0.3.0
+# Penelope release contract — 0.4.0 development
 
 Penelope provides deterministic, runtime-independent task recovery
 alongside its saga engine. Applications declare recovery permissions, supply
 journal and runtime adapters, and define valid checkpoints and effect evidence.
 
-The 0.3.0 candidate adds optional SQLite persistence and a protected Linux
-single-process runtime. All nine library crates use version `0.3.0`. Saga v1
+Released 0.3.0 adds optional SQLite persistence and a protected Linux
+single-process runtime. The 0.4.0 workspace adds the independent optional
+`penelope-timeline` crate; all ten library crates use version `0.4.0`. Saga v1
 records, linear/graph decisions, task history v1 and fingerprints retain their
-existing formats. The [dated changelog](../CHANGELOG.md#030---2026-10-30) records
-source-compatibility changes. [Qualification evidence](verification-2026-10-30.md)
-includes measured performance exceptions and deployment limits. The
-[qualification audit](qualification-0.3.0.md) records the passing versioned
-package/workflow verification. Tagging and publishing are separate release actions.
+existing formats. The [changelog](../CHANGELOG.md) separates unreleased work from
+released source-compatibility changes. Historical [0.3.0 qualification](qualification-0.3.0.md)
+and [performance evidence](verification-2026-10-30.md) retain their original
+revision scope. Tagging and publishing remain separate authorized release actions.
+
+## Rewindable timeline contract
+
+The [timeline architecture and actual baseline mapping](timeline-foundation.md)
+define a separate logical-step/revision/branch protocol. `S_t` is complete state
+after applying `I_t`; state correction at `t` replays `t+1..head`, while input
+replacement at `k` restores `k-1` and replays `k..head`. The independent
+[`penelope.timeline.v1` binary metadata format](timeline-wire-v1.md) is protected
+by golden fixtures; it is not a complete durable state recovery image.
+
+Pure core decisions are allocation-free `no_std`. `penelope-timeline` supplies
+caller-owned scratch replay, exact-head fencing, validation, bounded immutable
+history and effect intents. `LiveTimeline` publishes state/head/intents under one
+exclusive owner; optional `SharedTimeline` uses one hosted lock. Arbitrary
+consumer state is safe only when snapshot isolation and the whole declared
+consistency domain are honored. Missing history, stale results, incompatible
+scope/model/schema, exhausted capacity and invalid validation fail closed.
+
+Authority observations and irreversible-effect finality are separate frontiers.
+Replay performs no intentional irreversible I/O. Explicitly finalized eligible
+intents cross an idempotent durable-admission boundary; uncertain external effects
+still require the existing task/saga reconciliation policy. Finalized history
+cannot be corrected across a new authority epoch without application recovery.
+
+The [two independent integration samples](timeline-examples.md) demonstrate this
+contract, including a concrete SQLite v0.3 inbox/outcome/outbox handoff with two
+lost acknowledgements. [Property/fuzz evidence](timeline-verification.md) and
+[operation-level performance evidence](timeline-performance.md) disclose their
+models, scope and limitations. Consumer determinism, snapshot completeness,
+authority trust and effect finality are application obligations. No persistent
+timeline adapter, distributed atomic promotion, Bevy/ECS, transport or rollback
+of already-issued effects is supplied.
 
 ## Recoverable execution
 
@@ -119,7 +151,7 @@ The test suite includes saga compatibility fixtures, task protocol fixtures,
 property tests, real-thread CAS/fencing interleavings, and subprocess kills at
 four persistence/effect boundaries: before checkpoint persistence, after blob
 persistence, after history commit, and after an external effect before
-acknowledgement. Sixteen sanitizer-instrumented fuzz targets exercise protocol
+acknowledgement. Twenty-two sanitizer-instrumented fuzz targets exercise protocol
 and recovery boundaries. The task history fuzzer checks that every accepted
 running state can still record a timeout.
 The worker protocol target checks bounded start-packet decoding, full scope and
@@ -179,6 +211,10 @@ cargo clippy --workspace --all-targets --all-features --locked --exclude penelop
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
 cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
 cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none-elf --locked
+cargo check -p penelope-timeline --no-default-features --target riscv32imafc-unknown-none-elf --locked
+cargo check -p penelope-timeline --features alloc --target riscv32imafc-unknown-none-elf --locked
+cargo bench -p penelope-timeline --bench timeline_operations --locked
+cargo bench -p penelope-timeline --bench timeline_allocations --locked
 ./scripts/run_coverage_json.sh
 ./scripts/check_coverage_ratchet.sh
 PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh
@@ -238,14 +274,14 @@ pre-1.0 breaking release. No checker finding is silently suppressed.
 
 ## Packaging and publication
 
-`./scripts/publish-crates.sh` verifies the nine unpacked library archives
+`./scripts/publish-crates.sh` verifies the ten unpacked library archives
 using a fresh Cargo temporary registry for each run. It excludes the fuzz
 crate and retains verified archives under the configured Cargo target
 directory's `package` directory.
 
 For an authorized release, validate the latest `main` revision and its dated
 changelog entry, then create and push an annotated tag matching the qualified
-workspace version (for this development series, `v0.3.0` after qualification).
+workspace version (for this development series, `v0.4.0` after qualification).
 The release workflow verifies the tagged revision and package version, publishes the crates
 dependency-first, and creates a GitHub release from the matching changelog
 section. Missing, empty or duplicate version entries stop release verification.

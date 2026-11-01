@@ -1,6 +1,6 @@
 [package]
 name = "penelope"
-description = "Penelope process engine: deterministic saga/process orchestration over an append-only outcome log (pure logic, no I/O)."
+description = "Deterministic saga orchestration, recoverable task execution and optional rewindable timelines."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
