@@ -154,6 +154,27 @@ All database work happens outside replay; the sample's blocking waiter belongs a
 a synchronous composition root. Its injected lease time is separate from timeline
 steps and revisions.
 
+## Client prediction acceptance test
+
+The executable [client prediction regression](../crates/penelope-timeline/tests/client_prediction.rs)
+uses the public owned-input and scoped-correction APIs. A client predicts through
+tick 6 (position 21, velocity 6), then receives an admitted authoritative post-tick-2
+snapshot (position 20, velocity 2). Application ACK handling selects only inputs
+3–6. Replay advances one tick per call while reads retain the old live publication;
+publishing produces position 38, velocity 6, matching an independent server formula.
+A new local input then advances tick 7 to position 45, velocity 7 on the new branch.
+The same test covers genesis and current-tick snapshots, including zero remaining
+inputs. It uses a bounded six-entry captured-input array and no transport or engine.
+
+Run it with:
+
+```sh
+cargo test -p penelope-timeline --test client_prediction --all-features --locked
+```
+
+This establishes the prediction/reconciliation mechanism. It does not establish
+integration with a particular game engine or behavior under real network conditions.
+
 ## What downstream prediction integrations still supply
 
 The consumer owns authenticated authority and finality, a complete consistency
