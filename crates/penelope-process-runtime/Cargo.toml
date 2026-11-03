@@ -17,7 +17,7 @@ thiserror.workspace = true
 [target.'cfg(all(target_os = "linux", target_arch = "x86_64"))'.dependencies]
 libc = "0.2"
 rustix = { version = "1.1", features = ["fs", "process", "thread", "event", "pipe"] }
-seccompiler = "0.4"
+seccompiler = "0.5"
 
 [dev-dependencies]
 async-trait.workspace = true
