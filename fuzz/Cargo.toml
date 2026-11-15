@@ -186,3 +186,9 @@ name = "fuzz_timeline_effects"
 path = "fuzz_targets/fuzz_timeline_effects.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_machine"
+path = "fuzz_targets/fuzz_machine.rs"
+test = false
+doc = false

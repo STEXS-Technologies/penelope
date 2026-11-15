@@ -1,0 +1,19 @@
+[package]
+name = "penelope-machine-consumer"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.89"
+publish = false
+
+[workspace]
+
+[dependencies]
+penelope = { path = "../../crates/penelope" }
+
+[[bin]]
+name = "flat"
+path = "../../crates/penelope/examples/counter_machine.rs"
+
+[[bin]]
+name = "nested"
+path = "../../crates/penelope/examples/nested_order.rs"

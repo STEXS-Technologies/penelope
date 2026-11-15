@@ -164,7 +164,7 @@ impl<'ast> Visit<'ast> for FuzzedNewtypes {
             if let (true, syn::PathArguments::AngleBracketed(arguments)) = (
                 matches!(
                     segment.ident.to_string().as_str(),
-                    "wire" | "identifier" | "timeline_digest" | "timeline_counter"
+                    "wire" | "identifier" | "timeline_digest" | "fixed_counter" | "byte_identity"
                 ),
                 &segment.arguments,
             ) {
@@ -263,12 +263,17 @@ fn public_type_inventory_accepts_only_static_thread_local_declarations() {
 }
 
 #[test]
-fn fuzz_inventory_counts_timeline_constructor_and_arithmetic_probes() {
-    let ast = syn::parse_file("fn target() { timeline_digest::<TimelineId>(digest, make, get); timeline_counter::<TimelineStep>(value, make, get, next); }").unwrap();
+fn fuzz_inventory_counts_identity_constructor_and_arithmetic_probes() {
+    let ast = syn::parse_file("fn target() { timeline_digest::<TimelineId>(digest, make, get); fixed_counter::<TimelineStep>(value, make, get, next); byte_identity::<MachineId>(bytes, make, get); fixed_counter::<MachineRevision>(value, make, get, next); }").unwrap();
     let mut covered = FuzzedNewtypes::default();
     covered.visit_file(&ast);
     assert_eq!(
         covered.0,
-        BTreeSet::from(["TimelineId".into(), "TimelineStep".into()])
+        BTreeSet::from([
+            "TimelineId".into(),
+            "TimelineStep".into(),
+            "MachineId".into(),
+            "MachineRevision".into()
+        ])
     );
 }

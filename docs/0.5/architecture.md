@@ -19,19 +19,20 @@ validation happens before publication and must not mutate the current state.
 
 ## ADR-050-02: hierarchy is a bounded helper
 
-Use a single active path with stable numeric state IDs and explicit parent
+Use a single active path with stable model-owned node IDs and explicit parent
 relations, supplied by the model. No reflection, registration map, parallel
 regions or mandatory macros. Dispatch walks leaf to root with a caller-sized
 maximum depth; repeated IDs and exhausted depth fail closed.
 
 Unhandled alone permits parent fallback. Rejection, evaluation error or intent
-staging failure terminates the whole attempt. Discard an unhandled handler's
-provisional intents before considering a parent; intents must not leak from an
-unselected transition. A staging error remains fatal even if a handler ignores it.
+staging failure terminates the whole attempt. Guard selection receives no intent sink, so an unselected handler cannot stage
+provisional intents. A staging error remains fatal even if a handler ignores it.
 
 External transitions exit leaf up to (excluding) the least common ancestor,
 perform the transition action, and enter ancestor-to-leaf. An external self-edge
-exits and reenters the leaf; an internal transition runs its action without entry
+exits and reenters the leaf. The active source leaf determines the exit path even
+when selection bubbles to a parent; selection does not introduce a separate
+SCXML transition domain. An internal transition retains the leaf and runs its action without entry
 or exit. No implicit completion-transition loop. All hooks return candidates or
 stage intents, with the entire attempt subject to one publication boundary.
 

@@ -1,7 +1,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use penelope_core::timeline::*;
+use penelope_core::{machine::*, timeline::*};
 use penelope_domain::{
     ActionId, CanonicalCommitId, CanonicalEventId, ContentDigest, DefinitionId, DefinitionVersion,
     ExternalReferenceId, InputId, LogicalTime, MigrationId, OperationId, OutcomeId, PrincipalId,
@@ -52,14 +52,13 @@ fn timeline_digest<T>(digest: Digest, make: fn(Digest) -> T, get: fn(T) -> Diges
     assert_eq!(get(make(digest)), digest);
 }
 
-fn timeline_counter<T>(
-    value: u64,
-    make: fn(u64) -> T,
-    get: fn(T) -> u64,
-    next: fn(T) -> Option<T>,
-) {
+fn fixed_counter<T>(value: u64, make: fn(u64) -> T, get: fn(T) -> u64, next: fn(T) -> Option<T>) {
     assert_eq!(get(make(value)), value);
     assert_eq!(next(make(value)).map(get), value.checked_add(1));
+}
+
+fn byte_identity<T>(value: [u8; 32], make: fn([u8; 32]) -> T, get: fn(T) -> [u8; 32]) {
+    assert_eq!(get(make(value)), value);
 }
 
 fuzz_target!(|data: &[u8]| {
@@ -86,6 +85,47 @@ fuzz_target!(|data: &[u8]| {
         *slot = *byte;
     }
     let value = u64::from_be_bytes(integer);
+    byte_identity::<MachineTenantId>(
+        digest.0,
+        MachineTenantId::from_bytes,
+        MachineTenantId::bytes,
+    );
+    byte_identity::<MachineId>(digest.0, MachineId::from_bytes, MachineId::bytes);
+    byte_identity::<MachineDefinitionId>(
+        digest.0,
+        MachineDefinitionId::from_bytes,
+        MachineDefinitionId::bytes,
+    );
+    byte_identity::<MachineEventId>(digest.0, MachineEventId::from_bytes, MachineEventId::bytes);
+    byte_identity::<MachineIntentId>(
+        digest.0,
+        MachineIntentId::from_bytes,
+        MachineIntentId::bytes,
+    );
+    fixed_counter::<MachineRevision>(
+        value,
+        MachineRevision::new,
+        MachineRevision::get,
+        MachineRevision::checked_next,
+    );
+    fixed_counter::<MachineLogicalTime>(
+        value,
+        MachineLogicalTime::new,
+        MachineLogicalTime::get,
+        MachineLogicalTime::checked_next,
+    );
+    fixed_counter::<TransitionId>(
+        value,
+        TransitionId::new,
+        TransitionId::get,
+        TransitionId::checked_next,
+    );
+    fixed_counter::<RejectCode>(
+        value,
+        RejectCode::new,
+        RejectCode::get,
+        RejectCode::checked_next,
+    );
     let small = (value & u64::from(u32::MAX)) as u32;
     roundtrip(digest);
     roundtrip(ContentDigest::sha256(data));
@@ -150,25 +190,25 @@ fuzz_target!(|data: &[u8]| {
         TimelineSnapshotId::from_digest,
         TimelineSnapshotId::digest,
     );
-    timeline_counter::<TimelineStep>(
+    fixed_counter::<TimelineStep>(
         value,
         TimelineStep::new,
         TimelineStep::get,
         TimelineStep::checked_next,
     );
-    timeline_counter::<TimelineRevision>(
+    fixed_counter::<TimelineRevision>(
         value,
         TimelineRevision::new,
         TimelineRevision::get,
         TimelineRevision::checked_next,
     );
-    timeline_counter::<TimelineBranchId>(
+    fixed_counter::<TimelineBranchId>(
         value,
         TimelineBranchId::new,
         TimelineBranchId::get,
         TimelineBranchId::checked_next,
     );
-    timeline_counter::<InputRevision>(
+    fixed_counter::<InputRevision>(
         value,
         InputRevision::new,
         InputRevision::get,
@@ -185,13 +225,13 @@ fuzz_target!(|data: &[u8]| {
         TimelineEffectId::from_digest,
         TimelineEffectId::digest,
     );
-    timeline_counter::<AuthorityEpoch>(
+    fixed_counter::<AuthorityEpoch>(
         value,
         AuthorityEpoch::new,
         AuthorityEpoch::get,
         AuthorityEpoch::checked_next,
     );
-    timeline_counter::<AuthoritySequence>(
+    fixed_counter::<AuthoritySequence>(
         value,
         AuthoritySequence::new,
         AuthoritySequence::get,

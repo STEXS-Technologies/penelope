@@ -90,3 +90,6 @@ pub mod storage;
 
 /// Runtime integration contracts for recoverable task execution.
 pub mod runtime;
+
+/// Typed application machines; no storage or runtime is required.
+pub use penelope_core::machine;

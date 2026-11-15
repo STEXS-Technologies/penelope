@@ -13,3 +13,6 @@ pub mod task;
 
 /// Independent timeline identities and bounded correction planning.
 pub mod timeline;
+
+/// Pure application machines and bounded in-memory publication.
+pub mod machine;

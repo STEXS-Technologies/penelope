@@ -29,6 +29,7 @@ fi
 
 fuzz_targets=(
   fuzz_newtypes
+  fuzz_machine
   fuzz_identifiers
   fuzz_dtos
   fuzz_linear_engine

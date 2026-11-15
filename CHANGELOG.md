@@ -21,6 +21,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Portable `machine` API with typed context, bounded staged intents, consuming
+  prepared publication and an optional single-path hierarchy helper. Flat and
+  nested examples compile through the facade alone. Durable machine admission
+  and specialized engine adapters remain under development.
 - Canonical `saga`, `storage`, `runtime` and `integration::statechronicle`
   facade paths, and hosted supervision under `task::TaskSupervisor`.
   Existing imports and protocol behavior remain available.

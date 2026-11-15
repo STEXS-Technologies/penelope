@@ -23,3 +23,7 @@ workspace = true
 [[test]]
 name = "task_allocations"
 harness = false
+
+[[test]]
+name = "machine_allocations"
+harness = false

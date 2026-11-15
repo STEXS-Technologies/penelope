@@ -71,3 +71,23 @@ fixtures; complete repeated campaigns on the final candidate; establish isolated
 same-work performance tolerances; verify packages and remaining release gates.
 Do not infer a new wire format, SQLite migration or durable-machine guarantee
 from the namespace changes.
+
+## Portable machine checkpoint
+
+The initial kernel and hierarchy implementation is described in [machine.md](machine.md).
+Raw logs and a source hash manifest are under
+[evidence/machine-checkpoint](evidence/machine-checkpoint/). These supplement,
+rather than replace, the earlier baseline and dependency checkpoint evidence.
+
+- Strict workspace Clippy with all features/targets: passed.
+- Workspace library and integration tests, all features: passed.
+- Rust 1.89 machine/hierarchy tests, no-default allocation probe and core
+  compile-fail documentation: passed.
+- Rust 1.89 bare-metal RISC-V core builds, default-free and serde: passed.
+- Independent facade-only flat and nested consumers on Rust 1.89: passed.
+- Instrumented `fuzz_machine` and expanded `fuzz_newtypes`: 10,000 runs each,
+  seed 501, passed. This is bounded smoke evidence, not the full chaos campaign.
+- Runner regression script: passed with the new core tests and fuzz target.
+
+F2 remains in progress. Full release coverage, chaos, performance qualification,
+specialized adapters and durable machine protocols remain outstanding.

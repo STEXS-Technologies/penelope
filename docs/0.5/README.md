@@ -1,7 +1,7 @@
 # Penelope 0.5.0 implementation
 
-Status: initial stabilization and facade consolidation; not release qualification
-or an implemented machine API.
+Status: stabilization, facade consolidation and an initial portable machine API;
+not release qualification.
 
 The [imported proposal](plan.md) is the source plan. Its baseline SHA matches
 this checkout. Development remains on the existing branch, with versions at
@@ -19,7 +19,7 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | --- | --- | --- | --- |
 | F0 | Freeze and reproduce 0.4 baseline | In progress | [Baseline](baseline.md), compatibility fixture, CI, chaos and comparable performance runs |
 | F1 | Resolve kernel, hierarchy, publication, protocol and feature contracts | Design in progress | ADRs and compiling public API fixtures |
-| F2 | Allocation-free machine kernel and hierarchy | Pending | Truth tables, failed staging/publication, replay oracle, portable build and allocation probe |
+| F2 | Allocation-free machine kernel and hierarchy | In progress | Truth tables, failed staging/publication, replay oracle, portable build and allocation probe |
 | F3 | Saga adapter and proven shared internals | Pending | Legacy/new differential decisions, errors and bytes |
 | F4 | Task adapter and verified composition | Pending | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Pending | Correction, replay, scope, scratch and finality parity |
@@ -58,3 +58,7 @@ performance tolerances. Proposal sketches remain sketches until compile-tested.
 
 [Initial verification and baseline deviations](verification.md) record the
 completed checks, approved MSRV change and remaining qualification work.
+
+The first [machine checkpoint](machine.md) provides the portable owner and
+hierarchy helper, with independent facade consumer examples. Specialized adapters,
+durable admission and shared-internal extraction remain pending.
