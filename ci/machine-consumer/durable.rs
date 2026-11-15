@@ -18,6 +18,7 @@ use penelope_sqlite::{
 };
 use std::{
     future::Future,
+    path::PathBuf,
     sync::{
         Arc,
         atomic::{AtomicU64, Ordering},
@@ -160,6 +161,18 @@ fn claim(
     .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound).into())
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    run(std::env::args_os().nth(1).map(PathBuf::from), |_| {})
+}
+
+// One execution path for the consumer and measurement harness. The ordinary
+// binary instantiates a no-op observer; checkpoints confer no authority.
+pub fn run(
+    worker: Option<PathBuf>,
+    mut observe: impl FnMut(&'static str),
+) -> Result<(), Box<dyn std::error::Error>> {
+    #[cfg(not(feature = "protected"))]
+    drop(worker);
+    observe("begin");
     let directory = tempfile::tempdir()?;
     let path = directory.path().join("counter.db");
     let store =
@@ -172,6 +185,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
     let mut machine: MemoryMachine<_, 4> =
         snapshot.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
+    observe("bootstrap_restored");
     let retained = commit_counter(
         &store,
         &mut machine,
@@ -181,6 +195,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         1,
         None,
     )?;
+    observe("initial_committed");
     println!(
         "committed={} revision={}",
         machine.read().1,
@@ -220,6 +235,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         stored.batch().intents().count(),
         duplicate.disposition
     );
+    observe("recovered");
     // The same committed machine intent becomes one durable native task input.
     // The default profile demonstrates admission. The protected profile below
     // supplies the production Linux runtime to complete this pure task.
@@ -244,7 +260,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     };
     #[cfg(feature = "protected")]
-    let (definition, worker) = workflow::pin_worker(definition)?;
+    let (definition, worker) = workflow::pin_worker(definition, worker)?;
     let tasks = Arc::new(
         SqliteTaskJournal::open(
             &directory.path().join("tasks.db"),
@@ -274,6 +290,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     let lease = claim(&outbox, &owner)?;
     let accepted = block_on(receiver.accept(&outbox, &owner, &lease, TaskTick::new(1)))?;
+    observe("native_admitted");
     // Simulate losing the reply after native commit and exiting before source ACK.
     // Reopen both databases, reclaim only after expiry, and resolve native history.
     let source = lease.metadata().source;
@@ -347,6 +364,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "task_admitted=true generation={} source_acknowledged=true",
         accepted.generation.get()
     );
+    observe("lost_ack_recovered");
     // Task admission and source acknowledgement do not establish task completion.
     // The optional Linux progression executes through the native supervisor and
     // admits only the verified durable result as the next application event.
@@ -355,7 +373,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let binding = receiver.binding(source, lease.payload())?;
         drop(outbox);
         drop(receiver);
-        workflow::complete(directory.path(), &worker, definition, binding)?
+        workflow::complete(directory.path(), &worker, definition, binding, &mut observe)?
     };
     #[cfg(feature = "protected")]
     let (amount, event_id, causation) =
@@ -373,6 +391,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         2,
         causation,
     )?;
+    observe("result_committed");
     let result_receipt = block_on(journal.commit(&owner, Arc::clone(&result)))?;
     if result_receipt.disposition != MachineCommitDisposition::AlreadyCommitted
         || result.record().header().causation != causation
@@ -430,6 +449,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "saga_admitted=true native_actions={} source_acknowledged=true",
         receipt.commit().actions.len()
     );
+    observe("saga_admitted");
     Ok(())
 }
 

@@ -40,3 +40,9 @@ required-features = ["timeline"]
 name = "durable"
 path = "durable.rs"
 required-features = ["durable"]
+
+[[bench]]
+name = "native_pipeline"
+path = "native_pipeline.rs"
+harness = false
+required-features = ["protected"]

@@ -17,13 +17,13 @@ fn invalid(message: &str) -> std::io::Error {
     std::io::Error::other(message)
 }
 
-pub fn pin_worker(mut definition: TaskDefinition) -> Result<(TaskDefinition, PathBuf)> {
-    let worker = std::env::args_os()
-        .nth(1)
-        .map(PathBuf::from)
-        .ok_or_else(|| {
-            invalid("pass the worker path; see scripts/run-supervised-saga-example.sh")
-        })?;
+pub fn pin_worker(
+    mut definition: TaskDefinition,
+    worker: Option<PathBuf>,
+) -> Result<(TaskDefinition, PathBuf)> {
+    let worker = worker.ok_or_else(|| {
+        invalid("pass the worker path; see scripts/run-supervised-saga-example.sh")
+    })?;
     let mut bytes = Vec::new();
     std::fs::File::open(&worker)?
         .take(1024 * 1024 + 1)
@@ -49,6 +49,7 @@ pub fn complete(
     worker: &Path,
     definition: TaskDefinition,
     binding: MachineTaskBinding,
+    observe: &mut impl FnMut(&'static str),
 ) -> Result<CompletedCount> {
     let scope = binding.scope();
     let path = root.join("tasks.db");
@@ -70,6 +71,7 @@ pub fn complete(
     )?;
     let mut supervisor =
         TaskSupervisor::<_, _, 8>::restore(journal, runtime, scope, definition, TaskTick::new(3))?;
+    observe("native_setup");
     // Generation zero is already admitted by the receiver. Do not submit it again.
     let start = Instant::now();
     for _ in 0..5000 {
@@ -79,12 +81,16 @@ pub fn complete(
                 .ok_or_else(|| invalid("task clock overflow"))?,
         );
         match supervisor.projection().status() {
-            TaskStatus::Completed => break,
+            TaskStatus::Completed => {
+                observe("durable_completed");
+                break;
+            }
             TaskStatus::Running => {
                 supervisor.poll(tick)?;
             }
             TaskStatus::Pending => {
                 supervisor.advance(tick)?;
+                observe("dispatch_return");
             }
             _ => return Err(invalid("task unresolved; no result event admitted").into()),
         }
@@ -115,6 +121,7 @@ pub fn complete(
             invalid("task result schema or meaning differs; no result event admitted").into(),
         );
     }
+    observe("result_verified");
     println!("task_result_verified=true amount=1");
     let mut identity = b"penelope.counter-result.v1\0".to_vec();
     identity.extend_from_slice(&scope.task.digest().0);
