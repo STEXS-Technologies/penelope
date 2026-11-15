@@ -219,3 +219,10 @@ name = "fuzz_sqlite_machine_task"
 path = "fuzz_targets/fuzz_sqlite_machine_task.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_sqlite_machine_saga"
+path = "fuzz_targets/fuzz_sqlite_machine_saga.rs"
+test = false
+doc = false
+bench = false

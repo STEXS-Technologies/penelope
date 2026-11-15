@@ -34,6 +34,7 @@ pub enum MachineOperation {
     },
     ReadHead,
     ClaimIntents {
+        consumer: MachineSourceId,
         owner: MachineLeaseOwner,
     },
     ReadIntent {

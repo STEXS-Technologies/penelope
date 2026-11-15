@@ -26,3 +26,14 @@ pub use penelope_executor::saga_machine::{
     LinearSagaSource, PreparedGraphSaga, PreparedLinearSaga, prepare_graph_result,
     prepare_graph_start, prepare_linear,
 };
+
+/// Verified machine intent admission into native saga bootstrap and outbox.
+pub use penelope_executor::machine_saga::{
+    MachineSagaDefinition, MachineSagaHandoffError, MachineSagaReceipt, MachineSagaReceiver,
+};
+
+/// Native authorization remains mandatory before durable workflow bootstrap.
+pub use penelope_ports::{
+    ProcessAuthorizationDecision, ProcessAuthorizationOperation, ProcessAuthorizationRequest,
+    ProcessAuthorizer,
+};

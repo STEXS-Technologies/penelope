@@ -277,6 +277,7 @@ fn sigkill_v7_outbox_migration_preserves_populated_machine_journal() {
         "before-transaction",
         "after-begin",
         "after-v8",
+        "after-v9",
         "before-commit",
         "after-commit",
     ] {
@@ -331,7 +332,7 @@ fn sigkill_v7_outbox_migration_preserves_populated_machine_journal() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 8 } else { 7 },
+            if phase == "after-commit" { 9 } else { 7 },
             "{phase}"
         );
         drop(recovered_connection);
@@ -347,5 +348,94 @@ fn sigkill_v7_outbox_migration_preserves_populated_machine_journal() {
             .remove(0);
         assert_eq!(lease.metadata().attempt.get(), 1);
         assert_eq!(lease.metadata().source.commit, receipt.identity);
+    }
+}
+
+#[path = "../../tests/support/machine_schema.rs"]
+mod machine_schema;
+#[test]
+fn sigkill_v8_receiver_migration_preserves_pending_uncertainty_and_accepted_receipts() {
+    for accepted in [false, true] {
+        for phase in [
+            "before-transaction",
+            "after-begin",
+            "after-v9",
+            "before-commit",
+            "after-commit",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("v8.db");
+            let store = std::sync::Arc::new(support::open(&path));
+            block_on(store.bootstrap(&true, genesis())).unwrap();
+            block_on(store.commit(&true, batch(&mut owner(), 8, 4))).unwrap();
+            let original = outbox(std::sync::Arc::clone(&store));
+            let lease = block_on(original.claim(&true, claim_request()))
+                .unwrap()
+                .remove(0);
+            if accepted {
+                block_on(original.acknowledge(&true, &lease, &())).unwrap();
+            }
+            drop(original);
+            drop(store);
+            let connection = rusqlite::Connection::open(&path).unwrap();
+            machine_schema::downgrade_to_v8(&connection);
+            let tables = [
+                "machine_heads",
+                "machine_events",
+                "machine_intents",
+                "machine_intent_delivery",
+                "lease_counter",
+            ];
+            let before = crate::write_snapshot::snapshot(&connection, &tables);
+            drop(connection);
+            let marker = directory.path().join("marker");
+            let mut child = Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "machine::tests::outbox_process_helper",
+                    "--nocapture",
+                ])
+                .env("PENELOPE_OUTBOX_DB", &path)
+                .env("PENELOPE_MIGRATION_CUT", phase)
+                .env("PENELOPE_MIGRATION_MARKER", &marker)
+                .spawn()
+                .unwrap();
+            let deadline = Instant::now() + Duration::from_secs(10);
+            while std::fs::read(&marker).ok().as_deref() != Some(phase.as_bytes()) {
+                if Instant::now() >= deadline {
+                    drop(child.kill());
+                    drop(child.wait());
+                    panic!("v8 migration did not reach {phase}");
+                }
+                std::thread::sleep(Duration::from_millis(2));
+            }
+            child.kill().unwrap();
+            assert_eq!(child.wait().unwrap().signal(), Some(9));
+            let recovered_connection = rusqlite::Connection::open(&path).unwrap();
+            assert_eq!(
+                crate::write_snapshot::snapshot(&recovered_connection, &tables),
+                before
+            );
+            let version: u32 = recovered_connection
+                .query_row("PRAGMA user_version", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(version, if phase == "after-commit" { 9 } else { 8 });
+            drop(recovered_connection);
+            let recovered = outbox(std::sync::Arc::new(support::open(&path)));
+            let status =
+                block_on(recovered.status(&true, SCOPE, lease.metadata().source.intent.identity))
+                    .unwrap()
+                    .unwrap();
+            assert_eq!(status.accepted.is_some(), accepted);
+            if accepted {
+                block_on(recovered.acknowledge(&true, &lease, &())).unwrap();
+            } else {
+                assert_eq!(status.consumer, None);
+                assert_eq!(
+                    block_on(recovered.validate(&true, &lease)),
+                    Err(MachineStoreError::Conflict)
+                );
+            }
+        }
     }
 }

@@ -64,8 +64,9 @@ encoding and a machine-specific journal. Process `AtomicProcessCommit` is not a
 generic machine transaction. The initial accepted-batch [metadata layout and
 independent goldens](machine-wire.md), canonical payload preparation and
 [scoped journal/SQLite snapshot profile](machine-storage.md) are implemented.
-Source-authorized leased delivery and native task admission are implemented;
-production saga composition and final qualification remain open.
+Source-authorized leased delivery and native task/saga admission are implemented.
+Both bridges retain native execution and recovery authority; complete release
+qualification remains open.
 
 Persist immutable accepted event bytes, pinned model/schema, exact predecessor
 and next head/state, and the entire ordered intent batch in one local transaction.

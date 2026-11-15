@@ -7,6 +7,7 @@ pub(super) struct Delivery {
     pub(super) token: MachineLeaseToken,
     pub(super) expires: MachineLeaseTick,
     pub(super) attempt: MachineDeliveryAttempt,
+    pub(super) target: Option<MachineSourceId>,
     pub(super) accepted: Option<(MachineSourceId, [u8; 32])>,
 }
 fn sql_fixed<const BYTES: usize>(
@@ -28,13 +29,22 @@ fn delivery_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<Delivery> {
     if token <= 0 || attempt == 0 || expires == 0 {
         return Err(rusqlite::Error::InvalidQuery);
     }
-    let accepted = match (row.get_ref(4)?, row.get_ref(5)?) {
-        (rusqlite::types::ValueRef::Null, rusqlite::types::ValueRef::Null) => None,
-        (rusqlite::types::ValueRef::Blob(_), rusqlite::types::ValueRef::Blob(_)) => Some((
-            MachineSourceId::from_bytes(sql_fixed(row, 4)?),
+    let target = match row.get_ref(4)? {
+        rusqlite::types::ValueRef::Null => None,
+        rusqlite::types::ValueRef::Blob(_) => Some(MachineSourceId::from_bytes(sql_fixed(row, 4)?)),
+        rusqlite::types::ValueRef::Integer(_)
+        | rusqlite::types::ValueRef::Real(_)
+        | rusqlite::types::ValueRef::Text(_) => return Err(rusqlite::Error::InvalidQuery),
+    };
+    let accepted = match row.get_ref(5)? {
+        rusqlite::types::ValueRef::Null => None,
+        rusqlite::types::ValueRef::Blob(_) => Some((
+            target.ok_or(rusqlite::Error::InvalidQuery)?,
             sql_fixed(row, 5)?,
         )),
-        _ => return Err(rusqlite::Error::InvalidQuery),
+        rusqlite::types::ValueRef::Integer(_)
+        | rusqlite::types::ValueRef::Real(_)
+        | rusqlite::types::ValueRef::Text(_) => return Err(rusqlite::Error::InvalidQuery),
     };
     Ok(Delivery {
         owner: MachineLeaseOwner::from_bytes(sql_fixed(row, 0)?),
@@ -43,6 +53,7 @@ fn delivery_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<Delivery> {
         ),
         expires: MachineLeaseTick::new(expires),
         attempt: MachineDeliveryAttempt::new(u64::from(attempt)),
+        target,
         accepted,
     })
 }
@@ -107,7 +118,7 @@ pub(crate) fn usage(
         return Err(MachineStoreError::Corrupt);
     }
     let damaged: bool = connection.query_row(
-        "SELECT EXISTS(SELECT 1 FROM machine_intent_delivery d LEFT JOIN machine_intents i ON i.machine_key=d.machine_key AND i.intent=d.intent WHERE d.machine_key=?1 AND (i.intent IS NULL OR typeof(d.owner)!='blob' OR length(d.owner)!=32 OR typeof(d.token)!='integer' OR d.token<=0 OR d.token>=(SELECT next_token FROM lease_counter WHERE singleton=1) OR typeof(d.expires)!='blob' OR length(d.expires)!=8 OR d.expires=x'0000000000000000' OR typeof(d.attempt)!='integer' OR d.attempt NOT BETWEEN 1 AND 65535 OR (d.consumer IS NULL)!=(d.receipt IS NULL) OR (d.consumer IS NOT NULL AND (typeof(d.consumer)!='blob' OR length(d.consumer)!=32 OR typeof(d.receipt)!='blob' OR length(d.receipt)!=32)))) OR EXISTS(SELECT 1 FROM machine_intents i LEFT JOIN machine_events e ON e.machine_key=i.machine_key AND e.event=i.event WHERE i.machine_key=?1 AND e.event IS NULL)",
+        "SELECT EXISTS(SELECT 1 FROM machine_intent_delivery d LEFT JOIN machine_intents i ON i.machine_key=d.machine_key AND i.intent=d.intent WHERE d.machine_key=?1 AND (i.intent IS NULL OR typeof(d.owner)!='blob' OR length(d.owner)!=32 OR typeof(d.token)!='integer' OR d.token<=0 OR d.token>=(SELECT next_token FROM lease_counter WHERE singleton=1) OR typeof(d.expires)!='blob' OR length(d.expires)!=8 OR d.expires=x'0000000000000000' OR typeof(d.attempt)!='integer' OR d.attempt NOT BETWEEN 1 AND 65535 OR (d.receipt IS NOT NULL AND d.consumer IS NULL) OR (d.consumer IS NOT NULL AND (typeof(d.consumer)!='blob' OR length(d.consumer)!=32)) OR (d.receipt IS NOT NULL AND (typeof(d.receipt)!='blob' OR length(d.receipt)!=32)))) OR EXISTS(SELECT 1 FROM machine_intents i LEFT JOIN machine_events e ON e.machine_key=i.machine_key AND e.event=i.event WHERE i.machine_key=?1 AND e.event IS NULL)",
         [key(scope).as_slice()], |row| row.get(0),
     ).map_err(|e| db_error(&e))?;
     if damaged {
@@ -173,6 +184,7 @@ pub(super) fn check<const N: usize>(
     payloads: MachinePayloadLimits,
     clock: &impl MachineLeaseClock,
     allow_accepted: bool,
+    consumer: MachineSourceId,
 ) -> Result<(Delivery, MachineLeaseTick), MachineStoreError> {
     let metadata = lease.metadata();
     let scope = metadata.source.head.scope;
@@ -183,7 +195,8 @@ pub(super) fn check<const N: usize>(
             .ok_or(MachineStoreError::Conflict)?;
     let delivery = read_delivery(connection, scope, original.intent.identity)?
         .ok_or(MachineStoreError::Conflict)?;
-    if original != metadata.source
+    if delivery.target != Some(consumer)
+        || original != metadata.source
         || payload != lease.payload()
         || delivery.owner != metadata.owner
         || delivery.token != metadata.token

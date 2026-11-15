@@ -184,7 +184,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 8 } else { 1 },
+            if phase == "after-commit" { 9 } else { 1 },
             "{phase}"
         );
         assert_eq!(snapshot(&connection), original, "{phase}");
@@ -254,9 +254,9 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             checked_connection
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            8
+            9
         );
-        println!("v1 phase={phase} signal=9 rows_preserved=true reopen_version=8");
+        println!("v1 phase={phase} signal=9 rows_preserved=true reopen_version=9");
     }
 }
 

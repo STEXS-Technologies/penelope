@@ -228,35 +228,11 @@ pub(crate) fn commit_process(
     let scope = commit.outcomes.first().ok_or(PortError::Invariant)?.scope();
     let key = scope.canonical_bytes();
     let process_key = scope_process_key(&scope)?;
-    // Cap the aggregate encoding allowance instead of rejecting overflow: a
-    // larger per-record limit must still admit an identical small batch.
-    let max_encoded = limits.max_record_bytes.saturating_mul(
-        u32::try_from(
-            MAX_OUTCOMES_PER_ATOMIC_COMMIT
-                .saturating_add(MAX_ACTIONS_PER_ATOMIC_COMMIT)
-                .saturating_add(2),
-        )
-        .map_err(|_overflow| PortError::QuotaExceeded)?,
-    );
-    let commit_bytes = encode(commit, max_encoded)?;
-    let commit_digest = Digest::of(&commit_bytes);
+    let commit_digest = batch_digest(commit, limits)?;
     let transaction = connection
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|error| db_error(&error))?;
-    let existing = transaction.query_row("SELECT commit_digest,committed_through FROM process_commits WHERE scope=?1 AND first_sequence=?2", params![key,integer(commit.expected_sequence)?], |row| Ok((copy_column(row,0,32)?,row.get::<_,i64>(1)?))).optional().map_err(|error| db_error(&error))?;
-    if let Some((digest, through)) = existing {
-        if digest != commit_digest.0 {
-            return Err(PortError::Conflict);
-        }
-        verify_committed_batch(&transaction, commit, commit_digest, limits)?;
-        let receipt = AtomicProcessCommitReceipt {
-            committed_through_sequence: u64::try_from(through)
-                .map_err(|_negative| PortError::Invariant)?,
-            duplicate_input: commit.input.is_some(),
-        };
-        receipt
-            .validate_for(commit)
-            .map_err(|_receipt| PortError::Invariant)?;
+    if let Some(receipt) = committed_receipt(&transaction, commit, &key, commit_digest, limits)? {
         return Ok(receipt);
     }
     let head = process_head(&transaction, &key)?;
@@ -658,3 +634,45 @@ mod commit_boundary_tests;
 #[cfg(test)]
 #[path = "inbox_retry_tests.rs"]
 mod inbox_retry_tests;
+
+fn batch_digest(commit: &AtomicProcessCommit, limits: SqliteLimits) -> Result<Digest, PortError> {
+    // Cap the aggregate encoding allowance instead of rejecting overflow: a
+    // larger per-record limit must still admit an identical small batch.
+    let max_encoded = limits.max_record_bytes.saturating_mul(
+        u32::try_from(
+            MAX_OUTCOMES_PER_ATOMIC_COMMIT
+                .saturating_add(MAX_ACTIONS_PER_ATOMIC_COMMIT)
+                .saturating_add(2),
+        )
+        .map_err(|_overflow| PortError::QuotaExceeded)?,
+    );
+    let commit_bytes = encode(commit, max_encoded)?;
+    Ok(Digest::of(&commit_bytes))
+}
+fn committed_receipt(
+    connection: &Connection,
+    commit: &AtomicProcessCommit,
+    key: &[u8],
+    commit_digest: Digest,
+    limits: SqliteLimits,
+) -> Result<Option<AtomicProcessCommitReceipt>, PortError> {
+    let existing = connection.query_row("SELECT commit_digest,committed_through FROM process_commits WHERE scope=?1 AND first_sequence=?2", params![key,integer(commit.expected_sequence)?], |row| Ok((copy_column(row,0,32)?,row.get::<_,i64>(1)?))).optional().map_err(|error| db_error(&error))?;
+    if let Some((digest, through)) = existing {
+        if digest != commit_digest.0 {
+            return Err(PortError::Conflict);
+        }
+        verify_committed_batch(connection, commit, commit_digest, limits)?;
+        let receipt = AtomicProcessCommitReceipt {
+            committed_through_sequence: u64::try_from(through)
+                .map_err(|_negative| PortError::Invariant)?,
+            duplicate_input: commit.input.is_some(),
+        };
+        receipt
+            .validate_for(commit)
+            .map_err(|_receipt| PortError::Invariant)?;
+        return Ok(Some(receipt));
+    }
+    Ok(None)
+}
+#[path = "process_commit_verifier.rs"]
+mod commit_verifier;

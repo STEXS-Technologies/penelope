@@ -1,8 +1,21 @@
 //! One model across memory, timeline and a local durable journal.
 use async_trait::async_trait;
+use penelope::ports::PortError;
+use penelope::saga::{
+    LinearSagaDefinition, MachineSagaDefinition, MachineSagaReceiver, ProcessAuthorizationDecision,
+    ProcessAuthorizationOperation, ProcessAuthorizationRequest, ProcessAuthorizer, RetryPolicy,
+    StepPlan,
+};
+use penelope::task::{
+    Digest, EffectContract, ExecutionBudget, MachineTaskReceiver, RecoveryMode, TaskDefinition,
+    TaskRecoveryPolicy, TaskSequence, TaskTick,
+};
+use penelope::{ContentDigest, LogicalTime, ProcessActionKind};
 use penelope::{machine::*, storage::machine::*};
-use penelope_sqlite::{SqliteLimits, SqliteMachineStore, SqliteMachineOutbox, SqliteTaskJournal};
-use penelope::task::{Digest,EffectContract,RecoveryMode,TaskRecoveryPolicy,ExecutionBudget,TaskDefinition,TaskTick,TaskSequence,MachineTaskReceiver};
+use penelope_sqlite::{
+    SqliteLeaseClock, SqliteLimits, SqliteMachineOutbox, SqliteMachineStore, SqliteProcessStore,
+    SqliteTaskJournal,
+};
 use std::{
     future::Future,
     sync::Arc,
@@ -51,7 +64,9 @@ impl MachineAuthorizer for LocalOwner {
 }
 struct LocalClock;
 impl MachineLeaseClock for LocalClock {
-    fn now(&self) -> Result<MachineLeaseTick,MachineStoreError> {Ok(MachineLeaseTick::new(100))}
+    fn now(&self) -> Result<MachineLeaseTick, MachineStoreError> {
+        Ok(MachineLeaseTick::new(100))
+    }
 }
 struct ThreadWake(std::thread::Thread);
 impl Wake for ThreadWake {
@@ -73,31 +88,25 @@ fn block_on<T>(future: impl Future<Output = T>) -> T {
         std::thread::park();
     }
 }
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let directory = tempfile::tempdir()?;
-    let path = directory.path().join("counter.db");
-    let store =
-        SqliteMachineStore::<_, 4>::open(&path, SqliteLimits::default(), PAYLOADS, LocalOwner, 8)?;
-    let owner = SCOPE.tenant;
-    let bootstrap =
-        prepare_machine_bootstrap(&Counter, &CounterCodec, SCOPE, &0, &mut [0; 8], PAYLOADS)?;
-    block_on(store.bootstrap(&owner, Arc::new(bootstrap)))?;
-    let snapshot = block_on(store.load_head(&owner, SCOPE))?
-        .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
-    let mut machine: MemoryMachine<_, 4> =
-        snapshot.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
-    let event = 7_u64;
+fn commit_counter(
+    store: &SqliteMachineStore<LocalOwner, 4>,
+    machine: &mut MemoryMachine<Counter, 4>,
+    owner: &MachineTenantId,
+    event: u64,
+    nonce: u8,
+    logical_time: u64,
+) -> Result<Arc<MachineCommitBatch<4>>, Box<dyn std::error::Error>> {
     let context = TransitionContext {
         expected: machine.read().0,
-        event: MachineEventId::from_bytes([4; 32]),
+        event: MachineEventId::from_bytes([nonce; 32]),
         event_digest: penelope::core::task::Digest::of(&event.to_le_bytes()).0,
-        logical_time: MachineLogicalTime::new(1),
+        logical_time: MachineLogicalTime::new(logical_time),
     };
     let mut state = [0; 8];
     let mut encoded_event = [0; 8];
     let mut intent = [0; 8];
     let MachineCommitDecision::Prepared(prepared) = prepare_machine_commit(
-        &mut machine,
+        machine,
         &MachineCommitInput {
             event: &event,
             context,
@@ -115,11 +124,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
     };
     let retained = prepared.batch();
-    let receipt = block_on(store.commit(&owner, Arc::clone(&retained)))?;
+    let receipt = block_on(store.commit(owner, Arc::clone(&retained)))?;
     prepared.publish(receipt)?;
-    // The journal retains exact durable intent bytes; release the local typed
-    // cache after verified admission. This does not execute or acknowledge them.
     let _ = machine.take_intents();
+    Ok(retained)
+}
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let directory = tempfile::tempdir()?;
+    let path = directory.path().join("counter.db");
+    let store =
+        SqliteMachineStore::<_, 4>::open(&path, SqliteLimits::default(), PAYLOADS, LocalOwner, 8)?;
+    let owner = SCOPE.tenant;
+    let bootstrap =
+        prepare_machine_bootstrap(&Counter, &CounterCodec, SCOPE, &0, &mut [0; 8], PAYLOADS)?;
+    block_on(store.bootstrap(&owner, Arc::new(bootstrap)))?;
+    let snapshot = block_on(store.load_head(&owner, SCOPE))?
+        .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let mut machine: MemoryMachine<_, 4> =
+        snapshot.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
+    let retained = commit_counter(&store, &mut machine, &owner, 7, 4, 1)?;
     println!(
         "committed={} revision={}",
         machine.read().1,
@@ -129,12 +152,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reopened =
         SqliteMachineStore::<_, 4>::open(&path, SqliteLimits::default(), PAYLOADS, LocalOwner, 8)?;
     let duplicate = block_on(reopened.commit(&owner, retained))?;
-    let stored = block_on(reopened.lookup(&owner, SCOPE, context.event))?
+    let stored = block_on(reopened.lookup(&owner, SCOPE, MachineEventId::from_bytes([4; 32])))?
         .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
     if duplicate != stored.receipt() {
         return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
     }
-    let restored = stored.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
+    let mut restored = stored.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
     println!(
         "restored={} retained_intents={} duplicate={:?}",
         restored.read().1,
@@ -143,18 +166,157 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     // The same committed machine intent becomes one durable native task input.
     // This example demonstrates admission only; no worker is registered or run.
-    let definition=TaskDefinition {
-        code:Digest::of(b"counter-task-admission-example-v1"),checkpoint_schema:1,effects:EffectContract::Pure,
-        recovery:TaskRecoveryPolicy {mode:RecoveryMode::RestartFromBeginning,max_attempts:2,timeout_ticks:10,restart_delay_ticks:1,max_checkpoint_bytes:8},
-        budget:ExecutionBudget {max_input_bytes:8,max_output_bytes:8,max_history_records:32,max_checkpoint_commits:4,cpu_ticks:10,deadline_tick:TaskTick::new(1000)},
+    let definition = TaskDefinition {
+        code: Digest::of(b"counter-task-admission-example-v1"),
+        checkpoint_schema: 1,
+        effects: EffectContract::Pure,
+        recovery: TaskRecoveryPolicy {
+            mode: RecoveryMode::RestartFromBeginning,
+            max_attempts: 2,
+            timeout_ticks: 10,
+            restart_delay_ticks: 1,
+            max_checkpoint_bytes: 8,
+        },
+        budget: ExecutionBudget {
+            max_input_bytes: 8,
+            max_output_bytes: 8,
+            max_history_records: 32,
+            max_checkpoint_commits: 4,
+            cpu_ticks: 10,
+            deadline_tick: TaskTick::new(1000),
+        },
     };
-    let tasks=Arc::new(SqliteTaskJournal::open(&directory.path().join("tasks.db"),definition,SqliteLimits::default())?.into_async(8)?);
-    let receiver=Arc::new(MachineTaskReceiver::new(tasks,MachineSourceId::from_bytes([8;32]),definition,1)?);
-    let outbox=SqliteMachineOutbox::new(Arc::new(reopened),Arc::new(LocalClock),Arc::clone(&receiver),MachineOutboxLimits {lease_ticks:10,max_claims:1,max_claim_bytes:512,max_attempts:3})?;
-    let lease=block_on(outbox.claim(&owner,MachineIntentClaim {scope:SCOPE,owner:MachineLeaseOwner::from_bytes([9;32]),max_intents:1,max_bytes:512}))?.pop().ok_or_else(||std::io::Error::from(std::io::ErrorKind::NotFound))?;
-    let accepted=block_on(receiver.accept(&outbox,&owner,&lease,TaskTick::new(1)))?;
-    let acknowledgement=block_on(outbox.acknowledge(&owner,&lease,&accepted))?;
-    if accepted.sequence!=TaskSequence::ZERO || acknowledgement.source!=lease.metadata().source {return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());}
-    println!("task_admitted=true generation={} source_acknowledged=true",accepted.generation.get());
+    let tasks = Arc::new(
+        SqliteTaskJournal::open(
+            &directory.path().join("tasks.db"),
+            definition,
+            SqliteLimits::default(),
+        )?
+        .into_async(8)?,
+    );
+    let receiver = Arc::new(MachineTaskReceiver::new(
+        tasks,
+        MachineSourceId::from_bytes([8; 32]),
+        definition,
+        1,
+    )?);
+    let journal = Arc::new(reopened);
+    let outbox = SqliteMachineOutbox::new(
+        Arc::clone(&journal),
+        Arc::new(LocalClock),
+        Arc::clone(&receiver),
+        MachineOutboxLimits {
+            lease_ticks: 10,
+            max_claims: 1,
+            max_claim_bytes: 512,
+            max_attempts: 3,
+        },
+    )?;
+    let lease = block_on(outbox.claim(
+        &owner,
+        MachineIntentClaim {
+            scope: SCOPE,
+            owner: MachineLeaseOwner::from_bytes([9; 32]),
+            max_intents: 1,
+            max_bytes: 512,
+        },
+    ))?
+    .pop()
+    .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let accepted = block_on(receiver.accept(&outbox, &owner, &lease, TaskTick::new(1)))?;
+    let acknowledgement = block_on(outbox.acknowledge(&owner, &lease, &accepted))?;
+    if accepted.sequence != TaskSequence::ZERO || acknowledgement.source != lease.metadata().source
+    {
+        return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
+    }
+    println!(
+        "task_admitted=true generation={} source_acknowledged=true",
+        accepted.generation.get()
+    );
+    // A second committed event starts one host-pinned saga. Its action remains
+    // in the native outbox; this example does not dispatch external effects.
+    commit_counter(&journal, &mut restored, &owner, 1, 5, 2)?;
+    let processes = Arc::new(SqliteProcessStore::open(
+        &directory.path().join("sagas.db"),
+        SqliteLimits::default(),
+        Arc::new(LocalClock),
+        10,
+        8,
+    )?);
+    let policy = MachineSagaDefinition::Linear(LinearSagaDefinition {
+        definition_id: "def_counter".parse()?,
+        definition_version: "dfv_one".parse()?,
+        definition_digest: ContentDigest::sha256(b"counter-workflow-example-v1"),
+        steps: vec![StepPlan {
+            step_id: "stp_notify".parse()?,
+            action_kind: ProcessActionKind::ExternalEffect,
+            payload_digest: ContentDigest::sha256(b"host-defined-notification"),
+            retry_policy: RetryPolicy::no_retry(),
+            compensation: None,
+        }],
+    });
+    let saga = Arc::new(MachineSagaReceiver::new(
+        processes,
+        Arc::new(LocalSagaOwner),
+        MachineSourceId::from_bytes([10; 32]),
+        "pri_local".parse()?,
+        policy,
+        8,
+    )?);
+    let saga_outbox = SqliteMachineOutbox::new(
+        journal,
+        Arc::new(LocalClock),
+        Arc::clone(&saga),
+        MachineOutboxLimits {
+            lease_ticks: 10,
+            max_claims: 1,
+            max_claim_bytes: 512,
+            max_attempts: 3,
+        },
+    )?;
+    let lease = block_on(saga_outbox.claim(
+        &owner,
+        MachineIntentClaim {
+            scope: SCOPE,
+            owner: MachineLeaseOwner::from_bytes([9; 32]),
+            max_intents: 1,
+            max_bytes: 512,
+        },
+    ))?
+    .pop()
+    .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let receipt = block_on(saga.accept(&saga_outbox, &owner, &lease, LogicalTime(1)))?;
+    block_on(saga_outbox.acknowledge(&owner, &lease, &receipt))?;
+    println!(
+        "saga_admitted=true native_actions={} source_acknowledged=true",
+        receipt.commit().actions.len()
+    );
     Ok(())
+}
+
+impl SqliteLeaseClock for LocalClock {
+    fn now(&self) -> Result<LogicalTime, PortError> {
+        Ok(LogicalTime(100))
+    }
+}
+struct LocalSagaOwner;
+#[async_trait]
+impl ProcessAuthorizer for LocalSagaOwner {
+    async fn authorize(
+        &self,
+        request: &ProcessAuthorizationRequest,
+    ) -> Result<ProcessAuthorizationDecision, PortError> {
+        // This standalone demo pins a local service identity; hosted applications
+        // inject authenticated principals and their exact process-scope policy.
+        Ok(
+            if request.principal_id.as_str() == "pri_local"
+                && request.scope.definition_id.as_str() == "def_counter"
+                && request.operation == ProcessAuthorizationOperation::Start
+            {
+                ProcessAuthorizationDecision::Authorized
+            } else {
+                ProcessAuthorizationDecision::Denied
+            },
+        )
+    }
 }

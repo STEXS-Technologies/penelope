@@ -15,6 +15,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Add verified machine-to-linear/graph saga bootstrap through native process
+  commits. Pin the receiver durably on first machine intent claim, preventing
+  retargeting after uncertain delivery. SQLite schema 9 preserves version-8
+  acceptance and refuses pending deliveries whose original receiver is unknown.
+
 - Add source-bound machine-to-task admission through the native task journal,
   with read-only receipt verification and no implicit worker restart. Add a
   bounded asynchronous view of the existing SQLite task journal.

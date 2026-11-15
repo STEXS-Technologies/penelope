@@ -615,7 +615,7 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
     let version: u32 = connection
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 8);
+    assert_eq!(version, 9);
 }
 
 #[path = "support/commit_integrity.rs"]

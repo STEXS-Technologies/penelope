@@ -305,3 +305,36 @@ This checkpoint proves task admission and recovery boundaries. Production saga
 composition, final performance/coverage campaigns and complete F0–F8 release
 qualification remain open. No successful external effect or automatic retry is
 inferred from an admission receipt.
+
+## Native machine-to-saga admission checkpoint
+
+`MachineSagaReceiver` admits a source-authorized intent through the existing
+linear or graph engine and native atomic process commit. The receiver pins the
+workflow, principal and policy identity. Native start authorization precedes
+writes; source context and unchanged native replay events are retained separately.
+Redelivery recovers the original start time and batch, including after later
+escalation. Admission dispatches no effect and grants no retry authority.
+
+The optional `ProcessCommitVerifier` authenticates the complete retained native
+batch through the same verifier used by commit retries. Read-only tests reject
+missing commit markers or actions and install write-aborting triggers to prove
+that receipt lookup cannot repair history. The original `ProcessStore` contract
+remains unchanged.
+
+First source claims now persist their receiver identity. Reopening with a changed
+receiver cannot admit the intent again after a lost source acknowledgement.
+Schema 9 preserves accepted receipts; pending version-8 deliveries with unknown
+receiver identity require reviewed recovery and cannot be automatically retargeted.
+Migration crash tests preserve rows and uncertainty across transaction cuts.
+
+[Source hashes, logs and retained fuzz corpora](evidence/machine-saga/manifest.json)
+record workspace tests, strict Clippy/rustdoc, Rust 1.89, independent consumers,
+frozen legacy imports, 3,136 parity observations, 66 script tests and seven
+signed-source conformance cases. Focused saga tests cover source/native denial,
+racing starts, lost acknowledgements, read-only complete-batch verification,
+advanced histories and 20 SIGKILL cases across shared/separate databases and
+linear/graph engines. Final-source saga and outbox fuzz campaigns each completed
+10,000 cases (seeds 518 and 519).
+
+This checkpoint completes the production admission bridges. Final performance,
+coverage and complete F0–F8 release qualification remain open.

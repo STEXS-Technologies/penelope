@@ -14,7 +14,8 @@ pub use penelope_ports::payloads;
 /// Saga-specific admission, history, definitions and outbox storage.
 pub use penelope_ports::{
     AtomicProcessCommit, AtomicProcessCommitReceipt, AtomicProcessCommitReceiptValidationError,
-    DefinitionRegistry, Inbox, InboxAcceptanceReceipt, OutboxStore, ProcessStore,
+    DefinitionRegistry, Inbox, InboxAcceptanceReceipt, OutboxStore, ProcessCommitVerifier,
+    ProcessStore,
 };
 
 /// Task-specific journal contracts for portable and hosted applications.

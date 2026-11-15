@@ -19,3 +19,7 @@ pub mod inbox;
 
 /// Canonical application-machine payloads and checked durable preparation.
 pub mod machine;
+
+/// Read-only exact native process batch verification.
+mod process_commits;
+pub use process_commits::ProcessCommitVerifier;

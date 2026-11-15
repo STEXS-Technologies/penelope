@@ -1,6 +1,7 @@
-//! Deterministic saga coordination, recoverable execution and optional timelines.
+//! Typed state machines, saga coordination, recoverable tasks and optional timelines.
 //!
-//! Start with [`saga`] for linear or graph coordination and [`task`] for bounded
+//! Start with [`machine`] for typed state transitions. Add [`saga`] for linear or
+//! graph coordination and [`task`] for bounded
 //! recovery and supervision. [`storage`] supplies protocol-specific durable ports;
 //! [`integration`] supplies external canonical-evidence boundaries. Enable the
 //! `timeline` feature for bounded rewindable computation.

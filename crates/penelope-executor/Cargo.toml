@@ -13,6 +13,7 @@ penelope-core = { workspace = true }
 penelope-domain = { workspace = true }
 penelope-ports = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
@@ -21,7 +22,6 @@ penelope-sqlite = { version = "0.4.0", path = "../penelope-sqlite" }
 rusqlite.workspace = true
 syn = { version = "2", features = ["full", "visit"] }
 proptest = { workspace = true }
-serde_json = { workspace = true }
 
 [[bench]]
 name = "linear_saga"

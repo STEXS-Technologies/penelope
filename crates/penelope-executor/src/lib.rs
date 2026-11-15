@@ -22,3 +22,6 @@ pub mod saga_machine;
 
 /// Source-authorized machine handoff into native task admission.
 pub mod machine_task;
+
+/// Source-authorized machine bootstrap through native linear/graph saga commits.
+pub mod machine_saga;

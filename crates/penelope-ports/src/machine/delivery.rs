@@ -118,11 +118,16 @@ pub trait MachineIntentAcceptor: Send + Sync {
 pub struct MachineIntentStatus {
     pub source: MachineIntentSource,
     pub attempt: MachineDeliveryAttempt,
+    /// Receiver pinned on first claim; absent for unclaimed or legacy unknown delivery.
+    pub consumer: Option<MachineSourceId>,
     pub accepted: Option<MachineIntentAcceptance>,
 }
 /// Claims coordinate source-authorized handoff, never direct external execution.
 /// Expired/reopened attempts retain uncertainty and require receiver reconciliation.
 /// Receiver verification is pinned by the host adapter, never supplied per call.
+/// The first claim durably pins the configured consumer before receiver admission.
+/// Reclaim/validation/ACK cannot retarget an attempted intent; unknown legacy
+/// targets require explicit reconciliation rather than guessing a new receiver.
 /// Every method authorizes before returning scoped data. Acknowledgement verifies
 /// the native receiver receipt and rechecks exact live fencing under transaction.
 #[async_trait]

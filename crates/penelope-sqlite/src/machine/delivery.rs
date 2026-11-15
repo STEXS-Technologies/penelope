@@ -70,19 +70,21 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
                 context,
                 request.scope,
                 MachineOperation::ClaimIntents {
+                    consumer: self.consumer,
                     owner: request.owner,
                 },
             )
             .await?;
         let clock = Arc::clone(&self.clock);
         let limits = self.limits;
+        let consumer = self.consumer;
         let payloads = self.store.payloads;
         let storage = self.store.limits;
         self.store
             .worker
             .run(move |connection| {
                 Ok(claim::<N>(
-                    connection, request, &*clock, limits, payloads, storage,
+                    connection, request, &*clock, limits, payloads, storage, consumer,
                 ))
             })
             .map_err(worker_error)?
@@ -108,6 +110,7 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
                 },
             )
             .await?;
+        let consumer = self.consumer;
         let lease = copy_lease(lease, self.store.payloads)?;
         let clock = Arc::clone(&self.clock);
         let payloads = self.store.payloads;
@@ -116,7 +119,7 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
             .run(move |connection| {
                 let result = (|| {
                     let transaction = connection.transaction().map_err(|e| db_error(&e))?;
-                    check::<N>(&transaction, &lease, payloads, &*clock, false).map(|_| ())
+                    check::<N>(&transaction, &lease, payloads, &*clock, false, consumer).map(|_| ())
                 })();
                 Ok(result)
             })
@@ -152,6 +155,7 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
                     Ok(Some(MachineIntentStatus {
                         source,
                         attempt: delivery.map_or(MachineDeliveryAttempt::ZERO, |row| row.attempt),
+                        consumer: delivery.and_then(|row| row.target),
                         accepted: delivery.and_then(|row| acceptance(source, row)),
                     }))
                 })();
@@ -191,7 +195,7 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
             .run(move |connection| {
                 let result = (|| {
                     let transaction = connection.transaction().map_err(|e| db_error(&e))?;
-                    check::<N>(&transaction, &owned, payloads, &*clock, true).map(|_| ())
+                    check::<N>(&transaction, &owned, payloads, &*clock, true, consumer).map(|_| ())
                 })();
                 Ok(result)
             })
@@ -231,6 +235,7 @@ fn claim<const N: usize>(
     limits: MachineOutboxLimits,
     payloads: MachinePayloadLimits,
     storage: SqliteLimits,
+    consumer: MachineSourceId,
 ) -> Result<Vec<MachineIntentLease>, MachineStoreError> {
     if request.max_intents == 0
         || request.max_intents > limits.max_claims
@@ -285,6 +290,9 @@ fn claim<const N: usize>(
             break;
         };
         let previous = read_delivery(&transaction, request.scope, intent)?;
+        if previous.is_some_and(|row| row.target != Some(consumer)) {
+            return Err(MachineStoreError::Conflict);
+        }
         let attempt = previous
             .map_or(Some(1), |row| row.attempt.get().checked_add(1))
             .filter(|n| *n <= u64::from(limits.max_attempts))
@@ -320,18 +328,20 @@ fn claim<const N: usize>(
             token,
             expires,
             attempt: MachineDeliveryAttempt::new(attempt),
+            target: Some(consumer),
             accepted: None,
         };
         write(
             &transaction,
-            "INSERT INTO machine_intent_delivery(machine_key,intent,owner,token,expires,attempt) VALUES(?1,?2,?3,?4,?5,?6) ON CONFLICT(machine_key,intent) DO UPDATE SET owner=excluded.owner,token=excluded.token,expires=excluded.expires,attempt=excluded.attempt",
+            "INSERT INTO machine_intent_delivery(machine_key,intent,owner,token,expires,attempt,consumer) VALUES(?1,?2,?3,?4,?5,?6,?7) ON CONFLICT(machine_key,intent) DO UPDATE SET owner=excluded.owner,token=excluded.token,expires=excluded.expires,attempt=excluded.attempt",
             params![
                 key(request.scope).as_slice(),
                 intent.bytes().as_slice(),
                 request.owner.bytes().as_slice(),
                 i64::try_from(token.get()).map_err(|_invalid| MachineStoreError::Capacity)?,
                 expires.get().to_be_bytes().as_slice(),
-                i64::try_from(attempt).map_err(|_invalid| MachineStoreError::Capacity)?
+                i64::try_from(attempt).map_err(|_invalid| MachineStoreError::Capacity)?,
+                consumer.bytes().as_slice()
             ],
         )?;
         #[cfg(all(test, unix))]
@@ -368,7 +378,7 @@ fn claim<const N: usize>(
     super::tests::cut("outbox-claim-after-usage");
     // Recheck every source and lease after all writes, including trigger effects.
     for lease in &leases {
-        check::<N>(&transaction, lease, payloads, clock, false)?;
+        check::<N>(&transaction, lease, payloads, clock, false, consumer)?;
     }
     #[cfg(all(test, unix))]
     super::tests::cut("outbox-claim-after-validation");
@@ -391,7 +401,14 @@ fn acknowledge<const N: usize>(
         .map_err(|e| db_error(&e))?;
     #[cfg(all(test, unix))]
     super::tests::cut("outbox-ack-after-begin");
-    let (delivery, tick) = check::<N>(&transaction, lease, payloads, clock, true)?;
+    let (delivery, tick) = check::<N>(
+        &transaction,
+        lease,
+        payloads,
+        clock,
+        true,
+        verified.consumer,
+    )?;
     let source = lease.metadata().source;
     if let Some(previous) = acceptance(source, delivery) {
         return if previous == verified {
@@ -414,7 +431,14 @@ fn acknowledge<const N: usize>(
     #[cfg(all(test, unix))]
     super::tests::cut("outbox-ack-after-write");
     record_time(&transaction, source.head.scope, tick)?;
-    let (stored, _) = check::<N>(&transaction, lease, payloads, clock, true)?;
+    let (stored, _) = check::<N>(
+        &transaction,
+        lease,
+        payloads,
+        clock,
+        true,
+        verified.consumer,
+    )?;
     if acceptance(source, stored) != Some(verified) {
         return Err(MachineStoreError::Corrupt);
     }

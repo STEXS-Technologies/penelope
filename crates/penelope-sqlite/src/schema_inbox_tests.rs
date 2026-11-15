@@ -137,7 +137,7 @@ fn sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 8 } else { 5 },
+            if phase == "after-commit" { 9 } else { 5 },
             "{phase}"
         );
         let indexed: bool = connection
@@ -156,8 +156,8 @@ fn sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows() {
             reopened
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            8
+            9
         );
-        println!("populated-v5 phase={phase} signal=9 rows_preserved=true reopen_version=8");
+        println!("populated-v5 phase={phase} signal=9 rows_preserved=true reopen_version=9");
     }
 }

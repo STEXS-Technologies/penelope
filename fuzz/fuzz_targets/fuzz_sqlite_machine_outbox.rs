@@ -19,12 +19,12 @@ impl MachineLeaseClock for Clock {
         Ok(MachineLeaseTick::new(self.0.load(Ordering::SeqCst)))
     }
 }
-struct Receiver;
+struct Receiver(u8);
 #[async_trait]
 impl MachineIntentAcceptor for Receiver {
     type Receipt = u8;
     fn identity(&self) -> MachineSourceId {
-        MachineSourceId::from_bytes([8; 32])
+        MachineSourceId::from_bytes([self.0; 32])
     }
     async fn verify(
         &self,
@@ -59,7 +59,7 @@ fuzz_target!(|data: &[u8]| {
     let mut outbox = SqliteMachineOutbox::new(
         Arc::clone(&store),
         Arc::clone(&clock),
-        Arc::new(Receiver),
+        Arc::new(Receiver(8)),
         LIMITS,
     )
     .unwrap();
@@ -70,7 +70,7 @@ fuzz_target!(|data: &[u8]| {
     let mut leases: Vec<MachineIntentLease> = Vec::new();
     for op in data.chunks(2).take(36) {
         let argument = op.get(1).copied().unwrap_or(0);
-        match op[0] % 7 {
+        match op[0] % 8 {
             0 => {
                 let small = argument & 1 != 0;
                 let result = block_on(outbox.claim(
@@ -112,7 +112,7 @@ fuzz_target!(|data: &[u8]| {
                 if let Some(lease) = leases.get(usize::from(argument) % leases.len().max(1)) {
                     let current = lease.metadata().token.get() == attempts;
                     let live = current && !accepted && tick < expires;
-                    if op[0] % 7 == 2 {
+                    if op[0] % 8 == 2 {
                         assert_eq!(
                             block_on(outbox.validate(&true, lease)),
                             if live {
@@ -140,7 +140,7 @@ fuzz_target!(|data: &[u8]| {
                 outbox = SqliteMachineOutbox::new(
                     Arc::clone(&store),
                     Arc::clone(&clock),
-                    Arc::new(Receiver),
+                    Arc::new(Receiver(8)),
                     LIMITS,
                 )
                 .unwrap();
@@ -151,12 +151,47 @@ fuzz_target!(|data: &[u8]| {
                     Err(MachineStoreError::Denied)
                 );
             }
-            _ => {
+            6 => {
                 assert_eq!(
                     block_on(outbox.status(&true, SCOPE, MachineIntentId::from_bytes([5; 32])))
                         .unwrap(),
                     None
                 );
+            }
+            _ => {
+                if attempts > 0 {
+                    let changed = SqliteMachineOutbox::new(
+                        Arc::clone(&store),
+                        Arc::clone(&clock),
+                        Arc::new(Receiver(9)),
+                        LIMITS,
+                    )
+                    .unwrap();
+                    for lease in &leases {
+                        assert_eq!(
+                            block_on(changed.validate(&true, lease)),
+                            Err(MachineStoreError::Conflict)
+                        );
+                        assert_eq!(
+                            block_on(changed.acknowledge(&true, lease, &42)),
+                            Err(MachineStoreError::Conflict)
+                        );
+                    }
+                    let result = block_on(changed.claim(
+                        &true,
+                        MachineIntentClaim {
+                            scope: SCOPE,
+                            owner: MachineLeaseOwner::from_bytes([9; 32]),
+                            max_intents: 1,
+                            max_bytes: 512,
+                        },
+                    ));
+                    if !accepted && expires <= tick {
+                        assert_eq!(result.err(), Some(MachineStoreError::Conflict));
+                    } else {
+                        assert!(result.unwrap().is_empty());
+                    }
+                }
             }
         }
         let status = block_on(outbox.status(&true, SCOPE, MachineIntentId::from_bytes([4; 32])))
@@ -164,6 +199,14 @@ fuzz_target!(|data: &[u8]| {
             .unwrap();
         assert_eq!(status.source.commit, receipt.identity);
         assert_eq!(status.attempt.get(), attempts);
+        assert_eq!(
+            status.consumer,
+            if attempts > 0 {
+                Some(MachineSourceId::from_bytes([8; 32]))
+            } else {
+                None
+            }
+        );
         assert_eq!(status.accepted.is_some(), accepted);
         let head = block_on(store.load_head(&true, SCOPE)).unwrap().unwrap();
         assert_eq!(head.head(), receipt.head);

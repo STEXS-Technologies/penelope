@@ -128,6 +128,12 @@ cannot replace the verifier on an acknowledgement. Host authorization covers
 claim, validation, status and acknowledgement before any scoped reads or native
 receipt lookup.
 
+The first claim persists the configured consumer before returning any lease.
+Validation, reclaim and acknowledgement require that same consumer, including
+after reopen. Changing receiver namespace, workflow policy or input schema cannot
+turn an uncertain delivery into a fresh downstream operation. `status.consumer`
+reports the retained receiver; first-claim authorization also receives it.
+
 A claim binds the full source scope/definition, committed revision, event, commit
 identity, ordered intent metadata and immutable payload. It adds a distinct owner,
 durable fencing token, expiry and attempt count. The trusted lease clock is separate
@@ -172,9 +178,18 @@ and deferred commit failure. Process-death tests cover eleven claim/ack boundari
 and five populated version-7 migration boundaries. The dedicated real-SQLite
 outbox fuzzer compares bounded operation sequences to an independent lease,
 expiry and acceptance oracle. Tests use explicitly configured receiver fixtures;
-The production task receiver below builds on those source guarantees. The saga
-bridge and full release qualification remain separate work. See [checkpoint evidence](evidence/machine-outbox/manifest.json).
+The production task and saga receivers below build on those source guarantees. Full
+release qualification remains separate work. See [checkpoint evidence](evidence/machine-outbox/manifest.json).
 
+
+Schema version 9 permits the consumer to be retained before acceptance, reusing
+the existing metadata columns and logical charge. Migration preserves all source,
+lease and accepted receipt bytes. Version-8 pending deliveries have no recorded
+consumer: migration preserves that uncertainty, and claim/validate/ACK refuse
+these unknown targets. Restore the original receiver and reconcile authoritative
+acceptance under an explicitly reviewed recovery procedure; do not clear attempts
+or assign a new receiver based on missing acknowledgement. Already accepted
+version-8 receipts retain their consumer and exact acknowledgement behavior.
 
 ## Admit a recoverable task
 
@@ -222,3 +237,44 @@ worker. A full queue refuses immediately. Dropping an accepted call does not
 cancel its transaction; resolve a missing receipt by reading native history.
 Input/output copies are bounded by the configured blob limit, and failed blob
 reads leave the caller's buffer unchanged.
+
+
+## Admit a saga
+
+`penelope::saga::MachineSagaReceiver` starts a host-pinned linear or graph workflow
+through the existing engines, `ProcessStore` and `ProcessPayloadStore`. Configure
+a `MachineSagaDefinition`, authenticated service principal, native
+`ProcessAuthorizer`, receiver namespace and source input bound. Source authorization
+and native `Start` authorization both run before any native writes. The receiver
+identity binds this exact policy; the source-bound outbox preserves it on reclaim.
+
+Claim, call `receiver.accept(&outbox, &context, &lease, logical_time)`, then
+acknowledge its `MachineSagaReceipt` through the source outbox. The
+[durable consumer](../../ci/machine-consumer/durable.rs) uses one counter model,
+recovers its state, admits a task and then admits a saga from a second event.
+The example performs admission only and dispatches no external effect.
+
+Each source/receiver pair has one deterministic native process scope, start input,
+first action and outcome identities. The original engines produce the start and
+exact outcome plan. Bootstrap atomically commits native outcomes and the first
+action with `input: None`: no machine event is mislabeled as a canonical event,
+timer, manual decision or task result. The native v1 event bytes and outcome
+formats retain their existing meaning and replay through the existing engines.
+No new saga evaluator or machine-shaped process journal is introduced.
+
+The immutable source payload is retained in the derived native process scope as
+admission context; the native start event is stored separately for replay. The
+workflow definition supplies its step payloads and recovery policy. Source bytes
+do not silently replace those commands. Applications can read the context by the
+source digest exposed by the verified receipt.
+
+Receipt verification uses the optional `ProcessCommitVerifier` port to check the
+retained native commit marker, frontier, exact outcomes and first action. SQLite
+shares the native commit-retry verifier under a read transaction; verification
+never resubmits or repairs a batch. The receiver also checks original recorded
+time, replay event and source bytes. Competing starts and lost acknowledgements
+resolve by native lookup; later outcomes do not cause another start. Escalated
+or otherwise advanced sagas keep their native retry, compensation, reconciliation
+and manual-review authority. Source acknowledgement proves native admission,
+not dispatch or effect completion. Native outbox workers handle subsequent work
+through the existing authorization and idempotency protocol.

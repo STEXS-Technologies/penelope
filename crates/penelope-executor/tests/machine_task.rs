@@ -592,3 +592,67 @@ fn native_scope_quota_refuses_admission_without_acknowledging_source() {
         None,
     );
 }
+
+#[test]
+fn reopened_outbox_with_changed_receiver_cannot_admit_a_second_task_after_lost_source_ack() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("machine.db");
+    let store = source(&path);
+    let tasks = journal(&directory.path().join("tasks.db"));
+    let original =
+        Arc::new(MachineTaskReceiver::new(Arc::clone(&tasks), NAMESPACE, definition(), 1).unwrap());
+    let clock = Arc::new(Clock(AtomicU64::new(100)));
+    let outbox = SqliteMachineOutbox::new(
+        Arc::clone(&store),
+        Arc::clone(&clock),
+        Arc::clone(&original),
+        OUTBOX,
+    )
+    .unwrap();
+    let first = block_on(outbox.claim(&true, claim())).unwrap().remove(0);
+    let native = block_on(original.accept(&outbox, &true, &first, TaskTick::new(1))).unwrap();
+    drop(outbox);
+    drop(store);
+    let reopened_store = Arc::new(machine::open(&path));
+    let changed = Arc::new(
+        MachineTaskReceiver::new(
+            Arc::clone(&tasks),
+            MachineSourceId::from_bytes([99; 32]),
+            definition(),
+            1,
+        )
+        .unwrap(),
+    );
+    let other = SqliteMachineOutbox::new(
+        Arc::clone(&reopened_store),
+        Arc::clone(&clock),
+        Arc::clone(&changed),
+        OUTBOX,
+    )
+    .unwrap();
+    assert!(matches!(
+        block_on(changed.accept(&other, &true, &first, TaskTick::new(2))),
+        Err(MachineTaskHandoffError::Source(MachineStoreError::Conflict))
+    ));
+    let changed_scope = changed
+        .binding(first.metadata().source, first.payload())
+        .unwrap()
+        .scope();
+    assert_eq!(
+        block_on(tasks.read(changed_scope, TaskSequence::ZERO)).unwrap(),
+        None
+    );
+    clock.0.store(110, Ordering::SeqCst);
+    assert!(matches!(
+        block_on(other.claim(&true, claim())),
+        Err(MachineStoreError::Conflict)
+    ));
+    let resumed =
+        SqliteMachineOutbox::new(reopened_store, clock, Arc::clone(&original), OUTBOX).unwrap();
+    let reclaimed = block_on(resumed.claim(&true, claim())).unwrap().remove(0);
+    assert_eq!(
+        block_on(original.accept(&resumed, &true, &reclaimed, TaskTick::new(3))).unwrap(),
+        native
+    );
+    block_on(resumed.acknowledge(&true, &reclaimed, &native)).unwrap();
+}

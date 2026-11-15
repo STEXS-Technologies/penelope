@@ -126,6 +126,7 @@ dependencies = [
  "penelope-domain",
  "penelope-ports",
  "serde",
+ "serde_json",
  "thiserror",
 ]
 

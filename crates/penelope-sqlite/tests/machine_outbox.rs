@@ -546,3 +546,109 @@ fn counter_substitution_exhaustion_and_deferred_commit_failure_return_no_lease()
         assert_eq!(count, 0);
     }
 }
+
+#[test]
+fn receiver_is_durably_pinned_before_admission_and_cannot_change_on_reclaim() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("outbox.db");
+    let (store, clock, outbox, receiver) = setup(&path);
+    let first = block_on(outbox.claim(&true, request())).unwrap().remove(0);
+    let mut changed = Receiver::from_source(first.metadata().source);
+    changed.consumer = MachineSourceId::from_bytes([99; 32]);
+    let changed = Arc::new(changed);
+    let other = SqliteMachineOutbox::new(
+        Arc::clone(&store),
+        Arc::clone(&clock),
+        Arc::clone(&changed),
+        LIMITS,
+    )
+    .unwrap();
+    assert_eq!(
+        block_on(other.validate(&true, &first)),
+        Err(MachineStoreError::Conflict)
+    );
+    assert_eq!(
+        block_on(other.acknowledge(&true, &first, &42)),
+        Err(MachineStoreError::Conflict)
+    );
+    assert_eq!(changed.calls.load(Ordering::SeqCst), 0);
+    clock.0.store(110, Ordering::SeqCst);
+    drop(outbox);
+    drop(other);
+    drop(store);
+    let reopened = Arc::new(open(&path));
+    let reopened_other =
+        SqliteMachineOutbox::new(Arc::clone(&reopened), Arc::clone(&clock), changed, LIMITS)
+            .unwrap();
+    assert!(matches!(
+        block_on(reopened_other.claim(&true, request())),
+        Err(MachineStoreError::Conflict)
+    ));
+    let original =
+        SqliteMachineOutbox::new(reopened, clock, Arc::clone(&receiver), LIMITS).unwrap();
+    let status = block_on(original.status(&true, SCOPE, first.metadata().source.intent.identity))
+        .unwrap()
+        .unwrap();
+    assert_eq!(status.consumer, Some(receiver.consumer));
+    assert_eq!(status.attempt.get(), 1);
+    let next = block_on(original.claim(&true, request()))
+        .unwrap()
+        .remove(0);
+    assert_eq!(next.metadata().attempt.get(), 2);
+    block_on(original.acknowledge(&true, &next, &42)).unwrap();
+}
+
+#[test]
+fn version8_pending_unknown_receiver_is_not_reinterpreted_and_accepted_receipts_survive() {
+    for accepted in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("outbox.db");
+        let (store, clock, outbox, receiver) = setup(&path);
+        let lease = block_on(outbox.claim(&true, request())).unwrap().remove(0);
+        if accepted {
+            block_on(outbox.acknowledge(&true, &lease, &42)).unwrap();
+        }
+        drop(outbox);
+        drop(store);
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        machine_schema::downgrade_to_v8(&sql);
+        drop(sql);
+        clock.0.store(110, Ordering::SeqCst);
+        let upgraded_outbox =
+            SqliteMachineOutbox::new(Arc::new(open(&path)), clock, Arc::clone(&receiver), LIMITS)
+                .unwrap();
+        let status =
+            block_on(upgraded_outbox.status(&true, SCOPE, lease.metadata().source.intent.identity))
+                .unwrap()
+                .unwrap();
+        assert_eq!(status.attempt.get(), 1);
+        assert_eq!(status.accepted.is_some(), accepted);
+        if accepted {
+            assert_eq!(status.consumer, Some(receiver.consumer));
+            block_on(upgraded_outbox.acknowledge(&true, &lease, &42)).unwrap();
+            assert!(
+                block_on(upgraded_outbox.claim(&true, request()))
+                    .unwrap()
+                    .is_empty()
+            );
+        } else {
+            assert_eq!(status.consumer, None);
+            assert!(matches!(
+                block_on(upgraded_outbox.claim(&true, request())),
+                Err(MachineStoreError::Conflict)
+            ));
+            assert_eq!(
+                block_on(upgraded_outbox.validate(&true, &lease)),
+                Err(MachineStoreError::Conflict)
+            );
+            assert_eq!(
+                block_on(upgraded_outbox.acknowledge(&true, &lease, &42)),
+                Err(MachineStoreError::Conflict)
+            );
+            assert_eq!(receiver.calls.load(Ordering::SeqCst), 0);
+        }
+    }
+}
+
+#[path = "support/machine_schema.rs"]
+mod machine_schema;
