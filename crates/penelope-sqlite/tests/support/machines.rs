@@ -157,9 +157,16 @@ pub(super) fn batch(
     event: u64,
     id: u8,
 ) -> Arc<MachineCommitBatch<2>> {
+    batch_id(owner, event, MachineEventId::from_bytes([id; 32]))
+}
+pub(super) fn batch_id(
+    owner: &mut MemoryMachine<Model, 2>,
+    event: u64,
+    id: MachineEventId,
+) -> Arc<MachineCommitBatch<2>> {
     let context = TransitionContext {
         expected: owner.read().0,
-        event: MachineEventId::from_bytes([id; 32]),
+        event: id,
         event_digest: Digest::of(&event.to_le_bytes()).0,
         logical_time: MachineLogicalTime::new(7),
     };

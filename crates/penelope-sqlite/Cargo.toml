@@ -30,6 +30,10 @@ name = "durable_store"
 harness = false
 
 [[bench]]
+name = "machine_store"
+harness = false
+
+[[bench]]
 name = "worker_poll"
 harness = false
 
