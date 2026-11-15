@@ -6,11 +6,13 @@
 
 use std::num::{NonZeroU32, NonZeroU64};
 
+use penelope::saga::{
+    ActionResultObservation, EngineError, LinearSagaDefinition, LinearSagaInput, RetryBackoff,
+    RetryJitterSeed, RetryPolicy, SagaStatus, StepPlan, prepare_linear,
+};
 use penelope::{
-    ActionId, ActionResultObservation, ContentDigest, DefinitionId, DefinitionVersion, DomainError,
-    EngineError, LinearSagaDefinition, LogicalTime, ProcessActionKind, ProcessId, RetryBackoff,
-    RetryJitterSeed, RetryPolicy, RetryTimerScheduleRequest, SagaStatus, StepId, StepPlan,
-    TenantId, apply_action_result, fire_retry_timer, schedule_retry_timer, start,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, LogicalTime,
+    ProcessActionKind, ProcessId, StepId, TenantId,
 };
 use thiserror::Error;
 
@@ -50,30 +52,37 @@ fn main() -> Result<(), ExampleError> {
     );
     let tenant_id = identifier::<TenantId>("tnt_market")?;
     let process_id = identifier::<ProcessId>("prc_trade_retry")?;
-    let first = start(
+    let (_, first) = prepare_linear(
         &definition,
-        tenant_id.clone(),
-        process_id.clone(),
-        identifier::<ActionId>("act_settle_first")?,
-    )?;
+        None,
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::Start {
+            input_id: identifier("inp_start")?,
+            action_id: identifier::<ActionId>("act_settle_first")?,
+        },
+    )?
+    .into_parts();
     let first_action = first
         .next_action
         .as_ref()
         .ok_or(ExampleError::MissingTimer)?;
 
-    let waiting = schedule_retry_timer(
+    let (_, waiting) = prepare_linear(
         &definition,
-        &first.projection,
-        tenant_id.clone(),
-        process_id.clone(),
-        &RetryTimerScheduleRequest::new(
-            ActionResultObservation::retryable_failure(first_action.action_id.clone()),
-            Some(identifier("act_settle_timer")?),
-            LogicalTime(10_000),
-            RetryJitterSeed::from_digest(ContentDigest([7; 32])),
-        )
-        .with_deadline(LogicalTime(10_100)),
-    )?;
+        Some(&first.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::RetryTimerScheduled {
+            input_id: identifier("inp_retryable")?,
+            observation: ActionResultObservation::retryable_failure(first_action.action_id.clone()),
+            next_action_id: Some(identifier("act_settle_timer")?),
+            observed_at: LogicalTime(10_000),
+            jitter_seed: RetryJitterSeed::from_digest(ContentDigest([7; 32])),
+            retry_deadline: Some(LogicalTime(10_100)),
+        },
+    )?
+    .into_parts();
     let timer = waiting
         .retry_timer_schedule()
         .ok_or(ExampleError::MissingTimer)?;
@@ -83,27 +92,35 @@ fn main() -> Result<(), ExampleError> {
 
     // A real outer layer atomically persisted `waiting` and `timer` before
     // calling its timer adapter. The adapter now returns this typed firing.
-    let retry = fire_retry_timer(
+    let (_, retry) = prepare_linear(
         &definition,
-        &waiting.projection,
-        tenant_id.clone(),
-        process_id.clone(),
-        &timer.action.action_id,
-        timer.due_at,
-        identifier("act_settle_retry")?,
-    )?;
+        Some(&waiting.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::RetryTimerFired {
+            input_id: identifier("inp_timer_fired")?,
+            timer_action_id: timer.action.action_id.clone(),
+            fired_at: timer.due_at,
+            next_action_id: identifier("act_settle_retry")?,
+        },
+    )?
+    .into_parts();
     let retry_action = retry
         .next_action
         .as_ref()
         .ok_or(ExampleError::MissingTimer)?;
-    let complete = apply_action_result(
+    let (_, complete) = prepare_linear(
         &definition,
-        &retry.projection,
-        tenant_id,
-        process_id,
-        &ActionResultObservation::succeeded(retry_action.action_id.clone()),
-        None,
-    )?;
+        Some(&retry.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::ActionResult {
+            input_id: identifier("inp_retry_result")?,
+            observation: ActionResultObservation::succeeded(retry_action.action_id.clone()),
+            next_action_id: None,
+        },
+    )?
+    .into_parts();
     if complete.projection.status == SagaStatus::Completed {
         Ok(())
     } else {

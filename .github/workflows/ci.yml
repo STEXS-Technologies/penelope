@@ -31,6 +31,8 @@ jobs:
       - run: cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin nested --locked
+      - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked
+      - run: ./scripts/check-saga-machine-parity.sh
       - run: cargo check -p penelope-core --no-default-features --locked
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
       - run: cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz
@@ -90,6 +92,8 @@ jobs:
       - run: cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin nested --locked
+      - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked
+      - run: ./scripts/check-saga-machine-parity.sh
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
       - name: Preserve MSRV property regression seeds
         if: failure()

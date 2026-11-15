@@ -20,8 +20,8 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | F0 | Freeze and reproduce 0.4 baseline | In progress | [Baseline](baseline.md), compatibility fixture, CI, chaos and comparable performance runs |
 | F1 | Resolve kernel, hierarchy, publication, protocol and feature contracts | Design in progress | ADRs and compiling public API fixtures |
 | F2 | Allocation-free machine kernel and hierarchy | In progress | Truth tables, failed staging/publication, replay oracle, portable build and allocation probe |
-| F3 | Saga adapter and proven shared internals | Pending | Legacy/new differential decisions, errors and bytes |
-| F4 | Task adapter and verified composition | Pending | Recovery, fencing, ambiguity and journal parity |
+| F3 | Saga adapter and proven shared internals | Prepared views and 0.4 parity; integration in progress | Legacy/new differential decisions, errors and bytes |
+| F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Pending | Correction, replay, scope, scratch and finality parity |
 | F6 | Machine journal, SQLite and effect bridges | Pending | Independent codec, CAS, duplicates, crash/reopen, quotas and receipt verification |
 | F7 | Consolidate API, internals, docs and examples | Facade paths established; integration pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
@@ -60,5 +60,7 @@ performance tolerances. Proposal sketches remain sketches until compile-tested.
 completed checks, approved MSRV change and remaining qualification work.
 
 The first [machine checkpoint](machine.md) provides the portable owner and
-hierarchy helper, with independent facade consumer examples. Specialized adapters,
-durable admission and shared-internal extraction remain pending.
+hierarchy helper, with independent facade consumer examples. The implemented
+[public preparation API](public-api.md) now includes saga/task inspection, and
+[shared intent admission](staging-extraction.md) has differential evidence. Durable
+admission, effect bridges and timeline composition remain pending.

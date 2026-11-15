@@ -96,8 +96,7 @@ impl TaskProjection {
             tick,
             event,
         };
-        let mut candidate = *self;
-        candidate.apply(&record)?;
+        self.evaluate(&record)?;
         Ok(record)
     }
 
@@ -105,10 +104,27 @@ impl TaskProjection {
     /// # Errors
     /// Rejects invalid scope, order, generation, policy, quotas and transitions.
     pub fn apply(&mut self, record: &TaskRecord) -> Result<(), TaskError> {
-        let mut candidate = *self;
-        candidate.apply_inner(record)?;
-        *self = candidate;
+        *self = self.evaluate(record)?;
         Ok(())
+    }
+
+    /// Evaluates one proposed record on an isolated copy, without journal or runtime I/O.
+    /// Persist and verify admission through the existing task journal before applying
+    /// the record or issuing a runtime command. This view cannot start a task.
+    /// # Errors
+    /// Returns the exact record validation errors and precedence used by `apply`.
+    pub fn prepare(&self, record: TaskRecord) -> Result<PreparedTask<'_>, TaskError> {
+        Ok(PreparedTask {
+            before: self,
+            next: self.evaluate(&record)?,
+            record,
+        })
+    }
+
+    fn evaluate(&self, record: &TaskRecord) -> Result<Self, TaskError> {
+        let mut next = *self;
+        next.apply_inner(record)?;
+        Ok(next)
     }
 
     fn apply_inner(&mut self, r: &TaskRecord) -> Result<(), TaskError> {
@@ -438,4 +454,38 @@ pub fn replay(
         projection.apply(&record)?;
     }
     Ok(projection)
+}
+
+/// Isolated task projection and its proposed v1 record. Dropping aborts inspection;
+/// extracting the record does not admit it durably or authorize runtime execution.
+/// This projection view has no dispatch intents; runtime commands remain under
+/// TaskControl and its journal-first admission and fencing rules.
+pub struct PreparedTask<'projection> {
+    before: &'projection TaskProjection,
+    next: TaskProjection,
+    record: TaskRecord,
+}
+impl PreparedTask<'_> {
+    /// Transfers the proposed record to the existing journal admission path.
+    pub const fn into_record(self) -> TaskRecord {
+        self.record
+    }
+}
+impl crate::machine::PreparedDecision for PreparedTask<'_> {
+    type State = TaskProjection;
+    type Provenance = TaskRecord;
+    type Intent = core::convert::Infallible;
+
+    fn before(&self) -> Option<&TaskProjection> {
+        Some(self.before)
+    }
+    fn candidate(&self) -> &TaskProjection {
+        &self.next
+    }
+    fn provenance(&self) -> &TaskRecord {
+        &self.record
+    }
+    fn intents(&self) -> impl Iterator<Item = &Self::Intent> {
+        core::iter::empty()
+    }
 }

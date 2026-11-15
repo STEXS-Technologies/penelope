@@ -16,3 +16,6 @@ mod graph_outcomes;
 
 /// Bounded authorized integration calls through existing ports.
 pub mod services;
+
+/// Saga candidates inspected through the common prepared-decision view.
+pub mod saga_machine;

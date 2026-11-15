@@ -20,3 +20,9 @@ pub use penelope_executor::graph::{
     GraphEngineError, GraphSagaDecision, GraphSagaEvent, GraphSagaEventEnvelope, GraphSagaInput,
     GraphSagaProjection, apply_graph_result, replay_graph, replay_graph_ordered, start_graph,
 };
+
+/// Prepared saga views retain legacy events, errors and durable commit authority.
+pub use penelope_executor::saga_machine::{
+    LinearSagaSource, PreparedGraphSaga, PreparedLinearSaga, prepare_graph_result,
+    prepare_graph_start, prepare_linear,
+};

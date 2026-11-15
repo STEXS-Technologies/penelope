@@ -17,3 +17,7 @@ path = "../../crates/penelope/examples/counter_machine.rs"
 [[bin]]
 name = "nested"
 path = "../../crates/penelope/examples/nested_order.rs"
+
+[[bin]]
+name = "decisions"
+path = "../../crates/penelope/examples/prepared_decisions.rs"

@@ -121,3 +121,12 @@ old dependencies and Rust 1.85; do not rewrite it as new-version evidence.
 The first [shared admission extraction](staging-extraction.md) has two real
 callers and preserves domain-specific poisoning, provenance and error meanings.
 Its cross-crate helper is internal support, not a new application API.
+
+## Prepared decision inspection
+
+One portable `PreparedDecision` trait supplies read-only before-state, candidate,
+native provenance and native intents. It intentionally supplies no generic commit,
+authorization or dispatch operation. Saga adapters use the original decision
+engines; task preparation shares the existing projection evaluator. Missing old
+coordinates remain missing rather than receiving synthetic machine identities.
+See [public APIs](public-api.md) and [adapter evidence](prepared-adapters.md).

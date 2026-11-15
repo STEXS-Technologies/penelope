@@ -1,0 +1,7 @@
+{
+  "library_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+  "fixture_sha256": "2c2893572926f69fa8390ddedf8c893ee41152875e91f71fbd0cf160debd858e",
+  "output_sha256": "1e78e040cbb8db6e073b1415b4f391482d863555f4a0a09bbc9e10169e165357",
+  "rows": 3136,
+  "description": "Unmodified 0.4 library sources; external facade consumer, resolved dependencies pinned by baseline/Cargo.lock."
+}

@@ -3,10 +3,13 @@
 //! A real adapter must durably append every decision and obtain verified
 //! canonical evidence before passing an observation to the pure engine.
 
+use penelope::saga::{
+    ActionResultObservation, CompensationPlan, LinearSagaDefinition, LinearSagaInput, RetryPolicy,
+    SagaStatus, StepPlan, prepare_linear,
+};
 use penelope::{
-    ActionId, ActionResultObservation, CompensationPlan, ContentDigest, DefinitionId,
-    DefinitionVersion, DomainError, LinearSagaDefinition, ProcessId, RetryPolicy, SagaStatus,
-    StepId, StepPlan, TenantId, apply_action_result, start,
+    ActionId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, ProcessId, StepId,
+    TenantId,
 };
 use thiserror::Error;
 
@@ -62,36 +65,53 @@ fn main() -> Result<(), ExampleError> {
     let tenant_id = identifier::<TenantId>("tnt_market")?;
     let process_id = identifier::<ProcessId>("prc_trade_failure")?;
 
-    let lock = start(
+    let (_, lock) = prepare_linear(
         &definition,
-        tenant_id.clone(),
-        process_id.clone(),
-        identifier("act_lock_seller")?,
-    )?;
-    let settle = apply_action_result(
-        &definition,
-        &lock.projection,
-        tenant_id.clone(),
-        process_id.clone(),
-        &ActionResultObservation::succeeded(action_id(&lock)?),
-        Some(identifier("act_settle")?),
-    )?;
-    let unlock = apply_action_result(
-        &definition,
-        &settle.projection,
-        tenant_id.clone(),
-        process_id.clone(),
-        &ActionResultObservation::terminal_failure(action_id(&settle)?),
-        Some(identifier("act_unlock_seller")?),
-    )?;
-    let completed = apply_action_result(
-        &definition,
-        &unlock.projection,
-        tenant_id,
-        process_id,
-        &ActionResultObservation::succeeded(action_id(&unlock)?),
         None,
-    )?;
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::Start {
+            input_id: identifier("inp_lock")?,
+            action_id: identifier("act_lock_seller")?,
+        },
+    )?
+    .into_parts();
+    let (_, settle) = prepare_linear(
+        &definition,
+        Some(&lock.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::ActionResult {
+            input_id: identifier("inp_lock_result")?,
+            observation: ActionResultObservation::succeeded(action_id(&lock)?),
+            next_action_id: Some(identifier("act_settle")?),
+        },
+    )?
+    .into_parts();
+    let (_, unlock) = prepare_linear(
+        &definition,
+        Some(&settle.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::ActionResult {
+            input_id: identifier("inp_settle_result")?,
+            observation: ActionResultObservation::terminal_failure(action_id(&settle)?),
+            next_action_id: Some(identifier("act_unlock_seller")?),
+        },
+    )?
+    .into_parts();
+    let (_, completed) = prepare_linear(
+        &definition,
+        Some(&unlock.projection),
+        &tenant_id,
+        &process_id,
+        &LinearSagaInput::ActionResult {
+            input_id: identifier("inp_unlock_result")?,
+            observation: ActionResultObservation::succeeded(action_id(&unlock)?),
+            next_action_id: None,
+        },
+    )?
+    .into_parts();
 
     if completed.projection.status == SagaStatus::Compensated {
         Ok(())

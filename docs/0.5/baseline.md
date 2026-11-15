@@ -82,3 +82,9 @@ benches, the completed seed-one fuzz round and the deliberately interrupted
 three-round campaign. It also records the baseline advisory failures and
 subsequent approved Rust 1.89 dependency fixes. Commands above describe the old
 baseline; run them at the baseline commit to reproduce the old MSRV profile.
+
+The full unchanged-source default chaos campaign has now completed with exit zero:
+three rounds, 1,000 property cases, and 22 fuzz targets per round with at least
+10,000 executions each. [Raw evidence and counts](evidence/baseline-complete-chaos/)
+supersede the earlier interrupted attempt. Remaining compatibility-fixture and
+performance qualification gaps stay explicit in the verification ledger.

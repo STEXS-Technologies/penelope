@@ -273,6 +273,25 @@ impl<M: Machine, const CAPACITY: usize> PreparedTransition<'_, M, CAPACITY> {
     }
 }
 
+impl<M: Machine, const CAPACITY: usize> PreparedDecision for PreparedTransition<'_, M, CAPACITY> {
+    type State = M::State;
+    type Provenance = TransitionRecord;
+    type Intent = ProposedIntent<M::Effect>;
+
+    fn before(&self) -> Option<&M::State> {
+        Some(&self.owner.state)
+    }
+    fn candidate(&self) -> &M::State {
+        self.state()
+    }
+    fn provenance(&self) -> &TransitionRecord {
+        &self.record
+    }
+    fn intents(&self) -> impl Iterator<Item = &Self::Intent> {
+        self.intents()
+    }
+}
+
 // len/bytes include the retained prefix; new slots start after that prefix.
 struct Staging<'pending, Effect, const CAPACITY: usize> {
     old: &'pending IntentBatch<Effect, CAPACITY>,

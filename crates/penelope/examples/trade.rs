@@ -5,8 +5,8 @@
 //! action ID. It may advance only after verified, correlated evidence arrives.
 
 use penelope::saga::{
-    ActionResultObservation, LinearSagaDefinition, LinearSagaEvent, RetryPolicy, SagaDecision,
-    SagaStatus, StepPlan, apply_action_result, start,
+    ActionResultObservation, LinearSagaDefinition, LinearSagaEvent, LinearSagaInput, RetryPolicy,
+    SagaDecision, SagaStatus, StepPlan, prepare_linear,
 };
 use penelope::{
     ActionId, CausationId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, InputId,
@@ -157,14 +157,12 @@ fn main() -> Result<(), ExampleError> {
     let start_input_id = identifier::<InputId>("inp_trade_start")?;
     let mut next_sequence = 0_u64;
     let first_action_id = identifier::<ActionId>("act_lock_seller")?;
-    let start_event =
-        LinearSagaEvent::started(&definition, start_input_id, first_action_id.clone());
-    let mut decision = start(
-        &definition,
-        tenant_id.clone(),
-        process_id.clone(),
-        first_action_id,
-    )?;
+    let start_input = LinearSagaInput::Start {
+        input_id: start_input_id,
+        action_id: first_action_id,
+    };
+    let (start_event, mut decision) =
+        prepare_linear(&definition, None, &tenant_id, &process_id, &start_input)?.into_parts();
     validate_outcome_plan(
         &start_event,
         &decision,
@@ -177,19 +175,20 @@ fn main() -> Result<(), ExampleError> {
         // A real adapter obtains this only after durable StateChronicle evidence.
         let observed = ActionResultObservation::succeeded(action.action_id.clone());
         let next_action_id = next_action_ids.next();
-        let event = LinearSagaEvent::ActionResultObserved {
+        let input = LinearSagaInput::ActionResult {
             input_id: input_ids.next().ok_or(ExampleError::MissingInputId)?,
-            observation: observed.clone(),
-            next_action_id: next_action_id.clone(),
-        };
-        decision = apply_action_result(
-            &definition,
-            &decision.projection,
-            tenant_id.clone(),
-            process_id.clone(),
-            &observed,
+            observation: observed,
             next_action_id,
-        )?;
+        };
+        let (event, next) = prepare_linear(
+            &definition,
+            Some(&decision.projection),
+            &tenant_id,
+            &process_id,
+            &input,
+        )?
+        .into_parts();
+        decision = next;
         validate_outcome_plan(
             &event,
             &decision,

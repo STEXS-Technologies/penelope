@@ -1,6 +1,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
+use penelope_core::machine::PreparedDecision;
 use penelope_domain::{
     ActionId, CausationId, ContentDigest, DefinitionId, DefinitionVersion, InputId, LogicalTime,
     OutcomeActor, OutcomeId, ProcessActionKind, ProcessId, ProcessOutcomeFact, ProcessScope,
@@ -8,14 +9,16 @@ use penelope_domain::{
 };
 use penelope_executor::engine::{
     ActionResult, ActionResultObservation, CompensationPlan, LinearSagaDefinition, LinearSagaEvent,
-    LinearSagaEventEnvelope, LinearSagaInput, ProcessGraphDefinition, RetryBackoff,
-    RetryJitterSeed, RetryPolicy, RetryTimerScheduleRequest, StepPlan, apply_action_result,
-    apply_manual_resolution, fire_retry_timer, replay, replay_ordered, schedule_retry_timer, start,
+    LinearSagaEventEnvelope, LinearSagaInput, LinearSagaProjection, ProcessGraphDefinition,
+    RetryBackoff, RetryJitterSeed, RetryPolicy, RetryTimerScheduleRequest, StepPlan,
+    apply_action_result, apply_manual_resolution, fire_retry_timer, replay, replay_ordered,
+    schedule_retry_timer, start,
 };
 use penelope_executor::graph::{
     GraphSagaEventEnvelope, GraphSagaInput, apply_graph_result, replay_graph, replay_graph_ordered,
     start_graph,
 };
+use penelope_executor::saga_machine::prepare_linear;
 use penelope_ports::ManualReviewResolution;
 use std::num::{NonZeroU32, NonZeroU64};
 
@@ -24,6 +27,33 @@ fn identifier<T: TryFrom<&'static str>>(value: &'static str) -> T {
         Ok(identifier) => identifier,
         Err(_) => unreachable!(),
     }
+}
+
+fn check_preparation(
+    definition: &LinearSagaDefinition,
+    before: Option<&LinearSagaProjection>,
+    tenant: &TenantId,
+    process: &ProcessId,
+    input: &LinearSagaInput,
+) {
+    let expected = penelope_executor::engine::decide(
+        definition,
+        before,
+        tenant.clone(),
+        process.clone(),
+        input,
+    )
+    .map(|decision| (input.to_event(definition), decision));
+    let actual = prepare_linear(definition, before, tenant, process, input).map(|ready| {
+        assert_eq!(ready.before(), before);
+        assert_eq!(ready.candidate(), &ready.decision().projection);
+        assert_eq!(
+            ready.intents().count(),
+            usize::from(ready.decision().next_action.is_some())
+        );
+        ready.into_parts()
+    });
+    assert_eq!(actual, expected);
 }
 
 fuzz_target!(|data: &[u8]| {
@@ -101,6 +131,15 @@ fuzz_target!(|data: &[u8]| {
     let tenant_id = identifier::<TenantId>("tnt_fuzz");
     let process_id = identifier::<ProcessId>("prc_fuzz");
     let action_id = identifier::<ActionId>("act_fuzz_start");
+    let start_input = LinearSagaInput::Start {
+        input_id: identifier("inp_fuzz_start"),
+        action_id: action_id.clone(),
+    };
+    check_preparation(&definition, None, &tenant_id, &process_id, &start_input);
+    if let Ok(input) = serde_json::from_slice::<LinearSagaInput>(data) {
+        check_preparation(&definition, None, &tenant_id, &process_id, &input);
+    }
+
     let replay_events = [
         LinearSagaEvent::started(
             &definition,
@@ -212,6 +251,17 @@ fuzz_target!(|data: &[u8]| {
             action_id: active_action.action_id.clone(),
             result,
         };
+        check_preparation(
+            &definition,
+            Some(&decision.projection),
+            &tenant_id,
+            &process_id,
+            &LinearSagaInput::ActionResult {
+                input_id: identifier("inp_fuzz_result"),
+                observation: observation.clone(),
+                next_action_id: next_action_id.clone(),
+            },
+        );
         let Ok(next) = apply_action_result(
             &definition,
             &decision.projection,

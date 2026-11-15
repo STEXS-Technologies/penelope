@@ -1,7 +1,9 @@
 # Initial stabilization and facade verification
 
-This is an incremental checkpoint, not 0.5 release qualification. The machine
-kernel, hierarchy, adapters and durable machine protocol remain unimplemented.
+This is an incremental verification ledger, not 0.5 release qualification.
+Earlier sections describe their original checkpoint; later sections record the
+machine kernel, hierarchy, shared admission and prepared adapters. The durable
+machine protocol remains pending.
 The [evidence manifest](evidence/manifest.json) contains compressed raw logs,
 exit codes and hashes. Candidate source hashes identify the changed checkout.
 
@@ -32,7 +34,7 @@ that assertion and uses 100 samples.
 Baseline audit and deny checks failed on RUSTSEC-2026-0459 (bundled SQLite) and
 RUSTSEC-2026-0486 (rustix). Preserve these failures as baseline deviations.
 
-## Candidate changes
+## Initial facade/dependency candidate changes
 
 The user explicitly approved Rust 1.89 as the new workspace minimum to consume
 patched bundled SQLite. Workspace manifests inherit the minimum; CI installs
@@ -107,3 +109,33 @@ and correction fuzzers each passed 10,000 instrumented runs with seed 502.
 Allocation/memory benchmark records are identical to the parent. This checkpoint
 consolidates metadata admission only; specialized engine adapters and full release
 qualification remain pending.
+
+## Prepared saga/task adapter checkpoint
+
+[The adapter record](prepared-adapters.md) and [implemented public API](public-api.md)
+record the shared inspection interface and distinct commit authorities. Logs,
+checkpoint source hashes and full parent/candidate RISC-V profile bundles are in
+[evidence/prepared-adapters](evidence/prepared-adapters/). The independently compiled
+0.4 saga observations and their source/output hashes are in `ci/saga-parity/baseline`.
+
+Workspace library/integration tests, documentation and strict all-target Clippy
+passed. Rust 1.89 passed the new task parity tests, existing zero-allocation
+probes, bare-metal core/timeline builds, facade example consumers and three-way
+saga parity. Trade, compensation and timer examples passed through preparation.
+Task-history and linear-engine instrumented fuzzers passed at least 10,000 runs
+with seed 503 (the linear corpus initialization executed 55,967 inputs).
+The fixed-port RISC-V stack bound remains 115,056 bytes, with the independent
+65,552-byte positive-control branch accounted for. Full latency and release
+qualification, runtime effect bridges and machine durability remain outstanding.
+
+## Completed unchanged 0.4 chaos campaign
+
+The full default campaign subsequently passed on the clean original
+`42ec187c9adfc7403b06215f405f2575f53c35c2` checkout: three rounds/seeds, 1,000
+property cases and all 22 fuzz targets per round with at least 10,000 executions
+each. Exit zero, raw output, toolchains, lock hash and all 66 target-run counts are
+preserved in [baseline-complete-chaos](evidence/baseline-complete-chaos/).
+This supersedes the earlier interrupted baseline attempt; that attempt remains
+recorded rather than being relabeled successful. These original-source results
+do not qualify the final 0.5 candidate or erase the baseline advisories. Bench
+output produced by all-target tests is not isolated performance evidence.

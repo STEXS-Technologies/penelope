@@ -1,5 +1,6 @@
 #![no_main]
 use libfuzzer_sys::fuzz_target;
+use penelope_core::machine::PreparedDecision;
 use penelope_ports::task::*;
 
 fuzz_target!(|data: &[u8]| {
@@ -124,15 +125,25 @@ fuzz_target!(|data: &[u8]| {
             event,
         };
         let before = projection;
+        let prepared = projection.prepare(record).map(|ready| {
+            assert_eq!(ready.before(), Some(&before));
+            assert_eq!(*ready.provenance(), record);
+            assert_eq!(ready.intents().count(), 0);
+            (*ready.candidate(), ready.into_record())
+        });
         match projection.apply(&record) {
             Ok(()) => {
+                assert_eq!(prepared, Ok((projection, record)));
                 accepted.push(record);
                 assert_eq!(
                     replay(scope, definition, accepted.clone()).unwrap(),
                     projection
                 );
             }
-            Err(_) => assert_eq!(projection, before),
+            Err(error) => {
+                assert_eq!(prepared, Err(error));
+                assert_eq!(projection, before);
+            }
         }
         assert!(projection.generation().get() <= definition.recovery.max_attempts);
         // Independently exercise the safety boundary of every accepted live

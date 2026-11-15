@@ -1,4 +1,6 @@
 //! A pure flat machine. Intents describe work; this example executes no I/O effects.
+#[path = "support/inspection.rs"]
+mod inspection;
 use penelope::machine::*;
 
 struct Counter;
@@ -70,10 +72,12 @@ fn main() -> Result<(), MachineFailure<MachineError>> {
         logical_time: MachineLogicalTime::new(1),
     };
     if let PrepareDecision::Ready(ready) = counter.prepare(&3, context)? {
+        inspection::inspect("machine", &ready);
         println!("candidate={} (not published)", ready.state());
         ready.publish();
     }
-    println!("published={:?}", counter.read());
+    let (head, state) = counter.read();
+    println!("published revision={} state={state}", head.revision.get());
     for intent in counter.take_intents() {
         println!(
             "committed intent={} (not dispatched)",

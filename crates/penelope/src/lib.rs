@@ -93,3 +93,6 @@ pub mod runtime;
 
 /// Typed application machines; no storage or runtime is required.
 pub use penelope_core::machine;
+
+/// Typed transition inspection across machines, sagas and task projections.
+pub mod diagnostics;

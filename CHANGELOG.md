@@ -23,6 +23,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Common prepared-decision inspection across local machines, linear/graph sagas
+  and task projections. Saga adapters retain their existing decisions and commit
+  paths; task proposal/application share one isolated evaluator.
 - Portable `machine` API with typed context, bounded staged intents, consuming
   prepared publication and an optional single-path hierarchy helper. Flat and
   nested examples compile through the facade alone. Durable machine admission
