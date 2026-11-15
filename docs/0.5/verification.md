@@ -729,3 +729,22 @@ source/dependency identities and per-profile flags remain available. The canonic
 DTO diagnostic instead leaves patched-original encoding close to original and
 current encoding slower, with near-identical whole-process instruction counts;
 its cause remains unresolved. No security downgrade or weaker validation was used.
+
+## Owned-state and consumer cost
+
+`machine_state_cost` measures owned copying/counter updates, a direct consumer
+transition and the full in-memory machine path separately at 8/256/4096/65536
+bytes. It reuses the sampler/allocation probe and one counter model, with whole
+state and closed-form revision checks outside timing. All 12 profiles pass on
+Rust 1.100 and 1.89, including the debug all-target entry; strict core benchmark
+Clippy, formatting and package inclusion pass. All operation allocation probes
+remain zero, with a positive allocation control.
+
+[Raw measurements and limitations](evidence/machine-performance/state-cost.json)
+retain three pinned current runs and one pinned MSRV compatibility run. The
+minimal capacity-zero, effect-free counter is a separate profile: it does not
+replace the broader flat/hierarchy/intent measurements. Direct computation has
+no publication guarantee; its timing is not subtracted to claim exact kernel
+cost. Batch-mean quantiles and optimized owned copies do not establish physical
+copy counts, individual tails or release-wide performance acceptance. Durable,
+timeline-over-machine and native end-to-end measurements remain open.

@@ -1,0 +1,222 @@
+{
+  "source_commit": "df79a143f3ef447f1fc7a8bc7f8c2bc9e7ce0e7d",
+  "source_sha256": {
+    "crates/penelope-core/benches/machine_state_cost.rs": "b2a675f1df9673271c0ee77b19a2ac49fde9eea4ea93056a053105f53bc3a0f0",
+    "crates/penelope-core/benches/support/measurement.rs": "338745bfdc3bd7978fe5ecdde0a486f011471df77f618c7637de462c44b652e4",
+    "crates/penelope-core/tests/support/allocations.rs": "0e2bfddecfebb1105ddeff953cf740f981a9017f36f5b0119361d44123550e69",
+    "crates/penelope-core/Cargo.toml": "42a5ccd27442d5c3efefc7ad0aa85b23f4785092c733d874e97170012aa92d2b",
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9"
+  },
+  "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo +TOOLCHAIN bench --locked -p penelope-core --bench machine_state_cost",
+  "checks": [
+    {
+      "command": "cargo +1.100.0 clippy --locked -p penelope-core --benches --all-features -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.100.0 test --locked -p penelope-core --bench machine_state_cost",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.89.0 test --locked -p penelope-core --bench machine_state_cost",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.100.0 package -p penelope-core --locked --allow-dirty --list",
+      "exit_code": 0,
+      "scope": "New benchmark, shared sampler and allocation helper included; package list, not package compilation or publication."
+    },
+    {
+      "command": "cargo +1.100.0 fmt --all -- --check",
+      "exit_code": 0
+    }
+  ],
+  "runs": {
+    "Rust1.100.0": 3,
+    "Rust1.89.0": 1,
+    "profiles_per_run": 12,
+    "warmup_operations_per_profile": 128,
+    "samples_per_profile": 101,
+    "operations_per_sample": 32,
+    "allocation_probe_operations_per_profile": 32,
+    "cpu": 4
+  },
+  "scope": [
+    "Same owned-array counter model at8/256/4096/65536bytes for direct consumer transition versus full MemoryMachine publication. Separate owned-copy-and-counter control.",
+    "Effect type Infallible, capacity0, trivial model validation, always-accepted event. This isolates a minimal pure state path; flat/hierarchy/intent benchmarks remain independent broader profiles.",
+    "Black-box input/output whole arrays; independent closed-form counter and every-word checks outside timing. Kernel additionally checks exact revision and no pending intents.",
+    "All allocation/reallocation/deallocation/requested-byte counts zero. Separate positive control requires one allocation and deallocation of16bytes.",
+    "No changes to portable production source, publication, validation, recovery, wire or authority rules; no new library dependencies or Clone bounds."
+  ],
+  "limitations": [
+    "Batch-mean quantiles, not individual-operation tail latency. Very short8byte controls approach timer/loop resolution.",
+    "Direct consumer/control paths provide no kernel publication or validation guarantee and are not interchangeable application APIs. Measurements are reported separately; no subtraction or normalization is claimed as isolated kernel overhead.",
+    "Compiler may optimize redundant copies and enum plumbing; measures resulting optimized paths, not mandated physical copy counts.",
+    "Fixed profile order, short runs on shared host with ongoing disjoint-core chaos campaign. Frequency, caches, thermals and unrelated activity uncontrolled. No cross-compiler speed claim, confidence interval or release acceptance.",
+    "Guard/intent/hierarchy dispatch, timeline-over-machine, durable machine SQLite and native end-to-end performance are outside this measurement; remaining release gates stay open."
+  ],
+  "selected_observations": [
+    {
+      "kind": "owned_copy_and_counter",
+      "state_bytes": 8,
+      "batch_mean_p50_ns_by_round": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "consumer_transition",
+      "state_bytes": 8,
+      "batch_mean_p50_ns_by_round": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "machine_publication",
+      "state_bytes": 8,
+      "batch_mean_p50_ns_by_round": [
+        28,
+        22,
+        22
+      ]
+    },
+    {
+      "kind": "owned_copy_and_counter",
+      "state_bytes": 256,
+      "batch_mean_p50_ns_by_round": [
+        15,
+        15,
+        11
+      ]
+    },
+    {
+      "kind": "consumer_transition",
+      "state_bytes": 256,
+      "batch_mean_p50_ns_by_round": [
+        15,
+        14,
+        12
+      ]
+    },
+    {
+      "kind": "machine_publication",
+      "state_bytes": 256,
+      "batch_mean_p50_ns_by_round": [
+        37,
+        36,
+        29
+      ]
+    },
+    {
+      "kind": "owned_copy_and_counter",
+      "state_bytes": 4096,
+      "batch_mean_p50_ns_by_round": [
+        87,
+        88,
+        88
+      ]
+    },
+    {
+      "kind": "consumer_transition",
+      "state_bytes": 4096,
+      "batch_mean_p50_ns_by_round": [
+        87,
+        87,
+        84
+      ]
+    },
+    {
+      "kind": "machine_publication",
+      "state_bytes": 4096,
+      "batch_mean_p50_ns_by_round": [
+        115,
+        108,
+        100
+      ]
+    },
+    {
+      "kind": "owned_copy_and_counter",
+      "state_bytes": 65536,
+      "batch_mean_p50_ns_by_round": [
+        1748,
+        1784,
+        1753
+      ]
+    },
+    {
+      "kind": "consumer_transition",
+      "state_bytes": 65536,
+      "batch_mean_p50_ns_by_round": [
+        1757,
+        1786,
+        1759
+      ]
+    },
+    {
+      "kind": "machine_publication",
+      "state_bytes": 65536,
+      "batch_mean_p50_ns_by_round": [
+        1803,
+        1803,
+        1786
+      ]
+    }
+  ],
+  "artifacts": {
+    "state-cost-1.100.0-build.jsonl.gz": {
+      "raw_sha256": "6dcc0fbddbc18b98439376e9b82324c17d633ae7ca466eef41f9abca3259bde7",
+      "gzip_sha256": "5666c8e5e0259209852eb18e1a488196f85917b8c714ef37d4c5fac3b5c0a02b"
+    },
+    "state-cost-1.100.0-build.log.gz": {
+      "raw_sha256": "61d2aa4c12a5e52b66d1080863fd072b751a2932e7d7d4dd65b4117b691fa795",
+      "gzip_sha256": "8461883599e8a90d1b461ed19bcb6e788a198bd920366769d4cb04bdf4576f36"
+    },
+    "state-cost-1.100.0-round-1.csv.gz": {
+      "raw_sha256": "03739d9904e2a8102d531ee6f2bee0342ce99871e6791458c5a34cf6c47b3a65",
+      "gzip_sha256": "728605f262ed508d58115dddbf2bbae125c0b6e8d65d8165b1a3ff48bd047d11"
+    },
+    "state-cost-1.100.0-round-2.csv.gz": {
+      "raw_sha256": "f1a1fc4809c1745f472fec9427357dbf8d81a4f8a93d510c06b7aada1ba046bb",
+      "gzip_sha256": "84bb3c4f0d7707a497dd4222e437c7c2b9d6f317f08e255c04fea3c9b867eb49"
+    },
+    "state-cost-1.100.0-round-3.csv.gz": {
+      "raw_sha256": "0afdb3c30b6689b49aa1156a0c6e211290404b59ca9771b3d181ad6c24d7fd91",
+      "gzip_sha256": "2ab9b2bc712cec4d65491143197c4a03af50f4a82065807e275362b06c1e0e1c"
+    },
+    "state-cost-1.89.0-build.jsonl.gz": {
+      "raw_sha256": "1dd66df2cce5a2b8f17afbb1d51ed8961b6c68be77fd70874183685791227f71",
+      "gzip_sha256": "f694b13123147e80cc1fded50b1be6676c8033e0d844ceadcacffac5be74b2e7"
+    },
+    "state-cost-1.89.0-build.log.gz": {
+      "raw_sha256": "55414aba5f45a40ac7487d792eb48aad28385bfc1f9c611ede2e99a29ea4ce5e",
+      "gzip_sha256": "ab80f123490d47a091143e05de4f7d79e372e927ecfa0eceb02a6b751a102d3b"
+    },
+    "state-cost-1.89.0-round-1.csv.gz": {
+      "raw_sha256": "becbf4f223491551b681980fb527fe0ecd69569659c4c06201c7795f4b70eacf",
+      "gzip_sha256": "049f0bceaff9fb9f99844ab85880a41980340bc2f0bb2a12738c54a0d5aaddd8"
+    },
+    "state-cost-metadata.json.gz": {
+      "raw_sha256": "089438a1b1654a455b5bfa57ec7d1630b58932521033e5f14a19a8bc05a2d552",
+      "gzip_sha256": "7f1c1d02e3fa562f309c31b4515a37e4ce0c3c73313245c489e203c87631e145"
+    },
+    "state-cost-clippy.log.gz": {
+      "raw_sha256": "2ca8ed3959b566f2db0e6398f361c960da9f42b8e4440bcd70899bb532682298",
+      "gzip_sha256": "f021a90477db6e2e3000239d7d2c4ca1225af5607e2961ac97e41033816f1e12"
+    },
+    "state-cost-debug.log.gz": {
+      "raw_sha256": "a520cc06daac947e6ac2826460265a254b168ebbf46871ca48e5708053f62e59",
+      "gzip_sha256": "885ee0b351ba31470c67ff4933ee79523fe8285f6a3f89b93f8985bd6542513c"
+    },
+    "state-cost-msrv-debug.log.gz": {
+      "raw_sha256": "8d18b09634304ca9a81be492b738a6739599a801eaafe4c35b8bb84914b91b97",
+      "gzip_sha256": "80a329323c709f315e2cdf65a305c91a7bbeca4699c37ddc2c109b2c4ffa938e"
+    },
+    "state-cost-package.log.gz": {
+      "raw_sha256": "1c92cc43af7fa095b1b2b05fc58184349ad882291a09874b895c8ae442f3c3d8",
+      "gzip_sha256": "d9b625e288f69ae69e312c58ed65d40d2510f8eea8725bcb5e2daf62ca12f915"
+    }
+  }
+}
