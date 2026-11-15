@@ -1,0 +1,79 @@
+{
+  "parent_commit": "347a939d5d980f512f9efb17b6dca4ffed857367",
+  "scope": "Actual old-writer schema-6 database, native public replay and byte/type-preserving upgrade to schema 9; separate original-backup restore and original reader refusal of upgraded stores.",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "b0c7c1a77be55d71e504457b647165c66b6a88913c0e709b6ed43793594eaf76",
+    "ci/sqlite-upgrade/Cargo.lock": "01b8f6ed3b06c177ea1d3027070e7f3e8f0645aa4f5bd4be264454776d1ba76d",
+    "ci/sqlite-upgrade/Cargo.toml": "1627a953664197002d08363c006c0db84dabb202b5b06d44a0d76e569790ea1f",
+    "ci/sqlite-upgrade/baseline/Cargo.lock": "5e15d390edd204d756892ee27b2b616a29852d86b3413be0983a6c99a08c04d0",
+    "ci/sqlite-upgrade/baseline/database.sqlite.gz": "7ef09f24f78ea69ae3ab3f09df3c8db7dfb00196827443208181441a6fba7ad2",
+    "ci/sqlite-upgrade/baseline/manifest.json": "06eef255941a46ddd1908781ddb1b17fd39ed607555d832dc1890f9d0a4d0167",
+    "ci/sqlite-upgrade/baseline/replay.txt": "f6c17fe0225e59bc711cd35b8010ac3864d852af3a3bdbf66e5203894cb1113b",
+    "ci/sqlite-upgrade/main.rs": "6b20bfc725fba4e86ad88650e7269eddcea85da7c4a8084b241029911f900dc0",
+    "docs/0.5/compatibility-matrix.md": "5d45f11b6efc0330df01b5f738c1ca1e04ff998fbc9f08456ecc548e2cc9d154",
+    "docs/0.5/verification.md": "82c5072fd75314193754453375539cab09082ad8212bcf116381ae2a6acd700f",
+    "scripts/check-sqlite-upgrade.py": "c335b5df584ce0cbc4e3b0c71a44975af50fe41715fd0ece7b78ee51fa329731",
+    "scripts/tests/test_sqlite_upgrade.py": "dfffcc5aff7b1d17b54e121ac8d3978096d56a662a39b7802c11ecde416b62c7"
+  },
+  "checks": [
+    {
+      "command": "cargo build --manifest-path /tmp/penelope-v040-upgrade-producer/Cargo.toml --locked",
+      "exit_code": 0,
+      "log": "baseline-locked.log.gz",
+      "raw_sha256": "2303bf6b363860ca5983aa54b3c9654330f560ec35197ad2daf415bb40949710",
+      "gzip_sha256": "c41be6aac5189768360fc443b8194c021269bfc3cc0a3c07203f0a73b61ff008"
+    },
+    {
+      "command": "python3 scripts/check-sqlite-upgrade.py",
+      "exit_code": 0,
+      "log": "candidate.log.gz",
+      "raw_sha256": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "gzip_sha256": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc"
+    },
+    {
+      "command": "RUSTUP_TOOLCHAIN=1.89.0 python3 scripts/check-sqlite-upgrade.py",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "gzip_sha256": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc"
+    },
+    {
+      "command": "Original baseline sqlite-upgrade read/refuse on upgraded and separately restored copies; assertions of unchanged upgraded rows/schema and identical restored replay",
+      "exit_code": 0,
+      "log": "rollback.log.gz",
+      "raw_sha256": "ed4003f0cf65eaae07df3b0b3e4ae2db989c3c53648535c6633d55db19b687ec",
+      "gzip_sha256": "c43ec21252264ec95cd731cc86160db4b54b8c379c056f4ea1284f8a962de96e"
+    },
+    {
+      "command": "cargo clippy --manifest-path ci/sqlite-upgrade/Cargo.toml --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "c20b265aed12ff27956c066ee16d168cdc0e1b12b0cc273e8bd7bdf74b909312",
+      "gzip_sha256": "c1321e60fe6f8e54f9a348eb0d6a966f22c21c2bb664a3516c75bfa125f5a942"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "56b29d5ddd69ba178ab4cd74e0dcc0de39b1f2f8c5d2fa642dc91fa7fa246208",
+      "gzip_sha256": "abde33075a1145423fdbf4b320dc6046adc99459cda82761a453b1d6801afdac"
+    },
+    {
+      "command": "./scripts/check-action-pins.sh",
+      "exit_code": 0,
+      "log": "pins.log.gz",
+      "raw_sha256": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "gzip_sha256": "553a849b1058ef3c8665e374133c8e354ea5b5980ed4d329398439a1b56ec05d"
+    }
+  ],
+  "baseline_binary_sha256": "e0e29d2999c6f0b586e2b33f646f0fb7b62212c174ee04c5398009ad070c39ac",
+  "baseline_source_sha256": "6b20bfc725fba4e86ad88650e7269eddcea85da7c4a8084b241029911f900dc0",
+  "baseline_manifest": "[package]\nname = \"penelope-sqlite-upgrade\"\nversion = \"0.0.0\"\nedition = \"2024\"\nrust-version = \"1.89\"\npublish = false\n\n[workspace]\n\n[dependencies]\npenelope-core = { path = \"/tmp/penelope-v040-baseline/crates/penelope-core\", features = [\"serde\"] }\npenelope-domain = { path = \"/tmp/penelope-v040-baseline/crates/penelope-domain\" }\npenelope-ports = { path = \"/tmp/penelope-v040-baseline/crates/penelope-ports\" }\npenelope-sqlite = { path = \"/tmp/penelope-v040-baseline/crates/penelope-sqlite\" }\nserde_json = \"1\"\n\n[[bin]]\nname = \"sqlite-upgrade\"\npath = \"main.rs\"\n",
+  "rollback_steps": [
+    "Write frozen original backup to isolated copy; old binary read output equals frozen replay.",
+    "Candidate read upgrades copy; snapshot all tables, rows, storage types and schemas.",
+    "Original binary refuse mode checks TaskPortError::Corrupt and PortError::Invariant, then verify unchanged snapshot and user_version 9.",
+    "Restore original frozen backup to a different path, read through old binary, compare exact replay and user_version 6. Dispatch remains disabled."
+  ],
+  "limitations": "One bounded fixture with default limits and a claimed unresolved action. No worker executes. This complements existing crash, corruption, fencing and migration tests; final full release qualification is still open."
+}

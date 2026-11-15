@@ -468,3 +468,30 @@ Workspace strict Clippy, focused tests, formatting and 70 script tests pass.
 retain the exact scope. Full archive test execution is not claimed: repository
 architecture tests intentionally inspect the workspace and fuzz harnesses.
 Final candidate versions, remaining performance and release qualification stay open.
+
+## Actual 0.4 SQLite writer upgrade and backup restore
+
+The new independent SQLite consumer compiles identical producer/reader source
+against the untouched `42ec187` checkout and the current adapter. Its old build
+uses only the original baseline dependency versions/checksums; the external
+consumer itself is the sole added lockfile package. The original writer creates
+schema 6 with task input/history/start, a consumed process input, outcome and
+commit, immutable process payload and a claimed unacknowledged external action.
+No worker or external effect runs.
+
+The frozen old database and expected public replay are retained independently
+of the candidate. On Rust 1.100 and 1.89, the current adapter upgrades it to
+schema 9, reopens again, preserves every row and table schema in all 15 legacy
+tables, reproduces exact task/process replay and payloads, and passes integrity
+checks. Storage types are compared along with values. Current/MSRV CI now run
+the same check. Actual original task/process adapters refuse the upgraded copy
+without changing its rows/version; separately restoring the original backup
+lets both old adapters replay it again.
+
+[Producer/database identities](../../ci/sqlite-upgrade/baseline/manifest.json),
+the frozen lock and [raw qualification logs](evidence/sqlite-upgrade/manifest.json)
+record this bounded case. Strict consumer Clippy, formatting, action pin checks
+and 72 script tests pass. This adds real cross-version evidence to the synthetic
+migration/failure suites; it does not qualify every existing deployment or
+authorize rolling back accepted external effects. The compatibility matrix now
+states the quiesced upgrade and separate-backup rollback procedure.

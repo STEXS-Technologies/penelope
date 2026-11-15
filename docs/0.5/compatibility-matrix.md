@@ -49,3 +49,21 @@ paths. `scripts/check-saga-machine-parity.sh` checks all of them on current Rust
 and Rust 1.89 without regenerating expected data from candidate libraries. These
 bounded fixtures supplement existing wire and migration suites; they do not
 prove every possible downstream program or deployment compatible.
+
+`python3 scripts/check-sqlite-upgrade.py` opens a frozen database written by the
+actual `42ec187` adapters with their original locked dependencies. It verifies
+all legacy table rows and schemas, exact task/process replay, payload bytes and
+SQLite integrity through schema 6 → 9 and a second reopen. The fixture retains
+an unacknowledged process lease; opening never dispatches or acknowledges it.
+Current Rust and MSRV CI run this check. The
+[producer identities](../../ci/sqlite-upgrade/baseline/manifest.json) and
+[upgrade/rollback evidence](evidence/sqlite-upgrade/manifest.json) bound its scope.
+
+For deployment, quiesce admission, workers and dispatchers and preserve a
+consistent schema-6 backup with the matching registry before opening the new
+adapter. Validate an isolated copy with dispatch disabled. Both original adapters
+refuse the upgraded schema; do not change `user_version` or run mixed versions.
+Rollback means separately restoring the original backup and prior deployment,
+after establishing exclusive authority and reconciling any post-backup work.
+Newly accepted work cannot be recovered by downgrading a schema or restoring an
+older snapshot alone. Follow the [operating procedure](../reliable-execution-operations.md#upgrades-retention-and-backuprestore).

@@ -1,0 +1,33 @@
+{
+  "baseline_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+  "baseline_schema": 6,
+  "database_sha256": "64c049a6afa6e33214ca32b8a6b0bcd1030fe6fb96e7bc9a65f34c31bb8e6472",
+  "database_gzip_sha256": "7ef09f24f78ea69ae3ab3f09df3c8db7dfb00196827443208181441a6fba7ad2",
+  "producer_source_sha256": "6b20bfc725fba4e86ad88650e7269eddcea85da7c4a8084b241029911f900dc0",
+  "producer_lock_sha256": "5e15d390edd204d756892ee27b2b616a29852d86b3413be0983a6c99a08c04d0",
+  "replay_sha256": "f6c17fe0225e59bc711cd35b8010ac3864d852af3a3bdbf66e5203894cb1113b",
+  "tables": {
+    "task_heads": 1,
+    "task_records": 2,
+    "task_blobs": 1,
+    "runtime_generations": 0,
+    "task_retirements": 0,
+    "process_usage": 1,
+    "process_heads": 1,
+    "process_outcomes": 1,
+    "process_inbox": 1,
+    "process_sources": 0,
+    "process_commits": 1,
+    "process_actions": 1,
+    "process_timers": 0,
+    "lease_counter": 1,
+    "process_payloads": 1
+  },
+  "producer_rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n",
+  "reproduction": "At baseline_commit, create an external Cargo project using ../Cargo.toml and ../main.rs, point the four path dependencies at the untouched baseline crates and use this Cargo.lock. cargo build --locked, then sqlite-upgrade write NEW_DATABASE. Preserve its stdout as replay.txt. Never generate expected database or replay with the candidate writer.",
+  "dependency_policy": "Started with the baseline root Cargo.lock and resolved only the external producer graph offline, preserving its reachable pinned dependencies.",
+  "scope": "Actual original public adapters write task input blob/history/start, consumed process input, outcome/commit, process payload and one claimed unacknowledged external action in a shared schema-6 database. No worker or effect executes.",
+  "limitations": "One bounded combined task/process database, default limits, single process scope and pure task. Does not replace arbitrary store migration, concurrency, corruption, SIGKILL or effect reconciliation tests.",
+  "baseline_root_lock_sha256": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+  "dependency_comparison": "Every (name, version, registry source, checksum) matches an original baseline root lock package, except the external penelope-sqlite-upgrade producer."
+}

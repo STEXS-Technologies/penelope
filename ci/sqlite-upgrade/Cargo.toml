@@ -1,0 +1,19 @@
+[package]
+name = "penelope-sqlite-upgrade"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.89"
+publish = false
+
+[workspace]
+
+[dependencies]
+penelope-core = { path = "../../crates/penelope-core", features = ["serde"] }
+penelope-domain = { path = "../../crates/penelope-domain" }
+penelope-ports = { path = "../../crates/penelope-ports" }
+penelope-sqlite = { path = "../../crates/penelope-sqlite" }
+serde_json = "1"
+
+[[bin]]
+name = "sqlite-upgrade"
+path = "main.rs"
