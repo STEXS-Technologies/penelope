@@ -681,3 +681,14 @@ copied libraries. The exact Rust code fence prints `count = 3` on Rust 1.100 and
 1.89 using one resolved lockfile. The qualification manifest records the fetched
 Git identity, compiled source digest, lockfile and complete log. This checks the
 default hosted onboarding path; optional deployment profiles remain separate.
+
+The complete external consumer matrix also passes on Rust 1.100 and 1.89:
+flat/nested/prepared facade examples, optional timeline and durable consumers,
+and the protected-worker progression with wrong-result refusal. Legacy import
+fixtures compile with default and all features. Frozen parity retains all 33,278
+task/timeline and 3,136 saga observations through both saga facade paths, without
+regenerating expectations. The original SQLite writer fixture upgrades and
+reopens twice on each toolchain with exact rows, schemas, replay and integrity
+across all 15 legacy tables. The qualification manifest retains every run log
+and all four consumer lock identities. Full chaos and final candidate gates
+remain open.

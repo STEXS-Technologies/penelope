@@ -85,6 +85,48 @@
         0
       ],
       "limitations": "Default hosted facade only; does not qualify optional storage/runtime deployment or future Git branch heads."
+    },
+    "external_consumer_matrix": {
+      "toolchains": [
+        "1.100.0",
+        "1.89.0"
+      ],
+      "facade_only_binaries": [
+        "flat",
+        "nested",
+        "decisions"
+      ],
+      "optional_binaries": {
+        "timeline": "timeline feature",
+        "durable": "durable feature"
+      },
+      "protected_script": "./scripts/run-supervised-saga-example.sh",
+      "protected_checks": [
+        "native saga/task completion and reopen without dispatch",
+        "machine task-result verification and next-event publication before native saga admission",
+        "wrong application result refused before machine result event"
+      ],
+      "legacy_imports": [
+        "default features",
+        "all features"
+      ],
+      "frozen_task_timeline_observations": 33278,
+      "frozen_saga_observations_per_facade_path": 3136,
+      "parity_command": "./scripts/check-saga-machine-parity.sh",
+      "sqlite_upgrade_command": "python3 scripts/check-sqlite-upgrade.py",
+      "sqlite_legacy_tables": 15,
+      "sqlite_upgrade_reopens_per_toolchain": 2,
+      "exit_codes": [
+        0,
+        0
+      ],
+      "lock_sha256": {
+        "ci/machine-consumer/Cargo.lock": "395842f80005e98c96c07c9a85fcb46e5b5b49bc16630fd4734e5ade0d7f1d66",
+        "ci/compat-0.4/Cargo.lock": "15480755ab85362a015ebf8190cd7c43a5e0d6c38d90fe24304da76bd7d56bd6",
+        "ci/saga-parity/Cargo.lock": "74a0764e22033afa302cfcbf12e6867913a3734caa9a3653ec23c44b65fdac15",
+        "ci/sqlite-upgrade/Cargo.lock": "01b8f6ed3b06c177ea1d3027070e7f3e8f0645aa4f5bd4be264454776d1ba76d"
+      },
+      "scope": "Existing external fixture sources and frozen original observations, no regenerated expectations. SQLite check verifies original schema-6 writer data through schema 9; not arbitrary deployment data or a full downgrade."
     }
   },
   "inconclusive_attempts": {
@@ -122,7 +164,17 @@
     "conformance.log.gz": "ea2f5170259e262cb8046fb685a080df0170beba023c136f7fa197906348d50f",
     "first-steps.json.gz": "3c3ab8670d58623e87dedd3addc48e0b9ffcd7cad48c9dfe52939d9dfcfe47dc",
     "first-steps.log.gz": "cbbd18574050af1e2b80617d2a8e8f3cb1f2ca0bd023cc59a9097b1be9af2f0f",
-    "first-steps-Cargo.lock.gz": "4fc364869a943653c206efec10318096cd122d3a002d15d6e8af61488b1d98bd"
+    "first-steps-Cargo.lock.gz": "4fc364869a943653c206efec10318096cd122d3a002d15d6e8af61488b1d98bd",
+    "consumers-1.100.0.log.gz": "7634f45d306dee27d5517e69d654d4a8d68ca344b60cfe3f24b8cc8e93410b31",
+    "protected-1.100.0.log.gz": "97b7e525eda52202773b30ba233dbac2f698bb31331582770d5229e55f426874",
+    "compat-1.100.0.log.gz": "1e31182087f583de386edeeef02e32e9eca6ff7dec2690a72171e24ef5911aa5",
+    "parity-1.100.0.log.gz": "53b3bbe6ace1d51e6ab74eaae15465de66157da55f35ab1c81e4593a12685651",
+    "upgrade-1.100.0.log.gz": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc",
+    "consumers-1.89.0.log.gz": "4bf58b6c053fc896c4c2d080fe97b34e8f68bec7fcd49ebad4b81c85ea4943a9",
+    "protected-1.89.0.log.gz": "a5813e12330137717ed1d6845d577c302485f9e8adcbc9628e5f5ba3c75e3b75",
+    "compat-1.89.0.log.gz": "7dd140b02a1f546f1fadc8f27561fed2d2d3c5abccff93ebf88c22a493560201",
+    "parity-1.89.0.log.gz": "e91694ca075943428d208dd8008f726e10745c76d94a046542b37045f471be7d",
+    "upgrade-1.89.0.log.gz": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc"
   },
   "build_input_hashes_reverified_at": "77e2822 (only documentation/evidence changed since tested source)",
   "active_campaign": {
