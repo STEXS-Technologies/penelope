@@ -209,6 +209,44 @@ fn run<const N: usize>(data: &[u8]) {
                 assert_eq!(metadata.digest, Digest::of(payload).0);
                 assert_eq!(metadata.payload_bytes, payload.len() as u64);
             }
+            let mut wire = vec![0; batch.record().encoded_len()];
+            batch.record().encode(&mut wire).unwrap();
+            let recovered = MachineStoredCommit::<N>::decode(
+                &wire,
+                batch.event(),
+                batch.state(),
+                batch.intents().map(|(_, b)| b),
+                limits,
+            )
+            .unwrap();
+            assert_eq!(recovered.batch().byte_len(), batch.byte_len());
+            let restored = recovered
+                .restore(
+                    Model,
+                    &Codec(0),
+                    SCOPE,
+                    &mut [0; 8],
+                    IntentLimits {
+                        max_intents: N,
+                        max_payload_bytes: 32,
+                    },
+                )
+                .unwrap();
+            assert_eq!(*restored.read().1, state + event);
+            assert_eq!(restored.pending_intents().count(), 0);
+            assert_eq!(recovered.receipt().identity, batch.record().identity());
+            let mut corrupt = batch.state().to_vec();
+            corrupt[usize::from(byte(8)) % 8] ^= 1;
+            assert!(
+                MachineStoredCommit::<N>::decode(
+                    &wire,
+                    batch.event(),
+                    &corrupt,
+                    batch.intents().map(|(_, b)| b),
+                    limits,
+                )
+                .is_err()
+            );
             let record = batch.record().header().transition;
             let mut receipt = MachineCommitReceipt {
                 head: MachineHead {
@@ -270,6 +308,15 @@ fn run<const N: usize>(data: &[u8]) {
     }
 }
 fuzz_target!(|data: &[u8]| {
+    let limits = MachinePayloadLimits {
+        max_record_bytes: 2048,
+        max_event_bytes: 64,
+        max_state_bytes: 64,
+        max_intent_bytes: 64,
+        max_batch_bytes: 4096,
+    };
+    // Arbitrary framing must remain bounded, even with an infinite payload source.
+    let _ = MachineStoredCommit::<4>::decode(data, data, data, core::iter::repeat(data), limits);
     match data.first().copied().unwrap_or(0) % 3 {
         0 => run::<0>(data),
         1 => run::<1>(data),

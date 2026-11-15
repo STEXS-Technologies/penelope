@@ -3,6 +3,9 @@ use penelope_core::{machine::*, task::Digest};
 use std::sync::Arc;
 use thiserror::Error;
 
+mod recovery;
+pub use recovery::*;
+
 /// Application-owned canonical payload interpretation, pinned to the complete
 /// model definition. Encoding must be deterministic and include all relevant
 /// state/event/effect data. Implementations must not consult mutable host state,

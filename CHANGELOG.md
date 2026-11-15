@@ -23,6 +23,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Bounded machine recovery payload verification and canonical snapshot restoration,
+  keeping recovered bytes distinct from new transition admission and dispatch.
 - Hosted machine payload preparation with bounded canonical encoding, immutable
   accepted batches and consuming receipt matching. The facade example shares
   its model with flat and timeline examples; durable storage remains pending.

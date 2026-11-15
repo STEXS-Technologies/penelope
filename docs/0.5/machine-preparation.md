@@ -58,3 +58,24 @@ exact duplicates versus conflicting batches, lost ACK and snapshot restoration.
 It is not production storage or crash-durability evidence. A dedicated bounded
 fuzzer compares preparation/publication against an independent outcome oracle at
 capacities 0, 1 and 4. These checks do not complete F1, F6 or F8.
+
+## Checked stored payloads
+
+`MachineStoredCommit<INTENTS>::decode` validates an exact wire record and its
+retained event, next-state and ordered intent bytes under explicit payload/batch
+limits. It checks all hashes and charges before copying payloads and consumes at
+most `INTENTS + 1` payload items, including from an unbounded source. Missing,
+extra, reordered or substituted payloads fail. Empty batches support capacity 0.
+The recovered object exposes read-only batch bytes and reconstructs exact
+already-committed receipt coordinates. It cannot yield the accepted-batch Arc
+used by a new preparation: structural recovery is distinct from model acceptance.
+
+`restore` checks the caller's configured complete scope and pinned model/codec,
+decodes the snapshot, requires byte-identical re-encoding, and invokes the native
+owner's invariant-checked restoration. This snapshot path evaluates no event and
+performs no dispatch. Local last-transition provenance and pending intents start
+empty, as documented by `MemoryMachine::restore`; durable pending intent bytes
+remain in the recovered batch for the upcoming authoritative outbox protocol.
+It does not reconstruct earlier pending batches, replay history, verify the
+predecessor chain, or authenticate the source. A trusted coherent journal read is
+still required. Checked recovery bytes alone do not establish SQLite durability.

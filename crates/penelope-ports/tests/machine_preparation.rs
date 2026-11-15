@@ -142,7 +142,7 @@ impl MachineCodec<Model> for Codec {
         write(state.0, output)
     }
     fn decode_state(&self, input: &[u8]) -> Result<State, CodecFault> {
-        Ok(State(read(input)?))
+        Ok(State(read(input)? + u64::from(self.0 == 11)))
     }
     fn encode_event(&self, event: &u64, output: &mut [u8]) -> Result<usize, CodecFault> {
         if self.0 == 9 {
@@ -779,4 +779,313 @@ fn zero_intent_profile_needs_no_effect_buffer_and_uses_the_same_preparation() {
         .unwrap();
     assert_eq!(owner.read().1, &State(13));
     assert_eq!(owner.pending_intents().count(), 0);
+}
+
+fn retained_batch() -> Arc<MachineCommitBatch<2>> {
+    let mut machine = owner(model());
+    let mut scratch = Scratch::default();
+    let context = context(machine.read().0, 8);
+    let MachineCommitDecision::Prepared(prepared) = prepare_machine_commit(
+        &mut machine,
+        &MachineCommitInput {
+            event: &8,
+            context,
+            codec: &Codec(0),
+            causation: None,
+        },
+        &mut scratch.buffers(),
+        LIMITS,
+    )
+    .unwrap() else {
+        panic!("accepted fixture")
+    };
+    prepared.batch()
+}
+fn encoded_record(batch: &MachineCommitBatch<2>) -> Vec<u8> {
+    let mut bytes = vec![0; batch.record().encoded_len()];
+    batch.record().encode(&mut bytes).unwrap();
+    bytes
+}
+
+#[test]
+fn stored_bytes_reconstruct_exact_receipt_and_non_clone_snapshot_without_pending_effects() {
+    let batch = retained_batch();
+    let record = encoded_record(&batch);
+    let stored = MachineStoredCommit::<2>::decode(
+        &record,
+        batch.event(),
+        batch.state(),
+        batch.intents().map(|(_, bytes)| bytes),
+        LIMITS,
+    )
+    .unwrap();
+    assert_eq!(
+        stored.receipt(),
+        receipt(&batch, MachineCommitDisposition::AlreadyCommitted)
+    );
+    assert_eq!(stored.batch().byte_len(), batch.byte_len());
+    assert_eq!(stored.batch().intents().count(), 1);
+    let restored = stored
+        .restore(
+            model(),
+            &Codec(0),
+            SCOPE,
+            &mut [0; 8],
+            IntentLimits {
+                max_intents: 2,
+                max_payload_bytes: 16,
+            },
+        )
+        .unwrap();
+    assert_eq!(restored.read(), (stored.receipt().head, &State(13)));
+    assert!(restored.last_transition().is_none());
+    assert_eq!(restored.pending_intents().count(), 0);
+}
+
+#[test]
+fn recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors() {
+    let batch = retained_batch();
+    let record = encoded_record(&batch);
+    let intent = batch.intents().next().unwrap().1;
+    for coordinate in 0..3 {
+        for offset in 0..8 {
+            let mut event = batch.event().to_vec();
+            let mut state = batch.state().to_vec();
+            let mut payload = intent.to_vec();
+            match coordinate {
+                0 => event[offset] ^= 1,
+                1 => state[offset] ^= 1,
+                _ => payload[offset] ^= 1,
+            }
+            assert_eq!(
+                MachineStoredCommit::<2>::decode(
+                    &record,
+                    &event,
+                    &state,
+                    [payload.as_slice()],
+                    LIMITS
+                )
+                .err(),
+                Some(MachineRecoveryError::PayloadMismatch)
+            );
+        }
+    }
+    for len in 0..8 {
+        assert!(
+            MachineStoredCommit::<2>::decode(
+                &record,
+                &batch.event()[..len],
+                batch.state(),
+                [intent],
+                LIMITS
+            )
+            .is_err()
+        );
+        assert!(
+            MachineStoredCommit::<2>::decode(
+                &record,
+                batch.event(),
+                &batch.state()[..len],
+                [intent],
+                LIMITS
+            )
+            .is_err()
+        );
+        assert!(
+            MachineStoredCommit::<2>::decode(
+                &record,
+                batch.event(),
+                batch.state(),
+                [&intent[..len]],
+                LIMITS
+            )
+            .is_err()
+        );
+    }
+    assert!(
+        MachineStoredCommit::<2>::decode(&record, batch.event(), batch.state(), [], LIMITS)
+            .is_err()
+    );
+    assert!(
+        MachineStoredCommit::<2>::decode(
+            &record,
+            batch.event(),
+            batch.state(),
+            [intent, intent],
+            LIMITS
+        )
+        .is_err()
+    );
+    let calls = std::cell::Cell::new(0);
+    let unbounded = std::iter::from_fn(|| {
+        calls.set(calls.get() + 1);
+        Some(intent)
+    });
+    assert!(
+        MachineStoredCommit::<2>::decode(&record, batch.event(), batch.state(), unbounded, LIMITS)
+            .is_err()
+    );
+    assert_eq!(calls.get(), 2); // One declared payload plus one bounded excess probe.
+    for field in 0..5 {
+        let mut limits = LIMITS;
+        match field {
+            0 => limits.max_record_bytes = record.len() - 1,
+            1 => limits.max_event_bytes = 7,
+            2 => limits.max_state_bytes = 7,
+            3 => limits.max_intent_bytes = 7,
+            _ => limits.max_batch_bytes = 424,
+        }
+        assert_eq!(
+            MachineStoredCommit::<2>::decode(
+                &record,
+                batch.event(),
+                batch.state(),
+                [intent],
+                limits
+            )
+            .err(),
+            Some(MachineRecoveryError::Capacity)
+        );
+    }
+    assert!(
+        MachineStoredCommit::<0>::decode(&record, batch.event(), batch.state(), [intent], LIMITS)
+            .is_err()
+    );
+}
+
+#[test]
+fn snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution() {
+    let batch = retained_batch();
+    let record = encoded_record(&batch);
+    let stored = MachineStoredCommit::<2>::decode(
+        &record,
+        batch.event(),
+        batch.state(),
+        batch.intents().map(|(_, b)| b),
+        LIMITS,
+    )
+    .unwrap();
+    let limits = IntentLimits {
+        max_intents: 2,
+        max_payload_bytes: 16,
+    };
+    let wrong_scope = MachineScope {
+        tenant: MachineTenantId::from_bytes([99; 32]),
+        ..SCOPE
+    };
+    assert!(matches!(
+        stored.restore(model(), &Codec(0), wrong_scope, &mut [0; 8], limits),
+        Err(MachinePreparationError::Machine(MachineFailure::Kernel(
+            MachineError::ScopeMismatch
+        )))
+    ));
+    assert!(matches!(
+        stored.restore(model(), &Codec(1), SCOPE, &mut [0; 8], limits),
+        Err(MachinePreparationError::Machine(MachineFailure::Kernel(
+            MachineError::DefinitionMismatch
+        )))
+    ));
+    assert!(
+        stored
+            .restore(model(), &Codec(0), SCOPE, &mut [0; 7], limits)
+            .is_err()
+    );
+    assert!(matches!(
+        stored.restore(model(), &Codec(11), SCOPE, &mut [0; 8], limits),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+    // A valid content hash is not model validity or source authenticity.
+    let invalid_state = 1025_u64.to_le_bytes();
+    let mut header = batch.record().header();
+    header.next_state_digest = Digest::of(&invalid_state).0;
+    let invalid_record =
+        MachineCommitRecord::<2>::new(header, batch.record().intents().copied()).unwrap();
+    let mut wire = vec![0; invalid_record.encoded_len()];
+    invalid_record.encode(&mut wire).unwrap();
+    let invalid_stored = MachineStoredCommit::<2>::decode(
+        &wire,
+        batch.event(),
+        &invalid_state,
+        batch.intents().map(|(_, b)| b),
+        LIMITS,
+    )
+    .unwrap();
+    assert!(matches!(
+        invalid_stored.restore(model(), &Codec(0), SCOPE, &mut [0; 8], limits),
+        Err(MachinePreparationError::Machine(MachineFailure::Model(
+            Fault::Invalid
+        )))
+    ));
+}
+
+#[test]
+fn recovery_preserves_order_and_supports_exact_zero_capacity() {
+    let batch = retained_batch();
+    let payload = 99_u64.to_le_bytes();
+    let mut metadata: Vec<_> = batch.record().intents().copied().collect();
+    metadata.push(IntentMetadata {
+        identity: MachineIntentId::from_bytes([55; 32]),
+        digest: Digest::of(&payload).0,
+        payload_bytes: 8,
+    });
+    let record = MachineCommitRecord::<2>::new(batch.record().header(), metadata).unwrap();
+    let mut bytes = vec![0; record.encoded_len()];
+    record.encode(&mut bytes).unwrap();
+    let first = batch.intents().next().unwrap().1;
+    let stored = MachineStoredCommit::<2>::decode(
+        &bytes,
+        batch.event(),
+        batch.state(),
+        [first, &payload],
+        LIMITS,
+    )
+    .unwrap();
+    assert_eq!(
+        stored.batch().intents().map(|(_, b)| b).collect::<Vec<_>>(),
+        [first, &payload]
+    );
+    assert!(
+        MachineStoredCommit::<2>::decode(
+            &bytes,
+            batch.event(),
+            batch.state(),
+            [&payload, first],
+            LIMITS
+        )
+        .is_err()
+    );
+    let empty_record = MachineCommitRecord::<0>::new(batch.record().header(), []).unwrap();
+    let mut empty_bytes = vec![0; empty_record.encoded_len()];
+    empty_record.encode(&mut empty_bytes).unwrap();
+    let empty_stored = MachineStoredCommit::<0>::decode(
+        &empty_bytes,
+        batch.event(),
+        batch.state(),
+        [],
+        MachinePayloadLimits {
+            max_record_bytes: 329,
+            max_intent_bytes: 0,
+            max_batch_bytes: 345,
+            ..LIMITS
+        },
+    )
+    .unwrap();
+    assert_eq!(empty_stored.batch().byte_len(), 345);
+    assert_eq!(empty_stored.batch().intents().count(), 0);
+    let calls = std::cell::Cell::new(0);
+    let endless = std::iter::from_fn(|| {
+        calls.set(calls.get() + 1);
+        Some(first)
+    });
+    assert!(
+        MachineStoredCommit::<0>::decode(
+            &empty_bytes,
+            batch.event(),
+            batch.state(),
+            endless,
+            LIMITS
+        )
+        .is_err()
+    );
+    assert_eq!(calls.get(), 1);
 }

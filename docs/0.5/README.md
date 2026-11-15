@@ -23,7 +23,7 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | F3 | Saga adapter and proven shared internals | Prepared views and 0.4 parity; integration in progress | Legacy/new differential decisions, errors and bytes |
 | F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Adapter implemented; qualification in progress | [Captured machine composition](timeline-machines.md), correction, scope, scratch and finality checks |
-| F6 | Machine journal, SQLite and effect bridges | Metadata and accepted-batch preparation implemented; storage and bridges pending | [Machine wire](machine-wire.md), [payload preparation](machine-preparation.md); production CAS, crash/reopen, authorization and bridges remain open |
+| F6 | Machine journal, SQLite and effect bridges | Metadata, preparation and checked snapshot decoding implemented; storage and bridges pending | [Machine wire](machine-wire.md), [payload preparation](machine-preparation.md); production CAS, crash/reopen, authorization and bridges remain open |
 | F7 | Consolidate API, internals, docs and examples | Facade paths established; integration pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
 | F8 | Qualify candidate | Pending | Exact-SHA evidence for every section 14 release gate |
 

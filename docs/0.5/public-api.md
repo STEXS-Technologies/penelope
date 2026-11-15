@@ -27,7 +27,8 @@ owner. Local publication supplies no durable admission or historical deduplicati
 [`penelope.machine.v1` metadata codec](machine-wire.md). It binds event/state
 digests, native provenance, causation and ordered intent metadata. Constructing
 or decoding a record proves neither acceptance nor durable admission; [canonical payload preparation](machine-preparation.md) now binds the native
-accepted candidate and checks exact receipt coordinates. Trusted store admission
+accepted candidate and checks exact receipt coordinates. `MachineStoredCommit` checks retained payloads and supports scoped canonical
+snapshot restoration without event evaluation or dispatch. Trusted store admission
 and receipt acquisition remain pending.
 
 `prepare_linear` delegates exactly once to the original `decide` and borrows its

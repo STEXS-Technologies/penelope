@@ -1,0 +1,67 @@
+{
+  "checkpoint": "bounded stored machine payload verification and snapshot restoration",
+  "parent_commit": "9e004aeb8d1ed5ef83685f5264d0ef2bd546b79e",
+  "source_scope": "Parent plus exact implementation/test/fuzz delta hashes; documentation excluded.",
+  "source_sha256": {
+    "crates/penelope-ports/src/machine.rs": "99d862c148186fb002a13319f8d7598a0957f703765a814c1c9f6ba4d5b705b0",
+    "crates/penelope-ports/src/machine/recovery.rs": "8915a8bb699e900b92265a986b890e18a5c91e975bf6aa85350f67cd9400c59f",
+    "crates/penelope-ports/tests/machine_preparation.rs": "e4bf24da638bd187e883a346c1644ad4799a184363df60eb85b572eb7458b882",
+    "fuzz/fuzz_targets/fuzz_machine_commit.rs": "526f51a9914b333bc180100859aef13c168cd68610911e1b9cb91ccfb5302f5a"
+  },
+  "checks": [
+    {
+      "command": "cargo test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "log": "tests.log.gz",
+      "raw_sha256": "6cfedf9838c66c5bc1ca4df7e88abcf2de08efa88e9d16b07629bc29b6404b66",
+      "gzip_sha256": "35f9c6d8fee9f4516efb725f62c1fbd489752f7ff438151620a0d4e0378dd220"
+    },
+    {
+      "command": "cargo +1.89.0 test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "5414d261f30b4cefa02a0d9cfa63d1d8745c206f7c02298bc42a6d313617c254",
+      "gzip_sha256": "14d6156bbbf3b7248bc133bf2a3dfa88c1104c39b56288c47fa0ccc1bb22fdef"
+    },
+    {
+      "command": "cargo test -p penelope-ports --all-features --locked",
+      "exit_code": 0,
+      "log": "ports.log.gz",
+      "raw_sha256": "bd89e968f76796a65b2943650d5f86d35c1ec7832d1e7395caf6935be7e1415a",
+      "gzip_sha256": "ea167ec63945471198e65d2406822e43eba1166f9485c632b8fb9ef42258c542"
+    },
+    {
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "d03c05055eb9dc4b7958fdfd5f954e5776666af9060dc37edaf928146ac73cdf",
+      "gzip_sha256": "cf77d8814f1450e813b33fc42eade410f0cdabfac1721d98d49d950281e80f31"
+    },
+    {
+      "command": "RUSTDOCFLAGS='-D warnings' cargo doc -p penelope-ports -p penelope --all-features --no-deps --locked",
+      "exit_code": 0,
+      "log": "rustdoc.log.gz",
+      "raw_sha256": "205583e0c7916081ccb4a24767456fe29efab6eea5327c03bdbb3fbf3df0153f",
+      "gzip_sha256": "792fd6055407b8514e06f043e8ac15ab02512dc5a4ee9776783894acd59178ee"
+    },
+    {
+      "command": "cargo +nightly fuzz run fuzz_machine_commit -- -runs=10000 -seed=507",
+      "exit_code": 0,
+      "log": "fuzz.log.gz",
+      "raw_sha256": "65ffea92ca148c8660e2311a56289b732bab757f2ffad3626ae47f39815cb413",
+      "gzip_sha256": "45da504ff9072dbe5e008155d9a4a318f8204e6d937f2fd20274cb6538af9832"
+    },
+    {
+      "command": "graphify update .",
+      "exit_code": 0,
+      "log": "graph.log.gz",
+      "raw_sha256": "121f709a3b73b712ec9568973d7fe1ae7e8099d9b345aa473a3d5b1582b1752f",
+      "gzip_sha256": "e040021deb5099f153a4ffca96b125a04216a745eb2de2df731824fc5c11c23f"
+    }
+  ],
+  "limitations": [
+    "Snapshot restoration only: no event evaluation, predecessor-chain replay, local last transition or local pending-intent reconstruction.",
+    "Requires authenticated coherent journal bytes. No production store, authorization, SQLite crash/reopen or durable outbox proof.",
+    "Ports suite preceded final test-variable renames; final stable and MSRV targeted runs cover the final 14 tests."
+  ]
+}
