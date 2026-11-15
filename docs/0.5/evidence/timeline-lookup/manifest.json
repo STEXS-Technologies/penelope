@@ -1,0 +1,1873 @@
+{
+  "parent_commit": "4bc537d",
+  "candidate_commit": "89f6d026e26e9d47d43e0b31a72920a7e7ef6c86",
+  "scope": "Read-only native history lookup optimization. Add one lazily attempted, bounded wrapped-position hint after the existing hint misses; every hint still requires exact/canonical coordinates and content/charge verification, with the original ancestry and scan fallback. No storage layout, wire, allocation or public API change.",
+  "source_sha256": {
+    "crates/penelope-timeline/src/history.rs": "08dc40ad9b11b12a9d0715a238f6c488b1d1894b53ce09091c9377e43775efe9",
+    "crates/penelope-timeline/tests/history_lookup.rs": "54df55c108804c0725c756c88c6e237143283b3b5f8aa732c139256e96d83c2c",
+    "crates/penelope-timeline/tests/support/history_lookup.rs": "61e8794280f17ad3754ebb336aebf9099f81689c1d4f200dd3b9a3ce77001c0b",
+    "scripts/benchmark-decision-comparison.py": "b59111bab73e1a2990aaad263b40b3c7a76e9aca508eec90259c3dfcd65e9834",
+    "docs/0.5/verification.md": "ca526bc6639cc7dd91269a75294d724cd71779aad0ee956e661df4b293253db2"
+  },
+  "performance_command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= python3 scripts/benchmark-decision-comparison.py OUTPUT --before 42ec187 --after CANDIDATE --cpu 4 --parallel-cpus 4,5,6,7 --runs 5 --toolchain 1.100.0 --benchmark timeline_operations",
+  "runs": [
+    {
+      "label": "eager",
+      "revisions": {
+        "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+        "after": "2d626041a07c2ebd258a42907f62c1ee4d753ec0"
+      },
+      "raw_archive": "eager.json.gz",
+      "raw_sha256": "aa99b512d0d900e8c4b5bcf10ac40ac4f2a6d281e82a5b153567e0d64ca0b236",
+      "gzip_sha256": "04edf05a201880abfa42da3a7f8a786780ac16b65f31baa506fc692c338a09c9",
+      "summary": "eager-summary.json.gz",
+      "summary_raw_sha256": "bc62cf10cef7cfce1536009092c6f3cf460e166a56dd80de98047a9d21e10203",
+      "summary_gzip_sha256": "867816967775304a96ca8d4ef40322541850739fbbbe47bf73eef0074a7bc645",
+      "matched_profiles": 640,
+      "measured_runs_per_revision": 5,
+      "threshold_exceedances": {
+        "p50_ns": 81,
+        "p95_ns": 107
+      },
+      "targeted_profiles": [
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 70,
+                "before": 271
+              },
+              "delta_percent": -74.16974169741697,
+              "range_ns": {
+                "after": [
+                  70,
+                  80
+                ],
+                "before": [
+                  270,
+                  281
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 81,
+                "before": 281
+              },
+              "delta_percent": -71.17437722419928,
+              "range_ns": {
+                "after": [
+                  80,
+                  100
+                ],
+                "before": [
+                  271,
+                  351
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 81,
+                "before": 331
+              },
+              "delta_percent": -75.52870090634441,
+              "range_ns": {
+                "after": [
+                  81,
+                  150
+                ],
+                "before": [
+                  271,
+                  431
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 431,
+                "before": 1373
+              },
+              "delta_percent": -68.60888565185725,
+              "range_ns": {
+                "after": [
+                  421,
+                  461
+                ],
+                "before": [
+                  1313,
+                  2475
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 431,
+                "before": 1864
+              },
+              "delta_percent": -76.87768240343348,
+              "range_ns": {
+                "after": [
+                  431,
+                  491
+                ],
+                "before": [
+                  1382,
+                  3126
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 451,
+                "before": 2195
+              },
+              "delta_percent": -79.45330296127563,
+              "range_ns": {
+                "after": [
+                  431,
+                  501
+                ],
+                "before": [
+                  1393,
+                  7675
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 1654,
+                "before": 5110
+              },
+              "delta_percent": -67.63209393346379,
+              "range_ns": {
+                "after": [
+                  1613,
+                  1703
+                ],
+                "before": [
+                  5050,
+                  8396
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 1724,
+                "before": 5240
+              },
+              "delta_percent": -67.09923664122137,
+              "range_ns": {
+                "after": [
+                  1643,
+                  2044
+                ],
+                "before": [
+                  5090,
+                  17524
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 1743,
+                "before": 5881
+              },
+              "delta_percent": -70.3621833021595,
+              "range_ns": {
+                "after": [
+                  1644,
+                  2144
+                ],
+                "before": [
+                  5160,
+                  18275
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 6502,
+                "before": 20259
+              },
+              "delta_percent": -67.90562219260576,
+              "range_ns": {
+                "after": [
+                  6412,
+                  6583
+                ],
+                "before": [
+                  19558,
+                  20600
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 6633,
+                "before": 23425
+              },
+              "delta_percent": -71.68409818569904,
+              "range_ns": {
+                "after": [
+                  6483,
+                  8336
+                ],
+                "before": [
+                  20580,
+                  32873
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 8807,
+                "before": 25309
+              },
+              "delta_percent": -65.20210201904462,
+              "range_ns": {
+                "after": [
+                  6603,
+                  11983
+                ],
+                "before": [
+                  23556,
+                  36911
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 25650,
+                "before": 25920
+              },
+              "delta_percent": -1.041666666666663,
+              "range_ns": {
+                "after": [
+                  25580,
+                  26381
+                ],
+                "before": [
+                  25619,
+                  26201
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 33104,
+                "before": 27323
+              },
+              "delta_percent": 21.157998755627116,
+              "range_ns": {
+                "after": [
+                  29457,
+                  47753
+                ],
+                "before": [
+                  25700,
+                  35529
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 36180,
+                "before": 30870
+              },
+              "delta_percent": 17.201166180758023,
+              "range_ns": {
+                "after": [
+                  31732,
+                  72580
+                ],
+                "before": [
+                  28816,
+                  106566
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 2054,
+                "before": 2685
+              },
+              "delta_percent": -23.500931098696466,
+              "range_ns": {
+                "after": [
+                  2053,
+                  3377
+                ],
+                "before": [
+                  2605,
+                  3026
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 2084,
+                "before": 2705
+              },
+              "delta_percent": -22.957486136783732,
+              "range_ns": {
+                "after": [
+                  2074,
+                  17984
+                ],
+                "before": [
+                  2635,
+                  3897
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 2094,
+                "before": 3577
+              },
+              "delta_percent": -41.45932345540956,
+              "range_ns": {
+                "after": [
+                  2084,
+                  26631
+                ],
+                "before": [
+                  2645,
+                  8747
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 3416,
+                "before": 6453
+              },
+              "delta_percent": -47.06338137300481,
+              "range_ns": {
+                "after": [
+                  3377,
+                  3487
+                ],
+                "before": [
+                  6292,
+                  6523
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 3437,
+                "before": 6503
+              },
+              "delta_percent": -47.14747039827771,
+              "range_ns": {
+                "after": [
+                  3407,
+                  3517
+                ],
+                "before": [
+                  6342,
+                  12805
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 3517,
+                "before": 9098
+              },
+              "delta_percent": -61.34315234117389,
+              "range_ns": {
+                "after": [
+                  3417,
+                  4228
+                ],
+                "before": [
+                  6382,
+                  13386
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 8046,
+                "before": 19557
+              },
+              "delta_percent": -58.85872066267832,
+              "range_ns": {
+                "after": [
+                  7915,
+                  8266
+                ],
+                "before": [
+                  19077,
+                  29948
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 8286,
+                "before": 19668
+              },
+              "delta_percent": -57.87065283709579,
+              "range_ns": {
+                "after": [
+                  7965,
+                  15280
+                ],
+                "before": [
+                  19248,
+                  35047
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 9849,
+                "before": 24888
+              },
+              "delta_percent": -60.42671166827387,
+              "range_ns": {
+                "after": [
+                  7976,
+                  18626
+                ],
+                "before": [
+                  22253,
+                  39857
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 27093,
+                "before": 72270
+              },
+              "delta_percent": -62.51141552511415,
+              "range_ns": {
+                "after": [
+                  26321,
+                  32142
+                ],
+                "before": [
+                  71308,
+                  79063
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 34918,
+                "before": 77670
+              },
+              "delta_percent": -55.043131196086,
+              "range_ns": {
+                "after": [
+                  29096,
+                  48424
+                ],
+                "before": [
+                  75616,
+                  123398
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 39767,
+                "before": 88070
+              },
+              "delta_percent": -54.846145111842844,
+              "range_ns": {
+                "after": [
+                  33756,
+                  121845
+                ],
+                "before": [
+                  80936,
+                  174177
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 99893,
+                "before": 99442
+              },
+              "delta_percent": 0.4535307013133316,
+              "range_ns": {
+                "after": [
+                  99202,
+                  114712
+                ],
+                "before": [
+                  98310,
+                  103350
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 114311,
+                "before": 124490
+              },
+              "delta_percent": -8.176560366294483,
+              "range_ns": {
+                "after": [
+                  104051,
+                  157895
+                ],
+                "before": [
+                  103911,
+                  131735
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 155261,
+                "before": 135822
+              },
+              "delta_percent": 14.312114385003905,
+              "range_ns": {
+                "after": [
+                  106756,
+                  233932
+                ],
+                "before": [
+                  122417,
+                  200087
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 291,
+                "before": 220
+              },
+              "delta_percent": 32.27272727272727,
+              "range_ns": {
+                "after": [
+                  290,
+                  291
+                ],
+                "before": [
+                  211,
+                  341
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 301,
+                "before": 241
+              },
+              "delta_percent": 24.896265560165975,
+              "range_ns": {
+                "after": [
+                  291,
+                  301
+                ],
+                "before": [
+                  230,
+                  390
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 301,
+                "before": 290
+              },
+              "delta_percent": 3.7931034482758585,
+              "range_ns": {
+                "after": [
+                  300,
+                  311
+                ],
+                "before": [
+                  231,
+                  431
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 2195,
+                "before": 1683
+              },
+              "delta_percent": 30.421865715983355,
+              "range_ns": {
+                "after": [
+                  2194,
+                  2244
+                ],
+                "before": [
+                  1653,
+                  2836
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 2244,
+                "before": 2605
+              },
+              "delta_percent": -13.857965451055666,
+              "range_ns": {
+                "after": [
+                  2225,
+                  2274
+                ],
+                "before": [
+                  1723,
+                  4408
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 2265,
+                "before": 2675
+              },
+              "delta_percent": -15.327102803738313,
+              "range_ns": {
+                "after": [
+                  2245,
+                  2826
+                ],
+                "before": [
+                  1734,
+                  10259
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 8827,
+                "before": 7054
+              },
+              "delta_percent": 25.134675361497028,
+              "range_ns": {
+                "after": [
+                  8687,
+                  14499
+                ],
+                "before": [
+                  6994,
+                  7674
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 8877,
+                "before": 7304
+              },
+              "delta_percent": 21.536144578313255,
+              "range_ns": {
+                "after": [
+                  8737,
+                  15119
+                ],
+                "before": [
+                  7194,
+                  13025
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 9969,
+                "before": 9187
+              },
+              "delta_percent": 8.512027865462057,
+              "range_ns": {
+                "after": [
+                  9509,
+                  18095
+                ],
+                "before": [
+                  7926,
+                  13236
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 38214,
+                "before": 33525
+              },
+              "delta_percent": 13.986577181208059,
+              "range_ns": {
+                "after": [
+                  37853,
+                  38514
+                ],
+                "before": [
+                  33244,
+                  35639
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 43634,
+                "before": 42623
+              },
+              "delta_percent": 2.371958801586005,
+              "range_ns": {
+                "after": [
+                  40939,
+                  79364
+                ],
+                "before": [
+                  34186,
+                  65186
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 49696,
+                "before": 50368
+              },
+              "delta_percent": -1.3341804320203265,
+              "range_ns": {
+                "after": [
+                  42472,
+                  83321
+                ],
+                "before": [
+                  37151,
+                  72831
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 187553,
+                "before": 188204
+              },
+              "delta_percent": -0.3459012560838248,
+              "range_ns": {
+                "after": [
+                  186160,
+                  193734
+                ],
+                "before": [
+                  185218,
+                  196830
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 232941,
+                "before": 237168
+              },
+              "delta_percent": -1.7822809147945762,
+              "range_ns": {
+                "after": [
+                  200187,
+                  319938
+                ],
+                "before": [
+                  205197,
+                  246116
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 349235,
+                "before": 314518
+              },
+              "delta_percent": 11.03815997812525,
+              "range_ns": {
+                "after": [
+                  295411,
+                  367731
+                ],
+                "before": [
+                  259522,
+                  361078
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "exit_code": 0,
+      "log": "eager-comparison.log.gz",
+      "log_raw_sha256": "a454c4d9864bf3979744bf34f52629750ab2b43351da48140adad983f5960dc7",
+      "log_gzip_sha256": "93a9aae3a604b39c13d61c569d2b18fb403e2ed01f78b12c45a63073b781997e"
+    },
+    {
+      "label": "lazy",
+      "revisions": {
+        "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+        "after": "89f6d026e26e9d47d43e0b31a72920a7e7ef6c86"
+      },
+      "raw_archive": "lazy.json.gz",
+      "raw_sha256": "16f41d1620158bd892e7eb3ee2e6d50d59a944118728d8ab0353ce552d7de859",
+      "gzip_sha256": "656ba240aa37807a2613422b52b82cbdd862a028a5a7fe8eacb562cc22841832",
+      "summary": "lazy-summary.json.gz",
+      "summary_raw_sha256": "8734d4a402c094fc57d93eed4beabeb0ddb4173bd52a77c8542de119e2d6caf8",
+      "summary_gzip_sha256": "c52e83ba6d08ca30c41f82d5378c302f9bfe07059caeb2dab50a9b7fd1230e8a",
+      "matched_profiles": 640,
+      "measured_runs_per_revision": 5,
+      "threshold_exceedances": {
+        "p50_ns": 59,
+        "p95_ns": 27
+      },
+      "targeted_profiles": [
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 70,
+                "before": 271
+              },
+              "delta_percent": -74.16974169741697,
+              "range_ns": {
+                "after": [
+                  70,
+                  80
+                ],
+                "before": [
+                  261,
+                  271
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 81,
+                "before": 281
+              },
+              "delta_percent": -71.17437722419928,
+              "range_ns": {
+                "after": [
+                  80,
+                  90
+                ],
+                "before": [
+                  271,
+                  281
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 81,
+                "before": 281
+              },
+              "delta_percent": -71.17437722419928,
+              "range_ns": {
+                "after": [
+                  81,
+                  91
+                ],
+                "before": [
+                  271,
+                  531
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 431,
+                "before": 1342
+              },
+              "delta_percent": -67.88375558867362,
+              "range_ns": {
+                "after": [
+                  420,
+                  471
+                ],
+                "before": [
+                  1312,
+                  1653
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 431,
+                "before": 1353
+              },
+              "delta_percent": -68.14486326681448,
+              "range_ns": {
+                "after": [
+                  421,
+                  481
+                ],
+                "before": [
+                  1323,
+                  1673
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 441,
+                "before": 1383
+              },
+              "delta_percent": -68.11279826464208,
+              "range_ns": {
+                "after": [
+                  421,
+                  481
+                ],
+                "before": [
+                  1353,
+                  2455
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 1623,
+                "before": 5079
+              },
+              "delta_percent": -68.04489072652096,
+              "range_ns": {
+                "after": [
+                  1593,
+                  1833
+                ],
+                "before": [
+                  4950,
+                  6432
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 1633,
+                "before": 5110
+              },
+              "delta_percent": -68.0430528375734,
+              "range_ns": {
+                "after": [
+                  1603,
+                  1843
+                ],
+                "before": [
+                  5000,
+                  6462
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 1694,
+                "before": 5140
+              },
+              "delta_percent": -67.04280155642024,
+              "range_ns": {
+                "after": [
+                  1604,
+                  1844
+                ],
+                "before": [
+                  5009,
+                  6473
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 6402,
+                "before": 20069
+              },
+              "delta_percent": -68.10005481090239,
+              "range_ns": {
+                "after": [
+                  6312,
+                  7204
+                ],
+                "before": [
+                  19809,
+                  20470
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 6443,
+                "before": 20209
+              },
+              "delta_percent": -68.11816517393241,
+              "range_ns": {
+                "after": [
+                  6322,
+                  7234
+                ],
+                "before": [
+                  20038,
+                  20910
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 6533,
+                "before": 24066
+              },
+              "delta_percent": -72.85381866533699,
+              "range_ns": {
+                "after": [
+                  6323,
+                  8527
+                ],
+                "before": [
+                  22534,
+                  26922
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_collect_evicted",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 25569,
+                "before": 25620
+              },
+              "delta_percent": -0.1990632318501162,
+              "range_ns": {
+                "after": [
+                  25219,
+                  28976
+                ],
+                "before": [
+                  25309,
+                  26050
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 25620,
+                "before": 25679
+              },
+              "delta_percent": -0.22975972584602378,
+              "range_ns": {
+                "after": [
+                  25339,
+                  29076
+                ],
+                "before": [
+                  25439,
+                  26140
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 28825,
+                "before": 29206
+              },
+              "delta_percent": -1.3045264671642798,
+              "range_ns": {
+                "after": [
+                  27613,
+                  32112
+                ],
+                "before": [
+                  28615,
+                  29397
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 2043,
+                "before": 2635
+              },
+              "delta_percent": -22.46679316888045,
+              "range_ns": {
+                "after": [
+                  2024,
+                  2074
+                ],
+                "before": [
+                  2575,
+                  2695
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 2064,
+                "before": 2655
+              },
+              "delta_percent": -22.259887005649716,
+              "range_ns": {
+                "after": [
+                  2044,
+                  2094
+                ],
+                "before": [
+                  2615,
+                  2716
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 2095,
+                "before": 2755
+              },
+              "delta_percent": -23.956442831215973,
+              "range_ns": {
+                "after": [
+                  2054,
+                  3517
+                ],
+                "before": [
+                  2655,
+                  3356
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 3396,
+                "before": 6372
+              },
+              "delta_percent": -46.70433145009416,
+              "range_ns": {
+                "after": [
+                  3346,
+                  3497
+                ],
+                "before": [
+                  6232,
+                  7094
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 3417,
+                "before": 6443
+              },
+              "delta_percent": -46.96569920844327,
+              "range_ns": {
+                "after": [
+                  3367,
+                  3526
+                ],
+                "before": [
+                  6272,
+                  7124
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 3426,
+                "before": 6924
+              },
+              "delta_percent": -50.519930675909876,
+              "range_ns": {
+                "after": [
+                  3367,
+                  3547
+                ],
+                "before": [
+                  6303,
+                  7194
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 8026,
+                "before": 19207
+              },
+              "delta_percent": -58.21315145519863,
+              "range_ns": {
+                "after": [
+                  7855,
+                  8396
+                ],
+                "before": [
+                  18737,
+                  19397
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 8096,
+                "before": 19288
+              },
+              "delta_percent": -58.02571547075902,
+              "range_ns": {
+                "after": [
+                  7915,
+                  8456
+                ],
+                "before": [
+                  18846,
+                  21532
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 9197,
+                "before": 22172
+              },
+              "delta_percent": -58.519754645498836,
+              "range_ns": {
+                "after": [
+                  7975,
+                  13016
+                ],
+                "before": [
+                  21722,
+                  24077
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 26592,
+                "before": 71398
+              },
+              "delta_percent": -62.75525925095942,
+              "range_ns": {
+                "after": [
+                  25970,
+                  28004
+                ],
+                "before": [
+                  70276,
+                  72650
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 26761,
+                "before": 74985
+              },
+              "delta_percent": -64.31152897246115,
+              "range_ns": {
+                "after": [
+                  26101,
+                  31711
+                ],
+                "before": [
+                  72721,
+                  100525
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 30429,
+                "before": 76198
+              },
+              "delta_percent": -60.06588099425182,
+              "range_ns": {
+                "after": [
+                  28836,
+                  32844
+                ],
+                "before": [
+                  73342,
+                  103019
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_full_correction_evicted",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 98541,
+                "before": 99753
+              },
+              "delta_percent": -1.2150010525999178,
+              "range_ns": {
+                "after": [
+                  98150,
+                  106627
+                ],
+                "before": [
+                  97648,
+                  102337
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 104843,
+                "before": 102849
+              },
+              "delta_percent": 1.9387645966416844,
+              "range_ns": {
+                "after": [
+                  101967,
+                  110644
+                ],
+                "before": [
+                  100895,
+                  111044
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 105624,
+                "before": 103470
+              },
+              "delta_percent": 2.0817628298057445,
+              "range_ns": {
+                "after": [
+                  102729,
+                  114711
+                ],
+                "before": [
+                  102037,
+                  114221
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 1,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 211,
+                "before": 211
+              },
+              "delta_percent": 0.0,
+              "range_ns": {
+                "after": [
+                  201,
+                  220
+                ],
+                "before": [
+                  210,
+                  211
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 230,
+                "before": 221
+              },
+              "delta_percent": 4.072398190045257,
+              "range_ns": {
+                "after": [
+                  211,
+                  231
+                ],
+                "before": [
+                  220,
+                  240
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 240,
+                "before": 231
+              },
+              "delta_percent": 3.8961038961038863,
+              "range_ns": {
+                "after": [
+                  220,
+                  291
+                ],
+                "before": [
+                  221,
+                  241
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 8,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 1633,
+                "before": 1653
+              },
+              "delta_percent": -1.2099213551119203,
+              "range_ns": {
+                "after": [
+                  1573,
+                  1714
+                ],
+                "before": [
+                  1603,
+                  1664
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 1713,
+                "before": 1733
+              },
+              "delta_percent": -1.1540680900173128,
+              "range_ns": {
+                "after": [
+                  1633,
+                  1784
+                ],
+                "before": [
+                  1664,
+                  4739
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 1783,
+                "before": 1753
+              },
+              "delta_percent": 1.711351968054764,
+              "range_ns": {
+                "after": [
+                  1653,
+                  2805
+                ],
+                "before": [
+                  1684,
+                  9278
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 32,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 7034,
+                "before": 7013
+              },
+              "delta_percent": 0.29944388991871573,
+              "range_ns": {
+                "after": [
+                  6954,
+                  7395
+                ],
+                "before": [
+                  6853,
+                  8717
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 7284,
+                "before": 7134
+              },
+              "delta_percent": 2.1026072329688894,
+              "range_ns": {
+                "after": [
+                  7094,
+                  8666
+                ],
+                "before": [
+                  6984,
+                  8767
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 8196,
+                "before": 7404
+              },
+              "delta_percent": 10.696920583468405,
+              "range_ns": {
+                "after": [
+                  7154,
+                  9228
+                ],
+                "before": [
+                  7124,
+                  9529
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 128,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 32814,
+                "before": 33124
+              },
+              "delta_percent": -0.9358773095036854,
+              "range_ns": {
+                "after": [
+                  32222,
+                  34417
+                ],
+                "before": [
+                  32834,
+                  33234
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 33395,
+                "before": 33475
+              },
+              "delta_percent": -0.2389843166542227,
+              "range_ns": {
+                "after": [
+                  32403,
+                  45538
+                ],
+                "before": [
+                  33345,
+                  33715
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 36160,
+                "before": 36290
+              },
+              "delta_percent": -0.3582254064480539,
+              "range_ns": {
+                "after": [
+                  35658,
+                  52211
+                ],
+                "before": [
+                  35469,
+                  37422
+                ]
+              }
+            }
+          }
+        },
+        {
+          "operation": "history_read_all_inherited",
+          "state_words": 1,
+          "steps": 512,
+          "metrics": {
+            "p50_ns": {
+              "median_ns": {
+                "after": 183244,
+                "before": 183364
+              },
+              "delta_percent": -0.06544359852533876,
+              "range_ns": {
+                "after": [
+                  182543,
+                  189416
+                ],
+                "before": [
+                  182764,
+                  185970
+                ]
+              }
+            },
+            "p95_ns": {
+              "median_ns": {
+                "after": 189186,
+                "before": 189106
+              },
+              "delta_percent": 0.04230431609784091,
+              "range_ns": {
+                "after": [
+                  186611,
+                  193594
+                ],
+                "before": [
+                  185949,
+                  191340
+                ]
+              }
+            },
+            "p99_ns": {
+              "median_ns": {
+                "after": 190769,
+                "before": 190217
+              },
+              "delta_percent": 0.29019488268662297,
+              "range_ns": {
+                "after": [
+                  188615,
+                  217751
+                ],
+                "before": [
+                  188925,
+                  218232
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "exit_code": 0,
+      "log": "lazy-comparison.log.gz",
+      "log_raw_sha256": "a454c4d9864bf3979744bf34f52629750ab2b43351da48140adad983f5960dc7",
+      "log_gzip_sha256": "93a9aae3a604b39c13d61c569d2b18fb403e2ed01f78b12c45a63073b781997e"
+    }
+  ],
+  "checks": [
+    {
+      "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo test -p penelope-timeline --all-features --lib --tests --locked --target-dir /tmp/penelope-timeline-hints-direct",
+      "exit_code": 0,
+      "log": "tests.log.gz",
+      "raw_sha256": "830815516f7b8fa1c1a66697f7b5c3d2801d15ae33e0f49cb97d165226763292",
+      "gzip_sha256": "65ba2b05945177c4d70eb8f08c1dbcab5dd8c1959a7b9bff75b02c8dc783fdf7"
+    },
+    {
+      "command": "Same tests on Rust 1.89.0 with a separate target directory",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "a0fd3d3630686b03b900f4a2800bc6ded2e7bdcb36b90991615e5828617559d3",
+      "gzip_sha256": "e58b6c86e8b33bc4c35bc35398978a2be771802ff1a7465ba7f5d2e18a88ec65"
+    },
+    {
+      "command": "PROPTEST_CASES=10000 PROPTEST_RNG_SEED=506 with wrapper-free cargo test -p penelope-timeline --test history_lookup",
+      "exit_code": 0,
+      "log": "oracle.log.gz",
+      "raw_sha256": "39e95e880c28c5abf1ae47df5f892f1de5f5945b5472dd8ca9050878026c023c",
+      "gzip_sha256": "969c58a7b7d81938f4caced293b8acc2be1f2338d642e368107525e60b50df20"
+    },
+    {
+      "command": "Wrapper-free cargo clippy -p penelope-timeline --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "85ac540529e1a1806dc6452af9af89fae2b714d6528386f9508a264db853fff9",
+      "gzip_sha256": "46aab1a85202b6a156ecad73f32d2701a928f91be68acccd31fc017a78e33c12"
+    },
+    {
+      "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= cargo +nightly fuzz run fuzz_timeline_correction -- -runs=10000 -seed=506",
+      "exit_code": 0,
+      "log": "fuzz.log.gz",
+      "raw_sha256": "196c9917991ffc194a2adb58192616183d013a821bb93edba177faaedd4e1e10",
+      "gzip_sha256": "99f872a2d5b8991732210892612d3791980229213f56bf8072aa282f5d1ec0e0"
+    },
+    {
+      "command": "Rust 1.89 bare-metal riscv32imafc-unknown-none-elf timeline checks, no-default-features and alloc",
+      "exit_code": 0,
+      "log": "portable.log.gz",
+      "raw_sha256": "8123ca2a6d3f6273da91456f8873e065ae0a3272bd1a7814bd96a36ed27ef2fc",
+      "gzip_sha256": "313c3895b0563e33a94f309527b92fbc7fecc52a48beab240e43a19cfa19c569"
+    },
+    {
+      "command": "Wrapper-free cargo bench -p penelope-timeline --bench timeline_allocations --locked",
+      "exit_code": 0,
+      "log": "allocations-current.log.gz",
+      "raw_sha256": "a6051a374bf8ec8b492487ee3f82f93bcaab0fd3953d0a6b7dab9253cd505557",
+      "gzip_sha256": "00d71488cdb26195bc56aaf364ddcbe37956d77b7341181753402cca743e76ee"
+    },
+    {
+      "command": "Same allocation benchmark at original 42ec187 baseline, Rust 1.100.0",
+      "exit_code": 0,
+      "log": "allocations-baseline.log.gz",
+      "raw_sha256": "321d1b34b8277bb71ab03166b1f4d988592983b08d7b36bcfae30e24952da9be",
+      "gzip_sha256": "06e64ccd85d7834674d724ffe1d364906a7a4becf70c2aaef1e6582dbd2398c9"
+    }
+  ],
+  "allocation_comparison": "All 643 allocation/size records match the actual 0.4 baseline byte-for-byte; latency was measured separately without allocation instrumentation.",
+  "cache_context": "Three initial cache-dependent oracle/MSRV/Clippy checks stalled without compiler progress and were deliberately terminated (exit 143). Wrapper-free isolated-target replacements passed; canceled checks are not passing evidence.",
+  "assessment": "Eager two-hint iteration improved sparse eviction but slowed inherited reads. The retained lazy implementation preserves original-hit behavior: inherited read median changes range -1.21% to +0.30% across horizons 1/8/32/128/512. Evicted collection p50 improves 67.9\u201374.2% for horizons 1\u2013128 and full correction 22.5\u201362.8%; horizon 512 stays near baseline. Other timeline threshold exceedances remain unresolved and are retained, not accepted.",
+  "limitations": [
+    "Shared host, five alternating run-level distributions, 200 samples/profile after 16 warmups; no statistical speedup/noninferiority proof or final release performance pass.",
+    "Original slow sparse fallback existed at both baseline and prior candidate; this optimization removes work but does not by itself explain every prior baseline/candidate slowdown.",
+    "Exact-path and canonical/ancestor precedence remains native. Arbitrary imported/recycled layouts can still require a bounded full scan.",
+    "No allocation increase does not prove a stack high-water bound. Portable compilation and bounded local indices are qualified, not a new measured stack ceiling.",
+    "Final coverage, full chaos and exact final-candidate qualification remain open."
+  ]
+}

@@ -551,3 +551,34 @@ vary, but their timings are not subtracted and do not excuse a sustained library
 regression. No workload, threshold or production behavior was changed to obtain
 a passing result. Diagnosis, remaining performance profiles and final release
 qualification remain open.
+
+## Validated history hints after eviction
+
+Sparse retained histories were missing the original floor-relative input hint
+and scanning slots left empty by eviction. That path existed in both versions.
+A second, wrapped-position hint now runs only after the original hint misses
+and the floor has moved. Both candidates must pass the existing full-record or
+canonical/branch check, followed by payload digest and byte-charge verification.
+The original ancestry/override precedence and full scan remain the fallback.
+No history is compacted or rewritten and no mutable index or allocation is added.
+
+The first eager two-hint implementation improved eviction but slowed inherited
+reads; the retained lazy version preserves the original successful-hint path.
+[Both comparisons and all profile results](evidence/timeline-lookup/manifest.json)
+remain available. Against the unchanged 0.4 benchmark on Rust 1.100, five
+alternating rounds measure evicted collection p50 improvements of 68–74% for
+horizons 1/8/32/128, and full correction improvements of 22–63%. Horizon 512 stays
+near baseline. Inherited-read median changes range from -1.21% to +0.30% across
+all five horizons. These are local run-level observations, not statistical proof.
+
+Timeline suites pass on Rust 1.100 and 1.89. Ten thousand seeded independent
+lookup-oracle cases, explicit post-eviction corruption checks, strict Clippy,
+10,000 instrumented correction/lookup fuzz runs and both MSRV bare-metal timeline
+profiles pass. All 643 allocation/size records exactly match the actual 0.4
+baseline. The first cache-dependent checks were deliberately stopped after
+stalling; isolated wrapper-free replacements provide the passing evidence.
+
+The full comparison still contains 59 p50 and 27 p95 threshold exceedances across
+640 profiles. They are retained for review; this targeted improvement does not
+accept those results or close the wider performance, coverage, chaos or final
+release qualification gates.
