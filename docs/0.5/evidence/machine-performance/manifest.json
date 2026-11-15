@@ -1,0 +1,98 @@
+{
+  "source_commit": "4b57a24d8a592c855a4b7e26fb4192a86970b21c",
+  "source_sha256": {
+    "crates/penelope-core/benches/machine_operations.rs": "eda811a5e713e10f6f034df019a17a713315406aa9ad043e02752329a2289ca1",
+    "crates/penelope-core/tests/support/allocations.rs": "0e2bfddecfebb1105ddeff953cf740f981a9017f36f5b0119361d44123550e69",
+    "crates/penelope-core/Cargo.toml": "430d0598870cfcc06bbb0fc33b980a698027a0e99674a7a8b5c5cb0e11e884c6",
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9"
+  },
+  "tools": {
+    "rustc": "1.100.0 (0ef1bc386 2026-11-09)",
+    "msrv": "1.89.0",
+    "host": "x86_64-unknown-linux-gnu",
+    "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cpu_affinity": 4,
+    "wrappers": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER="
+  },
+  "command": "cargo bench --locked -p penelope-core --bench machine_operations",
+  "runs": {
+    "current": 3,
+    "msrv": 1,
+    "profiles_per_run": 396,
+    "warmup_operations_per_profile": 128,
+    "samples_per_profile": 101,
+    "operations_per_sample": 32,
+    "allocation_probe_operations": 32
+  },
+  "scope": [
+    "Flat portable kernel, consumer linear dispatch, owned array state; no durable storage or external effects.",
+    "8/256/4096/65536-byte state; 2/8/32 states and events; accept/reject; 0/1/8/32 intents and count quota refusal.",
+    "Rejected profiles return before staging; intent count labels denote configured count only.",
+    "Every profile checks initial disposition, rollback/publication, payloads, then final whole state and revision outside timing.",
+    "All allocation/deallocation/reallocation/requested-byte counts zero; separate positive control allocates/deallocates 16 bytes.",
+    "Quantiles are of per-batch average latency (integer ns); raw elapsed batch samples retained. Throughput uses total elapsed batch time.",
+    "Latency includes context, model dispatch/copy, kernel preparation/publication, head/state read and intent drain; instrumentation disabled.",
+    "MSRV run is compatibility evidence and unpinned, not a cross-compiler performance comparison."
+  ],
+  "limitations": [
+    "Fixed matrix order, short shared-host runs, no confidence intervals or historical equivalent; no regression acceptance or release-wide claim.",
+    "Consumer computation/copy cost not yet separately measured; hierarchy, SQLite and end-to-end profiles remain open.",
+    "Capacity fixed at 32 across flat profiles, not specialized capacity-zero best case."
+  ],
+  "selected_observations": [
+    {
+      "state_bytes": 8,
+      "states": 8,
+      "events": 8,
+      "intents": 0,
+      "batch_mean_p50_ns_by_round": [
+        308,
+        299,
+        447
+      ]
+    },
+    {
+      "state_bytes": 256,
+      "states": 8,
+      "events": 8,
+      "intents": 0,
+      "batch_mean_p50_ns_by_round": [
+        362,
+        428,
+        501
+      ]
+    },
+    {
+      "state_bytes": 4096,
+      "states": 8,
+      "events": 8,
+      "intents": 0,
+      "batch_mean_p50_ns_by_round": [
+        570,
+        561,
+        551
+      ]
+    },
+    {
+      "state_bytes": 65536,
+      "states": 8,
+      "events": 8,
+      "intents": 0,
+      "batch_mean_p50_ns_by_round": [
+        4629,
+        4669,
+        4572
+      ]
+    }
+  ],
+  "artifacts_sha256": {
+    "round-1.csv.gz": "48a6b189b1da918d468770f79a1add3c66c6099cdfe128198635b9e121748531",
+    "round-2.csv.gz": "8bad8955cdebcbb4e8ad994d2d77c67ca036a6caed8c41f1d09d2663b12edf20",
+    "round-3.csv.gz": "fd1325d4a3241e7fdda8faea7876dcb65e90cde7bc265c8be822d6e68f0898c6",
+    "msrv.csv.gz": "de8844e229668b344753154b32e56950d8110c0b8828979a09edb770b968ecf7",
+    "build.log.gz": "0ac29e78ccf36008560608a2e985efdd11213212af591f6ab7de888bcb4764be",
+    "clippy.log.gz": "3c16cb5e9a78299eb67801c6834ccbab93d7ceafb3111b570873381589d985f3",
+    "msrv.log.gz": "19956c8af42a6034a63b950c66dcbc70ed1f24998b37baed3b6efc0df1d5cb72",
+    "package.log.gz": "e6cd5f0c6f5f8c677af9c2b74a645916a9e4e0b4017552259d24f409f0673155"
+  }
+}

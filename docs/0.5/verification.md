@@ -582,3 +582,27 @@ The full comparison still contains 59 p50 and 27 p95 threshold exceedances acros
 640 profiles. They are retained for review; this targeted improvement does not
 accept those results or close the wider performance, coverage, chaos or final
 release qualification gates.
+
+## Flat machine measurement fixture
+
+`cargo bench --locked -p penelope-core --bench machine_operations` now exercises
+396 flat-machine profiles: 2/8/32 states and events, 8 B/256 B/4 KiB/64 KiB owned
+state, guards, 0/1/8/32 intents and count-quota refusal. It uses the public portable
+API and existing isolated allocation instrumentation, with no new dependencies.
+Each profile checks disposition, whole state, revision and intent payloads outside
+timing; quota refusal must preserve state and head. Allocation counting has a
+positive control and runs separately from latency sampling.
+
+[Raw samples, source hashes and scope](evidence/machine-performance/manifest.json)
+record three Rust 1.100 runs pinned to CPU 4 and one unpinned MSRV 1.89 compatibility
+run. All profiles pass with zero allocations, reallocations, deallocations and
+requested bytes. Strict Clippy and packaged literal includes also pass. Quantiles
+are explicitly **32-operation batch averages**, not individual-operation tail
+latency; throughput uses total sampled time. Context construction, consumer linear
+dispatch/state copy, publication and intent drain are included, with capacity 32
+throughout. Rejected profiles return before intent staging.
+
+These short fixed-order shared-host runs establish a reproducible new-machine
+fixture, without a historical equivalent or a regression conclusion. Separate
+consumer-computation measurements, hierarchy, durable SQLite, end-to-end workloads
+and final candidate qualification remain open.
