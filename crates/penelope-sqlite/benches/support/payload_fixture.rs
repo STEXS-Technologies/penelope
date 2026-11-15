@@ -109,7 +109,7 @@ impl Fixture {
             damaged: false,
         })
     }
-    pub(super) fn size(&self) -> usize {
+    pub(super) const fn size(&self) -> usize {
         self.bytes.len()
     }
     pub(super) fn removed_bytes(&self, case: Case) -> usize {

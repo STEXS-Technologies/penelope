@@ -34,7 +34,7 @@ pub(crate) fn scope_digest(scope: TaskScope) -> Digest {
     let mut bytes = [0; PREFIX.len().saturating_add(128)];
     let (prefix, fields) = bytes.split_at_mut(PREFIX.len());
     prefix.copy_from_slice(PREFIX);
-    for (destination, digest) in fields.chunks_exact_mut(32).zip([
+    for (destination, digest) in fields.as_chunks_mut::<32>().0.iter_mut().zip([
         scope.tenant.digest(),
         scope.task.digest(),
         scope.definition.digest(),

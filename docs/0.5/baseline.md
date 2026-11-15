@@ -73,3 +73,12 @@ source break. A new canonical API gets a separate fixture.
 | process-runtime | Protected workers, IPC and generation fencing | Runtime observations versus verified completion |
 | statechronicle | Canonical event verification/correlation boundary | External canonical authority |
 | facade | Consumer imports over these layers | Compatibility aliases versus actual shared semantics |
+
+## Follow-up evidence
+
+The [initial verification checkpoint](verification.md) records completed stable
+and Rust 1.85 all-target checks, signed conformance, coverage, representative
+benches, the completed seed-one fuzz round and the deliberately interrupted
+three-round campaign. It also records the baseline advisory failures and
+subsequent approved Rust 1.89 dependency fixes. Commands above describe the old
+baseline; run them at the baseline commit to reproduce the old MSRV profile.

@@ -37,7 +37,7 @@ def main():
         runtime_tests = root / "crates/penelope-process-runtime/tests"
         shutil.copytree(runtime_tests / "support", project / "tests/support")
         shutil.copytree(runtime_tests / "fixtures", project / "tests/fixtures")
-        manifest = ['[package]', 'name = "penelope-statechronicle-conformance"', 'version = "0.0.0"', 'edition = "2024"', 'publish = false', '[workspace]', '[dependencies]', 'async-trait = "0.1"', 'libc = "0.2"', 'serde = { version = "1", features = ["derive"] }', 'chrono = "0.4"', 'ed25519-dalek = "2"', 'serde_json = "1"', 'tempfile = "3"', 'rusqlite = { version = "0.40.2", features = ["bundled"] }']
+        manifest = ['[package]', 'name = "penelope-statechronicle-conformance"', 'version = "0.0.0"', 'edition = "2024"', 'publish = false', '[workspace]', '[dependencies]', 'async-trait = "0.1"', 'libc = "0.2"', 'serde = { version = "1", features = ["derive"] }', 'chrono = "0.4"', 'ed25519-dalek = "2"', 'serde_json = "1"', 'tempfile = "3"', 'rusqlite = { version = "0.41.0", features = ["bundled"] }']
         for name in ["penelope-core", "penelope-domain", "penelope-ports", "penelope-executor", "penelope-process-runtime", "penelope-statechronicle", "penelope-sqlite"]:
             manifest.append(f'{name} = {{ path = {json.dumps(str(root / "crates" / name))} }}')
         for name in ["statechronicle-core", "statechronicle-domain", "statechronicle-commit", "statechronicle-accumulator", "statechronicle-proof"]:

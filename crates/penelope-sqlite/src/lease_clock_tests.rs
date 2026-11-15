@@ -39,10 +39,10 @@ fn wait_for_release(_attempt: i32) -> bool {
         let Some(busy) = slot.as_mut() else {
             return false;
         };
-        if let Some(entered) = busy.entered.take() {
-            if entered.send(()).is_err() {
-                return false;
-            }
+        if let Some(entered) = busy.entered.take()
+            && entered.send(()).is_err()
+        {
+            return false;
         }
         busy.resume.recv_timeout(Duration::from_secs(5)).is_ok()
     })
@@ -126,7 +126,7 @@ fn contended_claim(reclaim: bool) {
             .worker
             .run(|connection| {
                 connection
-                    .busy_handler(None)
+                    .busy_handler(None::<fn(i32) -> bool>)
                     .map_err(|error| db_error(&error))?;
                 BUSY.with(|slot| *slot.borrow_mut() = None);
                 Ok(())

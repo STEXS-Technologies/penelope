@@ -3,6 +3,7 @@ name = "penelope-ports"
 description = "Penelope adapter surface: backend-agnostic port traits for process stores, step execution, timers, and escalation — no implementations."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true

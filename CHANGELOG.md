@@ -7,6 +7,25 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Security
+
+- Upgrade bundled SQLite through `rusqlite` 0.41.1 / `libsqlite3-sys` 0.39.1
+  to address RUSTSEC-2026-0459; upgrade `rustix` to 1.1.6 for
+  RUSTSEC-2026-0486. Conformance uses the same patched dependencies.
+
+### Changed
+
+- Raise the workspace minimum Rust version to 1.89 to support patched SQLite;
+  all library manifests now inherit that minimum explicitly.
+- Centralize the SQLite dependency version in the workspace.
+
+### Added
+
+- Canonical `saga`, `storage`, `runtime` and `integration::statechronicle`
+  facade paths, and hosted supervision under `task::TaskSupervisor`.
+  Existing imports and protocol behavior remain available.
+
+
 ## [0.4.0] - 2026-11-02
 
 Penelope adds rewindable computation alongside the saga orchestration and

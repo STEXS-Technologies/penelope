@@ -4,11 +4,14 @@
 //! for each event/decision, then submit the returned action with its stable
 //! action ID. It may advance only after verified, correlated evidence arrives.
 
+use penelope::saga::{
+    ActionResultObservation, LinearSagaDefinition, LinearSagaEvent, RetryPolicy, SagaDecision,
+    SagaStatus, StepPlan, apply_action_result, start,
+};
 use penelope::{
-    ActionId, ActionResultObservation, CausationId, ContentDigest, DefinitionId, DefinitionVersion,
-    DomainError, InputId, LinearSagaDefinition, LinearSagaEvent, LogicalTime, OutcomeActor,
-    OutcomeId, ProcessId, ProcessOutcomeFact, ProcessScope, RetryPolicy, SagaDecision, SagaStatus,
-    StepId, StepPlan, TenantId, apply_action_result, start,
+    ActionId, CausationId, ContentDigest, DefinitionId, DefinitionVersion, DomainError, InputId,
+    LogicalTime, OutcomeActor, OutcomeId, ProcessId, ProcessOutcomeFact, ProcessScope, StepId,
+    TenantId,
 };
 use thiserror::Error;
 
@@ -17,7 +20,7 @@ enum ExampleError {
     #[error(transparent)]
     Domain(#[from] DomainError),
     #[error(transparent)]
-    Engine(#[from] penelope::EngineError),
+    Engine(#[from] penelope::saga::EngineError),
     #[error("trade simulation did not complete")]
     NotCompleted,
     #[error("trade simulation ran out of preallocated outcome identities")]

@@ -1,0 +1,103 @@
+{
+  "baseline_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+  "candidate": "source hashes in candidate-source-sha256.json; isolated checkout, then copied unchanged to branch",
+  "logs": {
+    "baseline-all-targets.log.gz": {
+      "exit_code": 0,
+      "sha256": "6ec0fe161a197d4bfbbf937600521f4dc36e5d4f46e88cbe1dfea78537ea2e13"
+    },
+    "baseline-msrv-all-targets.log.gz": {
+      "exit_code": 0,
+      "sha256": "1bb266a0b9daab213ba9fdb5025304a2f9bea10d8c09935981e4cbeb63dabfea"
+    },
+    "baseline-rustdoc.log.gz": {
+      "exit_code": 0,
+      "sha256": "caf0a106efa31d60099d35a4e515b02c1d9acb0a00a10abdaf851fb63feb7e44"
+    },
+    "baseline-script-tests.log.gz": {
+      "exit_code": 0,
+      "sha256": "b9c324179628cda5d50494bab78ea95860a261be2d1e6806abb9eb32ca915de5"
+    },
+    "baseline-coverage.log.gz": {
+      "exit_code": 0,
+      "sha256": "7d81a8df0bf248edac6cb1ea3bc6beb44423b34d82a592d5c48c6a9241d4c888"
+    },
+    "baseline-conformance.log.gz": {
+      "exit_code": 0,
+      "sha256": "1e26ce6030fbc0a283d997d07fe99d91ffc67b7613b37599c8d1e4fff7146a33"
+    },
+    "baseline-audit.log.gz": {
+      "exit_code": 1,
+      "sha256": "70297f3763b5e35a845d1dbd51e195c259b18d5bbb7d3bdb1718d166ce6821fa"
+    },
+    "baseline-deny.log.gz": {
+      "exit_code": 1,
+      "sha256": "146e7549199eea1b343690d30a974e59597ed0d8dd8cbe4f1d339494b12887bb"
+    },
+    "baseline-chaos-interrupted.log.gz": {
+      "exit_code": 143,
+      "sha256": "f2eb65daf44b8de3d3eca0ad25c990e8746387e546ad2832cb604aa6a6742d55"
+    },
+    "baseline-bench-executor.log.gz": {
+      "exit_code": 0,
+      "sha256": "bf1f58524e12ef3c530e7e166b7706ca7e26b6e22294295328b2bbd454162e7f"
+    },
+    "baseline-bench-timeline.log.gz": {
+      "exit_code": 0,
+      "sha256": "dfc27e3f1a7a89623a31e061466c49a737626b75f426b74195a280005959b342"
+    },
+    "candidate-workspace-tests.log.gz": {
+      "exit_code": 0,
+      "sha256": "ef7eafcdb79ef2108743a583afd02d91c1effc18611ffa7ad40ce74d4dc01c7f"
+    },
+    "candidate-final-adapter-msrv-tests.log.gz": {
+      "exit_code": 0,
+      "sha256": "bc06c855fcc001281b2afeb74c7af4b942859690a27892eb214d90965f142131"
+    },
+    "candidate-clippy.log.gz": {
+      "exit_code": 0,
+      "sha256": "03999b9f5238523105d0560979bdd2c37a630b8d4595f8e0e5439778dc65a423"
+    },
+    "candidate-rustdoc.log.gz": {
+      "exit_code": 0,
+      "sha256": "8bd08176950e57c39de7c54b9f5b9b3decff75b7072e354887d40ced6744645d"
+    },
+    "candidate-portable-msrv.log.gz": {
+      "exit_code": 0,
+      "sha256": "f750c07b8fd8ecc54f8a5ec8b6ebdfd345254fb6ac8a87fb967266ff43917900"
+    },
+    "candidate-conformance.log.gz": {
+      "exit_code": 0,
+      "sha256": "b232a737f93d32478a666dabcf84583fcbda12305b5c5cc11cba3f1eba31aa25"
+    },
+    "candidate-audit.log.gz": {
+      "exit_code": 0,
+      "sha256": "82488f260af6314055e17894b73868171bd309092ba6ff393002388615ba6724"
+    },
+    "candidate-deny.log.gz": {
+      "exit_code": 0,
+      "sha256": "799d382f4ce6bc37d38b3d04693a9fb49ca064a90b4539e74e60e81d8047af82"
+    },
+    "candidate-legacy-consumer.log.gz": {
+      "exit_code": 0,
+      "sha256": "9d8ac430a73e2ee90c4f269b4a70994a8028fef5199e5fbb2e09b6c63ef47aec"
+    },
+    "candidate-final-workspace-msrv-tests.log.gz": {
+      "exit_code": 0,
+      "sha256": "2c241b4ac387496c745977bcfb5126f7932d11c0e7e22e5c6df30d109601d9fb"
+    },
+    "candidate-final-conformance.log.gz": {
+      "exit_code": 0,
+      "sha256": "f4981db62bf0e6df1f22e1dd317b34eb8066e5392b4167a90c9bf6a4edb08aff"
+    }
+  },
+  "baseline_chaos": {
+    "requested_rounds": 3,
+    "completed_rounds": 1,
+    "seed": 1,
+    "property_cases": 1000,
+    "fuzz_runs_requested_per_target": 10000,
+    "completed_targets": 22,
+    "disposition": "Stopped deliberately with SIGTERM during round two after the complete seed-one round. Not a passing three-round campaign."
+  }
+}

@@ -1,9 +1,15 @@
-//! Penelope umbrella crate.
+//! Deterministic saga coordination, recoverable execution and optional timelines.
 //!
-//! This is the consumer-facing facade for Penelope's hexagonal architecture:
-//! pure protocol primitives, typed protocol values, intent boundary, deterministic
-//! executor, backend-neutral ports, and adapter boundaries. It ships no
-//! database, broker, scheduler, HTTP, or StateChronicle client implementation.
+//! Start with [`saga`] for linear or graph coordination and [`task`] for bounded
+//! recovery and supervision. [`storage`] supplies protocol-specific durable ports;
+//! [`integration`] supplies external canonical-evidence boundaries. Enable the
+//! `timeline` feature for bounded rewindable computation.
+//!
+//! Decisions plan state changes and effects. Applications durably admit plans
+//! before dispatch and supply verified evidence for external outcomes. No
+//! database, broker, scheduler or external client is included in this facade.
+//!
+//! Existing root imports and internal-crate aliases remain available.
 
 #![deny(unsafe_code)]
 #![allow(clippy::must_use_candidate)]
@@ -25,21 +31,8 @@ pub use penelope_domain::{
 };
 /// Application execution boundary.
 pub use penelope_executor as executor;
-/// Deterministic linear-saga reference API.
-pub use penelope_executor::engine::{
-    ActionResult, ActionResultObservation, CompensationPlan, EngineError, GraphDefinitionError,
-    GraphTransition, GraphTransitionOutcome, LinearSagaDefinition, LinearSagaEvent,
-    LinearSagaEventEnvelope, LinearSagaInput, LinearSagaProjection, MAX_GRAPH_TRANSITIONS,
-    ProcessGraphDefinition, RetryBackoff, RetryJitter, RetryJitterSeed, RetryPolicy,
-    RetryTimerScheduleRequest, SagaDecision, SagaStatus, StepPlan, apply_action_result,
-    apply_manual_resolution, decide, fire_retry_timer, replay, replay_ordered,
-    schedule_retry_timer, start,
-};
-/// Deterministic bounded graph-process API.
-pub use penelope_executor::graph::{
-    GraphEngineError, GraphSagaDecision, GraphSagaEvent, GraphSagaEventEnvelope, GraphSagaInput,
-    GraphSagaProjection, apply_graph_result, replay_graph, replay_graph_ordered, start_graph,
-};
+/// Linear and graph saga coordination.
+pub mod saga;
 /// Inbound parsing and validation boundary.
 pub use penelope_intent as intent;
 /// User-facing typed process-input parser.
@@ -70,19 +63,30 @@ pub use penelope_ports::{
     RecoveryDisposition, RedactedDiagnostic, TimerClaimRequest, TimerClaimStore, TimerLease,
     TimerSchedule, TimerValidationError,
 };
-/// StateChronicle adapter boundary; no client implementation is included.
-pub use penelope_statechronicle as statechronicle;
+/// Compatibility exports for existing saga consumers.
+pub use saga::*;
+/// External canonical-evidence integrations.
+pub mod integration;
+
+/// Compatibility path for the StateChronicle adapter boundary.
+pub use integration::statechronicle;
 /// Frequently used StateChronicle committed-event correlation contracts.
 pub use penelope_statechronicle::{
     CanonicalCommandExpectation, CanonicalCommitBindingError, CorrelationError,
     VerifiedCanonicalEvent, bind_verified_event_to_commit, verify_committed_event,
 };
 
-/// Allocation-free recoverable task contracts and deterministic decisions.
-pub use penelope_core::task;
-/// Bounded supervisor using injected journal and protected runtime adapters.
-pub use penelope_executor::task::TaskSupervisor;
+/// Recoverable task contracts, deterministic control and hosted supervision.
+pub mod task;
+/// Compatibility path for hosted task supervision.
+pub use task::TaskSupervisor;
 
 /// Optional rewindable computation API; no timeline dependency by default.
 #[cfg(feature = "timeline")]
 pub use penelope_timeline as timeline;
+
+/// Durable storage contracts; adapters retain their protocol-specific semantics.
+pub mod storage;
+
+/// Runtime integration contracts for recoverable task execution.
+pub mod runtime;

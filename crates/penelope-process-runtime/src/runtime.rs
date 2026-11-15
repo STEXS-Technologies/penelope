@@ -79,7 +79,9 @@ fn start_header(scope: TaskScope, generation: TaskGeneration, lengths: [u32; 4])
     let (scope_bytes, fields) = remaining.split_at_mut(32);
     scope_bytes.copy_from_slice(&scope_digest(scope).0);
     for (destination, value) in fields
-        .chunks_exact_mut(4)
+        .as_chunks_mut::<4>()
+        .0
+        .iter_mut()
         .zip(std::iter::once(generation.get()).chain(lengths))
     {
         destination.copy_from_slice(&value.to_be_bytes());
@@ -466,13 +468,12 @@ impl<A: TaskGenerationAuthority> TaskRuntime for LinuxProcessRuntime<A> {
             if execution != execution_id(scope, generation) {
                 return Err(TaskPortError::Corrupt);
             }
-            if let Some(saved) = self.registry.load(scope, generation, execution)? {
-                if saved.boot == self.registry.boot {
-                    if let Some(identity) = saved.identity {
-                        stop_identity(identity, self.config.fence_timeout)?;
-                        stopped_pid = Some(identity.pid);
-                    }
-                }
+            if let Some(saved) = self.registry.load(scope, generation, execution)?
+                && saved.boot == self.registry.boot
+                && let Some(identity) = saved.identity
+            {
+                stop_identity(identity, self.config.fence_timeout)?;
+                stopped_pid = Some(identity.pid);
             }
         }
         if let Ok(index) = self.index(scope, generation) {

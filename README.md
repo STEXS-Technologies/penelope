@@ -33,13 +33,31 @@ adapters and workers through the ports. The optional
 task journal and saga inbox/outbox/timer persistence. Penelope never guesses whether an
 ambiguous payment, trade, or canonical mutation succeeded.
 
+## API navigation (unreleased)
+
+Use Rust 1.89 or newer. The facade groups the existing implementations by purpose:
+
+| Path | Purpose |
+| --- | --- |
+| `penelope::saga` | Linear and graph decisions, retries, compensation and replay |
+| `penelope::task` | Recovery contracts, portable control and hosted `TaskSupervisor` |
+| `penelope::storage` | Saga storage ports and synchronous/asynchronous task journals |
+| `penelope::runtime` | Task runtime, clock and generation authority contracts |
+| `penelope::integration::statechronicle` | Verified external canonical-event correlation |
+| `penelope::timeline` | Optional bounded replay and correction |
+
+Existing root imports and crate aliases remain available. These paths expose the
+same types and implementations; their distinct histories and recovery rules still
+apply. The broader application-machine API is [planned for 0.5](docs/0.5/README.md)
+and is not implemented by this namespace consolidation.
+
 ## The programming model
 
 Given a saga definition, replayed projection and typed input, ask the pure engine
 for its next decision:
 
 ```rust
-let decision = penelope::decide(
+let decision = penelope::saga::decide(
     &definition,
     projection.as_ref(),
     tenant_id,

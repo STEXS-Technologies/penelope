@@ -19,7 +19,7 @@ pub(super) struct Invoice {
     pub(super) units: u64,
 }
 impl Invoice {
-    pub(super) fn bytes(self) -> [u8; 16] {
+    pub(super) const fn bytes(self) -> [u8; 16] {
         let mut bytes = [0; 16];
         let (total, units) = bytes.split_at_mut(8);
         total.copy_from_slice(&self.total.to_le_bytes());

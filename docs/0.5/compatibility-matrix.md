@@ -13,19 +13,23 @@ Status: requirements; no 0.5 compatibility qualification claimed.
 | SQLite process/task stores | Existing data survives forward-only machine schema addition | Old database reopen, migration rollback and CAS tests |
 | StateChronicle bridge | Exactly scoped canonical evidence; no inherited authority | Pinned upstream signed-event conformance |
 | Default features | Timeline opt-in; no default runtime or database | Cargo feature matrix and external fixtures |
-| Portable core | Rust 1.85, no_std and allocation-free supported paths | MSRV, bare-metal builds and allocation probes |
+| Portable core | Approved Rust 1.89 minimum, no_std and allocation-free supported paths | MSRV, bare-metal builds and allocation probes |
 
 ## Planned canonical imports
 
-These are target paths, not claims about APIs already available:
+The canonical paths below now expose existing implementations; machine adapters
+and generalized diagnostics remain planned:
 
 | Current path | Target consumer path |
 | --- | --- |
 | Root saga exports, `executor::engine`, `executor::graph` | `penelope::saga` |
-| `penelope::task` and root `TaskSupervisor` | `penelope::task` with documented hosted composition |
+| `penelope::task` and root `TaskSupervisor` | `penelope::task`, including `TaskSupervisor` |
 | `penelope::ports` | `penelope::storage` for storage contracts; retain non-storage contracts under their appropriate namespaces |
 | `penelope::statechronicle` | `penelope::integration::statechronicle` |
 | `penelope::timeline` | Same optional path |
+
+The workspace MSRV increase from Rust 1.85 to 1.89 is an explicitly approved
+source compatibility change for patched SQLite; see [verification](verification.md).
 
 Retain existing exports through 0.5 unless a specific source change has a recorded
 reason and migration path. New machine records use their own independently

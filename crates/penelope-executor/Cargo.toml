@@ -3,6 +3,7 @@ name = "penelope-executor"
 description = "Penelope application boundary: deterministic decisions composed with injected ports."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
@@ -19,7 +20,7 @@ thiserror = { workspace = true }
 tempfile = "3"
 async-trait.workspace = true
 penelope-sqlite = { version = "0.4.0", path = "../penelope-sqlite" }
-rusqlite = { version = "0.40.2", features = ["bundled"] }
+rusqlite.workspace = true
 syn = { version = "2", features = ["full", "visit"] }
 proptest = { workspace = true }
 serde_json = { workspace = true }

@@ -26,7 +26,7 @@ fn data_version(connection: &Connection) -> Result<i64, TaskPortError> {
 
 pub(crate) fn key(scope: TaskScope) -> [u8; 128] {
     let mut key = [0; 128];
-    for (destination, digest) in key.chunks_exact_mut(32).zip([
+    for (destination, digest) in key.as_chunks_mut::<32>().0.iter_mut().zip([
         scope.tenant.digest(),
         scope.task.digest(),
         scope.definition.digest(),
