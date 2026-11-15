@@ -1,0 +1,172 @@
+{
+  "source_commit": "68448c54d9058bc9b91d8d1a2588fc4328ecccee",
+  "source_sha256": {
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9",
+    "crates/penelope-core/Cargo.toml": "f0b4610a30e0472dd6d5fcd21c0fcde0ec64f65c7b4943a1c66e8344b8b8da9c",
+    "crates/penelope-core/benches/machine_operations.rs": "02e08b726bd3a49873d3d7387867f669760c0cdc6d6dc952271a79f794a2884e",
+    "crates/penelope-core/benches/machine_hierarchy.rs": "05e9ffd423704a80b9ca0c6d05b9a6c30163ca23224f34744325e14d88314cd3",
+    "crates/penelope-core/benches/support/measurement.rs": "338745bfdc3bd7978fe5ecdde0a486f011471df77f618c7637de462c44b652e4",
+    "crates/penelope-core/tests/support/allocations.rs": "0e2bfddecfebb1105ddeff953cf740f981a9017f36f5b0119361d44123550e69"
+  },
+  "environment": {
+    "cpu": "AMD Ryzen 9 7950X 16-Core Processor",
+    "target": "x86_64-unknown-linux-gnu",
+    "rust": "1.100.0 (0ef1bc386 2026-11-09)",
+    "msrv": "1.89.0",
+    "current_run_affinity": 4,
+    "msrv_affinity": "unpinned; compatibility only",
+    "compiler_wrappers": "explicitly disabled"
+  },
+  "commands": [
+    "cargo bench --locked -p penelope-core --bench machine_hierarchy",
+    "cargo bench --locked -p penelope-core --bench machine_operations",
+    "cargo clippy --locked -p penelope-core --benches --all-features -- -D warnings",
+    "cargo +1.89.0 bench --locked -p penelope-core --bench machine_hierarchy",
+    "cargo +1.89.0 bench --locked -p penelope-core --bench machine_operations",
+    "cargo package --locked -p penelope-core --allow-dirty --no-verify",
+    "python3 scripts/check-package-includes.py /tmp/penelope-machine-bench/package/penelope-core-0.4.0.crate"
+  ],
+  "results": {
+    "current_rounds": 3,
+    "msrv_rounds": 1,
+    "hierarchy_profiles_per_run": 60,
+    "flat_profiles_requalified_per_run": 396,
+    "internal_heap_operations": 0,
+    "sample_batches": 101,
+    "operations_per_batch": 32,
+    "warmup_operations": 128,
+    "separate_allocation_operations": 32
+  },
+  "scope": [
+    "Hierarchy at depths 1/2/4/8/16; leaf/parent/root selection; internal, external sibling, guard rejection, fully unhandled.",
+    "One active leaf, two sibling branches sharing root; depth 1 is an external self transition, and leaf/parent/root labels coincide. At depth 2 parent and root coincide.",
+    "Owned 32-byte state, zero intent capacity, counter-only hooks. Final whole state, revision, exit/entry/action totals checked against independent closed forms outside sampling.",
+    "Context construction, status assertions, state reads, drain, kernel validation and counter hooks remain in timed callbacks. Allocation probe and output formatting are outside timing.",
+    "Same shared sampler and allocation positive control for both matrices; original flat CSV fields retained.",
+    "Batch-mean percentiles and throughput from raw elapsed samples; no individual event tail-latency claim.",
+    "Source path building detects cycles by bounded prefix scans; worst-case work is quadratic in configured active depth, not claimed linear. No registry of unrelated machine instances is present."
+  ],
+  "limitations": [
+    "Short fixed-order shared-host samples; no confidence intervals, historical equivalent, or sustained-throughput/real-world generalization.",
+    "Reported owner_bytes is inline owner size; transient path workspace is not included and peak stack was not measured.",
+    "No intent staging in hierarchy timing; existing lifecycle allocation tests cover effect-staging hierarchy separately.",
+    "Consumer-computation split, durable database, end-to-end, remaining legacy performance findings and final release gates remain open."
+  ],
+  "observations": [
+    {
+      "depth": 1,
+      "external_sibling_batch_mean_p50_ns_by_round": {
+        "leaf": [
+          47,
+          55,
+          49
+        ],
+        "parent": [
+          46,
+          54,
+          50
+        ],
+        "root": [
+          44,
+          55,
+          49
+        ]
+      }
+    },
+    {
+      "depth": 2,
+      "external_sibling_batch_mean_p50_ns_by_round": {
+        "leaf": [
+          44,
+          56,
+          50
+        ],
+        "parent": [
+          45,
+          57,
+          50
+        ],
+        "root": [
+          45,
+          57,
+          50
+        ]
+      }
+    },
+    {
+      "depth": 4,
+      "external_sibling_batch_mean_p50_ns_by_round": {
+        "leaf": [
+          96,
+          93,
+          83
+        ],
+        "parent": [
+          84,
+          94,
+          82
+        ],
+        "root": [
+          85,
+          93,
+          84
+        ]
+      }
+    },
+    {
+      "depth": 8,
+      "external_sibling_batch_mean_p50_ns_by_round": {
+        "leaf": [
+          161,
+          125,
+          114
+        ],
+        "parent": [
+          118,
+          126,
+          113
+        ],
+        "root": [
+          121,
+          129,
+          116
+        ]
+      }
+    },
+    {
+      "depth": 16,
+      "external_sibling_batch_mean_p50_ns_by_round": {
+        "leaf": [
+          350,
+          242,
+          230
+        ],
+        "parent": [
+          236,
+          243,
+          229
+        ],
+        "root": [
+          240,
+          251,
+          239
+        ]
+      }
+    }
+  ],
+  "artifacts_sha256": {
+    "hierarchy-round-1.csv.gz": "f4ffcf9a01260b424007433408bd84ee1dda625733334cc1a0ef06fb03132ab4",
+    "hierarchy-round-2.csv.gz": "d80c1b5ca44064799558a87db4a5530bfea685e43b3743b2e7fbb33c07c4be76",
+    "hierarchy-round-3.csv.gz": "d71e512841f779925f0762ae07b186fec7204e3f6aee501e98fe79a47f45f838",
+    "shared-flat-round-1.csv.gz": "a4c8803b02dc8173a83515bbb7a86f14ee20fa35d56cc332861e242e060c81e3",
+    "shared-flat-round-2.csv.gz": "c866a0273686382f238c4cde8a518e6875aa06624b12bb1c8015254ea622a311",
+    "shared-flat-round-3.csv.gz": "116adfa24c2336cc5544f93ecf88b9f276b8135cf745e3677298be798d23cd82",
+    "hierarchy-msrv.csv.gz": "a8e153004fb0de21f4b8c6e74aaa6030437b5ad1162691f3d632a0dabb93634c",
+    "shared-flat-msrv.csv.gz": "5216e157524a93d3aa7413df829c2f3a609661032128e1dbaf75287feb5d5394",
+    "hierarchy-build.log.gz": "77a49b4465946c6c51b4f29ff2fb45226ac2c4972c5e795a37399f449d8a251a",
+    "hierarchy-clippy.log.gz": "2ed897df081764a7df8c9fa1bc889e6c46bd25ba1100fc26e85020cced7febdb",
+    "hierarchy-msrv.log.gz": "733583bfaa8fc9589ae9389fa947a29a7cbc61bc7ef382793727c815167ddfac",
+    "shared-flat-msrv.log.gz": "78c9f2844ecd030006523b8e2bea9b70807bd3d2a80798504dab762605ad069d",
+    "hierarchy-package.log.gz": "bc188cc310599db3700ba76238bf1daac5e54335e3c379a7ecf47d7b5b67998e"
+  }
+}

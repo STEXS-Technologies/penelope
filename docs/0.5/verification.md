@@ -606,3 +606,27 @@ These short fixed-order shared-host runs establish a reproducible new-machine
 fixture, without a historical equivalent or a regression conclusion. Separate
 consumer-computation measurements, hierarchy, durable SQLite, end-to-end workloads
 and final candidate qualification remain open.
+
+## Hierarchical machine depth measurements
+
+`cargo bench --locked -p penelope-core --bench machine_hierarchy` adds 60 profiles
+at depths 1/2/4/8/16, handled at leaf/parent/root, for internal transitions,
+external sibling transitions, rejection and unhandled events. Independent
+closed-form expectations check final state, revision and exit/entry/action
+counter totals. At depth 1 the external transition is a self transition and
+all handler labels coincide; at depth 2 parent and root coincide.
+
+[Three pinned runs, MSRV results and raw samples](evidence/machine-performance/hierarchy.json)
+pass all hierarchy profiles and requalify all 396 flat profiles after extracting
+their shared sampler. Allocation probes remain zero with a positive control;
+strict Clippy and packaged includes pass. Sibling-transition median batch averages
+are approximately 50 ns at depth 1 and 240 ns at depth 16 on this host. Prefix
+cycle checks are bounded by active depth and can be quadratic; no linear-scaling
+claim is made. Inline owner size excludes transient path workspace and is not a
+peak-stack measurement.
+
+Hierarchy timings include context construction, status checks, state reads, drain
+and counter-only hooks, with intent capacity zero. They are not directly compared
+to flat profiles with capacity 32. Consumer-computation separation, durable and
+end-to-end workloads, statistical review of legacy findings and final release
+qualification remain open.
