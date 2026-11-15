@@ -1,0 +1,15 @@
+[package]
+name = "penelope-compat-04"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.85"
+publish = false
+
+[workspace]
+
+[features]
+default = []
+timeline = ["penelope/timeline"]
+
+[dependencies]
+penelope = { path = "../../crates/penelope" }

@@ -1,0 +1,616 @@
+[
+  {
+    "name": "penelope",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {
+      "default": [],
+      "timeline": [
+        "dep:penelope-timeline"
+      ]
+    },
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-executor",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-intent",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-statechronicle",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-timeline",
+        "kind": null,
+        "optional": true,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-core",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {
+      "default": [],
+      "serde": [
+        "dep:serde"
+      ]
+    },
+    "dependencies": [
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": true,
+        "default_features": false
+      },
+      {
+        "name": "sha2",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-domain",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "sha2",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "proptest",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      }
+    ]
+  },
+  {
+    "name": "penelope-executor",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-intent",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "async-trait",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-sqlite",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "proptest",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "rusqlite",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde_json",
+        "kind": "dev",
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "syn",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "tempfile",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      }
+    ]
+  },
+  {
+    "name": "penelope-fuzz",
+    "version": "0.0.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "libfuzzer-sys",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-executor",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-intent",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-process-runtime",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-sqlite",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-statechronicle",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-timeline",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "tempfile",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      }
+    ]
+  },
+  {
+    "name": "penelope-intent",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-ports",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "async-trait",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-process-runtime",
+    "version": "0.4.0",
+    "rust_version": "1.85",
+    "features": {},
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "async-trait",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-executor",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-sqlite",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-statechronicle",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "tempfile",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "libc",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "rustix",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "seccompiler",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      }
+    ]
+  },
+  {
+    "name": "penelope-sqlite",
+    "version": "0.4.0",
+    "rust_version": "1.85",
+    "features": {},
+    "dependencies": [
+      {
+        "name": "async-trait",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "rusqlite",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "serde_json",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "penelope-timeline",
+        "kind": "dev",
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "rusqlite",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "tempfile",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "thiserror",
+        "kind": "dev",
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-statechronicle",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {},
+    "dependencies": [
+      {
+        "name": "penelope-domain",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "penelope-ports",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "serde",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      }
+    ]
+  },
+  {
+    "name": "penelope-timeline",
+    "version": "0.4.0",
+    "rust_version": null,
+    "features": {
+      "alloc": [],
+      "default": [],
+      "std": [
+        "alloc"
+      ]
+    },
+    "dependencies": [
+      {
+        "name": "penelope-core",
+        "kind": null,
+        "optional": false,
+        "default_features": true
+      },
+      {
+        "name": "thiserror",
+        "kind": null,
+        "optional": false,
+        "default_features": false
+      },
+      {
+        "name": "proptest",
+        "kind": "dev",
+        "optional": false,
+        "default_features": true
+      }
+    ]
+  }
+]
