@@ -103,6 +103,26 @@ manual review. Their adapters present truthful views of existing history,
 including fields the legacy protocol did not record. No synthetic rewritten
 machine histories or unchecked identity conversions.
 
+The consolidation audit tracks these authoritative owners:
+
+| Responsibility | Shared owner and callers | Boundary retained |
+| --- | --- | --- |
+| Prepared lifecycle inspection | Core `PreparedDecision`: machine, saga and task views | Native state/events remain typed; inspection confers no commit authority |
+| Intent count, identity and byte preflight | `core::__private::admit_intent`: machine staging/wire and timeline effects | Payload ownership, poisoning and public error precedence stay local |
+| Bounded wire cursor movement | `core::__private::{take_bytes, put_bytes}`: machine and timeline codecs | Distinct protocol tags, schemas, variants and error types |
+| Blocking async I/O and response delivery | SQLite `DatabaseWorker<State>`: process, machine and native task adapters | Task journal owns its original connection, cache and transactions |
+| Native committed process proof | SQLite `committed_receipt`/`verify_committed_batch`: idempotent commit and read-only verifier | Verification never retries writes or dispatches actions |
+| Full source-to-receiver identity | `MachineIntentSource::binding_identity`: task and saga receivers | Host-pinned task/saga policies and native identities remain distinct |
+
+Separate machine/task/process transactions remain necessary: each authenticates
+different history and scope, and only its native owner may advance that history.
+The machine outbox and process action leases also protect different authorities;
+sharing a universal lease would erase source acceptance versus execution rights.
+Thin protocol readers and error adapters are retained to preserve old wire/error
+contracts and the allocation-free core boundary. The
+[measured maintenance inventory](evidence/maintenance/manifest.json) records size,
+dependencies, build/test cost and the limits of these consolidation claims.
+
 ## ADR-050-07 and 08: authorization and features
 
 Pure reducers do not authenticate callers. Hosted admission verifies the trusted

@@ -1,0 +1,164 @@
+{
+  "scope": "Baseline versus current maintenance inventory, shared-owner audit and bounded build/test qualification cost. No semantic code-size, statistical speedup or flake-rate claim.",
+  "revisions": {
+    "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "after": "20941bab77159d68c194d08210c1e977a313280e"
+  },
+  "inventory": {
+    "file": "inventory.json.gz",
+    "raw_sha256": "89610f2e45d6d6a787ff695520545f384f597065aab374f78443041a305c3372",
+    "gzip_sha256": "35590c28cf9d1ccc092af687243a50583278ac364d8d89fa157ffd0e0b242343",
+    "command": "python3 docs/0.5/evidence/maintenance/inventory.py --before 42ec187 --after 20941ba"
+  },
+  "source_sha256": {
+    "docs/0.5/architecture.md": "06a2197933221596a9368c421faa9a560c7f797638ec44635e8dad6b158c7a80",
+    "docs/0.5/verification.md": "bd47e79fc629699ceaac0d0ee0e20671bd198a781e50030dcc48aa27cf819885",
+    "docs/0.5/evidence/maintenance/inventory.py": "5324fe1ac1f99a0b62ba9392d6053e1efab8a7a92a2e7f7e39e3ab494f2bdca0"
+  },
+  "checks": [
+    {
+      "command": "cargo +1.100.0 test --workspace --lib --tests --all-features --locked --exclude penelope-fuzz --no-run",
+      "exit_code": 0,
+      "log": "current-build.log.gz",
+      "raw_sha256": "aea7d02d04e58c6452f536879fde96efb947c094334d82b6327f50d23456d8ad",
+      "gzip_sha256": "cbe4eb480c3cde8d65603a4c53dceb13fc187cd9d41f56c55e5c2ace085cff05"
+    },
+    {
+      "command": "Same prebuild command using --manifest-path /tmp/penelope-v040-baseline/Cargo.toml",
+      "exit_code": 0,
+      "log": "baseline-build.log.gz",
+      "raw_sha256": "5aa359f7990715cad98d79944e5f38cf14dea20fcd9fadc2d4256b0d21aa680f",
+      "gzip_sha256": "86bc4282ae9694433c5a1ac7b771ab2d593301748dec60d7fcb443cc973e0dad"
+    },
+    {
+      "command": "cargo +1.100.0 test --workspace --lib --tests --all-features --locked --exclude penelope-fuzz",
+      "exit_code": 0,
+      "log": "current-tests.log.gz",
+      "raw_sha256": "ec43893dc30bebef0659b99dba3da32239fa78dff72a7ecb6f66d7e9a7b4934f",
+      "gzip_sha256": "17a1aef74e921b760eed91fbbeb1b09e95494608ce9bf7e45b6d31b36d30f238"
+    },
+    {
+      "command": "Same test command using --manifest-path /tmp/penelope-v040-baseline/Cargo.toml",
+      "exit_code": 0,
+      "log": "baseline-tests.log.gz",
+      "raw_sha256": "864423b2d9ebb924a22edacd5b680e6ffd84d1d195a3253230acf36c243a5eb3",
+      "gzip_sha256": "a2ff1ab3a0bc5cf20ab9190f08202e9be4319c3e2123d61664795688561e874a"
+    },
+    {
+      "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= taskset -c 4,5,6,7 cargo +1.100.0 build --release -p penelope --locked --jobs 4 --target-dir NEW_EMPTY_TARGET (baseline workspace)",
+      "exit_code": 0,
+      "log": "cold-before.log.gz",
+      "raw_sha256": "93a1b0c4c49b342a7cbf87402ffd49f7e0f393330f3277f251fc89f6c470a9dd",
+      "gzip_sha256": "927a0c059ad5a7b000d1e235d89a69f4b82f7291935861a6076df31f4ca63f76"
+    },
+    {
+      "command": "Same build command with candidate workspace and separate NEW_EMPTY_TARGET",
+      "exit_code": 0,
+      "log": "cold-after.log.gz",
+      "raw_sha256": "75af6f19d68a145c3da53821c91f92201e6bb5afe2a6778591350ecb4167d362",
+      "gzip_sha256": "ad4a8763b55326328a287efe7a59623d4029c69dbab577c06a5f88eb7e8ba05a"
+    }
+  ],
+  "tests": {
+    "baseline": {
+      "binaries": 65,
+      "passed": 572,
+      "failed": 0,
+      "ignored": 0,
+      "resources": {
+        "wall_seconds": 30.32,
+        "user_seconds": 42.01,
+        "system_seconds": 39.15,
+        "peak_rss_kib": 53892
+      }
+    },
+    "current": {
+      "binaries": 78,
+      "passed": 685,
+      "failed": 0,
+      "ignored": 0,
+      "resources": {
+        "wall_seconds": 38.41,
+        "user_seconds": 60.48,
+        "system_seconds": 120.27,
+        "peak_rss_kib": 61672
+      }
+    }
+  },
+  "artifact_cold_builds": {
+    "before": {
+      "resources": {
+        "wall_seconds": 5.47,
+        "user_seconds": 12.46,
+        "system_seconds": 1.89,
+        "peak_rss_kib": 299704
+      },
+      "rlib_artifacts": [],
+      "rlib_bytes_sum": 0
+    },
+    "after": {
+      "resources": {
+        "wall_seconds": 5.17,
+        "user_seconds": 12.64,
+        "system_seconds": 1.83,
+        "peak_rss_kib": 302264
+      },
+      "rlib_artifacts": [],
+      "rlib_bytes_sum": 0
+    }
+  },
+  "cache_assisted_context": {
+    "before": {
+      "resources": {
+        "wall_seconds": 5.5,
+        "user_seconds": 2.61,
+        "system_seconds": 0.94,
+        "peak_rss_kib": 267200
+      },
+      "log": "cache-assisted-before.log.gz",
+      "raw_sha256": "07d45b47d11dfcb27933baa5380bee887b18a393519fa29326bf48327f680f10",
+      "gzip_sha256": "749bb0bf72cf846ea13834f25c6c3038594848fa071ba7353c2e1091cefba720"
+    },
+    "after": {
+      "resources": {
+        "wall_seconds": 4.95,
+        "user_seconds": 2.38,
+        "system_seconds": 0.93,
+        "peak_rss_kib": 266072
+      },
+      "log": "cache-assisted-after.log.gz",
+      "raw_sha256": "95cf18f48809526ace32e201fd25224d1ae5f056a4770a3eea46cbf7ad47efa7",
+      "gzip_sha256": "04e252b77d1292455d73d9789805b9f2a478ef1579dccfb4a22733004bc75990"
+    }
+  },
+  "build_conditions": {
+    "compiler_wrappers": "Both RUSTC_WRAPPER and RUSTC_WORKSPACE_WRAPPER explicitly empty for qualified artifact-cold builds. Global Cargo config otherwise uses sccache; first cached observations retained separately.",
+    "jobs": 4,
+    "cpu_affinity": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "target_policy": "Each build starts with a nonexistent target directory, asserted before execution. Separate targets per revision and cache mode.",
+    "profile": "Default facade release build; timeline feature disabled. Each revision uses its own locked dependencies.",
+    "order": "Baseline then candidate; no other qualification build/test overlapped each measured operation. Shared host applications remain uncontrolled.",
+    "registry_os_caches": "Warm/uncontrolled. No fresh-install claim.",
+    "rlib_scope": "Sum of release/deps/*.rlib bytes including dependency artifacts, not a linked application binary or runtime memory."
+  },
+  "environment": {
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_PROFILE_RELEASE_LTO": null,
+    "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": null,
+    "PROPTEST_CASES": null,
+    "PROPTEST_RNG_SEED": null
+  },
+  "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n",
+  "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "remaining": "Full planned workload performance matrix and exact final release-candidate qualification remain open. These one-run build/test observations cannot prove absence of rare flakes or meaningful timing regressions."
+}

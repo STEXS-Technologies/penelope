@@ -495,3 +495,33 @@ and 72 script tests pass. This adds real cross-version evidence to the synthetic
 migration/failure suites; it does not qualify every existing deployment or
 authorize rolling back accepted external effects. The compatibility matrix now
 states the quiesced upgrade and separate-backup rollback procedure.
+
+## Maintenance and qualification cost inventory
+
+The reproducible [inventory and raw measurements](evidence/maintenance/manifest.json)
+compare the original `42ec187` tree with `20941ba`. Library count stays at ten;
+declared normal dependency edges stay at 52, including optional edges. Three
+unused internal edges were removed while timeline hashing and native bridge
+dependencies were added. This is a declared graph inventory, not a feature-specific
+resolved dependency count. Tracked Markdown files fall from 171 to 59.
+
+Crate `src/` text grows from 26,673 to 32,483 physical lines: 5,646 lines in new
+files and a net 164 in existing paths. These counts include comments and inline
+test code, so they are not production-only semantic LoC. Overall Rust text has
+grown to implement the new machine/durability/integration contracts; no overall
+code-size reduction is claimed. The architecture audit identifies actual shared
+owners and explains retained native protocol/authority boundaries rather than
+forcing incompatible engines into one evaluator.
+
+Prebuilt, all-feature library/integration suites pass 572 baseline and 685 current
+tests, with zero failures or ignored tests. Single-run wall time is 30.32 versus
+38.41 seconds; the test sets differ and this is qualification cost, not a library
+throughput comparison. One successful run cannot establish a flake rate.
+
+Fresh-target release builds of the default facade, Rust 1.100, four pinned CPUs
+and four Cargo jobs take 5.47 versus 5.17 seconds after explicitly disabling both
+compiler wrappers. Initial cache-assisted runs are retained separately and do
+not support a cold-build claim. Registry/toolchain/OS caches remain warm; this
+is an artifact-cold compilation measurement, not a fresh install or a speedup
+claim. The remaining workload performance matrix and final exact-candidate
+qualification are still open.
