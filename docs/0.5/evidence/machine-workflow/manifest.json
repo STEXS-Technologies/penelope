@@ -1,0 +1,69 @@
+{
+  "parent_commit": "0d4be9374f1c87a1a8c9157217ffb7605a074d8c",
+  "scope": "Canonical consumer progression using unchanged production task supervisor, SQLite journals and Linux fenced runtime. No library evaluator, journal protocol or result authority added.",
+  "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "5f37b5b14d89d3535c2598a8d73bd1c203932653a441235679a8d82c83744d1c",
+    "ci/machine-consumer/Cargo.toml": "14a369209a7586e04792f968e2824440eca5daa363855bbdee78ff0a62cd2edc",
+    "ci/machine-consumer/Cargo.lock": "395842f80005e98c96c07c9a85fcb46e5b5b49bc16630fd4734e5ade0d7f1d66",
+    "ci/machine-consumer/durable.rs": "7d8763d2120a53df314c43041aa22e2dfee52c8fa1175279dc7549d58064a429",
+    "ci/machine-consumer/workflow.rs": "9b6959d72effde11adca131b4caa188937c1222b3d15175ab3c4baa0a2507fa8",
+    "scripts/run-supervised-saga-example.sh": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0",
+    "crates/penelope-process-runtime/tests/fixtures/worker.c": "16d3806b462155469c2dc2fb914bf75de204b11b1e07bc8282f58d979d32dc28",
+    "crates/penelope/examples/support/counter.rs": "9d6c2fbfa92753cfed0488058ade91ca95198aeae792122de8423941a71f09d6",
+    "crates/penelope/examples/support/counter_codec.rs": "6afb81fa45a217caf281ca2966fe0ccecbb36f3b05b30cd4959f45fcd5345df4",
+    "rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d"
+  },
+  "checks": [
+    {
+      "command": "bash scripts/run-supervised-saga-example.sh",
+      "exit_code": 0,
+      "log": "workflow.log.gz",
+      "raw_sha256": "d106624c3e2f0bd1cfebc08182fde0380fecf561dedc5dbcd9372bd6142462bc",
+      "gzip_sha256": "1994cb9f7286803af627954fc6b44ae54e54d8de2fd04437b8ca2cfa13ade47a"
+    },
+    {
+      "command": "RUSTUP_TOOLCHAIN=1.89.0 bash scripts/run-supervised-saga-example.sh",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "7ef2afefe5e955524d1b96261e205774337726ea4e311eab608541507c0119bd",
+      "gzip_sha256": "8730b6b435a6f9b6669ce51c8cb203d9df40430a920c467498738ad656c2fe21"
+    },
+    {
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked",
+      "exit_code": 0,
+      "log": "admission.log.gz",
+      "raw_sha256": "79616bc46087644ea0b56153d4cfd1646268c3ca9582639f28948b0fada0e09e",
+      "gzip_sha256": "24b203066d7f9f3eb41b87d0db4a444ae78b664f8232eb2d090cac897a1249c8"
+    },
+    {
+      "command": "cargo clippy --manifest-path ci/machine-consumer/Cargo.toml --all-features --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "24dbe2e72dd310dafc9e04d02020ecfe438967e2264f8bdfc6ae61e3af6bb642",
+      "gzip_sha256": "0649cc8e7dad7c2f7e0f3564061169f0d87a00433d6ee2e75b75ffd9d10add4d"
+    },
+    {
+      "command": "bash scripts/check-layer-boundaries.sh && bash scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "17b1b30d9b7cbb4117b509b6ccb41802eb11da517109b5c93efb32b058ad37bb",
+      "gzip_sha256": "366b5bd590dd1d38fd19664d51ddbcd5782421f570a75bc01ee24ee1e2c15c1d"
+    },
+    {
+      "command": "cargo tree --manifest-path ci/machine-consumer/Cargo.toml --features durable --edges normal --locked; assert protected runtime absent",
+      "exit_code": 0,
+      "log": "dependencies.log.gz",
+      "raw_sha256": "3bec83d6f7b39d1fefd27b78f95cdcdd7220d2fc9f414cc433e4227e32c52f77",
+      "gzip_sha256": "7f777ede924be2fc2c21652355ea11dcfc041adfc27f45ff05fdb415727f7fbd"
+    }
+  ],
+  "limitations": "Local authenticated demo, Linux x86-64 protected execution only. Worker code is explicitly host-selected and digest-pinned. Application schema and expected pure result are fixed to this demo. Native completion does not prove remote effects. Source/native reopen recovery is demonstrated here; actual SIGKILL coverage remains in earlier bridge checkpoints. Final full release qualification remains open."
+}

@@ -30,6 +30,8 @@ mod counter;
 mod counter_codec;
 use counter::{Counter, DEFINITION};
 use counter_codec::CounterCodec;
+#[cfg(feature = "protected")]
+mod workflow;
 const SCOPE: MachineScope = MachineScope {
     tenant: MachineTenantId::from_bytes([1; 32]),
     instance: MachineId::from_bytes([2; 32]),
@@ -104,12 +106,13 @@ fn commit_counter(
     machine: &mut MemoryMachine<Counter, 4>,
     owner: &MachineTenantId,
     event: u64,
-    nonce: u8,
+    event_id: MachineEventId,
     logical_time: u64,
+    causation: Option<MachineCausation>,
 ) -> Result<Arc<MachineCommitBatch<4>>, Box<dyn std::error::Error>> {
     let context = TransitionContext {
         expected: machine.read().0,
-        event: MachineEventId::from_bytes([nonce; 32]),
+        event: event_id,
         event_digest: penelope::core::task::Digest::of(&event.to_le_bytes()).0,
         logical_time: MachineLogicalTime::new(logical_time),
     };
@@ -122,7 +125,7 @@ fn commit_counter(
             event: &event,
             context,
             codec: &CounterCodec,
-            causation: None,
+            causation,
         },
         &mut MachineCommitBuffers {
             state: &mut state,
@@ -169,7 +172,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
     let mut machine: MemoryMachine<_, 4> =
         snapshot.restore(Counter, &CounterCodec, SCOPE, &mut [0; 8], INTENTS)?;
-    let retained = commit_counter(&store, &mut machine, &owner, 7, 4, 1)?;
+    let retained = commit_counter(
+        &store,
+        &mut machine,
+        &owner,
+        256,
+        MachineEventId::from_bytes([4; 32]),
+        1,
+        None,
+    )?;
     println!(
         "committed={} revision={}",
         machine.read().1,
@@ -189,7 +200,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?,
         PrepareDecision::Rejected { .. }
     );
-    if !rejected || machine.read().0 != before || *machine.read().1 != 7 {
+    if !rejected || machine.read().0 != before || *machine.read().1 != 256 {
         return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
     }
     println!("overflow_rejected=true revision_unchanged=true");
@@ -210,7 +221,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         duplicate.disposition
     );
     // The same committed machine intent becomes one durable native task input.
-    // This example demonstrates admission only; no worker is registered or run.
+    // The default profile demonstrates admission. The protected profile below
+    // supplies the production Linux runtime to complete this pure task.
     let definition = TaskDefinition {
         code: Digest::of(b"counter-task-admission-example-v1"),
         checkpoint_schema: 1,
@@ -231,6 +243,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             deadline_tick: TaskTick::new(1000),
         },
     };
+    #[cfg(feature = "protected")]
+    let (definition, worker) = workflow::pin_worker(definition)?;
     let tasks = Arc::new(
         SqliteTaskJournal::open(
             &directory.path().join("tasks.db"),
@@ -333,9 +347,44 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "task_admitted=true generation={} source_acknowledged=true",
         accepted.generation.get()
     );
+    // Task admission and source acknowledgement do not establish task completion.
+    // The optional Linux progression executes through the native supervisor and
+    // admits only the verified durable result as the next application event.
+    #[cfg(feature = "protected")]
+    let completed = {
+        let binding = receiver.binding(source, lease.payload())?;
+        drop(outbox);
+        drop(receiver);
+        workflow::complete(directory.path(), &worker, definition, binding)?
+    };
+    #[cfg(feature = "protected")]
+    let (amount, event_id, causation) =
+        (completed.amount, completed.event, Some(completed.causation));
+    #[cfg(not(feature = "protected"))]
+    let (amount, event_id, causation) = (1, MachineEventId::from_bytes([5; 32]), None);
     // A second committed event starts one host-pinned saga. Its action remains
     // in the native outbox; this example does not dispatch external effects.
-    commit_counter(&journal, &mut restored, &owner, 1, 5, 2)?;
+    let result = commit_counter(
+        &journal,
+        &mut restored,
+        &owner,
+        amount,
+        event_id,
+        2,
+        causation,
+    )?;
+    let result_receipt = block_on(journal.commit(&owner, Arc::clone(&result)))?;
+    if result_receipt.disposition != MachineCommitDisposition::AlreadyCommitted
+        || result.record().header().causation != causation
+    {
+        return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
+    }
+    #[cfg(feature = "protected")]
+    println!(
+        "result_committed=true state={} revision={}",
+        restored.read().1,
+        restored.read().0.revision.get()
+    );
     let processes = Arc::new(SqliteProcessStore::open(
         &directory.path().join("sagas.db"),
         SqliteLimits::default(),

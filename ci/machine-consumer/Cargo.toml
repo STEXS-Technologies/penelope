@@ -12,10 +12,12 @@ penelope = { path = "../../crates/penelope" }
 penelope-sqlite = { path = "../../crates/penelope-sqlite", optional = true }
 async-trait = { version = "0.1", optional = true }
 tempfile = { version = "3", optional = true }
+penelope-process-runtime = { path = "../../crates/penelope-process-runtime", optional = true }
 
 [features]
 durable = ["dep:penelope-sqlite", "dep:async-trait", "dep:tempfile"]
 timeline = ["penelope/timeline"]
+protected = ["durable", "dep:penelope-process-runtime"]
 
 [[bin]]
 name = "flat"

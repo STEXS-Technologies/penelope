@@ -40,7 +40,7 @@ The machine tutorial uses the unreleased branch.
 | Typed state transitions | [First machine](docs/getting-started.md) · `penelope::machine` |
 | Multi-step work with retries and compensation | [Trade example](crates/penelope/examples/trade.rs) · `penelope::saga` |
 | Checkpoints and recovery after interruption | [Recoverable task example](crates/penelope-executor/examples/recoverable_task.rs) · `penelope::task` |
-| Durable local storage | [SQLite adapter](crates/penelope-sqlite/README.md) |
+| Durable local storage | [SQLite adapter](crates/penelope-sqlite/README.md) · [machine/task/saga progression](docs/getting-started.md) |
 | Correct and replay earlier inputs | [Timeline quickstart](docs/timeline-examples.md#quickstart) · optional `timeline` feature |
 
 Applications supply workers and choose their storage and runtime adapters.

@@ -24,7 +24,7 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Adapter implemented; qualification in progress | [Captured machine composition](timeline-machines.md), correction, scope, scratch and finality checks |
 | F6 | Machine journal, SQLite and effect bridges | Journal, snapshots, outbox and native task/saga admission implemented; qualification pending | [Machine storage](machine-storage.md), wire and payload preparation; native task/saga authority is preserved; qualification remains open |
-| F7 | Consolidate API, internals, docs and examples | Facade paths established; integration pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
+| F7 | Consolidate API, internals, docs and examples | Facade and recovery/result progression implemented; consolidation audit pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
 | F8 | Qualify candidate | Pending | Exact-SHA evidence for every section 14 release gate |
 
 Do not call a phase complete because its API names exist. In particular, namespace

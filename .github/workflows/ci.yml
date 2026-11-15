@@ -98,6 +98,7 @@ jobs:
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked
+      - run: ./scripts/run-supervised-saga-example.sh
       - run: ./scripts/check-saga-machine-parity.sh
       - run: cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
       - name: Preserve MSRV property regression seeds

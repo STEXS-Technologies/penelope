@@ -97,3 +97,17 @@ source, and reopens them. After lease expiry, the new attempt recovers the exact
 original task; the stale acknowledgement is refused. A second event starts a
 native saga. Admission records work; a worker still owns execution and any
 uncertain external result still requires reconciliation.
+
+On Linux x86-64 with a C compiler, run the complete protected-worker progression:
+
+```sh
+./scripts/run-supervised-saga-example.sh
+```
+
+Its machine leg uses the same counter, recovery and admission code. A real
+protected worker completes the admitted pure task; native journal replay, exact
+output bytes, schema and application meaning are checked before its result is
+committed as the counter's next event. The event retains task/source causation
+and uses a stable result identity. Its new intent then starts a saga. The script
+also runs a worker with the wrong result and verifies refusal before machine
+admission. The optional `protected` consumer feature supplies the Linux runtime.

@@ -106,8 +106,14 @@ reopens both source/task databases after native admission but before source ACK.
 Reclaim recovers the original task and refuses the stale lease. It then admits
 a saga from a second event. All adapters share one monotonic host clock; resetting
 it on reopen would violate the durable clock floor. It performs no external
-effects. Stable and MSRV CI compile/run this
-exact source. SQLite stays absent from the facade's normal dependency graph and
+effects in its default admission profile. The optional `protected` consumer
+feature completes the native pure task through the existing Linux runtime and
+commits only its verified output as the next machine event, retaining stable
+result identity and task/source causation. That transition starts the saga.
+[`run-supervised-saga-example.sh`](../../scripts/run-supervised-saga-example.sh)
+builds the worker and checks both the successful round trip and refusal of a
+completed worker with incorrect output. Stable and MSRV CI compile/run these
+profiles. SQLite stays absent from the facade's normal dependency graph and
 all portable profiles; no reverse adapter-to-facade dependency was added.
 
 Evidence includes independent-worker CAS races, coherent concurrent readers,

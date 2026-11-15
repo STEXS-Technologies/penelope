@@ -357,3 +357,30 @@ implementation and identical bytes. No evaluator or storage algorithm changed.
 source-coordinate tests, both bridge suites, the consumer on Rust 1.100/1.89 and
 strict workspace/consumer Clippy. This improves onboarding but does not complete
 the plan's verified effect-result round trip or final release qualification.
+
+## Verified result returning to the application machine
+
+The optional `protected` mode extends the same canonical durable consumer with
+the existing native supervisor, SQLite generation authority and Linux runtime.
+After uncertain source delivery is recovered and acknowledged, it executes the
+admitted pure task, reconstructs its completed projection from native history,
+reads and verifies exact output bytes/schema and checks application meaning.
+Only then does it prepare and commit the next counter event. The stable result
+identity binds native task identity, generation, output sequence and digest; the
+commit retains task/source causation. An exact retry returns `AlreadyCommitted`.
+That transition's intent starts the native saga. No direct state mutation or
+second task evaluator is introduced.
+
+The existing supervised-saga script now runs this progression and a negative
+worker whose completed output has the wrong application meaning. The negative
+case must fail before the machine result event is admitted. Stable and Rust 1.89
+CI run the same script. Default admission still omits the protected runtime from
+its dependency graph, and portable/pure machine profiles are unchanged.
+
+[Source hashes and logs](evidence/machine-workflow/manifest.json) cover both
+toolchains, successful and refused results, default admission, strict external
+consumer Clippy, layer checks, 66 script tests and the default dependency graph.
+This is a local, host-authenticated example with a pinned pure worker and fixed
+application schema. External-effect success would need independent evidence.
+The saga's action remains admitted rather than executed in the machine leg;
+complete release performance/coverage and F0–F8 qualification remain open.
