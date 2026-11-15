@@ -34,3 +34,7 @@ harness = false
 [[bench]]
 name = "machine_hierarchy"
 harness = false
+
+[[bench]]
+name = "machine_state_cost"
+harness = false
