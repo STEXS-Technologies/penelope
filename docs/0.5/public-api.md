@@ -9,7 +9,7 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 | `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `ci/saga-parity` |
 | `penelope::task` | Task record/projection/control contracts, prepared record inspection, hosted supervisor | `prepared_decisions`, existing recovery examples |
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
-| `penelope::storage` | Existing process/task storage and commit ports | Existing durable examples |
+| `penelope::storage` | Existing process/task ports; hosted `storage::machine` codec and accepted preparation | Durable examples, `prepared_decisions` |
 | `penelope::runtime` | Existing runtime integration boundaries | Existing task/runtime examples |
 | `penelope::timeline` (feature `timeline`) | Captured `MachineTimeline` adapter over existing replay, history, finality and handoff | `timeline_machine`, independent facade consumer |
 
@@ -26,8 +26,9 @@ owner. Local publication supplies no durable admission or historical deduplicati
 `MachineCommitRecord<INTENTS>` supplies the independent bounded
 [`penelope.machine.v1` metadata codec](machine-wire.md). It binds event/state
 digests, native provenance, causation and ordered intent metadata. Constructing
-or decoding a record proves neither acceptance nor durable admission; payload
-codecs, accepted-candidate store binding and verified receipts remain pending.
+or decoding a record proves neither acceptance nor durable admission; [canonical payload preparation](machine-preparation.md) now binds the native
+accepted candidate and checks exact receipt coordinates. Trusted store admission
+and receipt acquisition remain pending.
 
 `prepare_linear` delegates exactly once to the original `decide` and borrows its
 source input and definition. `into_parts` produces the original replay event and

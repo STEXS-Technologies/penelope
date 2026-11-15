@@ -23,6 +23,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Hosted machine payload preparation with bounded canonical encoding, immutable
+  accepted batches and consuming receipt matching. The facade example shares
+  its model with flat and timeline examples; durable storage remains pending.
 - Independent bounded machine commit metadata codec with canonical content
   identities, frozen Python-encoded fixtures and allocation/fuzz checks. Durable
   machine admission and recovery remain under development.

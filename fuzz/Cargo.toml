@@ -192,3 +192,9 @@ name = "fuzz_machine"
 path = "fuzz_targets/fuzz_machine.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_machine_commit"
+path = "fuzz_targets/fuzz_machine_commit.rs"
+test = false
+doc = false

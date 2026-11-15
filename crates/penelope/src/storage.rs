@@ -7,6 +7,8 @@
 
 /// Bounded discovery of accepted, unconsumed process inputs.
 pub use penelope_ports::inbox;
+/// Application-machine codecs, prepared commit batches and receipt binding.
+pub use penelope_ports::machine;
 /// Scoped immutable process payload storage.
 pub use penelope_ports::payloads;
 /// Saga-specific admission, history, definitions and outbox storage.

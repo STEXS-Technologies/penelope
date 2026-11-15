@@ -16,3 +16,6 @@ pub mod payloads;
 
 /// Bounded discovery of durably accepted, unconsumed process inputs.
 pub mod inbox;
+
+/// Canonical application-machine payloads and checked durable preparation.
+pub mod machine;

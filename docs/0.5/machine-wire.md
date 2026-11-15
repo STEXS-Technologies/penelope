@@ -7,8 +7,8 @@ of saga v1, task v1 and timeline v1; no existing decoder or authorization enum g
 a machine variant.
 
 This is metadata, not a store, payload serializer, durable receipt or source of
-authorization. `new` and `decode` establish structural validity only. A future
-durable preparation must bind a real accepted candidate, authenticated scope,
+authorization. `new` and `decode` establish structural validity only. [Accepted preparation](machine-preparation.md) binds payloads to a native candidate.
+A durable store must additionally bind a real accepted candidate, authenticated scope,
 canonical event/state/intent payloads and the corresponding local transaction.
 Constructing a DTO does not establish any of those facts.
 
@@ -108,6 +108,7 @@ decode/construct/encode/refusal iterations with a positive allocator control.
 The machine fuzzer covers raw bytes and mutated/rehashed fixtures; the explicit
 newtype fuzzer covers every added identity/code type.
 
-Machine payload codecs, accepted-candidate durable preparation, store operations,
-verified receipts, SQLite migration/transactions, crash recovery and typed durable
-bridges remain unimplemented. This record codec alone does not qualify F1/F6/F8.
+Hosted [canonical payload preparation and receipt matching](machine-preparation.md)
+are implemented. Production store operations, authenticated receipt acquisition,
+SQLite migration/transactions, crash recovery and typed durable bridges remain
+unimplemented. This record codec alone does not qualify F1/F6/F8.

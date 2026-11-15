@@ -1,0 +1,136 @@
+{
+  "checkpoint": "canonical accepted machine commit preparation",
+  "parent_commit": "4df1b1ba70ab7f17200e8927f0ca941979e373b9",
+  "source_scope": "Parent plus exact changed/new implementation, example, test and runner hashes. Documentation excluded.",
+  "source_sha256": {
+    "crates/penelope-ports/src/lib.rs": "718071c58189c219baaaddb7e23d32bed1b2c4b113fa778538c3a8484fffbe66",
+    "crates/penelope-ports/src/machine.rs": "eb745d21ee630e738b2d909dff67974318635e0414d3c7e1da8afd9d5348e6b8",
+    "crates/penelope-ports/tests/machine_preparation.rs": "b1b5782fe4d07379be21d8d9bdf27755b3e1f40d16549d084ee8c14865f883e3",
+    "crates/penelope/examples/prepared_decisions.rs": "54f198d173614283a90b4a21a72500c03ee57f367d078477d25902c77fbbaecb",
+    "crates/penelope/examples/support/counter.rs": "9d6c2fbfa92753cfed0488058ade91ca95198aeae792122de8423941a71f09d6",
+    "crates/penelope/examples/support/counter_codec.rs": "6afb81fa45a217caf281ca2966fe0ccecbb36f3b05b30cd4959f45fcd5345df4",
+    "crates/penelope/src/storage.rs": "3c0afd2b1153c39a86622150dbaad43635a222c19cb064812168d5e786250dbb",
+    "fuzz/Cargo.toml": "275ab69fc31bbde92be5f0d7655aab45e12b7219e704bb35cc79c3cd879e2dce",
+    "fuzz/fuzz_targets/fuzz_machine_commit.rs": "4a39da079108757ad02565670a4577ac077e2e8e7e26563e3b48d39dac209c96",
+    "scripts/run_bounded_fuzz.sh": "5428666ca45961b90f05232ea78810c9d8f61ebd46da4ec380f7bf3a9207b64a"
+  },
+  "checks": [
+    {
+      "name": "workspace",
+      "command": "cargo test --workspace --all-features --lib --tests --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "raw_sha256": "aa10ab02aed24047979caaaf95f12009bdbf17c828d9d0abbbb4d60cbfb17b2b",
+      "gzip_sha256": "e01057731b954161c4c40ec32024d5805d0a4986f77217cc387205d5641f3f0b"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "26831f3297b666775856394f6ca2c4d3d3cb6efe4bc2c9ede46e535ea13bfa65",
+      "gzip_sha256": "37a333b9df799b5b6260fd267e226dbd1dceb8147a4253a67ff6a15886c3ee95"
+    },
+    {
+      "name": "doc",
+      "command": "cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz",
+      "exit_code": 0,
+      "log": "doc.log.gz",
+      "raw_sha256": "9ae74e066be397e56c5a366caf99880b9d914407350569e5a535345913f0935e",
+      "gzip_sha256": "082977e5e96876227be042964cb4a259c21ab20f690a5d5f9efdefbeb5ddf6d5"
+    },
+    {
+      "name": "final",
+      "command": "cargo test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "log": "final.log.gz",
+      "raw_sha256": "59f2b71e043ad8eb779cafbe100d46517d7f21c861883a298e6d0ba223082d7b",
+      "gzip_sha256": "4003c6ea8b678d29de8e96971ca23e25263bb7d436a795ca4c60d81a17052fee"
+    },
+    {
+      "name": "msrv-final",
+      "command": "cargo +1.89.0 test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "log": "msrv-final.log.gz",
+      "raw_sha256": "afd50f2e7b4511f71a8d90a5e6b369d989bddb1fc5b11609952a106cb53f327b",
+      "gzip_sha256": "d8c1310142ec06d0ca4a68ec1627c496026b54138fc19a89152a208690b33ebe"
+    },
+    {
+      "name": "example",
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked",
+      "exit_code": 0,
+      "log": "example.log.gz",
+      "raw_sha256": "4691101263d5aeebfa8752010133c7d42abc7e4959426b0f13ea7c6e2ac841f5",
+      "gzip_sha256": "d88727c5d21a39d0cffaa05e53311b47d11db8cd5dff3e742e1040c18cc52459"
+    },
+    {
+      "name": "msrv-example",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked",
+      "exit_code": 0,
+      "log": "msrv-example.log.gz",
+      "raw_sha256": "4ca33ca54631c000e6d68fe8774af264afaefea165a00e94b2c3a1671e2f6727",
+      "gzip_sha256": "1693a3a022d081bdc254cef168b38144cd8d4d1e4036dd7a4413993392a08c70"
+    },
+    {
+      "name": "flat",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked",
+      "exit_code": 0,
+      "log": "flat.log.gz",
+      "raw_sha256": "5fbd39e0ebae100015d7753b7c5b915fc3cf003c8f17024702eaca36b7cb2626",
+      "gzip_sha256": "a4fca824443ea4e0a6e12615fdde0b228e87dc69887cb1e50b3622f032c0f4c8"
+    },
+    {
+      "name": "timeline",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked",
+      "exit_code": 0,
+      "log": "timeline.log.gz",
+      "raw_sha256": "b59b94d557049390c9ecebb4b532904b27e86209e81b33abf94addf4dad08a6f",
+      "gzip_sha256": "72d30bc727a620f4fb7aa0be70a2b345d99b9893c45fba269c427ba1f8aa9e12"
+    },
+    {
+      "name": "rustdoc",
+      "command": "RUSTDOCFLAGS='-D warnings' cargo doc -p penelope-ports -p penelope --all-features --no-deps --locked",
+      "exit_code": 0,
+      "log": "rustdoc.log.gz",
+      "raw_sha256": "acb7b70bbf5865a115e251f643cde1ae93a0a53a0c4ea9c847b76a5c2cefd61d",
+      "gzip_sha256": "3ba9508d0c3798408515737da49b429c5b7277e300855e1fba8d4656b50262bf"
+    },
+    {
+      "name": "layers",
+      "command": "./scripts/check-layer-boundaries.sh and ./scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "runners",
+      "command": "./scripts/test-chaos-runners.sh",
+      "exit_code": 0,
+      "log": "runners.log.gz",
+      "raw_sha256": "2f65d311068595da2b5a217d2246eec6e3f346e048a59f5669aa93319ce6774d",
+      "gzip_sha256": "aef1bf26aa295fe328696de8206c2729a5cb8b8be2bada3f99213eb1f14cf4d9"
+    },
+    {
+      "name": "fuzz",
+      "command": "instrumented fuzz_machine_commit: 10000 runs, seed 506",
+      "exit_code": 0,
+      "log": "fuzz.log.gz",
+      "raw_sha256": "877be444c602101b4a1c9d318482ef8491ec0ddd147a6b0bdedb858c31f56673",
+      "gzip_sha256": "3be86358b560971d7cbebdb1b878ca84d8d6288bdbd9bcda785b76e1465e3db2"
+    },
+    {
+      "name": "graph",
+      "command": "graphify update .",
+      "exit_code": 0,
+      "log": "graph.log.gz",
+      "raw_sha256": "23f7c2c3c4dbf3d7db2eb71ebbcaf5a717ce866f98082a4f412242e35f025bf6",
+      "gzip_sha256": "df34df98f417a490a348cac3d9fc20184c4ff7894bd53ed648c54efb14af0d89"
+    }
+  ],
+  "limitations": [
+    "Full workspace run preceded final causation and zero-intent test additions; final stable and MSRV targeted suites cover all 10 final tests.",
+    "Test-only journal peer provides no production crash durability.",
+    "Production store, authorization, recovery and bridges remain pending."
+  ]
+}
