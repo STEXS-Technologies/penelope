@@ -174,7 +174,10 @@
     "protected-1.89.0.log.gz": "a5813e12330137717ed1d6845d577c302485f9e8adcbc9628e5f5ba3c75e3b75",
     "compat-1.89.0.log.gz": "7dd140b02a1f546f1fadc8f27561fed2d2d3c5abccff93ebf88c22a493560201",
     "parity-1.89.0.log.gz": "e91694ca075943428d208dd8008f726e10745c76d94a046542b37045f471be7d",
-    "upgrade-1.89.0.log.gz": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc"
+    "upgrade-1.89.0.log.gz": "541a1b90ec3150e14f19313445059f1b2999d366c60f3f49724391f084994ffc",
+    "chaos-affinity.json.gz": "eac45d2c03ca1a2417a1a15d7ba1a4a9006648801f2b592fbd8d94bdf1e7edc1",
+    "durable-tool-tests.log.gz": "8326ddff3941f540ecc8bd34e03b4cad7bde1c7318608915fffe08760ce1d9c4",
+    "durable-tool-help.log.gz": "e1f5f601eb76bea813ecd8dc620742b42bb155bec589b88d70177e0e43411ed1"
   },
   "build_input_hashes_reverified_at": "77e2822 (only documentation/evidence changed since tested source)",
   "active_campaign": {
@@ -187,6 +190,28 @@
       3
     ],
     "fuzz_targets_per_round": 28,
-    "status": "Started; no completion claimed. Logs and results must be collected separately."
+    "status": "Started; no completion claimed. Logs and results must be collected separately.",
+    "affinity_followup": {
+      "record": "chaos-affinity.json.gz",
+      "cpus": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "scope": "Only the verified live campaign process tree; applied during round-one SQLite task-authority fuzzing. No restart, seed, workload or run-count change.",
+      "reason": "Separate controlled fuzz load from performance cores 4..7; unrelated host load and thermal/frequency effects remain uncontrolled."
+    }
+  },
+  "qualification_tool_followup": {
+    "script": "scripts/benchmark-durable-store.py",
+    "sha256": "63c101af98a67fbbe67c213de2587a20b74da3a387bda203940412da1e07308a",
+    "changes": "Optional checkout/toolchain selection, caller-relative data/output paths, runner identity and workspace-wrapper metadata; default workload unchanged.",
+    "checked": "Python compilation, CLI help, 75 existing script tests; actual performance comparison pending.",
+    "library_source_changes": false
   }
 }

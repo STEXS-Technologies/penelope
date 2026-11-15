@@ -692,3 +692,16 @@ reopens twice on each toolchain with exact rows, schemas, replay and integrity
 across all 15 legacy tables. The qualification manifest retains every run log
 and all four consumer lock identities. Full chaos and final candidate gates
 remain open.
+
+The existing SQLite measurement tool now accepts an explicit `--repository` and
+`--toolchain`, allowing original and current checkouts to use the same compiler
+and data filesystem without copying workloads or changing the baseline tree.
+The durable workload remains byte-identical to 0.4. Runner identity and both
+compiler-wrapper settings are recorded. Syntax/help checks and all 75 script
+tests pass; this tool change supplies no performance conclusion.
+
+During round-one SQLite fuzzing, the verified live campaign and its child threads
+were pinned to CPUs 8–15. Workloads, seeds and execution counts are unchanged.
+Performance runs can use CPUs 4–7 with separate SMT siblings, while unrelated
+applications, frequency, thermal state and OS caches remain uncontrolled. The
+qualification manifest records the affinity change and its timing.

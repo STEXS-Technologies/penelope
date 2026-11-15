@@ -22,17 +22,23 @@ def main():
                         help="existing directory on the filesystem to measure")
     parser.add_argument("--cpu", type=int, required=True)
     parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--repository", type=Path,
+                        help="checkout to measure; defaults to this script’s repository")
+    parser.add_argument("--toolchain", default="1.100.0")
     args = parser.parse_args()
     if args.runs < 1 or args.cpu not in os.sched_getaffinity(0):
         parser.error("runs must be positive and CPU must be in the current affinity mask")
     if not args.data_parent.is_dir():
         parser.error("data-parent must be an existing directory")
-    root = Path(__file__).resolve().parents[1]
-    os.chdir(root)
     output = args.output.resolve()
-    output.mkdir(parents=True, exist_ok=False)
     data_parent = args.data_parent.resolve()
-    toolchain = "1.100.0"
+    runner = Path(__file__).resolve()
+    root = args.repository.resolve() if args.repository else runner.parents[1]
+    if not (root / "Cargo.toml").is_file():
+        parser.error("repository must contain Cargo.toml")
+    os.chdir(root)
+    output.mkdir(parents=True, exist_ok=False)
+    toolchain = args.toolchain
     build = command("cargo", f"+{toolchain}", "bench", "-p", "penelope-sqlite",
                     "--bench", "durable_store", "--locked", "--no-run",
                     "--message-format=json", capture_output=True)
@@ -46,8 +52,10 @@ def main():
     source = root / "crates/penelope-sqlite/benches/durable_store.rs"
     metadata = {
         "schema": 1,
+        "runner_sha256": hashlib.sha256(runner.read_bytes()).hexdigest(),
+        "repository": str(root),
         "measured_at": datetime.now(timezone.utc).isoformat(),
-        "build_environment": {key: os.environ.get(key) for key in ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "CARGO_BUILD_RUSTFLAGS", "RUSTC_WRAPPER")},
+        "build_environment": {key: os.environ.get(key) for key in ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "CARGO_BUILD_RUSTFLAGS", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER")},
         "revision": command("git", "rev-parse", "HEAD", capture_output=True).stdout.strip(),
         "tracked_diff": command("git", "diff", "HEAD", capture_output=True).stdout,
         "benchmark_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
