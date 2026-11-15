@@ -705,3 +705,27 @@ were pinned to CPUs 8–15. Workloads, seeds and execution counts are unchanged.
 Performance runs can use CPUs 4–7 with separate SMT siblings, while unrelated
 applications, frequency, thermal state and OS caches remain uncontrolled. The
 qualification manifest records the affinity change and its timing.
+
+## Balanced legacy performance follow-up
+
+The [complete 31-pair comparison](evidence/legacy-balanced/manifest.json) uses
+unchanged fixtures, Rust 1.100, alternating revision order and pinned CPUs. All
+496 measured processes completed; the timeline matrix retains all 640 profiles
+at 1,000 samples each. Saga/task loop means remained below the existing review
+threshold. Canonical DTO encoding was 15.52% slower at the median and crossed the
+5% threshold in 30/31 pairs; this remains an unresolved review blocker. Timeline
+retains nine p50 and two p95 threshold flags. These results do not establish
+statistical equivalence or accept any retained regression. Raw observations,
+resource records, artifact/source hashes and exploratory intervals are preserved.
+The full chaos campaign and exact-candidate qualification remain open.
+
+The [legacy SQLite comparison](evidence/sqlite-balanced/manifest.json) completed
+nine alternating pairs on NVMe Btrfs with WAL/FULL unchanged. A further nine
+rotated triples compare original source/dependencies, original source with the
+patched dependency stack, and current source. The patched original reproduces
+most of the substantial replay and exact-retry cost; this distinguishes dependency
+cost from refactor cost without accepting either. All raw runs, setup failures,
+source/dependency identities and per-profile flags remain available. The canonical
+DTO diagnostic instead leaves patched-original encoding close to original and
+current encoding slower, with near-identical whole-process instruction counts;
+its cause remains unresolved. No security downgrade or weaker validation was used.

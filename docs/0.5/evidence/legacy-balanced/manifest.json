@@ -1,0 +1,98 @@
+{
+  "scope": "Complete unchanged legacy benchmark matrix, 31 alternating pairs at pinned CPUs; no performance acceptance or equivalence claim.",
+  "revisions": {
+    "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "after": "bbc773f6850fff8a66edbab4673d4e52f5dfa0b8"
+  },
+  "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_BUILD_JOBS=2 PENELOPE_TIMELINE_SAMPLES=1000 python3 scripts/benchmark-decision-comparison.py OUTPUT --before 42ec187 --after bbc773f --cpu 4 --parallel-cpus 4,5,6,7 --runs 31 --toolchain 1.100.0 --benchmark linear_saga --benchmark graph_saga --benchmark replay_saga --benchmark parallel_linear_saga --benchmark parallel_graph_saga --benchmark contract_throughput --benchmark task_poll --benchmark timeline_operations",
+  "exit_code": 0,
+  "records": 496,
+  "benchmark_fixture_and_support_sources_identical": true,
+  "timeline_profiles": 640,
+  "samples_per_timeline_profile_per_process": 1000,
+  "legacy_loop_measurement": "ns/op is the elapsed loop mean; no individual-operation p95/p99 is claimed for saga/task/contract loop fixtures.",
+  "review_flags": {
+    "canonical_DTO_encoding": {
+      "median_before": 306.56009,
+      "median_after": 354.14079,
+      "median_delta_percent": 15.52083965006663,
+      "absolute_delta_ns": 47.58069999999998,
+      "paired_threshold_exceedances": 30,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 306.56009,
+          "min": 301.76854,
+          "max": 359.13705
+        },
+        "after": {
+          "median": 354.14079,
+          "min": 347.0631,
+          "max": 432.97691
+        },
+        "median_delta_percent": 15.52083965006663,
+        "paired_geometric_mean_delta_percent": 15.63956698818638,
+        "paired_bootstrap_percentile_95_percent": [
+          14.067319298735478,
+          17.14035795934962
+        ]
+      }
+    },
+    "timeline_p50": 9,
+    "timeline_p95": 2,
+    "remaining": "Canonical encoding and all timeline flags remain open. Fewer flags than the historical five-pair checkpoint do not establish equivalence or erase those observations."
+  },
+  "conditions": {
+    "concurrent_work": "Full chaos campaign on disjoint physical cores, CPUs8-15; affinity record is in qualification evidence. Shared host applications, memory bandwidth, frequency, thermals and caches uncontrolled.",
+    "thresholds": "Existing review thresholds unchanged: >5% median, >10% p95. No p99 gate invented.",
+    "analysis": "Retains every paired observation and p99. Bootstrap intervals only for review flags, seed3030,10000 resamples, exploratory, no multiple-comparison correction or equivalence inference. No timer subtraction, discarded outliers or normalization."
+  },
+  "files": {
+    "raw.tar.gz": {
+      "sha256": "1d796c112ee77825a7758ca8707afe471e6c70410c68fc5d5d5ff8579d82c471",
+      "bytes": 973001
+    },
+    "summary.json.gz": {
+      "sha256": "a02e3d2b22e6d0a87b83092859b4a692a6ccf24c7b9fe06e392a29d42090ca92",
+      "bytes": 243960
+    },
+    "metadata.json": {
+      "sha256": "1d079f3b154950e3a94c4cec6718b2ced94e469f7218689e19d12faf2174d59b",
+      "bytes": 6877
+    },
+    "summarize.py": {
+      "sha256": "9cf901d12dc4932e2363c28c1ed9bec0893fa906454893c512b1496f210b39d0",
+      "bytes": 4145
+    },
+    "encoding-diagnostic.tar.gz": {
+      "sha256": "32a9165f210b117ac8ccb1b043fdd6745a0ac5d7ac21b15c3352858ef1ee361e",
+      "bytes": 21528
+    }
+  },
+  "encoding_diagnostic": {
+    "rounds": 15,
+    "exit_code": 0,
+    "file": "encoding-diagnostic.tar.gz",
+    "results": {
+      "baseline": {
+        "encoding_ns_per_operation_median": 301.58539,
+        "whole_process_instructions_median": 854557481.0,
+        "whole_process_cycles_median": 173021565.0,
+        "whole_process_task_clock_median": 32.636241
+      },
+      "patched-baseline": {
+        "encoding_ns_per_operation_median": 304.97123,
+        "whole_process_instructions_median": 854606115.0,
+        "whole_process_cycles_median": 174278727.0,
+        "whole_process_task_clock_median": 32.876121
+      },
+      "candidate": {
+        "encoding_ns_per_operation_median": 346.91693,
+        "whole_process_instructions_median": 854621744.0,
+        "whole_process_cycles_median": 197291684.0,
+        "whole_process_task_clock_median": 37.125572
+      }
+    },
+    "assessment": "Patched baseline encoding remains near original baseline; candidate is slower with nearly identical whole-process instruction counts. The dependency stack alone does not explain this encoding flag. Crate-graph/codegen/layout effects remain hypotheses, not an accepted diagnosis. No production change made from this diagnostic."
+  }
+}

@@ -169,7 +169,7 @@
       "tree-sitter-rust": "0.24.2"
     },
     "python": "3.13.13 (main, Apr  7 2026, 20:49:46) [Clang 22.1.1 ]",
-    "script_sha256": "00ebb3e3fdd9e7988677b96c7d770fda873920d60bb94eb2a1eeac0aedef8696",
+    "script_sha256": "9818b17b7aa7862504e699ec4196f209b4c69359d54efc87a40bde6a7287b824",
     "file": "production-inventory.json.gz",
     "raw_sha256": "5678479df4ad1da020c796b3ba1924dbceb0de8e33cbf42238e8e2eb2d041f34",
     "gzip_sha256": "4d5aa48384f9b032958a52cb314ee9e6dbaf120c0c6ea85a19a818626eee3527",

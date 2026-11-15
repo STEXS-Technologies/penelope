@@ -1,0 +1,73 @@
+{
+  "scope": "Unchanged legacy SQLite WAL/FULL fixtures, nine alternating pairs plus nine rotated three-variant diagnostic rounds. Open performance review, no acceptance or final package qualification.",
+  "paired_exit_code": 0,
+  "diagnostic_exit_code": 0,
+  "toolchain": "Rust 1.100.0",
+  "benchmark_sha256": "22453b576a939abbad480a6498ed1859c93e98b237d0d7038e5c6a2cc2d0dc66",
+  "baseline": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+  "candidate": "e8a701d",
+  "variants": "Original source/dependencies (SQLite3.53.2), original source plus patched dependencies and approved MSRV (SQLite3.54.1), and candidate (SQLite3.54.1). Patched-baseline Cargo.lock refresh changes only workspace package edges; all external versions/checksums equal candidate. Exact manifests, diffs and locks are recorded in the raw metadata.",
+  "conditions": "CPU4, benchmark build restricted to CPUs4-7, separate explicit cached build targets with both compiler wrappers empty. Same NVMe Btrfs data parent, WAL/FULL unchanged. Full chaos campaign on CPUs8-15; shared host caches, thermals, frequency and unrelated activity uncontrolled. No tmpfs durability-performance claim.",
+  "assessment": "Original-baseline task replay median is about2.6x faster than both patched variants; patched-baseline and candidate are close. This attributes the bulk of observed slowdown to the patched dependency stack rather than new machine or async-worker source. It does not distinguish rusqlite from bundled SQLite, excuse the regression, establish equivalence or authorize an insecure dependency downgrade. Exact retry also slows versus original. Further diagnosis and possible safe optimization remain open.",
+  "attribution_p50_percent_changes": {
+    "baseline -> patched-baseline": {
+      "/process/claim_to_ack_without_external_execution/p50_ns": -1.113,
+      "/process/commits/p50_ns": -0.928,
+      "/process/exact_retry_after_ack/p50_ns": 39.957,
+      "/tasks/0/checkpoint_append/p50_ns": 1.973,
+      "/tasks/0/reopen_and_record_and_blob_replay/p50_ns": 71.473,
+      "/tasks/0/warm_record_and_blob_replay/p50_ns": 164.511,
+      "/tasks/1/checkpoint_append/p50_ns": 1.827,
+      "/tasks/1/reopen_and_record_and_blob_replay/p50_ns": 134.472,
+      "/tasks/1/warm_record_and_blob_replay/p50_ns": 161.708,
+      "/tasks/2/checkpoint_append/p50_ns": 2.781,
+      "/tasks/2/reopen_and_record_and_blob_replay/p50_ns": 144.991,
+      "/tasks/2/warm_record_and_blob_replay/p50_ns": 152.707
+    },
+    "patched-baseline -> candidate": {
+      "/process/claim_to_ack_without_external_execution/p50_ns": 1.138,
+      "/process/commits/p50_ns": 2.578,
+      "/process/exact_retry_after_ack/p50_ns": 1.21,
+      "/tasks/0/checkpoint_append/p50_ns": -0.911,
+      "/tasks/0/reopen_and_record_and_blob_replay/p50_ns": 8.181,
+      "/tasks/0/warm_record_and_blob_replay/p50_ns": 1.065,
+      "/tasks/1/checkpoint_append/p50_ns": 1.59,
+      "/tasks/1/reopen_and_record_and_blob_replay/p50_ns": 5.042,
+      "/tasks/1/warm_record_and_blob_replay/p50_ns": 0.498,
+      "/tasks/2/checkpoint_append/p50_ns": 0.181,
+      "/tasks/2/reopen_and_record_and_blob_replay/p50_ns": 5.954,
+      "/tasks/2/warm_record_and_blob_replay/p50_ns": 6.36
+    }
+  },
+  "discarded_setup_attempts": "First diagnostic setup failed because the executor dev-dependency still required old SQLite and native links could not coexist. Second failed because copied current lock lacked original workspace dependency edges. Both failures retained; no measurement from either attempt is substituted for the completed rotated diagnostic. Refreshed diagnostic lock offline; external package versions/checksums unchanged.",
+  "files": {
+    "attribution.tar.gz": {
+      "sha256": "5861d929b527c22e3a01c8402d24ecf21276791a38e4e78b81b3360687ca6f24",
+      "bytes": 221073
+    },
+    "paired.tar.gz": {
+      "sha256": "a219ec1a98889e2d8244d2071c6bef564e26984291d223a407686fb607d7296e",
+      "bytes": 134642
+    },
+    "penelope-sqlite-comparison.py": {
+      "sha256": "a99491296a125ca8c1642d9e84cbaf1990e13a6e502f451f58529860edd002db",
+      "bytes": 1907
+    },
+    "penelope-sqlite-diagnostic-final.py": {
+      "sha256": "6b3c031fc550548f38d6c814786f6a311730b47ea5884e9e63a2dd2301e4d2c6",
+      "bytes": 1887
+    },
+    "setup-attempts.tar.gz": {
+      "sha256": "0c18411cfac37beb1e1b4b2d265d945db291d16bd58ef6b3eb9700b30b684b69",
+      "bytes": 2527
+    },
+    "summarize.py": {
+      "sha256": "4f96ecf1b5fd8a54f588955e8d62b0a9ee7e2321fe382d984153f532904572f2",
+      "bytes": 2885
+    },
+    "summary.json.gz": {
+      "sha256": "164e5c388a08223ef02113467d1cd4cd0d03c80a3847490c1d0be224ee951243",
+      "bytes": 11743
+    }
+  }
+}

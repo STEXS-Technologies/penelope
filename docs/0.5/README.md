@@ -31,6 +31,13 @@ finality and external evidence distinct. [Remaining separate implementations](ar
 have explicit authority or protocol reasons. The measured maintenance inventory
 does not claim an overall reduction in production source size.
 
+Maintainability and ease of reasoning are acceptance criteria: each invariant
+needs an identifiable owner, each state/effect publication boundary must be
+explicit, and identical behavior should use one implementation. Prefer fewer
+control paths and abstractions when independent checks establish equivalence.
+Retained complexity needs a concrete protocol, recovery, authority or resource
+reason; passing tests alone does not justify unnecessary layers.
+
 Retain wire, recovery, crash, allocation, conformance and migration guarantees.
 Unknown effects require reconciliation. Do not weaken checks, widen bounds or
 rewrite histories to simplify implementation. The approved MSRV is Rust 1.89;

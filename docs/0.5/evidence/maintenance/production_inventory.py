@@ -183,6 +183,11 @@ if __name__ == '__main__':
     cli.add_argument('--before', required=True)
     cli.add_argument('--after', required=True)
     args = cli.parse_args()
+    if sys.version_info[:2] != (3, 13):
+        cli.error('Use Python 3.13 for this pinned source audit.')
+    required = {'tree-sitter': '0.25.2', 'tree-sitter-rust': '0.24.2'}
+    if any(version(name) != expected for name, expected in required.items()):
+        cli.error('Use tree-sitter==0.25.2 and tree-sitter-rust==0.24.2.')
     # Boundary checks for three-valued test cfg filtering; no feature guesswork.
     assert cfg('all(test, unix)') is False
     assert cfg('not(test)') is True

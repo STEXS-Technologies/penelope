@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "measured_at": "2026-11-15T22:21:05.683358+00:00",
+  "revisions": {
+    "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "after": "bbc773f6850fff8a66edbab4673d4e52f5dfa0b8"
+  },
+  "serial_cpu": 4,
+  "parallel_cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "runs": 31,
+  "warmup_processes_per_binary": 1,
+  "benchmarks": [
+    "linear_saga",
+    "graph_saga",
+    "replay_saga",
+    "parallel_linear_saga",
+    "parallel_graph_saga",
+    "contract_throughput",
+    "task_poll",
+    "timeline_operations"
+  ],
+  "perf": null,
+  "runner_sha256": "b59111bab73e1a2990aaad263b40b3c7a76e9aca508eec90259c3dfcd65e9834",
+  "build_target_policy": "separate explicit target directory in each archived snapshot",
+  "order": "alternating before/after by round; fixed benchmark order within each revision",
+  "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n",
+  "platform": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+  "build_environment": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "CARGO_TARGET_DIR": null,
+    "CARGO_PROFILE_BENCH_OPT_LEVEL": null,
+    "CARGO_PROFILE_BENCH_LTO": null,
+    "CARGO_PROFILE_BENCH_CODEGEN_UNITS": null
+  },
+  "cache_policy": "one warmup; OS caches uncontrolled; no cold-cache claim",
+  "timeline_samples": "1000",
+  "resources": "GNU time process wall/user/system seconds and peak RSS KiB, including threads",
+  "limitations": [
+    "pure in-process workloads, no persistence or external execution",
+    "allocations and stack high-water marks not measured",
+    "RSS is whole-process peak, not incremental library memory",
+    "each revision uses its own locked dependencies; lock hashes disclosed"
+  ],
+  "sources": {
+    "before": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-executor/task_poll": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+      "penelope-timeline/timeline_operations": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+      "crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+      "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+      "crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+      "crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+      "crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c"
+    },
+    "after": {
+      "penelope-executor/linear_saga": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+      "penelope-executor/graph_saga": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+      "penelope-executor/replay_saga": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+      "penelope-executor/parallel_linear_saga": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+      "penelope-executor/parallel_graph_saga": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+      "penelope-executor/task_poll": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+      "penelope-ports/contract_throughput": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+      "penelope-timeline/timeline_operations": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+      "crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+      "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+      "crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+      "crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+      "crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c"
+    }
+  },
+  "locks": {
+    "before": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "after": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9"
+  },
+  "binaries": {
+    "before": {
+      "linear_saga": "c9df4e233209d8727047b77e8142b463bbda68bce6c0c3e4cbc61f0291ab8873",
+      "graph_saga": "9cfcd4640e436f3628c294c91b01cc51cc2e41e748afe9cfd7d2c993853cd48c",
+      "replay_saga": "4cf552c6d2e42af3ec21bcad5b08b1fe61ef9ff408b14d07f9ed433a19ba6031",
+      "parallel_linear_saga": "44492c0dfa0944a171cd0ad9e04f11c1a8183e04019d66b0741a9bd77d77349a",
+      "parallel_graph_saga": "76b01d4889101695639f82e0a2228dcc411013adef0eabda5ebee91f19ce4f02",
+      "task_poll": "5b12506e81709b95cad542d1130724ed720028af7cd6a5d513d8c8a56f061374",
+      "contract_throughput": "4bef2aab8e475f666b5a7e12898f8775865b35f4d96dc225abe4d2fa45ed04d5",
+      "timeline_operations": "21cd18fb6cca3c7e9c545a8491ffd3cea2dc2c5c296c1ec06f1830560765414c"
+    },
+    "after": {
+      "linear_saga": "f54c7c9e782336c1fe8516a4fea4905a011e40be182783213d2dcb0afbbedb53",
+      "graph_saga": "d0c9cf9276782e89ba68637b3a1af4d773bdb55cd146f64667b5a7ba6ab78967",
+      "replay_saga": "541745f0a6a592fbcd707fc4b1564edb072e1da7cf9418a211ff6b35bdd3bab1",
+      "parallel_linear_saga": "507cc9ca7430f3265fb670f1e3b10e906d6538736cce9fe2f035cd553ed540d3",
+      "parallel_graph_saga": "8c85f8f04fd4c7418bfab55426c6c05ecb60afc3f35216d477e96a8cbafdcc25",
+      "task_poll": "2272660cf657e5bae951cdd06b236c9582a837eb4ede98274bcf26bfb067e52b",
+      "contract_throughput": "563a5ce3d74bd06459eac79934344473fbed1c400f9df07b50e68781dcd0771a",
+      "timeline_operations": "b29b1101860d71271d0e5f6b6365d86b82e50fffcd54d36ef91dd75572d03dbf"
+    }
+  }
+}
