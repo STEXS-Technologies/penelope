@@ -583,6 +583,15 @@ The full comparison still contains 59 p50 and 27 p95 threshold exceedances acros
 accept those results or close the wider performance, coverage, chaos or final
 release qualification gates.
 
+[Descriptive triage](evidence/timeline-lookup/lazy-triage.json.gz) retains every
+flag and its five paired values. None exceeds its threshold in all five pairs,
+which does not establish equivalence. The largest absolute differences cluster
+in narrow-state indexed replay, whose fixture and replay/publication source files
+match 0.4 exactly. Those selected paths use fixture-owned stores and stage no
+effects, so they do not invoke the changed history hints or intent preflight.
+Generated code, dependencies and runtime conditions can still differ. All flags
+remain open pending balanced repeat measurements after chaos finishes.
+
 ## Flat machine measurement fixture
 
 `cargo bench --locked -p penelope-core --bench machine_operations` now exercises
@@ -659,3 +668,9 @@ profiles also pass on Rust 1.89. The full documented chaos campaign has restarte
 with three rounds, 10,000 property cases and 100,000 fuzz executions per target;
 completion is not claimed. Remaining performance findings and exact 0.5 candidate
 qualification remain open.
+
+The pinned StateChronicle conformance rerun passes all seven selected signed-source
+and checkpoint-proof tests, including real workers and SIGKILL recovery. Its
+upstream tracked tree is clean at `ae3d94bc22c7835eaa3fdcd766e3c117929c12bb`;
+the remaining 25 tests are deliberately outside this selected profile. The
+qualification manifest retains the exact command, lock identity and complete log.

@@ -59,6 +59,16 @@
         "timeline alloc"
       ],
       "exit_code": 0
+    },
+    "pinned_statechronicle_conformance": {
+      "command": "python3 scripts/run-statechronicle-conformance.py /home/ac/projects/statechronicle",
+      "upstream_commit": "ae3d94bc22c7835eaa3fdcd766e3c117929c12bb",
+      "upstream_tracked_changes": false,
+      "selected_tests": 7,
+      "filtered_out": 25,
+      "exit_code": 0,
+      "lock_sha256": "d8b09be3e9a8035483cc8129e5fc7af378e9bfb6524cbaa53e37483d1d5d4b5d",
+      "scope": "Pinned signed-source and checkpoint proof tests, including real workers and SIGKILL recovery; not arbitrary upstream or deployment conformance."
     }
   },
   "inconclusive_attempts": {
@@ -92,7 +102,8 @@
     "msrv-workspace.log.gz": "66da33a7f016577d985c6b8f3955dbccd1499df1d4302e8cd00f52dfaf092bd5",
     "tools.log.gz": "923bb711afdc57bfe36aa140c3bbc61313d7877ef8ee84565b176871f1150503",
     "secrets.log.gz": "51655dbc34680ecbaf32f39902f27021fe8a3871b57ee81d4709b9a5f0169ac4",
-    "portable-msrv.log.gz": "bac91f38c00549fbfa9dea46d858b9dc44f4b9b2f9ebd42f018366c401ea90eb"
+    "portable-msrv.log.gz": "bac91f38c00549fbfa9dea46d858b9dc44f4b9b2f9ebd42f018366c401ea90eb",
+    "conformance.log.gz": "ea2f5170259e262cb8046fb685a080df0170beba023c136f7fa197906348d50f"
   },
   "build_input_hashes_reverified_at": "77e2822 (only documentation/evidence changed since tested source)",
   "active_campaign": {

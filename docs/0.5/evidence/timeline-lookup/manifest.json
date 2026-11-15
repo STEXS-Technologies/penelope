@@ -1869,5 +1869,10 @@
     "Exact-path and canonical/ancestor precedence remains native. Arbitrary imported/recycled layouts can still require a bounded full scan.",
     "No allocation increase does not prove a stack high-water bound. Portable compilation and bounded local indices are qualified, not a new measured stack ceiling.",
     "Final coverage, full chaos and exact final-candidate qualification remain open."
-  ]
+  ],
+  "open_findings_triage": {
+    "archive": "lazy-triage.json.gz",
+    "sha256": "b99efd434f54fca93da6e2261a84e06c751c7dff12676c719ad7f4381aa920c0",
+    "scope": "All 59 p50 and 27 p95 flags retained with raw paired-round values, prioritization and source-path identities. No acceptance or threshold changes."
+  }
 }
