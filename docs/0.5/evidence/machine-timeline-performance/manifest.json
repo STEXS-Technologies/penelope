@@ -1,0 +1,749 @@
+{
+  "schema": 1,
+  "source_revision": "21ab0541f31d6ec64f57ccb20445ce80d178d6c3",
+  "benchmark": "crates/penelope-timeline/benches/machine_timeline.rs",
+  "scope": {
+    "paths": [
+      "native RewindableComputation through current LiveTimeline",
+      "MachineTimeline through the same current LiveTimeline"
+    ],
+    "application_state_bytes": [
+      8,
+      256,
+      4096,
+      65536
+    ],
+    "replay_horizons": [
+      1,
+      8,
+      32,
+      128
+    ],
+    "operations": [
+      "last live input",
+      "begin correction + replay in batches of 8 + publication"
+    ],
+    "profiles_per_run": 64,
+    "sample_count": 101,
+    "warmup_trials": 8,
+    "allocation_probe": "One separate trial after latency samples, for both operations in every configuration; zero alloc/realloc/requested bytes. Existing allocator reused with a positive Vec control. Deallocations not counted. Fixture allocation is excluded.",
+    "effect_profile": "No effects, capacity zero; no finalization or durable handoff."
+  },
+  "correctness": "Same array arithmetic shared by both paths, independently checked against base + H*(H+1)/2 + word_index*H before and after correction. Every word, timeline step/revision and empty eligible-effect queue checked. Machine head, last transition and expected predecessor checked separately. Authoritative state starts at 100 rather than predicted zero.",
+  "measurement": "Individual call nearest-rank p50/p95/p99 with all 101 chronological nanosecond samples retained. Fixture construction, captured-input hashing, snapshot capture and result verification are outside timing. Restore/load verification and snapshot hashing during correction remain inside. Inputs/initial states/results use black_box. No timer subtraction, outlier removal, bootstrap or equivalence test.",
+  "environment": {
+    "rust_current": "1.100.0",
+    "rust_msrv": "1.89.0",
+    "stable_runs": 3,
+    "msrv_runs": 1,
+    "affinity": [
+      4
+    ],
+    "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+    "other_load": "Long chaos campaign runs on CPUs 8-15. Other host load, turbo/frequency and OS caches are uncontrolled. CPU pinning is not full hardware isolation.",
+    "order": "Native then machine in every profile, increasing horizons/widths; repeated runs do not establish randomized paired equivalence."
+  },
+  "qualification": {
+    "checks": [
+      {
+        "label": "rustc-1.100.0",
+        "args": [
+          "rustc",
+          "+1.100.0",
+          "-vV"
+        ],
+        "exit_code": 0,
+        "seconds": 0.013098478317260742
+      },
+      {
+        "label": "build-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "bench",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--bench",
+          "machine_timeline",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "exit_code": 0,
+        "seconds": 0.902716875076294
+      },
+      {
+        "label": "release-1.100.0-1",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-machine-timeline-qualification/release-1.100.0-1.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/target/sqlite-performance-after/release/build/penelope-timeline/146faeaae46783e7/out/machine_timeline-146faeaae46783e7"
+        ],
+        "exit_code": 0,
+        "seconds": 0.469083309173584
+      },
+      {
+        "label": "release-1.100.0-2",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-machine-timeline-qualification/release-1.100.0-2.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/target/sqlite-performance-after/release/build/penelope-timeline/146faeaae46783e7/out/machine_timeline-146faeaae46783e7"
+        ],
+        "exit_code": 0,
+        "seconds": 0.44567394256591797
+      },
+      {
+        "label": "release-1.100.0-3",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-machine-timeline-qualification/release-1.100.0-3.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/target/sqlite-performance-after/release/build/penelope-timeline/146faeaae46783e7/out/machine_timeline-146faeaae46783e7"
+        ],
+        "exit_code": 0,
+        "seconds": 0.4449119567871094
+      },
+      {
+        "label": "debug-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--bench",
+          "machine_timeline"
+        ],
+        "exit_code": 0,
+        "seconds": 0.5746474266052246
+      },
+      {
+        "label": "tests-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--lib",
+          "--tests",
+          "--all-features"
+        ],
+        "exit_code": 0,
+        "seconds": 4.662020444869995
+      },
+      {
+        "label": "rustc-1.89.0",
+        "args": [
+          "rustc",
+          "+1.89.0",
+          "-vV"
+        ],
+        "exit_code": 0,
+        "seconds": 0.023382186889648438
+      },
+      {
+        "label": "build-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "bench",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--bench",
+          "machine_timeline",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "exit_code": 0,
+        "seconds": 9.022277355194092
+      },
+      {
+        "label": "release-1.89.0-1",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-machine-timeline-qualification/release-1.89.0-1.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/target/sqlite-performance-after/release/deps/machine_timeline-7f2e61d076cefbea"
+        ],
+        "exit_code": 0,
+        "seconds": 0.4521019458770752
+      },
+      {
+        "label": "debug-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--bench",
+          "machine_timeline"
+        ],
+        "exit_code": 0,
+        "seconds": 1.389681339263916
+      },
+      {
+        "label": "tests-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--lib",
+          "--tests",
+          "--all-features"
+        ],
+        "exit_code": 0,
+        "seconds": 7.009681940078735
+      },
+      {
+        "label": "clippy",
+        "args": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "-p",
+          "penelope-timeline",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "seconds": 1.0913848876953125
+      },
+      {
+        "label": "format",
+        "args": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "seconds": 0.7158408164978027
+      },
+      {
+        "label": "diff",
+        "args": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "seconds": 0.005032777786254883
+      }
+    ],
+    "timeline_test_counts": {
+      "tests-1.89.0.stdout": 73,
+      "tests-1.100.0.stdout": 73
+    },
+    "debug": "Same dimensions and invariant checks, 1 warmup and 3 timed smoke samples plus a separate allocation probe. Debug samples are not release performance data.",
+    "strict_clippy": "All timeline targets/features; passed.",
+    "package": "cargo package --list includes benchmark and shared allocator. Inclusion check only, not package build or publication.",
+    "graph": "AST update completed."
+  },
+  "assessment": [
+    "All final-source measurements and checks passed. At horizon 128 the machine correction median across current runs was 36.070-40.378 microseconds for 8-byte application state and 393.320-407.138 microseconds for 64 KiB. These are fixture observations, not latency guarantees.",
+    "Both paths perform the same application arithmetic and correction. The machine path additionally carries machine head/context/provenance and owned state transitions; its state storage and snapshot digest are larger. Do not treat the difference as a safety-equivalent legacy regression or attribute it to one component.",
+    "The native comparator uses the pre-existing API on the current engine, not a v0.4 binary. Frozen old-fixture comparisons remain separate and their outstanding review flags are unchanged.",
+    "This fills the bounded timeline-over-machine measurement profile. Native end-to-end execution, broader payload/effect profiles, full chaos and exact release qualification remain open."
+  ],
+  "selected_observations": {
+    "native/8/1/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 131,
+        "p95_ns": 141,
+        "p99_ns": 141
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 131,
+        "p95_ns": 141,
+        "p99_ns": 141
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 160,
+        "p95_ns": 170,
+        "p99_ns": 171
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 181,
+        "p95_ns": 201,
+        "p99_ns": 240
+      }
+    ],
+    "native/8/1/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 551,
+        "p95_ns": 561,
+        "p99_ns": 561
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 541,
+        "p95_ns": 552,
+        "p99_ns": 561
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 541,
+        "p95_ns": 551,
+        "p99_ns": 561
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 601,
+        "p95_ns": 712,
+        "p99_ns": 802
+      }
+    ],
+    "machine/8/1/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 371,
+        "p95_ns": 381,
+        "p99_ns": 390
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 330,
+        "p95_ns": 331,
+        "p99_ns": 341
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 370,
+        "p95_ns": 501,
+        "p99_ns": 531
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 401,
+        "p95_ns": 511,
+        "p99_ns": 601
+      }
+    ],
+    "machine/8/1/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 842,
+        "p95_ns": 862,
+        "p99_ns": 952
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 852,
+        "p95_ns": 871,
+        "p99_ns": 882
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 892,
+        "p95_ns": 1163,
+        "p99_ns": 1183
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 1022,
+        "p95_ns": 1212,
+        "p99_ns": 1253
+      }
+    ],
+    "native/8/128/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 140,
+        "p95_ns": 190,
+        "p99_ns": 341
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 140,
+        "p95_ns": 180,
+        "p99_ns": 211
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 161,
+        "p95_ns": 200,
+        "p99_ns": 310
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 161,
+        "p95_ns": 251,
+        "p99_ns": 351
+      }
+    ],
+    "native/8/128/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 11753,
+        "p95_ns": 15079,
+        "p99_ns": 19408
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 11603,
+        "p95_ns": 14238,
+        "p99_ns": 14979
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 11753,
+        "p95_ns": 14718,
+        "p99_ns": 16492
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 11082,
+        "p95_ns": 12985,
+        "p99_ns": 15019
+      }
+    ],
+    "machine/8/128/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 381,
+        "p95_ns": 451,
+        "p99_ns": 521
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 331,
+        "p95_ns": 390,
+        "p99_ns": 401
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 360,
+        "p95_ns": 421,
+        "p99_ns": 481
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 361,
+        "p95_ns": 421,
+        "p99_ns": 441
+      }
+    ],
+    "machine/8/128/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 36441,
+        "p95_ns": 41250,
+        "p99_ns": 49505
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 36070,
+        "p95_ns": 43694,
+        "p99_ns": 56910
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 40378,
+        "p95_ns": 44025,
+        "p99_ns": 93261
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 34507,
+        "p95_ns": 40689,
+        "p99_ns": 41170
+      }
+    ],
+    "native/65536/1/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 4749,
+        "p95_ns": 4879,
+        "p99_ns": 4930
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 3607,
+        "p95_ns": 4780,
+        "p99_ns": 5931
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 4369,
+        "p95_ns": 4819,
+        "p99_ns": 5190
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 3677,
+        "p95_ns": 4970,
+        "p99_ns": 5461
+      }
+    ],
+    "native/65536/1/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 40729,
+        "p95_ns": 44406,
+        "p99_ns": 98901
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 37493,
+        "p95_ns": 42011,
+        "p99_ns": 42502
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 39606,
+        "p95_ns": 44166,
+        "p99_ns": 48634
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 38424,
+        "p95_ns": 43574,
+        "p99_ns": 49165
+      }
+    ],
+    "machine/65536/1/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 6713,
+        "p95_ns": 6873,
+        "p99_ns": 7084
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 5380,
+        "p95_ns": 7004,
+        "p99_ns": 8467
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 5391,
+        "p95_ns": 6763,
+        "p99_ns": 7163
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 5550,
+        "p95_ns": 7344,
+        "p99_ns": 9388
+      }
+    ],
+    "machine/65536/1/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 44716,
+        "p95_ns": 48374,
+        "p99_ns": 52071
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 40879,
+        "p95_ns": 47472,
+        "p99_ns": 56609
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 40738,
+        "p95_ns": 46019,
+        "p99_ns": 50678
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 40879,
+        "p95_ns": 46370,
+        "p99_ns": 46860
+      }
+    ],
+    "native/65536/128/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 3627,
+        "p95_ns": 4739,
+        "p99_ns": 5029
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 3617,
+        "p95_ns": 5250,
+        "p99_ns": 7835
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 3617,
+        "p95_ns": 4618,
+        "p99_ns": 5200
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 3637,
+        "p95_ns": 4790,
+        "p99_ns": 5110
+      }
+    ],
+    "native/65536/128/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 171852,
+        "p95_ns": 227199,
+        "p99_ns": 249563
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 173415,
+        "p95_ns": 267928,
+        "p99_ns": 280192
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 173676,
+        "p95_ns": 233872,
+        "p99_ns": 279090
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 171622,
+        "p95_ns": 231337,
+        "p99_ns": 244393
+      }
+    ],
+    "machine/65536/128/live_input": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 5360,
+        "p95_ns": 6162,
+        "p99_ns": 6944
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 5351,
+        "p95_ns": 7024,
+        "p99_ns": 7264
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 5391,
+        "p95_ns": 7203,
+        "p99_ns": 10400
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 5521,
+        "p95_ns": 6993,
+        "p99_ns": 7414
+      }
+    ],
+    "machine/65536/128/correction": [
+      {
+        "run": "release-1.100.0-1",
+        "p50_ns": 393320,
+        "p95_ns": 480318,
+        "p99_ns": 511159
+      },
+      {
+        "run": "release-1.100.0-2",
+        "p50_ns": 407138,
+        "p95_ns": 502803,
+        "p99_ns": 535054
+      },
+      {
+        "run": "release-1.100.0-3",
+        "p50_ns": 394713,
+        "p95_ns": 483104,
+        "p99_ns": 532580
+      },
+      {
+        "run": "release-1.89.0-1",
+        "p50_ns": 407619,
+        "p95_ns": 489857,
+        "p99_ns": 529284
+      }
+    ]
+  },
+  "artifact": {
+    "path": "qualification.tar.gz",
+    "sha256": "db6d21c45efc899eb66e49ff668ccbee4315f5da1f2005f44ef8d908b3a162be",
+    "members": {
+      "allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+      "build-1.100.0.stderr": "972a3e1ebb406745559dde5e2082bfadb58f8ed5a0256d5c0e98b82b9b8cb9a1",
+      "build-1.100.0.stdout": "9a3d2b9b2367432ede65ad466e1d3bc59a39e10ca74854061514fde91e7b0084",
+      "build-1.89.0.stderr": "47c857fe351746accb938a063e51e6aa17c4a9f0a5f4ff81690ed03a5326e5fb",
+      "build-1.89.0.stdout": "771c99b930146f1e29fa54c5d569ba927ac38d308f8915852db5834561aa463a",
+      "checks.json": "22749c33c4ca002407931980c25dc03cf151b144a73f766b5d471b8e560f798d",
+      "clippy.stderr": "de93efe9ec19770eca857758d21ce6c3743eb099a45226c3671d236087527743",
+      "clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "debug-1.100.0.stderr": "2f2dee01cd08fa2d9ad400f3e8cbb76f9cb492953b1b610611b1c54d4a1fed23",
+      "debug-1.100.0.stdout": "5cda1115b27498e3ecc623b149829fe5de0a56395148c357d354d3518f74b74f",
+      "debug-1.89.0.stderr": "f3f8b1e384734c667f7b366b073efc8f639417bd683a3146439c8df4279f327c",
+      "debug-1.89.0.stdout": "95bcc8c0defee9c577acbbb1aec8aa704b37c9cf057069cf8e68f28c221adcea",
+      "diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "graph-update.log": "394ea61d97d006556946627e664e0e32206e5fce73e0ca81f8b403a34a72ff71",
+      "metadata.json": "0c372fc82f4e6a28d1b2e17dd2941ccf4f4018b69634c6cbd743d72f51ab4a60",
+      "package-list.log": "4f997dd611bb8a79c46f98cecbbebc9bdbcfc2120f870db6415fce314848eb2f",
+      "qualification.log": "b5ac1d42ecf3357f030fbc2b70ec07815abed29165ad49ec2f07a3153d23aecb",
+      "release-1.100.0-1.resources.json": "4c699088ad5abf7dbd5186af6450c3f39353241220d9c099eadd677ac2ad0ce3",
+      "release-1.100.0-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-1.stdout": "9425afa7bf9d67ec363c0bb24f4d713daf0f86f6a4e97932544ebd0fd3607c26",
+      "release-1.100.0-2.resources.json": "bf96ff4d1b45314506be2d757a9be7e8b44d8cb816fd8740e2bdf92cf21306fe",
+      "release-1.100.0-2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-2.stdout": "50922de8e6fb0a2bf73f73b9060d2b3c0ffac8dec397f44720f533420a3570bb",
+      "release-1.100.0-3.resources.json": "bf96ff4d1b45314506be2d757a9be7e8b44d8cb816fd8740e2bdf92cf21306fe",
+      "release-1.100.0-3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-3.stdout": "e70b133306fe2115580b8dc9135b3d766e3f7854387351ca10ca3e397cdecc48",
+      "release-1.89.0-1.resources.json": "073fae5e2b9b7585ca640a263b706501d8b239e020916044d73a54488d6c28c5",
+      "release-1.89.0-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.89.0-1.stdout": "2262801f71e81126e5befa5874ba23d8453ae559278553144283c975e4fcc14c",
+      "run-as-recorded.py": "bd0ef1b71845315465c2dcd874f871695aabce427d70c39d1dc83f90f93bcd9a",
+      "rustc-1.100.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rustc-1.100.0.stdout": "be69adad9137eaa0bdac1dd07e2fe286b1831fc8bad193ea27806ca0c7c8e7c6",
+      "rustc-1.89.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rustc-1.89.0.stdout": "48cee7c7fa47e58de4f15a9bebf677bf7ad098f625aedfe1f7b827a97e3797c7",
+      "source.rs": "3ce3874ef183ab275c50e9b10f19a96104e53db0dd78de4e512372059b91a434",
+      "tests-1.100.0.stderr": "980d54582de7cac4c71406a3bfdaf32e09f28f770e32df37687789d223bd0ea1",
+      "tests-1.100.0.stdout": "6bc9a899a4e6ea07147bd5d9cf080b3a4add97c6241e0e640682061a18ca3308",
+      "tests-1.89.0.stderr": "225d3200d328390770756d0264055d83dd5edf02d63bc263ecc3c7d9d320452b",
+      "tests-1.89.0.stdout": "73c20c474df994f4bbaf2adab925be9e6c2c5ad60f9c840ad537dec19927e1db"
+    }
+  }
+}

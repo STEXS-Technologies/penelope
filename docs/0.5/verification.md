@@ -746,8 +746,9 @@ minimal capacity-zero, effect-free counter is a separate profile: it does not
 replace the broader flat/hierarchy/intent measurements. Direct computation has
 no publication guarantee; its timing is not subtracted to claim exact kernel
 cost. Batch-mean quantiles and optimized owned copies do not establish physical
-copy counts, individual tails or release-wide performance acceptance. Durable,
-timeline-over-machine and native end-to-end measurements remain open.
+copy counts, individual tails or release-wide performance acceptance. The durable
+and timeline profiles below provide separate measurements; native end-to-end
+measurements remain open.
 
 ## Durable machine performance profile
 
@@ -790,3 +791,24 @@ tests also pass against the original reader. Both record and blob reads now
 share the real concurrent-retirement test fixture. Strict all-target SQLite
 Clippy and formatting pass. These selected checks do not replace final release
 qualification or resolve the existing performance findings.
+
+
+## Timeline over machine performance
+
+[The timeline-machine measurements](evidence/machine-timeline-performance/manifest.json)
+cover 8/256/4096/65536-byte application state and replay horizons 1/8/32/128,
+using the same computation through the existing native API and machine adapter.
+All 64 profiles pass in three Rust 1.100 release runs and one Rust 1.89 run,
+with 101 individual call samples after eight warmups and separate zero-allocation
+probes. A closed-form oracle checks every state word after prediction and after
+replaying an independently changed authority snapshot. Timeline heads and machine
+provenance are checked outside timing. No second correction implementation exists.
+
+The 73 timeline tests pass on each compiler, as do the new benchmark's debug
+smokes, strict all-target Clippy, formatting and package inclusion. The benchmark
+shares its model, computation, driver and existing allocation probe across paths.
+Its native comparator uses the current engine's pre-existing API; the machine
+path carries additional context/provenance and owned-state costs. This is a new
+profile, not a replacement for frozen legacy comparisons or an acceptance of their
+open performance findings. Native end-to-end execution and final qualification
+remain open.
