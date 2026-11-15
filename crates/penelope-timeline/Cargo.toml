@@ -38,3 +38,7 @@ harness = false
 [[bench]]
 name = "timeline_throughput"
 harness = false
+
+[[bench]]
+name = "machine_timeline"
+harness = false
