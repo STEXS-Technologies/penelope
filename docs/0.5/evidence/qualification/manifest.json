@@ -1,0 +1,61 @@
+{
+  "source_commit": "8f8aea3",
+  "documentation_followup_commit": "b80996fae389037bc95d2568c39898f46811d168",
+  "status": "Partial qualification rehearsal; not a 0.5 release candidate or complete release qualification.",
+  "tools": {
+    "rustc": "1.100.0 (0ef1bc386 2026-11-09)",
+    "compiler_wrappers": "explicitly disabled",
+    "cargo_build_jobs": 2,
+    "coverage_target": "isolated, cleaned completely before retry"
+  },
+  "passed": {
+    "coverage": {
+      "covered_lines": 14847,
+      "lines": 15777,
+      "percent": 94.1053432211447,
+      "unchanged_ratchet_percent": 94.0759,
+      "commands": [
+        "./scripts/run_coverage_json.sh",
+        "./scripts/check_coverage_ratchet.sh /tmp/penelope-050-release-coverage.json"
+      ]
+    },
+    "python_script_tests": 75,
+    "static": [
+      "action pins",
+      "layer boundaries and negative tests",
+      "independent machine wire fixtures",
+      "chaos runner target/seed checks",
+      "cargo fmt --all -- --check"
+    ],
+    "documentation_links": 46,
+    "stable_workspace_all_targets": {
+      "command": "cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+      "exit_code": 0,
+      "scope": "All workspace library/integration/example/benchmark targets and features. Debug benchmark measurements are execution checks, not performance acceptance."
+    }
+  },
+  "inconclusive_attempts": {
+    "coverage": "LLVM profile writes and runtime storage failed under disk quota exhaustion; clean sequential retry passed.",
+    "msrv": "Compilation failed with disk quota/no-space errors; no MSRV result from that attempt.",
+    "chaos": "Application workload returned Unavailable during concurrent quota exhaustion; no fuzz phase reached and no campaign pass claimed. Requires independent retry. The application workload subsequently passes in the full stable workspace retry, but this does not replace the interrupted campaign.",
+    "stable": "Run exited 101; log truncates mid-benchmark during quota exhaustion. No full-workspace result from that attempt."
+  },
+  "resource_response": "All four handles confirmed terminal before deleting only their three newly created failed build directories. Coverage rerun alone. Coverage build artifacts deleted only after passing report and logs retained.",
+  "open": [
+    "Doctests, strict workspace Clippy, warning-free rustdoc and MSRV all-target checks are running in a sequential pipeline; not yet included here.",
+    "Full documented chaos campaign, remaining performance review and final candidate version/package qualification."
+  ],
+  "artifacts_sha256": {
+    "coverage.json.gz": "ae979eadd228507a767d3e277451505b841dd04fe21de34fa6fef0ca20d08c49",
+    "coverage.log.gz": "9c6aa14eb2bdeeb396a2bd0346d99c71e6b8e91b14d6fb7dd56c2f6341500823",
+    "coverage-ratchet.log.gz": "b8c1e00f946916470a8254aa3fa22f7b15713c9c4781312b4036b267f4c97dc7",
+    "script-tests.log.gz": "ae69336734541a8c2d74b9c6cf94b954aa4f9a57492d89f0aa4afb641cf8f17a",
+    "static-checks.log.gz": "8e9855e6b477be51a7524a6a1fd52aabd1effcaf8386f262e34f2f405beeed5d",
+    "quota-attempt-coverage.log.gz": "d2daafe11a60198fbdf80764710a3c0213c3098930306bbd17f34d4106500403",
+    "quota-attempt-chaos.log.gz": "43ab71b2a137f5510a757790d60e1f078868a6bbebfcd30505d7872222b497f6",
+    "quota-attempt-stable.log.gz": "60322d6803d8314a7ec471130c4fcba0d232583e31c31c74b1b98f2c0ad99530",
+    "quota-attempt-msrv.log.gz": "a550740ec4e933df9fbfdfb251999f8dd0bfb8624d8d1dedc2b677a1e71caa3b",
+    "source-sha256.json.gz": "751f25613560c9f8f51926d76ff432b90e448d4a1b2a04a0612b41863d3dfe61",
+    "stable-workspace.log.gz": "b990fc3e44ac25e938a2c44f33dd8841db3b1e92020779a029117a9d8e400366"
+  }
+}

@@ -630,3 +630,25 @@ and counter-only hooks, with intent capacity zero. They are not directly compare
 to flat profiles with capacity 32. Consumer-computation separation, durable and
 end-to-end workloads, statistical review of legacy findings and final release
 qualification remain open.
+
+## Workspace qualification rehearsal after timeline lookup changes
+
+A clean sequential Rust 1.100 coverage run passes at **94.105343%** (14,847 of
+15,777 lines), above the unchanged 94.0759% ratchet. The 75 Python script tests,
+action pins, layer boundaries and negative tests, independent machine wire
+fixtures, chaos-runner target/seed checks and formatting pass. Documentation
+cleanup removes stale claims that the implemented native bridges and durable
+outbox are still absent; all 46 local file links in the edited guides resolve.
+
+[Reports, source identities and failed attempts](evidence/qualification/manifest.json)
+retain the full scope. Initial parallel coverage, workspace, MSRV and chaos
+attempts were inconclusive during disk-quota exhaustion: MSRV compilation and
+LLVM profile writes explicitly failed for lack of space, the workspace log
+truncated, and the chaos workload returned `Unavailable` before fuzzing. No
+passing campaign is inferred from those failures. All handles were confirmed
+terminal before removing their new temporary build directories; sequential
+coverage then passed. The stable all-target/all-feature workspace retry also
+passes, including the previously failing application workload and all 67 protected
+runtime tests. Debug benchmark execution is not performance acceptance. MSRV and
+documentation/lint retries, the full documented chaos workload, remaining
+performance findings and exact 0.5 candidate qualification remain open.
