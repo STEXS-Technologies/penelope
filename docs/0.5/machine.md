@@ -45,5 +45,6 @@ against an independent reference model at capacities zero, one and four.
 
 Remaining gates include full chaos and coverage qualification, durable contracts,
 adapters, replay/correction integration, measured shared-internal extraction and
-comparable performance evidence. The new bounded storage is intentionally not yet
-extracted into the existing timeline; equivalence must be demonstrated first.
+comparable performance evidence. The metadata admission preflight is now [shared with timeline](staging-extraction.md),
+with differential and performance evidence. Storage, provenance, poisoning and
+finality remain owned by their respective engines.

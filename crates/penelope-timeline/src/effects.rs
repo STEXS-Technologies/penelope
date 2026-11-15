@@ -101,23 +101,15 @@ impl<Effect, const CAPACITY: usize> StagedEffects<Effect, CAPACITY> {
         }
     }
     pub(crate) fn push(&mut self, effect: StagedEffect<Effect>) -> Result<(), TimelineError> {
-        if self.len >= self.limits.max_intents || self.len >= CAPACITY {
-            return Err(TimelineError::Capacity);
-        }
-        if self
-            .iter()
-            .any(|old| old.descriptor.identity == effect.descriptor.identity)
-        {
-            return Err(TimelineError::InputMismatch);
-        }
-        let bytes = self
-            .bytes
-            .checked_add(effect.descriptor.payload_bytes)
-            .ok_or(TimelineError::Capacity)?;
-        if bytes > self.limits.max_payload_bytes {
-            return Err(TimelineError::Capacity);
-        }
-        let len = self.len.checked_add(1).ok_or(TimelineError::Capacity)?;
+        let (len, bytes) = penelope_core::__private::admit_intent::<CAPACITY, _, _>(
+            self.len,
+            self.bytes,
+            (self.limits.max_intents, self.limits.max_payload_bytes),
+            self.iter().map(|old| old.descriptor.identity),
+            effect.descriptor.identity,
+            effect.descriptor.payload_bytes,
+            (TimelineError::Capacity, TimelineError::InputMismatch),
+        )?;
         let slot = self
             .slots
             .get_mut(self.len)

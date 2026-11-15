@@ -18,6 +18,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Raise the workspace minimum Rust version to 1.89 to support patched SQLite;
   all library manifests now inherit that minimum explicitly.
 - Centralize the SQLite dependency version in the workspace.
+- Share bounded intent admission between machine and timeline, preserving their
+  distinct error, poisoning and provenance rules.
 
 ### Added
 

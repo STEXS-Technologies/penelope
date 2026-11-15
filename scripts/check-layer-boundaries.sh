@@ -13,7 +13,7 @@ require_internal_dependencies() {
     actual_dependencies="$(jq -r --arg package_name "$package_name" '
         .packages[]
         | select(.name == $package_name)
-        | [.dependencies[] | select(.name | startswith("penelope-")) | .name]
+        | [.dependencies[] | select(.name == "penelope" or (.name | startswith("penelope-"))) | .name]
         | sort
         | join(" ")
     ' <<<"$metadata")"
@@ -70,7 +70,7 @@ fi
 forbidden_infrastructure_dependencies='^(aws|aws-config|aws-sdk-.*|axum|deadpool|diesel|lapin|mongodb|postgres|rdkafka|redis|reqwest|rusqlite|sea-orm|sqlx|surrealdb|tokio-postgres)$'
 if jq -e --arg pattern "$forbidden_infrastructure_dependencies" '
     .packages[]
-    | select(.name | startswith("penelope-"))
+    | select(.name == "penelope" or (.name | startswith("penelope-")))
     | . as $package
     | .dependencies[]
     | select(.kind != "dev")

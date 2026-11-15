@@ -16,3 +16,7 @@ pub mod timeline;
 
 /// Pure application machines and bounded in-memory publication.
 pub mod machine;
+
+/// Version-coupled implementation support for other Penelope crates.
+#[doc(hidden)]
+pub mod __private;

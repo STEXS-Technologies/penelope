@@ -91,3 +91,19 @@ rather than replace, the earlier baseline and dependency checkpoint evidence.
 
 F2 remains in progress. Full release coverage, chaos, performance qualification,
 specialized adapters and durable machine protocols remain outstanding.
+
+## Shared staging extraction
+
+[The extraction record](staging-extraction.md) documents the shared owner,
+retained domain rules, differential oracle and alternating parent/candidate
+performance comparison. Reproduction script, source and binary hashes, raw
+p50/p95/p99 measurements and verification logs are preserved under
+[evidence/staging-extraction](evidence/staging-extraction/).
+
+Workspace library/integration tests and documentation, strict all-target Clippy,
+Rust 1.89 machine tests/allocation probe, portable core/timeline builds and the
+layer gate regression suite passed. Machine, timeline effects, branch promotion
+and correction fuzzers each passed 10,000 instrumented runs with seed 502.
+Allocation/memory benchmark records are identical to the parent. This checkpoint
+consolidates metadata admission only; specialized engine adapters and full release
+qualification remain pending.

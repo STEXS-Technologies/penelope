@@ -135,8 +135,8 @@ impl<M: Machine, const CAPACITY: usize> MemoryMachine<M, CAPACITY> {
         let mut sink = Staging {
             old: &self.pending,
             slots: core::array::from_fn(|_| None),
-            len: 0,
-            bytes: 0,
+            len: self.pending.len,
+            bytes: self.pending.bytes,
             limits: self.limits,
             poisoned: None,
         };
@@ -161,16 +161,6 @@ impl<M: Machine, const CAPACITY: usize> MemoryMachine<M, CAPACITY> {
                     revision,
                     transition,
                 };
-                let len = self
-                    .pending
-                    .len
-                    .checked_add(sink.len)
-                    .ok_or(MachineError::Capacity)?;
-                let bytes = self
-                    .pending
-                    .bytes
-                    .checked_add(sink.bytes)
-                    .ok_or(MachineError::Capacity)?;
                 let mut pending = IntentBatch::empty();
                 // Reserve the old prefix without touching it; only tentative
                 // new payloads move while constructing the ready handle.
@@ -185,8 +175,8 @@ impl<M: Machine, const CAPACITY: usize> MemoryMachine<M, CAPACITY> {
                         intent,
                     });
                 }
-                pending.len = len;
-                pending.bytes = bytes;
+                pending.len = sink.len;
+                pending.bytes = sink.bytes;
                 Ok(PrepareDecision::Ready(PreparedTransition {
                     owner: self,
                     state: next,
@@ -283,6 +273,7 @@ impl<M: Machine, const CAPACITY: usize> PreparedTransition<'_, M, CAPACITY> {
     }
 }
 
+// len/bytes include the retained prefix; new slots start after that prefix.
 struct Staging<'pending, Effect, const CAPACITY: usize> {
     old: &'pending IntentBatch<Effect, CAPACITY>,
     slots: [Option<ProposedIntent<Effect>>; CAPACITY],
@@ -293,39 +284,18 @@ struct Staging<'pending, Effect, const CAPACITY: usize> {
 }
 impl<Effect, const CAPACITY: usize> Staging<'_, Effect, CAPACITY> {
     fn admit(&mut self, intent: ProposedIntent<Effect>) -> Result<(), MachineError> {
-        let count = self
-            .old
-            .len
-            .checked_add(self.len)
-            .ok_or(MachineError::Capacity)?;
-        if count >= CAPACITY || count >= self.limits.max_intents {
-            return Err(MachineError::Capacity);
-        }
-        if self
-            .old
-            .iter()
-            .any(|old| old.intent.metadata.identity == intent.metadata.identity)
-            || self
-                .slots
+        let (len, bytes) = crate::__private::admit_intent::<CAPACITY, _, _>(
+            self.len,
+            self.bytes,
+            (self.limits.max_intents, self.limits.max_payload_bytes),
+            self.old
                 .iter()
-                .flatten()
-                .any(|old| old.metadata.identity == intent.metadata.identity)
-        {
-            return Err(MachineError::DuplicateIntent);
-        }
-        let bytes = self
-            .bytes
-            .checked_add(intent.metadata.payload_bytes)
-            .ok_or(MachineError::Capacity)?;
-        let total = self
-            .old
-            .bytes
-            .checked_add(bytes)
-            .ok_or(MachineError::Capacity)?;
-        if total > self.limits.max_payload_bytes {
-            return Err(MachineError::Capacity);
-        }
-        let len = self.len.checked_add(1).ok_or(MachineError::Capacity)?;
+                .map(|old| old.intent.metadata.identity)
+                .chain(self.slots.iter().flatten().map(|old| old.metadata.identity)),
+            intent.metadata.identity,
+            intent.metadata.payload_bytes,
+            (MachineError::Capacity, MachineError::DuplicateIntent),
+        )?;
         let slot = self.slots.get_mut(self.len).ok_or(MachineError::Capacity)?;
         *slot = Some(intent);
         self.len = len;

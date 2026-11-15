@@ -121,3 +121,36 @@ PY_TIMELINE_KIND
   fi
 done
 printf '%s\n' 'Timeline durable handoff remains an example-only SQLite dependency'
+
+# Shared portable helpers must not reverse the core/timeline dependency direction.
+for layer_case in core-executor core-timeline core-facade timeline-executor facade-client; do
+  python3 - "$gate_test_dir" "$layer_case" <<'PY_PORTABLE'
+import json, sys
+from pathlib import Path
+directory, case = Path(sys.argv[1]), sys.argv[2]
+source, target = {
+    'core-executor': ('penelope-core', 'penelope-executor'),
+    'core-timeline': ('penelope-core', 'penelope-timeline'),
+    'core-facade': ('penelope-core', 'penelope'),
+    'timeline-executor': ('penelope-timeline', 'penelope-executor'),
+    'facade-client': ('penelope', 'sqlx'),
+}[case]
+metadata = json.loads((directory / 'baseline.json').read_text())
+package = next(p for p in metadata['packages'] if p['name'] == source)
+package['dependencies'].append({'name': target, 'kind': None})
+(directory / 'metadata.json').write_text(json.dumps(metadata))
+PY_PORTABLE
+  if ./scripts/check-layer-boundaries.sh > "$gate_test_dir/result.txt" 2>&1; then
+    printf 'gate incorrectly admitted %s\n' "$layer_case" >&2
+    exit 1
+  fi
+  expected='directly depends on'
+  if [[ "$layer_case" == facade-client ]]; then
+    expected='production infrastructure dependency found'
+  fi
+  if ! grep -Fq "$expected" "$gate_test_dir/result.txt"; then
+    cat "$gate_test_dir/result.txt" >&2
+    exit 1
+  fi
+done
+printf '%s\n' 'Portable layers reject reverse dependencies, including the umbrella facade'

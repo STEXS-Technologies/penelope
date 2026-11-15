@@ -117,3 +117,7 @@ to adopt the patched bundled SQLite dependency. Every published crate inherits
 the workspace minimum, and CI tests it explicitly. The development toolchain
 remains independently pinned. Original baseline evidence remains scoped to the
 old dependencies and Rust 1.85; do not rewrite it as new-version evidence.
+
+The first [shared admission extraction](staging-extraction.md) has two real
+callers and preserves domain-specific poisoning, provenance and error meanings.
+Its cross-crate helper is internal support, not a new application API.
