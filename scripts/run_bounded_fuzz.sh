@@ -54,6 +54,7 @@ fuzz_targets=(
   fuzz_sqlite_process
   fuzz_sqlite_machine
   fuzz_sqlite_machine_outbox
+  fuzz_sqlite_machine_task
 )
 
 dtos=(

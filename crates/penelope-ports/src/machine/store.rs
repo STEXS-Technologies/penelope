@@ -40,6 +40,7 @@ pub enum MachineOperation {
         intent: MachineIntentId,
     },
     ValidateIntent {
+        consumer: MachineSourceId,
         intent: MachineIntentId,
         owner: MachineLeaseOwner,
         token: MachineLeaseToken,

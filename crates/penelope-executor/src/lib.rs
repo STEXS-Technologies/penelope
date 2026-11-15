@@ -19,3 +19,6 @@ pub mod services;
 
 /// Saga candidates inspected through the common prepared-decision view.
 pub mod saga_machine;
+
+/// Source-authorized machine handoff into native task admission.
+pub mod machine_task;

@@ -23,7 +23,7 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | F3 | Saga adapter and proven shared internals | Prepared views and 0.4 parity; integration in progress | Legacy/new differential decisions, errors and bytes |
 | F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Adapter implemented; qualification in progress | [Captured machine composition](timeline-machines.md), correction, scope, scratch and finality checks |
-| F6 | Machine journal, SQLite and effect bridges | Scoped journal and SQLite snapshots implemented; outbox and bridges pending | [Machine storage](machine-storage.md), wire and payload preparation; effect leasing, reconciliation and bridges remain open |
+| F6 | Machine journal, SQLite and effect bridges | Journal, snapshots, outbox and task admission implemented; saga bridge pending | [Machine storage](machine-storage.md), wire and payload preparation; task admission uses native recovery authority; saga bridge remains open |
 | F7 | Consolidate API, internals, docs and examples | Facade paths established; integration pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
 | F8 | Qualify candidate | Pending | Exact-SHA evidence for every section 14 release gate |
 
@@ -65,4 +65,4 @@ hierarchy helper, with independent facade consumer examples. The implemented
 [shared intent admission](staging-extraction.md) has differential evidence. The scoped machine journal and timeline composition are implemented. The
 [leased outbox](machine-storage.md#leased-receiver-handoff) now preserves
 source authority, attempt uncertainty and verified receiver acceptance; production
-machine-to-saga/task bridges and final release qualification remain pending.
+machine-to-saga bridge and final release qualification remain pending.

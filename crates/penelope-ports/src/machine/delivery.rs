@@ -129,6 +129,8 @@ pub struct MachineIntentStatus {
 pub trait MachineIntentOutbox: Send + Sync {
     type Context: Send + Sync;
     type Receipt: Sync;
+    /// Trusted receiver namespace pinned by the host adapter.
+    fn consumer(&self) -> MachineSourceId;
     async fn claim(
         &self,
         context: &Self::Context,

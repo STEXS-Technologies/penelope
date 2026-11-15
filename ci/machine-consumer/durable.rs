@@ -1,7 +1,8 @@
 //! One model across memory, timeline and a local durable journal.
 use async_trait::async_trait;
 use penelope::{machine::*, storage::machine::*};
-use penelope_sqlite::{SqliteLimits, SqliteMachineStore};
+use penelope_sqlite::{SqliteLimits, SqliteMachineStore, SqliteMachineOutbox, SqliteTaskJournal};
+use penelope::task::{Digest,EffectContract,RecoveryMode,TaskRecoveryPolicy,ExecutionBudget,TaskDefinition,TaskTick,TaskSequence,MachineTaskReceiver};
 use std::{
     future::Future,
     sync::Arc,
@@ -47,6 +48,10 @@ impl MachineAuthorizer for LocalOwner {
             Err(MachineStoreError::Denied)
         }
     }
+}
+struct LocalClock;
+impl MachineLeaseClock for LocalClock {
+    fn now(&self) -> Result<MachineLeaseTick,MachineStoreError> {Ok(MachineLeaseTick::new(100))}
 }
 struct ThreadWake(std::thread::Thread);
 impl Wake for ThreadWake {
@@ -136,7 +141,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         stored.batch().intents().count(),
         duplicate.disposition
     );
-    // Intent bytes remain journal evidence. Leasing, source authorization and
-    // downstream acknowledgement/reconciliation must precede external execution.
+    // The same committed machine intent becomes one durable native task input.
+    // This example demonstrates admission only; no worker is registered or run.
+    let definition=TaskDefinition {
+        code:Digest::of(b"counter-task-admission-example-v1"),checkpoint_schema:1,effects:EffectContract::Pure,
+        recovery:TaskRecoveryPolicy {mode:RecoveryMode::RestartFromBeginning,max_attempts:2,timeout_ticks:10,restart_delay_ticks:1,max_checkpoint_bytes:8},
+        budget:ExecutionBudget {max_input_bytes:8,max_output_bytes:8,max_history_records:32,max_checkpoint_commits:4,cpu_ticks:10,deadline_tick:TaskTick::new(1000)},
+    };
+    let tasks=Arc::new(SqliteTaskJournal::open(&directory.path().join("tasks.db"),definition,SqliteLimits::default())?.into_async(8)?);
+    let receiver=Arc::new(MachineTaskReceiver::new(tasks,MachineSourceId::from_bytes([8;32]),definition,1)?);
+    let outbox=SqliteMachineOutbox::new(Arc::new(reopened),Arc::new(LocalClock),Arc::clone(&receiver),MachineOutboxLimits {lease_ticks:10,max_claims:1,max_claim_bytes:512,max_attempts:3})?;
+    let lease=block_on(outbox.claim(&owner,MachineIntentClaim {scope:SCOPE,owner:MachineLeaseOwner::from_bytes([9;32]),max_intents:1,max_bytes:512}))?.pop().ok_or_else(||std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let accepted=block_on(receiver.accept(&outbox,&owner,&lease,TaskTick::new(1)))?;
+    let acknowledgement=block_on(outbox.acknowledge(&owner,&lease,&accepted))?;
+    if accepted.sequence!=TaskSequence::ZERO || acknowledgement.source!=lease.metadata().source {return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());}
+    println!("task_admitted=true generation={} source_acknowledged=true",accepted.generation.get());
     Ok(())
 }

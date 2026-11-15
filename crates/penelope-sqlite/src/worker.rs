@@ -13,7 +13,7 @@ use std::{
     task::{Context, Poll, Waker},
 };
 
-type Job = Box<dyn FnOnce(&mut Connection) + Send>;
+type Job<State = Connection> = Box<dyn FnOnce(&mut State) + Send>;
 fn contain_panic<T>(operation: impl FnOnce() -> T) -> Result<T, PortError> {
     match std::panic::catch_unwind(std::panic::AssertUnwindSafe(operation)) {
         Ok(value) => Ok(value),
@@ -84,19 +84,19 @@ impl<T> Future for Response<T> {
     }
 }
 
-pub(crate) struct DatabaseWorker {
-    sender: SyncSender<Job>,
+pub(crate) struct DatabaseWorker<State = Connection> {
+    sender: SyncSender<Job<State>>,
     capacity: u16,
 }
-impl DatabaseWorker {
+impl<State: Send + 'static> DatabaseWorker<State> {
     pub(crate) const fn capacity(&self) -> u16 {
         self.capacity
     }
-    pub(crate) fn new(mut connection: Connection, capacity: u16) -> Result<Self, PortError> {
+    pub(crate) fn new(mut connection: State, capacity: u16) -> Result<Self, PortError> {
         if capacity == 0 || capacity > 1024 {
             return Err(PortError::QuotaExceeded);
         }
-        let (sender, receiver) = sync_channel::<Job>(usize::from(capacity));
+        let (sender, receiver) = sync_channel::<Job<State>>(usize::from(capacity));
         std::thread::Builder::new()
             .name("penelope-sqlite".into())
             .spawn(move || {
@@ -112,7 +112,7 @@ impl DatabaseWorker {
 
     pub(crate) fn run<T: Send + 'static>(
         &self,
-        operation: impl FnOnce(&mut Connection) -> Result<T, PortError> + Send + 'static,
+        operation: impl FnOnce(&mut State) -> Result<T, PortError> + Send + 'static,
     ) -> Result<Response<T>, PortError> {
         let completion = Arc::new(Mutex::new(Completion {
             result: None,

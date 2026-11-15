@@ -1,6 +1,7 @@
 //! Actual process death while the production commit transaction is in flight.
 #![allow(clippy::unwrap_used, clippy::panic, clippy::arithmetic_side_effects)]
-use crate::{SqliteLimits, SqliteMachineStore};
+use crate::SqliteMachineStore;
+use crate::machine_test_support as support;
 use penelope_core::machine::*;
 use penelope_ports::machine::*;
 use std::{
@@ -9,9 +10,6 @@ use std::{
     process::Command,
     time::{Duration, Instant},
 };
-#[path = "../../tests/support/machines.rs"]
-#[allow(dead_code)] // History fixture is used by the integration profile.
-mod support;
 use support::*;
 
 pub(super) fn cut(phase: &str) {

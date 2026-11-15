@@ -15,6 +15,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Add source-bound machine-to-task admission through the native task journal,
+  with read-only receipt verification and no implicit worker restart. Add a
+  bounded asynchronous view of the existing SQLite task journal.
+
 - Add bounded source-bound machine intent leases, persisted uncertainty, and
   typed receiver acknowledgement to the optional SQLite machine adapter.
 

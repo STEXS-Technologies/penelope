@@ -8,6 +8,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+async-trait.workspace = true
 penelope-core = { workspace = true }
 penelope-domain = { workspace = true }
 penelope-ports = { workspace = true }
@@ -16,7 +17,6 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 tempfile = "3"
-async-trait.workspace = true
 penelope-sqlite = { version = "0.4.0", path = "../penelope-sqlite" }
 rusqlite.workspace = true
 syn = { version = "2", features = ["full", "visit"] }

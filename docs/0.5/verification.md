@@ -275,3 +275,33 @@ all 13 focused outbox integration tests. The final-source outbox campaign
 completed 10,000 cases with seed 512; existing newtype, process and journal fuzz
 checks also passed. The manifest records actual completed counts, including
 initial corpus processing. The final outbox corpus is retained alongside the logs.
+
+## Native machine-to-task admission checkpoint
+
+The production `MachineTaskReceiver` now admits source-authorized machine intents
+through the existing native task projection and journal. Complete source and
+receiver-policy identities bind the native task. Native receipt verification
+reads the exact record and payload; outbox acknowledgement remains a separate
+source transaction. Redelivery reconstructs the initial intent, including its
+original tick, without driving a supervisor or adding a generation.
+
+The SQLite async task view owns the unchanged synchronous journal on the existing
+bounded worker. This shares queue, cancellation, wakeup and panic containment
+rather than implementing another task storage path. Tests cover buffer integrity,
+queue saturation and commit completion after its response future is dropped.
+
+[Source hashes and raw checkpoint logs](evidence/machine-task/manifest.json)
+cover the full workspace, strict Clippy/rustdoc, Rust 1.89, independent facade
+consumer, frozen legacy imports, 3,136 saga parity observations, 66 script tests,
+layer gates and seven signed-source conformance tests. Focused handoff checks
+cover competing native writers, lost native/source acknowledgements, corrupted
+input, forged receipts, receiver policy denial, scope quota and redelivery of
+running/faulted tasks including reconciliation-required tasks. Ten actual SIGKILL
+cases exercise five handoff cuts in shared and separate databases. Independent
+SHA-256 source-identity and bounded real-SQLite fuzz oracles supplement these
+checks; the evidence manifest records the final campaign and retained corpora.
+
+This checkpoint proves task admission and recovery boundaries. Production saga
+composition, final performance/coverage campaigns and complete F0–F8 release
+qualification remain open. No successful external effect or automatic retry is
+inferred from an admission receipt.

@@ -1,0 +1,170 @@
+{
+  "checkpoint": "source-bound native task admission and shared bounded async journal",
+  "parent_commit": "576d755a10586c9a0d7bb92dafa4d53a5a50f4f3",
+  "source_scope": "Parent plus exact changed/new code, tests, fixtures, lockfiles and scripts; documentation excluded. Full workspace includes doctests. Fuzz seed 514 is the final-source campaign; seed 513 was preliminary.",
+  "source_sha256": {
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9",
+    "Cargo.toml": "a253ad71c5a688aeded045a33b6b3af25aef7a7135f7c500d94527ac0d721fb8",
+    "ci/compat-0.4/Cargo.lock": "2c7b7fee8a01638780ca8a8b61356fd494fa2867d1abd853506a92a91055551c",
+    "ci/machine-consumer/Cargo.lock": "9031af0bd1c70da3e648ec80be94356bff218d570ce7a991678e9caa036381a0",
+    "ci/machine-consumer/durable.rs": "3fe516fb3444bcb69e09ea32acc9c0d90ede613b427e08bd8aa4b385d7ffcb42",
+    "ci/saga-parity/Cargo.lock": "209829de6e88edf5a07002914c04864edd3ea1598bbdfcf38c90b30abf89b0eb",
+    "crates/penelope-executor/Cargo.toml": "587ce2e068bd2d227bd8adcbe5c4af3537ea959b28b01511e26a4485a849a8f0",
+    "crates/penelope-executor/src/lib.rs": "fd932448063a96652bee8dc1c8ca5395dd83c62dea7056cfabef664a78312e14",
+    "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+    "crates/penelope-executor/tests/machine_task.rs": "fd92051f51f7bad1a67834ba79ef652483727087054b722af417e9df4454be2b",
+    "crates/penelope-executor/tests/support/machine_task_crash.rs": "c33d15de9db4b3466c669a6dfb4a6155057caedbe73db2c7b3c3858f2b4e5218",
+    "crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "crates/penelope-ports/src/machine.rs": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+    "crates/penelope-ports/src/machine/delivery.rs": "ae345a0184bbd12e4377f12db9a07778a8f00a69513556ffe4345ca48ff0bfec",
+    "crates/penelope-ports/src/machine/store.rs": "c55fe49d8b47ff869b3fb869c6ebcc07b421fddaf7072ef4904c29336f2f18cb",
+    "crates/penelope-ports/src/machine/task.rs": "f5245aa90ce59ff5ca9287637a9eefba761af606f677e3e40326778f5c6ea591",
+    "crates/penelope-ports/tests/machine_task.rs": "b8b2c5a8def9b991c83d410e8cdd5d454f6f5d9fbea489c43279e12f06759a43",
+    "crates/penelope-sqlite/README.md": "f7825a1cdbb8a13a66720d1cde011efbec2e22bd83c03f7edbb6d1fbec8a3a86",
+    "crates/penelope-sqlite/src/async_task_tests.rs": "e22dd53a337b877031e0dd2cf35a21f648a447096536d051d3aa33c770c7690f",
+    "crates/penelope-sqlite/src/async_tasks.rs": "6ec0fd3402d86965e21221e3ef733929a16096f27cfe73630d523e41ab172be5",
+    "crates/penelope-sqlite/src/lib.rs": "be5d2f47139cd456ae93ca90aaa56fe4e910468411a09cd9cd55a8d3da97ac95",
+    "crates/penelope-sqlite/src/machine/delivery.rs": "01a63adcdb5aa58d0f2593b03970ad7b4a0cc1e6bfdb14518a7052a711450f1d",
+    "crates/penelope-sqlite/src/machine/tests.rs": "9423d876a5fe59da3a553db5c516072945586833de81b0f938a519d38fc3b5ba",
+    "crates/penelope-sqlite/src/worker.rs": "3c2f67a679e45846bc675854537a283bfcb779ef2e493bc4257e1df6e424230a",
+    "crates/penelope-sqlite/tests/support/machines.rs": "6ef8997dffeac1d7be4ef00da7636cb071597826cedbaadd222778178b58d033",
+    "crates/penelope/src/task.rs": "000afab91929fedd4bf95edd8290c5d012da0294d5ae9a23f5e614b2a5050e6f",
+    "fuzz/Cargo.toml": "1094a691ad0bf6c9899b3ab0d16d392bd87e2a9deee0400271e0faa2ed614f80",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine_task.rs": "2b43953d81446c6f0f4aeb3f2b50d4984eeafb9a4079469a6e59c1eb7815f32b",
+    "rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d",
+    "scripts/conformance/Cargo.lock": "877ce6fcba85b956d1eacf592b2f76649d725b293284a3889d41036f74dff6e3",
+    "scripts/run_bounded_fuzz.sh": "f3e1da573262c839a59441b1571478f59686e0f452b2cc7d8fbbf05523bb3597",
+    "scripts/seed-machine-corpus.py": "dd81efdab1d2cd9364371c7142c20e94edabf42189f345dbddd5ae0d0901c3f2"
+  },
+  "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "checks": [
+    {
+      "name": "workspace",
+      "command": "cargo test --workspace --all-features --locked",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "raw_sha256": "8826dd15d707d794a0a4ed9fb8e0ea3ac3fbc23235ff97a34cb6d87b3b2792df",
+      "gzip_sha256": "bf0d8d1763999417d074eab02561e00db361a0cab9ed36083a97d733a372b5c1"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "ac71ce13a430c68ef9af31e366ecbf4f19100e69319e877f8d03605b839ef99b",
+      "gzip_sha256": "b77a7fe08c2dcf91e0d4c67c491165eb03f6e21c51dbbba219f853ec3d0db515"
+    },
+    {
+      "name": "msrv",
+      "command": "cargo +1.89.0 test -p penelope-executor --test machine_task -p penelope-ports --test machine_task --locked",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "38fe2b9157030472aae0e9e080f30baf5009694256c3b14c5c991388cb4bb36a",
+      "gzip_sha256": "dd82285d2151f1758ad2f5c5f1e9256b0dd6b35ec67fcf723fcd17225766c668"
+    },
+    {
+      "name": "async-msrv",
+      "command": "cargo +1.89.0 test -p penelope-sqlite --lib async_tasks --locked",
+      "exit_code": 0,
+      "log": "async-msrv.log.gz",
+      "raw_sha256": "77592b9dbd5515c47c39a12196031ad57d341cc1175a47ce04cae37ae770e551",
+      "gzip_sha256": "6b54668ec6da5e3a34234f14f7599f712f275e6dc0b1a7275eafa4c4e0362fe6"
+    },
+    {
+      "name": "docs",
+      "command": "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+      "exit_code": 0,
+      "log": "docs.log.gz",
+      "raw_sha256": "0c540effff1be36abb629e5ec0a4babeef50178373402c6e689c45c57c718798",
+      "gzip_sha256": "e372ff76b403214e03921f421cf8cf7c487cfe5f68bc426b6ee0b9d4b8670a8f"
+    },
+    {
+      "name": "consumer",
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer.log.gz",
+      "raw_sha256": "cc05fae3165e95f7edac7e37e3a17dbc8ebd58ca757e7a460fd93eb581e1e07d",
+      "gzip_sha256": "28e00e7dbc0fe17897480126e6a0013216b0bff57ba1fde946659788f52f046d"
+    },
+    {
+      "name": "consumer-msrv",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer-msrv.log.gz",
+      "raw_sha256": "a1a0860d462d4114d6277e702977ebe2077bf420e9a5919539d5b2871b7c848e",
+      "gzip_sha256": "5a2fab2378a89048fd93c220ba510c4e3a9da4bb6bc5ff4075f6902a584ab128"
+    },
+    {
+      "name": "compat",
+      "command": "cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked",
+      "exit_code": 0,
+      "log": "compat.log.gz",
+      "raw_sha256": "31644c05295b164e05f3974109930af8d33f2aaaeceb19d64ecb66897a4acada",
+      "gzip_sha256": "cf0ed7c893456e87fcec83cb66b2349ea7d42ca55882a46a402414d2c49e1c89"
+    },
+    {
+      "name": "scripts",
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "0e2cf362d5b5fb31f5b4828ca99023c673a56ca85f5091e2a8f209348cdadebe",
+      "gzip_sha256": "592f5b10582a08cf807007729ce6e2449918fa1a6f4678f973a22645d6d6e9d6"
+    },
+    {
+      "name": "layers",
+      "command": "bash scripts/check-layer-boundaries.sh && bash scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "parity",
+      "command": "bash scripts/check-saga-machine-parity.sh",
+      "exit_code": 0,
+      "log": "parity.log.gz",
+      "raw_sha256": "f33bb7485909decae4ae4955cbdc8c8e00d31bd71769f55073cf6f8435023f83",
+      "gzip_sha256": "75e69a2adfcf81ace0bb031f4f5060bee79653dd7f1c21076172ed04bdec0fb4"
+    },
+    {
+      "name": "conformance",
+      "command": "python3 scripts/run-statechronicle-conformance.py /home/ac/projects/statechronicle",
+      "exit_code": 0,
+      "log": "conformance.log.gz",
+      "raw_sha256": "9a955cd4243c67458405f4a774d936ba1468ee0bd77da86f0baf67476f4725af",
+      "gzip_sha256": "74f3c2de1c0b0a93553efb1b2e7f263668ef3b5e9e58cb7a205710abe6b5895a"
+    },
+    {
+      "name": "fmt",
+      "command": "cargo fmt --all --check",
+      "exit_code": 0,
+      "log": "fmt.log.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "name": "fuzz",
+      "command": "cargo +nightly fuzz run fuzz_sqlite_machine_task /tmp/penelope-machine-task-qualified-seeds/fuzz_sqlite_machine_task -- -runs=10000 -seed=514",
+      "exit_code": 0,
+      "log": "fuzz.log.gz",
+      "raw_sha256": "9f436473384413dcec41b464a903ef42aa590926d7c1af4d68c0caeb344ed82e",
+      "gzip_sha256": "ae8c3acd6b1dd46846b7bca30d0748076745c51167cfac393e7a704c455569ca"
+    }
+  ],
+  "fuzz": {
+    "runs": 10000,
+    "seed": 514,
+    "initial_corpus": "initial-corpus.json.gz",
+    "initial_entries": 3,
+    "final_corpus": "final-corpus.json.gz",
+    "final_entries": 262,
+    "scope": "Real SQLite source and native task journals, independent delivery/record-count oracle, shared/separate stores, pure/reconcile-required policy, expiry/reclaim/reopen/native start/fault/forged ACK/denial. No arbitrary application effect execution.",
+    "initial_corpus_sha256": "a458e1e5193364636477e0b1019643a5c0ab2db5fc2d43d905e580af1c509fc2",
+    "final_corpus_sha256": "8984a30d0bdb18e8c78c44d91491cf560dcea22d56526e99a54e0e17ab8f70ec"
+  },
+  "tools": {
+    "rust": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "msrv": "rustc 1.89.0 (29483883e 2025-08-04)",
+    "fuzz_rust": "rustc 1.99.0-nightly (7608eb7b0 2026-08-05)"
+  }
+}

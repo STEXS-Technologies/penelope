@@ -64,7 +64,8 @@ encoding and a machine-specific journal. Process `AtomicProcessCommit` is not a
 generic machine transaction. The initial accepted-batch [metadata layout and
 independent goldens](machine-wire.md), canonical payload preparation and
 [scoped journal/SQLite snapshot profile](machine-storage.md) are implemented.
-Source-authorized intent delivery, reconciliation and durable bridges remain open.
+Source-authorized leased delivery and native task admission are implemented;
+production saga composition and final qualification remain open.
 
 Persist immutable accepted event bytes, pinned model/schema, exact predecessor
 and next head/state, and the entire ordered intent batch in one local transaction.
@@ -75,7 +76,17 @@ No claim of cross-store atomicity or persistent timeline correction follows.
 The initial recovery profile retains a complete state snapshot per accepted event;
 restoration does not execute events. History is append-only within explicit limits
 and refuses further admission rather than discarding deduplication evidence.
-SQLite schema 7 adds separate tables in the existing forward migration.
+SQLite schema 7 adds separate journal tables; schema 8 adds bounded delivery
+metadata without rewriting accepted event bytes.
+
+The task receiver binds its policy identity and the complete machine source to
+a native task scope. It uses the existing task projection/journal and records only
+the initial intent. Receipt verification reads the exact native intent and input;
+source acknowledgement remains a separate fenced transaction. Native supervisor
+recovery and reconciliation rules retain all execution authority. The async
+SQLite task adapter moves that same journal onto the existing worker rather than
+duplicating its evaluator, cache or SQL. See the
+[handoff contract](machine-storage.md#admit-a-recoverable-task).
 
 ## ADR-050-06: extraction boundaries
 

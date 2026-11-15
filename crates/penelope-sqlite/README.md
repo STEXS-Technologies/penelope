@@ -1,11 +1,13 @@
 # penelope-sqlite
 
-Optional SQLite persistence for Penelope tasks and sagas. The default Penelope
+Optional SQLite persistence for Penelope machines, tasks and sagas. The default Penelope
 facade does not depend on this package. The [0.3.0 qualification report](../../docs/qualification-0.3.0.md)
 records the verified profile, evidence and limits.
 
 `SqliteTaskJournal` implements synchronous `TaskJournal` and
-`TaskGenerationAuthority` for one pinned task definition. `SqliteProcessStore`
+`TaskGenerationAuthority` for one pinned task definition. Move it into
+`SqliteAsyncTaskJournal` with `into_async(queue_capacity)` for bounded asynchronous
+I/O through the same native journal. `SqliteProcessStore`
 implements the async `ProcessStore`, `Inbox`, `OutboxStore`, `TimerScheduler` and
 `TimerClaimStore` ports through a bounded dedicated database worker.
 `PendingInbox` discovers retained inputs awaiting atomic consumption.
@@ -159,3 +161,6 @@ the method does not shrink the main database file. Take backups with a
 SQLite-consistent procedure, or fully stop writers and close all database
 connections before copying database files. Exercise restore in an isolated
 location before reconnecting dispatchers.
+
+For machine snapshots, leased intents and verified native task admission, see
+the [machine storage guide](../../docs/0.5/machine-storage.md).

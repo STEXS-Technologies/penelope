@@ -41,6 +41,21 @@ def main() -> None:
             raise ValueError(f'conflicting deterministic seed: {path}')
         path.write_bytes(data)
     print('fuzz_sqlite_machine_outbox: 3 deterministic lease/expiry/acceptance sequences')
+    directory = root / 'fuzz_sqlite_machine_task'
+    directory.mkdir(parents=True, exist_ok=True)
+    sequences = [
+        [(2, 0), (4, 0), (4, 0), (1, 10), (0, 0), (2, 1), (3, 1), (5, 0)],
+        [(2, 0), (5, 0), (2, 0), (3, 0), (1, 15), (3, 0), (6, 0), (7, 0)],
+        [(7, 0), (2, 0), (1, 10), (0, 0), (6, 1), (4, 0), (2, 1), (3, 1)],
+    ]
+    for operations in sequences:
+        data = bytes(value for operation in operations for value in operation)
+        path = directory / ('penelope-task-handoff-v1-' + hashlib.sha256(data).hexdigest())
+        if path.exists() and path.read_bytes() != data:
+            raise ValueError(f'conflicting deterministic seed: {path}')
+        path.write_bytes(data)
+    print('fuzz_sqlite_machine_task: 3 deterministic native admission/recovery sequences')
+
 
 
 if __name__ == '__main__':

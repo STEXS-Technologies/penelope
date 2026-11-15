@@ -9,3 +9,6 @@
 pub use penelope_core::task::*;
 /// Hosted bounded supervisor using injected journal and runtime adapters.
 pub use penelope_executor::task::TaskSupervisor;
+
+/// Durable source-authorized machine intent admission into the native task journal.
+pub use penelope_executor::machine_task::{MachineTaskHandoffError, MachineTaskReceiver};

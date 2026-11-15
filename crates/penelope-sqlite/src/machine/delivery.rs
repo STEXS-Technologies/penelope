@@ -56,6 +56,9 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
 {
     type Context = A::Context;
     type Receipt = V::Receipt;
+    fn consumer(&self) -> MachineSourceId {
+        self.consumer
+    }
     async fn claim(
         &self,
         context: &Self::Context,
@@ -98,6 +101,7 @@ impl<A: MachineAuthorizer, C: MachineLeaseClock + 'static, V: MachineIntentAccep
                 context,
                 metadata.source.head.scope,
                 MachineOperation::ValidateIntent {
+                    consumer: self.consumer,
                     intent: metadata.source.intent.identity,
                     owner: metadata.owner,
                     token: metadata.token,

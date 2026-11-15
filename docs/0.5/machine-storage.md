@@ -172,5 +172,53 @@ and deferred commit failure. Process-death tests cover eleven claim/ack boundari
 and five populated version-7 migration boundaries. The dedicated real-SQLite
 outbox fuzzer compares bounded operation sequences to an independent lease,
 expiry and acceptance oracle. Tests use explicitly configured receiver fixtures;
-production machine-to-saga/task bridges and full release qualification remain
-separate work. See [checkpoint evidence](evidence/machine-outbox/manifest.json).
+The production task receiver below builds on those source guarantees. The saga
+bridge and full release qualification remain separate work. See [checkpoint evidence](evidence/machine-outbox/manifest.json).
+
+
+## Admit a recoverable task
+
+`penelope::task::MachineTaskReceiver` accepts a committed machine intent into the
+existing native task journal. Configure it with an `Arc<AsyncTaskJournal>`, a
+host-owned receiver namespace, an exact task definition and an input schema.
+Pin that receiver in `SqliteMachineOutbox`, claim a lease, call
+`receiver.accept(&outbox, &context, &lease, task_tick)`, then pass its native
+`TaskRecord` receipt to `outbox.acknowledge`. The
+[durable consumer](../../ci/machine-consumer/durable.rs) demonstrates the complete
+sequence using the facade and optional SQLite adapter.
+
+Receiver identity binds its namespace, task definition fingerprint and input
+schema. Native task identity binds that receiver and every source coordinate:
+tenant, instance, machine definition/schemas, committed revision, event, commit,
+intent identity, payload digest and byte length. Lease owner, token, expiry and
+attempt do not alter native task identity. Source policy receives the configured
+consumer during validation and acknowledgement, before native admission.
+
+The receiver validates the live source lease before touching the task journal.
+It proposes only the existing `IntentCommitted` event through `TaskProjection`;
+sequence and generation are native zero values. The native journal validates and
+commits the exact record and input bytes. An existing intent is read back with
+its original tick. A competing admission resolves through authoritative lookup,
+never a fabricated receipt. Source acknowledgement independently verifies the
+exact native record and input blob, then rechecks the source lease before commit.
+
+Lost acknowledgements may leave a durable task with a pending source intent.
+Reclaim and repeat admission with the same source identity. Running, completed
+or faulted tasks retain that original intent; delivery never adds a generation
+or restarts execution. The host restores and drives `TaskSupervisor` separately,
+under the task's original recovery permissions and reconciliation rules.
+Acceptance proves durable task admission, not successful execution.
+
+Machine and task journals may use separate databases. There is no transaction
+across them: stable identity, native lookup and separately acknowledged acceptance
+resolve the gap. Expired leases or unavailable/corrupt history leave source work
+unacknowledged. Do not infer that a task was never admitted from a failed response.
+
+`SqliteTaskJournal::into_async(queue_capacity)` moves the existing journal,
+connection and validation cache to the shared bounded worker implementation.
+It implements `AsyncTaskJournal` without another task evaluator. Construction and
+migration are synchronous setup operations; subsequent native I/O runs on the
+worker. A full queue refuses immediately. Dropping an accepted call does not
+cancel its transaction; resolve a missing receipt by reading native history.
+Input/output copies are bounded by the configured blob limit, and failed blob
+reads leave the caller's buffer unchanged.

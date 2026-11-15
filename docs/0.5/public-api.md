@@ -29,8 +29,9 @@ digests, native provenance, causation and ordered intent metadata. Constructing
 or decoding a record proves neither acceptance nor durable admission; [canonical payload preparation](machine-preparation.md) now binds the native
 accepted candidate and checks exact receipt coordinates. `MachineStoredCommit` checks retained payloads and supports scoped canonical
 snapshot restoration without event evaluation or dispatch. The [optional SQLite journal](machine-storage.md) now implements authorized
-admission, coherent snapshots, exact lookup and bounded history. Effect leasing,
-reconciliation and typed durable bridges remain pending.
+admission, coherent snapshots, exact lookup and bounded history. The source-bound outbox and [native task receiver](machine-storage.md#admit-a-recoverable-task)
+provide separately acknowledged admission. Saga composition and final release
+qualification remain pending.
 
 `prepare_linear` delegates exactly once to the original `decide` and borrows its
 source input and definition. `into_parts` produces the original replay event and

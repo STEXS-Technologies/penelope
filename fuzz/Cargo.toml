@@ -213,3 +213,9 @@ name = "fuzz_sqlite_machine_outbox"
 path = "fuzz_targets/fuzz_sqlite_machine_outbox.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_sqlite_machine_task"
+path = "fuzz_targets/fuzz_sqlite_machine_task.rs"
+test = false
+doc = false
