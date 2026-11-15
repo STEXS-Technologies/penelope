@@ -812,3 +812,26 @@ path carries additional context/provenance and owned-state costs. This is a new
 profile, not a replacement for frozen legacy comparisons or an acceptance of their
 open performance findings. Native end-to-end execution and final qualification
 remain open.
+
+## Protected native pipeline measurement
+
+[The native pipeline measurements](evidence/native-pipeline-performance/manifest.json)
+run the same protected consumer through initial machine commit, task admission,
+lost-ACK recovery, a real Linux worker, output verification, machine result commit
+and saga admission. A no-op observer preserves the ordinary CLI; the private
+benchmark observes twelve existing phase boundaries without copying the workflow.
+Three Rust 1.100 release runs and one Rust 1.89 run each retain 101 samples after
+eight warmups. Independent raw checks cover phase identity/order, interval sums,
+nearest-rank quantiles and every expected result/provenance/recovery observation.
+
+Both ordinary CLI profiles and debug benchmark smokes pass on each compiler.
+A digest-pinned worker returning the wrong meaning is refused by both the CLI and
+benchmark before machine result admission on each compiler. Strict consumer
+all-target/all-feature Clippy and formatting pass. No library production code,
+lease policy, timeout, worker sandbox or durable validation changed.
+
+This is a sequential fresh-store recovery scenario, including console output,
+fsync and cleanup. The native leg includes worker execution, IPC, polling sleeps,
+durable completion and fencing; worker CPU is not isolated. The saga action is
+admitted but remains undispatched. Queue saturation/backpressure performance,
+other payload/effect profiles and exact release qualification remain open.

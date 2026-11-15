@@ -1,0 +1,614 @@
+{
+  "schema": 1,
+  "source_revision": "07e4ebcda42fb61870b34e7dfdb4a5442a1e9dd7",
+  "benchmark": "ci/machine-consumer/native_pipeline.rs",
+  "scope": "Sequential fresh-store protected counter workflow: state transition -> durable intent -> native task admission -> lost-ACK recovery -> real Linux worker -> verified result -> machine result commit -> saga admission. The saga action remains undispatched.",
+  "reuse": "Harness calls the same consumer run function with a checkpoint observer. Normal main supplies a no-op observer. Shared counter/codec and native supervisor, admission, outbox and recovery paths remain authoritative. Worker path selection moves to the CLI; image pinning stays in workflow.",
+  "profiles": {
+    "rust_current": "1.100.0",
+    "current_runs": 3,
+    "rust_msrv": "1.89.0",
+    "msrv_runs": 1,
+    "samples_per_release_run": 101,
+    "warmup_iterations": 8,
+    "phase_count": 12,
+    "debug": "All phases and checks, one warmup and three measured smoke iterations; excluded from release observations.",
+    "runtime_limits": "One live worker, 8-entry native stores, 8-byte input/output, existing 64 MiB process address-space limit and configured SQLite WAL/FULL.",
+    "data_parent": "/home/ac/projects/penelope/target/native-pipeline-data",
+    "affinity": [
+      4
+    ],
+    "cold_cache": false
+  },
+  "timing_boundaries": {
+    "begin": "fresh store setup, bootstrap and restoration",
+    "bootstrap_restored": "initial machine transition, preparation, durable commit and memory publication",
+    "initial_committed": "overflow refusal, store reopen, exact duplicate commit and retained state restoration",
+    "recovered": "worker image pinning, task store/receiver setup, outbox claim and native task admission",
+    "native_admitted": "lost-ACK simulation, store/receiver reopen, expired lease reclaim, duplicate native admission, stale-ACK refusal and source acknowledgement",
+    "lost_ack_recovered": "binding verification, receiver teardown, native runtime and supervisor restoration",
+    "native_setup": "native supervisor advance, durable start and process dispatch until return",
+    "dispatch_return": "worker/native polling leg to durable completion, including the consumer 1 ms sleeps and fence work",
+    "durable_completed": "supervisor reconstruction and verified output read/schema/meaning checks",
+    "result_verified": "result causation construction, next machine transition/commit/publication",
+    "result_committed": "exact result retry and native saga setup/admission/source acknowledgement",
+    "saga_admitted": "final reporting, store/runtime drops and temporary directory cleanup"
+  },
+  "verification": {
+    "checks": [
+      {
+        "label": "compile-good",
+        "args": [
+          "cc",
+          "-nostdlib",
+          "-static",
+          "-fno-builtin",
+          "-fno-stack-protector",
+          "-fno-pie",
+          "-no-pie",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/worker",
+          "/home/ac/projects/penelope/crates/penelope-process-runtime/tests/fixtures/worker.c"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.029384851455688477
+      },
+      {
+        "label": "compile-wrong",
+        "args": [
+          "cc",
+          "-nostdlib",
+          "-static",
+          "-fno-builtin",
+          "-fno-stack-protector",
+          "-fno-pie",
+          "-no-pie",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/wrong-worker",
+          "/tmp/penelope-native-pipeline-qualification/wrong-worker.c"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.022014379501342773
+      },
+      {
+        "label": "cc-version",
+        "args": [
+          "cc",
+          "--version"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.0032258033752441406
+      },
+      {
+        "label": "rustc-1.100.0",
+        "args": [
+          "rustc",
+          "+1.100.0",
+          "-vV"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.01698017120361328
+      },
+      {
+        "label": "build-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "bench",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bench",
+          "native_pipeline",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 1.717433214187622
+      },
+      {
+        "label": "release-1.100.0-1",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/release-1.100.0-1.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/build/penelope-machine-consumer/78310971d4e51c4e/out/native_pipeline-78310971d4e51c4e"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 4.777972221374512
+      },
+      {
+        "label": "release-1.100.0-2",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/release-1.100.0-2.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/build/penelope-machine-consumer/78310971d4e51c4e/out/native_pipeline-78310971d4e51c4e"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 4.576596021652222
+      },
+      {
+        "label": "release-1.100.0-3",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/release-1.100.0-3.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/build/penelope-machine-consumer/78310971d4e51c4e/out/native_pipeline-78310971d4e51c4e"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 4.880144357681274
+      },
+      {
+        "label": "wrong-result-benchmark-1.100.0",
+        "args": [
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/build/penelope-machine-consumer/78310971d4e51c4e/out/native_pipeline-78310971d4e51c4e"
+        ],
+        "exit_code": 1,
+        "expected_exit": 1,
+        "seconds": 0.03006458282470703
+      },
+      {
+        "label": "debug-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bench",
+          "native_pipeline"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.30829334259033203
+      },
+      {
+        "label": "admission-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "durable",
+          "--bin",
+          "durable",
+          "--"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.6111721992492676
+      },
+      {
+        "label": "protected-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bin",
+          "durable",
+          "--",
+          "/tmp/penelope-native-pipeline-qualification/worker"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.11561727523803711
+      },
+      {
+        "label": "wrong-result-consumer-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bin",
+          "durable",
+          "--",
+          "/tmp/penelope-native-pipeline-qualification/wrong-worker"
+        ],
+        "exit_code": 1,
+        "expected_exit": 1,
+        "seconds": 0.10070514678955078
+      },
+      {
+        "label": "rustc-1.89.0",
+        "args": [
+          "rustc",
+          "+1.89.0",
+          "-vV"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.06844282150268555
+      },
+      {
+        "label": "build-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "bench",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bench",
+          "native_pipeline",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 18.523937940597534
+      },
+      {
+        "label": "release-1.89.0-1",
+        "args": [
+          "/usr/bin/time",
+          "-f",
+          "{\"peak_rss_kib\":%M,\"wall_seconds\":%e}",
+          "-o",
+          "/tmp/penelope-native-pipeline-qualification/release-1.89.0-1.resources.json",
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/deps/native_pipeline-cfc468477b4315bd"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 4.346329212188721
+      },
+      {
+        "label": "wrong-result-benchmark-1.89.0",
+        "args": [
+          "taskset",
+          "-c",
+          "4",
+          "/home/ac/projects/penelope/ci/machine-consumer/target/release/deps/native_pipeline-cfc468477b4315bd"
+        ],
+        "exit_code": 1,
+        "expected_exit": 1,
+        "seconds": 0.0332334041595459
+      },
+      {
+        "label": "debug-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "test",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bench",
+          "native_pipeline"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 3.3371293544769287
+      },
+      {
+        "label": "admission-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "durable",
+          "--bin",
+          "durable",
+          "--"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 1.0711543560028076
+      },
+      {
+        "label": "protected-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bin",
+          "durable",
+          "--",
+          "/tmp/penelope-native-pipeline-qualification/worker"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.13541603088378906
+      },
+      {
+        "label": "wrong-result-consumer-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "run",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--features",
+          "protected",
+          "--bin",
+          "durable",
+          "--",
+          "/tmp/penelope-native-pipeline-qualification/wrong-worker"
+        ],
+        "exit_code": 1,
+        "expected_exit": 1,
+        "seconds": 0.11014986038208008
+      },
+      {
+        "label": "clippy",
+        "args": [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--locked",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.08861231803894043
+      },
+      {
+        "label": "consumer-format",
+        "args": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.05620431900024414
+      },
+      {
+        "label": "workspace-format",
+        "args": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.6666278839111328
+      },
+      {
+        "label": "diff",
+        "args": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.004751682281494141
+      }
+    ],
+    "positive_oracle": "Every iteration must print all nine exact consumer observations, including 256/revision1, overflow refusal, exact duplicate, source provenance, recovered native task, attempt2/stale-ACK refusal, verified amount1, state257/revision2, and one admitted saga action. Missing/reordered/repeated phase markers fail the harness.",
+    "raw_validation": "All measured/warmup identities, positive phase durations, monotonic ordering, total=initial-offset+sum(intervals), 101 measured samples, nearest-rank p50/p95/p99 and all exact output occurrence counts checked independently by the as-run Python driver.",
+    "negative_oracle": "A separately compiled, digest-pinned worker changes the sum from 1 to 2. Both consumer and benchmark exit1 on both compilers with the schema/meaning refusal, no result commit output and no benchmark summary.",
+    "format_and_clippy": "Consumer/workspace formatting and strict consumer all-target/all-feature Clippy pass. Ordinary admission-only and protected CLI profiles pass on both compilers.",
+    "graph": "AST update completed."
+  },
+  "assessment": [
+    "All final-source samples and expected refusals passed. Current full-scenario medians were 40.453-42.546 ms; the MSRV compatibility run median was 39.242 ms.",
+    "Current initial transition/commit/publication medians were 0.729-0.751 ms; the dispatch-return-to-durable-completion leg was 4.088-4.180 ms; verified result/causation to machine commit/publication was 1.632-1.743 ms. All tails and outliers remain in raw observations.",
+    "The measured scenario deliberately includes fresh databases, recovery, fsync, console output and cleanup. Timed callbacks add clock/observer work. No timer subtraction, outlier removal, statistical equivalence or baseline regression conclusion.",
+    "Native execution cost includes IPC, host polling, durable writes and fencing. Worker CPU/business computation is not independently timed. Saga external effects are not executed.",
+    "This is an unsaturated sequential composition profile. It does not measure queue-full refusal latency, runtime saturation, concurrent independent-machine throughput, isolated effect CPU cost or a sustained service-level capacity guarantee. Existing bound/refusal correctness tests remain separate; backpressure performance coverage remains open.",
+    "Whole-process/child GNU time maximum RSS is retained in KiB; it is not simultaneous summed host+worker memory. Allocations and stack usage are not measured.",
+    "CPU pinning does not isolate frequency or other system load; chaos is running on CPUs8-15. OS caches and other load remain uncontrolled. This is selected profile evidence, not exact release qualification."
+  ],
+  "selected_observations": {
+    "release-1.100.0-1": {
+      "total_p50_ns": 42546310,
+      "first_transition_commit_publish_ns": [
+        728919,
+        934847,
+        4808967
+      ],
+      "native_completion_leg_ns": [
+        4088213,
+        4692902,
+        8789813
+      ],
+      "verified_result_to_machine_commit_ns": [
+        1631945,
+        2140228,
+        2876391
+      ]
+    },
+    "release-1.100.0-2": {
+      "total_p50_ns": 40452523,
+      "first_transition_commit_publish_ns": [
+        736254,
+        825676,
+        875172
+      ],
+      "native_completion_leg_ns": [
+        4096399,
+        5268385,
+        6947231
+      ],
+      "verified_result_to_machine_commit_ns": [
+        1639419,
+        2290308,
+        4315813
+      ]
+    },
+    "release-1.100.0-3": {
+      "total_p50_ns": 42520211,
+      "first_transition_commit_publish_ns": [
+        750520,
+        896533,
+        1010143
+      ],
+      "native_completion_leg_ns": [
+        4179941,
+        5721972,
+        8119577
+      ],
+      "verified_result_to_machine_commit_ns": [
+        1742659,
+        2479494,
+        6627362
+      ]
+    },
+    "release-1.89.0-1": {
+      "total_p50_ns": 39241673,
+      "first_transition_commit_publish_ns": [
+        730032,
+        892416,
+        1005163
+      ],
+      "native_completion_leg_ns": [
+        4122539,
+        4845818,
+        7135344
+      ],
+      "verified_result_to_machine_commit_ns": [
+        1634429,
+        2148744,
+        2608623
+      ]
+    }
+  },
+  "artifact": {
+    "path": "qualification.tar.gz",
+    "sha256": "1729d007968dc36e4cbf6e484ed787130f883e79234744b7d0c77e2e97e3eccd",
+    "members": {
+      "admission-1.100.0.stderr": "001ac57ec8440f03835effa093907eb4d7266469563bf4a22c805329488c8cea",
+      "admission-1.100.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "admission-1.89.0.stderr": "692d64cefabe0e176d5a2f5511fc94d91b3c4bc0435f63457f4137d526a3aab5",
+      "admission-1.89.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "build-1.100.0.stderr": "6d15f3e6bdd29cebb1fa653e3e16bc5ed13114957140ba34394a17d39f4fe0ba",
+      "build-1.100.0.stdout": "8d05bb6e5a702e0a7ba62c9c7b13b5764652b33a6cf6ce1745628dc5fd65a5ef",
+      "build-1.89.0.stderr": "b9228c73cb17ddf9d4ea82da63ed541458d5d485405cc3a8fc25bb5d2b700684",
+      "build-1.89.0.stdout": "010d25fe6c344f5e2ba23dd5c171a25fae4152999815376463bb253d0e46a6ec",
+      "cc-version.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cc-version.stdout": "0ff89e1159c58eb2b7dbe5944399106189239661696edc53961fc8d468099ae9",
+      "checks.json": "2b8fd545c10a19fdb2a550f605a7b90ab43d8f9f8c715f94e73a93563a925c90",
+      "clippy.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compile-good.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compile-good.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compile-wrong.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compile-wrong.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "consumer-format.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "consumer-format.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "debug-1.100.0.stderr": "0ec0c779476b10a0a01e4ae299fe86e8287c5e44e7727b05e711b178595b83d1",
+      "debug-1.100.0.stdout": "7db030c08fa1e4d3e6d43420701a3f13b2b4e65d2a024f8041468cb46854e727",
+      "debug-1.89.0.stderr": "b49b616117c996b2daf325d5481154c044c6bc70794093f8c5729755bcd3ca96",
+      "debug-1.89.0.stdout": "32f016159fab437cec8dda20765343fe18f8d90e971ad8610ced87fbfc154947",
+      "diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "graph-update.log": "2e5200f597ae13c11a277dff1c7bf7ce4a4a02f738a5c54d6af1c3853920d07e",
+      "metadata.json": "92642c5ec5c249da8232e0ac6dbe3d819653f82442525ec9268675a8bc50b9c6",
+      "protected-1.100.0.stderr": "6bd4efcbffabfc421c5e3541f4d99812010eae145c0e0fd84fc06f6b02262d4f",
+      "protected-1.100.0.stdout": "da5dd944ddf336bc7bceadaaf96d3dad7a664983c7abbddffa18eef4bea9c7d5",
+      "protected-1.89.0.stderr": "05c12d8fb95608365e7bacf2e2778b9908310f5432e79433be622d1cbfdac82b",
+      "protected-1.89.0.stdout": "da5dd944ddf336bc7bceadaaf96d3dad7a664983c7abbddffa18eef4bea9c7d5",
+      "qualification.log": "04b857f686acd3afbeb5717f3ad9548b7f75d0e39a7cf7cbca795c0293842590",
+      "release-1.100.0-1.resources.json": "9093be55c8736a4392e6ed63c9f320bd671fb8ee83b131dcc2f559923ffc2ee8",
+      "release-1.100.0-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-1.stdout": "44375e6d5c7c59fe42550e00eb3d34654adc13de87eccb909b21842a6051537e",
+      "release-1.100.0-2.resources.json": "d2260148beeebf101dbc3306aaef1357b736845d61a71250b9f55238bde56af5",
+      "release-1.100.0-2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-2.stdout": "0f2dd467607cfdb58c4114af40cd1b8afa558b6e211dea611f33560396fd6a88",
+      "release-1.100.0-3.resources.json": "a736a12d791a4cd1592d294b3caba6c473d52e4c3cab2276ff31329f59e1c88c",
+      "release-1.100.0-3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.100.0-3.stdout": "6218478f776de5f642c68108fb021bfba559fb50f1e39c2ba1285b89ad3ce2a9",
+      "release-1.89.0-1.resources.json": "8b143d15e1776ee72d12dea7e97bf38b5402b29d0b9ca2e34f2cb51421f2e0a1",
+      "release-1.89.0-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-1.89.0-1.stdout": "2e4b287d1b9c103dca259b94a2226d12f99ae194c45629231ab35454de2dc396",
+      "results.json": "13089551415f91b524d45b3bc1c5b178c163a4a718f5a55dd7c500171cc9419c",
+      "run-as-recorded.py": "2408ecc0a28a09ca132a0231104e2ad736d68e0d05bd5418aea31511e4ca7991",
+      "rustc-1.100.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rustc-1.100.0.stdout": "be69adad9137eaa0bdac1dd07e2fe286b1831fc8bad193ea27806ca0c7c8e7c6",
+      "rustc-1.89.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rustc-1.89.0.stdout": "48cee7c7fa47e58de4f15a9bebf677bf7ad098f625aedfe1f7b827a97e3797c7",
+      "source/ci/machine-consumer/durable.rs": "569901d9bf9b49b79eeb7e5d672e980d7b057ba6d28e6f64e23ab6514dbcc16e",
+      "source/ci/machine-consumer/native_pipeline.rs": "5df419b65add0ea10d331b6e4e02648be507b493d98083db5f0c8a15283277ad",
+      "source/ci/machine-consumer/workflow.rs": "86e4866770ea648200ef9152348b4fbda5c968b63bf445b1880f68d1d4eb2efb",
+      "source/crates/penelope-process-runtime/tests/fixtures/worker.c": "16d3806b462155469c2dc2fb914bf75de204b11b1e07bc8282f58d979d32dc28",
+      "source/crates/penelope/examples/support/counter.rs": "9d6c2fbfa92753cfed0488058ade91ca95198aeae792122de8423941a71f09d6",
+      "source/crates/penelope/examples/support/counter_codec.rs": "6afb81fa45a217caf281ca2966fe0ccecbb36f3b05b30cd4959f45fcd5345df4",
+      "worker": "1d5729ed7126fb1835d5925003d9f6be94bd579812a9e8eb9f84094c29fd99db",
+      "workspace-format.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workspace-format.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wrong-result-benchmark-1.100.0.stderr": "5a3c93d39810b8f9331d1e9a468139c755863e7a74d3926289b5b05be4f514fb",
+      "wrong-result-benchmark-1.100.0.stdout": "b5c9dfd119a8d58b540ed05988d3c0e228bdf999deaa6f6a4a04c62576da37d7",
+      "wrong-result-benchmark-1.89.0.stderr": "5a3c93d39810b8f9331d1e9a468139c755863e7a74d3926289b5b05be4f514fb",
+      "wrong-result-benchmark-1.89.0.stdout": "b5c9dfd119a8d58b540ed05988d3c0e228bdf999deaa6f6a4a04c62576da37d7",
+      "wrong-result-consumer-1.100.0.stderr": "39c199dfcbc591dde506739d245f1f6623d2b1df944d32f3446a2b3620206bdf",
+      "wrong-result-consumer-1.100.0.stdout": "b5c9dfd119a8d58b540ed05988d3c0e228bdf999deaa6f6a4a04c62576da37d7",
+      "wrong-result-consumer-1.89.0.stderr": "15e91fca2818bf34de152cc54465b33900aaf3643d1d79690bdcca40b88686c2",
+      "wrong-result-consumer-1.89.0.stdout": "b5c9dfd119a8d58b540ed05988d3c0e228bdf999deaa6f6a4a04c62576da37d7",
+      "wrong-worker": "fcb56480b7dae7b7e9c8ab71fd16cd6ff48c7193a99d346e4edaaad2da7c16c8",
+      "wrong-worker.c": "a6277aa5ce289f5ada418917aeab8574e1bdbba1427ba22be8172d0ac4a8a85e"
+    }
+  }
+}
