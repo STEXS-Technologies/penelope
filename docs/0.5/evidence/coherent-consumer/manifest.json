@@ -1,0 +1,58 @@
+{
+  "parent_commit": "dcbcc45554ae8371021212930673ff2cf09bf47a",
+  "scope": "Example and source-binding ownership consolidation. Existing production binding implementation is moved unchanged; no algorithm or protocol changes.",
+  "source_sha256": {
+    "ci/machine-consumer/durable.rs": "39e8400baf5e3bd844a0850a14c2fb49361e37ce64388e75e5a1bb28aa2c9c9f",
+    "ci/machine-consumer/Cargo.toml": "c750fbe11ba4f1e770e95aecde3e9052e771052dd538b7d94f7d63cf88369ab2",
+    "ci/machine-consumer/Cargo.lock": "570e7235e1aaec471524c4a66a0a112b1c7ea762612ebddb84297a821d05b8fd",
+    "crates/penelope-ports/src/machine/task.rs": "46aed09aada7f72322243ab901c2b6eed6f1ae6b46b81afec0ef0b8080f37e96",
+    "crates/penelope-ports/src/machine/delivery.rs": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+    "crates/penelope/examples/support/counter.rs": "9d6c2fbfa92753cfed0488058ade91ca95198aeae792122de8423941a71f09d6",
+    "crates/penelope/examples/support/counter_codec.rs": "6afb81fa45a217caf281ca2966fe0ccecbb36f3b05b30cd4959f45fcd5345df4"
+  },
+  "checks": [
+    {
+      "command": "cargo test -p penelope-ports --test machine_task --locked",
+      "exit_code": 0,
+      "log": "identity.log.gz",
+      "raw_sha256": "fc83778ab0e6ca1ae0946bb8531adc8ee101c67bada0a0575943f0be11203a4f",
+      "gzip_sha256": "cbab8e22449989752bfc572a99647ec1b9cf9dd705a41976ef966e140e2b44d5"
+    },
+    {
+      "command": "cargo test -p penelope-executor --test machine_task --test machine_saga --locked",
+      "exit_code": 0,
+      "log": "bridges.log.gz",
+      "raw_sha256": "2f8b6122f0e29b75c7d90e50288dbc6e8adfb9cd485b09297de31b3ef42f9e28",
+      "gzip_sha256": "d6726b917019e892161427c338ef1e092d034012aaf40a61ceb1259c0ff4e981"
+    },
+    {
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer.log.gz",
+      "raw_sha256": "4c6c3c66826948cffa92e3098d626367a3ee4b26e413edbc2c3821a3b4637158",
+      "gzip_sha256": "97c4f6d45ce110cc47f010aa3062e917366af840cb2b6ab1c851ba019d06446a"
+    },
+    {
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer-msrv.log.gz",
+      "raw_sha256": "8d6ffd35cdf43fc61d084ba70668abc95d52b8b0374f69f64265328c52eccb28",
+      "gzip_sha256": "0fa66e2710eb8645c5f259d6fc41391df01dfbdf82ae6b518177d05f7164e22b"
+    },
+    {
+      "command": "cargo clippy --manifest-path ci/machine-consumer/Cargo.toml --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "consumer-clippy.log.gz",
+      "raw_sha256": "602df6b12333a559c8095d1c1c99cc8498cdbc5ccf3a719c40df89409bde076c",
+      "gzip_sha256": "7adaf51f1114c9a9e9af6067db85992b1f332138ccad0725d2abaa80e0bb719a"
+    },
+    {
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "def4fff984d6eacc954b56d59d1b978c9454a07bb3b50b2414508cf646ea2513",
+      "gzip_sha256": "3d4851f0e2cd7ed08ec1ff17725c77e6edb9f73eb9552159b5fa7443fbb90f38"
+    }
+  ],
+  "limitations": "Adapter reopen simulates process recovery, not SIGKILL. Actual process-death evidence remains in machine-task and machine-saga checkpoints. This example performs admission, not external execution or a verified result returning to the machine; F7/F8 remain open."
+}

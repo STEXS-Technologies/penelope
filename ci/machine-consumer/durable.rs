@@ -1,4 +1,4 @@
-//! One model across memory, timeline and a local durable journal.
+//! One model across memory, durable recovery and native task/saga admission.
 use async_trait::async_trait;
 use penelope::ports::PortError;
 use penelope::saga::{
@@ -18,7 +18,10 @@ use penelope_sqlite::{
 };
 use std::{
     future::Future,
-    sync::Arc,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
     task::{Context, Poll, Wake, Waker},
 };
 #[path = "../../crates/penelope/examples/support/counter.rs"]
@@ -62,10 +65,18 @@ impl MachineAuthorizer for LocalOwner {
         }
     }
 }
-struct LocalClock;
+struct LocalClock(AtomicU64);
+impl LocalClock {
+    fn new() -> Self {
+        Self(AtomicU64::new(100))
+    }
+    fn advance(&self) {
+        self.0.store(111, Ordering::SeqCst);
+    }
+}
 impl MachineLeaseClock for LocalClock {
     fn now(&self) -> Result<MachineLeaseTick, MachineStoreError> {
-        Ok(MachineLeaseTick::new(100))
+        Ok(MachineLeaseTick::new(self.0.load(Ordering::SeqCst)))
     }
 }
 struct ThreadWake(std::thread::Thread);
@@ -129,6 +140,22 @@ fn commit_counter(
     let _ = machine.take_intents();
     Ok(retained)
 }
+fn claim(
+    outbox: &impl MachineIntentOutbox<Context = MachineTenantId>,
+    owner: &MachineTenantId,
+) -> Result<MachineIntentLease, Box<dyn std::error::Error>> {
+    block_on(outbox.claim(
+        owner,
+        MachineIntentClaim {
+            scope: SCOPE,
+            owner: MachineLeaseOwner::from_bytes([9; 32]),
+            max_intents: 1,
+            max_bytes: 512,
+        },
+    ))?
+    .pop()
+    .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound).into())
+}
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let directory = tempfile::tempdir()?;
     let path = directory.path().join("counter.db");
@@ -148,6 +175,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         machine.read().1,
         machine.read().0.revision.get()
     );
+    let before = machine.read().0;
+    let overflow = u64::MAX;
+    let rejected = matches!(
+        machine.prepare(
+            &overflow,
+            TransitionContext {
+                expected: before,
+                event: MachineEventId::from_bytes([6; 32]),
+                event_digest: Digest::of(&overflow.to_le_bytes()).0,
+                logical_time: MachineLogicalTime::new(2),
+            }
+        )?,
+        PrepareDecision::Rejected { .. }
+    );
+    if !rejected || machine.read().0 != before || *machine.read().1 != 7 {
+        return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
+    }
+    println!("overflow_rejected=true revision_unchanged=true");
     drop(store);
     let reopened =
         SqliteMachineStore::<_, 4>::open(&path, SqliteLimits::default(), PAYLOADS, LocalOwner, 8)?;
@@ -201,9 +246,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         1,
     )?);
     let journal = Arc::new(reopened);
+    let clock = Arc::new(LocalClock::new());
     let outbox = SqliteMachineOutbox::new(
         Arc::clone(&journal),
-        Arc::new(LocalClock),
+        Arc::clone(&clock),
         Arc::clone(&receiver),
         MachineOutboxLimits {
             lease_ticks: 10,
@@ -212,18 +258,72 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             max_attempts: 3,
         },
     )?;
-    let lease = block_on(outbox.claim(
-        &owner,
-        MachineIntentClaim {
-            scope: SCOPE,
-            owner: MachineLeaseOwner::from_bytes([9; 32]),
-            max_intents: 1,
-            max_bytes: 512,
-        },
-    ))?
-    .pop()
-    .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let lease = claim(&outbox, &owner)?;
     let accepted = block_on(receiver.accept(&outbox, &owner, &lease, TaskTick::new(1)))?;
+    // Simulate losing the reply after native commit and exiting before source ACK.
+    // Reopen both databases, reclaim only after expiry, and resolve native history.
+    let source = lease.metadata().source;
+    let provenance = stored.receipt();
+    if source.head != provenance.head
+        || source.event != provenance.event
+        || source.commit != provenance.identity
+    {
+        return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
+    }
+    println!(
+        "provenance_verified=true source_revision={}",
+        source.head.revision.get()
+    );
+    drop(outbox);
+    drop(receiver);
+    drop(journal);
+    let journal = Arc::new(SqliteMachineStore::<_, 4>::open(
+        &path,
+        SqliteLimits::default(),
+        PAYLOADS,
+        LocalOwner,
+        8,
+    )?);
+    let tasks = Arc::new(
+        SqliteTaskJournal::open(
+            &directory.path().join("tasks.db"),
+            definition,
+            SqliteLimits::default(),
+        )?
+        .into_async(8)?,
+    );
+    let receiver = Arc::new(MachineTaskReceiver::new(
+        tasks,
+        MachineSourceId::from_bytes([8; 32]),
+        definition,
+        1,
+    )?);
+    clock.advance();
+    let outbox = SqliteMachineOutbox::new(
+        Arc::clone(&journal),
+        Arc::clone(&clock),
+        Arc::clone(&receiver),
+        MachineOutboxLimits {
+            lease_ticks: 10,
+            max_claims: 1,
+            max_claim_bytes: 512,
+            max_attempts: 3,
+        },
+    )?;
+    let recovered_lease = claim(&outbox, &owner)?;
+    let recovered = block_on(receiver.accept(&outbox, &owner, &recovered_lease, TaskTick::new(2)))?;
+    if recovered != accepted
+        || recovered_lease.metadata().source != source
+        || recovered_lease.metadata().attempt.get() != 2
+        || !matches!(
+            block_on(outbox.acknowledge(&owner, &lease, &accepted)),
+            Err(MachineStoreError::Conflict)
+        )
+    {
+        return Err(std::io::Error::from(std::io::ErrorKind::InvalidData).into());
+    }
+    println!("reopened=true task_recovered=true attempt=2 stale_ack_refused=true");
+    let lease = recovered_lease;
     let acknowledgement = block_on(outbox.acknowledge(&owner, &lease, &accepted))?;
     if accepted.sequence != TaskSequence::ZERO || acknowledgement.source != lease.metadata().source
     {
@@ -239,7 +339,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let processes = Arc::new(SqliteProcessStore::open(
         &directory.path().join("sagas.db"),
         SqliteLimits::default(),
-        Arc::new(LocalClock),
+        clock.clone(),
         10,
         8,
     )?);
@@ -265,7 +365,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?);
     let saga_outbox = SqliteMachineOutbox::new(
         journal,
-        Arc::new(LocalClock),
+        Arc::clone(&clock),
         Arc::clone(&saga),
         MachineOutboxLimits {
             lease_ticks: 10,
@@ -274,17 +374,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             max_attempts: 3,
         },
     )?;
-    let lease = block_on(saga_outbox.claim(
-        &owner,
-        MachineIntentClaim {
-            scope: SCOPE,
-            owner: MachineLeaseOwner::from_bytes([9; 32]),
-            max_intents: 1,
-            max_bytes: 512,
-        },
-    ))?
-    .pop()
-    .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))?;
+    let lease = claim(&saga_outbox, &owner)?;
     let receipt = block_on(saga.accept(&saga_outbox, &owner, &lease, LogicalTime(1)))?;
     block_on(saga_outbox.acknowledge(&owner, &lease, &receipt))?;
     println!(
@@ -296,7 +386,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 impl SqliteLeaseClock for LocalClock {
     fn now(&self) -> Result<LogicalTime, PortError> {
-        Ok(LogicalTime(100))
+        Ok(LogicalTime(self.0.load(Ordering::SeqCst)))
     }
 }
 struct LocalSagaOwner;

@@ -2,36 +2,6 @@
 use super::*;
 use penelope_core::task::*;
 
-impl MachineIntentSource {
-    /// Stable full-source identity within a host-pinned receiver namespace. All
-    /// coordinates are fixed-width and tagged separately from other protocols.
-    /// This binds content; it does not authenticate a source or permit execution.
-    pub fn binding_identity(self, consumer: MachineSourceId) -> [u8; 32] {
-        let scope = self.head.scope;
-        let mut bytes = b"penelope.machine-receiver-source.v1\0".to_vec();
-        for value in [
-            consumer.bytes(),
-            scope.tenant.bytes(),
-            scope.instance.bytes(),
-            scope.definition.fingerprint.bytes(),
-        ] {
-            bytes.extend_from_slice(&value);
-        }
-        bytes.extend_from_slice(&scope.definition.state_schema.to_le_bytes());
-        bytes.extend_from_slice(&scope.definition.event_schema.to_le_bytes());
-        bytes.extend_from_slice(&self.head.revision.get().to_le_bytes());
-        for value in [
-            self.event.bytes(),
-            self.commit.bytes(),
-            self.intent.identity.bytes(),
-            self.intent.digest,
-        ] {
-            bytes.extend_from_slice(&value);
-        }
-        bytes.extend_from_slice(&self.intent.payload_bytes.to_le_bytes());
-        Digest::of(&bytes).0
-    }
-}
 /// Immutable task identity derived from the complete source and receiver policy.
 /// Task generations, ticks, history and execution authority remain native task
 /// coordinates. Transport owner/token/expiry are deliberately absent.

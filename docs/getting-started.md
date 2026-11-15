@@ -83,3 +83,17 @@ To stage work alongside a transition, see the
 [shared model](../crates/penelope/examples/support/counter.rs). For persistence,
 continue with the [machine storage contract](0.5/machine-storage.md) and
 [durable consumer example](../ci/machine-consumer/durable.rs).
+
+Run the durable progression with:
+
+```sh
+cargo run --manifest-path ci/machine-consumer/Cargo.toml --features durable --bin durable --locked
+```
+
+It rejects an overflowing transition without changing state, commits and restores
+the counter, and checks the intent's originating event, commit and revision. It
+then admits a native task, drops both database adapters before acknowledging the
+source, and reopens them. After lease expiry, the new attempt recovers the exact
+original task; the stale acknowledgement is refused. A second event starts a
+native saga. Admission records work; a worker still owns execution and any
+uncertain external result still requires reconciliation.

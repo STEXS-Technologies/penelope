@@ -338,3 +338,22 @@ linear/graph engines. Final-source saga and outbox fuzz campaigns each completed
 
 This checkpoint completes the production admission bridges. Final performance,
 coverage and complete F0–F8 release qualification remain open.
+
+## Consumer recovery progression
+
+The canonical durable consumer now rejects an invalid overflowing transition,
+checks the committed intent's source event/commit/revision, and reopens both source
+and task adapters between native admission and source acknowledgement. Expiry
+permits reclaim; native lookup returns the exact original task, the stale lease
+is refused, and the new lease acknowledges it. The example then admits a saga
+from a second event and shares the monotonic host clock across all adapters.
+This is an explicit reopen demonstration; actual process-death tests remain in
+the preceding admission checkpoints.
+
+The unchanged full-source binding implementation moved from the specialized task
+module to receiver delivery. Task and saga identities retain one authoritative
+implementation and identical bytes. No evaluator or storage algorithm changed.
+[Focused checks and source hashes](evidence/coherent-consumer/manifest.json) cover
+source-coordinate tests, both bridge suites, the consumer on Rust 1.100/1.89 and
+strict workspace/consumer Clippy. This improves onboarding but does not complete
+the plan's verified effect-result round trip or final release qualification.

@@ -101,7 +101,12 @@ optional SQLite adapter, and reuses the flat/timeline counter model and codec.
 It prepares genesis, restores the owner, prepares one event, commits, verifies
 and publishes the receipt, reopens and resolves an exact duplicate. After verified
 admission it releases the local typed intent cache; durable bytes remain in the
-journal. It performs no external effects. Stable and MSRV CI compile/run this
+journal. The same progression rejects overflow, inspects source provenance and
+reopens both source/task databases after native admission but before source ACK.
+Reclaim recovers the original task and refuses the stale lease. It then admits
+a saga from a second event. All adapters share one monotonic host clock; resetting
+it on reopen would violate the durable clock floor. It performs no external
+effects. Stable and MSRV CI compile/run this
 exact source. SQLite stays absent from the facade's normal dependency graph and
 all portable profiles; no reverse adapter-to-facade dependency was added.
 
