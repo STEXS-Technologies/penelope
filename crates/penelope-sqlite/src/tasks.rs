@@ -247,11 +247,7 @@ fn checked_head(
         .prepare_cached("SELECT head.next_sequence,head.last_digest,head.bytes_used,(SELECT max(sequence) FROM task_records WHERE scope=?1) FROM (SELECT 1) LEFT JOIN task_heads AS head ON head.scope=?1")
         .map_err(|error| sql_error(&error))?
         .query_row([key(scope)], |row| {
-            let checksum = if row.get_ref(1)? == rusqlite::types::ValueRef::Null {
-                None
-            } else {
-                Some(Digest(column_bytes(row, 1, 32)?.try_into().map_err(|_invalid| rusqlite::Error::InvalidQuery)?))
-            };
+            let checksum = optional_digest(row, 1)?;
             Ok((row.get(0)?, checksum, row.get(2)?, row.get(3)?))
         })
         .map_err(|error| sql_error(&error))?;

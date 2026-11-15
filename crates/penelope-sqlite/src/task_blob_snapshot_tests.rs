@@ -1,4 +1,4 @@
-//! Gate a real external retirement inside the reader's tombstone query.
+//! Gate a real external retirement inside each reader's tombstone query.
 #![allow(clippy::unwrap_used, clippy::panic)]
 use super::*;
 use rusqlite::functions::FunctionFlags;
@@ -34,6 +34,32 @@ const fn definition() -> TaskDefinition {
 }
 #[test]
 fn blob_read_and_external_retirement_share_one_snapshot() {
+    exercise_retirement_snapshot(|reader, scope, output| {
+        let mut buffer = [0xa5; 8];
+        let result = reader.read_blob(scope, output, &mut buffer)?;
+        assert_eq!(result, 4);
+        assert_eq!(&buffer[..4], b"done");
+        assert_eq!(&buffer[4..], &[0xa5; 4]);
+        Ok(())
+    });
+}
+
+#[test]
+fn record_read_and_external_retirement_share_one_snapshot() {
+    exercise_retirement_snapshot(|reader, scope, output| {
+        let record = reader.read(scope, TaskSequence::new(2))?.unwrap();
+        assert_eq!(record.scope, scope);
+        assert_eq!(record.sequence, TaskSequence::new(2));
+        assert_eq!(record.event, TaskExecutionEvent::Completed { output });
+        assert_eq!(record.generation, TaskGeneration::new(1));
+        assert_eq!(record.tick, TaskTick::new(2));
+        Ok(())
+    });
+}
+
+fn exercise_retirement_snapshot(
+    read: impl FnOnce(&mut SqliteTaskJournal, TaskScope, BlobRef) -> Result<(), TaskPortError>,
+) {
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("blob-retirement.db");
     let definition = definition();
@@ -110,19 +136,20 @@ fn blob_read_and_external_retirement_share_one_snapshot() {
         release.send(()).unwrap();
         retired
     });
-    let mut buffer = [0xa5; 8];
-    let result = reader.read_blob(scope, output, &mut buffer);
+    let result = read(&mut reader, scope, output);
     let retired = retiring.join().unwrap();
     assert_eq!(retired.scope, scope);
     assert_eq!(retired.next_sequence, frontier);
     assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert_eq!(
         result,
-        Ok(4),
-        "a read pinned before retirement must return its verified blob"
+        Ok(()),
+        "a read pinned before retirement must return its verified data"
     );
-    assert_eq!(&buffer[..4], b"done");
-    assert_eq!(&buffer[4..], &[0xa5; 4]);
+    assert_eq!(
+        reader.read(scope, TaskSequence::new(2)),
+        Err(TaskPortError::Conflict)
+    );
     let mut after = [0xa5; 8];
     assert_eq!(
         reader.read_blob(scope, output, &mut after),

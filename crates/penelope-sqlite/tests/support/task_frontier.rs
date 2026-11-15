@@ -5,6 +5,13 @@ use super::*;
 fn reads_reject_inconsistent_frontiers_without_mutation() {
     let damage = [
         "DELETE FROM task_heads",
+        "UPDATE task_heads SET next_sequence=0",
+        "UPDATE task_heads SET next_sequence=4294967296",
+        "UPDATE task_heads SET next_sequence='invalid'",
+        "UPDATE task_heads SET bytes_used=-1",
+        "UPDATE task_heads SET bytes_used='invalid'",
+        "UPDATE task_records SET sequence=4294967295 WHERE sequence=1",
+        "UPDATE task_records SET sequence=4294967296 WHERE sequence=1",
         "UPDATE task_heads SET next_sequence=1",
         "UPDATE task_heads SET next_sequence=3",
         "DELETE FROM task_records WHERE sequence=1",
@@ -90,5 +97,34 @@ fn cached_frontier_query_rebinds_scope_and_observes_new_tail() {
         if cursor == 0 {
             assert_eq!(record, Some(intent()));
         }
+    }
+}
+
+#[test]
+fn retired_scope_refuses_before_decoding_damaged_retained_rows() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("retired-damage.db");
+    let mut journal = open(&path);
+    committed_start(&mut journal);
+    let connection = Connection::open(&path).unwrap();
+    connection.execute_batch("PRAGMA ignore_check_constraints=ON; INSERT INTO task_retirements SELECT scope,next_sequence,last_digest FROM task_heads; UPDATE task_heads SET last_digest=x''; UPDATE task_records SET record='invalid'").unwrap();
+    let tables = [
+        "task_heads",
+        "task_records",
+        "task_blobs",
+        "task_retirements",
+    ];
+    let before = write_snapshot::snapshot(&connection, &tables);
+    for reopen in [false, true] {
+        if reopen {
+            journal = open(&path);
+        }
+        for cursor in [0, 1, u32::MAX] {
+            assert_eq!(
+                journal.read(scope(), TaskSequence::new(cursor)),
+                Err(TaskPortError::Conflict)
+            );
+        }
+        assert_eq!(write_snapshot::snapshot(&connection, &tables), before);
     }
 }
