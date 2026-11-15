@@ -674,3 +674,10 @@ and checkpoint-proof tests, including real workers and SIGKILL recovery. Its
 upstream tracked tree is clean at `ae3d94bc22c7835eaa3fdcd766e3c117929c12bb`;
 the remaining 25 tests are deliberately outside this selected profile. The
 qualification manifest retains the exact command, lock identity and complete log.
+
+The README installation and first-machine tutorial also pass in a fresh external
+application with the actual Git branch dependency, without workspace patches or
+copied libraries. The exact Rust code fence prints `count = 3` on Rust 1.100 and
+1.89 using one resolved lockfile. The qualification manifest records the fetched
+Git identity, compiled source digest, lockfile and complete log. This checks the
+default hosted onboarding path; optional deployment profiles remain separate.

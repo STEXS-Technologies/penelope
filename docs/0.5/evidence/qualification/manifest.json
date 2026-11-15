@@ -69,6 +69,22 @@
       "exit_code": 0,
       "lock_sha256": "d8b09be3e9a8035483cc8129e5fc7af378e9bfb6524cbaa53e37483d1d5d4b5d",
       "scope": "Pinned signed-source and checkpoint proof tests, including real workers and SIGKILL recovery; not arbitrary upstream or deployment conformance."
+    },
+    "first_steps": {
+      "recipe": "Actual README Git branch dependency and exact Rust fence from docs/getting-started.md in a fresh application",
+      "source": [
+        "git+https://github.com/STEXS-Technologies/penelope?branch=refactor%2Funified-state-execution#8f02bc4417563b4929cc958ae005280aca55dfa3"
+      ],
+      "toolchains": [
+        "1.100.0",
+        "1.89.0"
+      ],
+      "stdout": "count = 3\n",
+      "exit_codes": [
+        0,
+        0
+      ],
+      "limitations": "Default hosted facade only; does not qualify optional storage/runtime deployment or future Git branch heads."
     }
   },
   "inconclusive_attempts": {
@@ -103,7 +119,10 @@
     "tools.log.gz": "923bb711afdc57bfe36aa140c3bbc61313d7877ef8ee84565b176871f1150503",
     "secrets.log.gz": "51655dbc34680ecbaf32f39902f27021fe8a3871b57ee81d4709b9a5f0169ac4",
     "portable-msrv.log.gz": "bac91f38c00549fbfa9dea46d858b9dc44f4b9b2f9ebd42f018366c401ea90eb",
-    "conformance.log.gz": "ea2f5170259e262cb8046fb685a080df0170beba023c136f7fa197906348d50f"
+    "conformance.log.gz": "ea2f5170259e262cb8046fb685a080df0170beba023c136f7fa197906348d50f",
+    "first-steps.json.gz": "3c3ab8670d58623e87dedd3addc48e0b9ffcd7cad48c9dfe52939d9dfcfe47dc",
+    "first-steps.log.gz": "cbbd18574050af1e2b80617d2a8e8f3cb1f2ca0bd023cc59a9097b1be9af2f0f",
+    "first-steps-Cargo.lock.gz": "4fc364869a943653c206efec10318096cd122d3a002d15d6e8af61488b1d98bd"
   },
   "build_input_hashes_reverified_at": "77e2822 (only documentation/evidence changed since tested source)",
   "active_campaign": {
