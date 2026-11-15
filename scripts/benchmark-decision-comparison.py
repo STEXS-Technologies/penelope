@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare unchanged saga/contract benchmarks at two exact revisions."""
+"""Compare unchanged legacy benchmarks at two exact revisions."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -19,6 +19,9 @@ BENCHMARKS = {
                           "parallel_linear_saga", "parallel_graph_saga"],
     "penelope-ports": ["contract_throughput"],
 }
+DEFAULT_BENCHMARKS = [name for names in BENCHMARKS.values() for name in names]
+BENCHMARKS["penelope-executor"].append("task_poll")
+BENCHMARKS["penelope-timeline"] = ["timeline_operations"]
 
 PERF_EVENTS = ["task-clock", "instructions", "cycles", "context-switches", "cpu-migrations"]
 
@@ -56,6 +59,26 @@ def observations(stdout):
                        "elapsed_ns": nanos, "ns_per_operation": nanos / operations})
     if not result:
         raise ValueError("benchmark produced no observations")
+    return result
+
+
+def timeline_observations(stdout):
+    result = []
+    for line in stdout.splitlines():
+        fields = line.split(",")
+        if fields[0] == "memory" and len(fields) == 7:
+            if any(int(value) < 0 for value in fields[1:]):
+                raise ValueError("negative timeline memory measurement")
+            continue  # Retained in raw stdout; not a latency observation.
+        if fields[0] != "latency" or len(fields) != 8 or not fields[1]:
+            raise ValueError(f"unrecognized timeline output: {line!r}")
+        words, steps, samples, p50, p95, p99 = map(int, fields[2:])
+        if min(words, steps) < 0 or samples < 100 or not 0 < p50 <= p95 <= p99:
+            raise ValueError("invalid timeline dimensions, count or percentiles")
+        result.append({"operation": fields[1], "state_words": words, "steps": steps,
+                       "samples": samples, "p50_ns": p50, "p95_ns": p95, "p99_ns": p99})
+    if not result:
+        raise ValueError("timeline produced no latency observations")
     return result
 
 
@@ -107,7 +130,7 @@ def main():
     parser.add_argument("--benchmark", action="append", choices=[name for names in BENCHMARKS.values() for name in names], help="repeat to select binaries; default is all six")
     parser.add_argument("--perf", action="store_true", help="record Linux perf counters for each measured process")
     args = parser.parse_args()
-    selection = args.benchmark or [name for names in BENCHMARKS.values() for name in names]
+    selection = args.benchmark or DEFAULT_BENCHMARKS
     try:
         parallel = cpu_list(args.parallel_cpus)
         cpu_list(str(args.cpu))
@@ -144,6 +167,7 @@ def main():
                                "CARGO_PROFILE_BENCH_OPT_LEVEL",
                                "CARGO_PROFILE_BENCH_LTO", "CARGO_PROFILE_BENCH_CODEGEN_UNITS")},
         "cache_policy": "one warmup; OS caches uncontrolled; no cold-cache claim",
+        "timeline_samples": os.environ.get("PENELOPE_TIMELINE_SAMPLES", "200"),
         "resources": "GNU time process wall/user/system seconds and peak RSS KiB, including threads",
         "limitations": ["pure in-process workloads, no persistence or external execution",
                         "allocations and stack high-water marks not measured",
@@ -165,7 +189,14 @@ def main():
             snapshots[label] = snapshot
             metadata["sources"][label] = {f"{package}/{name}": digest(
                 snapshot / "crates" / package / "benches" / f"{name}.rs")
-                for package, names in BENCHMARKS.items() for name in names}
+                for package, names in BENCHMARKS.items() for name in names if name in selection}
+            support = []
+            if "task_poll" in selection:
+                support.append(snapshot / "crates/penelope-executor/tests/support/tasks.rs")
+            if "timeline_operations" in selection:
+                support.extend(sorted((snapshot / "crates/penelope-timeline/benches/support").glob("*.rs")))
+            metadata["sources"][label].update({str(path.relative_to(snapshot)): digest(path)
+                                                for path in support})
             metadata["locks"][label] = digest(snapshot / "Cargo.lock")
         if metadata["sources"]["before"] != metadata["sources"]["after"]:
             raise ValueError("benchmark source/datasets differ between revisions")
@@ -191,7 +222,9 @@ def main():
                     record = {"benchmark": name, "revision": revisions[label], "cpus": affinity,
                               "stdout": measured.stdout, "stderr": measured.stderr,
                               "resources": json.loads(resource_path.read_text()),
-                              "observations": observations(measured.stdout),
+                              "observations": (timeline_observations(measured.stdout)
+                                               if name == "timeline_operations"
+                                               else observations(measured.stdout)),
                               "perf": performance_counters(perf_path.read_text()) if args.perf else None}
                     if index:
                         (output / f"run-{index}-{label}-{name}.json").write_text(

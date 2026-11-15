@@ -1,0 +1,629 @@
+{
+  "scope": "Unchanged task polling and timeline benchmark/support sources at 42ec187 versus 5281290, both Rust 1.100.0. Serial CPU 4, five alternating rounds followed by an independent nine-round repeat; original six-workload runner default unchanged.",
+  "command": "python3 scripts/benchmark-decision-comparison.py OUTPUT --before 42ec187 --after 5281290 --cpu 4 --parallel-cpus 4,5,6,7 --runs 5 --toolchain 1.100.0 --benchmark task_poll --benchmark timeline_operations",
+  "repeat": "Same command with a new OUTPUT directory and --runs 9.",
+  "runs": [
+    {
+      "label": "comparison",
+      "samples_per_revision": 5,
+      "raw_archive": "comparison.json.gz",
+      "raw_sha256": "16de2c010a0aeb7f5e9b44f0dbb62b8ee364ee3df257b2bc6074b03e604b6d1a",
+      "gzip_sha256": "a547bfc9268d2c66dddd19e7e2a16d183adee5991f88afeaea31a6d799538f22",
+      "summary": "comparison-summary.json.gz",
+      "summary_raw_sha256": "efbb57c8173530b84ad83374b5b1def877ea14012312f14bdbf2934b9468f4f8",
+      "summary_gzip_sha256": "3c82b4da66225a95c3348604fd8838adbbd9dba8b79f1aeebd81b385353693f8",
+      "log": "comparison.log.gz",
+      "log_raw_sha256": "70ef795e134ed7b3e0d93ba39c124e9be7abf383289eb6825ab47e9417c7edbb",
+      "log_gzip_sha256": "ff2889ed1fc20b81f8f78c76f7e426250a76228835cadb7c7b603b021649f312",
+      "matched_profiles": {
+        "task_poll": 9,
+        "timeline_operations": 640
+      },
+      "threshold_exceedances": {
+        "p50_ns": 68,
+        "p95_ns": 108
+      }
+    },
+    {
+      "label": "repeat",
+      "samples_per_revision": 9,
+      "raw_archive": "repeat.json.gz",
+      "raw_sha256": "4c64d3440feb0e5145f0a8b753dfd15431b7fe930d827fb9f24b4bb558bcd2b0",
+      "gzip_sha256": "eb218aef70d5bd7f03d1417c441cd87c0ccf029343acdb030e25fba91123e75e",
+      "summary": "repeat-summary.json.gz",
+      "summary_raw_sha256": "0a5a0735a3d49dc1b4282a4ac64da7e608309fc4f4be21aa15fcab0d83cf2a9d",
+      "summary_gzip_sha256": "4579f0b96694feea2f083ed3e632a3077e4cfecdb06f7fa6e8dc709c24e2f6af",
+      "log": "repeat.log.gz",
+      "log_raw_sha256": "e50437297da927fcbeead0979bbb9b0a6df77c75b87bb7c65201c7c7201c0791",
+      "log_gzip_sha256": "25f8a69e9d03c878538e39aeadf5b236f1cc557f01d68669c7b9aa32c99b79e1",
+      "matched_profiles": {
+        "task_poll": 9,
+        "timeline_operations": 640
+      },
+      "threshold_exceedances": {
+        "p50_ns": 21,
+        "p95_ns": 36
+      }
+    }
+  ],
+  "sustained_timeline_review_blockers": {
+    "p50_ns": [
+      {
+        "operation": "effects_handoff_one_cap512",
+        "state_words": 1,
+        "steps": 8,
+        "initial_delta_percent": 6.25,
+        "repeat": {
+          "median": {
+            "after": 170,
+            "before": 161
+          },
+          "delta_percent": 5.590062111801242,
+          "range": {
+            "after": [
+              160,
+              200
+            ],
+            "before": [
+              160,
+              221
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_collect_evicted",
+        "state_words": 1,
+        "steps": 8,
+        "initial_delta_percent": 22.98595713229861,
+        "repeat": {
+          "median": {
+            "after": 1663,
+            "before": 1363
+          },
+          "delta_percent": 22.010271460014664,
+          "range": {
+            "after": [
+              1633,
+              1674
+            ],
+            "before": [
+              1303,
+              2274
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_collect_evicted",
+        "state_words": 1,
+        "steps": 128,
+        "initial_delta_percent": 20.686611083864648,
+        "repeat": {
+          "median": {
+            "after": 24407,
+            "before": 20209
+          },
+          "delta_percent": 20.77292295511901,
+          "range": {
+            "after": [
+              24167,
+              26071
+            ],
+            "before": [
+              19398,
+              20630
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_full_correction_evicted",
+        "state_words": 1,
+        "steps": 8,
+        "initial_delta_percent": 9.885454260160053,
+        "repeat": {
+          "median": {
+            "after": 6974,
+            "before": 6402
+          },
+          "delta_percent": 8.934707903780058,
+          "range": {
+            "after": [
+              6904,
+              10791
+            ],
+            "before": [
+              6292,
+              6463
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_full_correction_evicted",
+        "state_words": 1,
+        "steps": 32,
+        "initial_delta_percent": 17.658782189122558,
+        "repeat": {
+          "median": {
+            "after": 21762,
+            "before": 19258
+          },
+          "delta_percent": 13.002388617717319,
+          "range": {
+            "after": [
+              21472,
+              34547
+            ],
+            "before": [
+              19017,
+              19698
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_full_correction_evicted",
+        "state_words": 1,
+        "steps": 128,
+        "initial_delta_percent": 16.403599764501386,
+        "repeat": {
+          "median": {
+            "after": 79534,
+            "before": 71809
+          },
+          "delta_percent": 10.757704466014006,
+          "range": {
+            "after": [
+              78602,
+              92319
+            ],
+            "before": [
+              71047,
+              97198
+            ]
+          }
+        }
+      },
+      {
+        "operation": "ring_promote",
+        "state_words": 128,
+        "steps": 32,
+        "initial_delta_percent": 33.33333333333333,
+        "repeat": {
+          "median": {
+            "after": 40,
+            "before": 31
+          },
+          "delta_percent": 29.032258064516125,
+          "range": {
+            "after": [
+              30,
+              50
+            ],
+            "before": [
+              30,
+              50
+            ]
+          }
+        }
+      },
+      {
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 1,
+        "initial_delta_percent": 10.000000000000009,
+        "repeat": {
+          "median": {
+            "after": 110,
+            "before": 101
+          },
+          "delta_percent": 8.910891089108919,
+          "range": {
+            "after": [
+              100,
+              160
+            ],
+            "before": [
+              100,
+              111
+            ]
+          }
+        }
+      },
+      {
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 63,
+        "initial_delta_percent": 9.090909090909083,
+        "repeat": {
+          "median": {
+            "after": 120,
+            "before": 110
+          },
+          "delta_percent": 9.090909090909083,
+          "range": {
+            "after": [
+              110,
+              180
+            ],
+            "before": [
+              110,
+              120
+            ]
+          }
+        }
+      },
+      {
+        "operation": "snapshot_restore_child_snapshot",
+        "state_words": 1,
+        "steps": 32,
+        "initial_delta_percent": 9.090909090909083,
+        "repeat": {
+          "median": {
+            "after": 120,
+            "before": 110
+          },
+          "delta_percent": 9.090909090909083,
+          "range": {
+            "after": [
+              110,
+              171
+            ],
+            "before": [
+              110,
+              150
+            ]
+          }
+        }
+      },
+      {
+        "operation": "snapshot_restore_imported",
+        "state_words": 1,
+        "steps": 32,
+        "initial_delta_percent": 9.090909090909083,
+        "repeat": {
+          "median": {
+            "after": 120,
+            "before": 110
+          },
+          "delta_percent": 9.090909090909083,
+          "range": {
+            "after": [
+              110,
+              151
+            ],
+            "before": [
+              110,
+              150
+            ]
+          }
+        }
+      }
+    ],
+    "p95_ns": [
+      {
+        "operation": "effects_append_cap512",
+        "state_words": 1,
+        "steps": 1,
+        "initial_delta_percent": 34.13919413919413,
+        "repeat": {
+          "median": {
+            "after": 6192,
+            "before": 5581
+          },
+          "delta_percent": 10.947858806665467,
+          "range": {
+            "after": [
+              5530,
+              14618
+            ],
+            "before": [
+              5400,
+              15490
+            ]
+          }
+        }
+      },
+      {
+        "operation": "effects_handoff_all_cap512",
+        "state_words": 1,
+        "steps": 1,
+        "initial_delta_percent": 35.13513513513513,
+        "repeat": {
+          "median": {
+            "after": 140,
+            "before": 111
+          },
+          "delta_percent": 26.126126126126124,
+          "range": {
+            "after": [
+              101,
+              210
+            ],
+            "before": [
+              101,
+              141
+            ]
+          }
+        }
+      },
+      {
+        "operation": "effects_promote_drop_cap512",
+        "state_words": 1,
+        "steps": 64,
+        "initial_delta_percent": 30.53195419283339,
+        "repeat": {
+          "median": {
+            "after": 19307,
+            "before": 16963
+          },
+          "delta_percent": 13.818310440370208,
+          "range": {
+            "after": [
+              16221,
+              29046
+            ],
+            "before": [
+              16162,
+              25629
+            ]
+          }
+        }
+      },
+      {
+        "operation": "effects_stage_cap512",
+        "state_words": 1,
+        "steps": 0,
+        "initial_delta_percent": 27.208413001912035,
+        "repeat": {
+          "median": {
+            "after": 6082,
+            "before": 5320
+          },
+          "delta_percent": 14.323308270676694,
+          "range": {
+            "after": [
+              5291,
+              46891
+            ],
+            "before": [
+              5250,
+              14639
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_append",
+        "state_words": 1,
+        "steps": 512,
+        "initial_delta_percent": 32.482598607888626,
+        "repeat": {
+          "median": {
+            "after": 692,
+            "before": 541
+          },
+          "delta_percent": 27.911275415896487,
+          "range": {
+            "after": [
+              411,
+              912
+            ],
+            "before": [
+              431,
+              792
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_collect_evicted",
+        "state_words": 1,
+        "steps": 8,
+        "initial_delta_percent": 21.764280549530014,
+        "repeat": {
+          "median": {
+            "after": 1683,
+            "before": 1392
+          },
+          "delta_percent": 20.905172413793103,
+          "range": {
+            "after": [
+              1643,
+              3056
+            ],
+            "before": [
+              1323,
+              2515
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_collect_evicted",
+        "state_words": 1,
+        "steps": 128,
+        "initial_delta_percent": 50.16965584100823,
+        "repeat": {
+          "median": {
+            "after": 24568,
+            "before": 20490
+          },
+          "delta_percent": 19.90239141044412,
+          "range": {
+            "after": [
+              24287,
+              32583
+            ],
+            "before": [
+              20108,
+              34086
+            ]
+          }
+        }
+      },
+      {
+        "operation": "history_materialize_root",
+        "state_words": 1,
+        "steps": 32,
+        "initial_delta_percent": 16.880633910634124,
+        "repeat": {
+          "median": {
+            "after": 151313,
+            "before": 120182
+          },
+          "delta_percent": 25.903213459586304,
+          "range": {
+            "after": [
+              112828,
+              189637
+            ],
+            "before": [
+              115033,
+              202402
+            ]
+          }
+        }
+      },
+      {
+        "operation": "prediction_indexed_yield1",
+        "state_words": 128,
+        "steps": 128,
+        "initial_delta_percent": 33.06535811234077,
+        "repeat": {
+          "median": {
+            "after": 11151,
+            "before": 9949
+          },
+          "delta_percent": 12.081616242838479,
+          "range": {
+            "after": [
+              9639,
+              30619
+            ],
+            "before": [
+              9428,
+              16051
+            ]
+          }
+        }
+      },
+      {
+        "operation": "replay_yield8",
+        "state_words": 512,
+        "steps": 512,
+        "initial_delta_percent": 13.460930585409026,
+        "repeat": {
+          "median": {
+            "after": 77961,
+            "before": 70426
+          },
+          "delta_percent": 10.69917360065884,
+          "range": {
+            "after": [
+              57772,
+              139921
+            ],
+            "before": [
+              57872,
+              131504
+            ]
+          }
+        }
+      },
+      {
+        "operation": "ring_promote",
+        "state_words": 512,
+        "steps": 1,
+        "initial_delta_percent": 86.41975308641976,
+        "repeat": {
+          "median": {
+            "after": 90,
+            "before": 81
+          },
+          "delta_percent": 11.111111111111116,
+          "range": {
+            "after": [
+              80,
+              110
+            ],
+            "before": [
+              80,
+              191
+            ]
+          }
+        }
+      },
+      {
+        "operation": "ring_restore",
+        "state_words": 128,
+        "steps": 32,
+        "initial_delta_percent": 29.032258064516125,
+        "repeat": {
+          "median": {
+            "after": 40,
+            "before": 31
+          },
+          "delta_percent": 29.032258064516125,
+          "range": {
+            "after": [
+              30,
+              50
+            ],
+            "before": [
+              30,
+              60
+            ]
+          }
+        }
+      },
+      {
+        "operation": "snapshot_restore_imported",
+        "state_words": 1,
+        "steps": 32,
+        "initial_delta_percent": 16.666666666666675,
+        "repeat": {
+          "median": {
+            "after": 140,
+            "before": 121
+          },
+          "delta_percent": 15.702479338842966,
+          "range": {
+            "after": [
+              111,
+              180
+            ],
+            "before": [
+              120,
+              190
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "assessment": "All nine task profile means are within +5% or faster in the repeat. Initial large hosted task slowdown +9.30% did not reproduce (-9.08% repeat). Timeline has 11 p50 and 13 p95 profiles above provisional thresholds in both runs, including material history operations. These remain review blockers, not accepted regressions. No production changes or benchmark reductions were made in response.",
+  "parser_tests": {
+    "command": "python3 -m unittest discover -s scripts/tests",
+    "passed": 75,
+    "log": "scripts.log.gz",
+    "raw_sha256": "7e57bb09128cc8fcd51685cccfc602fbd92a69cc35ceb5c40b0db0815af2eb75",
+    "gzip_sha256": "ed27dec78c1b39474107afdb6b3f39fe377699fcb10b98b0c31cc46e9e687c7e"
+  },
+  "source_sha256": {
+    "scripts/benchmark-decision-comparison.py": "b59111bab73e1a2990aaad263b40b3c7a76e9aca508eec90259c3dfcd65e9834",
+    "scripts/tests/test_decision_benchmark.py": "fdedb9438c04a7bce743dc297d75744c63af7ae1ba1da3ac33917c51ad0436bd",
+    "docs/0.5/verification.md": "15a1c9969349b42c917d7bb00d8ef8a0b05943e89ffd2def13c82816e750aba2"
+  },
+  "limitations": [
+    "Shared host; pinned affinity does not isolate cores or control clocks/scheduler/thermal effects.",
+    "Task observations are aggregate ns/operation; timeline observations are per-fixture p50/p95/p99 over 200 samples after 16 warmups. They are not interchangeable.",
+    "Timer controls and handwritten rings are retained, not subtracted or used to normalize away slowdowns.",
+    "Timeline state_words and steps preserve Reporter parameters; effect profile names identify capacity and steps denotes pending count.",
+    "Medians of run-level percentiles and threshold exceedances are descriptive; no statistical noninferiority proof or p99 release tolerance is asserted.",
+    "Each revision uses its own disclosed lockfile; compiler caching affects builds but not the measured benchmark processes.",
+    "Machine-specific, SQLite, startup/restart and end-to-end performance qualification remains open."
+  ]
+}

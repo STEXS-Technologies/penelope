@@ -525,3 +525,29 @@ not support a cold-build claim. Registry/toolchain/OS caches remain warm; this
 is an artifact-cold compilation measurement, not a fresh install or a speedup
 claim. The remaining workload performance matrix and final exact-candidate
 qualification are still open.
+
+## Legacy task polling and timeline performance review
+
+The existing comparison runner now accepts the unchanged task-poll and timeline
+operation fixtures while retaining its original six-workload default. Source
+comparison includes their shared fixture files. Timeline CSV parsing preserves
+its per-fixture p50/p95/p99 values and sample counts; aggregate task means stay
+separate. Parser tests reject missing, malformed and unordered measurements.
+All 75 script tests pass.
+
+[Both raw comparisons and every profile summary](evidence/legacy-runtime/manifest.json)
+compare `42ec187` and `5281290` with Rust 1.100, CPU 4, independent locked builds
+and alternating order. Each run matches nine task and 640 timeline profile
+identities and operation/sample counts. The initial five rounds put the largest
+hosted pending-task profile at +9.30%; nine subsequent rounds put it at -9.08%.
+All task profiles are within +5% or faster in the repeat. These are aggregate
+polling measurements, not startup/recovery or per-operation tail qualification.
+
+Timeline threshold exceedances fall from 68 to 21 for median p50 and 108 to 36
+for median p95. Eleven p50 and thirteen p95 profiles exceed the provisional
+thresholds in both comparisons, including history collection and full correction
+with eviction. Those remain review blockers. Some handwritten controls also
+vary, but their timings are not subtracted and do not excuse a sustained library
+regression. No workload, threshold or production behavior was changed to obtain
+a passing result. Diagnosis, remaining performance profiles and final release
+qualification remain open.

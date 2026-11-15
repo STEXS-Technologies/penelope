@@ -65,5 +65,26 @@ class PerformanceCounters(unittest.TestCase):
                 MODULE.performance_counters("\n".join(json.dumps(item) for item in records))
 
 
+class TimelineObservations(unittest.TestCase):
+    def test_percentiles_and_dimensions_are_preserved_without_becoming_means(self):
+        result = MODULE.timeline_observations(
+            "memory,128,100,200,300,400,1024\nlatency,correction,128,32,200,500,900,1200"
+        )
+        self.assertEqual(result, [{"operation": "correction", "state_words": 128,
+            "steps": 32, "samples": 200, "p50_ns": 500, "p95_ns": 900, "p99_ns": 1200}])
+        self.assertNotIn("ns_per_operation", result[0])
+
+    def test_empty_missing_and_invalid_percentiles_fail(self):
+        for text in ["", "warning", "memory,1,2,3,4,5,6",
+                     "latency,x,1,2,99,1,2,3", "latency,x,-1,2,200,1,2,3",
+                     "latency,x,1,2,200,5,4,9", "latency,x,1,2,200,0,1,2"]:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                MODULE.timeline_observations(text)
+
+    def test_original_default_workloads_stay_unchanged(self):
+        self.assertEqual(MODULE.DEFAULT_BENCHMARKS, ["linear_saga", "graph_saga",
+            "replay_saga", "parallel_linear_saga", "parallel_graph_saga", "contract_throughput"])
+
+
 if __name__ == "__main__":
     unittest.main()
