@@ -23,6 +23,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Optional captured machine adapter over existing timeline replay, history,
+  correction and effect finality, with a facade-only prediction example sharing
+  the flat machine's model.
 - Common prepared-decision inspection across local machines, linear/graph sagas
   and task projections. Saga adapters retain their existing decisions and commit
   paths; task proposal/application share one isolated evaluator.

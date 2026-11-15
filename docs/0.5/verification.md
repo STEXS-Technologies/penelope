@@ -139,3 +139,27 @@ This supersedes the earlier interrupted baseline attempt; that attempt remains
 recorded rather than being relabeled successful. These original-source results
 do not qualify the final 0.5 candidate or erase the baseline advisories. Bench
 output produced by all-target tests is not isolated performance evidence.
+
+## Optional machine/timeline adapter checkpoint
+
+[The composition record](timeline-machines.md) defines captured context, separate
+native/timeline coordinates, snapshot obligations, failure behavior and the
+existing finality boundary. No correction or publication engine was duplicated.
+The flat and timeline facade examples share one pure counter model.
+
+Workspace library/integration tests, doctests, strict all-target Clippy and strict
+facade/timeline rustdoc passed. Rust 1.89 passed timeline tests, the final seven
+adapter tests, independent facade examples, legacy compatibility and default-free
+bare-metal RISC-V compilation. The adapter tests include 2,048 native differential
+event attempts, actual `FixedHistory` restore/replay, non-Clone state preparation,
+captured-context hashing, hierarchy, panic poisoning and finalized-prefix refusal.
+The machine, correction, effects and branch-promotion fuzz targets each passed
+10,000 instrumented executions with seed 504. The machine target now includes an
+independent vector oracle for the adapter at capacities zero, one and four.
+
+Raw logs, commands, toolchains and checkpoint source hashes are in
+[evidence/timeline-machines](evidence/timeline-machines/). The manifest records
+test timing relative to the final adapter-test additions. The layer gate and its
+regression suite passed, and the code graph was updated. Full F5/F8 qualification,
+new-adapter resource/performance measurements, machine durability and cross-engine
+admitted effects remain open.

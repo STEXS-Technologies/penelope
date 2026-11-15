@@ -95,6 +95,7 @@ dependencies = [
  "penelope-intent",
  "penelope-ports",
  "penelope-statechronicle",
+ "penelope-timeline",
  "thiserror",
 ]
 
@@ -166,6 +167,15 @@ dependencies = [
  "penelope-domain",
  "penelope-ports",
  "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "penelope-timeline"
+version = "0.4.0"
+dependencies = [
+ "penelope-core",
+ "sha2",
  "thiserror",
 ]
 

@@ -10,6 +10,9 @@ publish = false
 [dependencies]
 penelope = { path = "../../crates/penelope" }
 
+[features]
+timeline = ["penelope/timeline"]
+
 [[bin]]
 name = "flat"
 path = "../../crates/penelope/examples/counter_machine.rs"
@@ -21,3 +24,8 @@ path = "../../crates/penelope/examples/nested_order.rs"
 [[bin]]
 name = "decisions"
 path = "../../crates/penelope/examples/prepared_decisions.rs"
+
+[[bin]]
+name = "timeline"
+path = "../../crates/penelope/examples/timeline_machine.rs"
+required-features = ["timeline"]

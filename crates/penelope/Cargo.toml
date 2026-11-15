@@ -24,3 +24,7 @@ thiserror = { workspace = true }
 
 [lints]
 workspace = true
+
+[[example]]
+name = "timeline_machine"
+required-features = ["timeline"]

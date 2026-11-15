@@ -1,7 +1,9 @@
 # Penelope
 
-Penelope provides deterministic saga orchestration and recoverable task
-execution for Rust. It coordinates workflows and declared computations that
+Penelope provides deterministic state evolution and reliable execution for Rust.
+Start with a typed application machine, saga coordination or recoverable task;
+add bounded timeline correction when the computation supports captured replay.
+Its workflow and task protocols coordinate declared computations that
 must survive crashes, retries, duplicate delivery, timeouts and uncertain
 external results.
 
@@ -14,6 +16,8 @@ checkpoints and explicit recovery permissions.
 
 ## What Penelope gives you
 
+- Typed pure machines with bounded staged intents, prepared publication and
+  optional nested state hierarchies.
 - Deterministic linear and graph saga decisions.
 - Append-only outcome contracts and ordered replay after restart.
 - Typed identities and scopes that prevent cross-process or stale results.
@@ -39,17 +43,22 @@ Use Rust 1.89 or newer. The facade groups the existing implementations by purpos
 
 | Path | Purpose |
 | --- | --- |
+| `penelope::machine` | Pure models, bounded local publication and optional hierarchy |
 | `penelope::saga` | Linear and graph decisions, retries, compensation and replay |
 | `penelope::task` | Recovery contracts, portable control and hosted `TaskSupervisor` |
 | `penelope::storage` | Saga storage ports and synchronous/asynchronous task journals |
 | `penelope::runtime` | Task runtime, clock and generation authority contracts |
 | `penelope::integration::statechronicle` | Verified external canonical-event correlation |
-| `penelope::timeline` | Optional bounded replay and correction |
+| `penelope::timeline` | Optional bounded replay/correction, including captured machine models |
+| `penelope::diagnostics` | Common read-only prepared decision inspection |
 
 Existing root imports and crate aliases remain available. These paths expose the
 same types and implementations; their distinct histories and recovery rules still
-apply. The broader application-machine API is [planned for 0.5](docs/0.5/README.md)
-and is not implemented by this namespace consolidation.
+apply. The [flat machine](crates/penelope/examples/counter_machine.rs) and
+[timeline machine](crates/penelope/examples/timeline_machine.rs) examples share
+one model. [Implemented APIs](docs/0.5/public-api.md) distinguish local preparation
+and publication from durable commit and effect dispatch. Machine durability and
+full release qualification remain [in progress](docs/0.5/README.md).
 
 ## The programming model
 

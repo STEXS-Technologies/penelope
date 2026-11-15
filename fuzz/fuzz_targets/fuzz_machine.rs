@@ -2,6 +2,8 @@
 //! State/revision/retained-intent oracle across failures, aborts and transfers.
 use libfuzzer_sys::fuzz_target;
 use penelope_core::machine::*;
+use penelope_core::task::Digest;
+use penelope_timeline::*;
 
 const DEFINITION: MachineDefinition = MachineDefinition {
     fingerprint: MachineDefinitionId::from_bytes([3; 32]),
@@ -18,6 +20,17 @@ fn scope() -> MachineScope {
 struct Event {
     opcode: u8,
     amount: u64,
+}
+impl HistoryPayload for Event {
+    fn digest(&self) -> Digest {
+        let mut bytes = [0; 9];
+        bytes[0] = self.opcode;
+        bytes[1..].copy_from_slice(&self.amount.to_le_bytes());
+        Digest::of(&bytes)
+    }
+    fn byte_len(&self) -> u64 {
+        9
+    }
 }
 #[derive(Debug, PartialEq, Eq)]
 enum Fault {
@@ -214,10 +227,139 @@ fn run<const N: usize>(data: &[u8]) {
         }
     }
 }
+fn timeline_run<const N: usize>(data: &[u8]) {
+    let limit = usize::from(data.get(1).copied().unwrap_or(0)) % (N + 1);
+    let max_bytes = u64::from(data.get(2).copied().unwrap_or(0));
+    let timeline_scope = TimelineScope {
+        tenant: TimelineTenantId::from_digest(Digest([11; 32])),
+        timeline: TimelineId::from_digest(Digest([12; 32])),
+        model: TimelineModelId::from_digest(Digest([13; 32])),
+        schema: TimelineSchemaId::from_digest(Digest([14; 32])),
+    };
+    let adapter = MachineTimeline::new(Counter, scope(), timeline_scope).unwrap();
+    let mut revision = if data.first().copied().unwrap_or(0) & 8 == 0 {
+        0
+    } else {
+        u64::MAX - 2
+    };
+    let initial = adapter
+        .restore(
+            MachineHead {
+                scope: scope(),
+                revision: MachineRevision::new(revision),
+            },
+            0,
+        )
+        .unwrap();
+    let head = TimelineHead::new(
+        timeline_scope,
+        TimelineBranchId::ZERO,
+        TimelineStep::ZERO,
+        TimelineRevision::new(99),
+        None,
+    )
+    .unwrap();
+    let mut live = LiveTimeline::<_, _, 1, N>::new(
+        head,
+        initial,
+        EffectLimits {
+            max_intents: limit,
+            max_payload_bytes: max_bytes,
+        },
+    );
+    let mut state = 0;
+    // Independent ordinary-vector reference for the timeline's retained batch.
+    let mut pending = Vec::new();
+    for (index, bytes) in data.chunks(3).take(128).enumerate() {
+        let opcode = bytes.first().copied().unwrap_or(0);
+        let amount = u64::from(bytes.get(1).copied().unwrap_or(0));
+        let charge = amount % 16;
+        let mut id = [0; 32];
+        id[..8].copy_from_slice(&(index as u64).to_be_bytes());
+        if opcode & 64 != 0 {
+            id = [99; 32];
+        }
+        let mut context = TransitionContext {
+            expected: live.read().1.read().0,
+            event: MachineEventId::from_bytes(id),
+            event_digest: id,
+            logical_time: MachineLogicalTime::new(index as u64),
+        };
+        if opcode & 32 != 0 {
+            context.expected.scope.instance = MachineId::from_bytes([99; 32]);
+        }
+        if opcode & 16 != 0 {
+            context.expected.revision =
+                MachineRevision::new(if revision == 0 { 1 } else { revision - 1 });
+        }
+        let before = (live.read().0, live.read().1.clone());
+        let input = MachineTimelineInput {
+            context,
+            event: Event { opcode, amount },
+        };
+        let result = live.apply_input(
+            &adapter,
+            TimelineInputId::from_digest(Digest::of(&(index as u64).to_le_bytes())),
+            &input,
+            &|_: &MachineTimelineState<u64>, _: TimelineHead| Ok(()),
+        );
+        let accepted = opcode & 48 == 0
+            && opcode & 7 >= 5
+            && state + amount <= 1024
+            && revision < u64::MAX
+            && pending.len() < limit
+            && !pending
+                .iter()
+                .any(|entry: &([u8; 32], u64, u64)| entry.0 == id)
+            && pending.iter().map(|entry| entry.1).sum::<u64>() + charge <= max_bytes;
+        assert_eq!(result.is_ok(), accepted);
+        if accepted {
+            pending.push((id, charge, state));
+            state += amount;
+            revision += 1;
+            assert_eq!(
+                live.read().1.last_transition(),
+                Some(TransitionRecord {
+                    context,
+                    revision: MachineRevision::new(revision),
+                    transition: TransitionId::new(1)
+                })
+            );
+        } else {
+            assert_eq!(live.read(), (before.0, &before.1));
+        }
+        assert_eq!(live.read().1.read().0.revision.get(), revision);
+        assert_eq!(*live.read().1.read().1, state);
+        assert_eq!(live.eligible_effects().count(), 0);
+        let mut actual: Vec<_> = live
+            .tentative_effects()
+            .map(|effect| {
+                (
+                    effect.payload.intent.metadata.identity.bytes(),
+                    effect.descriptor.payload_bytes,
+                    effect.payload.intent.payload,
+                )
+            })
+            .collect();
+        let mut expected = pending.clone();
+        actual.sort_unstable();
+        expected.sort_unstable();
+        assert_eq!(actual, expected);
+    }
+}
 fuzz_target!(|data: &[u8]| {
     match data.first().copied().unwrap_or(0) % 3 {
-        0 => run::<0>(data),
-        1 => run::<1>(data),
-        _ => run::<4>(data),
+        0 => {
+            run::<0>(data);
+            timeline_run::<0>(data);
+        }
+        1 => {
+            run::<1>(data);
+            timeline_run::<1>(data);
+        }
+        _ => {
+            run::<4>(data);
+            timeline_run::<4>(data);
+        }
     }
 });

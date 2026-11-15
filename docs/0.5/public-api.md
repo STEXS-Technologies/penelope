@@ -11,6 +11,7 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
 | `penelope::storage` | Existing process/task storage and commit ports | Existing durable examples |
 | `penelope::runtime` | Existing runtime integration boundaries | Existing task/runtime examples |
+| `penelope::timeline` (feature `timeline`) | Captured `MachineTimeline` adapter over existing replay, history, finality and handoff | `timeline_machine`, independent facade consumer |
 
 `PreparedDecision` is defined once in the portable machine module and reexported
 by diagnostics. Its associated types preserve each engine's native state,
@@ -52,7 +53,11 @@ The flat example, saga and task example share one generic inspection helper.
 0.4 observations. Task parity uses an exact frozen 0.4 projection implementation,
 including its private recovery fields and original error precedence.
 
-Remaining integration work includes machine/timeline composition, typed admitted
-effect bridges, durable machine contracts, end-to-end composition and final
+The [optional machine/timeline composition](timeline-machines.md) uses the same
+counter model as the flat example. Captured context and native revisions remain
+distinct from timeline branch/revision, and intents retain timeline finality.
+
+Remaining integration work includes typed admitted effect bridges, durable
+machine contracts, end-to-end composition and final
 performance/coverage/chaos qualification. Prepared inspection does not complete
 those phases.
