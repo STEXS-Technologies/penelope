@@ -207,3 +207,9 @@ doc = false
 
 # Fuzzer instrumentation keeps its existing default lint profile.
 [lints]
+
+[[bin]]
+name = "fuzz_sqlite_machine_outbox"
+path = "fuzz_targets/fuzz_sqlite_machine_outbox.rs"
+test = false
+doc = false

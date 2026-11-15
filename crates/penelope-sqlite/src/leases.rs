@@ -12,7 +12,6 @@ use penelope_core::task::Digest;
 use penelope_domain::{LogicalTime, ProcessAction, ProcessScope};
 use penelope_ports::*;
 use rusqlite::{Connection, TransactionBehavior, params};
-use std::num::NonZeroU64;
 
 // Compare decoded rows without constructing an owned scope for each claim.
 fn action_in_scope(action: &ProcessAction, scope: &ProcessScope) -> bool {
@@ -24,26 +23,11 @@ fn action_in_scope(action: &ProcessAction, scope: &ProcessScope) -> bool {
 }
 
 fn token(connection: &Connection) -> Result<OutboxLeaseToken, PortError> {
-    let next: i64 = connection
-        .prepare_cached("SELECT next_token FROM lease_counter WHERE singleton=1")
-        .map_err(|error| db_error(&error))?
-        .query_row([], |row| row.get(0))
-        .map_err(|error| db_error(&error))?;
-    let value = NonZeroU64::new(u64::try_from(next).map_err(|_negative| PortError::Invariant)?)
-        .ok_or(PortError::Invariant)?;
-    let following = next.checked_add(1).ok_or(PortError::QuotaExceeded)?;
-    let changed = connection
-        .prepare_cached(
-            "UPDATE lease_counter SET next_token=?1 WHERE singleton=1 AND next_token=?2",
-        )
-        .map_err(|error| db_error(&error))?
-        .execute(params![following, next])
-        .map_err(|error| db_error(&error))?;
-    if changed != 1 {
-        return Err(PortError::Invariant);
-    }
-    Ok(OutboxLeaseToken::new(value))
+    crate::lease_counter::next(connection)
+        .map(OutboxLeaseToken::new)
+        .map_err(port_error)
 }
+
 fn expiry(now: LogicalTime, millis: u64) -> Result<LogicalTime, PortError> {
     let value = now.0.checked_add(millis).ok_or(PortError::QuotaExceeded)?;
     integer(value)?;

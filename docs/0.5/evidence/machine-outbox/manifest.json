@@ -1,0 +1,180 @@
+{
+  "checkpoint": "source-bound leased machine intent handoff",
+  "parent_commit": "17e13a65b4377d6300dc829370a02a98ea1092e6",
+  "source_scope": "Parent plus exact changed/new source, fixture, test, manifest and script hashes; documentation excluded.",
+  "source_sha256": {
+    "crates/penelope-core/src/machine/identities.rs": "718967acb68d104c8309269919f559393febbcd601bcee93986c9848c20a29b9",
+    "crates/penelope-ports/src/machine.rs": "42ba6012e63534cd810e679f9d5f4434753cacc45323b53299fd24caf6c08a94",
+    "crates/penelope-ports/src/machine/delivery.rs": "523d72bf9da102288b5faad3ee3f05a31ee2fffaf3fa44b0df89a2b6338ad7fd",
+    "crates/penelope-ports/src/machine/store.rs": "bc613966fd08f3a7437ccb296f141f313708bb73a16ff7dc35838bc605214aaa",
+    "crates/penelope-sqlite/src/lease_counter.rs": "4be3d1b76d6d02961b06ea6604eb5247748fb60451b12f246e07371d7e90fa94",
+    "crates/penelope-sqlite/src/leases.rs": "b7c5ba819acc3a601c7d2ab1aad39f6d34b685e8f61bc12f7cffd1e7baba4820",
+    "crates/penelope-sqlite/src/lib.rs": "6b0ef6cea1bef75ea54861797da3058ab385cc501f07ede7ac65013619562ad8",
+    "crates/penelope-sqlite/src/machine.rs": "0eee57a3584efa4b723badf71e1330113029ebf4f28e091ce7f57d61c085e7d0",
+    "crates/penelope-sqlite/src/machine/delivery.rs": "b538f6273926de2782db921fa309c415598354d867cc5608b7d81438bc96f617",
+    "crates/penelope-sqlite/src/machine/delivery/state.rs": "a84e5de7357f332899d518f47ed8897bdb026f7df251d21cec55622fb2b3fba4",
+    "crates/penelope-sqlite/src/machine/read.rs": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+    "crates/penelope-sqlite/src/machine/tests.rs": "0850efe340c9e6863c2d85cf531d4c32f381e7a1813ce5958ea6e66633247327",
+    "crates/penelope-sqlite/src/schema.rs": "832e330afc540cbb52e8c40fdb4d9a5c63d51124cef8054f403732cd9d751a4e",
+    "crates/penelope-sqlite/src/schema_inbox_tests.rs": "c6c072f5fc9daa7e8eb258678b0ae1f4b4edc54390a264ca7ac4c836b26154db",
+    "crates/penelope-sqlite/src/schema_tests.rs": "0bf5c9ec5de1c6885aefa8cedd1c507233c40ea65cdb608c9b46c8da72bafa98",
+    "crates/penelope-sqlite/tests/machine_outbox.rs": "1f0811b9c1ae4f0c1a6659bbccf0098f97c0f70b72ad3711649ff8fcaf1cda0a",
+    "crates/penelope-sqlite/tests/process.rs": "e1acd9d86d19f13f86b0aec0b886b3c29a918c91636bc2e7bfea4f4b479dedb2",
+    "crates/penelope-sqlite/tests/support/claim_indexes.rs": "8d2fe1ca427e679a51511a40a9c1d7babba582ee586c6124a0261b28fc3eae02",
+    "crates/penelope-sqlite/tests/support/inbox_index.rs": "5c85864224a9065bf1d86b3c59909dd6a0d07cba633c4638720d4a72b2d4d6ef",
+    "crates/penelope-sqlite/tests/tasks.rs": "e56b957334f774872cd2879f1f7339da4693ad619bad25bc39b1e3c1ce6d62ab",
+    "fuzz/Cargo.toml": "3321aec5fcebccce1cdc349fc1ec5e56f436292f772d142ca738098bc430b3ae",
+    "fuzz/fuzz_targets/fuzz_newtypes.rs": "06868915a2bcaf2ce13d7336df786d44a54d2fcc818fb098211a58033ad159cf",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine_outbox.rs": "0392c46899c2ebc5baf5280400d35107062d468290b879f58a0d873661718362",
+    "scripts/run_bounded_fuzz.sh": "de1c4c7abf4195dcab03167df4c56cd765ae0e69cf63eb154db230b47aaa97df",
+    "scripts/seed-machine-corpus.py": "5403362de117763493afed83edc428595d4e1900e7e8bc6ee3a8fd9a072efa36"
+  },
+  "tools": {
+    "rust": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "msrv": "rustc 1.89.0 (29483883e 2025-08-04)",
+    "fuzz_rust": "rustc 1.99.0-nightly (7608eb7b0 2026-08-05)"
+  },
+  "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "checks": [
+    {
+      "name": "workspace",
+      "command": "cargo test --workspace --all-features --lib --tests --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "raw_sha256": "bd2cffab2e8e3e38070c1f9277c6137743d5145d1a9fd97992ae328df587b444",
+      "gzip_sha256": "17a9811eb1303530074bbd7ed73fffedbedebe71948598614df57b32b0b5da49"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "62b44fc4facefb074ca04391bba824e094863da1195f0e07460873fc1ee4e42b",
+      "gzip_sha256": "4fcd1a493d7a5c487565e6124a96d5522a0b64ff933d83553bd925e460e5a559"
+    },
+    {
+      "name": "msrv",
+      "command": "cargo +1.89.0 test -p penelope-sqlite --test machine_outbox --locked",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "6015ad479d4a4bb8b3ac8aee699ab4804086287f6bbc54045b342569b05f33f0",
+      "gzip_sha256": "d05dd0ef3482c81149e4f65138b328bf61797b27648c9c657d1212393acadbba"
+    },
+    {
+      "name": "docs",
+      "command": "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "docs.log.gz",
+      "raw_sha256": "0b600254f7e890cd2e6287c32c1237867f3878a889cb988f8cd54fceb24e6564",
+      "gzip_sha256": "8cad22f80fe6d6178225e2fa616e21a71ad8520dde4835d3fd3cbc3b34d6a821"
+    },
+    {
+      "name": "doctests",
+      "command": "cargo test --workspace --all-features --doc --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "doctests.log.gz",
+      "raw_sha256": "8fb3a0c88cfb6e5a9a7127a1a1f20dc2c7816ac0cf7fba563967b05b621a1bf5",
+      "gzip_sha256": "f43b830b64c8e3a80aad55c526948a23b1d3950520331c469c1f3f2bc486ef89"
+    },
+    {
+      "name": "scripts",
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "b03e4bea2389d5e26413034d651cd404594c78d50c6430ad96999fde88d1d5d0",
+      "gzip_sha256": "390704d24065cbdcf6883e5d8233fbeb7dc665b674a5d6f67a0d8dddc66a01a6"
+    },
+    {
+      "name": "layers",
+      "command": "./scripts/check-layer-boundaries.sh && ./scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "consumer",
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --all-features --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer.log.gz",
+      "raw_sha256": "1b5f0cf7266eed18deb606e05408557e8275fe678256cab887a6a8e224577946",
+      "gzip_sha256": "7e1f4859ac1f73d62d345fb9462abadb598b464f013a7edadd21b066ff485b4c"
+    },
+    {
+      "name": "compat",
+      "command": "cargo test --manifest-path ci/compat-0.4/Cargo.toml --locked",
+      "exit_code": 0,
+      "log": "compat.log.gz",
+      "raw_sha256": "ca62d0e1218644a89ff45fc69b0d829fcd5de0487252797750964c2596f782da",
+      "gzip_sha256": "9113209b993a3db1b18b47c6a1caa8c745681a8be632fdfddfbf17b8d13656dc"
+    },
+    {
+      "name": "conformance",
+      "command": "python3 scripts/run-statechronicle-conformance.py /home/ac/projects/statechronicle",
+      "exit_code": 0,
+      "log": "conformance.log.gz",
+      "raw_sha256": "f2f554adbfc9dbf6193c1c6fe296e55079baee1d40cce034a57436f75c18325a",
+      "gzip_sha256": "230c7afa7d70512a033b35514108420a32a1fd17f02e7f08caab993b3a78e805"
+    },
+    {
+      "name": "fuzz-qualified",
+      "command": "cargo +nightly fuzz run fuzz_sqlite_machine_outbox /tmp/penelope-outbox-qualified-corpus -- -runs=10000 -seed=512",
+      "exit_code": 0,
+      "log": "fuzz-qualified.log.gz",
+      "raw_sha256": "74496540f0e78ae57296870f19f674fad00c012f07c31a1532c81796d5c78927",
+      "gzip_sha256": "04999974529c8540b88cd857007cff3c1e5d7f5179ca95eb21b0b35b9a1950fa",
+      "completed_runs": 10000,
+      "seconds": 149
+    },
+    {
+      "name": "fuzz-newtypes",
+      "command": "cargo +nightly fuzz run fuzz_newtypes -- -runs=2000 -seed=512",
+      "exit_code": 0,
+      "log": "fuzz-newtypes.log.gz",
+      "raw_sha256": "f85d5b4fd71159bdd0149b9f753c921354462b440d6509d0c0d39a5eb62b322d",
+      "gzip_sha256": "25d2ccf98b085b4c5bb302333cd633c01d7516916259dcb7a3badc553eb5677d",
+      "completed_runs": 7581,
+      "seconds": 2
+    },
+    {
+      "name": "fuzz-process",
+      "command": "cargo +nightly fuzz run fuzz_sqlite_process -- -runs=1000 -seed=512",
+      "exit_code": 0,
+      "log": "fuzz-process.log.gz",
+      "raw_sha256": "6418573cecc57763fe67adafa75fc9b59b97972e769fdf23023f98f2153e85a5",
+      "gzip_sha256": "d46efbed7bf23d9ab7d9d6ff7e59014b6dab416baee04f6e74da0768c0070ab8",
+      "completed_runs": 2740,
+      "seconds": 77
+    },
+    {
+      "name": "fuzz-journal",
+      "command": "cargo +nightly fuzz run fuzz_sqlite_machine -- -runs=1000 -seed=512",
+      "exit_code": 0,
+      "log": "fuzz-journal.log.gz",
+      "raw_sha256": "69204a3b146e5497e86e10ab78222561a47490bf6bd1d7dccab5b7ca38b1796e",
+      "gzip_sha256": "d07d52f8559ae6f67645295759ef31a271f1880df3d10453b1768db760c49e7c",
+      "completed_runs": 1000,
+      "seconds": 16
+    },
+    {
+      "name": "fmt",
+      "command": "cargo fmt --all --check && git diff --check",
+      "exit_code": 0,
+      "log": "fmt.log.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    }
+  ],
+  "retained_corpus": {
+    "file": "outbox-final-corpus.json.gz",
+    "format": "gzip JSON object mapping corpus filename to hex-encoded input",
+    "entries": 420,
+    "gzip_sha256": "52ca74aae8bef5db186d4fa479e044b891bbe7c38c470f584b7d741481b545b9"
+  },
+  "notes": [
+    "Fuzz runs include initialization against inherited working corpora; requested runs can be below the completed initialization count. The complete final outbox corpus is retained for regression replay. This does not claim bit-identical random campaign reproduction.",
+    "Only seed 512 runs are qualification evidence for the final source. Earlier development campaigns ran against earlier API iterations and are excluded.",
+    "Source-bound handoff, typed verifier injection and receiver receipt checking are implemented. Production saga/task receiver bridges, receiver-specific external-effect reconciliation, final release coverage/performance/full campaigns remain pending.",
+    "No release version bump, tag or publication was performed."
+  ]
+}

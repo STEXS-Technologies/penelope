@@ -13,7 +13,9 @@ use penelope_core::{
 use penelope_ports::{PortError, machine::*};
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, sync::Arc};
+mod delivery;
 mod read;
+pub use delivery::SqliteMachineOutbox;
 use read::*;
 
 /// Machine state journal. Construction/migration is synchronous; all port calls
@@ -369,6 +371,12 @@ fn commit<const N: usize>(
         .and_then(|bytes| bytes.checked_add(u64::try_from(batch.state().len()).ok()?))
         .filter(|bytes| *bytes <= limits.max_scope_bytes)
         .ok_or(MachineStoreError::Capacity)?;
+    if next_used
+        .checked_add(delivery::usage(&transaction, expected.scope)?)
+        .is_none_or(|bytes| bytes > limits.max_scope_bytes)
+    {
+        return Err(MachineStoreError::Capacity);
+    }
     if count >= limits.max_history_records {
         return Err(MachineStoreError::Capacity);
     }

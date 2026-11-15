@@ -62,5 +62,7 @@ completed checks, approved MSRV change and remaining qualification work.
 The first [machine checkpoint](machine.md) provides the portable owner and
 hierarchy helper, with independent facade consumer examples. The implemented
 [public preparation API](public-api.md) now includes saga/task inspection, and
-[shared intent admission](staging-extraction.md) has differential evidence. The scoped machine journal and timeline composition are implemented; durable
-outbox delivery and effect bridges remain pending.
+[shared intent admission](staging-extraction.md) has differential evidence. The scoped machine journal and timeline composition are implemented. The
+[leased outbox](machine-storage.md#leased-receiver-handoff) now preserves
+source authority, attempt uncertainty and verified receiver acceptance; production
+machine-to-saga/task bridges and final release qualification remain pending.

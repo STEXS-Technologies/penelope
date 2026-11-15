@@ -26,7 +26,7 @@ pub(super) fn check_scope(
         }
     }
 }
-fn fixed<const N: usize>(bytes: &[u8]) -> Result<[u8; N], MachineStoreError> {
+pub(super) fn fixed<const N: usize>(bytes: &[u8]) -> Result<[u8; N], MachineStoreError> {
     bytes
         .try_into()
         .map_err(|_invalid| MachineStoreError::Corrupt)

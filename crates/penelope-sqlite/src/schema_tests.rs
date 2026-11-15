@@ -87,7 +87,7 @@ fn seed_v1(path: &Path) -> TaskProjection {
         .unwrap();
     drop(journal);
     let connection = Connection::open(path).unwrap();
-    connection.execute_batch("DROP TABLE task_retirements; DROP TABLE process_payloads; DROP TABLE process_usage; DROP TABLE process_heads; DROP TABLE process_outcomes; DROP TABLE process_inbox; DROP TABLE process_sources; DROP TABLE process_commits; DROP TABLE process_actions; DROP TABLE process_timers; DROP TABLE lease_counter; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=1;").unwrap();
+    connection.execute_batch("DROP TABLE task_retirements; DROP TABLE process_payloads; DROP TABLE process_usage; DROP TABLE process_heads; DROP TABLE process_outcomes; DROP TABLE process_inbox; DROP TABLE process_sources; DROP TABLE process_commits; DROP TABLE process_actions; DROP TABLE process_timers; DROP TABLE lease_counter; DROP TABLE machine_intent_delivery; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=1;").unwrap();
     projection
 }
 #[derive(Debug, PartialEq, Eq)]
@@ -147,6 +147,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
         "after-inbox-index",
         "after-v6",
         "after-v7",
+        "after-v8",
         "before-commit",
         "after-commit",
     ] {
@@ -183,7 +184,7 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 7 } else { 1 },
+            if phase == "after-commit" { 8 } else { 1 },
             "{phase}"
         );
         assert_eq!(snapshot(&connection), original, "{phase}");
@@ -191,6 +192,8 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             "machine_heads",
             "machine_events",
             "machine_intents",
+            "machine_intent_delivery",
+            "machine_delivery_pending",
             "task_retirements",
             "process_heads",
             "process_payloads",
@@ -251,9 +254,9 @@ fn sigkill_at_schema_migration_boundaries_preserves_records_blobs_and_fences() {
             checked_connection
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            7
+            8
         );
-        println!("v1 phase={phase} signal=9 rows_preserved=true reopen_version=7");
+        println!("v1 phase={phase} signal=9 rows_preserved=true reopen_version=8");
     }
 }
 

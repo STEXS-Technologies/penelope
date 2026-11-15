@@ -8,7 +8,8 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path('fuzz/corpus'))
-    directory = parser.parse_args().root / 'fuzz_sqlite_machine'
+    root = parser.parse_args().root
+    directory = root / 'fuzz_sqlite_machine'
     directory.mkdir(parents=True, exist_ok=True)
     for amount in (0, 255):
         for base in (0, 8):
@@ -26,6 +27,20 @@ def main() -> None:
                 if path.read_bytes() != data:
                     raise ValueError(f'conflicting deterministic seed: {path}') from None
     print('fuzz_sqlite_machine: 4 deterministic deep journal sequences')
+    directory = root / 'fuzz_sqlite_machine_outbox'
+    directory.mkdir(parents=True, exist_ok=True)
+    sequences = [
+        [(0, 0), (1, 10), (0, 2), (2, 0), (3, 0), (3, 2), (4, 0), (3, 2)],
+        [(0, 1), (0, 0), (1, 10), (0, 0), (1, 10), (0, 0), (1, 10), (0, 0)],
+        [(0, 0), (3, 0), (1, 15), (4, 0), (3, 0), (0, 0), (5, 0), (6, 0)],
+    ]
+    for operations in sequences:
+        data = bytes(value for operation in operations for value in operation)
+        path = directory / ('penelope-outbox-v1-' + hashlib.sha256(data).hexdigest())
+        if path.exists() and path.read_bytes() != data:
+            raise ValueError(f'conflicting deterministic seed: {path}')
+        path.write_bytes(data)
+    print('fuzz_sqlite_machine_outbox: 3 deterministic lease/expiry/acceptance sequences')
 
 
 if __name__ == '__main__':

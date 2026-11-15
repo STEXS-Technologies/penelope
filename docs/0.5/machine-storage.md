@@ -61,12 +61,12 @@ Blob bounds apply before copying SQL columns into owned memory. The checked
 `MachineSnapshot::restore` and stored-commit restoration share one native
 canonical snapshot restoration helper. Neither evaluates events nor dispatches
 intents. Local provenance/pending caches start empty; journal bytes retain the
-durable intent history. Pending-outbox recovery and external delivery state are
-not implemented by this snapshot helper.
+durable intent history. The optional leased outbox below recovers delivery state separately from
+this snapshot helper.
 
 Payload limits bound each record, state, event, intent and complete batch. Shared
 SQLite limits additionally cap machine scopes, events per machine, logical retained
-bytes and database pages. Logical scope charge is genesis plus current head-state
+bytes and database pages. Logical journal charge is genesis plus current head-state
 bytes plus all retained complete batches; replacing the head subtracts the previous
 head-state charge. It does not measure SQLite row/index overhead: the separate
 page limit bounds database storage. Scope count is for machine scopes; existing
@@ -117,3 +117,60 @@ populated task/process rows and fences. A dedicated real-SQLite fuzzer compares
 bounded operation sequences with an independent arithmetic/history oracle;
 deterministic deep seeds exercise quotas, duplicates, history and reopen early.
 See [raw logs and source hashes](evidence/machine-storage/manifest.json).
+
+## Leased receiver handoff
+
+`SqliteMachineOutbox` is an optional view of an `Arc<SqliteMachineStore>` and uses
+that journal's bounded worker and connection. Construction pins a trusted
+`MachineLeaseClock`, a `MachineIntentAcceptor` and its receiver namespace. The
+outbox's `Receipt` is the configured acceptor's native receipt type. Callers
+cannot replace the verifier on an acknowledgement. Host authorization covers
+claim, validation, status and acknowledgement before any scoped reads or native
+receipt lookup.
+
+A claim binds the full source scope/definition, committed revision, event, commit
+identity, ordered intent metadata and immutable payload. It adds a distinct owner,
+durable fencing token, expiry and attempt count. The trusted lease clock is separate
+from captured machine logical time. SQLite persists a monotonic floor per machine
+and rejects time regression and overflow. Claims use one immediate transaction,
+respect count/byte bounds and revision/ordinal order, and never skip an oversized
+first eligible intent. All leases are rechecked after writes and returned only
+after commit. A shared checked fencing-counter helper also serves the existing
+process outbox/timer protocol, while each protocol keeps its own typed token.
+
+A lease is coordination evidence for source-authorized receiver admission. It does
+not authorize arbitrary external execution. `requires_reconciliation()` is true
+on every reclaim; expiry, reopen or an attempt limit never turns an uncertain
+operation into an unattempted one. Receiver-specific idempotency, fencing,
+reconciliation and execution authority remain mandatory. The generic outbox does
+not execute or restart effects.
+
+Acknowledgement checks the exact live source/lease before asking the pinned
+acceptor to authenticate the native downstream receipt. The verifier must only
+read/verify authoritative receiver acceptance, and must not submit or execute.
+The worker then rechecks the source, payload, owner, token, attempt and expiry in
+an immediate transaction before persisting the verified receiver identity and
+receipt digest. A receipt verification delay cannot bypass lease expiry or a
+concurrent reclaim. Exact retries return the stored acceptance even after expiry;
+changed receipts/receivers conflict. `status` resolves lost acknowledgements
+without re-executing an effect. This acceptance proves receiver admission, not
+external completion. Structural DTO decoding and hashes do not authenticate
+leases or receiver receipts.
+
+Schema version 8 adds delivery rows and per-machine clock/usage columns without
+rewriting version-7 event/intent wire bytes. Delivery metadata is charged once at
+304 logical bytes per claimed intent, retained across reclaim/acknowledgement.
+Journal commits and claims enforce the combined journal/delivery scope budget;
+database pages bound physical row/index overhead separately. No history, dedupe
+identity, uncertain attempt or accepted receipt is automatically discarded.
+
+Focused tests include independent-worker claims, reopen/expiry/stale owners,
+source/lease substitution, policy denial, receipt substitution, expiry during
+verification, lost acknowledgements, attempt/token exhaustion, clock regression,
+ordered byte bounds, whole-prefix quota rollback, suppressed/substituted writes
+and deferred commit failure. Process-death tests cover eleven claim/ack boundaries
+and five populated version-7 migration boundaries. The dedicated real-SQLite
+outbox fuzzer compares bounded operation sequences to an independent lease,
+expiry and acceptance oracle. Tests use explicitly configured receiver fixtures;
+production machine-to-saga/task bridges and full release qualification remain
+separate work. See [checkpoint evidence](evidence/machine-outbox/manifest.json).

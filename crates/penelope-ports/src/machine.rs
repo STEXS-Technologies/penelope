@@ -3,6 +3,8 @@ use penelope_core::{machine::*, task::Digest};
 use std::sync::Arc;
 use thiserror::Error;
 
+mod delivery;
+pub use delivery::*;
 mod recovery;
 mod store;
 pub use recovery::*;

@@ -33,6 +33,24 @@ pub enum MachineOperation {
         identity: MachineCommitId,
     },
     ReadHead,
+    ClaimIntents {
+        owner: MachineLeaseOwner,
+    },
+    ReadIntent {
+        intent: MachineIntentId,
+    },
+    ValidateIntent {
+        intent: MachineIntentId,
+        owner: MachineLeaseOwner,
+        token: MachineLeaseToken,
+    },
+    AcknowledgeIntent {
+        intent: MachineIntentId,
+        commit: MachineCommitId,
+        owner: MachineLeaseOwner,
+        token: MachineLeaseToken,
+        consumer: MachineSourceId,
+    },
     Lookup {
         event: MachineEventId,
     },

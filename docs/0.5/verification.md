@@ -237,3 +237,41 @@ Results and source hashes are recorded in
 [`evidence/rust-toolchain/manifest.json`](evidence/rust-toolchain/manifest.json).
 These checks cover the toolchain update; remaining release qualification in
 the plan is still required.
+
+## Machine intent outbox checkpoint
+
+The [leased handoff contract](machine-storage.md#leased-receiver-handoff) adds
+an optional journal view with host-pinned receiver verification, a distinct trusted
+lease clock, persisted attempt uncertainty and exact source/lease fencing. Native
+receipt verification runs outside the database worker, with transactional checks
+before and after it; no generic external-effect executor or restart path was added.
+The configured native receipt type remains intact at the acknowledgement boundary.
+
+Version 8 preserves all machine event wire bytes and adds bounded delivery state
+plus clock/usage columns. Delivery metadata and journal bytes share the scope
+budget. Existing process/timer leasing and machine leasing now use one extracted
+checked durable counter, including post-write verification. No legacy token type
+or protocol encoding changed.
+
+Focused integration tests cover normal/uncertain/reopened delivery, independent
+workers, byte ordering, whole-prefix quota rollback, denied operations, malformed
+or substituted coordinates/receipts, delayed verification, lost ACKs, time
+regression, attempt/token exhaustion and ignored/substituted/deferred writes.
+Actual SIGKILL tests cover eleven claim/ack transaction boundaries and five
+populated version-7 migration boundaries. Existing schema migration, row/fence,
+page-limit, corruption and rollback assertions remain in place at version 8.
+
+[Checkpoint evidence](evidence/machine-outbox/manifest.json) records the exact
+source hashes and verification commands/results, including a real-SQLite fuzz
+oracle for lease/expiry/acceptance operation sequences and deterministic deep
+seeds. This checkpoint qualifies the generic source-bound handoff mechanism. It
+does not prove production machine-to-saga/task bridges, downstream effect
+reconciliation, final performance/coverage campaigns, or completion of F6/F8.
+
+For this checkpoint, workspace library/integration tests, strict Clippy, rustdoc
+and doctests, all 66 script tests, layer gates, frozen legacy consumer, durable
+consumer and all seven signed-source conformance cases passed. Rust 1.89 passed
+all 13 focused outbox integration tests. The final-source outbox campaign
+completed 10,000 cases with seed 512; existing newtype, process and journal fuzz
+checks also passed. The manifest records actual completed counts, including
+initial corpus processing. The final outbox corpus is retained alongside the logs.

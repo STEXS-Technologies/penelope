@@ -15,6 +15,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Add bounded source-bound machine intent leases, persisted uncertainty, and
+  typed receiver acknowledgement to the optional SQLite machine adapter.
+
 - Remove unused workspace metadata and unused internal dependencies;
   retain the existing fuzz lint profile explicitly for newer Cargo diagnostics.
 - Update the development toolchain and verification/measurement scripts to Rust

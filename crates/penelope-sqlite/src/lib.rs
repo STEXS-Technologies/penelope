@@ -6,10 +6,11 @@
 #![deny(unsafe_code)]
 mod authority;
 mod inbox;
+mod lease_counter;
 mod leases;
 mod lifecycle;
 mod machine;
-pub use machine::SqliteMachineStore;
+pub use machine::{SqliteMachineOutbox, SqliteMachineStore};
 mod payloads;
 mod process;
 mod schema;

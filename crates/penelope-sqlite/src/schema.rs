@@ -118,7 +118,7 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     let version: u32 = transaction
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
-    if version > 7 {
+    if version > 8 {
         return Err(TaskPortError::Corrupt);
     }
     if version == 0 {
@@ -263,6 +263,26 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     }
     #[cfg(all(test, unix))]
     tests::cut("after-v7");
+    if version < 8 {
+        transaction.execute_batch(
+            "ALTER TABLE machine_heads ADD COLUMN delivery_bytes INTEGER NOT NULL DEFAULT 0 CHECK(delivery_bytes>=0);
+             ALTER TABLE machine_heads ADD COLUMN lease_tick BLOB NOT NULL DEFAULT x'0000000000000000' CHECK(length(lease_tick)=8);
+             CREATE TABLE machine_intent_delivery (
+                machine_key BLOB NOT NULL, intent BLOB NOT NULL CHECK(length(intent)=32),
+                owner BLOB NOT NULL CHECK(length(owner)=32), token INTEGER NOT NULL CHECK(token>0),
+                expires BLOB NOT NULL CHECK(length(expires)=8),
+                attempt INTEGER NOT NULL CHECK(attempt BETWEEN 1 AND 65535),
+                consumer BLOB CHECK(consumer IS NULL OR length(consumer)=32),
+                receipt BLOB CHECK(receipt IS NULL OR length(receipt)=32),
+                CHECK((consumer IS NULL)=(receipt IS NULL)),
+                PRIMARY KEY(machine_key,intent),
+                FOREIGN KEY(machine_key,intent) REFERENCES machine_intents(machine_key,intent));
+             CREATE INDEX machine_delivery_pending ON machine_intent_delivery(machine_key,expires,intent) WHERE receipt IS NULL;
+             PRAGMA user_version=8;"
+        ).map_err(|error| sql_error(&error))?;
+    }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v8");
     #[cfg(all(test, unix))]
     tests::cut("before-commit");
     transaction.commit().map_err(|error| sql_error(&error))?;

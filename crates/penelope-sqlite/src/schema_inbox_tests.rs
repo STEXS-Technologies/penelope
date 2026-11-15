@@ -87,7 +87,7 @@ fn seed_v5(path: &Path) {
             .unwrap();
     }
     transaction
-        .execute_batch("DROP INDEX process_inbox_pending; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=5;")
+        .execute_batch("DROP INDEX process_inbox_pending; DROP TABLE machine_intent_delivery; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=5;")
         .unwrap();
     transaction.commit().unwrap();
 }
@@ -100,6 +100,7 @@ fn sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows() {
         "after-inbox-index",
         "after-v6",
         "after-v7",
+        "after-v8",
         "before-commit",
         "after-commit",
     ] {
@@ -136,7 +137,7 @@ fn sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows() {
             .unwrap();
         assert_eq!(
             version,
-            if phase == "after-commit" { 7 } else { 5 },
+            if phase == "after-commit" { 8 } else { 5 },
             "{phase}"
         );
         let indexed: bool = connection
@@ -155,8 +156,8 @@ fn sigkill_during_populated_v5_inbox_upgrade_preserves_all_process_rows() {
             reopened
                 .query_row("PRAGMA user_version", [], |row| row.get::<_, u32>(0))
                 .unwrap(),
-            7
+            8
         );
-        println!("populated-v5 phase={phase} signal=9 rows_preserved=true reopen_version=7");
+        println!("populated-v5 phase={phase} signal=9 rows_preserved=true reopen_version=8");
     }
 }

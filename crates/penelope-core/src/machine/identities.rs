@@ -92,3 +92,20 @@ counter!(
     MachineEventType,
     "Stable application-defined event kind within the pinned event schema."
 );
+
+identifier!(
+    MachineLeaseOwner,
+    "Host-authenticated machine delivery worker identity."
+);
+counter!(
+    MachineLeaseToken,
+    "Opaque machine delivery fencing token; zero is not a live lease."
+);
+counter!(
+    MachineLeaseTick,
+    "Trusted hosted lease time, independent of captured event logical time."
+);
+counter!(
+    MachineDeliveryAttempt,
+    "Durable handoff attempt count; reclaim never resets uncertainty."
+);

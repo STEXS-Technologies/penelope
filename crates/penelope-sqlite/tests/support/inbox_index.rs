@@ -23,7 +23,7 @@ fn index_exists(connection: &Connection) -> bool {
 }
 fn downgrade(connection: &Connection) {
     connection
-        .execute_batch("DROP INDEX process_inbox_pending; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=5;")
+        .execute_batch("DROP INDEX process_inbox_pending; DROP TABLE machine_intent_delivery; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=5;")
         .unwrap();
 }
 #[test]
@@ -54,7 +54,7 @@ fn version_five_upgrade_preserves_pending_inputs_receipts_and_live_leases() {
     downgrade(&connection);
     let before = write_snapshot::snapshot(&connection, TABLES);
     let upgraded = store(&path, time.clone());
-    assert_eq!(version(&connection), 7);
+    assert_eq!(version(&connection), 8);
     assert!(index_exists(&connection));
     assert_eq!(write_snapshot::snapshot(&connection, TABLES), before);
     let scope = scope();
@@ -136,7 +136,7 @@ fn inbox_index_collision_rolls_back_version_and_rows_until_repaired() {
         .execute_batch("DROP INDEX process_inbox_pending")
         .unwrap();
     let repaired = store(&path, clock());
-    assert_eq!(version(&connection), 7);
+    assert_eq!(version(&connection), 8);
     assert!(index_exists(&connection));
     assert_eq!(write_snapshot::snapshot(&connection, TABLES), before);
     let scope = scope();
@@ -184,7 +184,7 @@ fn inbox_index_page_limit_failure_preserves_version_and_pending_rows() {
     assert!(!index_exists(&connection));
     assert_eq!(write_snapshot::snapshot(&connection, TABLES), before);
     let repaired = store(&path, clock());
-    assert_eq!(version(&connection), 7);
+    assert_eq!(version(&connection), 8);
     assert!(index_exists(&connection));
     assert_eq!(write_snapshot::snapshot(&connection, TABLES), before);
     let scope = scope();
@@ -207,12 +207,12 @@ fn next_unsupported_schema_rejects_healthy_database_without_row_changes() {
     block_on(ProcessStore::commit(&original, &commit(false))).unwrap();
     drop(original);
     let connection = Connection::open(&path).unwrap();
-    connection.pragma_update(None, "user_version", 8).unwrap();
+    connection.pragma_update(None, "user_version", 9).unwrap();
     let before = write_snapshot::snapshot(&connection, TABLES);
     assert!(matches!(
         SqliteProcessStore::open(&path, SqliteLimits::default(), clock(), 10, 16),
         Err(PortError::Invariant)
     ));
-    assert_eq!(version(&connection), 8);
+    assert_eq!(version(&connection), 9);
     assert_eq!(write_snapshot::snapshot(&connection, TABLES), before);
 }

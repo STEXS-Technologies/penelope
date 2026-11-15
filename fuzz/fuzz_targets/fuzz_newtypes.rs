@@ -119,6 +119,29 @@ fuzz_target!(|data: &[u8]| {
         MachineEventType::get,
         MachineEventType::checked_next,
     );
+    byte_identity::<MachineLeaseOwner>(
+        digest.0,
+        MachineLeaseOwner::from_bytes,
+        MachineLeaseOwner::bytes,
+    );
+    fixed_counter::<MachineLeaseToken>(
+        value,
+        MachineLeaseToken::new,
+        MachineLeaseToken::get,
+        MachineLeaseToken::checked_next,
+    );
+    fixed_counter::<MachineLeaseTick>(
+        value,
+        MachineLeaseTick::new,
+        MachineLeaseTick::get,
+        MachineLeaseTick::checked_next,
+    );
+    fixed_counter::<MachineDeliveryAttempt>(
+        value,
+        MachineDeliveryAttempt::new,
+        MachineDeliveryAttempt::get,
+        MachineDeliveryAttempt::checked_next,
+    );
     byte_identity::<MachineIntentId>(
         digest.0,
         MachineIntentId::from_bytes,
