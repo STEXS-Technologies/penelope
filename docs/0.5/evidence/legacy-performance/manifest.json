@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "scope": "Identical original benchmark sources at baseline 42ec187 and candidate 18f99c0, both Rust 1.100.0, pinned serial CPU 4 / parallel CPUs 4,5,6,7; isolated locked builds. Source, binary, dependency lock and runner hashes retained in each raw archive metadata.",
+  "command": "python3 scripts/benchmark-decision-comparison.py OUTPUT --before 42ec187 --after 18f99c0 --cpu 4 --parallel-cpus 4,5,6,7 --runs 5 --toolchain 1.100.0",
+  "repeat_command": "Same command with --runs 9 --benchmark parallel_linear_saga and a new OUTPUT directory.",
+  "runs": [
+    {
+      "archive": "six-workloads.json.gz",
+      "raw_sha256": "58ded72dd9d423706f70f730185242e0af5895d88c995633245ff57eb074ddc3",
+      "gzip_sha256": "05aa654898c4017b31fc85447afc9588295454034b637f31f5d7f25a2fc8a4fe",
+      "log": "six-workloads.log.gz",
+      "log_raw_sha256": "afad89f916a111262b6b431cb3821b44d12832dca4601162653082ab926bafa4",
+      "log_gzip_sha256": "99372d914347a2a9c60c4b5e3c5f7e2f63aeff51f3860ff48bc23323503f368d",
+      "summary": [
+        {
+          "benchmark": "contract_throughput",
+          "operation": "bounded outcome-log append",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 318.917236328125,
+            "before": 321.683837890625
+          },
+          "median_change_percent": -0.8600374767477992,
+          "range_ns_per_operation": {
+            "after": [
+              317.78466796875,
+              323.359375
+            ],
+            "before": [
+              318.58447265625,
+              357.3486328125
+            ]
+          }
+        },
+        {
+          "benchmark": "contract_throughput",
+          "operation": "canonical DTO encoding",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 341.72488,
+            "before": 342.79835
+          },
+          "median_change_percent": -0.31314911521599376,
+          "range_ns_per_operation": {
+            "after": [
+              333.15410999999995,
+              345.33476
+            ],
+            "before": [
+              339.77662,
+              367.25754
+            ]
+          }
+        },
+        {
+          "benchmark": "graph_saga",
+          "operation": "graph-saga start/result/result",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 440.08692,
+            "before": 437.90129
+          },
+          "median_change_percent": 0.499114766252462,
+          "range_ns_per_operation": {
+            "after": [
+              434.87584,
+              470.81993
+            ],
+            "before": [
+              418.1421,
+              443.10565
+            ]
+          }
+        },
+        {
+          "benchmark": "linear_saga",
+          "operation": "linear-saga start/result/complete",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 112.87981,
+            "before": 120.82136
+          },
+          "median_change_percent": -6.572968554566838,
+          "range_ns_per_operation": {
+            "after": [
+              110.77905,
+              118.96617
+            ],
+            "before": [
+              109.49526,
+              158.15101
+            ]
+          }
+        },
+        {
+          "benchmark": "parallel_graph_saga",
+          "operation": "parallel graph-saga",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 143.5582075,
+            "before": 150.706725
+          },
+          "median_change_percent": -4.743330133409773,
+          "range_ns_per_operation": {
+            "after": [
+              110.391345,
+              162.017965
+            ],
+            "before": [
+              139.025295,
+              152.824595
+            ]
+          }
+        },
+        {
+          "benchmark": "parallel_linear_saga",
+          "operation": "parallel linear-saga start/result/complete",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 42.57202,
+            "before": 35.694225
+          },
+          "median_change_percent": 19.268649200255773,
+          "range_ns_per_operation": {
+            "after": [
+              26.243605,
+              48.0911375
+            ],
+            "before": [
+              34.331215,
+              40.4753425
+            ]
+          }
+        },
+        {
+          "benchmark": "replay_saga",
+          "operation": "linear-saga replay",
+          "samples_per_revision": {
+            "after": 5,
+            "before": 5
+          },
+          "median_ns_per_operation": {
+            "after": 233.392723,
+            "before": 229.136065
+          },
+          "median_change_percent": 1.8576988306052922,
+          "range_ns_per_operation": {
+            "after": [
+              226.573312,
+              246.022759
+            ],
+            "before": [
+              224.985743,
+              232.21121
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "archive": "parallel-linear-repeat.json.gz",
+      "raw_sha256": "897755e085b5e90bc20f913ae5ed2bfcea0ad98929ef4cb0e05cafb9a85a8084",
+      "gzip_sha256": "2a4399b098847aec0557f67be923913f92e148a9932551a7ba1eb196685774d1",
+      "log": "parallel-linear-repeat.log.gz",
+      "log_raw_sha256": "5864b05a9c66d563e4e9e13c95136c34a079355488f832c43c3284883a512c0d",
+      "log_gzip_sha256": "91d49471ca73c9d385b7c19b9fafdb2c1dc985fa9dea405ec8c66e766c8d85d2",
+      "summary": [
+        {
+          "benchmark": "parallel_linear_saga",
+          "operation": "parallel linear-saga start/result/complete",
+          "samples_per_revision": {
+            "after": 9,
+            "before": 9
+          },
+          "median_ns_per_operation": {
+            "after": 32.7333525,
+            "before": 33.167765
+          },
+          "median_change_percent": -1.3097430592625137,
+          "range_ns_per_operation": {
+            "after": [
+              27.1427175,
+              42.8276625
+            ],
+            "before": [
+              26.9128475,
+              48.3732075
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "assessment": "Initial five-run parallel-linear median degradation of 19.27% was not sustained in a nine-run follow-up (-1.31%). Preserve both runs. Very short parallel process durations and wide sample ranges prevent a strong equivalence claim. Other first-run medians were within +2% or faster. Full release performance gate remains open.",
+  "limitations": [
+    "Shared interactive host; affinity pins execution but does not isolate CPUs or control scheduler, frequency, thermal state or other applications.",
+    "Measured observations are total fixture elapsed time divided by operation count, not individual-operation latency distributions; no operation p95/p99 claim.",
+    "No storage, task supervision, machine timeline, end-to-end result progression, allocation or stack qualification in these six legacy workloads.",
+    "Different locked dependency versions between revisions are disclosed, not normalized.",
+    "Process RSS is not library incremental memory; short timings magnify launch and scheduling noise."
+  ]
+}

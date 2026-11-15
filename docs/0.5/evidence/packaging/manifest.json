@@ -1,0 +1,197 @@
+{
+  "source_commit": "18f99c0577344bd1f207271a56f933bf6e5f9bfc",
+  "command": "./scripts/publish-crates.sh",
+  "exit_code": 0,
+  "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n",
+  "scope": "Cargo packaging and library verification of all ten archives through a unique temporary registry. Working versions remain 0.4.0; this is not final 0.5.0 candidate qualification. No publication attempted.",
+  "log": {
+    "file": "package.log.gz",
+    "raw_sha256": "7a0ce5bc5f745e9f85f49be9207983e0a168a196af34c599415fac42f0a49027",
+    "gzip_sha256": "bda2bf0524ac4bf47d5550376415b4984fb56ad4561c64506456937d9ddf34e5"
+  },
+  "archives": [
+    {
+      "file": "penelope-0.4.0.crate",
+      "sha256": "d716a4984bdaa951da8149e35cee3945c906a5213a5e9de3787c9c2c3f9d05f8",
+      "bytes": 18496,
+      "files": 24,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope"
+      }
+    },
+    {
+      "file": "penelope-core-0.4.0.crate",
+      "sha256": "e7e2f7b4f7e8ec580f59ce516fa46a901f8fffca741a825326c81afae040945c",
+      "bytes": 63852,
+      "files": 49,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-core"
+      }
+    },
+    {
+      "file": "penelope-domain-0.4.0.crate",
+      "sha256": "718bff01c169d20c706d53b94218779d21ba7edd5d1014e2699940148edb3b89",
+      "bytes": 27032,
+      "files": 32,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-domain"
+      }
+    },
+    {
+      "file": "penelope-executor-0.4.0.crate",
+      "sha256": "21919c8afe54682dcef0dabb32b8974c287bbdc18caa18a7ecaf53bc2563dfe9",
+      "bytes": 128145,
+      "files": 75,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-executor"
+      }
+    },
+    {
+      "file": "penelope-intent-0.4.0.crate",
+      "sha256": "4b0718275dbf0246e27a0b25772ae0276d23805aa1e2f83ad4a08219a5ffed32",
+      "bytes": 4484,
+      "files": 7,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-intent"
+      }
+    },
+    {
+      "file": "penelope-ports-0.4.0.crate",
+      "sha256": "d2c96fa5d65fb217a5d52098b508c3c586e6e96408421a3b677152dc01f50705",
+      "bytes": 67103,
+      "files": 39,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-ports"
+      }
+    },
+    {
+      "file": "penelope-process-runtime-0.4.0.crate",
+      "sha256": "09fd7e97ac445e05bc2c565a0f4e2e140427514c35a6f234a095ccbfd4173179",
+      "bytes": 75336,
+      "files": 41,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-process-runtime"
+      }
+    },
+    {
+      "file": "penelope-sqlite-0.4.0.crate",
+      "sha256": "1767919611c6f9b76ff7215e474dc5b2f7a9f8a8e0921e3e55c2de12cd9dd908",
+      "bytes": 186992,
+      "files": 136,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-sqlite"
+      }
+    },
+    {
+      "file": "penelope-statechronicle-0.4.0.crate",
+      "sha256": "7e0769f809377a401d8896fb83faf71c4a372bbcc6ed98530ad1f7a6670d5654",
+      "bytes": 9621,
+      "files": 9,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-statechronicle"
+      }
+    },
+    {
+      "file": "penelope-timeline-0.4.0.crate",
+      "sha256": "fcc03ec9422030b347725afaff97d92807a44e44ed5c9734e734798d108068af",
+      "bytes": 84791,
+      "files": 47,
+      "vcs": {
+        "git": {
+          "sha1": "18f99c0577344bd1f207271a56f933bf6e5f9bfc"
+        },
+        "path_in_vcs": "crates/penelope-timeline"
+      }
+    }
+  ],
+  "static_missing_test_bench_includes": [
+    {
+      "source": "penelope-domain-0.4.0/benches/action_effect_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-domain-0.4.0/benches/effect_key_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-domain-0.4.0/tests/action_effect_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/benches/lease_batch_service_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/benches/timer_input_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/tests/lease_batch_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/tests/machine_saga.rs",
+      "include": "../../penelope-sqlite/tests/support/machines.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/tests/machine_saga.rs",
+      "include": "../../penelope-sqlite/tests/support/write_snapshot.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/tests/machine_task.rs",
+      "include": "../../penelope-sqlite/tests/support/machines.rs"
+    },
+    {
+      "source": "penelope-executor-0.4.0/tests/timer_input_allocations.rs",
+      "include": "../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    {
+      "source": "penelope-ports-0.4.0/tests/machine_task.rs",
+      "include": "../../penelope-executor/tests/support/tasks.rs"
+    },
+    {
+      "source": "penelope-sqlite-0.4.0/benches/support/process_encoding_fixture.rs",
+      "include": "../../../penelope-ports/tests/support/atomic_validation_fixture.rs"
+    },
+    {
+      "source": "penelope-sqlite-0.4.0/src/async_task_tests.rs",
+      "include": "../../penelope-executor/tests/support/tasks.rs"
+    },
+    {
+      "source": "penelope-sqlite-0.4.0/src/lease_scope_tests.rs",
+      "include": "../../penelope-ports/tests/support/timer_claim_fixture.rs"
+    }
+  ],
+  "limitations": [
+    "Cargo package verifies library compilation, not packaged tests, benches, all features or the MSRV.",
+    "Workspace-relative shared test and bench fixtures are absent from individual archives; library verification does not qualify standalone archive testing.",
+    "Verified archives remain under target/package and are hashed here rather than committed."
+  ]
+}

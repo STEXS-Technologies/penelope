@@ -421,3 +421,30 @@ retain the measurement scope. Strict workspace/fixture Clippy, focused Rust 1.89
 tests, both parity consumers, layer gates and 66 script tests also pass. This
 closes these selected compatibility/coverage gaps; full performance, packaging
 and final release qualification remain open.
+
+## Archive verification and legacy performance checkpoint
+
+All ten library archives pass the existing packaging script, which verifies
+unpacked libraries against a fresh temporary registry. The
+[archive manifest](evidence/packaging/manifest.json) binds each archive to
+`18f99c0`, records its digest and preserves the complete log. Versions remain
+0.4.0 during development. This does not qualify the final 0.5.0 candidate or
+authorize publication. Static inspection also found 14 workspace-relative
+test/bench includes absent from individual archives; library compilation does
+not prove standalone archive testing, all-feature or MSRV behavior.
+
+The six unchanged original saga/contract benchmarks were built from the pinned
+0.4 baseline and `18f99c0` using Rust 1.100, separate locked build directories
+and pinned CPUs. Five alternating measurements put serial linear saga at
+-6.57%, graph at +0.50%, replay at +1.86%, parallel graph at -4.74%, DTO encoding
+at -0.31% and bounded outcome append at -0.86% median time per operation.
+Parallel linear initially regressed +19.27%; a separate nine-run comparison
+measured -1.31%. Both results and their wide ranges remain in the
+[raw performance evidence](evidence/legacy-performance/manifest.json).
+
+The parallel fixtures run for only tens of milliseconds on this shared host.
+The initial slowdown was not sustained, but these samples cannot establish
+statistical equivalence or operation latency percentiles. No benchmark sources
+or operation counts were changed. Task, timeline, SQLite, machine and complete
+workflow measurements, maintenance accounting and exact-candidate qualification
+remain open.
