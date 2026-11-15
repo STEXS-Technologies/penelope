@@ -44,7 +44,7 @@ The machine tutorial uses the unreleased branch.
 | Correct and replay earlier inputs | [Timeline quickstart](docs/timeline-examples.md#quickstart) · optional `timeline` feature |
 
 Applications supply workers and choose their storage and runtime adapters.
-The portable task core and timeline crate support `no_std`; the facade is hosted.
+The machine/task core and timeline crate support `no_std`; the facade is hosted.
 
 [Documentation](docs/README.md) · [0.5 progress](docs/0.5/README.md) ·
 [Changelog](CHANGELOG.md) · [Security](SECURITY.md)

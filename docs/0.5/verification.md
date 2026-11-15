@@ -649,6 +649,13 @@ passing campaign is inferred from those failures. All handles were confirmed
 terminal before removing their new temporary build directories; sequential
 coverage then passed. The stable all-target/all-feature workspace retry also
 passes, including the previously failing application workload and all 67 protected
-runtime tests. Debug benchmark execution is not performance acceptance. MSRV and
-documentation/lint retries, the full documented chaos workload, remaining
-performance findings and exact 0.5 candidate qualification remain open.
+runtime tests. The full MSRV 1.89 all-target/all-feature workspace retry also passes,
+as do workspace doctests, strict Clippy, warning-free API docs, dependency audit
+and advisory/license/source policy checks. The existing `hashbrown` duplication
+warning is retained. The secret scanner reports no findings across 888 inspected
+commits, and all 216 local Markdown file references resolve. Debug benchmark
+execution is not performance acceptance. All four core/timeline bare-metal
+profiles also pass on Rust 1.89. The full documented chaos campaign has restarted
+with three rounds, 10,000 property cases and 100,000 fuzz executions per target;
+completion is not claimed. Remaining performance findings and exact 0.5 candidate
+qualification remain open.

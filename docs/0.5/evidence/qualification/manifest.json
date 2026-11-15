@@ -32,6 +32,33 @@
       "command": "cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
       "exit_code": 0,
       "scope": "All workspace library/integration/example/benchmark targets and features. Debug benchmark measurements are execution checks, not performance acceptance."
+    },
+    "workspace_doctests": true,
+    "strict_workspace_clippy": true,
+    "rustdoc_warnings_denied": true,
+    "cargo_audit": "96 dependencies; no vulnerability reported",
+    "cargo_deny": "advisories/bans/licenses/sources pass; existing duplicate hashbrown warning retained",
+    "all_tracked_markdown_file_references": 216,
+    "msrv_workspace_all_targets": {
+      "command": "cargo +1.89.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+      "exit_code": 0,
+      "scope": "Full workspace, not just portable core or selected adapters."
+    },
+    "secret_scan": {
+      "command": "./scripts/check-no-secrets.sh",
+      "commits_inspected": 888,
+      "reported_findings": 0
+    },
+    "portable_msrv": {
+      "toolchain": "1.89.0",
+      "target": "riscv32imafc-unknown-none-elf",
+      "profiles": [
+        "core no-default-features",
+        "core serde",
+        "timeline no-default-features",
+        "timeline alloc"
+      ],
+      "exit_code": 0
     }
   },
   "inconclusive_attempts": {
@@ -42,8 +69,8 @@
   },
   "resource_response": "All four handles confirmed terminal before deleting only their three newly created failed build directories. Coverage rerun alone. Coverage build artifacts deleted only after passing report and logs retained.",
   "open": [
-    "Doctests, strict workspace Clippy, warning-free rustdoc and MSRV all-target checks are running in a sequential pipeline; not yet included here.",
-    "Full documented chaos campaign, remaining performance review and final candidate version/package qualification."
+    "Full documented chaos campaign is next; no completed campaign result included here.",
+    "Remaining performance review and final candidate version/package qualification."
   ],
   "artifacts_sha256": {
     "coverage.json.gz": "ae979eadd228507a767d3e277451505b841dd04fe21de34fa6fef0ca20d08c49",
@@ -56,6 +83,28 @@
     "quota-attempt-stable.log.gz": "60322d6803d8314a7ec471130c4fcba0d232583e31c31c74b1b98f2c0ad99530",
     "quota-attempt-msrv.log.gz": "a550740ec4e933df9fbfdfb251999f8dd0bfb8624d8d1dedc2b677a1e71caa3b",
     "source-sha256.json.gz": "751f25613560c9f8f51926d76ff432b90e448d4a1b2a04a0612b41863d3dfe61",
-    "stable-workspace.log.gz": "b990fc3e44ac25e938a2c44f33dd8841db3b1e92020779a029117a9d8e400366"
+    "stable-workspace.log.gz": "b990fc3e44ac25e938a2c44f33dd8841db3b1e92020779a029117a9d8e400366",
+    "doctests.log.gz": "50e89938576f87a535e7adc9aaa3a02169ecf0324325f1e5bb0ab0f8fc437bca",
+    "clippy.log.gz": "b8ef15b7803b40363021817daff9833df42f3a4259721626b1928ffb85031a08",
+    "rustdoc.log.gz": "c8e9d4a4a3824245a85e11ead42229b5e268dedcb0f73227204f685a787f5c2a",
+    "audit.log.gz": "82488f260af6314055e17894b73868171bd309092ba6ff393002388615ba6724",
+    "deny.log.gz": "aaadb180c8ebf13988b4f45e5502707825e78a1794da76f5ee901640d50de491",
+    "msrv-workspace.log.gz": "66da33a7f016577d985c6b8f3955dbccd1499df1d4302e8cd00f52dfaf092bd5",
+    "tools.log.gz": "923bb711afdc57bfe36aa140c3bbc61313d7877ef8ee84565b176871f1150503",
+    "secrets.log.gz": "51655dbc34680ecbaf32f39902f27021fe8a3871b57ee81d4709b9a5f0169ac4",
+    "portable-msrv.log.gz": "bac91f38c00549fbfa9dea46d858b9dc44f4b9b2f9ebd42f018366c401ea90eb"
+  },
+  "build_input_hashes_reverified_at": "77e2822 (only documentation/evidence changed since tested source)",
+  "active_campaign": {
+    "source_commit": "77e2822",
+    "started_at_utc": "2026-11-15T22:01:28.682516+00:00",
+    "command": "PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=10000 PENELOPE_CHAOS_FUZZ_RUNS=100000 ./scripts/run_pure_chaos_drill.sh",
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "fuzz_targets_per_round": 28,
+    "status": "Started; no completion claimed. Logs and results must be collected separately."
   }
 }

@@ -7,64 +7,46 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+The 0.5 API is implemented on the development branch; final
+[release qualification](docs/0.5/README.md) remains open.
+
+### Added
+
+- Portable typed application machines with guarded transitions, explicit
+  rejection, bounded staged intents and consuming prepared publication. Optional
+  single-path hierarchy adds parent fallback and ordered exit/action/entry hooks.
+- Independent `penelope.machine.v1` metadata and canonical payload preparation,
+  plus authorized SQLite admission, atomic CAS, duplicate/conflict checks,
+  snapshots, recovery and leased outbox delivery with persisted uncertainty.
+- Source-bound native task and linear/graph saga admission. Read-only receipt
+  verification preserves original execution authority; uncertain delivery never
+  implies permission to restart work. The canonical tutorial covers recovery,
+  verified real-worker results and progression back into a machine and saga.
+- Shared prepared-decision inspection for machine, saga and task lifecycles,
+  canonical facade namespaces, and a machine adapter over the existing timeline
+  replay, correction and effect-finality engine. Existing imports and saga/task/
+  timeline wire formats remain supported.
+
+### Changed
+
+- Raise the workspace minimum Rust version to 1.89 for patched SQLite; pin the
+  development toolchain and verification scripts to Rust 1.100.0.
+- Advance SQLite to schema 9, retaining legacy task/process data and machine
+  acceptance evidence. Unknown original receivers fail closed. Older adapters
+  refuse the upgraded schema; rollback requires a separate consistent backup.
+- Share bounded intent admission, wire cursors, SQLite worker delivery and native
+  receipt verification while retaining each engine's authority and error rules.
+  Remove unused internal dependencies and workspace metadata.
+- Add a lazy validated timeline input-position hint after eviction, preserving
+  integrity checks, ancestry/override precedence and the original scan fallback.
+- Shorten setup documentation and provide one canonical machine/task/saga tutorial.
+  Make packaged test and benchmark includes self-contained without fixture copies.
+
 ### Security
 
 - Upgrade bundled SQLite through `rusqlite` 0.41.1 / `libsqlite3-sys` 0.39.1
   to address RUSTSEC-2026-0459; upgrade `rustix` to 1.1.6 for
   RUSTSEC-2026-0486. Conformance uses the same patched dependencies.
-
-### Changed
-
-- Add verified machine-to-linear/graph saga bootstrap through native process
-  commits. Pin the receiver durably on first machine intent claim, preventing
-  retargeting after uncertain delivery. SQLite schema 9 preserves version-8
-  acceptance and refuses pending deliveries whose original receiver is unknown.
-
-- Add source-bound machine-to-task admission through the native task journal,
-  with read-only receipt verification and no implicit worker restart. Add a
-  bounded asynchronous view of the existing SQLite task journal.
-
-- Add bounded source-bound machine intent leases, persisted uncertainty, and
-  typed receiver acknowledgement to the optional SQLite machine adapter.
-
-- Remove unused workspace metadata and unused internal dependencies;
-  retain the existing fuzz lint profile explicitly for newer Cargo diagnostics.
-- Update the development toolchain and verification/measurement scripts to Rust
-  1.100.0. The supported library minimum remains Rust 1.89.
-- Raise the workspace minimum Rust version to 1.89 to support patched SQLite;
-  all library manifests now inherit that minimum explicitly.
-- Centralize the SQLite dependency version in the workspace.
-- Share bounded intent admission between machine and timeline, preserving their
-  distinct error, poisoning and provenance rules.
-
-### Added
-
-- Authorized machine journal contracts and optional SQLite snapshot adapter with
-  atomic CAS, exact duplicate lookup, bounded history and schema migration 7.
-  Crash/reopen tests and a shared-model application exercise receipt publication.
-  Intent delivery/reconciliation and durable bridges remain under development.
-- Bounded machine recovery payload verification and canonical snapshot restoration,
-  keeping recovered bytes distinct from new transition admission and dispatch.
-- Hosted machine payload preparation with bounded canonical encoding, immutable
-  accepted batches and consuming receipt matching. The facade example shares
-  its model with flat and timeline examples; durable storage remains pending.
-- Independent bounded machine commit metadata codec with canonical content
-  identities, frozen Python-encoded fixtures and allocation/fuzz checks. Durable
-  machine admission and recovery remain under development.
-- Optional captured machine adapter over existing timeline replay, history,
-  correction and effect finality, with a facade-only prediction example sharing
-  the flat machine's model.
-- Common prepared-decision inspection across local machines, linear/graph sagas
-  and task projections. Saga adapters retain their existing decisions and commit
-  paths; task proposal/application share one isolated evaluator.
-- Portable `machine` API with typed context, bounded staged intents, consuming
-  prepared publication and an optional single-path hierarchy helper. Flat and
-  nested examples compile through the facade alone. Durable machine admission
-  and specialized engine adapters remain under development.
-- Canonical `saga`, `storage`, `runtime` and `integration::statechronicle`
-  facade paths, and hosted supervision under `task::TaskSupervisor`.
-  Existing imports and protocol behavior remain available.
-
 
 ## [0.4.0] - 2026-11-02
 
