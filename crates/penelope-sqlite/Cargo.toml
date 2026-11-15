@@ -156,3 +156,7 @@ harness = false
 [[test]]
 name = "lease_claim_profile_allocations"
 harness = false
+
+[[bench]]
+name = "machine_backpressure"
+harness = false
