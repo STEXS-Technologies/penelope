@@ -1,0 +1,1 @@
+../../../../penelope-sqlite/tests/support/write_snapshot.rs

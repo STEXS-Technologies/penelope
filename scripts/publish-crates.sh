@@ -26,6 +26,7 @@ if [[ "$mode" == "dry-run" ]]; then
   trap 'rm -rf "$package_verify_dir"' EXIT
   cargo package --workspace --locked --allow-dirty --exclude penelope-fuzz \
     --target-dir "$package_verify_dir"
+  python3 scripts/check-package-includes.py "$package_verify_dir/package/"*.crate
   cp "$package_verify_dir/package/"*.crate "$package_output_dir/"
   printf 'Verified library archives retained in %s\n' "$package_output_dir"
 else

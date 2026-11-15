@@ -1,5 +1,5 @@
 //! Bounded duplicate indexing must not allocate.
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "../src/lease_batch_index.rs"]
 mod implementation;

@@ -1,5 +1,5 @@
 //! Reserve timer identity buffers without recurring allocation growth.
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "support/timer_input_fixture.rs"]
 mod fixture;

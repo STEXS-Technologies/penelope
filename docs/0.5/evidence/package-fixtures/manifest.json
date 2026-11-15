@@ -1,0 +1,258 @@
+{
+  "parent_commit": "9efb6efefda7ff437e7c5a152ec92d54fb540a2a",
+  "scope": "Package-local shared test fixtures and an archive literal-include gate; no production behavior or evaluator changes. Archives built from the dirty working tree represented by source_sha256.",
+  "source_sha256": {
+    "crates/penelope-domain/benches/action_effect_allocations.rs": {
+      "sha256": "decd28c3f45be5032e8f826aec65817adeb77410494c3c6ad0cf37a831074bb3"
+    },
+    "crates/penelope-domain/benches/effect_key_allocations.rs": {
+      "sha256": "635541710f72e1331acdba70759d97aa4c40fa50408faadaf4d15809353b0bdd"
+    },
+    "crates/penelope-domain/tests/action_effect_allocations.rs": {
+      "sha256": "d3cbc1109a72b04317456310d070fb9520e7617693e159451486ca6042a00b1f"
+    },
+    "crates/penelope-domain/tests/support/shared/outcome_log_allocator.rs": {
+      "sha256": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+      "symlink_target": "../../../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    "crates/penelope-executor/benches/lease_batch_service_allocations.rs": {
+      "sha256": "8a27e6bfdc83ea5b83dfd6304253f438e4d8fb1e4dc8288af4aa43da8952b7f8"
+    },
+    "crates/penelope-executor/benches/timer_input_allocations.rs": {
+      "sha256": "f63b005b16beda2a373736a8b8322b3bd7657775c4c3fb2c15247861ce4f7623"
+    },
+    "crates/penelope-executor/tests/lease_batch_allocations.rs": {
+      "sha256": "6bb8558d21fd90ce86a4988784a6c1cbabd423029eea286b89ac9d266981df63"
+    },
+    "crates/penelope-executor/tests/machine_saga.rs": {
+      "sha256": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d"
+    },
+    "crates/penelope-executor/tests/machine_task.rs": {
+      "sha256": "dc3fd7250ee360a9a3d5b0ac52a417c8601b9ffdf3c5d450e02d4d65dc485337"
+    },
+    "crates/penelope-executor/tests/support/shared/machines.rs": {
+      "sha256": "6ef8997dffeac1d7be4ef00da7636cb071597826cedbaadd222778178b58d033",
+      "symlink_target": "../../../../penelope-sqlite/tests/support/machines.rs"
+    },
+    "crates/penelope-executor/tests/support/shared/outcome_log_allocator.rs": {
+      "sha256": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+      "symlink_target": "../../../../penelope-ports/benches/support/outcome_log_allocator.rs"
+    },
+    "crates/penelope-executor/tests/support/shared/write_snapshot.rs": {
+      "sha256": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+      "symlink_target": "../../../../penelope-sqlite/tests/support/write_snapshot.rs"
+    },
+    "crates/penelope-executor/tests/timer_input_allocations.rs": {
+      "sha256": "37308dc310a1bf875b5b14f8f3e160a8e06fd0a79c9306c4edb0ea805d0cde51"
+    },
+    "crates/penelope-ports/tests/machine_task.rs": {
+      "sha256": "740b36df2f622c94298b68d417f3db7ddea726c0aa86cabf6f4ef34690543104"
+    },
+    "crates/penelope-ports/tests/support/shared/tasks.rs": {
+      "sha256": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+      "symlink_target": "../../../../penelope-executor/tests/support/tasks.rs"
+    },
+    "crates/penelope-sqlite/benches/support/process_encoding_fixture.rs": {
+      "sha256": "33c239b701eaca66b0017b8492d717d058469eab273d6068b1ab026fbc3d29d7"
+    },
+    "crates/penelope-sqlite/src/async_task_tests.rs": {
+      "sha256": "5f03ef3caf096ed6dd9e69169a72e17af9a04a97eb45133058dc8f68c82b0a1b"
+    },
+    "crates/penelope-sqlite/src/lease_scope_tests.rs": {
+      "sha256": "a975793f89e89b4e2eb21284f73a4746c738a693de0604562be84d5dc1ef4f5a"
+    },
+    "crates/penelope-sqlite/tests/support/shared/atomic_validation_fixture.rs": {
+      "sha256": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+      "symlink_target": "../../../../penelope-ports/tests/support/atomic_validation_fixture.rs"
+    },
+    "crates/penelope-sqlite/tests/support/shared/tasks.rs": {
+      "sha256": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+      "symlink_target": "../../../../penelope-executor/tests/support/tasks.rs"
+    },
+    "crates/penelope-sqlite/tests/support/shared/timer_claim_fixture.rs": {
+      "sha256": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+      "symlink_target": "../../../../penelope-ports/tests/support/timer_claim_fixture.rs"
+    },
+    "docs/0.5/verification.md": {
+      "sha256": "ec4aaf059c44bf27ba57b1f61279ad5e425b7fed7556ba7b264caf6d1cc2f050"
+    },
+    "scripts/check-package-includes.py": {
+      "sha256": "426de902462db665a831648bdb42f82b488b57d5f1cec3265b663e68b8d551c2"
+    },
+    "scripts/publish-crates.sh": {
+      "sha256": "953743d875453849e3a5efdfdcff8473daa92089f4fb11f1b836a677d5392cd4"
+    },
+    "scripts/tests/test_package_includes.py": {
+      "sha256": "2e24add216af262785ddde6214ab186cb2cce9485093417b83e09c4555dbcc77"
+    }
+  },
+  "checks": [
+    {
+      "command": "cargo test -p penelope-executor --test machine_task --test machine_saga -p penelope-ports --test machine_task -p penelope-sqlite --lib --locked",
+      "exit_code": 0,
+      "log": "tests.log.gz",
+      "raw_sha256": "e6b32d0087e00e11ea215555394a898a7797a28b9a2d5e08781337f44268a4ab",
+      "gzip_sha256": "14c9ca0735327e029d6208ae2a5f422e501337b3d8d6c70ba0f8bd84d9caac97"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "c5458fb63c9ed17993790959cce7d81bc3d18f93f65f1b006f7c73976d6776e4",
+      "gzip_sha256": "fb25d6342353d5e3cf4ff18f0fae2bf8c2fb415f266ce4a6fe5b4b2151ab47bc"
+    },
+    {
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "d789a023edd89be85cca4f520c605533093985025188bd507efa678914d69195",
+      "gzip_sha256": "3f918aa0180b2be990ad2108028a55904f3ff527e77ece446b7cecb845fd02d8"
+    },
+    {
+      "command": "./scripts/publish-crates.sh",
+      "exit_code": 0,
+      "log": "package.log.gz",
+      "raw_sha256": "02012682a813a15ba4a72688b5e8750527e0f739388523af304f71e2940fd098",
+      "gzip_sha256": "f716e9d2b02ac07be455ef900c7eca77463d0947d1f9b152e077f0b1b22f3acd"
+    },
+    {
+      "command": "cargo check --manifest-path /tmp/penelope-archive-fixtures/Cargo.toml --workspace --all-targets --all-features --locked",
+      "exit_code": 0,
+      "log": "archive-locked.log.gz",
+      "raw_sha256": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "gzip_sha256": "b8de9b33a59352f771db2b40adb1bd3ab77486eaa0599dc620c251e2174df9f3"
+    },
+    {
+      "command": "cargo test --manifest-path /tmp/penelope-archive-fixtures/Cargo.toml -p penelope-executor --test machine_task --test machine_saga -p penelope-ports --test machine_task -p penelope-sqlite --lib --locked",
+      "exit_code": 0,
+      "log": "archive-tests.log.gz",
+      "raw_sha256": "94bac7fc22a2a1f0a516ce7c1a1198a5b1089604a38d3902dbfa0b32f52ed774",
+      "gzip_sha256": "fcc5d3e8cc4d230c033f08599acd359113f618ef0f2a2d2f84d0a26811a41213"
+    },
+    {
+      "command": "cargo +1.89.0 check --manifest-path /tmp/penelope-archive-fixtures/Cargo.toml --workspace --all-targets --all-features --locked",
+      "exit_code": 0,
+      "log": "archive-msrv.log.gz",
+      "raw_sha256": "b5ad1bf234b613686e57fe69393bc702cf8e0b6c8d5487e4b97a5a02adea5709",
+      "gzip_sha256": "cac12c0633728c01a3264d9a52f089bb1851f1a89495f55811ad6ae3e7c41f14"
+    },
+    {
+      "command": "bash scripts/check-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    }
+  ],
+  "archives": [
+    {
+      "file": "penelope-0.4.0.crate",
+      "sha256": "3b04580db782b8af011a6ff1b7d3a17b8fed6778fbda737b07f8917d6829f04d",
+      "materialized_fixtures": []
+    },
+    {
+      "file": "penelope-core-0.4.0.crate",
+      "sha256": "ee70effc8acb36fcb7f5de0fd1cd791122ee5619c4e37a2eb616957db52c4b1d",
+      "materialized_fixtures": []
+    },
+    {
+      "file": "penelope-domain-0.4.0.crate",
+      "sha256": "2c1f304b3e6e05b28e2223c69193226bf46b2d0cd1d3e7ad8462999fb3dd0c9c",
+      "materialized_fixtures": [
+        {
+          "path": "penelope-domain-0.4.0/tests/support/shared/outcome_log_allocator.rs",
+          "sha256": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+          "regular_file": true
+        }
+      ]
+    },
+    {
+      "file": "penelope-executor-0.4.0.crate",
+      "sha256": "5245ecdf098ad453f6c5e3f89d394cc8df92099931cd63c63c0b34f5bfe7e2bc",
+      "materialized_fixtures": [
+        {
+          "path": "penelope-executor-0.4.0/tests/support/shared/machines.rs",
+          "sha256": "6ef8997dffeac1d7be4ef00da7636cb071597826cedbaadd222778178b58d033",
+          "regular_file": true
+        },
+        {
+          "path": "penelope-executor-0.4.0/tests/support/shared/outcome_log_allocator.rs",
+          "sha256": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+          "regular_file": true
+        },
+        {
+          "path": "penelope-executor-0.4.0/tests/support/shared/write_snapshot.rs",
+          "sha256": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+          "regular_file": true
+        }
+      ]
+    },
+    {
+      "file": "penelope-intent-0.4.0.crate",
+      "sha256": "8b754c197c4af9ba9aa636516204696133e8111156cfdfc485d6412d2e52822b",
+      "materialized_fixtures": []
+    },
+    {
+      "file": "penelope-ports-0.4.0.crate",
+      "sha256": "db3cc56391b0c6fabb85b456ee4a970b8d8510a2e54744596d312d7db310e8b2",
+      "materialized_fixtures": [
+        {
+          "path": "penelope-ports-0.4.0/tests/support/shared/tasks.rs",
+          "sha256": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+          "regular_file": true
+        }
+      ]
+    },
+    {
+      "file": "penelope-process-runtime-0.4.0.crate",
+      "sha256": "cf163508ee571de13075c85417a1eb9711a594e21d8512bbf6b81245b71f36e9",
+      "materialized_fixtures": []
+    },
+    {
+      "file": "penelope-sqlite-0.4.0.crate",
+      "sha256": "e5c2b6714467e017468237b890913b2fb172f06d02d60791076d395e0f3aa342",
+      "materialized_fixtures": [
+        {
+          "path": "penelope-sqlite-0.4.0/tests/support/shared/atomic_validation_fixture.rs",
+          "sha256": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+          "regular_file": true
+        },
+        {
+          "path": "penelope-sqlite-0.4.0/tests/support/shared/tasks.rs",
+          "sha256": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+          "regular_file": true
+        },
+        {
+          "path": "penelope-sqlite-0.4.0/tests/support/shared/timer_claim_fixture.rs",
+          "sha256": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+          "regular_file": true
+        }
+      ]
+    },
+    {
+      "file": "penelope-statechronicle-0.4.0.crate",
+      "sha256": "fb24014738c544265e8c7d7cbc54b786d355c5ae846432b6d32d8134489ab646",
+      "materialized_fixtures": []
+    },
+    {
+      "file": "penelope-timeline-0.4.0.crate",
+      "sha256": "6b31cbc28c7a2ccd6f714cd99cf93e4d080daae9b2d35290dcf08ac717a6531c",
+      "materialized_fixtures": []
+    }
+  ],
+  "isolated_workspace_manifest": "[workspace]\nresolver = \"3\"\nmembers = [\"penelope-0.4.0\",\"penelope-core-0.4.0\",\"penelope-domain-0.4.0\",\"penelope-executor-0.4.0\",\"penelope-intent-0.4.0\",\"penelope-ports-0.4.0\",\"penelope-process-runtime-0.4.0\",\"penelope-sqlite-0.4.0\",\"penelope-statechronicle-0.4.0\",\"penelope-timeline-0.4.0\"]\n[patch.crates-io]\npenelope = { path = \"penelope-0.4.0\" }\npenelope-core = { path = \"penelope-core-0.4.0\" }\npenelope-domain = { path = \"penelope-domain-0.4.0\" }\npenelope-executor = { path = \"penelope-executor-0.4.0\" }\npenelope-intent = { path = \"penelope-intent-0.4.0\" }\npenelope-ports = { path = \"penelope-ports-0.4.0\" }\npenelope-process-runtime = { path = \"penelope-process-runtime-0.4.0\" }\npenelope-sqlite = { path = \"penelope-sqlite-0.4.0\" }\npenelope-statechronicle = { path = \"penelope-statechronicle-0.4.0\" }\npenelope-timeline = { path = \"penelope-timeline-0.4.0\" }\n",
+  "isolated_workspace_lock": {
+    "file": "archive-workspace.lock.gz",
+    "raw_sha256": "fe615892edf7bdef2218599c81a13d1f808d79b11a1895f1f55f3d07a4c73a5c",
+    "gzip_sha256": "52bd9084529f75e915e9ecbf811aa214805a6db495d86b8041ca9f5ae73626c1"
+  },
+  "reproduction": "Extract all ten archives into a new directory, write isolated_workspace_manifest there and decompress the retained lock to Cargo.lock; use the archive check/test commands with that manifest path. No checkout-relative fixtures are available.",
+  "lock_resolution": "The archive-only workspace has a different package graph than the root including fuzz. Original root lock rejected --locked; an initial --offline check adjusted the graph, followed by the recorded locked checks.",
+  "limitations": [
+    "Versions remain 0.4.0 pending final release candidate qualification.",
+    "Literal static include validation is not a full Rust parser or macro evaluator.",
+    "Repository development requires Git symlink support; archive contents are ordinary files.",
+    "All-target all-feature archive compilation passed on current Rust and MSRV; only the named archive tests were executed. Repository architecture tests intentionally require the source workspace.",
+    "No final release, publication or full performance qualification is claimed."
+  ]
+}

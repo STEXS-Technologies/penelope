@@ -1,5 +1,5 @@
 //! Allocation traffic only; kept separate from ordinary latency measurement.
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "../tests/support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "../tests/support/effect_key_fixture.rs"]
 mod fixture;

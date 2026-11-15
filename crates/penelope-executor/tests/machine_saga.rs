@@ -20,7 +20,7 @@ use std::{
         atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
     },
 };
-#[path = "../../penelope-sqlite/tests/support/machines.rs"]
+#[path = "support/shared/machines.rs"]
 #[allow(dead_code)]
 mod machine;
 use machine::{SCOPE, block_on};
@@ -772,7 +772,7 @@ impl ProcessCommitVerifier for NativeFaults {
     }
 }
 
-#[path = "../../penelope-sqlite/tests/support/write_snapshot.rs"]
+#[path = "support/shared/write_snapshot.rs"]
 mod native_snapshot;
 #[test]
 fn native_verification_is_read_only_and_missing_commit_or_action_never_acknowledges_source() {

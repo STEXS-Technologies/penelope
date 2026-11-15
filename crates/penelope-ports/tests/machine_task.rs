@@ -2,7 +2,7 @@
 #![allow(clippy::unwrap_used, clippy::panic, clippy::indexing_slicing)]
 use penelope_core::{machine::*, task::*};
 use penelope_ports::machine::*;
-#[path = "../../penelope-executor/tests/support/tasks.rs"]
+#[path = "support/shared/tasks.rs"]
 mod native;
 fn source() -> MachineIntentSource {
     MachineIntentSource {

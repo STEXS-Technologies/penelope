@@ -1,7 +1,7 @@
 //! Allocation traffic only, including owned identity construction on reference.
 #[path = "../tests/support/action_effect_fixture.rs"]
 mod action_fixture;
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "../tests/support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "../tests/support/effect_key_fixture.rs"]
 mod fixture;

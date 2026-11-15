@@ -12,7 +12,7 @@ use std::{
     task::{Context, Poll, Waker},
     time::{Duration, Instant},
 };
-#[path = "../../penelope-executor/tests/support/tasks.rs"]
+#[path = "../tests/support/shared/tasks.rs"]
 mod native;
 fn fixture(path: &std::path::Path, capacity: u16) -> (SqliteAsyncTaskJournal, TaskRecord) {
     let definition = native::definition(RecoveryMode::RestartFromBeginning, EffectContract::Pure);

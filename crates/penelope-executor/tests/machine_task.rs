@@ -23,7 +23,7 @@ use std::sync::{
     Arc,
     atomic::{AtomicBool, AtomicU64, Ordering},
 };
-#[path = "../../penelope-sqlite/tests/support/machines.rs"]
+#[path = "support/shared/machines.rs"]
 #[allow(dead_code)]
 mod machine;
 #[path = "support/tasks.rs"]

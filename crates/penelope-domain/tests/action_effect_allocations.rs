@@ -1,7 +1,7 @@
 //! Direct action encoding must allocate only the canonical output vector.
 #[path = "support/action_effect_fixture.rs"]
 mod action_fixture;
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "support/effect_key_fixture.rs"]
 mod fixture;

@@ -448,3 +448,23 @@ statistical equivalence or operation latency percentiles. No benchmark sources
 or operation counts were changed. Task, timeline, SQLite, machine and complete
 workflow measurements, maintenance accounting and exact-candidate qualification
 remain open.
+
+## Shared fixtures in independent archives
+
+The 14 missing literal test/bench includes above now resolve through eight
+package-local links to the existing authoritative fixtures. Cargo materializes
+their contents as ordinary archive files; no production helper or duplicate
+fixture implementation was added. Repository checkouts must preserve Git
+symlinks; consumers of the published archives do not need symlink support.
+The packaging script now rejects missing literal Rust includes before retaining
+archives, with regression cases for missing neighbors, assets and path escapes.
+
+All ten rebuilt archives pass library verification and the include check.
+Extracted archives, patched only to resolve their candidate sibling dependencies,
+compile all targets/features on Rust 1.100 and 1.89. Their native task/saga bridge
+tests and SQLite library tests also run successfully outside the checkout.
+Workspace strict Clippy, focused tests, formatting and 70 script tests pass.
+[Raw logs, archive/source identities and the isolated workspace lock](evidence/package-fixtures/manifest.json)
+retain the exact scope. Full archive test execution is not claimed: repository
+architecture tests intentionally inspect the workspace and fuzz harnesses.
+Final candidate versions, remaining performance and release qualification stay open.

@@ -1,7 +1,7 @@
 //! Direct comparison must retain all five scope coordinates.
 #![allow(clippy::unwrap_used, clippy::arithmetic_side_effects)]
 use super::*;
-#[path = "../../penelope-ports/tests/support/timer_claim_fixture.rs"]
+#[path = "../tests/support/shared/timer_claim_fixture.rs"]
 mod fixture;
 #[test]
 fn borrowed_claim_scope_matches_owned_equality() {

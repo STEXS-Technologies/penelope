@@ -1,6 +1,6 @@
 //! Fresh public commits; setup and durable verification stay outside measurement.
 #[allow(clippy::unwrap_used)]
-#[path = "../../../penelope-ports/tests/support/atomic_validation_fixture.rs"]
+#[path = "../../tests/support/shared/atomic_validation_fixture.rs"]
 mod atomic;
 pub(super) type Error = Box<dyn std::error::Error>;
 use penelope_domain::*;

@@ -1,5 +1,5 @@
 //! Allocation traffic through the same immediate public service fixtures.
-#[path = "../../penelope-ports/benches/support/outcome_log_allocator.rs"]
+#[path = "../tests/support/shared/outcome_log_allocator.rs"]
 mod allocator;
 #[path = "../tests/support/lease_batch_fixture.rs"]
 mod fixture;
