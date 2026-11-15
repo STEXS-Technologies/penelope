@@ -75,7 +75,7 @@ def main():
     os.chdir(root)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
-    toolchain = "1.99.0"
+    toolchain = "1.100.0"
     build = command("cargo", f"+{toolchain}", "bench", "-p", "penelope-process-runtime",
                     "--bench", "dispatch", "--no-run", "--locked", "--message-format=json", capture_output=True)
     (output / "build.jsonl").write_text(build.stdout)

@@ -524,7 +524,7 @@ pub(crate) fn run_linear_saga_with_source(
             0,
             Some(start_input(&scope)),
             outcomes,
-            vec![started.next_action.clone().unwrap()],
+            vec![started.next_action.unwrap()],
         )
         .unwrap();
         let commit = attach_source(&stores.store, &scope, commit);
@@ -704,7 +704,7 @@ pub(crate) fn run_graph_saga_with_source(
             0,
             Some(start_input(&scope)),
             outcomes,
-            vec![started.next_action.clone().unwrap()],
+            vec![started.next_action.unwrap()],
         )
         .unwrap();
         let commit = attach_source(&stores.store, &scope, commit);

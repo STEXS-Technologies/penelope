@@ -5,7 +5,6 @@ publish = false
 edition = "2024"
 license.workspace = true
 repository.workspace = true
-homepage.workspace = true
 description = "Penelope fuzz targets (not published)."
 
 [package.metadata]
@@ -205,3 +204,6 @@ name = "fuzz_sqlite_machine"
 path = "fuzz_targets/fuzz_sqlite_machine.rs"
 test = false
 doc = false
+
+# Fuzzer instrumentation keeps its existing default lint profile.
+[lints]

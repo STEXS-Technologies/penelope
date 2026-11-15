@@ -27,11 +27,11 @@ require_internal_dependencies() {
 
 require_internal_dependencies penelope-core ''
 require_internal_dependencies penelope-timeline 'penelope-core'
-require_internal_dependencies penelope-domain 'penelope-core'
-require_internal_dependencies penelope-intent 'penelope-core penelope-domain'
+require_internal_dependencies penelope-domain ''
+require_internal_dependencies penelope-intent 'penelope-domain'
 require_internal_dependencies penelope-ports 'penelope-core penelope-domain'
 # SQLite is a dev-only dependency for the executable composition example.
-require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-intent penelope-ports penelope-sqlite'
+require_internal_dependencies penelope-executor 'penelope-core penelope-domain penelope-ports penelope-sqlite'
 require_internal_dependencies penelope-process-runtime 'penelope-core penelope-domain penelope-executor penelope-ports penelope-sqlite penelope-statechronicle'
 require_internal_dependencies penelope-sqlite 'penelope-core penelope-domain penelope-ports penelope-timeline'
 require_internal_dependencies penelope-statechronicle 'penelope-domain penelope-ports'

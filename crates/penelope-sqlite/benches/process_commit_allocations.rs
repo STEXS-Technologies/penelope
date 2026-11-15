@@ -52,8 +52,7 @@ fn main() -> Result<(), Error> {
         let directory = tempfile::tempdir()?;
         let path = directory.path().join("batches.db");
         let clock = Arc::new(Clock(AtomicU64::new(100)));
-        let store =
-            SqliteProcessStore::open(&path, SqliteLimits::default(), clock.clone(), 10, 16)?;
+        let store = SqliteProcessStore::open(&path, SqliteLimits::default(), clock, 10, 16)?;
         let scope = ProcessScope::new(
             "tnt_bench".parse()?,
             "prc_bench".parse()?,

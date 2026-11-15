@@ -38,8 +38,13 @@ fn warmed_timer_operations_reject_changed_evidence_without_writes() {
                     PortError::Invariant
                 }
                 "payload-identity" => {
-                    let mut changed = timer.clone();
-                    changed.action.payload_digest = ContentDigest([7; 32]);
+                    let changed = TimerSchedule {
+                        action: ProcessAction {
+                            payload_digest: ContentDigest([7; 32]),
+                            ..timer.action.clone()
+                        },
+                        due_at: timer.due_at,
+                    };
                     let bytes = if action_row {
                         serde_json::to_vec(&changed.action).unwrap()
                     } else {

@@ -333,7 +333,7 @@ mod tests {
             let result = fixture.run(crate::workload::Case::DurableReplay, 3, 64)?;
             let rows = snapshot(fixture.storage.as_ref().ok_or("missing storage")?)?;
             if let Some(previous) = &expected {
-                if previous != &(result, rows.clone()) {
+                if previous != &(result, rows) {
                     return Err("admission modes changed final rows or result".into());
                 }
             } else {

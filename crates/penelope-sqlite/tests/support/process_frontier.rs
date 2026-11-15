@@ -194,7 +194,7 @@ fn inconsistent_frontiers_reject_pages_retries_and_appends_until_repaired() {
                 .validate_for(&first)
                 .unwrap();
             let page = block_on(reopened.read_outcomes(&replay())).unwrap();
-            let mut expected = first.outcomes.clone();
+            let mut expected = first.outcomes;
             if matches!(operation, Operation::Append) {
                 expected.extend(next.outcomes.clone());
                 block_on(ProcessStore::commit(&reopened, &next))

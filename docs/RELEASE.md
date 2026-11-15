@@ -197,8 +197,8 @@ wire decoding and serialization, including malformed input and arithmetic
 boundaries. AST-based tests enforce explicit newtype fuzz invocations and keep
 all library `lib.rs` and `mod.rs` files limited to declarations and exports.
 
-The Rust toolchain is pinned to 1.99.0, with a supported minimum of 1.85.
-CI explicitly selects each job's stable, 1.85.0 or nightly toolchain through
+The Rust toolchain is pinned to 1.100.0, with a supported minimum of 1.89.
+CI explicitly selects each job's stable, 1.89.0 or nightly toolchain through
 `RUSTUP_TOOLCHAIN`, so the local pin cannot override its installed target or
 components. Stable checks follow the current stable channel.
 The full campaign also requires Python 3.11 or newer, nightly Rust with
@@ -214,7 +214,7 @@ Run from the repository root:
 cargo fmt --all -- --check
 cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz
-cargo +1.85.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+cargo +1.89.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
 cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked

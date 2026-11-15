@@ -45,12 +45,12 @@ def main():
         (project / "Cargo.toml").write_text("\n".join(manifest) + "\n")
         lockfile = root / "scripts/conformance/Cargo.lock"
         if args.refresh_lock:
-            subprocess.run(["cargo", "+1.99.0", "generate-lockfile", "--manifest-path", str(project / "Cargo.toml")], check=True)
+            subprocess.run(["cargo", "+1.100.0", "generate-lockfile", "--manifest-path", str(project / "Cargo.toml")], check=True)
             shutil.copyfile(project / "Cargo.lock", lockfile)
         else:
             shutil.copyfile(lockfile, project / "Cargo.lock")
         print(f"StateChronicle revision: {revision}", flush=True)
-        test_command = ["cargo", "+1.99.0", "test", "--manifest-path", str(project / "Cargo.toml"), "--locked", "--test", "signed_source", "signed_"]
+        test_command = ["cargo", "+1.100.0", "test", "--manifest-path", str(project / "Cargo.toml"), "--locked", "--test", "signed_source", "signed_"]
         environment = {**os.environ, "CARGO_TARGET_DIR": str(root / "target/statechronicle-conformance")}
         listing = subprocess.run([*test_command, "--", "--list"], text=True, capture_output=True, env=environment)
         if listing.returncode:

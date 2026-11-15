@@ -15,6 +15,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Remove unused workspace metadata and unused internal dependencies;
+  retain the existing fuzz lint profile explicitly for newer Cargo diagnostics.
+- Update the development toolchain and verification/measurement scripts to Rust
+  1.100.0. The supported library minimum remains Rust 1.89.
 - Raise the workspace minimum Rust version to 1.89 to support patched SQLite;
   all library manifests now inherit that minimum explicitly.
 - Centralize the SQLite dependency version in the workspace.

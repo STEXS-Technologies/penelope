@@ -440,7 +440,7 @@ fn lease_completion_rejects_damaged_durable_evidence() {
                 }
                 "payload" => {
                     let (column, bytes) = if timer {
-                        let mut other = schedule.clone();
+                        let mut other = schedule;
                         other.action.payload_digest = ContentDigest([7; 32]);
                         ("timer", serde_json::to_vec(&other).unwrap())
                     } else {

@@ -88,7 +88,7 @@ def main():
         (directory / 'Cargo.toml').write_text(manifest)
         (output / 'Cargo.toml').write_text(manifest)
         shutil.copyfile(ROOT / 'Cargo.lock', directory / 'Cargo.lock')
-        run('cargo', '+1.99.0', 'metadata', '--offline', '--format-version=1',
+        run('cargo', '+1.100.0', 'metadata', '--offline', '--format-version=1',
             '--manifest-path', str(directory / 'Cargo.toml'), cwd=ROOT)
         locked = (directory / 'Cargo.lock').read_text()
         baseline = {(p['name'], p['version'], p.get('source')) for p in
@@ -102,7 +102,7 @@ def main():
                        'CARGO_TARGET_DIR': str(directory / 'build'),
                        'CARGO_PROFILE_RELEASE_CODEGEN_UNITS': '1',
                        'CARGO_PROFILE_RELEASE_PANIC': 'abort'}
-        build = run('cargo', '+1.99.0', 'build', '--release', '--offline', '--locked',
+        build = run('cargo', '+1.100.0', 'build', '--release', '--offline', '--locked',
                     '--target', TARGET, '--manifest-path', str(directory / 'Cargo.toml'),
                     cwd=ROOT, env=environment)
         (output / 'build.stdout').write_text(build.stdout)
@@ -133,7 +133,7 @@ def main():
     metadata = {'schema': 1, 'recorded_at': datetime.now(timezone.utc).isoformat(),
         'revision': run('git', 'rev-parse', 'HEAD', cwd=ROOT).stdout.strip(),
         'tracked_diff': run('git', 'diff', 'HEAD', cwd=ROOT).stdout,
-        'rustc': run('rustc', '+1.99.0', '-vV').stdout,
+        'rustc': run('rustc', '+1.100.0', '-vV').stdout,
         'objdump': run('llvm-objdump', '--version').stdout,
         'readobj': run('llvm-readobj', '--version').stdout,
         'target': TARGET, 'flags': FLAGS,

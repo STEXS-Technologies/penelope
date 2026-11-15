@@ -103,7 +103,7 @@ def main():
     parser.add_argument("--cpu", type=int, required=True, help="CPU for serial benchmarks")
     parser.add_argument("--parallel-cpus", required=True, help="comma-separated pinned CPUs")
     parser.add_argument("--runs", type=int, default=5)
-    parser.add_argument("--toolchain", default="1.99.0")
+    parser.add_argument("--toolchain", default="1.100.0")
     parser.add_argument("--benchmark", action="append", choices=[name for names in BENCHMARKS.values() for name in names], help="repeat to select binaries; default is all six")
     parser.add_argument("--perf", action="store_true", help="record Linux perf counters for each measured process")
     args = parser.parse_args()

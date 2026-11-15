@@ -184,8 +184,7 @@ fn replay_keeps_one_snapshot_when_an_external_append_commits_during_head_read() 
         verify(&pinned, &request, &initial_history);
         drop(reader);
         let reopened = SqliteProcessStore::open(&path, limits, Arc::new(Clock), 10, 16).unwrap();
-        let all = OutcomeReplayRequest::new(request.scope.clone(), 0, NonZeroU16::new(4).unwrap())
-            .unwrap();
+        let all = OutcomeReplayRequest::new(request.scope, 0, NonZeroU16::new(4).unwrap()).unwrap();
         verify(
             &wait(reopened.read_outcomes(&all)).unwrap(),
             &all,

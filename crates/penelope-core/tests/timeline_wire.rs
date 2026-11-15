@@ -180,7 +180,7 @@ fn every_truncation_unknown_tag_flag_and_trailing_byte_is_refused() {
             record,
             TimelineRecord::Checkpoint { .. } | TimelineRecord::Fork { .. }
         ) {
-            let mut flag = golden.clone();
+            let mut flag = golden;
             flag[173] = 2; // Prefix21 + scope128 + branch/step/revision24.
             assert_eq!(
                 TimelineRecord::decode(&flag),

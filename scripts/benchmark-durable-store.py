@@ -32,7 +32,7 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     data_parent = args.data_parent.resolve()
-    toolchain = "1.99.0"
+    toolchain = "1.100.0"
     build = command("cargo", f"+{toolchain}", "bench", "-p", "penelope-sqlite",
                     "--bench", "durable_store", "--locked", "--no-run",
                     "--message-format=json", capture_output=True)

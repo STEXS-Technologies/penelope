@@ -102,7 +102,7 @@ def main():
         parser.error("Linux, positive runs, available CPU and existing data-parent required")
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
-    build = command("cargo", "+1.99.0", "bench", "-p", "penelope-sqlite", "--bench",
+    build = command("cargo", "+1.100.0", "bench", "-p", "penelope-sqlite", "--bench",
                     "durable_store", "--locked", "--no-run", "--message-format=json",
                     cwd=ROOT, capture_output=True)
     (output / "build.jsonl").write_text(build.stdout)
@@ -119,7 +119,7 @@ def main():
         "runner_sha256": digest(Path(__file__)),
         "benchmark_sha256": digest(ROOT / "crates/penelope-sqlite/benches/durable_store.rs"),
         "binary_sha256": digest(Path(binary)), "lock_sha256": digest(ROOT / "Cargo.lock"),
-        "rustc": command("rustc", "+1.99.0", "-vV", capture_output=True).stdout,
+        "rustc": command("rustc", "+1.100.0", "-vV", capture_output=True).stdout,
         "platform": platform.platform(), "cpu": args.cpu, "runs": args.runs,
         "filesystem": json.loads(command("findmnt", "-J", "-T", str(args.data_parent.resolve()),
                                          capture_output=True).stdout),

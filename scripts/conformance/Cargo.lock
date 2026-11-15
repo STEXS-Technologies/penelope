@@ -451,7 +451,6 @@ dependencies = [
 name = "penelope-domain"
 version = "0.4.0"
 dependencies = [
- "penelope-core",
  "serde",
  "serde_json",
  "sha2",
@@ -464,7 +463,6 @@ version = "0.4.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
- "penelope-intent",
  "penelope-ports",
  "serde",
  "thiserror",
@@ -474,7 +472,6 @@ dependencies = [
 name = "penelope-intent"
 version = "0.4.0"
 dependencies = [
- "penelope-core",
  "penelope-domain",
  "serde_json",
  "thiserror",

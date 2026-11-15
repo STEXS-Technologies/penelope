@@ -84,7 +84,7 @@ def main():
                 "revisions": revisions, "cpu": args.cpu, "capacity": args.capacity,
                 "runs": args.runs, "repetitions": args.repetitions,
                 "fixture_sha256": digest(output / "fixture.rs"), "runner_sha256": digest(Path(__file__)),
-                "rustc": command("rustc", "+1.99.0", "-vV", capture_output=True).stdout,
+                "rustc": command("rustc", "+1.100.0", "-vV", capture_output=True).stdout,
                 "valgrind": command("valgrind", "--version", capture_output=True).stdout.strip(),
                 "platform": platform.platform(), "snapshots": {},
                 "build_environment": {key: os.environ.get(key) for key in
@@ -109,7 +109,7 @@ def main():
                 stream.extractall(snapshot, filter="data")
             fixture = snapshot / "crates/penelope-executor/examples/hosted_task_memory.rs"
             fixture.write_text(source)
-            build_arguments = ("cargo", "+1.99.0", "build", "-p", "penelope-executor", "--example",
+            build_arguments = ("cargo", "+1.100.0", "build", "-p", "penelope-executor", "--example",
                             "hosted_task_memory", "--release", "--locked", "--message-format=json",
                             "--target-dir", str(snapshot / "target"))
             build = subprocess.run(build_arguments, cwd=snapshot, capture_output=True, text=True)

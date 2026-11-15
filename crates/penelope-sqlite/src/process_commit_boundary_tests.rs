@@ -377,7 +377,7 @@ fn deferred_outbox_commit_failure_preserves_tokens_envelopes_and_retry() {
                 let committed = batch(long, 0, u64::from(count), true);
                 wait(ProcessStore::commit(&adapter, &committed)).unwrap();
                 let request = OutboxClaimRequest::new(
-                    committed.outcomes.first().unwrap().scope().clone(),
+                    committed.outcomes.first().unwrap().scope(),
                     "pri_boundary".parse().unwrap(),
                     NonZeroU16::new(count).unwrap(),
                 )
@@ -591,7 +591,7 @@ fn deferred_timer_commit_failure_preserves_usage_tokens_and_terminal_state() {
                     }
                 }
                 let request = TimerClaimRequest::new(
-                    committed.outcomes.first().unwrap().scope().clone(),
+                    committed.outcomes.first().unwrap().scope(),
                     "pri_boundary".parse().unwrap(),
                     LogicalTime(100),
                     NonZeroU16::new(count).unwrap(),

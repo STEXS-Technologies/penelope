@@ -77,7 +77,7 @@ jobs:
           ref: ae3d94bc22c7835eaa3fdcd766e3c117929c12bb
           path: statechronicle-upstream
       - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
-      - run: rustup toolchain install 1.99.0 --profile minimal
+      - run: rustup toolchain install 1.100.0 --profile minimal
       - run: python3 penelope-conformance/scripts/run-statechronicle-conformance.py statechronicle-upstream
 
   msrv:

@@ -297,7 +297,7 @@ fn injected_failure_at_every_atomic_boundary_has_no_visible_partial_state() {
         assert!(!receipt.duplicate_input);
         let duplicate = block_on(store.commit(&commit)).expect("duplicate is idempotent");
         assert!(duplicate.duplicate_input);
-        let mut same_source_new_inbox_id = commit.clone();
+        let mut same_source_new_inbox_id = commit;
         same_source_new_inbox_id
             .input
             .as_mut()

@@ -681,12 +681,11 @@ fn committed_dispatch_recovers_task_intent_in_shared_and_separate_databases() {
                 .unwrap()
                 .duplicate_input
         );
-        let mut substituted = result_commit.clone();
+        let mut substituted = result_commit;
         substituted.input.as_mut().unwrap().input_id = "inp_substituted".try_into().unwrap();
         assert!(run(relay.commit(&store, &substituted)).is_err());
         let replay =
-            OutcomeReplayRequest::new(claim.scope.clone(), 0, NonZeroU16::new(10).unwrap())
-                .unwrap();
+            OutcomeReplayRequest::new(claim.scope, 0, NonZeroU16::new(10).unwrap()).unwrap();
         assert_eq!(run(store.read_outcomes(&replay)).unwrap().outcomes.len(), 2);
     }
 }

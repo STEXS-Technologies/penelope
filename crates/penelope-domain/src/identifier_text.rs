@@ -128,7 +128,9 @@ mod tests {
             let text = "a".repeat(length);
             let value = IdentifierText::from(text.as_str());
             assert_eq!(value.as_str(), text);
-            assert_eq!(value.clone().as_str(), text);
+            let cloned = value.clone();
+            assert_eq!(cloned.as_str(), text);
+            assert_eq!(value.as_str(), text);
         }
         for text in ["é", "αβγδεζηθικλ", "αβγδεζηθικλμ", "👩🏽‍💻"]
         {

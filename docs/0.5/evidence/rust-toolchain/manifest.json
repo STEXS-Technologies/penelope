@@ -1,0 +1,163 @@
+{
+  "checkpoint": "Rust 1.100.0 development toolchain upgrade",
+  "parent_commit": "e9ce595d75c4513281ec4c20d53894274f2e3f98",
+  "source_scope": "Parent plus exact changed source, test, CI, manifest, lockfile and script hashes; documentation excluded.",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "54f61d0d6308145144586eed765e50e026fbc9e7b7310502fc8852cd0574f726",
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9",
+    "Cargo.toml": "a253ad71c5a688aeded045a33b6b3af25aef7a7135f7c500d94527ac0d721fb8",
+    "ci/compat-0.4/Cargo.lock": "8a3ee2deda7d8aa0eab336b85508b8bf332e54e41e534c952b2492c2447681fc",
+    "ci/machine-consumer/Cargo.lock": "15f97442c024d8b169c6ec52a7fa55b7e5a2edc6a36b258826497696d089d265",
+    "ci/saga-parity/Cargo.lock": "39da6d50374f52fc8ffe6081ded553ecd8f6aeee55771835085cc9ca8bf1c167",
+    "crates/penelope-core/Cargo.toml": "be2972080f3b2adcd5c31e80501af13fe28db4bb0401ace9911747def8ffdaaa",
+    "crates/penelope-core/tests/timeline_wire.rs": "ab4c3958b3bbf045eb04fbbcebc18f1f8da1b9c6c59673bb27618dd0a9b4a2df",
+    "crates/penelope-domain/Cargo.toml": "7f0b47c6d5539628c9818a2117fbbf3866fc8ae9e4c3da120842673f8da33ba8",
+    "crates/penelope-domain/src/identifier_text.rs": "891835e58d34622dd4b429155229d65379b7c38ba225be884b3b0d846af58484",
+    "crates/penelope-executor/Cargo.toml": "b5098b21349e082b410729f660aba2410fe8be6e245f821a2d70a135700c0d74",
+    "crates/penelope-executor/benches/support/application_workloads/storage.rs": "65a91c6489311ed09e96a582c7a28da4df50c2e3e1b50d7bb9589ccca9126472",
+    "crates/penelope-intent/Cargo.toml": "f73cb0a634c1b08d4d26bf07ac094b47c678a63579ee379c693130551eb45d05",
+    "crates/penelope-ports/Cargo.toml": "740173b436b98a9b77dc8d7e163b94a87fbb6ee956b1d5355373d29600b3e10a",
+    "crates/penelope-ports/tests/atomic_commit_faults.rs": "98639ce823f9f7f68f1d26c768486c26a29bd66e4fca6f458e5ad1ff86935529",
+    "crates/penelope-process-runtime/Cargo.toml": "cf274ebd97704af209c203e284d88310307da0b2f3818fedde9e65b08e7931d6",
+    "crates/penelope-process-runtime/tests/runtime.rs": "768b638159680129c91e3290e27c5951afe12324f03612828fcf720da082123f",
+    "crates/penelope-process-runtime/tests/support/sagas.rs": "e26b555e007dd83acf7909fbc1e261514c9876a2046627baf1c97a06921373b7",
+    "crates/penelope-sqlite/Cargo.toml": "5deb69393075956c27993791517dca984d3f64d57ab540e6d7105f942cfd67ab",
+    "crates/penelope-sqlite/benches/lease_completion_allocations.rs": "520fea2b22cc9975a9e5bd33c58464386da85feea504acfd8df3515dcbf0b72e",
+    "crates/penelope-sqlite/benches/process_commit_allocations.rs": "e15bb32864c51c0fc40c1800a47834ca418ccbe211f7e8d1ebe803d17e4b0098",
+    "crates/penelope-sqlite/benches/support/inbox_fixture.rs": "cc52c76c9772991a8cabc9143b102d5497855a2ad577f7dce90d9379c58cc669",
+    "crates/penelope-sqlite/src/process_commit_boundary_tests.rs": "eff965a42344b6d5ab3e145b3da47cc351ea44696b2d30b0df882b73fd5292be",
+    "crates/penelope-sqlite/src/process_snapshot_tests.rs": "89e52f2838e14ace3d21922053abc0353d4826444f7da3414dfe5c61e2596a63",
+    "crates/penelope-sqlite/tests/support/lease_contracts.rs": "438150a8d8bebbe588b981c542b6b00a95fe9109a84d102c2893f1cf65acde52",
+    "crates/penelope-sqlite/tests/support/pending_inbox.rs": "380ac4fc7fbb4bae53646a527fcb104132cbddef2423397af576bf24fefb9244",
+    "crates/penelope-sqlite/tests/support/process_frontier.rs": "107163f6b6fff4e52f2c8af404dd4a3c5880e789bf3ebbfcf23006c84bcd1630",
+    "crates/penelope-sqlite/tests/support/timer_validation.rs": "41ea8b993fc612591f74b254b73b06a0e64d10f827861b2cc77dc828557d2d9a",
+    "crates/penelope-statechronicle/Cargo.toml": "ae87ede54f770b77b227be31337181520b2bb85321323c8c9d98463fc7b2d1b9",
+    "crates/penelope-timeline/Cargo.toml": "b7b23174ee04b6ba85084f14263a1897b44b8b6cf5aa3b81f8829784b99fe5d6",
+    "crates/penelope/Cargo.toml": "667cf94a6549ca51f378761364e99965be9ce8eb02baf277e3a3c8e64635fb22",
+    "fuzz/Cargo.toml": "0bdc58a9f196374e8f77f76c8998963df2c4c3bbcaf64b04266f49349ce26a53",
+    "rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d",
+    "scripts/benchmark-decision-comparison.py": "f0c40e626fb03b736535467e9b465e3690a17758cd3755d63d1a9557e6c8b9c0",
+    "scripts/benchmark-durable-store.py": "50211a9051e51c02bde52219a31606c2c137b5156ac6d1b2dcd6a8e180eb865a",
+    "scripts/benchmark-sqlite-cache.py": "e33fbc549bf796360ce3008eda6b9523102a6be6cd3d6d20c07f762a7bb7e3d2",
+    "scripts/benchmark-worker-dispatch.py": "3766bb164c64455f12911064867f02b39dcd10ab21dbd37c0e00da57fe9f5b5a",
+    "scripts/bound-portable-task-stack.py": "51673c99ae93c291058bf1af746a926feccc34baa3872be6d180dd825571a9de",
+    "scripts/check-layer-boundaries.sh": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392",
+    "scripts/conformance/Cargo.lock": "f9213c030c4a71a4103895d87cc373410d396c058bfc31ae01687451833c062c",
+    "scripts/measure-hosted-task-memory.py": "58cd717f528e0c5baff072e3961e79aee1b542cd163bdf784b3a2a1dae4802a7",
+    "scripts/measure-portable-task-memory.py": "4fb115a2264badabaff188312c5d77c86f3033d1f8646c02d0ce2cd2312d4524",
+    "scripts/record-task-stack-usage.py": "80e012ea034d094477161ff4e3165dd5f5a8cbde17015cf08ff9b2e50a2cc68b",
+    "scripts/run-statechronicle-conformance.py": "4bcb614368003378eee226133f6c6119596d89a683c9652e3c9cf51386c0dd14"
+  },
+  "toolchain": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+  "msrv": "1.89.0",
+  "checks": [
+    {
+      "name": "tests",
+      "command": "cargo test --workspace --all-features --lib --tests --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "tests.log.gz",
+      "raw_sha256": "e5546f86705ead37efd9f7e6af84de07091ecc35cdd7a0bc6ffd7b5a7cd7e783",
+      "gzip_sha256": "703ca9d70b47a1e54cc43286075b8c656bc138ef321a44b51c49ccf8a7a7f0e1"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "a18c5bcee8ab4512362841dced4ad3b6d1992e76d1b0ce8fc5444c930d104b83",
+      "gzip_sha256": "c1e2fe89a76e101c95e193ce9f2f8cb5633f765f670362d26d70a946b39a3fae"
+    },
+    {
+      "name": "docs",
+      "command": "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "docs.log.gz",
+      "raw_sha256": "7f386e0cd99a5ce62bd85c590b3dbbcdbbd1a06760d021861054a5dc6c62e5b3",
+      "gzip_sha256": "f35195b4033e7e4b2186cd700249267426bd4481f56cc641208b8c6dd828b4fc"
+    },
+    {
+      "name": "doctests",
+      "command": "cargo test --workspace --all-features --doc --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "doctests.log.gz",
+      "raw_sha256": "144b67d54d84284524d1dc3c4a7e46c1755a5e4d0bab5c877628c77da1712c63",
+      "gzip_sha256": "22826de942e744ffc8334832b6e06b6f2700f0d2d8a42253db7c7b8ba351ab9a"
+    },
+    {
+      "name": "scripts",
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "log": "scripts.log.gz",
+      "raw_sha256": "08a87b47540ae7d01c6dbf06411596dfc95117fcae340c547068c3fe8cbd4b68",
+      "gzip_sha256": "9df8fc8bca251cdb0ed2eeefdaeb2a644c83deccc8e5c3e22a307baf75d24bf5"
+    },
+    {
+      "name": "layers",
+      "command": "./scripts/check-layer-boundaries.sh && ./scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "consumer",
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --all-features --bin durable --locked",
+      "exit_code": 0,
+      "log": "consumer.log.gz",
+      "raw_sha256": "554ad61dd525e3feb991e7b98543194f18f1a711fd8652cd33804d891ef86099",
+      "gzip_sha256": "b01e5a0a6a538c90c566760daf2f9e349d0f8052113369e8f6e9e2c5077d596b"
+    },
+    {
+      "name": "compat",
+      "command": "cargo test --manifest-path ci/compat-0.4/Cargo.toml --locked",
+      "exit_code": 0,
+      "log": "compat.log.gz",
+      "raw_sha256": "614998c7cf9190b056d367bfaedfcf93d7f4d4e6591bd71bd968fe396053427b",
+      "gzip_sha256": "ce69cb5ecd14c8addceeea33856cf39d478264bba8bd8603942da76980c6dcdb"
+    },
+    {
+      "name": "portable",
+      "command": "rustup target add riscv32imafc-unknown-none-elf --toolchain 1.100.0; cargo check -p penelope-core --target riscv32imafc-unknown-none-elf --no-default-features --features serde --locked; cargo check -p penelope-timeline --target riscv32imafc-unknown-none-elf --no-default-features --features alloc --locked",
+      "exit_code": 0,
+      "log": "portable.log.gz",
+      "raw_sha256": "3e0aa69877eeb74aa857abc23ec544e5721ba0ae1e0d0eef9efc78847b931549",
+      "gzip_sha256": "bd9c01083f6b1d4e9f83c7734091f90999ee4a1b5911e5269bfd2a01bf8a2f20"
+    },
+    {
+      "name": "msrv",
+      "command": "cargo +1.89.0 check --workspace --all-features --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "6515af56fc417b1688dcb8819e20a048d0e22560aa67ec65d10a5da988da0b70",
+      "gzip_sha256": "223a0759c5f490ad1f672e5eefba240a96e73d18e5ced3459aa974202de3cafa"
+    },
+    {
+      "name": "msrv-consumer",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --all-features --bin durable --locked",
+      "exit_code": 0,
+      "log": "msrv-consumer.log.gz",
+      "raw_sha256": "28ba550a5174402fe50b8610b5334e7346f99a7201621ca5897fa9981284ac64",
+      "gzip_sha256": "2f78eb99edebbac42883c35cf77d79117825e0283e44682b8604c54ab595a11e"
+    },
+    {
+      "name": "conformance",
+      "command": "python3 scripts/run-statechronicle-conformance.py /home/ac/projects/statechronicle",
+      "exit_code": 0,
+      "log": "conformance.log.gz",
+      "raw_sha256": "93fddd67f1e838c2babccb46384b19e50e783fb743d1d48ce84570235764e405",
+      "gzip_sha256": "8ad9a397d7648a7a1256170d521409a8389d021f6eb4159a32ddafd3d8674c98"
+    },
+    {
+      "name": "fmt",
+      "command": "cargo fmt --all --check && git diff --check",
+      "exit_code": 0,
+      "log": "fmt.log.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    }
+  ],
+  "notes": [
+    "Checks run in a disk-backed worktree; the initial tmpfs checkout could not satisfy the existing cold-file cache test. No test was skipped or weakened; all 66 script tests passed on disk.",
+    "Historical performance evidence retains its original compiler. This checkpoint does not complete the remaining 0.5 release qualification."
+  ]
+}

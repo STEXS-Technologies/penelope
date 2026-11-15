@@ -321,7 +321,6 @@ dependencies = [
 name = "penelope-domain"
 version = "0.4.0"
 dependencies = [
- "penelope-core",
  "proptest",
  "serde",
  "serde_json",
@@ -336,7 +335,6 @@ dependencies = [
  "async-trait",
  "penelope-core",
  "penelope-domain",
- "penelope-intent",
  "penelope-ports",
  "penelope-sqlite",
  "proptest",
@@ -372,7 +370,6 @@ dependencies = [
 name = "penelope-intent"
 version = "0.4.0"
 dependencies = [
- "penelope-core",
  "penelope-domain",
  "serde_json",
  "thiserror",

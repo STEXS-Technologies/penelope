@@ -116,7 +116,7 @@ def main():
             'CARGO_TARGET_DIR': str(directory / 'target'), 'CARGO_PROFILE_RELEASE_CODEGEN_UNITS': '1',
             'CARGO_PROFILE_RELEASE_PANIC': 'abort'}
         # Preserve locked dependency versions; only add the nonpublishable fixture.
-        command('cargo', '+1.99.0', 'metadata', '--offline', '--format-version=1',
+        command('cargo', '+1.100.0', 'metadata', '--offline', '--format-version=1',
                 '--manifest-path', str(directory / 'Cargo.toml'), cwd=ROOT, capture_output=True)
         locked = (directory / 'Cargo.lock').read_text()
         (output / 'Cargo.lock').write_text(locked)
@@ -128,7 +128,7 @@ def main():
         if any((p['name'], p['version'], p.get('source')) not in baseline
                for p in packages if p['name'] != 'penelope-stack-fixture'):
             raise ValueError('fixture changed a pinned dependency version')
-        build = command('cargo', '+1.99.0', 'build', '--release', '--offline', '--locked',
+        build = command('cargo', '+1.100.0', 'build', '--release', '--offline', '--locked',
             '--manifest-path', str(directory / 'Cargo.toml'), '--message-format=json',
             cwd=ROOT, env=environment, capture_output=True)
         (output / 'build.jsonl').write_text(build.stdout)
@@ -157,7 +157,7 @@ def main():
     metadata = {'schema': 1, 'recorded_at': datetime.now(timezone.utc).isoformat(),
         'revision': command('git', 'rev-parse', 'HEAD', cwd=ROOT, capture_output=True).stdout.strip(),
         'tracked_diff': command('git', 'diff', 'HEAD', cwd=ROOT, capture_output=True).stdout,
-        'rustc': command('rustc', '+1.99.0', '-vV', capture_output=True).stdout,
+        'rustc': command('rustc', '+1.100.0', '-vV', capture_output=True).stdout,
         'platform': platform.platform(), 'source_fixture_sha256': digest(original),
         'generated_fixture_sha256': digest(output / 'fixture.rs'), 'runner_sha256': digest(Path(__file__)),
         'fixture_lock_sha256': digest(output / 'Cargo.lock'),

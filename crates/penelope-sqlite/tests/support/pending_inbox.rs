@@ -136,7 +136,7 @@ fn discovery_rejects_corrupt_misindexed_and_oversized_inputs_without_consuming_t
             } else if case == "malformed" {
                 b"{malformed".to_vec()
             } else {
-                let mut substituted = input.clone();
+                let mut substituted = input;
                 if case == "tenant" {
                     substituted.tenant_id = id("tnt_foreign");
                 } else {

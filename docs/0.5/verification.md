@@ -38,7 +38,8 @@ RUSTSEC-2026-0486 (rustix). Preserve these failures as baseline deviations.
 
 The user explicitly approved Rust 1.89 as the new workspace minimum to consume
 patched bundled SQLite. Workspace manifests inherit the minimum; CI installs
-and tests it. The development toolchain remains independently pinned to 1.99.
+and tests it. The development toolchain was initially independently pinned to 1.99; the
+subsequent Rust 1.100 checkpoint below updates that pin.
 
 The workspace now resolves `rusqlite` 0.41.1, `libsqlite3-sys` 0.39.1 and `rustix`
 1.1.6. SQLite version selection is centralized. The conformance lockfile and its
@@ -211,3 +212,28 @@ Rust 1.89. The new real-SQLite fuzzer and deterministic deep seeds extend the
 bounded runner; final candidate coverage, full repeated campaigns and isolated
 performance qualification remain open. This is not proof of completed outbox
 reconciliation, typed subsystem bridges, F6 or F8.
+
+## Rust 1.100 toolchain checkpoint
+
+The development toolchain is pinned to Rust 1.100.0 (released November 12,
+2026). CI conformance and the measurement/verification scripts use that same
+version. The previously approved Rust 1.89 library minimum is retained.
+Historical measurement evidence keeps its original compiler identity.
+
+New Cargo diagnostics exposed unused internal dependency edges and redundant
+manifest metadata; these were removed and the exact dependency layer gate was
+narrowed accordingly. The fuzz package explicitly retains its existing lint
+profile. New Clippy diagnostics were resolved by removing unnecessary fixture
+clones while preserving the clone-contract assertions and corruption checks.
+No library behavior or wire format changed.
+
+Workspace library/integration tests, strict Clippy, rustdoc/doctests, all 66
+script tests, dependency-layer gates, the frozen legacy consumer, the durable
+machine consumer and RISC-V core/timeline builds passed on Rust 1.100. The
+seven signed-source conformance cases also passed. Rust 1.89 workspace checks
+and the durable consumer passed. Formatting and diff checks passed.
+
+Results and source hashes are recorded in
+[`evidence/rust-toolchain/manifest.json`](evidence/rust-toolchain/manifest.json).
+These checks cover the toolchain update; remaining release qualification in
+the plan is still required.
