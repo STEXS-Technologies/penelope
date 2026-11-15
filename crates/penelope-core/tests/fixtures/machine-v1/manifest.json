@@ -1,0 +1,16 @@
+{
+  "protocol": "penelope.machine.v1",
+  "encoder": "Python struct + hashlib; no Rust invocation",
+  "fixtures": {
+    "empty.bin": {
+      "bytes": 329,
+      "sha256": "3e4d8501f6ba9ac0556b9892272307e14aebc967f486fa947e8de2ab2dd4eb98",
+      "commit_identity": "0ed6dec6f5bbb923c463feb7af60bc6c2d07058acd0aa9f3b4b679d3287b0a1d"
+    },
+    "caused.bin": {
+      "bytes": 569,
+      "sha256": "3b410e70f87684593c3ba2fd8fc218b0818fb66f5837a26c5d5a2d528b1b5f79",
+      "commit_identity": "3043785f78bb1f2e47f2a90468a977bc5a29ea9c9ab6e05ba5473ef51dc8465c"
+    }
+  }
+}

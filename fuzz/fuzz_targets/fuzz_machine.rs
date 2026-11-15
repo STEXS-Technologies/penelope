@@ -347,7 +347,47 @@ fn timeline_run<const N: usize>(data: &[u8]) {
         assert_eq!(actual, expected);
     }
 }
+fn canonical<const N: usize>(bytes: &[u8]) {
+    if let Ok(record) = MachineCommitRecord::<N>::decode(bytes) {
+        let mut output = [0; 713]; // 329 + optional causation 96 + four intents * 72.
+        let len = record.encode(&mut output).unwrap();
+        assert_eq!(len, record.encoded_len());
+        assert_eq!(&output[..len], bytes);
+        assert_eq!(
+            MachineCommitRecord::<N>::decode(&output[..len]).unwrap(),
+            record
+        );
+    }
+}
+fn wire_run(data: &[u8]) {
+    canonical::<0>(data);
+    canonical::<1>(data);
+    canonical::<4>(data);
+    let fixtures: [&[u8]; 2] = [
+        include_bytes!("../../crates/penelope-core/tests/fixtures/machine-v1/empty.bin"),
+        include_bytes!("../../crates/penelope-core/tests/fixtures/machine-v1/caused.bin"),
+    ];
+    for fixture in fixtures {
+        canonical::<4>(fixture);
+        let mut bytes = fixture.to_vec();
+        for (index, value) in data.iter().copied().take(128).enumerate() {
+            let offset = (index * 31 + usize::from(value)) % bytes.len();
+            bytes[offset] ^= value;
+        }
+        // Half the structured cases have a valid recomputed checksum, so the
+        // fuzzer also explores structural checks independently of content hashing.
+        if data.first().copied().unwrap_or(0) & 1 != 0 {
+            let end = bytes.len() - 32;
+            let digest = Digest::of(&bytes[..end]);
+            bytes[end..].copy_from_slice(&digest.0);
+        }
+        canonical::<0>(&bytes);
+        canonical::<1>(&bytes);
+        canonical::<4>(&bytes);
+    }
+}
 fuzz_target!(|data: &[u8]| {
+    wire_run(data);
     match data.first().copied().unwrap_or(0) % 3 {
         0 => {
             run::<0>(data);

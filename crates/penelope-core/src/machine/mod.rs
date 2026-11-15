@@ -13,9 +13,11 @@ mod hierarchy;
 mod identities;
 mod memory;
 mod view;
+mod wire;
 
 pub use contracts::*;
 pub use hierarchy::*;
 pub use identities::*;
 pub use memory::*;
 pub use view::*;
+pub use wire::*;

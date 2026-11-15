@@ -97,6 +97,28 @@ fuzz_target!(|data: &[u8]| {
         MachineDefinitionId::bytes,
     );
     byte_identity::<MachineEventId>(digest.0, MachineEventId::from_bytes, MachineEventId::bytes);
+    byte_identity::<MachineCommitId>(
+        digest.0,
+        MachineCommitId::from_bytes,
+        MachineCommitId::bytes,
+    );
+    byte_identity::<MachineSourceId>(
+        digest.0,
+        MachineSourceId::from_bytes,
+        MachineSourceId::bytes,
+    );
+    byte_identity::<MachineCauseId>(digest.0, MachineCauseId::from_bytes, MachineCauseId::bytes);
+    byte_identity::<MachineCorrelationId>(
+        digest.0,
+        MachineCorrelationId::from_bytes,
+        MachineCorrelationId::bytes,
+    );
+    fixed_counter::<MachineEventType>(
+        value,
+        MachineEventType::new,
+        MachineEventType::get,
+        MachineEventType::checked_next,
+    );
     byte_identity::<MachineIntentId>(
         digest.0,
         MachineIntentId::from_bytes,

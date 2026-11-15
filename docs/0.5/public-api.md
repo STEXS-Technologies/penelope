@@ -23,6 +23,12 @@ and `publish` makes the local state/head/intent tuple visible. Its view contains
 only newly staged intents, while earlier committed pending intents stay with the
 owner. Local publication supplies no durable admission or historical deduplication.
 
+`MachineCommitRecord<INTENTS>` supplies the independent bounded
+[`penelope.machine.v1` metadata codec](machine-wire.md). It binds event/state
+digests, native provenance, causation and ordered intent metadata. Constructing
+or decoding a record proves neither acceptance nor durable admission; payload
+codecs, accepted-candidate store binding and verified receipts remain pending.
+
 `prepare_linear` delegates exactly once to the original `decide` and borrows its
 source input and definition. `into_parts` produces the original replay event and
 `SagaDecision` together. `prepare_graph_start` and `prepare_graph_result` delegate

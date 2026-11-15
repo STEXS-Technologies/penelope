@@ -171,6 +171,38 @@ fn exercise() {
         let _ = black_box(nested.take_intents());
     }
 }
+fn exercise_wire() {
+    let fixture = include_bytes!("fixtures/machine-v1/caused.bin");
+    for _ in 0..10_000 {
+        let record = MachineCommitRecord::<2>::decode(black_box(fixture)).unwrap();
+        let constructed =
+            MachineCommitRecord::<2>::new(record.header(), record.intents().copied()).unwrap();
+        let mut output = [0; 569];
+        let len = constructed.encode(black_box(&mut output)).unwrap();
+        assert_eq!(len, fixture.len());
+        assert_eq!(output.as_slice(), fixture);
+        assert_eq!(constructed.encode(&mut []), Err(MachineWireError::Capacity));
+        assert_eq!(
+            MachineCommitRecord::<1>::decode(black_box(fixture)),
+            Err(MachineWireError::Capacity)
+        );
+    }
+}
+fn check_no_allocations(profile: &str, operation: fn()) {
+    start_counting();
+    black_box(operation)();
+    let counts = stop_counting();
+    assert_eq!(
+        counts,
+        Counts {
+            allocations: 0,
+            reallocations: 0,
+            deallocations: 0,
+            requested_bytes: 0
+        }
+    );
+    println!("{profile}: 10000 iterations, {counts:?}");
+}
 fn main() {
     start_counting();
     let control = black_box(Vec::<u8>::with_capacity(16));
@@ -184,17 +216,9 @@ fn main() {
             requested_bytes: 16
         }
     );
-    start_counting();
-    black_box(exercise)();
-    let counts = stop_counting();
-    assert_eq!(
-        counts,
-        Counts {
-            allocations: 0,
-            reallocations: 0,
-            deallocations: 0,
-            requested_bytes: 0
-        }
+    check_no_allocations("flat and hierarchical machine lifecycles", exercise);
+    check_no_allocations(
+        "machine commit decode/construct/encode/refusal",
+        exercise_wire,
     );
-    println!("flat and hierarchical machine lifecycles: 10000 dispatches each, {counts:?}");
 }

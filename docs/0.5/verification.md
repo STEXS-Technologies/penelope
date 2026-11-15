@@ -163,3 +163,29 @@ test timing relative to the final adapter-test additions. The layer gate and its
 regression suite passed, and the code graph was updated. Full F5/F8 qualification,
 new-adapter resource/performance measurements, machine durability and cross-engine
 admitted effects remain open.
+
+## Independent machine commit metadata checkpoint
+
+[The machine wire record](machine-wire.md) fixes the initial v1 accepted-batch
+metadata layout independently of the old protocols. Frozen fixtures use a
+separate Python `struct`/SHA-256 encoder; Rust verifies exact bytes, commit
+identities, every truncation and byte mutation, rehashed structural violations,
+intent/revision/charge bounds and untouched short output buffers. Fixed-field
+read/write cursors are shared with timeline while its seven goldens stay unchanged.
+
+Workspace library/integration tests, strict all-target Clippy, workspace doctests
+and strict core rustdoc passed. Rust 1.89 passed new machine and existing timeline
+wire tests, the allocation probe, legacy facade compatibility and a default-free
+bare-metal RISC-V build. The allocator's positive control passed; 10,000 machine
+wire decode/construct/encode/refusal cycles observed no allocations. Machine,
+timeline-wire and newtype instrumented fuzz targets each passed 10,000 executions
+with seed 505. The architecture gate initially identified five missing direct
+newtype fuzz calls; the calls were added before the recorded successful rerun.
+Layer/runner regression gates passed and the code graph was updated.
+
+Commands, raw logs, toolchains, parent revision and exact changed/new source hashes
+are in [evidence/machine-wire](evidence/machine-wire/). This supplies metadata
+encoding evidence, not crash durability or admission authority. Payload codecs,
+accepted-candidate durable preparation, store/receipt contracts, SQLite migration,
+crash/reopen checks and downstream effect bridges remain pending, as do the full
+F1/F6/F8 gates and final performance qualification.

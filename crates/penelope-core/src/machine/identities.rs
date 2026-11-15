@@ -34,6 +34,22 @@ identifier!(MachineId, "Machine instance identity within its tenant.");
 identifier!(MachineDefinitionId, "Pinned model/code fingerprint.");
 identifier!(MachineEventId, "Caller-assigned immutable event identity.");
 identifier!(
+    MachineCommitId,
+    "Content identity of a complete machine commit record."
+);
+identifier!(
+    MachineSourceId,
+    "Application-pinned source namespace for machine causation."
+);
+identifier!(
+    MachineCauseId,
+    "Occurrence identity within a pinned causation source."
+);
+identifier!(
+    MachineCorrelationId,
+    "Application correlation identity, never authority."
+);
+identifier!(
     MachineIntentId,
     "Stable application effect idempotency identity."
 );
@@ -72,3 +88,7 @@ counter!(
 );
 counter!(TransitionId, "Stable application-defined transition code.");
 counter!(RejectCode, "Bounded application-defined refusal code.");
+counter!(
+    MachineEventType,
+    "Stable application-defined event kind within the pinned event schema."
+);

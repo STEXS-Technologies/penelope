@@ -23,6 +23,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Independent bounded machine commit metadata codec with canonical content
+  identities, frozen Python-encoded fixtures and allocation/fuzz checks. Durable
+  machine admission and recovery remain under development.
 - Optional captured machine adapter over existing timeline replay, history,
   correction and effect finality, with a facade-only prediction example sharing
   the flat machine's model.

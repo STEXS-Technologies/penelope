@@ -61,8 +61,9 @@ No mutable live-state accessor is provided.
 
 New application machines require `penelope.machine.v1`, bounded canonical
 encoding and a machine-specific journal. Process `AtomicProcessCommit` is not a
-generic machine transaction. Final field layout/goldens are pending the F1
-wire design and must precede SQLite implementation.
+generic machine transaction. The initial accepted-batch [metadata layout and
+independent goldens](machine-wire.md) now precede journal implementation. Payload
+codecs, accepted-candidate binding, verified receipts and store APIs remain pending.
 
 Persist immutable accepted event bytes, pinned model/schema, exact predecessor
 and next head/state, and the entire ordered intent batch in one local transaction.

@@ -235,13 +235,7 @@ struct Writer<'output> {
 }
 impl Writer<'_> {
     fn bytes(&mut self, value: &[u8]) -> Result<(), TimelineWireError> {
-        if value.len() > self.remaining.len() {
-            return Err(TimelineWireError::Capacity);
-        }
-        let (selected, rest) = core::mem::take(&mut self.remaining).split_at_mut(value.len());
-        selected.copy_from_slice(value);
-        self.remaining = rest;
-        Ok(())
+        crate::__private::put_bytes(&mut self.remaining, value).ok_or(TimelineWireError::Capacity)
     }
     fn number(&mut self, value: u64) -> Result<(), TimelineWireError> {
         self.bytes(&value.to_le_bytes())
@@ -296,17 +290,7 @@ struct Reader<'input> {
 }
 impl Reader<'_> {
     fn take<const BYTES: usize>(&mut self) -> Result<[u8; BYTES], TimelineWireError> {
-        let value = self
-            .remaining
-            .get(..BYTES)
-            .ok_or(TimelineWireError::InvalidFormat)?;
-        let mut result = [0; BYTES];
-        result.copy_from_slice(value);
-        self.remaining = self
-            .remaining
-            .get(BYTES..)
-            .ok_or(TimelineWireError::InvalidFormat)?;
-        Ok(result)
+        crate::__private::take_bytes(&mut self.remaining).ok_or(TimelineWireError::InvalidFormat)
     }
     fn byte(&mut self) -> Result<u8, TimelineWireError> {
         let [value] = self.take()?;

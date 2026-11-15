@@ -1,0 +1,153 @@
+{
+  "checkpoint": "independent machine commit metadata v1",
+  "parent_commit": "09b8fe911dcad5e2fab83fac36a4380d2d2155e8",
+  "source_scope": "Parent commit plus exact hashes of changed/new implementation, tests, fixtures, CI and verification script. Documentation excluded.",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "0a09043311ae4cbaafde248fefac9f820fd2e30d2841f17fffd776da97557b97",
+    "crates/penelope-core/src/__private.rs": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+    "crates/penelope-core/src/machine/identities.rs": "7840dd13c2f7075c5dc81271eac329fdd855227b60946ced7dc4183f4d6d49ae",
+    "crates/penelope-core/src/machine/mod.rs": "a5674eb1315eba934edec9c801e7e2c689da3e7622b402aedf1bb85804e00e2f",
+    "crates/penelope-core/src/machine/wire.rs": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+    "crates/penelope-core/src/timeline/wire.rs": "e3254164b25dc0ca7bbdb61cd253d5a502ededc906f33063077e4cda6916436e",
+    "crates/penelope-core/tests/fixtures/machine-v1/caused.bin": "3b410e70f87684593c3ba2fd8fc218b0818fb66f5837a26c5d5a2d528b1b5f79",
+    "crates/penelope-core/tests/fixtures/machine-v1/empty.bin": "3e4d8501f6ba9ac0556b9892272307e14aebc967f486fa947e8de2ab2dd4eb98",
+    "crates/penelope-core/tests/fixtures/machine-v1/manifest.json": "f676134b0fc0e9c64cf9e1d6f7ffcf52e69aa38bee9afb3820e8577954b1c1eb",
+    "crates/penelope-core/tests/machine_allocations.rs": "59776def98792749be7bc947f0bed308a657188c1984914db02fcc2a61fd7c24",
+    "crates/penelope-core/tests/machine_wire.rs": "c24744aef241836d87e688eb86e5087366ee86241482df4cc3ec02b56a05009f",
+    "fuzz/fuzz_targets/fuzz_machine.rs": "eb66100921a8d2b1d1a376a54d757cecf753afefab787e2c69d8c2e3cf22b9d5",
+    "fuzz/fuzz_targets/fuzz_newtypes.rs": "c400757e6525c43608ce785eb8185096083e95a2a2c18188368261f851fd41a7",
+    "scripts/verify-machine-wire-fixtures.py": "cd87bb3b86901947bcfb83aa30c3a48c5bbae761a45cf485f61424edd5574b58"
+  },
+  "toolchains": {
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "msrv": "rustc 1.89.0 (29483883e 2025-08-04)",
+    "fuzz": "rustc 1.99.0-nightly (7608eb7b0 2026-08-05)"
+  },
+  "checks": [
+    {
+      "name": "workspace",
+      "command": "cargo test --workspace --all-features --lib --tests --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "raw_sha256": "00ff49b88295cd72ad216f93765e53d9f59c243caa52961f4b5991b1ac440d18",
+      "gzip_sha256": "1bdfce3707381296d8f4177a820016465289513d4db7600f9b82362780582811"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "9fe75bdec4191c84d59519e06ca1079872de4c03bc2083e5dd9c730a1388ae0d",
+      "gzip_sha256": "62e000c1b03d757409b6824a573bf3c0fc35b8d2f0970de78683be595ccc220e"
+    },
+    {
+      "name": "doctests",
+      "command": "cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz",
+      "exit_code": 0,
+      "log": "doctests.log.gz",
+      "raw_sha256": "9a1419e8e45bcd56d46e058d98b26ad8e50f959c6ebc94eb8a9ffd51ad33b10a",
+      "gzip_sha256": "816a0206acd73f22742f1a457409328a1886036b75d062807ff352e348c92b02"
+    },
+    {
+      "name": "rustdoc",
+      "command": "RUSTDOCFLAGS='-D warnings' cargo doc -p penelope-core --no-deps --all-features --locked",
+      "exit_code": 0,
+      "log": "rustdoc.log.gz",
+      "raw_sha256": "0809046e2dfdbc7b5a986096a06682286784e8933f37f116e36db9d8031bd0dd",
+      "gzip_sha256": "256488d258c934ba11aa6feb9ca23b70ee6c055f2a0ca08b969c2d870a2b0d67"
+    },
+    {
+      "name": "msrv",
+      "command": "cargo +1.89.0 test -p penelope-core --test machine_wire --test timeline_wire --no-default-features --locked",
+      "exit_code": 0,
+      "log": "msrv.log.gz",
+      "raw_sha256": "3679761be4bb7f0258506faef8d04d00e460eaa349b941a9b950256fe5130ecb",
+      "gzip_sha256": "dd0377c72c4b9a6103ba75102a70a718b99a883b3130b439c5afd1c7aa1cd166"
+    },
+    {
+      "name": "allocations",
+      "command": "cargo +1.89.0 test -p penelope-core --test machine_allocations --no-default-features --locked",
+      "exit_code": 0,
+      "log": "allocations.log.gz",
+      "raw_sha256": "a52a42224fa955f6aedf75746be0660f41da2e6834ea9d8a980349ea5f7234f6",
+      "gzip_sha256": "92440829abb164ca53fad84122c6eae90b7e037a3ff2a714c219bb872d331e05"
+    },
+    {
+      "name": "portable",
+      "command": "cargo +1.89.0 check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked",
+      "exit_code": 0,
+      "log": "portable.log.gz",
+      "raw_sha256": "21b697513489e3f1170900f99730c85d76deec56e52ff2623b3e2c7e0520de9f",
+      "gzip_sha256": "7fd3a0f3b51c3daa351cbdf5ae79a974b00604f6acf2a38ab43161a2bf7d8e34"
+    },
+    {
+      "name": "compat",
+      "command": "cargo +1.89.0 check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked",
+      "exit_code": 0,
+      "log": "compat.log.gz",
+      "raw_sha256": "fd2b8bc43c6a5dbd4adc40a431cce835d72a73535c1d80a88283b2b2adf64bdc",
+      "gzip_sha256": "5f632ddeeb33b27baae41cde68c0eb63483849566339af145c10a144940dae43"
+    },
+    {
+      "name": "independent",
+      "command": "python3 scripts/verify-machine-wire-fixtures.py",
+      "exit_code": 0,
+      "log": "independent.log.gz",
+      "raw_sha256": "b669bab0389458668298baf7a410c81f745d481dce6581e2d53863714f16595e",
+      "gzip_sha256": "6a15b43e04996c981fef35ee3ed15d4427ac0e237f18a92b0553dba5d75f8271"
+    },
+    {
+      "name": "layers",
+      "command": "./scripts/check-layer-boundaries.sh && ./scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "runners",
+      "command": "./scripts/test-chaos-runners.sh",
+      "exit_code": 0,
+      "log": "runners.log.gz",
+      "raw_sha256": "2f65d311068595da2b5a217d2246eec6e3f346e048a59f5669aa93319ce6774d",
+      "gzip_sha256": "aef1bf26aa295fe328696de8206c2729a5cb8b8be2bada3f99213eb1f14cf4d9"
+    },
+    {
+      "name": "machine-fuzz",
+      "command": "cargo +nightly fuzz run fuzz_machine -- -runs=10000 -seed=505",
+      "exit_code": 0,
+      "log": "machine-fuzz.log.gz",
+      "raw_sha256": "9931c3d8f5931ab79f26db9e9948900aa71e0da6d063df62b6d8b3c0176deb0f",
+      "gzip_sha256": "81f9f7f6307ddb67930ac28f20cdf5d1f2d96afc5b46042a52fa959a5f098646",
+      "executions": 10000,
+      "seed": 505
+    },
+    {
+      "name": "timeline-wire-fuzz",
+      "command": "cargo +nightly fuzz run fuzz_timeline_wire -- -runs=10000 -seed=505",
+      "exit_code": 0,
+      "log": "timeline-wire-fuzz.log.gz",
+      "raw_sha256": "ecfb400c306fe85d3f6d6ff31e3016404ec79d0257f763275ed8882083e0de46",
+      "gzip_sha256": "2882c1921aa47f06b40bd2a5a42461947c9254cb832884433d9f7b0cb710afae",
+      "executions": 10000,
+      "seed": 505
+    },
+    {
+      "name": "newtypes-fuzz",
+      "command": "cargo +nightly fuzz run fuzz_newtypes -- -runs=10000 -seed=505",
+      "exit_code": 0,
+      "log": "newtypes-fuzz.log.gz",
+      "raw_sha256": "3762d3850836d57ce480b32f62aa043bc304257ea1bcae982ce39db4e5039b12",
+      "gzip_sha256": "b2b45ba7453e0324441af35550479c3a16426df53488f9aea040edafbee48729",
+      "executions": 10000,
+      "seed": 505
+    }
+  ],
+  "notes": [
+    "The initial workspace architecture gate rejected five new ID types without direct fuzz invocations. Explicit calls were added; the recorded full workspace rerun passed.",
+    "Existing seven timeline wire golden fixtures pass unchanged after sharing fixed-field byte cursors.",
+    "The positive-control allocation executable observes zero allocations in 10000 machine wire decode/construct/encode/refusal cycles; this is not a universal application allocation guarantee.",
+    "This is bounded smoke fuzz evidence, not final release chaos or isolated performance qualification.",
+    "Machine payload codecs, accepted-candidate durable preparation, store APIs, SQLite and cross-engine effects remain unimplemented."
+  ]
+}
