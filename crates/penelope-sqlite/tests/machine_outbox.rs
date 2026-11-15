@@ -652,3 +652,66 @@ fn version8_pending_unknown_receiver_is_not_reinterpreted_and_accepted_receipts_
 
 #[path = "support/machine_schema.rs"]
 mod machine_schema;
+
+#[path = "support/write_snapshot.rs"]
+mod delivery_snapshot;
+#[test]
+fn malformed_delivery_rows_and_orphaned_sources_never_gain_admission_or_reset_uncertainty() {
+    for damage in [
+        "UPDATE machine_intent_delivery SET owner=printf('%032d',1)",
+        "UPDATE machine_intent_delivery SET token=0",
+        "UPDATE machine_intent_delivery SET expires=zeroblob(8)",
+        "UPDATE machine_intent_delivery SET attempt=0",
+        "UPDATE machine_intent_delivery SET consumer=printf('%032d',1)",
+        "UPDATE machine_intent_delivery SET receipt=printf('%032d',1)",
+        "UPDATE machine_intent_delivery SET consumer=NULL,receipt=zeroblob(32)",
+        "DELETE FROM machine_intents",
+        "DELETE FROM machine_events",
+    ] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("damaged.db");
+        let (_store, _clock, outbox, receiver) = setup(&path);
+        let lease = block_on(outbox.claim(&true, request())).unwrap().remove(0);
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        // Simulate storage corruption, including states CHECK normally rejects.
+        sql.execute_batch("PRAGMA foreign_keys=OFF; PRAGMA ignore_check_constraints=ON")
+            .unwrap();
+        sql.execute_batch(damage).unwrap();
+        let tables = [
+            "machine_heads",
+            "machine_events",
+            "machine_intents",
+            "machine_intent_delivery",
+            "lease_counter",
+        ];
+        let before = delivery_snapshot::snapshot(&sql, &tables);
+        assert_eq!(
+            block_on(outbox.status(&true, SCOPE, lease.metadata().source.intent.identity)),
+            Err(MachineStoreError::Corrupt),
+            "{damage}"
+        );
+        assert_eq!(
+            block_on(outbox.validate(&true, &lease)),
+            Err(MachineStoreError::Corrupt),
+            "{damage}"
+        );
+        assert_eq!(
+            block_on(outbox.acknowledge(&true, &lease, &42)),
+            Err(MachineStoreError::Corrupt),
+            "{damage}"
+        );
+        assert!(
+            matches!(
+                block_on(outbox.claim(&true, request())),
+                Err(MachineStoreError::Corrupt)
+            ),
+            "{damage}"
+        );
+        assert_eq!(receiver.calls.load(Ordering::SeqCst), 0);
+        assert_eq!(
+            delivery_snapshot::snapshot(&sql, &tables),
+            before,
+            "{damage}"
+        );
+    }
+}

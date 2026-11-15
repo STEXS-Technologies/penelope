@@ -781,3 +781,58 @@ fn genesis_state_correction_validates_and_publishes_without_running_an_input() {
     );
     assert_eq!(published.effect_finalized(), None);
 }
+
+#[test]
+fn signed_and_fixed_byte_payloads_retain_exact_content_and_charge_across_duplicates() {
+    fn exercise<T: HistoryPayload + Clone + Eq + std::fmt::Debug>(
+        initial: &T,
+        value: T,
+        changed: T,
+        charge: u64,
+    ) {
+        let baseline = StateAnchor {
+            digest: initial.digest(),
+            ..anchor(0, 0, 0, 0)
+        };
+        let mut history = FixedHistory::<T, T, 1, 1, 1>::new(
+            baseline,
+            initial.clone(),
+            HistoryLimits {
+                max_input_bytes: charge,
+                max_snapshot_bytes: charge,
+                max_total_bytes: charge * 2,
+            },
+        )
+        .unwrap();
+        assert_eq!(history.payload_bytes(), charge);
+        let record = InputRecord {
+            digest: value.digest(),
+            ..input(0, 1, 0)
+        };
+        assert_eq!(
+            history.append_input(record, changed.clone()),
+            Err(TimelineError::InputMismatch)
+        );
+        assert_eq!(history.payload_bytes(), charge);
+        history.append_input(record, value.clone()).unwrap();
+        assert_eq!(history.payload_bytes(), charge * 2);
+        history.append_input(record, value.clone()).unwrap();
+        assert_eq!(history.payload_bytes(), charge * 2);
+        assert_eq!(
+            history.append_input(record, changed),
+            Err(TimelineError::InputMismatch)
+        );
+        assert_eq!(history.read(record).unwrap().value, &value);
+        let mut restored = value;
+        history.restore(baseline, &mut restored).unwrap();
+        assert_eq!(&restored, initial);
+        let detached = history.materialize_branch(TimelineBranchId::ZERO).unwrap();
+        assert_eq!(detached.payload_bytes(), charge * 2);
+        assert_eq!(
+            detached.read(record).unwrap().value,
+            history.read(record).unwrap().value
+        );
+    }
+    exercise(&-7_i64, -19_i64, 23_i64, 8);
+    exercise(&[1_u8, 2, 3, 4], [5_u8, 6, 7, 8], [0_u8; 4], 4);
+}

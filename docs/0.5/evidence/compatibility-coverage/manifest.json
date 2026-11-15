@@ -1,0 +1,174 @@
+{
+  "parent_commit": "43a5ad17e71ded73a3f0d05c21a62f4485672b37",
+  "source_sha256": {
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9",
+    "Cargo.toml": "a253ad71c5a688aeded045a33b6b3af25aef7a7135f7c500d94527ac0d721fb8",
+    "ci/compat-0.4/Cargo.lock": "15480755ab85362a015ebf8190cd7c43a5e0d6c38d90fe24304da76bd7d56bd6",
+    "ci/compat-0.4/Cargo.toml": "70d9ff9b5d3ae39a121772f72b602042213bc69b71b7a742da0070044ca6d2f0",
+    "ci/compat-0.4/README.md": "92b23ccf857911848131c335c677a8683589ce55bc9f48bcf050f9e4ca7696b4",
+    "ci/compat-0.4/baseline/Cargo.lock": "394c2616403a3213b16dd9d169c017102fef2d19bef16b56a2a65527052516fd",
+    "ci/compat-0.4/baseline/manifest.json": "93fff0f881d7e7018c9696f12161cba2e1420733b0389e5cd77c905e30aa0573",
+    "ci/compat-0.4/baseline/protocols-v0.4.0.txt.gz": "e2dda2314c91952d203ef73e88a4f46602d7ba2b209060debf7a218eb06756ec",
+    "ci/compat-0.4/src/protocols.rs": "f8bfa20c3b88935d3160321e1c650fae1e6ed3102499eb614ccda120af8a9705",
+    "ci/coverage-baseline.json": "0da7c3c6dd23360f06d8c6c0d1c89218c8aacbbb8ed02c02dfadb64658e27ae6",
+    "crates/penelope-executor/tests/machine_saga.rs": "9d080963748ee71150c58733ffaba04e0f68be46e49fb96186c8e1fb6791aabf",
+    "crates/penelope-executor/tests/support/machine_saga_crash.rs": "ab9fde615d7d27a234f4677250f3b12d4161224a651ff475ed3f5b6dd718616e",
+    "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-timeline/tests/history.rs": "2bfdc3a444d84f2ee5bd37acba67b7714a6f747dde8f3fceb959df97e9b83a9c",
+    "crates/penelope/tests/prepared_lifecycles.rs": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+    "rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d",
+    "scripts/check-saga-machine-parity.sh": "d723691d8c2e9b7f1cd4da429619eebdb1e9ed2fd564183309754ebc144d2860",
+    "scripts/run_coverage_json.sh": "8b57b66a4aec3ab7b2e4c9dc5d364047feb3b196c26806e4566ac4a722ca25aa"
+  },
+  "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
+  "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5",
+  "coverage_tool": "cargo-llvm-cov 0.8.7",
+  "checks": [
+    {
+      "name": "coverage",
+      "command": "./scripts/run_coverage_json.sh && ./scripts/check_coverage_ratchet.sh",
+      "exit_code": 0,
+      "file": "coverage.log.gz",
+      "raw_sha256": "a2d61debbe31cc6a1990a4a356a71cc59ff19edd14b6d13cb56e9e6bbef9e833",
+      "gzip_sha256": "467608fcd43c9dee9f9b174990f9988222ad5ec8b396f028c4e2f8e13c687906"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0,
+      "file": "clippy.log.gz",
+      "raw_sha256": "4a36c854913a7c71a1461fbace37be8c57137a249caa1702ee4926e8fa78763c",
+      "gzip_sha256": "5e6eb0d49876bbc2eca2f43f11bb3cc711cbf6ec262d0896a90188f7ce9846dd"
+    },
+    {
+      "name": "fixture-clippy",
+      "command": "cargo clippy --manifest-path ci/compat-0.4/Cargo.toml --all-features --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "file": "fixture-clippy.log.gz",
+      "raw_sha256": "7f3d1ccdaa6c89b9aecda74a811f96d47d91af82fda61d09183aa504da50087a",
+      "gzip_sha256": "39aef64c52bb705b77e632f0cd8b41e58822490cdf81eb08f6f44c743652ab42"
+    },
+    {
+      "name": "parity",
+      "command": "bash scripts/check-saga-machine-parity.sh",
+      "exit_code": 0,
+      "file": "parity.log.gz",
+      "raw_sha256": "206e6a7f04b2296838bae0e483aa6e28d2416631b301f6ed7c134ba7c21d37eb",
+      "gzip_sha256": "d6f5a6f3cbd08dca072deb1be209bde5864fa2e30e282510c90d8a136a4bb9ca"
+    },
+    {
+      "name": "parity-msrv",
+      "command": "RUSTUP_TOOLCHAIN=1.89.0 bash scripts/check-saga-machine-parity.sh",
+      "exit_code": 0,
+      "file": "parity-msrv.log.gz",
+      "raw_sha256": "3d3aa358b0347e217cd39c3b03aa945abf0eaf30a8f2f1584761f6a24ae4cdc0",
+      "gzip_sha256": "97261833c378925eb9831eba4829b127854cda280ce82230556672c2caec6e10"
+    },
+    {
+      "name": "baseline-producer",
+      "command": "cargo run --manifest-path /tmp/penelope-protocol-v040/Cargo.toml --bin protocols --locked; compare stdout to retained corpus",
+      "exit_code": 0,
+      "file": "baseline-producer.log.gz",
+      "raw_sha256": "d4a7c60af24e729a0ef33f2c9bd5ef8970911200856ad28f517429f865008f5c",
+      "gzip_sha256": "36a859eee58372ad35dd7431a276e83fd4e403a90fdf1c82950a5ce91acb6680"
+    },
+    {
+      "name": "baseline-producer-msrv",
+      "command": "cargo +1.85.0 run --manifest-path /tmp/penelope-protocol-v040/Cargo.toml --bin protocols --locked; compare stdout to retained corpus",
+      "exit_code": 0,
+      "file": "baseline-producer-msrv.log.gz",
+      "raw_sha256": "0209d5bb4bdf17452e10647d0b0d8669f494bd13da8de57fdc32554890e894d2",
+      "gzip_sha256": "eb2f783ee0434f9df0be379cf50703287ff7b8e3e6038171ec640ca7a5806bb0"
+    },
+    {
+      "name": "msrv-adapters",
+      "command": "cargo +1.89.0 test -p penelope --test prepared_lifecycles -p penelope-executor --test machine_saga --locked",
+      "exit_code": 0,
+      "file": "msrv-adapters.log.gz",
+      "raw_sha256": "ea8abae6401f63d3814639fd1939021f5a66820cab25e5df598ac85f05aeb7a1",
+      "gzip_sha256": "b4d1e28f0862f654c817272a36ef57053f983f5d9248daf4ff22f5a0a1497bcc"
+    },
+    {
+      "name": "msrv-outbox",
+      "command": "cargo +1.89.0 test -p penelope-sqlite --test machine_outbox --locked",
+      "exit_code": 0,
+      "file": "msrv-outbox.log.gz",
+      "raw_sha256": "cad971fb6ee10954d17725b3da480bc92b1da8a6eba4f46b5efa9594657a38d1",
+      "gzip_sha256": "265d5245345c6724a2b8709e0838194c15bc3124ad9ceda518ef29c7e6c5e41c"
+    },
+    {
+      "name": "msrv-history",
+      "command": "cargo +1.89.0 test -p penelope-timeline --test history --locked",
+      "exit_code": 0,
+      "file": "msrv-history.log.gz",
+      "raw_sha256": "26481094030fb2b2f9647f86b9cc4c446e2f90333b6aa9f2695bc0476b686cee",
+      "gzip_sha256": "7a6a9b61536a5c64099d4a1c4c478a17b342b78057ba3abd6131062fb2f13252"
+    },
+    {
+      "name": "layers",
+      "command": "bash scripts/check-layer-boundaries.sh && bash scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "file": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "scripts",
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "file": "scripts.log.gz",
+      "raw_sha256": "cebe8293a19d63f98a4da48624cee761be6948b77ba39ba071afe7c03ceb175f",
+      "gzip_sha256": "45accb55e5f7f0ab30a1eeafdfa36217d8d0147c6502d0115260102d40bd56ac"
+    }
+  ],
+  "coverage": {
+    "lines": {
+      "count": 15761,
+      "covered": 14831,
+      "percent": 94.09935917771715
+    },
+    "unchanged_ratchet": 94.0759,
+    "report": {
+      "file": "coverage.json.gz",
+      "raw_sha256": "49d1c7ce57bdec10d1f07376fe9e91d550d5763b5f080c03dfe54663350ece8e",
+      "gzip_sha256": "acc1f276fbc553977803a1ad694f3fd153a13e7526545a3160abd33f4b498756"
+    }
+  },
+  "preliminary_measurements": [
+    {
+      "name": "stale-original",
+      "exit_code": 1,
+      "scope": "Inactive compiler-layout binaries inflated the denominator; failed ratchet. Before added tests.",
+      "file": "stale-original.log.gz",
+      "raw_sha256": "5eed0118961d8872ee9aecb906dc4e8392e04024056dfebfb060b45598743fc5",
+      "gzip_sha256": "59e25e524f3feb3efbd477868a308e3d752bce7b01e95b49e5a3b2014f8be01c"
+    },
+    {
+      "name": "stale-workspace-clean",
+      "exit_code": 1,
+      "scope": "Workspace-only cleanup retained old-layout objects; failed ratchet. After initial proposal tests.",
+      "file": "stale-workspace-clean.log.gz",
+      "raw_sha256": "711d51fe3755bfc412cb7a184d47ebb10b7816363d3952a157776f8347d281fb",
+      "gzip_sha256": "5116d49db88446b2af77a741ce57d927766bd624e805d728c96a9327e16f79eb"
+    },
+    {
+      "name": "fresh-rust199",
+      "exit_code": 0,
+      "scope": "Isolated Rust 1.99 coverage measurement before added tests; no ratchet command in this log.",
+      "file": "fresh-rust199.log.gz",
+      "raw_sha256": "9538c689ed320f1b83d85ccead1cf7d6cc2161421777b7926ace62c79fce3f7d",
+      "gzip_sha256": "ede405d1dd19e3e392ce54854a86516c4c0df7e92c99cadc030142f6095eed84"
+    },
+    {
+      "name": "fresh-rust100",
+      "exit_code": 0,
+      "scope": "Isolated Rust 1.100 coverage measurement before added tests; report below ratchet. Measurement command itself succeeded.",
+      "file": "fresh-rust100.log.gz",
+      "raw_sha256": "9d539f5caa61ad55c7549c3dbdfc08dcf30ea7cb7290a2ab1d8a25377f26f135",
+      "gzip_sha256": "313be5f1e4a0d97807853dcf7a95f3fe7ddf4e8b6b08c4472bf215c6959a9e49"
+    }
+  ],
+  "scope": "No production library changes. Independent baseline observations, selected exhaustive/signature checks and added public failure invariants; full clean workspace coverage includes all features, excludes fuzz crate and matches existing CI metric.",
+  "limitations": "Bounded compatibility corpus, not all downstream code. Coverage is not exhaustive behavioral proof. Final performance, package and F0\u2013F8 qualification remain open."
+}

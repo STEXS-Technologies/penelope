@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+  "fixture_sha256": "f8bfa20c3b88935d3160321e1c650fae1e6ed3102499eb614ccda120af8a9705",
+  "imports_sha256": "6b6051b07684777077359316f83b4ded7a00c48e9fae76b5d32a9c5b59503b24",
+  "lock_sha256": "394c2616403a3213b16dd9d169c017102fef2d19bef16b56a2a65527052516fd",
+  "output_sha256": "2f33c32b80226ecffbd4fb017a8ad1afadfe132a752b995ce1d08d2024dca13a",
+  "gzip_sha256": "e2dda2314c91952d203ef73e88a4f46602d7ba2b209060debf7a218eb06756ec",
+  "rows": 33278,
+  "toolchain": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+  "scope": "Unchanged 0.4 library sources in separate worktree and external consumer. Exact task record JSON across every event variant, all recovery/effect policies, valid history replay and competing version/scope/order/generation/time errors; timeline metadata bytes, strict prefixes/trailing bytes, trusted checkpoint restore and stale observation decisions. Selected function signatures and exhaustive TaskStatus/TaskExecutionEvent/TimelineRecord matches compile. Bounded corpus, not exhaustive API compatibility.",
+  "reproduction": "Copy the frozen consumer manifest and sources to a temporary directory; point only its penelope dependency at the baseline checkout; copy baseline/Cargo.lock; cargo run --bin protocols --locked. Compare stdout with decompressed protocols-v0.4.0.txt.gz. Never regenerate expected output using candidate libraries.",
+  "baseline_msrv": "Rust 1.85.0: the same frozen producer compiled and its output matched byte for byte."
+}

@@ -13,3 +13,8 @@ timeline = ["penelope/timeline"]
 
 [dependencies]
 penelope = { path = "../../crates/penelope" }
+serde_json = "1"
+
+[[bin]]
+name = "protocols"
+path = "src/protocols.rs"

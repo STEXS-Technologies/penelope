@@ -104,6 +104,7 @@ name = "penelope-compat-04"
 version = "0.0.0"
 dependencies = [
  "penelope",
+ "serde_json",
 ]
 
 [[package]]

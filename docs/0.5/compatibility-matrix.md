@@ -1,6 +1,6 @@
 # 0.5 compatibility obligations
 
-Status: requirements; no 0.5 compatibility qualification claimed.
+Status: selected contracts qualified; final candidate qualification remains open.
 
 | Existing surface | Preserve | Required evidence |
 | --- | --- | --- |
@@ -15,10 +15,11 @@ Status: requirements; no 0.5 compatibility qualification claimed.
 | Default features | Timeline opt-in; no default runtime or database | Cargo feature matrix and external fixtures |
 | Portable core | Approved Rust 1.89 minimum, no_std and allocation-free supported paths | MSRV, bare-metal builds and allocation probes |
 
-## Planned canonical imports
+## Canonical imports and preserved paths
 
-The canonical paths below now expose existing implementations; machine adapters
-and generalized diagnostics remain planned:
+The canonical paths expose the existing implementations. Machine, saga and task
+preparation share `PreparedDecision` inspection; their publication, durable
+admission and recovery authorities remain explicit:
 
 | Current path | Target consumer path |
 | --- | --- |
@@ -39,3 +40,12 @@ Downgrade support for newly admitted machine records is not established.
 The baseline source manifest pins all existing tracked crate/test/script files.
 Keep old wire fixtures independently checkable; a checksum inventory alone is
 not a cross-version replay fixture or a complete public API compatibility test.
+
+The unchanged import fixture and selected signature/exhaustive-match checks live
+in [`ci/compat-0.4`](../../ci/compat-0.4/README.md). Its independently generated
+0.4 corpus freezes 33,278 task/timeline byte, validation and replay observations.
+The separate saga corpus freezes another 3,136 observations across both facade
+paths. `scripts/check-saga-machine-parity.sh` checks all of them on current Rust
+and Rust 1.89 without regenerating expected data from candidate libraries. These
+bounded fixtures supplement existing wire and migration suites; they do not
+prove every possible downstream program or deployment compatible.

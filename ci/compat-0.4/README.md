@@ -13,8 +13,17 @@ cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
 cargo +1.89.0 check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
 ```
 
-An import fixture does not establish behavior, exhaustive enum or wire parity.
-Those require separate frozen examples and history/replay fixtures.
+`src/lib.rs` remains the unchanged import fixture. `src/protocols.rs` adds selected
+function-pointer signatures, exhaustive public enum matches, task event JSON and
+history replay under every recovery/effect policy, and timeline metadata parsing
+and checkpoint restoration. Its 33,278 expected observations were generated from
+the unmodified 0.4 library checkout, with an independently retained lockfile and
+source/output hashes in `baseline/manifest.json`.
+
+Run `./scripts/check-saga-machine-parity.sh` from the repository root to compare
+both saga paths and this task/timeline corpus. CI runs the gate on current Rust
+and Rust 1.89. Keep expected bytes independent of candidate libraries. This is
+bounded evidence, not exhaustive public API or SQLite migration qualification.
 
 The original consumer source and declared package minimum remain frozen. The
 0.5 dependency graph requires Rust 1.89 by an explicit compatibility decision;

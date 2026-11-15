@@ -36,6 +36,7 @@ fn saga_handoff_process_helper() {
     let native = Arc::new(NativeFaults {
         inner: process(&native_path),
         lose_ack: AtomicBool::new(false),
+        failure: std::sync::Mutex::new(None),
         barrier: None,
     });
     let receiver = make_receiver(native, Policy::new(true), graph);

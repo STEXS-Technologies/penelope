@@ -2,8 +2,9 @@
 
 This is an incremental verification ledger, not 0.5 release qualification.
 Earlier sections describe their original checkpoint; later sections record the
-machine kernel, hierarchy, shared admission, prepared adapters and initial scoped
-journal/SQLite snapshots. Outbox delivery and durable bridges remain pending.
+machine kernel, hierarchy, shared admission, prepared adapters, scoped journal
+and snapshots, native task/saga bridges and the verified result progression.
+Complete release qualification remains open.
 The [evidence manifest](evidence/manifest.json) contains compressed raw logs,
 exit codes and hashes. Candidate source hashes identify the changed checkout.
 
@@ -384,3 +385,39 @@ This is a local, host-authenticated example with a pinned pure worker and fixed
 application schema. External-effect success would need independent evidence.
 The saga's action remains admitted rather than executed in the machine leg;
 complete release performance/coverage and F0–F8 qualification remain open.
+
+## Task/timeline compatibility and current-toolchain coverage
+
+The frozen legacy import source remains unchanged. An additional independent
+consumer now compiles selected public function signatures and exhaustive matches
+for task status/events and timeline record variants. Its 33,278 expected byte,
+error and replay observations were generated against the untouched 0.4 checkout
+at `42ec187c9adfc7403b06215f405f2575f53c35c2`, then reproduced on its original
+Rust 1.85 minimum. The current branch matches on Rust 1.100 and Rust 1.89.
+All recovery/effect policies and task event variants are represented; timeline
+records include strict prefixes/trailing bytes and checkpoint restoration.
+The [producer manifest](../../ci/compat-0.4/baseline/manifest.json) retains its
+lockfile, source and output identities. The existing parity command enforces
+this corpus alongside the unchanged 3,136-observation saga corpus.
+
+The first current-toolchain coverage attempt reported 84.2632%. That report mixed
+inactive binaries from the older compiler layout with current artifacts. Fresh
+separate directories measured 94.5527% on Rust 1.99 and 93.4268% on Rust 1.100
+for the same production sources. Workspace-only cleanup did not remove the old
+layout. The coverage runner now cleans its complete instrumented build directory
+before measuring; ordinary non-coverage builds stay cached.
+
+Actual public-contract coverage gaps were addressed with proposal/abort tests
+through canonical facade paths, malformed native acknowledgements and receiver
+proof failures, corrupt delivery rows/orphaned sources, and signed/byte-array
+history payload admission and duplicate accounting. These checks preserve
+uncertainty, reject source acknowledgement before exact native proof and verify
+unchanged journal state on failure. No production behavior or protocol was changed.
+
+The final clean Rust 1.100 workspace coverage run passes at **94.0994%**, against
+the unchanged **94.0759%** ratchet.
+[Coverage reports, failed-attempt context, raw logs and source hashes](evidence/compatibility-coverage/manifest.json)
+retain the measurement scope. Strict workspace/fixture Clippy, focused Rust 1.89
+tests, both parity consumers, layer gates and 66 script tests also pass. This
+closes these selected compatibility/coverage gaps; full performance, packaging
+and final release qualification remain open.

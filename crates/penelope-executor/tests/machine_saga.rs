@@ -358,10 +358,26 @@ fn corrupt_native_payload_refuses_acknowledgement_without_reexecuting_a_saga() {
     assert_eq!(count, 3);
 }
 
+enum NativeFailure {
+    PayloadAck,
+    CommitAck,
+    VerifyAck,
+    Verify(PortError),
+    ForeignPage,
+}
 struct NativeFaults {
     inner: Arc<SqliteProcessStore>,
     lose_ack: AtomicBool,
+    failure: std::sync::Mutex<Option<NativeFailure>>,
     barrier: Option<Arc<std::sync::Barrier>>,
+}
+impl NativeFaults {
+    fn take_failure(&self, matches: impl FnOnce(&NativeFailure) -> bool) -> Option<NativeFailure> {
+        self.failure
+            .lock()
+            .unwrap()
+            .take_if(|failure| matches(failure))
+    }
 }
 #[async_trait]
 impl ProcessStore for NativeFaults {
@@ -374,7 +390,13 @@ impl ProcessStore for NativeFaults {
         }
         #[cfg(unix)]
         crash::cut("before-native-commit");
-        let receipt = self.inner.commit(commit).await?;
+        let mut receipt = self.inner.commit(commit).await?;
+        if self
+            .take_failure(|f| matches!(f, NativeFailure::CommitAck))
+            .is_some()
+        {
+            receipt.committed_through_sequence = 99;
+        }
         #[cfg(unix)]
         crash::cut("after-native-commit");
         if self.lose_ack.swap(false, Ordering::SeqCst) {
@@ -395,7 +417,14 @@ impl ProcessStore for NativeFaults {
         &self,
         request: &OutcomeReplayRequest,
     ) -> Result<OutcomeReplayPage, PortError> {
-        self.inner.read_outcomes(request).await
+        let mut page = self.inner.read_outcomes(request).await?;
+        if self
+            .take_failure(|f| matches!(f, NativeFailure::ForeignPage))
+            .is_some()
+        {
+            page.scope.process_id = id("prc_foreign");
+        }
+        Ok(page)
     }
 }
 #[async_trait]
@@ -406,7 +435,14 @@ impl ProcessPayloadStore for NativeFaults {
         digest: ContentDigest,
         bytes: &[u8],
     ) -> Result<ContentDigest, PortError> {
-        self.inner.put_payload(scope, digest, bytes).await
+        let stored = self.inner.put_payload(scope, digest, bytes).await?;
+        if self
+            .take_failure(|f| matches!(f, NativeFailure::PayloadAck))
+            .is_some()
+        {
+            return Ok(ContentDigest([99; 32]));
+        }
+        Ok(stored)
     }
     async fn read_payload(
         &self,
@@ -423,6 +459,7 @@ fn lost_native_ack_is_resolved_by_lookup_and_never_another_process() {
         let native = Arc::new(NativeFaults {
             inner: process(&directory.path().join("native.db")),
             lose_ack: AtomicBool::new(true),
+            failure: std::sync::Mutex::new(None),
             barrier: None,
         });
         let receiver = make_receiver(Arc::clone(&native), Policy::new(true), graph);
@@ -461,6 +498,7 @@ fn competing_native_writers_choose_one_original_start_and_action() {
             Arc::new(NativeFaults {
                 inner: process(&path),
                 lose_ack: AtomicBool::new(false),
+                failure: std::sync::Mutex::new(None),
                 barrier: Some(Arc::clone(&barrier)),
             }),
             Policy::new(true),
@@ -470,6 +508,7 @@ fn competing_native_writers_choose_one_original_start_and_action() {
             Arc::new(NativeFaults {
                 inner: process(&path),
                 lose_ack: AtomicBool::new(false),
+                failure: std::sync::Mutex::new(None),
                 barrier: Some(barrier),
             }),
             Policy::new(true),
@@ -721,7 +760,15 @@ impl ProcessCommitVerifier for NativeFaults {
         &self,
         commit: &AtomicProcessCommit,
     ) -> Result<AtomicProcessCommitReceipt, PortError> {
-        self.inner.verify_commit(commit).await
+        let mut receipt = self.inner.verify_commit(commit).await?;
+        match self
+            .take_failure(|f| matches!(f, NativeFailure::VerifyAck | NativeFailure::Verify(_)))
+        {
+            Some(NativeFailure::Verify(error)) => return Err(error),
+            Some(NativeFailure::VerifyAck) => receipt.committed_through_sequence = 99,
+            _ => {}
+        }
+        Ok(receipt)
     }
 }
 
@@ -771,5 +818,146 @@ fn native_verification_is_read_only_and_missing_commit_or_action_never_acknowled
             ack.unwrap();
         }
         assert_eq!(native_snapshot::snapshot(&sql, &tables), before);
+    }
+}
+
+#[test]
+fn native_ack_and_receiver_proof_failures_preserve_pending_source_until_exact_recovery() {
+    for graph in [false, true] {
+        for failure in [
+            NativeFailure::PayloadAck,
+            NativeFailure::CommitAck,
+            NativeFailure::VerifyAck,
+            NativeFailure::ForeignPage,
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let native = Arc::new(NativeFaults {
+                inner: process(&directory.path().join("native.db")),
+                lose_ack: AtomicBool::new(false),
+                failure: std::sync::Mutex::new(Some(failure)),
+                barrier: None,
+            });
+            let receiver = make_receiver(Arc::clone(&native), Policy::new(true), graph);
+            let outbox = SqliteMachineOutbox::new(
+                source(&directory.path().join("source.db"), 8),
+                Arc::new(Clock(AtomicU64::new(100))),
+                Arc::clone(&receiver),
+                LIMITS,
+            )
+            .unwrap();
+            let lease = block_on(outbox.claim(&true, claim())).unwrap().remove(0);
+            assert!(matches!(
+                block_on(receiver.accept(&outbox, &true, &lease, LogicalTime(1))),
+                Err(MachineSagaHandoffError::Port(PortError::Invariant))
+            ));
+            assert!(
+                block_on(outbox.status(&true, SCOPE, lease.metadata().source.intent.identity))
+                    .unwrap()
+                    .unwrap()
+                    .accepted
+                    .is_none()
+            );
+            let receipt =
+                block_on(receiver.accept(&outbox, &true, &lease, LogicalTime(2))).unwrap();
+            assert_eq!(receipt.source(), lease.metadata().source);
+            assert_eq!(receipt.consumer(), receiver.identity());
+            assert_eq!(receipt.commit().actions.len(), 1);
+            for (native_error, expected) in [
+                (PortError::Unavailable, MachineStoreError::Unavailable),
+                (PortError::QuotaExceeded, MachineStoreError::Capacity),
+                (PortError::Unauthorized, MachineStoreError::Denied),
+                (PortError::Conflict, MachineStoreError::Conflict),
+                (PortError::Invariant, MachineStoreError::Corrupt),
+            ] {
+                *native.failure.lock().unwrap() = Some(NativeFailure::Verify(native_error));
+                assert_eq!(
+                    block_on(outbox.acknowledge(&true, &lease, &receipt)),
+                    Err(expected)
+                );
+                assert!(
+                    block_on(outbox.status(&true, SCOPE, lease.metadata().source.intent.identity))
+                        .unwrap()
+                        .unwrap()
+                        .accepted
+                        .is_none()
+                );
+            }
+            block_on(outbox.acknowledge(&true, &lease, &receipt)).unwrap();
+            assert_eq!(
+                block_on(
+                    native.inner.read_outcomes(
+                        &OutcomeReplayRequest::new(
+                            receiver.scope(receipt.source()).unwrap(),
+                            0,
+                            NonZeroU16::new(4).unwrap()
+                        )
+                        .unwrap()
+                    )
+                )
+                .unwrap()
+                .outcomes
+                .len(),
+                3
+            );
+        }
+    }
+}
+#[test]
+fn invalid_receiver_policy_and_malformed_source_are_refused_before_native_admission() {
+    let directory = tempfile::tempdir().unwrap();
+    let native = process(&directory.path().join("native.db"));
+    for graph in [false, true] {
+        let mut invalid = definition(graph);
+        match &mut invalid {
+            MachineSagaDefinition::Linear(d) => d.steps.clear(),
+            MachineSagaDefinition::Graph(d) => d.steps.clear(),
+        }
+        assert!(
+            MachineSagaReceiver::new(
+                Arc::clone(&native),
+                Policy::new(true),
+                NAMESPACE,
+                id("pri_machine"),
+                invalid,
+                8
+            )
+            .is_err()
+        );
+        let receiver = make_receiver(Arc::clone(&native), Policy::new(true), graph);
+        let outbox = SqliteMachineOutbox::new(
+            source(&directory.path().join(format!("source-{graph}.db")), 8),
+            Arc::new(Clock(AtomicU64::new(100))),
+            Arc::clone(&receiver),
+            LIMITS,
+        )
+        .unwrap();
+        let lease = block_on(outbox.claim(&true, claim())).unwrap().remove(0);
+        let receipt = block_on(receiver.accept(&outbox, &true, &lease, LogicalTime(1))).unwrap();
+        for defect in 0..3 {
+            let mut forged = receipt.source();
+            match defect {
+                0 => forged.head.revision = MachineRevision::ZERO,
+                1 => forged.intent.payload_bytes = 9,
+                _ => forged.intent.digest = [99; 32],
+            }
+            assert_eq!(
+                block_on(receiver.verify(&forged, lease.payload(), &receipt)),
+                Err(MachineStoreError::Corrupt)
+            );
+        }
+        let bounded = MachineSagaReceiver::new(
+            Arc::clone(&native),
+            Policy::new(true),
+            NAMESPACE,
+            id("pri_machine"),
+            definition(graph),
+            7,
+        )
+        .unwrap();
+        assert_eq!(
+            block_on(bounded.verify(&receipt.source(), lease.payload(), &receipt)),
+            Err(MachineStoreError::Capacity)
+        );
+        block_on(outbox.acknowledge(&true, &lease, &receipt)).unwrap();
     }
 }
