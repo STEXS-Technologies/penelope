@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--parallel-cpus",
                         help="comma-separated CPU set for threaded workloads; defaults to --cpu")
     parser.add_argument("--runs", type=int, default=3)
-    parser.add_argument("--benchmark", choices=["durable_store", "machine_store"],
+    parser.add_argument("--benchmark", choices=["durable_store", "machine_store", "machine_backpressure"],
                         default="durable_store")
     parser.add_argument("--repository", type=Path,
                         help="checkout to measure; defaults to this script’s repository")
@@ -62,7 +62,7 @@ def main():
         raise RuntimeError(f"expected one benchmark executable, found {binaries}")
     source = root / f"crates/penelope-sqlite/benches/{args.benchmark}.rs"
     support = (["crates/penelope-sqlite/tests/support/machines.rs"]
-               if args.benchmark == "machine_store" else [])
+               if args.benchmark in ("machine_store", "machine_backpressure") else [])
     metadata = {
         "schema": 1,
         "benchmark": args.benchmark,
@@ -102,8 +102,12 @@ def main():
             if [case["records"] for case in results["tasks"]] != [16, 128, 512]:
                 raise RuntimeError("unexpected task dataset")
         else:
-            if [case["writers"] for case in results["profiles"]] != [1, 2, 8, 32]:
-                raise RuntimeError("unexpected machine writer profiles")
+            if args.benchmark == "machine_store":
+                if [case["writers"] for case in results["profiles"]] != [1, 2, 8, 32]:
+                    raise RuntimeError("unexpected machine writer profiles")
+            elif [(case["queue_capacity"], case["requests_per_round"])
+                  for case in results["profiles"]] != [(1, 32), (1, 128), (8, 32), (8, 128)]:
+                raise RuntimeError("unexpected machine backpressure profiles")
             if (results["measurement_mode"] != "release-101"
                     or any(case["measured_rounds"] != 101 for case in results["profiles"])):
                 raise RuntimeError("machine measurements require the full release profile")
