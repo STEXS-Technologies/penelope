@@ -1,7 +1,7 @@
 //! One inspection interface; machine, saga and task retain their own authorities.
 //! This example prepares proposals only. Production applications use the existing
 //! atomic process commit or task journal before dispatching or starting work.
-//! Machine journal admission remains under development; this demo aborts its batch.
+//! This demo aborts its machine batch; the durable consumer demonstrates journal admission.
 #[path = "support/counter.rs"]
 mod counter;
 #[path = "support/counter_codec.rs"]

@@ -696,7 +696,7 @@ fn schema_upgrade_preserves_v1_task_bytes() {
         .query_row("SELECT record FROM task_records", [], |row| row.get(0))
         .unwrap();
     connection
-        .execute_batch("DROP TABLE task_retirements; DROP TABLE process_payloads; DROP TABLE process_usage; DROP TABLE process_heads; DROP TABLE process_outcomes; DROP TABLE process_inbox; DROP TABLE process_sources; DROP TABLE process_commits; DROP TABLE process_actions; DROP TABLE process_timers; DROP TABLE lease_counter; PRAGMA user_version=1;")
+        .execute_batch("DROP TABLE task_retirements; DROP TABLE process_payloads; DROP TABLE process_usage; DROP TABLE process_heads; DROP TABLE process_outcomes; DROP TABLE process_inbox; DROP TABLE process_sources; DROP TABLE process_commits; DROP TABLE process_actions; DROP TABLE process_timers; DROP TABLE lease_counter; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=1;")
         .unwrap();
     drop(connection);
     let mut upgraded = open(&path);
@@ -713,7 +713,7 @@ fn schema_upgrade_preserves_v1_task_bytes() {
     let version: u32 = migrated_connection
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 6);
+    assert_eq!(version, 7);
 }
 
 #[test]
@@ -723,7 +723,7 @@ fn failed_schema_upgrade_rolls_back_schema_and_version() {
     drop(open(&path));
     let connection = Connection::open(&path).unwrap();
     connection
-        .execute_batch("DROP TABLE task_retirements; PRAGMA user_version=1;")
+        .execute_batch("DROP TABLE task_retirements; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=1;")
         .unwrap();
     assert!(SqliteTaskJournal::open(&path, definition(), SqliteLimits::default()).is_err());
     let version: u32 = connection

@@ -109,6 +109,6 @@ The machine fuzzer covers raw bytes and mutated/rehashed fixtures; the explicit
 newtype fuzzer covers every added identity/code type.
 
 Hosted [canonical payload preparation and receipt matching](machine-preparation.md)
-are implemented. Production store operations, authenticated receipt acquisition,
-SQLite migration/transactions, crash recovery and typed durable bridges remain
-unimplemented. This record codec alone does not qualify F1/F6/F8.
+are implemented. [Authorized journal admission, SQLite transactions and snapshot recovery](machine-storage.md)
+are also implemented. Durable outbox delivery and typed bridges remain pending.
+This record codec alone does not qualify F1/F6/F8.

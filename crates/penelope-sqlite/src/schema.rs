@@ -118,7 +118,7 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     let version: u32 = transaction
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .map_err(|error| sql_error(&error))?;
-    if version > 6 {
+    if version > 7 {
         return Err(TaskPortError::Corrupt);
     }
     if version == 0 {
@@ -235,6 +235,34 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
     }
     #[cfg(all(test, unix))]
     tests::cut("after-v6");
+    if version < 7 {
+        transaction.execute_batch(
+            "CREATE TABLE machine_heads (
+                machine_key BLOB PRIMARY KEY CHECK(length(machine_key)=64),
+                scope BLOB NOT NULL CHECK(length(scope)=104),
+                revision BLOB NOT NULL CHECK(length(revision)=8),
+                genesis BLOB NOT NULL, genesis_digest BLOB NOT NULL CHECK(length(genesis_digest)=32),
+                state BLOB NOT NULL, state_digest BLOB NOT NULL CHECK(length(state_digest)=32),
+                last_event BLOB CHECK(last_event IS NULL OR length(last_event)=32),
+                bytes_used INTEGER NOT NULL CHECK(bytes_used>=0),
+                event_count INTEGER NOT NULL CHECK(event_count>=0));
+             CREATE TABLE machine_events (
+                machine_key BLOB NOT NULL REFERENCES machine_heads(machine_key),
+                event BLOB NOT NULL CHECK(length(event)=32),
+                revision BLOB NOT NULL CHECK(length(revision)=8),
+                record BLOB NOT NULL, event_payload BLOB NOT NULL, state BLOB NOT NULL,
+                PRIMARY KEY(machine_key,event), UNIQUE(machine_key,revision));
+             CREATE TABLE machine_intents (
+                machine_key BLOB NOT NULL, intent BLOB NOT NULL CHECK(length(intent)=32),
+                event BLOB NOT NULL CHECK(length(event)=32),
+                ordinal INTEGER NOT NULL CHECK(ordinal>=0), payload BLOB NOT NULL,
+                PRIMARY KEY(machine_key,intent), UNIQUE(machine_key,event,ordinal),
+                FOREIGN KEY(machine_key,event) REFERENCES machine_events(machine_key,event));
+             PRAGMA user_version=7;"
+        ).map_err(|error| sql_error(&error))?;
+    }
+    #[cfg(all(test, unix))]
+    tests::cut("after-v7");
     #[cfg(all(test, unix))]
     tests::cut("before-commit");
     transaction.commit().map_err(|error| sql_error(&error))?;

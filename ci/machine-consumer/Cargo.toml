@@ -9,8 +9,12 @@ publish = false
 
 [dependencies]
 penelope = { path = "../../crates/penelope" }
+penelope-sqlite = { path = "../../crates/penelope-sqlite", optional = true }
+async-trait = { version = "0.1", optional = true }
+tempfile = { version = "3", optional = true }
 
 [features]
+durable = ["dep:penelope-sqlite", "dep:async-trait", "dep:tempfile"]
 timeline = ["penelope/timeline"]
 
 [[bin]]
@@ -29,3 +33,8 @@ path = "../../crates/penelope/examples/prepared_decisions.rs"
 name = "timeline"
 path = "../../crates/penelope/examples/timeline_machine.rs"
 required-features = ["timeline"]
+
+[[bin]]
+name = "durable"
+path = "durable.rs"
+required-features = ["durable"]

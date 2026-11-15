@@ -4,7 +4,9 @@ use std::sync::Arc;
 use thiserror::Error;
 
 mod recovery;
+mod store;
 pub use recovery::*;
+pub use store::*;
 
 /// Application-owned canonical payload interpretation, pinned to the complete
 /// model definition. Encoding must be deterministic and include all relevant

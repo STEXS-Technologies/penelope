@@ -23,6 +23,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Authorized machine journal contracts and optional SQLite snapshot adapter with
+  atomic CAS, exact duplicate lookup, bounded history and schema migration 7.
+  Crash/reopen tests and a shared-model application exercise receipt publication.
+  Intent delivery/reconciliation and durable bridges remain under development.
 - Bounded machine recovery payload verification and canonical snapshot restoration,
   keeping recovered bytes distinct from new transition admission and dispatch.
 - Hosted machine payload preparation with bounded canonical encoding, immutable

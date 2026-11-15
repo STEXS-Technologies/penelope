@@ -128,22 +128,14 @@ impl<const INTENTS: usize> MachineStoredCommit<INTENTS> {
         M: Machine,
         C: MachineCodec<M>,
     {
-        let head = self.receipt().head;
-        if head.scope != scope {
-            return Err(MachineFailure::Kernel(MachineError::ScopeMismatch).into());
-        }
-        if model.definition() != scope.definition || codec.definition() != scope.definition {
-            return Err(MachineFailure::Kernel(MachineError::DefinitionMismatch).into());
-        }
-        let state = codec
-            .decode_state(self.batch.state())
-            .map_err(MachinePreparationError::Codec)?;
-        let len = codec
-            .encode_state(&state, scratch)
-            .map_err(MachinePreparationError::Codec)?;
-        if scratch.get(..len) != Some(self.batch.state()) {
-            return Err(MachinePreparationError::PayloadMismatch);
-        }
-        MemoryMachine::restore(model, head, state, limits).map_err(Into::into)
+        super::store::restore_snapshot(
+            model,
+            codec,
+            scope,
+            self.receipt().head,
+            self.batch.state(),
+            scratch,
+            limits,
+        )
     }
 }

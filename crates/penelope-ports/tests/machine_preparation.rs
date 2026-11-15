@@ -1089,3 +1089,85 @@ fn recovery_preserves_order_and_supports_exact_zero_capacity() {
     );
     assert_eq!(calls.get(), 1);
 }
+
+#[test]
+fn bootstrap_and_snapshot_restore_preserve_native_invariants_without_clone() {
+    let bootstrap =
+        prepare_machine_bootstrap(&model(), &Codec(0), SCOPE, &State(5), &mut [0; 8], LIMITS)
+            .unwrap();
+    assert_eq!(bootstrap.scope(), SCOPE);
+    assert_eq!(bootstrap.state(), 5_u64.to_le_bytes());
+    assert!(matches!(
+        prepare_machine_bootstrap(
+            &model(),
+            &Codec(0),
+            SCOPE,
+            &State(1025),
+            &mut [0; 8],
+            LIMITS
+        ),
+        Err(MachinePreparationError::Machine(MachineFailure::Model(
+            Fault::Invalid
+        )))
+    ));
+    assert!(
+        prepare_machine_bootstrap(&model(), &Codec(1), SCOPE, &State(5), &mut [0; 8], LIMITS)
+            .is_err()
+    );
+    assert!(
+        prepare_machine_bootstrap(&model(), &Codec(0), SCOPE, &State(5), &mut [0; 7], LIMITS)
+            .is_err()
+    );
+    let head = MachineHead {
+        scope: SCOPE,
+        revision: MachineRevision::ZERO,
+    };
+    let snapshot =
+        MachineSnapshot::decode(head, bootstrap.state(), bootstrap.digest(), None, LIMITS).unwrap();
+    let restored: MemoryMachine<_, 2> = snapshot
+        .restore(
+            model(),
+            &Codec(0),
+            SCOPE,
+            &mut [0; 8],
+            IntentLimits {
+                max_intents: 2,
+                max_payload_bytes: 16,
+            },
+        )
+        .unwrap();
+    assert_eq!(restored.read(), (head, &State(5)));
+    assert!(snapshot.last().is_none());
+    assert_eq!(
+        MachineSnapshot::decode(
+            MachineHead {
+                revision: MachineRevision::new(1),
+                ..head
+            },
+            bootstrap.state(),
+            bootstrap.digest(),
+            None,
+            LIMITS
+        )
+        .err(),
+        Some(MachineStoreError::Corrupt)
+    );
+    assert_eq!(
+        MachineSnapshot::decode(head, bootstrap.state(), [99; 32], None, LIMITS).err(),
+        Some(MachineStoreError::Corrupt)
+    );
+    assert_eq!(
+        MachineSnapshot::decode(
+            head,
+            bootstrap.state(),
+            bootstrap.digest(),
+            None,
+            MachinePayloadLimits {
+                max_state_bytes: 7,
+                ..LIMITS
+            }
+        )
+        .err(),
+        Some(MachineStoreError::Capacity)
+    );
+}

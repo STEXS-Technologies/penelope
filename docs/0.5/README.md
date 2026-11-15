@@ -23,7 +23,7 @@ timeline correction. Internal crates serve dependency and deployment boundaries.
 | F3 | Saga adapter and proven shared internals | Prepared views and 0.4 parity; integration in progress | Legacy/new differential decisions, errors and bytes |
 | F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
 | F5 | Machine adapter to existing timeline | Adapter implemented; qualification in progress | [Captured machine composition](timeline-machines.md), correction, scope, scratch and finality checks |
-| F6 | Machine journal, SQLite and effect bridges | Metadata, preparation and checked snapshot decoding implemented; storage and bridges pending | [Machine wire](machine-wire.md), [payload preparation](machine-preparation.md); production CAS, crash/reopen, authorization and bridges remain open |
+| F6 | Machine journal, SQLite and effect bridges | Scoped journal and SQLite snapshots implemented; outbox and bridges pending | [Machine storage](machine-storage.md), wire and payload preparation; effect leasing, reconciliation and bridges remain open |
 | F7 | Consolidate API, internals, docs and examples | Facade paths established; integration pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
 | F8 | Qualify candidate | Pending | Exact-SHA evidence for every section 14 release gate |
 
@@ -62,5 +62,5 @@ completed checks, approved MSRV change and remaining qualification work.
 The first [machine checkpoint](machine.md) provides the portable owner and
 hierarchy helper, with independent facade consumer examples. The implemented
 [public preparation API](public-api.md) now includes saga/task inspection, and
-[shared intent admission](staging-extraction.md) has differential evidence. Durable
-admission and effect bridges remain pending; timeline composition is implemented.
+[shared intent admission](staging-extraction.md) has differential evidence. The scoped machine journal and timeline composition are implemented; durable
+outbox delivery and effect bridges remain pending.

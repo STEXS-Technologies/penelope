@@ -52,6 +52,7 @@ fuzz_targets=(
   fuzz_worker_protocol
   fuzz_sqlite_task_authority
   fuzz_sqlite_process
+  fuzz_sqlite_machine
 )
 
 dtos=(
@@ -84,6 +85,7 @@ for dto in "${dtos[@]}"; do
 done
 
 python3 scripts/seed-timeline-corpus.py
+python3 scripts/seed-machine-corpus.py
 
 for fuzz_target in "${fuzz_targets[@]}"; do
   printf '%s malformed-input drill (%s runs)\n' "${fuzz_target}" "${fuzz_runs}"

@@ -1,0 +1,162 @@
+{
+  "checkpoint": "authorized machine journal and SQLite snapshot profile",
+  "parent_commit": "5bacb63c6d64f55a51a79b50ad9bf5f90521d960",
+  "source_scope": "Parent plus exact changed/new source, test, fixture, CI, manifest, lockfile and script hashes; documentation excluded.",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "e072e189924a7897931d7cb42482b2a0bf7defe1ce25dc42a0219ab145199629",
+    "Cargo.lock": "e255d529efabfe754ce8d4ae5229c7095cf4e0ae32edb0c73b8be096d401eef5",
+    "ci/machine-consumer/Cargo.lock": "bf7cea6c579a28d71a69e7579baa71d12df78c48938378b3db2450592518d9ac",
+    "ci/machine-consumer/Cargo.toml": "c750fbe11ba4f1e770e95aecde3e9052e771052dd538b7d94f7d63cf88369ab2",
+    "ci/machine-consumer/durable.rs": "b6dbdfbd27407dd9a770f853749cac4386291efb389f3bddcc08145ae0aff6ee",
+    "crates/penelope-ports/src/machine.rs": "218bd30927c00310808eb4fecbaea58451cf19b7133855d759d21bd1f8367db1",
+    "crates/penelope-ports/src/machine/recovery.rs": "c01148135021aae2c0896e1d74906285f7e6b876fa85d850adc24a7f508bc5e4",
+    "crates/penelope-ports/src/machine/store.rs": "fbcc1d7b3c9a4bd5560cfb58d75c56bba7a8baa5cfc1815abdea8f6bc502e42a",
+    "crates/penelope-ports/tests/machine_preparation.rs": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+    "crates/penelope-sqlite/src/lib.rs": "34a909783ad3fa13c6cf6aca5ec380a77e3b99434b7ad372dfad89701b2658f7",
+    "crates/penelope-sqlite/src/machine.rs": "efe03ad579f52af77fc206bb9f6ae1f0bde2c4c832bb5fd349fe16f91115dc43",
+    "crates/penelope-sqlite/src/machine/read.rs": "40b7ea9d473f3a7c642bba3f2dec64ff04970c1acf05be771a9e6e600619c756",
+    "crates/penelope-sqlite/src/machine/tests.rs": "98476fd758193b9f8586407d3fa15f335c1331c41d7ac64419a64dcfd91be0d0",
+    "crates/penelope-sqlite/src/schema.rs": "1ba09ce41aa9fa7d23312abd4f6df086bf002b27f6c1d406dddbf0f99ff7d9d7",
+    "crates/penelope-sqlite/src/schema_inbox_tests.rs": "abad90b51a8d047a75e3dba7e1755620f4925ba5e83c7934a5cfddc8b886fa06",
+    "crates/penelope-sqlite/src/schema_tests.rs": "0702b2dca416b37d42695ac40986ba726825c4b0152f1acbfeebc1ab31f64829",
+    "crates/penelope-sqlite/tests/machines.rs": "04788feeadc0f3c819bf179bdfc0adbae23e6bd102f0555172180e3d44d38e32",
+    "crates/penelope-sqlite/tests/process.rs": "15c0e3ed4c96690bf0e817bfcbcb3f96de833573f86039ebe32c24c265b646a9",
+    "crates/penelope-sqlite/tests/support/claim_indexes.rs": "c97d73d737b18d46ae2f8f188514dc1cd63f2732a01aeea7a07901b40e7a5339",
+    "crates/penelope-sqlite/tests/support/inbox_index.rs": "6c76069e1c52c2af8a3028cd565bb129c40838abb68ef9723b951acc9cdd0cf8",
+    "crates/penelope-sqlite/tests/support/machines.rs": "6ef8997dffeac1d7be4ef00da7636cb071597826cedbaadd222778178b58d033",
+    "crates/penelope-sqlite/tests/tasks.rs": "a8531c7a651d4221de4ee109405bb41f185b776bdf780971a9dbb3bd1c285555",
+    "crates/penelope/examples/prepared_decisions.rs": "a20bb443ec589c7b41cd93c4eb61430bc0594ae800b4fa64071088e1587a3abb",
+    "fuzz/Cargo.toml": "3be63a07b08f2d17941ba287fb04c6a7432730dd84d0282c468b05fb8ede1bd0",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "4ebba0144e34b37ee2001a62b89fdfc64977286722e3b1d3d037e9c1f6bc291d",
+    "scripts/run_bounded_fuzz.sh": "ecd067ab6f0b997dac8d232c31d1e7de77dbc7433b9591025d49924533a7473c",
+    "scripts/seed-machine-corpus.py": "b7059b7c425e2653bcc172d176b4673f70f978c48e8ded6836bd993b8f247834"
+  },
+  "checks": [
+    {
+      "name": "workspace-final",
+      "command": "cargo test --workspace --all-features --lib --tests --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "workspace-final.log.gz",
+      "raw_sha256": "304ee7acf242fdeb8e8831ff54922e02d225099ea2d4fae3c8c81b43e1e45bbd",
+      "gzip_sha256": "f96db06a74098940e6805144b7e05ef5ba3090adb7e19ecc42c0666069547da2"
+    },
+    {
+      "name": "clippy",
+      "command": "cargo clippy --workspace --all-targets --all-features --exclude penelope-fuzz --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "clippy.log.gz",
+      "raw_sha256": "c5e448770cb682f3406987193bfebdb64c8c16ca8bac8beb731a444de90cbf45",
+      "gzip_sha256": "94060e8d094be6a378345c12a69a764237990064925aee96357ae7664ad32676"
+    },
+    {
+      "name": "doc",
+      "command": "cargo test --workspace --doc --all-features --exclude penelope-fuzz --locked",
+      "exit_code": 0,
+      "log": "doc.log.gz",
+      "raw_sha256": "d0aab5f5a26e0a499db4784f1b1d205d2b35f404d142adb95852bb88ec6ad603",
+      "gzip_sha256": "f82f7e1d036a06730c36dacc1ffe7c7fd0eba80db338e07a36c3f6b57305d013"
+    },
+    {
+      "name": "rustdoc",
+      "command": "RUSTDOCFLAGS='-D warnings' cargo doc -p penelope-ports -p penelope-sqlite -p penelope --all-features --no-deps --locked",
+      "exit_code": 0,
+      "log": "rustdoc.log.gz",
+      "raw_sha256": "96893f9fcc987baefdd7788aaeccc40f3fbabd80a505c84897be1e8ca146c9b3",
+      "gzip_sha256": "24b56aba13d6d67b5a5f012cd8557b14bfb65da5e5bb2318f8ae427a2a57aeae"
+    },
+    {
+      "name": "msrv-final",
+      "command": "cargo +1.89.0 test -p penelope-sqlite --test machines --locked; cargo +1.89.0 test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "log": "msrv-final.log.gz",
+      "raw_sha256": "381f219219e21b64d04c2ef6b5f669933f078bb4f9f25e6eacf76e53a19fb1c1",
+      "gzip_sha256": "6d2f89b6d028b8595dd06e9a7d412d3571c586dca6948925042fb1c97f2f7498"
+    },
+    {
+      "name": "crash",
+      "command": "cargo test -p penelope-sqlite --lib --all-features --locked -- --nocapture",
+      "exit_code": 0,
+      "log": "crash.log.gz",
+      "raw_sha256": "3544144341d6a20305688b3efcf04e7b077caf86a1e0dd411bf77189ea9efea4",
+      "gzip_sha256": "bea886ad47d41a4a48624a30ee58a522cd8bf8a6c1def730885173c8b7eee4cf"
+    },
+    {
+      "name": "compat",
+      "command": "cargo +1.89.0 check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked",
+      "exit_code": 0,
+      "log": "compat.log.gz",
+      "raw_sha256": "1d66132c34fd2860681cd99f86643d92020d6aa713173cee2212ef645e9d7fe7",
+      "gzip_sha256": "4b0df3710d9002f37d932ea241de88da0f3889f95fda3d58a503f0e9ff638e04"
+    },
+    {
+      "name": "independent",
+      "command": "cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked",
+      "exit_code": 0,
+      "log": "independent.log.gz",
+      "raw_sha256": "4d7dfb7b13e02b5f758cacebe08b76928ad5081e8f642a2da48ef4ee089194e1",
+      "gzip_sha256": "3749fc0b80a6aec5ad329350184adcc556d4145c34af3a7052c2bb6cb5f0a834"
+    },
+    {
+      "name": "msrv-example",
+      "command": "cargo +1.89.0 run --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked",
+      "exit_code": 0,
+      "log": "msrv-example.log.gz",
+      "raw_sha256": "6b435ca9f1750885980a5690b7b33e7b73b2ec8ba482f28c92033e583aeda2d5",
+      "gzip_sha256": "f1d7c47f1876417a368bb30ffc6d4ccef5a4ab2a66d1284c8b3eec515eb47838"
+    },
+    {
+      "name": "independent-clippy",
+      "command": "cargo clippy --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "independent-clippy.log.gz",
+      "raw_sha256": "1bf904663b629971ea22623a83ea08d076e19717ace89d6092772313ef4d3a8b",
+      "gzip_sha256": "5c6946b667165e04a44ee1fa26f0a553a712565d3289d3adf9c7627bae0935c1"
+    },
+    {
+      "name": "layers",
+      "command": "./scripts/check-layer-boundaries.sh; ./scripts/test-layer-boundaries.sh",
+      "exit_code": 0,
+      "log": "layers.log.gz",
+      "raw_sha256": "6f3b11345888c9f5ec49c8407764d7bd1bffdf7c80a4cee3454feab1f1c6ec37",
+      "gzip_sha256": "0968876f8bfe2fce1c3d0e2db7f26830f1b9e84a0d0eb3dce09db8fe303214fe"
+    },
+    {
+      "name": "runners",
+      "command": "./scripts/test-chaos-runners.sh",
+      "exit_code": 0,
+      "log": "runners.log.gz",
+      "raw_sha256": "2f65d311068595da2b5a217d2246eec6e3f346e048a59f5669aa93319ce6774d",
+      "gzip_sha256": "aef1bf26aa295fe328696de8206c2729a5cb8b8be2bada3f99213eb1f14cf4d9"
+    },
+    {
+      "name": "fuzz-final",
+      "command": "cargo +nightly fuzz run fuzz_sqlite_machine -- -runs=10000 -seed=510 -max_len=72",
+      "exit_code": 0,
+      "log": "fuzz-final.log.gz",
+      "raw_sha256": "6f433d5f251da69e9840d7271354bb4448bad7c26ef08cc01b54ed31ec2f25f4",
+      "gzip_sha256": "3864458f4e015550a6415c936dd37285e9363c73fc95d464eec47068c756e4ce"
+    },
+    {
+      "name": "seeds",
+      "command": "python3 scripts/seed-machine-corpus.py",
+      "exit_code": 0,
+      "log": "seeds.log.gz",
+      "raw_sha256": "884357ff2fd047c3e4417b6a30f610472f2b9162ee918386f73340cd334f8248",
+      "gzip_sha256": "f305e9cc2cd646ce3d55beed2f4d4becef69a13fe9544ae5c5a0ec3bc5469f1f"
+    },
+    {
+      "name": "graph",
+      "command": "graphify update .",
+      "exit_code": 0,
+      "log": "graph.log.gz",
+      "raw_sha256": "ed0096f9dfe95d7cb7ef94ff924dbf1bbf533f4dac2ca9c11e6daa019be50346",
+      "gzip_sha256": "2d2a53983dd22e9abbaa62392e29fed1dcd8d0bb0d8eb42245272a996a83303c"
+    }
+  ],
+  "limitations": [
+    "No intent leasing, external execution, acknowledgement/reconciliation or typed saga/task bridges yet. F6/F8 remain open.",
+    "Snapshot restoration does not replay events or populate local pending/provenance caches. Journal retains ordered intent payload history.",
+    "Crash log covers final production code with seven commit cuts and migration boundaries; final two integration tests are covered by final workspace and MSRV logs.",
+    "Full repeated candidate chaos, release coverage and isolated comparable performance remain pending."
+  ]
+}

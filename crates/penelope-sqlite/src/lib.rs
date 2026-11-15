@@ -1,12 +1,15 @@
 //! Optional SQLite adapter. Supported profile: single host, local filesystem,
 //! WAL/FULL durability. Digests detect corruption; they do not authenticate a
-//! database against malicious rewriting. Calls are synchronous: isolate them
-//! from async reactor threads in the consuming application.
+//! database against malicious rewriting. Task journal calls are synchronous;
+//! hosted process/machine ports isolate I/O on bounded workers. Construct adapters
+//! outside latency-sensitive async reactors.
 #![deny(unsafe_code)]
 mod authority;
 mod inbox;
 mod leases;
 mod lifecycle;
+mod machine;
+pub use machine::SqliteMachineStore;
 mod payloads;
 mod process;
 mod schema;

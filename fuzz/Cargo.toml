@@ -12,6 +12,7 @@ description = "Penelope fuzz targets (not published)."
 cargo-fuzz = true
 
 [dependencies]
+async-trait.workspace = true
 libfuzzer-sys = "0.4"
 serde_json = { workspace = true }
 serde = { workspace = true }
@@ -196,5 +197,11 @@ doc = false
 [[bin]]
 name = "fuzz_machine_commit"
 path = "fuzz_targets/fuzz_machine_commit.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_sqlite_machine"
+path = "fuzz_targets/fuzz_sqlite_machine.rs"
 test = false
 doc = false

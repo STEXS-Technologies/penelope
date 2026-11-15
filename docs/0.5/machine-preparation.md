@@ -3,8 +3,9 @@
 `penelope::storage::machine` adds hosted payload preparation around the existing
 portable machine owner. It introduces no second transition interpreter and no
 Clone, Serde or equality requirement on application state, events or effects.
-This is preparation for a journal; the production machine store, SQLite adapter,
-authorization, durable recovery and downstream bridges remain pending.
+This is preparation for a journal; the [machine store and SQLite snapshot profile](machine-storage.md) are now
+implemented. Durable outbox delivery/reconciliation and downstream bridges remain
+pending.
 
 `MachineCodec<M>` pins complete deterministic payload encodings to the model's
 full definition. `prepare_machine_commit` checks the expected scope/revision and
@@ -41,14 +42,14 @@ lookup. A receipt for a committed batch does not assert that it remains the late
 head. Later writes still require authoritative predecessor CAS.
 
 The native owner's pending typed intents are a local cache, not durable outbox
-or dispatch authority. Recovery of pending effects, journal authorization and
-external delivery acknowledgement uncertainty require the upcoming storage and
-bridge protocols. An exact retained batch can support lost-ACK lookup; evaluating
+or dispatch authority. Recovery of pending effects and external delivery acknowledgement uncertainty
+require the upcoming outbox and bridge protocols. Journal reads/writes now use
+the explicit host authorization contract. An exact retained batch can support lost-ACK lookup; evaluating
 the event again against a newer head cannot substitute for that lookup.
 
 The `prepared_decisions` facade example uses the same counter model as the flat
 and timeline examples, with an explicit canonical codec. It inspects the batch
-then drops it, leaving state unchanged while no machine journal exists. The
+then drops it, demonstrating inspection and abort without opening a journal. The
 independent facade consumer compiles this exact source on stable and Rust 1.89.
 
 Tests cover non-Clone state, receipt substitutions, both dispositions, causation,
@@ -78,4 +79,5 @@ empty, as documented by `MemoryMachine::restore`; durable pending intent bytes
 remain in the recovered batch for the upcoming authoritative outbox protocol.
 It does not reconstruct earlier pending batches, replay history, verify the
 predecessor chain, or authenticate the source. A trusted coherent journal read is
-still required. Checked recovery bytes alone do not establish SQLite durability.
+still required. The SQLite adapter supplies that transaction boundary; checked
+recovery bytes alone do not establish durability.

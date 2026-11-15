@@ -595,7 +595,7 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
     block_on(ProcessStore::commit(&store, &batch)).unwrap();
     let connection = Connection::open(&path).unwrap();
     connection
-        .execute_batch("DROP INDEX process_actions_pending; DROP INDEX process_timers_due; DROP INDEX process_inbox_pending; DROP TABLE process_payloads; PRAGMA user_version=3;")
+        .execute_batch("DROP INDEX process_actions_pending; DROP INDEX process_timers_due; DROP INDEX process_inbox_pending; DROP TABLE process_payloads; DROP TABLE machine_intents; DROP TABLE machine_events; DROP TABLE machine_heads; PRAGMA user_version=3;")
         .unwrap();
     let reopened =
         SqliteProcessStore::open(&path, SqliteLimits::default(), clock(), 10, 8).unwrap();
@@ -615,7 +615,7 @@ fn version_three_upgrade_preserves_process_records_and_adds_payload_storage() {
     let version: u32 = connection
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 6);
+    assert_eq!(version, 7);
 }
 
 #[path = "support/commit_integrity.rs"]

@@ -2,8 +2,8 @@
 
 This is an incremental verification ledger, not 0.5 release qualification.
 Earlier sections describe their original checkpoint; later sections record the
-machine kernel, hierarchy, shared admission and prepared adapters. The durable
-machine protocol remains pending.
+machine kernel, hierarchy, shared admission, prepared adapters and initial scoped
+journal/SQLite snapshots. Outbox delivery and durable bridges remain pending.
 The [evidence manifest](evidence/manifest.json) contains compressed raw logs,
 exit codes and hashes. Candidate source hashes identify the changed checkout.
 
@@ -189,3 +189,25 @@ encoding evidence, not crash durability or admission authority. Payload codecs,
 accepted-candidate durable preparation, store/receipt contracts, SQLite migration,
 crash/reopen checks and downstream effect bridges remain pending, as do the full
 F1/F6/F8 gates and final performance qualification.
+
+
+## Initial machine journal and SQLite checkpoint
+
+The [storage contract](machine-storage.md) records the implemented scope and
+limits. This checkpoint adds host-context authorization, canonical genesis,
+coherent snapshots, exact-event lookup, atomic accepted batches and bounded
+history. It reuses the bounded SQLite worker, connection setup, checked SQL
+writes and column reads. Stored-commit and head-snapshot restoration now share
+one canonical helper; no second model evaluator was added. Legacy migration
+fixtures remove the new tables when synthesizing old schemas; their existing
+row/fence, page-limit and rollback assertions remain intact at schema version 7.
+
+[Evidence](evidence/machine-storage/manifest.json) pins changed/new source bytes
+and compressed verification logs. New tests cover actual competing workers,
+concurrent readers, unauthorized reads/retries, corrupted bytes, quotas and
+silent-write rollback. SIGKILL commit/migration tests verify coherent reopen and
+exact retry. The independent facade/adapter counter example runs on stable and
+Rust 1.89. The new real-SQLite fuzzer and deterministic deep seeds extend the
+bounded runner; final candidate coverage, full repeated campaigns and isolated
+performance qualification remain open. This is not proof of completed outbox
+reconciliation, typed subsystem bridges, F6 or F8.

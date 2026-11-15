@@ -62,8 +62,9 @@ No mutable live-state accessor is provided.
 New application machines require `penelope.machine.v1`, bounded canonical
 encoding and a machine-specific journal. Process `AtomicProcessCommit` is not a
 generic machine transaction. The initial accepted-batch [metadata layout and
-independent goldens](machine-wire.md) now precede journal implementation. Payload
-codecs, accepted-candidate binding, verified receipts and store APIs remain pending.
+independent goldens](machine-wire.md), canonical payload preparation and
+[scoped journal/SQLite snapshot profile](machine-storage.md) are implemented.
+Source-authorized intent delivery, reconciliation and durable bridges remain open.
 
 Persist immutable accepted event bytes, pinned model/schema, exact predecessor
 and next head/state, and the entire ordered intent batch in one local transaction.
@@ -71,6 +72,10 @@ Exact duplicate event/content returns the same verifiable receipt; same ID with
 different content conflicts. An absent ACK is unknown until authoritative lookup.
 A content digest identifies bytes and does not authenticate a rewritten store.
 No claim of cross-store atomicity or persistent timeline correction follows.
+The initial recovery profile retains a complete state snapshot per accepted event;
+restoration does not execute events. History is append-only within explicit limits
+and refuses further admission rather than discarding deduplication evidence.
+SQLite schema 7 adds separate tables in the existing forward migration.
 
 ## ADR-050-06: extraction boundaries
 
@@ -91,6 +96,9 @@ machine histories or unchecked identity conversions.
 Pure reducers do not authenticate callers. Hosted admission verifies the trusted
 principal and exact requested operation. Machine operations use independent
 types instead of adding variants to legacy exhaustive authorization enums.
+`MachineAuthorizer` now carries a host-owned associated context; `MachineStore`
+authorizes every read, write and duplicate lookup before scoped information is
+queried. Stored bytes and receipt DTOs never authenticate their own source.
 
 Core machine support belongs in `penelope-core::machine`, without new packages
 or feature dependencies. Keep facade defaults unchanged. Timeline, SQLite,

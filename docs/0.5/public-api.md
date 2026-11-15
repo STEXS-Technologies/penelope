@@ -1,6 +1,6 @@
 # Implemented public preparation and inspection
 
-This records compiling APIs, not the pending machine journal or release contract.
+This records compiling APIs and the initial journal profile, not release qualification.
 Use Rust 1.89 or later. The facade defaults and existing imports remain supported.
 
 | Entry point | Current role | Compiled consumer |
@@ -9,7 +9,7 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 | `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `ci/saga-parity` |
 | `penelope::task` | Task record/projection/control contracts, prepared record inspection, hosted supervisor | `prepared_decisions`, existing recovery examples |
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
-| `penelope::storage` | Existing process/task ports; hosted `storage::machine` codec and accepted preparation | Durable examples, `prepared_decisions` |
+| `penelope::storage` | Existing process/task ports; machine codec, journal and authorization contracts | Durable examples, `prepared_decisions` |
 | `penelope::runtime` | Existing runtime integration boundaries | Existing task/runtime examples |
 | `penelope::timeline` (feature `timeline`) | Captured `MachineTimeline` adapter over existing replay, history, finality and handoff | `timeline_machine`, independent facade consumer |
 
@@ -28,8 +28,9 @@ owner. Local publication supplies no durable admission or historical deduplicati
 digests, native provenance, causation and ordered intent metadata. Constructing
 or decoding a record proves neither acceptance nor durable admission; [canonical payload preparation](machine-preparation.md) now binds the native
 accepted candidate and checks exact receipt coordinates. `MachineStoredCommit` checks retained payloads and supports scoped canonical
-snapshot restoration without event evaluation or dispatch. Trusted store admission
-and receipt acquisition remain pending.
+snapshot restoration without event evaluation or dispatch. The [optional SQLite journal](machine-storage.md) now implements authorized
+admission, coherent snapshots, exact lookup and bounded history. Effect leasing,
+reconciliation and typed durable bridges remain pending.
 
 `prepare_linear` delegates exactly once to the original `decide` and borrows its
 source input and definition. `into_parts` produces the original replay event and
@@ -66,6 +67,6 @@ counter model as the flat example. Captured context and native revisions remain
 distinct from timeline branch/revision, and intents retain timeline finality.
 
 Remaining integration work includes typed admitted effect bridges, durable
-machine contracts, end-to-end composition and final
+outbox delivery/reconciliation, end-to-end subsystem composition and final
 performance/coverage/chaos qualification. Prepared inspection does not complete
 those phases.
