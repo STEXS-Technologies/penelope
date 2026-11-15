@@ -89,6 +89,14 @@ reactors. All port calls execute SQLite work on the existing bounded
 and busy timeout. Queue saturation/unavailability can leave a commit outcome
 uncertain, so callers retain exact immutable batches for authoritative resolution.
 
+Commit obtains an immediate transaction before checking duplicates or stale heads.
+For a hot instance, sequence command admission through one host owner while
+retaining the store's CAS checks for independent writers. The
+[measured contention profile](evidence/machine-store-performance/manifest.json)
+shows why: one winning call stays near a millisecond while competing stale calls
+can wait much longer. These races target one predecessor of one machine;
+independent-instance throughput and external execution are separate workloads.
+
 ## Shared-model example and evidence
 
 Run the independent application with:

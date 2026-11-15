@@ -1,0 +1,620 @@
+{
+  "source_commit": "14e1648c79bf480c084152ef26376ba351967727",
+  "source_sha256": {
+    "Cargo.lock": "21627d60c8f45917cb977223d164d2a552552bef31afbb951d5d9bce0a4dabc9",
+    "crates/penelope-sqlite/Cargo.toml": "3da2f6b05740f9e4ae48f613792ea1647b4a5b4e0fe3ba71f391f211fc4c6c50",
+    "crates/penelope-sqlite/benches/machine_store.rs": "67ad68a5e072d7a0871322ddb3e951e5e74f026e64b9fc78742fdc2a95c96330",
+    "crates/penelope-sqlite/tests/support/machines.rs": "25015435cc9a00ef9e3c5516c1bfbeed63e90a60f8ad2bcaeb145baa35c3d80a",
+    "scripts/benchmark-durable-store.py": "4ef84e753c5bb6ed06c66557a826ca008187a973787502674942588a46233f11"
+  },
+  "binary_post_run_sha256": {
+    "1.100.0": "cfd711e1ce34ea4d1d8df2211be7266b2ab788f34c4d41c830b1edf97dcc5901",
+    "1.89.0": "590adf89907db9929eafd4f611f9cf2d8d48f2fcdaf87467fe04aecdcd872f6b"
+  },
+  "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_BUILD_JOBS=2 python3 scripts/benchmark-durable-store.py OUTPUT --benchmark machine_store --data-parent NVME_DIRECTORY --cpu 4 --parallel-cpus 4,5,6,7 --runs 3 --toolchain 1.100.0",
+  "checks": [
+    {
+      "name": "measure-1.100.0",
+      "command": [
+        "python3",
+        "/home/ac/projects/penelope/scripts/benchmark-durable-store.py",
+        "/tmp/penelope-machine-store-qualification/measure-1.100.0",
+        "--benchmark",
+        "machine_store",
+        "--data-parent",
+        "/home/ac/projects/penelope/target/perf-data",
+        "--cpu",
+        "4",
+        "--parallel-cpus",
+        "4,5,6,7",
+        "--runs",
+        "3",
+        "--toolchain",
+        "1.100.0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 125.70482525399711
+    },
+    {
+      "name": "measure-1.89.0",
+      "command": [
+        "python3",
+        "/home/ac/projects/penelope/scripts/benchmark-durable-store.py",
+        "/tmp/penelope-machine-store-qualification/measure-1.89.0",
+        "--benchmark",
+        "machine_store",
+        "--data-parent",
+        "/home/ac/projects/penelope/target/perf-data",
+        "--cpu",
+        "4",
+        "--parallel-cpus",
+        "4,5,6,7",
+        "--runs",
+        "1",
+        "--toolchain",
+        "1.89.0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 62.05331812100485
+    },
+    {
+      "name": "legacy-runner-default",
+      "command": [
+        "python3",
+        "/home/ac/projects/penelope/scripts/benchmark-durable-store.py",
+        "/tmp/penelope-machine-store-qualification/legacy-default",
+        "--data-parent",
+        "/home/ac/projects/penelope/target/perf-data",
+        "--cpu",
+        "4",
+        "--runs",
+        "1",
+        "--toolchain",
+        "1.100.0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2189639339994756
+    },
+    {
+      "name": "sqlite-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--test",
+        "machines",
+        "--test",
+        "machine_outbox"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.662287806000677
+    },
+    {
+      "name": "native-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-executor",
+        "--test",
+        "machine_task",
+        "--test",
+        "machine_saga"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.160126808004861
+    },
+    {
+      "name": "debug-entry-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--bench",
+        "machine_store"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.8436918500010506
+    },
+    {
+      "name": "sqlite-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--test",
+        "machines",
+        "--test",
+        "machine_outbox"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.665874420003092
+    },
+    {
+      "name": "native-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-executor",
+        "--test",
+        "machine_task",
+        "--test",
+        "machine_saga"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 14.85200949099817
+    },
+    {
+      "name": "debug-entry-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--bench",
+        "machine_store"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.016102282002976
+    }
+  ],
+  "additional_checks": [
+    {
+      "command": "cargo +1.100.0 clippy --locked -p penelope-sqlite --lib --bench machine_store --all-features -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit_code": 0,
+      "tests": 75
+    },
+    {
+      "command": "cargo +1.100.0 package --list --locked --allow-dirty -p penelope-sqlite",
+      "exit_code": 0,
+      "scope": "Inclusion of benchmark and shared fixture; not package build/publication."
+    },
+    {
+      "command": "CARGO_PROFILE_BENCH_DEBUG_ASSERTIONS=true ... benchmark-durable-store.py --benchmark machine_store --parallel-cpus 4,5,6,7 --runs 1",
+      "exit_code": 1,
+      "expected": true,
+      "reason": "Actual debug-smoke output with three rounds per writer profile refused as performance evidence."
+    }
+  ],
+  "scope": [
+    "One machine with8byte state/event/intent payloads, one committed intent per event, fixed fixture policy allowing trusted local requests; not policy engine performance.",
+    "Independent authorized SQLite worker/connection per writer, one committed CAS and writers-1 checked stale refusals per race. Exact retries and coherent snapshot reads measured separately.",
+    "Raw per-call latency for each winner/retry/snapshot, and per-race slowest-stale/last-finish distributions; every refusal checked, only the slowest losing latency per race is retained.",
+    "Eight warmups plus101 measured races per release profile; all109 event and intent rows verified, exact state/revision and retained payloads checked, integrity_check=ok.",
+    "Three pinned Rust1.100 runs and one pinned Rust1.89 compatibility run. All four writer counts also exercised by three-round debug smokes on both compilers.",
+    "No production source or legacy durable_store benchmark changes. Shared test preparation reused through batch_id; same async driver, policy, model and canonical codec as existing integration fixtures."
+  ],
+  "measurement_conditions": {
+    "cpus": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "filesystem": "Same Btrfs on local NVMe; exact findmnt metadata retained; WAL/FULL and production limits unchanged.",
+    "compilers": "Both compiler wrappers empty. Same current Cargo.lock and patched SQLite3.54.1. Builds restricted to CPUs4-7.",
+    "concurrent_work": "Full chaos campaign on disjoint physical cores8-15. Shared-host frequency, caches, thermals, I/O and unrelated applications uncontrolled.",
+    "io": "Raw Linux process I/O counters between completed open/bootstrap and final profile verification; includes warmup, measured calls and correctness checks, not per-operation physical disk writes. WAL bytes are logical file lengths.",
+    "snapshot": "Each commit retains required next-state bytes. Optional head-snapshot reads timed separately; no alternative snapshot cadence measured.",
+    "throughput": "One successful commit per race; barrier release to last completed call excludes client startup/join and batch preparation. Attempts/s separately includes stale refusals. Integer rates round down.",
+    "rss": "Whole benchmark process including all client/database-worker threads and four profiles; no per-profile memory or allocation count claim."
+  },
+  "assessment": "All current source profiles pass correctness checks. Winning commits stay around1ms, while32-writer multicore losing calls can take hundreds of milliseconds or over1s in retained runs. The implementation obtains a serialized writer transaction before checking duplicates or stale heads; this is consistent with the measured refusal tail, without a profiler-based causal attribution. This is a new hot-instance capacity finding, not an accepted regression budget or release-wide performance conclusion. No busy timeout or correctness check was relaxed. Legacy encoding/SQLite/timeline review findings, timeline-over-machine/native end-to-end metrics, full chaos and exact-candidate qualification remain open.",
+  "pilot_scope": "Retain initial three single-core and three multicore runs from the pre-debug-mode fixture. Their source snapshot and runner snapshot are archived; they are exploratory, not substituted for the completed final-source full-release qualification.",
+  "whole_process_resources": {
+    "1.100.0": [
+      {
+        "peak_rss_kib": 14524,
+        "wall_seconds": 38.7
+      },
+      {
+        "peak_rss_kib": 14304,
+        "wall_seconds": 42.36
+      },
+      {
+        "peak_rss_kib": 14584,
+        "wall_seconds": 43.11
+      }
+    ],
+    "1.89.0": [
+      {
+        "peak_rss_kib": 14072,
+        "wall_seconds": 47.15
+      }
+    ]
+  },
+  "selected_observations": [
+    {
+      "compiler": "1.100.0",
+      "writers": 1,
+      "commit_p50_ns_by_run": [
+        834945,
+        732797,
+        802992
+      ],
+      "commit_p95_ns_by_run": [
+        1002178,
+        878248,
+        983733
+      ],
+      "commit_p99_ns_by_run": [
+        1064779,
+        962090,
+        1019541
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        839153,
+        736214,
+        806589
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        1068275,
+        966018,
+        1022857
+      ],
+      "exact_retry_p50_ns_by_run": [
+        75276,
+        65457,
+        67842
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        36410,
+        30248,
+        30349
+      ],
+      "commits_per_measured_race_second_by_run": [
+        1174,
+        1284,
+        1204
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512,
+        3827512,
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.100.0",
+      "writers": 2,
+      "commit_p50_ns_by_run": [
+        883879,
+        809966,
+        857749
+      ],
+      "commit_p95_ns_by_run": [
+        1016506,
+        971438,
+        987420
+      ],
+      "commit_p99_ns_by_run": [
+        1183659,
+        1083795,
+        1069489
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        1155304,
+        1139574,
+        1146797
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        3209427,
+        1400749,
+        1481485
+      ],
+      "exact_retry_p50_ns_by_run": [
+        70737,
+        62040,
+        65456
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        37462,
+        30098,
+        32714
+      ],
+      "commits_per_measured_race_second_by_run": [
+        801,
+        846,
+        833
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512,
+        3827512,
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.100.0",
+      "writers": 8,
+      "commit_p50_ns_by_run": [
+        1036003,
+        1014492,
+        1028769
+      ],
+      "commit_p95_ns_by_run": [
+        1313780,
+        1225029,
+        1238074
+      ],
+      "commit_p99_ns_by_run": [
+        1434554,
+        1359468,
+        1300535
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        33528544,
+        33585133,
+        33475671
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        78887183,
+        78874318,
+        103723428
+      ],
+      "exact_retry_p50_ns_by_run": [
+        105845,
+        100685,
+        96567
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        41500,
+        36961,
+        34206
+      ],
+      "commits_per_measured_race_second_by_run": [
+        30,
+        25,
+        29
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512,
+        3827512,
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.100.0",
+      "writers": 32,
+      "commit_p50_ns_by_run": [
+        1172548,
+        1197586,
+        1167288
+      ],
+      "commit_p95_ns_by_run": [
+        2281922,
+        1493448,
+        1558083
+      ],
+      "commit_p99_ns_by_run": [
+        6201582,
+        1893221,
+        3779649
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        229394005,
+        329413962,
+        329276816
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        829601995,
+        829556087,
+        929792993
+      ],
+      "exact_retry_p50_ns_by_run": [
+        109281,
+        104963,
+        110032
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        40769,
+        36059,
+        39727
+      ],
+      "commits_per_measured_race_second_by_run": [
+        3,
+        2,
+        2
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512,
+        3827512,
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.89.0",
+      "writers": 1,
+      "commit_p50_ns_by_run": [
+        742686
+      ],
+      "commit_p95_ns_by_run": [
+        860274
+      ],
+      "commit_p99_ns_by_run": [
+        983251
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        746032
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        986458
+      ],
+      "exact_retry_p50_ns_by_run": [
+        68372
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        30479
+      ],
+      "commits_per_measured_race_second_by_run": [
+        1325
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.89.0",
+      "writers": 2,
+      "commit_p50_ns_by_run": [
+        807842
+      ],
+      "commit_p95_ns_by_run": [
+        1024912
+      ],
+      "commit_p99_ns_by_run": [
+        1066252
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        1141508
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        1657044
+      ],
+      "exact_retry_p50_ns_by_run": [
+        58883
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        29046
+      ],
+      "commits_per_measured_race_second_by_run": [
+        837
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.89.0",
+      "writers": 8,
+      "commit_p50_ns_by_run": [
+        1002829
+      ],
+      "commit_p95_ns_by_run": [
+        1145105
+      ],
+      "commit_p99_ns_by_run": [
+        1219108
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        33851686
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        78779844
+      ],
+      "exact_retry_p50_ns_by_run": [
+        97719
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        36991
+      ],
+      "commits_per_measured_race_second_by_run": [
+        22
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512
+      ]
+    },
+    {
+      "compiler": "1.89.0",
+      "writers": 32,
+      "commit_p50_ns_by_run": [
+        1098535
+      ],
+      "commit_p95_ns_by_run": [
+        1428652
+      ],
+      "commit_p99_ns_by_run": [
+        4487659
+      ],
+      "race_last_finish_p50_ns_by_run": [
+        329547066
+      ],
+      "race_last_finish_p99_ns_by_run": [
+        929561153
+      ],
+      "exact_retry_p50_ns_by_run": [
+        98881
+      ],
+      "snapshot_read_p50_ns_by_run": [
+        35509
+      ],
+      "commits_per_measured_race_second_by_run": [
+        2
+      ],
+      "wal_logical_bytes_at_end_by_run": [
+        3827512
+      ]
+    }
+  ],
+  "artifacts": {
+    "clippy.log.gz": {
+      "sha256": "e8ded6de688c4c1f521c0651c5fb6b095f161f5e4a819b50f0f3b51e89b2554a",
+      "bytes": 146
+    },
+    "expected-debug-refusal.log.gz": {
+      "sha256": "871b61162e4189a745ef2d721d33fb62e6a57d5f3385375d5b3c187bdb40795c",
+      "bytes": 69
+    },
+    "expected-debug-refusal.tar.gz": {
+      "sha256": "2c43720f69fe3b5ab4fddac76895e89beb9bf6acb7020b2ae832b988f97a3059",
+      "bytes": 10724
+    },
+    "multicore-pilot.tar.gz": {
+      "sha256": "615e16b7940eb36738605b39a6d906b85ae5f604b736b5533965d078ffe71f66",
+      "bytes": 32995
+    },
+    "package-list.log.gz": {
+      "sha256": "a5efc72f40e03043e2cb5f84358cc8b1ed3b3ba41b3c68ffeff7ee4bb5cbc5c5",
+      "bytes": 916
+    },
+    "pilot-runner.py.gz": {
+      "sha256": "7749367b6516442919980b4329ce802a9fc3c227e3862c90bb0fb41693d8be68",
+      "bytes": 2403
+    },
+    "pilot-source.rs.gz": {
+      "sha256": "07144c5dbf1cb0fb81a859d57c2c08b35ec4ea55adbf1938ea0b793e92bc2642",
+      "bytes": 3654
+    },
+    "qualification.tar.gz": {
+      "sha256": "c07e7cf93c48e66a7a8607a0b05f3c360a4bda0589a98ddb2c96f3c005c7cc15",
+      "bytes": 72208
+    },
+    "run-as-recorded.py.gz": {
+      "sha256": "8d5a1c5bb08b5800aac0b17476b96eb41ebaa0777a7b34b7ff4d56b92bbfbbb1",
+      "bytes": 1066
+    },
+    "script-tests.log.gz": {
+      "sha256": "0222e414a549754f3a507f87f06b823d592dfaf60e975c71ba5470f027db15a2",
+      "bytes": 181
+    },
+    "single-cpu-pilot.tar.gz": {
+      "sha256": "886c9472d5d5e7f46a0f3b9f96f6f05d4eaafde5f01463102ad5e94fcbfb6d1b",
+      "bytes": 31462
+    }
+  },
+  "limitations": [
+    "Three short current runs on a shared host, no confidence interval or acceptance of performance regressions. Single MSRV run is compatibility evidence, not a cross-compiler speed comparison.",
+    "All writers race the same predecessor of one hot machine. This is not independent-instance throughput, a steady stream of successful writers, or an external-worker benchmark.",
+    "Optional snapshot/export cadence and other payload sizes are not measured. Required next-state retention remains part of every commit.",
+    "Raw loser timing retains the slowest stale call per race; it is not a pooled percentile of all losing API calls."
+  ]
+}

@@ -748,3 +748,29 @@ no publication guarantee; its timing is not subtracted to claim exact kernel
 cost. Batch-mean quantiles and optimized owned copies do not establish physical
 copy counts, individual tails or release-wide performance acceptance. Durable,
 timeline-over-machine and native end-to-end measurements remain open.
+
+## Durable machine performance profile
+
+[The machine-store measurements](evidence/machine-store-performance/manifest.json)
+cover one writer and 2/8/32 independent connections racing one machine head,
+with exact retries, snapshot reads, race throughput, WAL size, process I/O and
+whole-process RSS. All 101-round release profiles pass in three Rust 1.100 runs
+and one Rust 1.89 run on four pinned cores and NVMe Btrfs, using WAL/FULL and the
+existing limits. Every race checks one commit, all stale refusals, the exact
+state/revision/receipt, retained payload and final event/intent counts.
+
+Selected machine/outbox and native task/saga suites pass on both compilers.
+Debug all-target entry smokes retain every writer count and invariant with three
+sample rounds; the measurement tool refuses those results as performance data.
+The actual debug-override refusal, 75 script tests, strict SQLite Clippy, package
+inclusion and raw pilot/final runs are retained. No portable production source,
+legacy benchmark fixture, timeout or validation check changed.
+
+The shared measurement tool preserves its legacy default and supports the new
+benchmark and explicit threaded affinity. Shared model/codec/async preparation
+comes from the existing integration fixture. The multicore refusal tail is a
+capacity finding: requests acquire a writer transaction before duplicate/stale
+checks, and the same-head race rate differs sharply from winner latency. This
+profile does not qualify external execution, optional snapshot cadence, other
+payload widths or final release performance. Existing review findings and final
+qualification remain open.
