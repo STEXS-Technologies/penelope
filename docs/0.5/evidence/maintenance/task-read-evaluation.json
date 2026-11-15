@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "source_revision": "eca3ab01330c00d87c63aed1a0eec6a1bcc47b6f",
+  "original_revision": "e586878",
+  "decision": "Reject the larger single-statement read candidate. Retain only reuse of the existing optional_digest decoder, shared retirement-race test setup and additional frontier/error-precedence cases.",
+  "retained_change": "No read query, transaction boundary, head invariant, bounds, wire format, dependency or cache policy changes. Remove the duplicate nullable digest decoder in checked_head.",
+  "pilot": {
+    "scope": "Three consecutive original runs followed by three consecutive experimental single-statement runs; unchanged durable_store fixture, Rust 1.100.0, CPU 4, patched SQLite 3.54.1, NVMe Btrfs, WAL/FULL.",
+    "warm_replay_p50_ns": {
+      "before": {
+        "16": [
+          400144,
+          444911,
+          394202
+        ],
+        "128": [
+          3034428,
+          3307105,
+          3275545
+        ],
+        "512": [
+          15487631,
+          13153859,
+          13346731
+        ]
+      },
+      "after": {
+        "16": [
+          460160,
+          429982,
+          666158
+        ],
+        "128": [
+          3983101,
+          3583218,
+          4939651
+        ],
+        "512": [
+          15887369,
+          16714888,
+          16307319
+        ]
+      }
+    },
+    "interpretation": "The candidate produced higher observed replay medians and more implementation code. This unbalanced small pilot does not establish statistical regression, equivalence, cause or release acceptance. It supplies no reason to adopt the candidate.",
+    "candidate_status": "Not retained or release-qualified. Full experimental source and as-run metadata/diff/raw samples retained. The final optional_digest reuse was not the measured experimental variant."
+  },
+  "verification": {
+    "commands": [
+      "cargo test --locked -p penelope-sqlite --lib --test tasks",
+      "cargo +1.89.0 test --locked -p penelope-sqlite --lib --test tasks",
+      "cargo clippy --locked -p penelope-sqlite --all-targets --all-features -- -D warnings",
+      "cargo fmt --all -- --check",
+      "git diff --check",
+      "graphify update ."
+    ],
+    "result": "Pass. 56 library tests and 46 task integration tests on each compiler. Expanded tests also pass against the original tasks.rs, with the same 56/46 totals.",
+    "snapshot_test": "A scalar-function gate pauses the reader after establishing the SQLite snapshot. A real independent writer retires the completed task and commits while the read is paused. Both record and blob reads return their verified retained data; later reads conflict; reopened retirement and final counts are checked.",
+    "frontier_test": "Reuse the existing no-mutation/restoration fixture, adding invalid next/usage column types and integer bounds. Retirement precedence is checked with malformed retained head and record data, warm and reopened.",
+    "scope_limit": "Selected SQLite tests, Clippy and graph update only. Does not replace final exact-candidate workspace, coverage, chaos, compatibility or performance qualification."
+  },
+  "artifact": {
+    "path": "task-read-evaluation.tar.gz",
+    "sha256": "5cec3554dba2dac71886d6e9982fd566573022feade4c4c22594dc50b55e73f1",
+    "members": {
+      "evaluation/before.rs": "9cabcc087f199febddcb193901c0b2f2408c2b289cb193d7d13383133f115e2e",
+      "evaluation/final-clippy.log": "c49d131ea3f4f96d51b75e62614f92afa0a2b027f1a9c730964ad58130626c63",
+      "evaluation/graph.log": "412cc21bfc680597032931ab3b5ed014f6b1c1c599344888c3ac36ccd42cb3b6",
+      "evaluation/msrv.log": "82e95ffec0e026ba027da301c633df74161ba37148e4f477be407b4695c85579",
+      "evaluation/original-new-tests.log": "57e65b9cca8c0990b22b5523e52d22ab8682c378beb6040af9bc2889038ec406",
+      "evaluation/single-statement.rs": "ee00c864e79ab2a39a4b70eae9a6453a5562ad5dcfdcafb1bab0c9136f40a41c",
+      "evaluation/tests-final.log": "511941994b49cfc3c95d254c7ec2b40d676d61196d860ee3168d9240deb95af8",
+      "pilot-after/build.jsonl": "23420b73efba4764bf92edf2202330c88fb3fe16b3b8a89bd0d9837f36cef1cb",
+      "pilot-after/build.stderr": "f0e71a0329488edd30b09dd7ab70fbdf60ce03643696f810d005b768738d7d70",
+      "pilot-after/metadata.json": "7b2090d9d56ae96c331edf01a3e889bf9871815acfce6559fdbbbd60baeaaee8",
+      "pilot-after/run-1.json": "6e938dfa1ffd74a1f70dfeb9ccb29789cf57ba9209ba772d2c35620ce92a59f5",
+      "pilot-after/run-1.resources.json": "c673a2652b7ae9bdbdcdc7e54b2b607124682feb55bc2f8710e5fc4ce6de4bc9",
+      "pilot-after/run-2.json": "c8157ce15a6beac6ac27cb7309fe259c986fddd7f675ef1feb5dc4b030e7e533",
+      "pilot-after/run-2.resources.json": "57ae8f252294bbfcd64cfb31839872f382ddf1dea880ce6befb3957b17ba5bfa",
+      "pilot-after/run-3.json": "50065bd76daf3e53e7715517d4f97c28cc2e29f01d68919ae0e0d081f7eb933e",
+      "pilot-after/run-3.resources.json": "05bf5112c0084d2689c321aa3a836a3c8095dd88f888dd384952995283ec509f",
+      "pilot-before/build.jsonl": "8fdda38a944d5779ab331ffeaa6b25f32b479c6f4ff2e13e92c64b8e8b8fec56",
+      "pilot-before/build.stderr": "7447ca0a32ab3b82a0b1a597e39bd6602207a3fe90c1e2e7263135cbb9cbfd05",
+      "pilot-before/metadata.json": "c7460cd0d8f2bb9c9d3763530760179b726998167614a6019ed3233a0daf9f96",
+      "pilot-before/run-1.json": "ce987556f82ce7e1a1397f64fcc1a695b3b30efe8c99b8745e53ad58174ecd15",
+      "pilot-before/run-1.resources.json": "56783a2d624d6fe245ad0cbff6bac814e686e1351e8bc74be3bad11898f79f22",
+      "pilot-before/run-2.json": "21d12f1fae5417719214a11db4594b44b222309212dc90a7130218e2529caa9f",
+      "pilot-before/run-2.resources.json": "5aa300c6e7af1489b037cc4dd9b25aeb59adc99b3e6547fe40e1548561e316c4",
+      "pilot-before/run-3.json": "acf9f51d4c6b575c9e2bc5b19d9a0fd2c9ffe04d6d431ace86f63dda4077a494",
+      "pilot-before/run-3.resources.json": "b6148d086b1c3b7e17299f647ce43dee766de53e18b1b021b1213f813d59c488",
+      "retained-source/src/task_blob_snapshot_tests.rs": "70ba9f18c7e942682a3698447a662fe06c9db1ecc7611956734b9454fa52b3ef",
+      "retained-source/src/tasks.rs": "ddef8f5a0a4bd1a78ecbf06cb04a5e501f305ea4eac1f27409a21e4deb5f398c",
+      "retained-source/tests/support/task_frontier.rs": "e276a0b28d248ae4baea6d167f44db0018b62880a1dc11fe53eb7082bb374702"
+    }
+  }
+}

@@ -774,3 +774,19 @@ checks, and the same-head race rate differs sharply from winner latency. This
 profile does not qualify external execution, optional snapshot cadence, other
 payload widths or final release performance. Existing review findings and final
 qualification remain open.
+
+## Task read simplification review
+
+[The task-reader evaluation](evidence/maintenance/task-read-evaluation.json)
+retains a rejected single-statement experiment and its original/current pilot
+measurements. Fewer queries produced more implementation code and higher observed
+replay medians in that small, unbalanced pilot; it was not adopted. The retained
+production change only reuses the existing nullable digest decoder, preserving
+all queries, transaction boundaries and frontier checks.
+
+The SQLite library/task suites pass on both supported compilers, including new
+record-read retirement interleaving and malformed-frontier cases. The expanded
+tests also pass against the original reader. Both record and blob reads now
+share the real concurrent-retirement test fixture. Strict all-target SQLite
+Clippy and formatting pass. These selected checks do not replace final release
+qualification or resolve the existing performance findings.
