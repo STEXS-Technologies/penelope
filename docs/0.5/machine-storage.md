@@ -3,9 +3,10 @@
 The hosted `penelope::storage::machine::MachineStore<INTENTS>` now has a concrete
 `penelope_sqlite::SqliteMachineStore<Policy, INTENTS>` implementation. It stores
 canonical accepted batches from the native owner, not a second machine evaluator.
-This is the initial journal/snapshot profile. Intent leasing, source-authorized
-downstream dispatch, delivery acknowledgement/reconciliation and typed saga/task
-bridges remain open; this checkpoint does not complete F6 or release qualification.
+The adapter also implements leased outbox delivery, source-authorized
+acknowledgement and typed native task/saga admission, described below. These
+implemented contracts remain subject to final release qualification; see the
+[canonical recovery and composition tutorial](../getting-started.md).
 
 ## Admission and authority
 

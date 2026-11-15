@@ -1,8 +1,9 @@
-# Portable machine checkpoint
+# Portable machine contract
 
-The initial implementation is available through `penelope::machine` and
-`penelope_core::machine`. It is additive; saga, task and timeline integration
-remain pending. This checkpoint does not qualify the 0.5 release.
+The portable implementation is available through `penelope::machine` and
+`penelope_core::machine`. Optional [durability and native task/saga admission](machine-storage.md)
+and [timeline composition](timeline-machines.md) build on this contract.
+Final 0.5 release qualification remains open.
 
 Implement `Machine` with application-owned state, event, effect and error types.
 Evaluation borrows current state and returns an owned candidate. `MemoryMachine`
@@ -43,8 +44,9 @@ control and observes zero allocations across 10,000 flat and 10,000 hierarchical
 operations. A bounded fuzz target checks decisions, retained intents and revision
 against an independent reference model at capacities zero, one and four.
 
-Remaining gates include full chaos and coverage qualification, durable contracts,
-adapters, replay/correction integration, measured shared-internal extraction and
-comparable performance evidence. The metadata admission preflight is now [shared with timeline](staging-extraction.md),
+The metadata admission preflight is [shared with timeline](staging-extraction.md),
 with differential and performance evidence. Storage, provenance, poisoning and
-finality remain owned by their respective engines.
+finality remain owned by their respective engines. [Flat and hierarchical
+measurements](verification.md#flat-machine-measurement-fixture) cover dispatch,
+state sizes, guards and intent quotas. Full chaos, coverage, remaining performance
+profiles and exact release-candidate qualification remain open.

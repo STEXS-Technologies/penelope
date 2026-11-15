@@ -1,68 +1,40 @@
-# Penelope 0.5.0 implementation
+# Penelope 0.5 preparation
 
-Status: stabilization, facade consolidation and an initial portable machine API;
-not release qualification.
+The [imported plan](plan.md) defines the scope and acceptance criteria. The machine
+kernel, hierarchy, native task/saga bridges, SQLite outbox and timeline adapter
+are implemented. **Final release qualification remains open.** Workspace versions
+remain 0.4.0 during development; this branch is not a qualified 0.5 release.
 
-The [imported proposal](plan.md) is the source plan. Its baseline SHA matches
-this checkout. Development remains on the existing branch, with versions at
-0.4.0 until qualification. This directory separates planned behavior from the
-current supported [release contract](../RELEASE.md).
+Users start with the [canonical tutorial](../getting-started.md), then the
+[public API map](public-api.md). Internal crates provide dependency and deployment
+boundaries behind the facade.
 
-The product goal is one framework for deterministic state evolution and reliable
-execution. Users enter through `penelope`, learn one event/decision/publication/
-effect lifecycle, and opt into saga coordination, task recovery, durability or
-timeline correction. Internal crates serve dependency and deployment boundaries.
+## Plan status
 
-## Work order and completion gates
+| Phase | Current state | Evidence and remaining work |
+| --- | --- | --- |
+| F0 — Baseline | Frozen original sources, dependencies, wire/API observations and populated SQLite database | [Baseline](baseline.md), [compatibility](compatibility-matrix.md); equivalent-work performance review remains open |
+| F1 — Contracts | Ownership, hierarchy, publication, wire, authority and feature decisions implemented | [ADRs](architecture.md), external consumer fixtures; final qualification remains open |
+| F2 — Portable kernel | Flat and nested machines, bounded consuming publication | [Machine contract](machine.md), allocation/oracle/fuzz checks and dispatch measurements; full campaign qualification remains open |
+| F3 — Saga | Native decision adapters and source-bound saga admission | [Public APIs](public-api.md), frozen legacy parity and [storage](machine-storage.md#admit-a-saga); final qualification remains open |
+| F4 — Task | Native prepared views, task admission, worker recovery and verified result progression | [Canonical tutorial](../getting-started.md), [storage](machine-storage.md#admit-a-recoverable-task); final qualification remains open |
+| F5 — Timeline | Machine adapter reuses existing correction/finality engine | [Composition](timeline-machines.md); retained legacy performance findings require review |
+| F6 — Durability | Authorized SQLite journal, snapshots, outbox and native receivers | [Storage](machine-storage.md), [wire](machine-wire.md), [upgrade/rollback](compatibility-matrix.md); final qualification remains open |
+| F7 — Coherence and maintenance | Canonical facade/tutorial, shared helpers, docs cleanup and maintenance inventory | [Extraction boundaries](architecture.md#adr-050-06-extraction-boundaries), [verification](verification.md); performance matrix and final audit remain open |
+| F8 — Candidate | Pending | Exact-candidate CI, chaos, coverage, performance conclusions, versions/changelog and release evidence |
 
-| Phase | Work | Status | Completion evidence |
-| --- | --- | --- | --- |
-| F0 | Freeze and reproduce 0.4 baseline | In progress | [Baseline](baseline.md), compatibility fixture, CI, chaos and comparable performance runs |
-| F1 | Resolve kernel, hierarchy, publication, protocol and feature contracts | Design in progress | ADRs and compiling public API fixtures |
-| F2 | Allocation-free machine kernel and hierarchy | In progress | Truth tables, failed staging/publication, replay oracle, portable build and allocation probe |
-| F3 | Saga adapter and proven shared internals | Prepared views and 0.4 parity; integration in progress | Legacy/new differential decisions, errors and bytes |
-| F4 | Task adapter and verified composition | Prepared projection view; composition in progress | Recovery, fencing, ambiguity and journal parity |
-| F5 | Machine adapter to existing timeline | Adapter implemented; qualification in progress | [Captured machine composition](timeline-machines.md), correction, scope, scratch and finality checks |
-| F6 | Machine journal, SQLite and effect bridges | Journal, snapshots, outbox and native task/saga admission implemented; qualification pending | [Machine storage](machine-storage.md), wire and payload preparation; native task/saga authority is preserved; qualification remains open |
-| F7 | Consolidate API, internals, docs and examples | Facade and recovery/result progression implemented; consolidation audit pending | Canonical end-to-end example, migration fixtures, maintenance and performance comparisons |
-| F8 | Qualify candidate | Pending | Exact-SHA evidence for every section 14 release gate |
+## Acceptance policy
 
-Do not call a phase complete because its API names exist. In particular, namespace
-aliases alone do not integrate the engines. Start production refactoring after F0
-and settle kernel contracts before constructing durable protocols around them.
+Share concepts and helpers where semantics, error precedence and publication
+boundaries match. Keep native saga correlation, task generations, timeline
+finality and external evidence distinct. [Remaining separate implementations](architecture.md#adr-050-06-extraction-boundaries)
+have explicit authority or protocol reasons. The measured maintenance inventory
+does not claim an overall reduction in production source size.
 
-## Refactor acceptance policy
+Retain wire, recovery, crash, allocation, conformance and migration guarantees.
+Unknown effects require reconciliation. Do not weaken checks, widen bounds or
+rewrite histories to simplify implementation. The approved MSRV is Rust 1.89;
+the development toolchain is independently pinned in `rust-toolchain.toml`.
 
-Each extraction or simplification records the duplicated responsibility, its
-canonical owner, old paths removed, invariant tests retained, and equivalent-work
-performance evidence where relevant. Prefer fewer decision paths and less shared
-mutable state. Lines removed are supporting evidence, not a correctness metric.
-
-Keep saga action correlation, task generations and recovery authority, timeline
-revision/finality, and external canonical evidence distinct. Share helpers only
-where semantics, error precedence and publication boundaries are equivalent.
-Do not replace meaningful protocol types with generic integers or universal events.
-
-Preserve the existing property, crash, wire, allocation, conformance and migration
-gates. Unknown effect outcomes continue to require reconciliation. There is no
-permission to weaken checks, widen bounds or rewrite old histories to simplify
-implementation. Follow [compatibility requirements](compatibility-matrix.md).
-
-## Decisions to settle before implementation
-
-Use the proposal's ADR-050-01 through ADR-050-10 identifiers. Record concrete
-choices and consequences for reducer ownership, hierarchy bubbling and hook
-order, candidate identity/publication, independent machine wire encoding,
-durable authority, extraction limits, authorization, features, migration and
-performance tolerances. Proposal sketches remain sketches until compile-tested.
-
-[Initial verification and baseline deviations](verification.md) record the
-completed checks, approved MSRV change and remaining qualification work.
-
-The first [machine checkpoint](machine.md) provides the portable owner and
-hierarchy helper, with independent facade consumer examples. The implemented
-[public preparation API](public-api.md) now includes saga/task inspection, and
-[shared intent admission](staging-extraction.md) has differential evidence. The scoped machine journal and timeline composition are implemented. The
-[leased outbox](machine-storage.md#leased-receiver-handoff) now preserves
-source authority, attempt uncertainty and verified receiver acceptance; production
-task/saga admission is implemented; final release qualification remains pending.
+[Verification](verification.md) records revision-scoped results and open gates.
+Publication and tagging require separate authorization after qualification.

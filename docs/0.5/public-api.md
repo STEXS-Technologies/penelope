@@ -1,6 +1,7 @@
 # Implemented public preparation and inspection
 
-This records compiling APIs and the initial journal profile, not release qualification.
+This maps the implemented APIs and their authority boundaries. Final release
+qualification remains open.
 Use Rust 1.89 or later. The facade defaults and existing imports remain supported.
 
 | Entry point | Current role | Compiled consumer |
@@ -67,7 +68,8 @@ The [optional machine/timeline composition](timeline-machines.md) uses the same
 counter model as the flat example. Captured context and native revisions remain
 distinct from timeline branch/revision, and intents retain timeline finality.
 
-Remaining integration work includes typed admitted effect bridges, durable
-outbox delivery/reconciliation, end-to-end subsystem composition and final
-performance/coverage/chaos qualification. Prepared inspection does not complete
-those phases.
+The [canonical tutorial](../getting-started.md) composes durable machine
+recovery, native task admission, verified worker results and saga admission.
+Those bridges retain their native authority boundaries; prepared inspection
+alone never supplies authority. Final performance, coverage, chaos and exact
+release-candidate qualification remain open; see [verification](verification.md).

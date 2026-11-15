@@ -1,8 +1,9 @@
 # Unified state and execution: contract decisions
 
-Status: initial design decisions for implementation. F1 is not complete until
-public fixtures cover flat/hierarchical models and the specialized adapters.
-Existing 0.4 protocols and APIs remain authoritative for existing engines.
+These decisions describe the implemented kernel, hierarchy, adapters and storage
+boundaries. Compiling external consumers cover flat and hierarchical models,
+prepared views and durable composition. Existing 0.4 protocols remain authoritative
+for legacy engines; final release qualification is tracked in [verification](verification.md).
 
 ## ADR-050-01: reference-based reducer
 
