@@ -5,14 +5,12 @@
     clippy::arithmetic_side_effects,
     clippy::indexing_slicing
 )]
-#[path = "../tests/support/allocations.rs"]
-mod allocations;
-use allocations::{Counts, start_counting, stop_counting};
+#[path = "support/measurement.rs"]
+mod measurement;
+use measurement::{BATCH, SAMPLES};
 use penelope_core::machine::*;
-use std::{hint::black_box, time::Instant};
+use std::hint::black_box;
 
-const SAMPLES: usize = 101;
-const BATCH: usize = 32;
 const CAPACITY: usize = 32;
 
 const fn definition() -> MachineDefinition {
@@ -167,32 +165,7 @@ fn profile<const WORDS: usize>(profile: Profile) {
     let intents = owner.take_intents();
     assert_eq!(intents.len(), if changed { profile.intents } else { 0 });
     assert!(intents.iter().all(|intent| intent.intent.payload == 1));
-    for step in 0..128 {
-        operation(&mut owner, profile, step);
-    }
-    let mut samples = Vec::with_capacity(SAMPLES);
-    for sample in 0..SAMPLES {
-        let start = Instant::now();
-        for offset in 0..BATCH {
-            operation(&mut owner, profile, (sample * BATCH + offset) as u64);
-        }
-        samples.push(start.elapsed().as_nanos());
-    }
-    // Allocation instrumentation is disabled throughout latency sampling.
-    start_counting();
-    for step in 0..BATCH {
-        operation(&mut owner, profile, step as u64);
-    }
-    let counts = stop_counting();
-    assert_eq!(
-        counts,
-        Counts {
-            allocations: 0,
-            reallocations: 0,
-            deallocations: 0,
-            requested_bytes: 0
-        }
-    );
+    let measurements = measurement::measure(|step| operation(&mut owner, profile, step));
     let operations = 1 + 128 + SAMPLES * BATCH + BATCH;
     assert_eq!(
         owner.read().0.revision,
@@ -208,26 +181,10 @@ fn profile<const WORDS: usize>(profile: Profile) {
         expected[0] = ((2 + increments) % profile.states) as u64;
     }
     assert_eq!(owner.read().1, &expected);
-    let raw = samples
-        .iter()
-        .map(u128::to_string)
-        .collect::<Vec<_>>()
-        .join(";");
-    samples.sort_unstable();
-    let total: u128 = samples.iter().sum();
-    let throughput = (SAMPLES * BATCH) as u128 * 1_000_000_000 / total;
-    println!(
-        "flat,{WORDS},{},{},{},{},{},{},{},{},{},{total},{SAMPLES},{BATCH},{throughput},{raw}",
-        profile.states,
-        profile.events,
-        profile.intents,
-        profile.reject,
-        profile.quota,
-        samples[50] / BATCH as u128,
-        samples[95] / BATCH as u128,
-        samples[99] / BATCH as u128,
-        counts.allocations
-    );
+    measurements.report(&format!(
+        "flat,{WORDS},{},{},{},{},{}",
+        profile.states, profile.events, profile.intents, profile.reject, profile.quota
+    ));
 }
 fn matrix<const WORDS: usize>() {
     for states in [2, 8, 32] {
@@ -256,18 +213,7 @@ fn matrix<const WORDS: usize>() {
     }
 }
 fn main() {
-    start_counting();
-    let control = black_box(Vec::<u8>::with_capacity(16));
-    drop(black_box(control));
-    assert_eq!(
-        stop_counting(),
-        Counts {
-            allocations: 1,
-            reallocations: 0,
-            deallocations: 1,
-            requested_bytes: 16
-        }
-    );
+    measurement::positive_control();
     println!(
         "kind,state_words,states,events,intents,reject,quota,batch_mean_p50_ns,batch_mean_p95_ns,batch_mean_p99_ns,allocations_per_op,total_elapsed_ns,samples,batch,operations_per_second,raw_batch_elapsed_ns"
     );

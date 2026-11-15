@@ -30,3 +30,7 @@ harness = false
 [[bench]]
 name = "machine_operations"
 harness = false
+
+[[bench]]
+name = "machine_hierarchy"
+harness = false
