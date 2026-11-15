@@ -774,8 +774,8 @@ impl<
         // appends can place a different descriptor here. Verify the complete
         // record before using it, then fall back to an exact step-filtered scan.
         let entry = self
-            .input_slot_hint(record.step)
-            .filter(|entry| entry.record == record)
+            .input_slot_hints(record.step)
+            .find(|entry| entry.record == record)
             .or_else(|| {
                 self.inputs
                     .iter()
@@ -786,10 +786,27 @@ impl<
         self.verify_input(entry)?;
         Ok(entry)
     }
-    fn input_slot_hint(&self, step: TimelineStep) -> Option<&StoredInput<Input>> {
-        let offset = step.get().checked_sub(self.floor.get())?.checked_sub(1)?;
-        let index = usize::try_from(offset).ok()?;
-        self.inputs.get(index)?.as_ref()
+    fn input_slot_hints(&self, step: TimelineStep) -> impl Iterator<Item = &StoredInput<Input>> {
+        let relative = step
+            .get()
+            .checked_sub(self.floor.get())
+            .and_then(|offset| offset.checked_sub(1))
+            .and_then(|offset| usize::try_from(offset).ok());
+        // Eviction leaves surviving entries in their original slots. Wrapped
+        // sequential appends can also reuse those positions. Neither index is
+        // authority: imports and branch-local appends still require the exact
+        // descriptor/canonical checks at the caller and the fallback scan.
+        let wrapped = step
+            .get()
+            .checked_sub(1)
+            .zip(u64::try_from(INPUTS).ok())
+            .and_then(|(offset, capacity)| offset.checked_rem(capacity))
+            .and_then(|offset| usize::try_from(offset).ok())
+            .filter(|index| Some(*index) != relative);
+        [relative, wrapped]
+            .into_iter()
+            .flatten()
+            .filter_map(|index| self.inputs.get(index)?.as_ref())
     }
     fn verify_input(&self, entry: &StoredInput<Input>) -> Result<(), TimelineError> {
         if self.check_payload(
@@ -847,7 +864,7 @@ impl<
             // append_input can only create child canonical entries after that
             // boundary; imports are noncanonical. Materialized roots have no
             // parent and must search their own complete canonical input range.
-            if let Some(entry) = self.input_slot_hint(step).filter(canonical).or_else(|| {
+            if let Some(entry) = self.input_slot_hints(step).find(canonical).or_else(|| {
                 if lineage.parent.is_some() && step <= lineage.inherited_through {
                     None
                 } else {

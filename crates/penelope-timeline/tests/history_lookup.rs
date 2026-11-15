@@ -41,7 +41,7 @@ fn canonical_and_exact_lookups_recheck_content_and_declared_charge() {
         model: TimelineModelId::from_digest(Digest([3; 32])),
         schema: TimelineSchemaId::from_digest(Digest([4; 32])),
     };
-    for interleaved in [false, true] {
+    for (interleaved, evicted) in [(false, false), (true, false), (false, true), (true, true)] {
         let anchor = StateAnchor {
             scope,
             branch: TimelineBranchId::ZERO,
@@ -98,8 +98,25 @@ fn canonical_and_exact_lookups_recheck_content_and_declared_charge() {
                     .unwrap();
             }
         }
+        if evicted {
+            history
+                .insert_snapshot(
+                    StateAnchor {
+                        step: TimelineStep::new(1),
+                        snapshot: TimelineSnapshotId::from_digest(Digest([6; 32])),
+                        digest: 1_u64.digest(),
+                        ..anchor
+                    },
+                    1,
+                )
+                .unwrap();
+            history.expire_before(TimelineStep::new(1)).unwrap();
+        }
         let charged = history.payload_bytes();
         for (record, value, bytes) in &cells {
+            if record.step <= history.floor() {
+                continue;
+            }
             assert_eq!(
                 history.read(*record).unwrap().value.value.get(),
                 record.step.get()
