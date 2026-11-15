@@ -26,3 +26,7 @@ harness = false
 [[test]]
 name = "machine_allocations"
 harness = false
+
+[[bench]]
+name = "machine_operations"
+harness = false
