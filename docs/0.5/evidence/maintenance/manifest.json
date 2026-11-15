@@ -160,5 +160,34 @@
   },
   "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n",
   "host": "Linux-7.2.15-100.fc43.x86_64-x86_64-with-glibc2.42",
-  "remaining": "Full planned workload performance matrix and exact final release-candidate qualification remain open. These one-run build/test observations cannot prove absence of rare flakes or meaningful timing regressions."
+  "remaining": "Full planned workload performance matrix and exact final release-candidate qualification remain open. These one-run build/test observations cannot prove absence of rare flakes or meaningful timing regressions.",
+  "production_source_followup": {
+    "source_revision": "bbc773f6850fff8a66edbab4673d4e52f5dfa0b8",
+    "command": "python3.13 docs/0.5/evidence/maintenance/production_inventory.py --before 42ec187 --after bbc773f",
+    "tool_versions": {
+      "tree-sitter": "0.25.2",
+      "tree-sitter-rust": "0.24.2"
+    },
+    "python": "3.13.13 (main, Apr  7 2026, 20:49:46) [Clang 22.1.1 ]",
+    "script_sha256": "00ebb3e3fdd9e7988677b96c7d770fda873920d60bb94eb2a1eeac0aedef8696",
+    "file": "production-inventory.json.gz",
+    "raw_sha256": "5678479df4ad1da020c796b3ba1924dbceb0de8e33cbf42238e8e2eb2d041f34",
+    "gzip_sha256": "4d5aa48384f9b032958a52cb314ee9e6dbaf120c0c6ea85a19a818626eee3527",
+    "before": {
+      "code_lines": 14356,
+      "lexical_tokens": 94306,
+      "excluded_test_files": 22
+    },
+    "after": {
+      "code_lines": 18831,
+      "lexical_tokens": 125872,
+      "excluded_test_files": 24
+    },
+    "existing_path_code_line_delta": 105,
+    "exact_whole_function_body_clone_minimum_tokens": 40,
+    "clone_review": "Two unchanged groups. EffectKey::canonical_bytes and ProcessAction::canonical_effect_key_bytes both forward to the single canonical_effect_key_bytes encoder, avoiding identifier clones. ProcessOutcome, ProcessAction and ManualReview scope methods construct the same ProcessScope from native DTO fields. These thin field projections do not duplicate validation, encoding or authority; extracting a trait/helper would add indirection without removing a semantic implementation.",
+    "validation": "Both source revisions parse without Rust syntax errors; all crate src files reachable from library roots or excluded test modules. Nested lease_clock_tests and schema_inbox_tests correctly excluded. The exact clone groups and their source coordinates are unchanged from baseline.",
+    "limits": "Conservative source-token inventory across cfg/platforms, not compiled code size. Includes macro definitions unexpanded, excludes comments and provably test-only items/files. Whole-body exact clones miss partial/renamed/semantic duplication. No numeric deletion target, no claim of net production-code reduction or complete absence of duplication.",
+    "discarded_tool_attempt": "System Python 3.14/tree-sitter 0.26.0 crashed in Point access during scratch analysis. No result used; rerun completed using Python 3.13.13/tree-sitter 0.25.2/tree-sitter-rust 0.24.2. This was the measurement tool, not a library runtime failure."
+  }
 }
