@@ -1,6 +1,6 @@
 # First-append retained-blob quota evidence
 
-The candidate fix and baseline full commits are recorded in `manifest.json` and [the report](../../verification-task-orphan-usage-2026-10-31.md). Root evidence describes the quota fix. `rejected-aggregate/` describes a separate, rejected SQL optimization measured before the quota bug was found; its candidate source is not production.
+The candidate fix and baseline full commits are recorded in `manifest.json` and [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-task-orphan-usage-2026-10-31.md). Root evidence describes the quota fix. `rejected-aggregate/` describes a separate, rejected SQL optimization measured before the quota bug was found; its candidate source is not production.
 
 Verify without third-party Python packages:
 

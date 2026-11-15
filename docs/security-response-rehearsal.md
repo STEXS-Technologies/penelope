@@ -33,5 +33,5 @@ reconstruction before further dispatch. Exercise `fuzz_task_supervisor`,
 drills must also verify durable journal integrity and persistent fencing.
 
 See [the current contracts and validation](RELEASE.md). The
-[2026-09-15 rehearsal](security-response-rehearsal-2026-09-15.md) records the
+[2026-09-15 rehearsal](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/security-response-rehearsal-2026-09-15.md) records the
 earlier saga-only revision and is historical evidence.

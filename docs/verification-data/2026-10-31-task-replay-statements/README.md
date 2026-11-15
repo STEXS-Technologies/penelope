@@ -1,7 +1,7 @@
 # Task replay statement reuse evidence
 
 Candidate code: `91cdfcf` (full pin in manifest). Baseline: `47c4a259e8a8c2bc23d848e36ff4ffb797c219a0`.
-See [the report](../../performance-task-replay-statements-2026-10-31.md) for results, allocation tradeoffs, variability and qualification scope.
+See [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-task-replay-statements-2026-10-31.md) for results, allocation tradeoffs, variability and qualification scope.
 
 Root data describes the final design, which holds one blob statement throughout replay. `per-reference/` preserves the rejected trial that checked out a cached statement per reference. Each phase has its own primary/confirmation raw data, analysis, measured source snapshots, build/executable hashes and test logs. Do not pool phases or attribute prototype qualification to final production. The prototype's measured tasks.rs precedes rustfmt-only cleanup; `qualified-tasks.rs.gz` is its qualified formatted source. The final measured tasks.rs matches committed production source exactly.
 

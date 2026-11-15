@@ -1,6 +1,6 @@
 # Rejected-request cleanup containment evidence
 
-Candidate and baseline full commits are in `manifest.json` and [the report](../../verification-worker-rejected-drop-2026-10-31.md).
+Candidate and baseline full commits are in `manifest.json` and [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-worker-rejected-drop-2026-10-31.md).
 
 Verify using Python's standard library:
 

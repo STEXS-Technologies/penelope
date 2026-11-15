@@ -1,7 +1,7 @@
 # SQLite file-cache replay method
 
 `scripts/benchmark-sqlite-cache.py` adds a narrowly verified cold/warm comparison
-for the optional SQLite adapter. Earlier [durable-store measurements](performance-sqlite-2026-10-30.md)
+for the optional SQLite adapter. Earlier [durable-store measurements](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-2026-10-30.md)
 only reopened connections; they did not establish a cold OS file cache.
 
 The runner builds the release `durable_store` benchmark once with Rust 1.99.0
@@ -51,5 +51,5 @@ source diff is retained if measured before commit. Run labels alone are not
 evidence: inspect every recorded residency check and dataset hash.
 
 The development smoke run may overlap fault testing and is not qualification
-latency evidence. The [serialized five-pair report](performance-sqlite-cache-2026-10-30.md)
+latency evidence. The [serialized five-pair report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-cache-2026-10-30.md)
 records qualified file-page observations for the current adapter.

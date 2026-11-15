@@ -1,7 +1,7 @@
 # Task replay scope decoder evidence
 
 Candidate code: `7433d8d` (full pin in manifest). Baseline: `bd187069a30b0c3113089c83260c4b961db45ebe`.
-See [the report](../../performance-task-scope-decode-2026-10-31.md) for findings, regressions, limits, and qualification scope.
+See [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-task-scope-decode-2026-10-31.md) for findings, regressions, limits, and qualification scope.
 
 Root data describes the final lazy decoder. `rejected-raw/` and `eager-scope/` preserve independent earlier trials, including their own raw observations, analyses, source snapshots, executable hashes and logs. Do not pool campaigns or attribute prototype test logs to the final source. `initial-*` logs may include development failures; final qualification is `workspace.log.gz`, `msrv.log.gz`, `clippy.log.gz`, and the root `repeat-*` logs. `negative-control.log.gz` intentionally contains a failed test: disabling identity comparison must fail the oracle check. It was executed before final identifier/comment-only cleanup; final production tests were rerun afterward.
 

@@ -34,10 +34,10 @@ particular root. Neither summing every entry nor taking the largest entry proves
 a bound. This explicit build profile also differs from the default hosted build.
 
 This inventory supports further call-chain analysis; it leaves the worst-case
-qualification item open. The [portable samples](performance-portable-memory-2026-10-30.md)
-and [hosted samples](performance-hosted-borrowed-restore-2026-10-30.md) remain
+qualification item open. The [portable samples](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-portable-memory-2026-10-30.md)
+and [hosted samples](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-hosted-borrowed-restore-2026-10-30.md) remain
 observational evidence with their original compiler/profile scope.
 
-The subsequent [freestanding RISC-V reference analysis](portable-task-stack-bound-2026-10-30.md)
+The subsequent [freestanding RISC-V reference analysis](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/portable-task-stack-bound-2026-10-30.md)
 resolves a complete call graph and sums its frames for one explicit fixed-port
 profile. The native frame inventory above retains its original, narrower scope.

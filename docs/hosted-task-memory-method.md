@@ -33,7 +33,7 @@ scaling. Output directories must not already exist. Both scenarios use the same
 4-byte input and 8-byte checkpoint/output; capacity changes reserved wrapper
 workspace, not the logical dataset.
 
-The [initial comparison](performance-hosted-memory-2026-10-30.md) records a hosted
+The [initial comparison](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-hosted-memory-2026-10-30.md) records a hosted
 stack regression; qualification remains open.
 Whole-process sampled maxima include fixture ownership/moves and startup; they
 are not a static worst-case bound or isolated supervisor cost. The fixed ports do

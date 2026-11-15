@@ -7,14 +7,14 @@ release workflow. The historical graph slowdown is removed by the verified optim
 Other disclosed timing tradeoffs and deployment limits remain part of the disposition.
 No tag, registry publication or GitHub release is authorized by this audit.
 
-The [pre-merge review](premerge-audit-0.3.0-2026-10-31.md) records the later code/
+The [pre-merge review](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/premerge-audit-0.3.0-2026-10-31.md) records the later code/
 documentation audit, packaging checks, passing pre-rewrite CI, and preservation
 of historical evidence during commit-message normalization. Its scope is
 separate from the historical full-release qualification reference above.
 
 The subsequent linear-engine optimization at `8a9e298` removes discarded terminal
 projection clones and reserves successor-history capacity. Its [direct-task
-comparison and scoped verification](performance-application-overhead-2026-10-30.md)
+comparison and scoped verification](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-application-overhead-2026-10-30.md)
 measure approximately 0.24–0.26 µs of added one-step in-memory engine time.
 The ~61 µs synthetic task has 0.43% median overhead; the ~3.8 µs task has 6.39%.
 These exclude persistence and worker isolation. Earlier qualification records
@@ -23,7 +23,7 @@ stable/MSRV tests, equivalence properties and targeted fuzzing separately.
 [All seven code CI jobs](https://github.com/STEXS-Technologies/penelope/actions/runs/41132374645)
 also pass on `8a9e298`.
 
-A further [identifier-storage optimization](performance-inline-identifiers-2026-10-30.md)
+A further [identifier-storage optimization](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-inline-identifiers-2026-10-30.md)
 at `aa2a557` has its own fixed comparisons and seven-job CI. The short-ID empty-task
 added-time median drops from 245.29 ns to 119.17 ns; the ~3.8 µs task's overhead
 falls from 6.34% to 2.87%. Standalone DTO encoding remains 6.29% slower, and the
@@ -31,7 +31,7 @@ long-ID control shows a smaller benefit. These scoped results exclude durability
 and isolated workers. The follow-up also retains the prior CI worker-test failure
 and the test-only bounded-deadline correction at `69a749f`.
 
-The [encoding and polling follow-up](performance-encoding-2026-10-31.md) at
+The [encoding and polling follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-encoding-2026-10-31.md) at
 `53734a1` reduces current-branch DTO encoding by 4.16% and short-ID JSON decoding
 by 9.47%; long-ID decoding measures 4.03% slower. The older-source timing control
 is too variable to establish exact parity. More importantly, a real queued-frame/
@@ -41,7 +41,7 @@ before exit-based fault classification. New deterministic and real-worker tests,
 seven-job CI runs pass. Historical full-campaign/package records retain their
 original revision scope; this is separately retained follow-up evidence.
 
-The [worker-protocol follow-up](performance-worker-protocol-2026-10-31.md) at
+The [worker-protocol follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-worker-protocol-2026-10-31.md) at
 `2e3a768` removes the scope-hash allocation and enforces pinned payload limits
 before payload access. Isolated allocation checks pass on stable/MSRV, 10,000
 scopes retain legacy wire digests, and 100,000 targeted fuzz iterations pass.
@@ -70,7 +70,7 @@ Both [production CI](https://github.com/STEXS-Technologies/penelope/actions/runs
 and [expanded-regression CI](https://github.com/STEXS-Technologies/penelope/actions/runs/41144326670)
 pass all seven jobs.
 
-The [graph transition-key follow-up](performance-graph-keys-2026-10-31.md) at
+The [graph transition-key follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-graph-keys-2026-10-31.md) at
 `005ea60` replaces tree storage with bounded per-source outcome bits. It preserves
 validation errors in 40,000 generated reference comparisons and exhaustive
 source/outcome-key tests. Stable/MSRV workspace suites, 100,000 targeted fuzz
@@ -79,7 +79,7 @@ measures 11.9% fewer graph instructions and 13.68%/16.49% lower serial/parallel
 graph time. The initial unfavorable controls and identical-source timing
 variation are retained; this does not revise application-wide overhead figures.
 
-The [linear-validation follow-up](performance-linear-validation-2026-10-31.md)
+The [linear-validation follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-linear-validation-2026-10-31.md)
 at `dd3ac8d` replaces quadratic duplicate checks for larger definitions with
 bounded borrowed-ID sorting and strict-descent admission. Frozen-reference
 properties cover 40,000 generated cases; allocation fixtures, stable/MSRV
@@ -89,7 +89,7 @@ pass. The fixed comparison measures 82.76–98.39% less validation time for its
 existing-workload controls remain disclosed. No application-wide slowdown or
 full historical release requalification claim is made.
 
-The [SQLite registration follow-up](performance-sqlite-waker-registration-2026-10-31.md)
+The [SQLite registration follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-waker-registration-2026-10-31.md)
 at 1ccebdc moves executor cloning and destruction outside completion locks and
 preserves results across registration callback unwinding. Final SQLite suites
 pass on stable/MSRV, with 1,400 worker-test executions covering 6,400 queue cases.
@@ -98,7 +98,7 @@ waker and 27.69% more when registrations change on every poll. Both profiles,
 the preliminary round and source-scoped checks are retained; these are pending
 poll measurements with the database worker intentionally blocked.
 
-The [required SQLite write audit](verification-sqlite-required-writes-2026-10-31.md)
+The [required SQLite write audit](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-sqlite-required-writes-2026-10-31.md)
 at 8231e0a checks 18 single-row mutations and verifies complete scoped retirement.
 The old-source matrix exposes 23 false-success cases; all 27 fault cases now
 reject and roll back correctly, then recover after fault removal. Stable/MSRV
@@ -118,7 +118,7 @@ this reliability follow-up independently of historical full-release evidence.
 | Typed task integration | Full linear/graph pure and effectful tests use shared/separate databases and actual child kills. Scope/code/schema/input substitutions fail. Versioned output classification and independent evidence gate saga success. Optimized graph validation is checked against the frozen original validator with 10,000 cases per property on stable/MSRV and explicit bound/cycle/error cases. `completed_worker_relay_crossing_cancellation_cannot_resurrect_the_process` checks a real completed worker against a cancellation-winning CAS. | Pass; task completion alone is not effect-success proof. |
 | Optional trusted evidence | Current local upstream suite and remote CI pass seven tests, including 136 signed-source SIGKILL cases and real signed checkpoint/state proof validation. Exact upstream revision is pinned by the runner. Its head/publication authority and application effect source are fixtures. | Pass for optional adapter contract; production authority/effect services remain application responsibilities. |
 | Adversarial campaigns | Recorded three-iteration campaign exited zero with 48 completed 100,000-input target runs. The final versioned CI bounded-fuzz job passes; the optimized graph/linear target also passes three additional 100,000-input runs. Timed property campaigns and real adapter kills have separately retained evidence. | Pass with exact revision/scope disclosure; campaign is not a single-SHA deployment-chaos certification. |
-| Performance and memory | [Original review](performance-final-2026-10-30.md) retains both 20-pair six-benchmark campaigns, self-control, counters, RSS and worker samples. The [optimization follow-up](performance-graph-optimization-2026-10-30.md) retains all three optimization stages and the fixed 40-pair confirmation. SQLite append quantiles/history-length replay and verified file-page cold/warm runs are separately linked. Hosted allocation/sample-stack evidence and versioned RISC-V static analysis cover their declared profiles. | Graph slowdown exception removed: optimized median time is 15.24% lower than the original baseline, with 17.73% fewer instructions. Other positive control medians remain disclosed. No universal timing or RAM guarantee. |
+| Performance and memory | [Original review](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-final-2026-10-30.md) retains both 20-pair six-benchmark campaigns, self-control, counters, RSS and worker samples. The [optimization follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-graph-optimization-2026-10-30.md) retains all three optimization stages and the fixed 40-pair confirmation. SQLite append quantiles/history-length replay and verified file-page cold/warm runs are separately linked. Hosted allocation/sample-stack evidence and versioned RISC-V static analysis cover their declared profiles. | Graph slowdown exception removed: optimized median time is 15.24% lower than the original baseline, with 17.73% fewer instructions. Other positive control medians remain disclosed. No universal timing or RAM guarantee. |
 | Operations and security | [Runbook](reliable-execution-operations.md) covers admission/authentication, clocks, restart, unknowns, leases/timers, upgrades, retention, backup, fence repair, telemetry and tenant isolation. Malicious-worker tests, private ownership requirements, typed bounded errors, quota checks and secret scans cover the supported boundary. | Pass within declared trust model. Authenticated principals and independent remote-effect evidence come from the application. |
 | Build and supply chain | Versioned local fmt, stable/MSRV all-target tests, docs, strict Clippy/rustdoc, portable checks, layer/negative tests, Python/runner/action-pin checks, audit/deny, secrets, whitespace and nine package archive verifications pass. Coverage is 94.4655% against unchanged 94.0759%. All seven versioned remote CI jobs pass. | Pass: local archives and all seven CI jobs; verification-only release job passed with both publication jobs skipped. |
 

@@ -10,7 +10,7 @@ single-process runtime. Version 0.4.0 adds the independent optional
 records, linear/graph decisions, task history v1 and fingerprints retain their
 existing formats. The [changelog](../CHANGELOG.md) separates unreleased work from
 released source-compatibility changes. Historical [0.3.0 qualification](qualification-0.3.0.md)
-and [performance evidence](verification-2026-10-30.md) retain their original
+and [performance evidence](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-2026-10-30.md) retain their original
 revision scope. Tagging and publishing remain separate authorized release actions.
 
 ## Rewindable timeline contract
@@ -241,7 +241,7 @@ git diff --check
 
 The [0.4.0 qualification audit](qualification-0.4.0.md) records workspace/MSRV,
 package, supply-chain, coverage and follow-up evidence with its source limits.
-The [2026-10-30 verification record](verification-2026-10-30.md) retains historical
+The [2026-10-30 verification record](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-2026-10-30.md) retains historical
 0.3.0 evidence at its documented revisions.
 
 Deployment adapters need their own conformance checks for transactional
@@ -249,17 +249,17 @@ commit/CAS, durable retention, idempotent starts, persistent fencing and
 independently verified effect evidence. Host process-kill tests do not certify
 power-loss behavior or production adapter implementations.
 
-The [pinned saga/contract comparison](performance-decisions-2026-10-30.md)
+The [pinned saga/contract comparison](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-decisions-2026-10-30.md)
 records identical benchmark datasets at the v0.2.0 baseline and a feature-branch
 revision, with raw samples and RSS/wall evidence. Its original slower medians and
 open-gate disposition are historical. The
-[final review](performance-final-2026-10-30.md) and
-[graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+[final review](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-final-2026-10-30.md) and
+[graph optimization follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-graph-optimization-2026-10-30.md)
 record the subsequent qualification decision and removal of the graph slowdown.
 
-The [fixed-port RISC-V stack analysis](portable-task-stack-bound-2026-10-30.md)
+The [fixed-port RISC-V stack analysis](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/portable-task-stack-bound-2026-10-30.md)
 provides a conservative bound for one explicit freestanding reference profile.
-The [SQLite file-cache measurements](performance-sqlite-cache-2026-10-30.md)
+The [SQLite file-cache measurements](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-cache-2026-10-30.md)
 verify database-page residency before paired cold/warm replays. Their scopes
 and limitations are separate from the final saga timing review and its
 explicit performance exceptions.
@@ -306,16 +306,16 @@ from Cargo metadata, waits for exact versions in the crates.io index, skips
 already-published versions and verifies all expected versions. Credentials
 remain outside the repository.
 
-The optional SQLite adapter has a [current store baseline](performance-sqlite-2026-10-30.md)
+The optional SQLite adapter has a [current store baseline](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-2026-10-30.md)
 with raw pinned-CPU measurements. The final performance review links subsequent
 cache and integration evidence; the historical core baseline does not cover this adapter.
 The [hosted supervisor comparison method](hosted-task-memory-method.md) provides
 a calibrated before/after allocation and sampled-stack runner. The
-[initial measurements](performance-hosted-memory-2026-10-30.md) retain the original
-stack regression. The [borrowed-restore follow-up](performance-hosted-borrowed-restore-2026-10-30.md)
+[initial measurements](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-hosted-memory-2026-10-30.md) retain the original
+stack regression. The [borrowed-restore follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-hosted-borrowed-restore-2026-10-30.md)
 records its removal for that fixture; the static RISC-V report supplies its
 separately scoped conservative call-chain bound.
-The Linux runtime also has a [real-worker dispatch/host-ACK baseline](performance-worker-dispatch-2026-10-30.md)
+The Linux runtime also has a [real-worker dispatch/host-ACK baseline](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-worker-dispatch-2026-10-30.md)
 with fresh and reused store/runtime profiles, raw samples and disclosed limits.
 
 Optional upstream signed-event conformance runs in its own pinned temporary
@@ -333,12 +333,12 @@ Deployment lifecycle procedures are in the [reliable execution runbook](reliable
 
 For verified database file-page cold/warm replay, see the [SQLite cache measurement method](performance-sqlite-cache-method.md). Reopened connections alone do not establish cold caches.
 
-The [final development performance review](performance-final-2026-10-30.md)
+The [final development performance review](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-final-2026-10-30.md)
 supersedes earlier open timing dispositions, retaining measured regressions and
 the explicit reference-profile qualification decision. Historical reports retain
 their original source revisions and do not imply universal performance bounds.
 
-The [graph optimization follow-up](performance-graph-optimization-2026-10-30.md)
+The [graph optimization follow-up](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-graph-optimization-2026-10-30.md)
 removes the original graph slowdown exception, with oracle parity tests and
 post-optimization validation. It retains host-load limitations and positive
 control medians; the improvement does not imply all workloads have zero overhead.

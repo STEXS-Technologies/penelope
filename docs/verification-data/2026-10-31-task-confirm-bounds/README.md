@@ -1,6 +1,6 @@
 # Termination-confirmation generation bounds evidence
 
-The candidate fix and baseline full commits are recorded in `manifest.json` and [the report](../../verification-task-confirm-bounds-2026-10-31.md).
+The candidate fix and baseline full commits are recorded in `manifest.json` and [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-task-confirm-bounds-2026-10-31.md).
 
 Verify with Python's standard library:
 

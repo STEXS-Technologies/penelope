@@ -1,226 +1,52 @@
 # Penelope
 
-Penelope provides deterministic state evolution and reliable execution for Rust.
-Start with a typed application machine, saga coordination or recoverable task;
-add bounded timeline correction when the computation supports captured replay.
-Its workflow and task protocols coordinate declared computations that
-must survive crashes, retries, duplicate delivery, timeouts and uncertain
-external results.
+Deterministic state machines and reliable execution for Rust. Start with a typed
+state transition; add saga coordination, recoverable tasks, SQLite persistence
+or timeline correction as needed.
 
-Use it for settlement, trading, approvals, inventory, marketplace orders,
-payments, provisioning, refunds, and other multi-step processes where “run it
-again” is not a safe recovery strategy.
-Recoverable tasks also support structured computations such as data ingestion,
-index construction, code analysis and batch processing, with application-defined
-checkpoints and explicit recovery permissions.
+Transitions prepare a decision before publishing it. Durable work is recorded
+before dispatch, and uncertain external effects require reconciliation.
 
-## What Penelope gives you
+## Get started
 
-- Typed pure machines with bounded staged intents, prepared publication and
-  optional nested state hierarchies.
-- Deterministic linear and graph saga decisions.
-- Append-only outcome contracts and ordered replay after restart.
-- Typed identities and scopes that prevent cross-process or stale results.
-- Bounded retries, backoff, jitter, deadlines, and timer decisions.
-- LIFO compensation, cancellation, reconciliation, and manual review.
-- Recoverable task supervision, committed checkpoints, generation fencing and
-  bounded execution budgets through injected journal/runtime ports.
-- An allocation-free `no_std` decision core with optional Serde support.
-- Backend-neutral ports for stores, inbox/outbox, leases, timers, effects, and
-  operator workflows.
-- Optional bounded timeline correction and scratch replay, with atomic state/head
-  publication and separate irreversible-effect finality.
-
-The engine is pure and deterministic. Your application selects durable
-adapters and workers through the ports. The optional
-[`penelope-sqlite`](crates/penelope-sqlite/README.md) crate provides a local
-task journal and saga inbox/outbox/timer persistence. Penelope never guesses whether an
-ambiguous payment, trade, or canonical mutation succeeded.
-
-## API navigation (unreleased)
-
-Use Rust 1.89 or newer. The facade groups the existing implementations by purpose:
-
-| Path | Purpose |
-| --- | --- |
-| `penelope::machine` | Pure models, bounded local publication and optional hierarchy |
-| `penelope::saga` | Linear and graph decisions, retries, compensation and replay |
-| `penelope::task` | Recovery contracts, portable control and hosted `TaskSupervisor` |
-| `penelope::storage` | Saga storage ports and synchronous/asynchronous task journals |
-| `penelope::runtime` | Task runtime, clock and generation authority contracts |
-| `penelope::integration::statechronicle` | Verified external canonical-event correlation |
-| `penelope::timeline` | Optional bounded replay/correction, including captured machine models |
-| `penelope::diagnostics` | Common read-only prepared decision inspection |
-
-Existing root imports and crate aliases remain available. These paths expose the
-same types and implementations; their distinct histories and recovery rules still
-apply. The [flat machine](crates/penelope/examples/counter_machine.rs) and
-[timeline machine](crates/penelope/examples/timeline_machine.rs) examples share
-one model. [Implemented APIs](docs/0.5/public-api.md) distinguish local preparation
-and publication from durable commit and effect dispatch. Machine durability and
-full release qualification remain [in progress](docs/0.5/README.md).
-
-## The programming model
-
-Given a saga definition, replayed projection and typed input, ask the pure engine
-for its next decision:
-
-```rust
-let decision = penelope::saga::decide(
-    &definition,
-    projection.as_ref(),
-    tenant_id,
-    process_id,
-    &input,
-)?;
-```
-
-Build an `AtomicProcessCommit` containing the accepted input, ordered outcome
-plan and pending actions, and persist it through your `ProcessStore` adapter.
-Dispatch only after a validated commit receipt. Route timer and manual-review
-decisions through their corresponding ports. The
-[trade example](crates/penelope/examples/trade.rs) demonstrates decision and
-outcome planning; application adapters provide durable commit and dispatch.
-
-After a crash, load the ordered outcome log and replay it. Duplicate inputs are
-deduplicated, stale results are rejected, and unknown effects wait for
-reconciliation instead of triggering blind retries.
-
-## Recoverable task execution (0.2.0)
-
-The existing saga APIs and v1 records retain their meaning. Alongside them,
-`penelope::task` provides explicit recovery permissions, immutable input,
-committed checkpoint references, ordered task history, typed faults, bounded
-recovery attempts and generation fencing. `TaskSupervisor` coordinates those
-decisions with application-supplied journal and runtime ports.
-Task identities, generations, history sequences and monotonic timestamps use
-distinct newtypes, preventing accidental substitution across these boundaries.
-
-Penelope never infers completion from a crash or timeout. Interrupted operations
-with external effects require independent reconciliation; unknown evidence does
-not authorize a restart. Application logic defines valid checkpoints, effect
-boundaries and result correctness. The task core does not provide instruction-level continuation or an OS scheduler. Storage
-integrations live in optional adapter packages.
-
-The `penelope-core` task contracts, projection and synchronous ports compile
-without `std` or `alloc`. Select that crate directly for the portable decision
-profile; the existing facade, saga crates and async ports remain hosted.
-`TaskControl` accepts a complete caller-owned `TaskWorkspace`, or dispatch-only
-buffers through `advance_with_buffers` and a later `poll_with_buffer`. Poll
-storage must fit the larger of the declared checkpoint and output sizes; a full
-workspace validates all capacities before dispatch. `advance_with_workspace`
-accepts a `TaskDispatchWorkspace` provider, borrowing or initializing its storage
-only for a start/restart transition.
-
-```bash
-cargo run -p penelope-executor --example recoverable_task --locked
-cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked
-PENELOPE_CHAOS_ITERATIONS=3 PENELOPE_CHAOS_PROPTEST_CASES=2000 PENELOPE_CHAOS_FUZZ_RUNS=10000 ./scripts/run_pure_chaos_drill.sh
-python3 scripts/run_property_stress.py --seconds 300 --cases 10000 --jobs 3
-```
-
-Task histories have their own version discriminator, independent of saga v1.
-Checkpoint schema/code changes require an explicit application transformation
-into a newly pinned history; old bytes are never silently reinterpreted.
-See [the architecture and release gates](docs/RELEASE.md).
-Validation includes process-kill fault injection, concurrent supervisor
-arbitration, stateful supervisor fuzzing and reproducible chaos campaigns.
-
-## Rewindable timelines (0.4.0)
-
-`penelope-timeline` maintains immutable input versions and complete state anchors,
-recomputes a corrected suffix in isolated scratch, validates it, and publishes
-state, head and tentative intents together. State correction at post-step `t`
-replays `t+1..head`; replacement input `k` restores `k-1` and replays `k..head`.
-Concurrent candidates are fenced by the exact expected head revision.
-
-The default timeline crate is `no_std` and its fixed buffers require no heap
-allocation; consumer state, clones and adapters may allocate. The facade re-export
-requires the optional `timeline` feature. `FixedHistory` supplies bounded owned
-storage, while applications can provide their own snapshot/input adapters without
-mandatory `Clone` or serialization. The `std` feature adds a single-lock shared
-publication owner. Existing task and saga protocols keep their meaning.
-
-Consumers own correction authentication, deterministic computation, complete
-dependency capture and effect authorization. Replay stages intents without I/O.
-Only an independently effect-finalized prefix may cross the durable handoff;
-authority observations alone do not authorize dispatch. Persistent timeline
-recovery, networking, ECS integration and arbitrary effect rollback are outside
-this release's supported profile.
+This branch contains the upcoming 0.5 API. Use Rust 1.89 or newer; repository
+builds use the toolchain pinned in `rust-toolchain.toml`.
 
 ```sh
-cargo run -p penelope-timeline --example quickstart --locked
-cargo run -p penelope-timeline --example rewindable_simulation --locked
-cargo run -p penelope-sqlite --example optimistic_timeline --locked
+cargo new my-app
+cd my-app
+cargo add penelope --git https://github.com/STEXS-Technologies/penelope --branch refactor/unified-state-execution
 ```
 
-See [the API and baseline mapping](docs/timeline-foundation.md),
-[integration examples](docs/timeline-examples.md),
-[verification](docs/timeline-verification.md) and
-[performance measurements](docs/timeline-performance.md).
-The [0.4.0 qualification audit](docs/qualification-0.4.0.md) records validation
-evidence and the supported integration limits.
+Follow the [first machine tutorial](docs/getting-started.md) for a complete
+`src/main.rs` you can run with `cargo run`.
 
-For owned state, `LiveTimeline::apply_input` derives the next input descriptor,
-computes on an isolated clone, validates and publishes in one call. A scoped
-`begin_correction` handle supports bounded `advance` and consuming `publish`;
-dropping it cancels and releases its reservation. Closures work as validators.
-See [the quickstart and its storage boundary](docs/timeline-examples.md#quickstart).
+To try the included example first:
 
-## StateChronicle boundary
-
-`penelope-statechronicle` provides the typed contract for canonical commands
-and verified committed events. StateChronicle remains the source of truth for
-balances, positions, inventory, ownership, and settlement. Penelope advances a
-saga only after the matching committed event is correlated by tenant, action,
-operation, resource scope, and result evidence.
-
-Penelope and StateChronicle can use separate datastores. Correctness comes from
-durable local records, at-least-once delivery, idempotency, and reconciliation.
-Task checkpoint-state verification is optional: evidence binds the exact task
-scope, generation and checkpoint identity, and the adapter verifies the proof.
-Recoverable execution also works with an independent journal.
-
-Custom StateChronicle domains require explicit schema migration and do not
-automatically provide transactions across resources. Existing history encodings
-and exhaustive Rust enum matches have distinct compatibility requirements.
-See the [integration boundaries](docs/RELEASE.md#integration-boundaries) for
-durability, task safety and portable-versus-hosted responsibilities. The original
-SQLite recovery fixture remains test-only. The separate optional SQLite adapter
-is compiled when an application selects it.
-
-## Start building
-
-Add the facade crate to your application:
-
-```toml
-[dependencies]
-penelope = "0.4.0"
+```sh
+git clone --branch refactor/unified-state-execution https://github.com/STEXS-Technologies/penelope.git
+cd penelope
+cargo run -p penelope --example counter_machine --locked
 ```
 
-Run the included workflows to see the public API:
+For the published API, use `cargo add penelope@0.4.0` and its
+[versioned API reference](https://docs.rs/penelope/0.4.0/penelope/).
+The machine tutorial uses the unreleased branch.
 
-```bash
-cargo run -p penelope --example trade --locked
-cargo run -p penelope --example trade_compensation --locked
-cargo run -p penelope --example trade_retry_timer --locked
-cargo run -p penelope --example trade_manual_review --locked
-cargo run -p penelope --example trade_competing_lock --locked
-```
+## Choose what you need
 
-## Scope and release
+| Need | Start here |
+| --- | --- |
+| Typed state transitions | [First machine](docs/getting-started.md) · `penelope::machine` |
+| Multi-step work with retries and compensation | [Trade example](crates/penelope/examples/trade.rs) · `penelope::saga` |
+| Checkpoints and recovery after interruption | [Recoverable task example](crates/penelope-executor/examples/recoverable_task.rs) · `penelope::task` |
+| Durable local storage | [SQLite adapter](crates/penelope-sqlite/README.md) |
+| Correct and replay earlier inputs | [Timeline quickstart](docs/timeline-examples.md#quickstart) · optional `timeline` feature |
 
-Penelope is a reusable library, not a database, broker, scheduler, or hosted
-service. Implement those adapters in your composition root or a separately
-reviewed integration crate. See [docs/RELEASE.md](docs/RELEASE.md) for the library
-boundary, release procedure and protocol review. The released 0.3.0 adds optional
-SQLite and [Linux process runtime](crates/penelope-process-runtime/README.md)
-packages for the documented single-host profile. See the
-[qualification evidence and limits](docs/verification-2026-10-30.md), including
-the explicit performance exception and source-compatibility changes.
+Applications supply workers and choose their storage and runtime adapters.
+The portable task core and timeline crate support `no_std`; the facade is hosted.
 
-Use the [pull request template](.github/pull_request_template.md) when proposing
-changes, and follow the [validation commands](docs/RELEASE.md#validation).
+[Documentation](docs/README.md) · [0.5 progress](docs/0.5/README.md) ·
+[Changelog](CHANGELOG.md) · [Security](SECURITY.md)
 
-The project is dual-licensed under [MIT](LICENSE-MIT) or
-[Apache 2.0](LICENSE-APACHE).
+Licensed under [MIT](LICENSE-MIT) or [Apache 2.0](LICENSE-APACHE).

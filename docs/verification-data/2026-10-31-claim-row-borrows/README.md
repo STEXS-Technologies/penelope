@@ -1,6 +1,6 @@
 # Claim row borrowing evidence
 
-Full candidate/baseline pins are in `manifest.json` and [the report](../../performance-sqlite-claim-row-borrows-2026-10-31.md). Verify with Python's standard library:
+Full candidate/baseline pins are in `manifest.json` and [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/performance-sqlite-claim-row-borrows-2026-10-31.md). Verify with Python's standard library:
 
 ```sh
 python3 docs/verification-data/2026-10-31-claim-row-borrows/verify.py

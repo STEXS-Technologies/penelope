@@ -1,6 +1,6 @@
 # Shared quota admission across independent SQLite workers
 
-Candidate and baseline full commits are in `manifest.json` and [the report](../../verification-concurrent-quota-2026-10-31.md). Verify with Python's standard library:
+Candidate and baseline full commits are in `manifest.json` and [the report](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-concurrent-quota-2026-10-31.md). Verify with Python's standard library:
 
 ```sh
 python3 docs/verification-data/2026-10-31-concurrent-quota/verify.py
