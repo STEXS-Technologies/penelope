@@ -921,3 +921,35 @@ separate legacy encoding/timeline findings.
 The ongoing multi-round chaos campaign began before this source change. Its
 results remain development rehearsal evidence; exact final-source coverage, CI,
 chaos and package qualification are still required.
+
+
+## Canonical first-machine onboarding
+
+The [onboarding checkpoint](evidence/qualification/first-machine.json) qualifies
+source `36d8cb0` and retains complete commands, source hashes and dependency locks.
+The first tutorial now uses the existing `MemoryMachine::handle` for immediate
+preparation, validation and publication, with an explicit accepted-outcome check.
+Its imports stay within `machine::*`: `machine::Digest` reexports the existing
+shared content-identity type, also used by the counter, timeline and durable
+examples. Existing task imports and all identity/authorization rules remain.
+
+The independent consumer compiles the canonical guide's Rust fence directly as
+`first-machine`; the README runs it and both stable/MSRV CI jobs invoke it. There
+is no second tutorial model. A clean shallow clone of the actual pushed branch
+runs the README command on Rust 1.100 and 1.89. A fresh `cargo new` application
+using the README's Git branch dependency, exact copied guide and one generated
+lockfile also prints `count = 3` on both compilers, without workspace patches.
+
+Both compilers pass all-feature core tests, no-default/serde bare-metal core
+checks, timeline and durable progressions, and the first-machine consumer.
+Strict all-target/all-feature consumer Clippy, formatting and action pins pass.
+An edited invalid guide fails generated-code compilation; restoring it passes.
+CRLF guide copies also run on both compilers after extractor normalization. These
+line-ending checks run on Linux and do not establish native Windows execution.
+An initial temporary verifier expected different compiler error wording; its
+failed assertion and actual successful negative refusal remain in the archive.
+
+This improves the existing entry path without introducing an identity policy,
+state owner or evaluator. Scope, event identity, digest and logical time remain
+application-supplied. Full exact-candidate release qualification and the remaining
+performance findings are still open.
