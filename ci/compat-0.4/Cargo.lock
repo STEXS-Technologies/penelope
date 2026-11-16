@@ -87,7 +87,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "penelope"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "penelope-core",
  "penelope-domain",
@@ -110,7 +110,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-core"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "serde",
  "sha2",
@@ -119,7 +119,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-domain"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -129,7 +129,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-executor"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "async-trait",
  "penelope-core",
@@ -142,7 +142,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-intent"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "penelope-domain",
  "serde_json",
@@ -151,7 +151,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-ports"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "async-trait",
  "penelope-core",
@@ -163,7 +163,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-statechronicle"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "penelope-domain",
  "penelope-ports",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "penelope-timeline"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "penelope-core",
  "sha2",

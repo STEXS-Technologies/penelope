@@ -2,8 +2,8 @@
 
 The [imported plan](plan.md) defines the scope and acceptance criteria. The machine
 kernel, hierarchy, native task/saga bridges, SQLite outbox and timeline adapter
-are implemented. **Final release qualification remains open.** Workspace versions
-remain 0.4.0 during development; this branch is not a qualified 0.5 release.
+are implemented. **Final release qualification remains open.** All ten library crates
+now carry candidate version 0.5.0; this is not a qualified or published release.
 
 Users start with the [canonical tutorial](../getting-started.md), then the
 [public API map](public-api.md). Internal crates provide dependency and deployment
@@ -21,7 +21,7 @@ boundaries behind the facade.
 | F5 — Timeline | Machine adapter reuses existing correction/finality engine | [Composition](timeline-machines.md); retained legacy performance findings require review |
 | F6 — Durability | Authorized SQLite journal, snapshots, outbox and native receivers | [Storage](machine-storage.md), [wire](machine-wire.md), [upgrade/rollback](compatibility-matrix.md); final qualification remains open |
 | F7 — Coherence and maintenance | Canonical facade/tutorial, shared helpers, docs cleanup and maintenance inventory | [Extraction boundaries](architecture.md#adr-050-06-extraction-boundaries), [verification](verification.md); performance matrix and final audit remain open |
-| F8 — Candidate | Pending | Exact-candidate CI, chaos, coverage, performance conclusions, versions/changelog and release evidence |
+| F8 — Candidate | Versioned manifests and locks prepared; qualification pending | Exact-candidate CI, chaos, coverage, performance conclusions, dated release notes and evidence |
 
 ## Stabilization focus
 

@@ -1,17 +1,34 @@
-# Penelope release contract — 0.4.0
+# Penelope 0.5 candidate release contract
 
-Penelope provides deterministic, runtime-independent task recovery
-alongside its saga engine. Applications declare recovery permissions, supply
-journal and runtime adapters, and define valid checkpoints and effect evidence.
+Penelope provides typed deterministic state machines that compose with saga
+coordination, recoverable tasks, optional SQLite persistence and timeline
+correction. All ten library crates carry candidate version `0.5.0`.
 
-Released 0.3.0 adds optional SQLite persistence and a protected Linux
-single-process runtime. Version 0.4.0 adds the independent optional
-`penelope-timeline` crate; all ten library crates use version `0.4.0`. Saga v1
-records, linear/graph decisions, task history v1 and fingerprints retain their
-existing formats. The [changelog](../CHANGELOG.md) separates unreleased work from
-released source-compatibility changes. Historical [0.3.0 qualification](qualification-0.3.0.md)
-and [performance evidence](https://github.com/STEXS-Technologies/penelope/blob/ca84c5009c64aa4ee7746d524fc709c645793424/docs/verification-2026-10-30.md) retain their original
-revision scope. Tagging and publishing remain separate authorized release actions.
+**This candidate is not qualified or published.** The [0.5 status](0.5/README.md)
+tracks open performance decisions, exact-source qualification and release
+artifacts. The [changelog](../CHANGELOG.md) remains unreleased until qualification
+is complete. Tagging and publication require separate explicit authorization.
+
+## Machine and execution contract
+
+`MemoryMachine` validates a candidate state and staged intents before consuming
+publication. Its optional bounded hierarchy uses one active path and explicit
+parent fallback. The [machine contract](0.5/machine.md) defines local guarantees;
+local publication supplies neither durable acceptance nor external authority.
+
+The [SQLite journal and outbox](0.5/machine-storage.md) atomically retain accepted
+head/state/event/intents and verifiable receipts. Native task/saga receivers bind
+admission to that source. Journal-before-dispatch, task generation fencing, saga
+compensation and unknown-outcome reconciliation retain their original owners.
+The [public API map](0.5/public-api.md) and [canonical tutorial](getting-started.md)
+show the progression. There is no universal interpreter replacing those protocols.
+
+Saga/task v1 formats, fingerprints and timeline v1 retain their independent
+contracts. The new machine metadata uses `penelope.machine.v1`; it does not rewrite
+old histories. [Compatibility and migration](0.5/compatibility-matrix.md) cover
+old imports, frozen replay corpora and forward-only SQLite schema upgrades.
+Historical [0.3 qualification](qualification-0.3.0.md) and
+[0.4 qualification](qualification-0.4.0.md) retain their original revision scope.
 
 ## Rewindable timeline contract
 
@@ -50,8 +67,8 @@ models, scope and limitations. Consumer determinism, snapshot completeness,
 authority trust and effect finality are application obligations. No persistent
 timeline adapter, distributed atomic promotion, Bevy/ECS, transport or rollback
 of already-issued effects is supplied.
-The [0.4.0 branch audit](qualification-0.4.0.md) records current gate evidence and
-any remaining qualification work; no tag or publication is implied.
+The [0.4.0 branch audit](qualification-0.4.0.md) records historical timeline
+qualification. Current candidate gates are tracked in the [0.5 status](0.5/README.md).
 
 ## Recoverable execution
 
@@ -294,7 +311,7 @@ directory's `package` directory.
 
 For an authorized release, validate the latest `main` revision and its dated
 changelog entry, then create and push an annotated tag matching the qualified
-workspace version (`v0.4.0` for this release).
+workspace version (`v0.5.0` for this candidate, once qualified).
 The release workflow verifies the tagged revision and package version, publishes the crates
 dependency-first, and creates a GitHub release from the matching changelog
 section. Missing, empty or duplicate version entries stop release verification.

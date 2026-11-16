@@ -18,7 +18,7 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 tempfile = "3"
-penelope-sqlite = { version = "0.4.0", path = "../penelope-sqlite" }
+penelope-sqlite = { version = "0.5.0", path = "../penelope-sqlite" }
 rusqlite.workspace = true
 proptest = { workspace = true }
 

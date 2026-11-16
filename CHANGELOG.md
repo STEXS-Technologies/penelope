@@ -7,8 +7,9 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-The 0.5 API is implemented on the development branch; final
-[release qualification](docs/0.5/README.md) remains open.
+The 0.5 API and candidate package versions are prepared on the development
+branch. Final [release qualification](docs/0.5/README.md) remains open; no 0.5
+release is published.
 
 ### Added
 
