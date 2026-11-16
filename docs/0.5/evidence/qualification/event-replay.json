@@ -1,0 +1,151 @@
+{
+  "scope": "Plan7.5 event-replay recovery addition, not a new evaluator or snapshot engine. Source follow-up only; final all-ten archive, coverage, performance and full-source campaign reconciliation remain open. Existing immutable campaigns are not restarted or claimed to cover this added method.",
+  "base_commit": "b5a5aba82f79d2065c8051e60b80602cfe8df27d",
+  "source_sha256": {
+    "crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+    "crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+    "crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "782f7577d4897765d6f3623437cba4280f8ee0ea647f9770bb2c9f5254da720c",
+    "crates/penelope-sqlite/src/worker.rs": "88138a000f046fc91d49cdf945f5450b91aa4e4471155c7fabeaf61dab661dc4",
+    "crates/penelope-sqlite/benches/worker_poll.rs": "32aa1f7f3853c0cbbaba3a0242387d55e0ec89e9ee5eca57e7ef9a3667e11522",
+    "crates/penelope-sqlite/tests/support/outbox_race.rs": "e82fd97c7aea3409e0a8e4eeab5a77d9552b0c89ddab4d4262f62e29fa8e5eb8"
+  },
+  "contract": {
+    "entry_point": "MachineStoredCommit::replay",
+    "isolation": "Consumes recovery owner on success/error; caller keeps whole recovery isolated until captured upper revision. Pending input intents refused.",
+    "verification": "Decode pinned event; reuse prepare_machine_commit; compare entire record and exact event/state/ordered intent payloads before local publication.",
+    "effects": "Drop staged intents without dispatch. Pending durable effects remain journal/outbox authority.",
+    "authority": "Caller authenticates genesis/snapshot and scoped journal; hashes and structural decoding are not authentication.",
+    "bounds": "Existing preparation payload/staging bounds; encoded-event and batch size checked before event decoding. Caller supplies bounded paginated history."
+  },
+  "checks": [
+    {
+      "command": "cargo +1.100.0 test -p penelope-ports --all-targets --all-features --locked",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.89.0 test -p penelope-ports --test machine_preparation --locked",
+      "exit_code": 0,
+      "tests": 18
+    },
+    {
+      "command": "cargo +1.100.0 test -p penelope-sqlite --test machines --locked",
+      "exit_code": 0,
+      "tests": 14
+    },
+    {
+      "command": "cargo +1.89.0 test -p penelope-sqlite --test machines --locked",
+      "exit_code": 0,
+      "tests": 14
+    },
+    {
+      "command": "cargo +1.100.0 clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.89.0 clippy -p penelope-ports -p penelope-sqlite --all-targets --all-features --locked -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +nightly fuzz build fuzz_sqlite_machine --sanitizer address",
+      "exit_code": 0
+    },
+    {
+      "command": "fuzz_sqlite_machine <fresh seeded corpus> -runs=1000 -seed=1 -max_len=96",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo +1.100.0 clippy --manifest-path fuzz/Cargo.toml --bin fuzz_sqlite_machine --locked -- -D warnings",
+      "exit_code": 0
+    }
+  ],
+  "tests": {
+    "replay": "Five consecutive event prefixes; resume suffix from canonical snapshot; exact state/revision/provenance and no pending intents.",
+    "refusals": "Wrong predecessor state, changed model effects, incompatible codec, noncanonical encoding, codec fault, capacity, duplicate revision, pending intents, rechecksummed rejected/unhandled/faulting/changed events and transition identity.",
+    "sqlite": "All512 count/byte partitions of nine-record history, with database reopen between pages and later writes beyond captured range; replayed state checked by independent arithmetic. Existing gap refusal retained.",
+    "lint_followup": "MSRV Clippy initially exposed unknown newer manual_noop_waker lint and an existing collapsible test branch. Narrow annotations retain newer lint suppression across compilers; nested branch simplified without changing call order. Existing acknowledgement/reclaim race passes both compilers."
+  },
+  "negative_controls": {
+    "source_sha256": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+    "restored_byte_exact": true,
+    "results": [
+      {
+        "mutation": "skip-exact-comparison",
+        "command": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "-p",
+          "penelope-ports",
+          "--test",
+          "machine_preparation",
+          "--locked",
+          "event_replay_refuses_validly_rechecksummed_transition_and_event_substitutions",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 101,
+        "compiled_and_failed_named_test": true
+      },
+      {
+        "mutation": "retain-replayed-effects",
+        "command": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "-p",
+          "penelope-ports",
+          "--test",
+          "machine_preparation",
+          "--locked",
+          "event_replay_reconstructs_every_prefix_without_pending_effects_and_can_resume_from_snapshot",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 101,
+        "compiled_and_failed_named_test": true
+      }
+    ]
+  },
+  "retained_failures": "Initial stable Clippy test-style errors and both MSRV Clippy failures retained verbatim. These are not successful checks.",
+  "archive": {
+    "name": "event-replay.tar.gz",
+    "sha256": "c3a4a7ff7c32f4850f40df71d2b7b92228c69c52dc06e1915c1cc50a77e69181",
+    "members": {
+      "penelope-050-replay-recovery-clippy-final.log": "e519922c834b16536828cfe88c744e35e69acbd919669af01a5faa6d37de2afb",
+      "penelope-050-replay-recovery-clippy-qualified.log": "457208b32d27d63374e92754a2c3890c44eed25842038ffc6e1cb8dc63117382",
+      "penelope-050-replay-recovery-clippy.log": "3137aca21c792518068dd766cfea7ff8af2a28f3cb9908a335c054d53942b710",
+      "penelope-050-replay-recovery-format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "penelope-050-replay-recovery-graph.log": "bb63c430d495b461eee8529d816b7ba0412570354d1da15fb54f017e5474817d",
+      "penelope-050-replay-recovery-msrv-clippy-final.log": "97df7d58b4542681e8e0fa5fdb3349c6b070b48c1d6f5a6e73c8a1003d5df82a",
+      "penelope-050-replay-recovery-msrv-clippy-qualified.log": "2d30ce85b62b693476eda468c3f87ac736ca59be076451b1d7033cbbe150f0fa",
+      "penelope-050-replay-recovery-msrv-clippy.log": "93d7835ae10f4053f1a96319ab3c406e47ccc0efd09fad345eaeab5af7a1e2ed",
+      "penelope-050-replay-recovery-msrv-final.log": "5cbc355e6eaa5ef44af221616e66a1022c6a72a0e3734b193425c74bc7a1d90e",
+      "penelope-050-replay-recovery-msrv.log": "227202903e9fd30b31a8a099c5fe52b72cc6f50f2d51e19fef4998c02e12902d",
+      "penelope-050-replay-recovery-ports-stable-all.log": "607cb06303deabfe12f21a8d3b1f1e7262713a23986bf75e73ae8850ea07208a",
+      "penelope-050-replay-recovery-race-msrv.log": "fce4d53447e9ca33ca4144214c33bb108a81acd268a8167c06a5b66b7fac4145",
+      "penelope-050-replay-recovery-race-stable.log": "39d09daedeb258cf7111cb403ed92adeb10f13bf1242bd5ed418ebd327b87193",
+      "penelope-050-replay-recovery-sqlite-msrv.log": "433b1b2af3013e92c3b417854f3553d818db804293be31e2980ace3d950c22e4",
+      "penelope-050-replay-recovery-sqlite-stable.log": "f3cf40f7ed3d94323f517d6fd5a0b874f98fc2df9b26a6c33c577a67d5e617cd",
+      "penelope-050-replay-recovery-stable-final.log": "8f05cf7463f805b9e1e1d551cfe1b11e66a0769b47ec6bb8cf2d482ac5730442",
+      "penelope-050-replay-recovery-stable.log": "9f6f2c00d75e9048fb318a51752103c98b02bb355456f104e329c45e720903da",
+      "penelope-050-event-replay-fuzz-build.log": "91c64f6433a922c46a59318eb38d957b8a74cd011ea0844f832f2699f8fe3d71",
+      "penelope-050-event-replay-fuzz-clippy.log": "44338470361bf3f3550698f2119bc33754a4b51d8fad2d47f08ecbea06994442",
+      "penelope-050-event-replay-fuzz-seeds.log": "cc1c8507c40f6aecdb303153c90ef1da06961dd3dad211b3d8cc6f79a8173612",
+      "penelope-050-event-replay-fuzz-smoke.log": "3e957f9172ed604e2718593c30e110f28f50c2097f921af580fadc3ceacefe32",
+      "mutations/manifest.json": "5a6ec22ff0f80f05e17c9c272bde3c1126b48c7aa4f0ba02171f7972fb5b52ee",
+      "mutations/retain-replayed-effects.log": "2aa8d4d813527af45247427a84ae3e79b3b7fa8a8e88795558d12e9af84d4d0d",
+      "mutations/skip-exact-comparison.log": "faa671a5e77efb207051cc88f3ce873d36d7b7ebfa2eb7f90db28e0b5b7f533a",
+      "mutations/driver.py": "75d006fe36abb926ff72dedb5b3111d5ec52cf107fdc4b89295b663cad33830f",
+      "recorder.py": "e666dd6948eeada1f0b3631d4d1360b99b1dba9aafb1b7c2accefe0508630df5",
+      "source/crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+      "source/crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+      "source/crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+      "source/fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "782f7577d4897765d6f3623437cba4280f8ee0ea647f9770bb2c9f5254da720c",
+      "source/crates/penelope-sqlite/src/worker.rs": "88138a000f046fc91d49cdf945f5450b91aa4e4471155c7fabeaf61dab661dc4",
+      "source/crates/penelope-sqlite/benches/worker_poll.rs": "32aa1f7f3853c0cbbaba3a0242387d55e0ec89e9ee5eca57e7ef9a3667e11522",
+      "source/crates/penelope-sqlite/tests/support/outbox_race.rs": "e82fd97c7aea3409e0a8e4eeab5a77d9552b0c89ddab4d4262f62e29fa8e5eb8"
+    }
+  },
+  "fuzz_binary_sha256": "00ba0d2c263cad69cbec6a80cdd77b0cf81afa158f9cec72138067b78fe12fcb"
+}

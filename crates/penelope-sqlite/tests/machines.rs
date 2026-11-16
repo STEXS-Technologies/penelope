@@ -718,6 +718,8 @@ fn every_small_history_partition_recovers_exact_records_across_reopens_and_refus
         for cuts in 0..256_u16 {
             let mut after = 0_u64;
             let mut reconstructed = Vec::new();
+            let mut replayed = owner();
+            let mut replay_expected = 5_u64;
             for end in 1..=9_u64 {
                 if end != 9 && cuts & (1 << (end - 1)) == 0 {
                     continue;
@@ -754,6 +756,21 @@ fn every_small_history_partition_recovers_exact_records_across_reopens_and_refus
                         .unwrap();
                     assert_eq!(restored.read().0, stored.receipt().head);
                     assert_eq!(restored.pending_intents().count(), 0);
+                    replayed = stored
+                        .replay(
+                            replayed,
+                            &Codec,
+                            &mut MachineCommitBuffers {
+                                state: &mut [0; 8],
+                                event: &mut [0; 8],
+                                intent: &mut [0; 8],
+                            },
+                            PAYLOADS,
+                        )
+                        .unwrap();
+                    replay_expected += stored.receipt().head.revision.get() * 3;
+                    assert_eq!(replayed.read(), (stored.receipt().head, &replay_expected));
+                    assert_eq!(replayed.pending_intents().count(), 0);
                 }
                 reconstructed.extend(page.records.iter().map(&signature));
                 after = end;

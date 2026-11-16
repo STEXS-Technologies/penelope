@@ -1171,3 +1171,191 @@ fn bootstrap_and_snapshot_restore_preserve_native_invariants_without_clone() {
         Some(MachineStoreError::Capacity)
     );
 }
+
+fn stored_batch(batch: &MachineCommitBatch<2>) -> MachineStoredCommit<2> {
+    MachineStoredCommit::decode(
+        &encoded_record(batch),
+        batch.event(),
+        batch.state(),
+        batch.intents().map(|(_, bytes)| bytes),
+        LIMITS,
+    )
+    .unwrap()
+}
+
+#[test]
+fn event_replay_reconstructs_every_prefix_without_pending_effects_and_can_resume_from_snapshot() {
+    let mut live = owner(model());
+    let mut replayed = owner(model());
+    let mut scratch = Scratch::default();
+    let mut expected = 5;
+    for (index, event) in [8_u64, 13, 21, 34, 55].into_iter().enumerate() {
+        let mut captured = context(live.read().0, event);
+        captured.event = MachineEventId::from_bytes([u8::try_from(index).unwrap(); 32]);
+        let MachineCommitDecision::Prepared(prepared) = prepare_machine_commit(
+            &mut live,
+            &MachineCommitInput {
+                event: &event,
+                context: captured,
+                codec: &Codec(0),
+                causation: None,
+            },
+            &mut scratch.buffers(),
+            LIMITS,
+        )
+        .unwrap() else {
+            panic!("accepted fixture")
+        };
+        let batch = prepared.batch();
+        prepared
+            .publish(receipt(&batch, MachineCommitDisposition::Committed))
+            .unwrap();
+        let _released = live.take_intents();
+        let stored = stored_batch(&batch);
+        replayed = stored
+            .replay(replayed, &Codec(0), &mut scratch.buffers(), LIMITS)
+            .unwrap();
+        expected += event;
+        assert_eq!(replayed.read(), (live.read().0, &State(expected)));
+        assert_eq!(
+            replayed.last_transition(),
+            Some(batch.record().header().transition)
+        );
+        assert_eq!(replayed.pending_intents().count(), 0);
+        // This checkpoint substitutes for the already verified prefix only.
+        if index == 2 {
+            replayed = stored
+                .restore(
+                    model(),
+                    &Codec(0),
+                    SCOPE,
+                    &mut [0; 8],
+                    IntentLimits {
+                        max_intents: 2,
+                        max_payload_bytes: 16,
+                    },
+                )
+                .unwrap();
+        }
+    }
+}
+
+#[test]
+fn event_replay_refuses_wrong_predecessor_model_codec_limits_and_duplicate_revision() {
+    let batch = retained_batch();
+    let stored = stored_batch(&batch);
+    let mut scratch = Scratch::default();
+    let limits = IntentLimits {
+        max_intents: 2,
+        max_payload_bytes: 16,
+    };
+    let wrong = MemoryMachine::new(model(), SCOPE, State(6), limits).unwrap();
+    assert!(matches!(
+        stored.replay(wrong, &Codec(0), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+    let mut changed_model = model();
+    changed_model.silent = true;
+    assert!(matches!(
+        stored.replay(
+            owner(changed_model),
+            &Codec(0),
+            &mut scratch.buffers(),
+            LIMITS
+        ),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+    assert!(matches!(
+        stored.replay(owner(model()), &Codec(1), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::Machine(MachineFailure::Kernel(
+            MachineError::DefinitionMismatch
+        )))
+    ));
+    assert!(matches!(
+        stored.replay(owner(model()), &Codec(4), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+    assert!(matches!(
+        stored.replay(owner(model()), &Codec(2), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::Codec(CodecFault::Refused))
+    ));
+    assert!(matches!(
+        stored.replay(
+            owner(model()),
+            &Codec(0),
+            &mut scratch.buffers(),
+            MachinePayloadLimits {
+                max_batch_bytes: 1,
+                ..LIMITS
+            }
+        ),
+        Err(MachinePreparationError::Capacity)
+    ));
+    let recovered = stored
+        .replay(owner(model()), &Codec(0), &mut scratch.buffers(), LIMITS)
+        .unwrap();
+    assert!(matches!(
+        stored.replay(recovered, &Codec(0), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::Machine(MachineFailure::Kernel(
+            MachineError::StaleHead
+        )))
+    ));
+    let mut pending = owner(model());
+    pending.handle(&8, context(pending.read().0, 8)).unwrap();
+    assert!(matches!(
+        stored.replay(pending, &Codec(0), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+}
+
+#[test]
+fn event_replay_refuses_validly_rechecksummed_transition_and_event_substitutions() {
+    let batch = retained_batch();
+    let mut scratch = Scratch::default();
+    for event in [0_u64, 1, 2, 3, 9] {
+        let mut header = batch.record().header();
+        let event_bytes = event.to_le_bytes();
+        header.transition.context.event_digest = Digest::of(&event_bytes).0;
+        let record =
+            MachineCommitRecord::<2>::new(header, batch.record().intents().copied()).unwrap();
+        let mut bytes = vec![0; record.encoded_len()];
+        record.encode(&mut bytes).unwrap();
+        let substituted = MachineStoredCommit::<2>::decode(
+            &bytes,
+            &event_bytes,
+            batch.state(),
+            batch.intents().map(|(_, payload)| payload),
+            LIMITS,
+        )
+        .unwrap();
+        let result = substituted.replay(owner(model()), &Codec(0), &mut scratch.buffers(), LIMITS);
+        if event == 2 || event == 3 {
+            assert!(matches!(
+                result,
+                Err(MachinePreparationError::Machine(MachineFailure::Model(_)))
+            ));
+        } else {
+            assert!(matches!(
+                result,
+                Err(MachinePreparationError::PayloadMismatch)
+            ));
+        }
+    }
+    let mut header = batch.record().header();
+    header.transition.transition = TransitionId::new(99);
+    let record = MachineCommitRecord::<2>::new(header, batch.record().intents().copied()).unwrap();
+    let mut bytes = vec![0; record.encoded_len()];
+    record.encode(&mut bytes).unwrap();
+    let substituted = MachineStoredCommit::<2>::decode(
+        &bytes,
+        batch.event(),
+        batch.state(),
+        batch.intents().map(|(_, payload)| payload),
+        LIMITS,
+    )
+    .unwrap();
+    assert!(matches!(
+        substituted.replay(owner(model()), &Codec(0), &mut scratch.buffers(), LIMITS),
+        Err(MachinePreparationError::PayloadMismatch)
+    ));
+}

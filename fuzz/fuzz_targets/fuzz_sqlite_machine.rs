@@ -177,8 +177,23 @@ fuzz_target!(|data: &[u8]| {
                             None
                         }
                     );
+                    let mut replayed = owner();
                     for (stored, (_, _, state, _)) in page.records.iter().zip(&commits) {
                         assert_eq!(stored.batch().state(), state.to_le_bytes());
+                        replayed = stored
+                            .replay(
+                                replayed,
+                                &Codec,
+                                &mut MachineCommitBuffers {
+                                    state: &mut [0; 8],
+                                    event: &mut [0; 8],
+                                    intent: &mut [0; 8],
+                                },
+                                PAYLOADS,
+                            )
+                            .unwrap();
+                        assert_eq!(replayed.read(), (stored.receipt().head, state));
+                        assert_eq!(replayed.pending_intents().count(), 0);
                     }
                 }
             }

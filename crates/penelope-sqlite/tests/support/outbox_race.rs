@@ -57,14 +57,12 @@ fn history(path: &std::path::Path, race: bool, ack_first: bool) -> History {
             });
             (ack_thread.join().unwrap(), claim_thread.join().unwrap())
         })
+    } else if ack_first {
+        let ack = acknowledge();
+        (ack, reclaim())
     } else {
-        if ack_first {
-            let ack = acknowledge();
-            (ack, reclaim())
-        } else {
-            let leases = reclaim();
-            (acknowledge(), leases)
-        }
+        let leases = reclaim();
+        (acknowledge(), leases)
     };
     drop(acknowledger);
     drop(reclaimer);

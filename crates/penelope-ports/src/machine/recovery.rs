@@ -109,6 +109,69 @@ impl<const INTENTS: usize> MachineStoredCommit<INTENTS> {
         }
     }
 
+    /// Re-evaluates one exact accepted event on an isolated recovery owner.
+    /// Start from trusted genesis or a verified snapshot, then supply contiguous
+    /// records from the authorized journal under the original pinned model.
+    /// Compares the entire regenerated record and every payload, including intent
+    /// order. Staged effects are discarded; no store admission or dispatch occurs.
+    /// The owner is consumed even on failure, so partial recovery cannot escape.
+    /// Model/codec purity and authenticated source bytes remain host obligations.
+    /// # Errors
+    /// Refuses scope/definition/head mismatch, pending local intents, refused or
+    /// divergent transitions, noncanonical events, codec/model failures and bounds.
+    pub fn replay<M, C>(
+        &self,
+        mut owner: MemoryMachine<M, INTENTS>,
+        codec: &C,
+        buffers: &mut MachineCommitBuffers<'_>,
+        limits: MachinePayloadLimits,
+    ) -> Result<MemoryMachine<M, INTENTS>, MachinePreparationError<M::Error, C::Error>>
+    where
+        M: Machine,
+        C: MachineCodec<M>,
+    {
+        let header = self.batch.record.header();
+        if owner.read().0.scope != header.transition.context.expected.scope {
+            return Err(MachineFailure::Kernel(MachineError::ScopeMismatch).into());
+        }
+        if codec.definition() != owner.read().0.scope.definition {
+            return Err(MachineFailure::Kernel(MachineError::DefinitionMismatch).into());
+        }
+        if self.batch.event().len() > limits.max_event_bytes
+            || self.batch.byte_len() > limits.max_batch_bytes
+        {
+            return Err(MachinePreparationError::Capacity);
+        }
+        if owner.pending_intents().next().is_some() {
+            return Err(MachinePreparationError::PayloadMismatch);
+        }
+        let event = codec
+            .decode_event(header.event_type, self.batch.event())
+            .map_err(MachinePreparationError::Codec)?;
+        let input = MachineCommitInput {
+            event: &event,
+            context: header.transition.context,
+            codec,
+            causation: header.causation,
+        };
+        let prepared = match prepare_machine_commit(&mut owner, &input, buffers, limits)? {
+            MachineCommitDecision::Prepared(prepared) => prepared,
+            MachineCommitDecision::Rejected { .. } | MachineCommitDecision::Unhandled => {
+                return Err(MachinePreparationError::PayloadMismatch);
+            }
+        };
+        if prepared.batch.record != self.batch.record
+            || prepared.batch.event != self.batch.event
+            || prepared.batch.state != self.batch.state
+            || prepared.batch.intents != self.batch.intents
+        {
+            return Err(MachinePreparationError::PayloadMismatch);
+        }
+        prepared.ready.publish();
+        drop(owner.take_intents());
+        Ok(owner)
+    }
+
     /// Restores an isolated native owner from a verified complete state snapshot.
     /// Re-encoding must reproduce every byte; lossy/noncanonical codecs fail.
     /// Does not evaluate an event or restore local pending intents/provenance.

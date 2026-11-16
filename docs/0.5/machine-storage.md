@@ -74,6 +74,20 @@ intents. Local provenance/pending caches start empty; journal bytes retain the
 durable intent history. The optional leased outbox below recovers delivery state separately from
 this snapshot helper.
 
+For event replay, start a separate `MemoryMachine` from trusted genesis (or a
+verified snapshot) and pass each contiguous historical record to
+`MachineStoredCommit::replay`. It decodes the original event and reuses the normal
+preparation path with the captured context and causation. The regenerated record,
+event, state and ordered intent bytes must match exactly. This checks predecessor
+state, native revision, pinned definition/schema, transition identity and effects;
+it does not authenticate the journal. A rejected or unhandled historical event
+fails recovery. Replay consumes the recovery owner, returns it only after the
+complete comparison, and discards staged intents without dispatching them. A
+failure therefore cannot return a partially recovered owner. Keep recovery
+isolated until the captured upper revision is reached; supply bounded history
+pages and the original model/codec. Missing executable versions require an
+explicit recovery/migration decision, never reinterpretation under a new model.
+
 Payload limits bound each record, state, event, intent and complete batch. Shared
 SQLite limits additionally cap machine scopes, events per machine, logical retained
 bytes and database pages. Logical journal charge is genesis plus current head-state
@@ -98,8 +112,8 @@ reactors. All port calls execute SQLite work on the existing bounded
 and busy timeout. Queue saturation/unavailability can leave a commit outcome
 uncertain, so callers retain exact immutable batches for authoritative resolution.
 
-Commit obtains an immediate transaction before checking duplicates or stale heads.
-For a hot instance, sequence command admission through one host owner while
+Requests not resolved by the read-only preflight obtain an immediate transaction
+and recheck duplicates and stale heads. For a hot instance, sequence command admission through one host owner while
 retaining the store's CAS checks for independent writers. The
 [measured contention profile](evidence/machine-store-performance/manifest.json)
 shows why: one winning call stays near a millisecond while competing stale calls

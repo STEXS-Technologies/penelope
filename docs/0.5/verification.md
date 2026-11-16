@@ -7,12 +7,15 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
-All ten library crates use candidate version 0.5.0. The latest production
-change is connection-level SQLite query-plan stability at `cefa55f`. The
+All ten library crates use candidate version 0.5.0. The production baseline is
+connection-level SQLite query-plan stability at `cefa55f`; a subsequent event-replay
+recovery method now reuses normal preparation and exact stored-batch comparison.
+Its targeted evidence below does not qualify final packages or replace full
+campaign reconciliation. The
 [current checkpoint](evidence/qualification/history-partition-checkpoint.json)
 qualifies all ten clean archives at `ce93ff8`, including the subsequent generated
-machine and exhaustive history-partition test additions. Production and
-dependencies are unchanged from the [production checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json).
+machine and exhaustive history-partition test additions. Dependencies and production outside the replay recovery helper remain unchanged
+from the [production checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json).
 Both retain commands, source/archive identities, raw logs and full LLVM JSON.
 **Full release qualification remains open.** Earlier checkpoints retain their
 original source scopes.
@@ -26,6 +29,7 @@ original source scopes.
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. Only test/fuzz inputs change; production remains `cefa55f`. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
 | Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; the current checkpoint includes the test in both extracted-workspace runs and fresh coverage |
 | Replay-mutation fuzz follow-up | [Initial checks](evidence/qualification/replay-mutation-initial.json) pass for the augmented SQLite target: ten deterministic seeds, 1,000-run smoke, strict Clippy and formatting. Reverse exact retries, future-head refusal and checksummed scope/model/event-digest substitutions are exercised. A separate immutable-source three-round/100,000-run campaign is running; completion is not yet claimed |
+| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. Final packages, coverage, fuzz and full-source campaign reconciliation remain open |
 | Repeated journal kills | [Growing-journal crash/model check](evidence/qualification/repeated-machine-kill.json): three seeds, 16 successive SIGKILLs per database, all eight commit boundaries twice per seed. Both compilers pass all nine machine unit tests; every retained prefix, payload/intent, row count and exact retry is checked after each death and reopen. Test-only addition; this is separate from clean-reopen fuzzing and final package reconciliation |
 | Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 696 passes on each compiler, with both new tests observed and every Penelope dependency resolved from those archives |
 | Locks | Six active locks retain every external package identity and checksum; extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`, then both compiler runs use the same lock with `--locked` |
@@ -51,7 +55,9 @@ the recorded package results; subprocess-split output is documented in the recor
 
 ## Open release gates
 
-- Complete the full campaign on the immutable `cefa55f` checkout: three rounds,
+- Complete the full campaign on the immutable `cefa55f` checkout and reconcile
+  the subsequent production event-replay addition with final-source qualification:
+  three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
   does not replace it. The earlier `be774e6` campaign and development rehearsal

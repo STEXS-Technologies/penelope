@@ -315,7 +315,7 @@ mod tests {
             panic_on_drop: bool,
         }
         // This waker carries the destructor whose lock context is under test.
-        #[allow(clippy::manual_noop_waker)]
+        #[allow(unknown_lints, clippy::manual_noop_waker)] // Lint postdates MSRV.
         impl Wake for Registration {
             fn wake(self: Arc<Self>) {}
         }
