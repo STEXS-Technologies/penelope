@@ -4,7 +4,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let guide =
         PathBuf::from(env::var("CARGO_MANIFEST_DIR")?).join("../../docs/getting-started.md");
     println!("cargo:rerun-if-changed={}", guide.display());
-    let text = fs::read_to_string(guide)?;
+    let text = fs::read_to_string(guide)?.replace("\r\n", "\n");
     let mut examples = text.split("```rust\n").skip(1);
     let (source, _) = examples
         .next()
