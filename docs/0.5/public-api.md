@@ -20,6 +20,21 @@ by diagnostics. Its associated types preserve each engine's native state,
 provenance and intents. It is not a generic commit/dispatch trait. Application
 implementations of this inspection trait are likewise not admission evidence.
 
+For diagnostics, read the native evidence at the stage being inspected:
+
+| Question | Source and limit |
+| --- | --- |
+| What was evaluated? | `PreparedDecision::{before, candidate, provenance, intents}`; machine provenance retains supplied scope, event identity/digest, logical time and selected transition. These are proposed coordinates |
+| Why was a local event refused? | After refusal, read the unchanged source state alongside the attempted event and `Rejected { reason }` or `Unhandled`. Refusals do not advance the head or create an accepted journal record; `nested_order` demonstrates this |
+| What committed? | Authenticated `MachineCommitReceipt` plus the exact prepared/stored batch; disposition distinguishes new commit from exact duplicate. A lost acknowledgement remains unknown until lookup/retry resolves it |
+| What caused it? | The committed header's optional typed `causation`; absence remains absence |
+| Was an intent admitted downstream? | Authorized outbox status and verified native receiver receipt; acknowledgement establishes receiver admission |
+| Did execution succeed? | The native task/saga result and its verified effect evidence. Claim, admission and source acknowledgement alone do not establish external completion |
+
+State paths come from the typed model/state; they are not invented from a digest.
+Legacy protocols retain their own provenance and explicitly missing fields.
+Operational logs may redact payloads, but they are never the durable authority.
+
 Start with `MemoryMachine::handle` for immediate local preparation, validation
 and publication. `machine::Digest` reexports the shared SHA-256 content identity;
 existing `task::Digest` imports name that same type. Local hashing authenticates
@@ -36,7 +51,11 @@ digests, native provenance, causation and ordered intent metadata. Constructing
 or decoding a record proves neither acceptance nor durable admission.
 [Canonical payload preparation](machine-preparation.md) binds the accepted
 candidate and checks exact receipt coordinates. `MachineStoredCommit` checks
-retained payloads and restores a scoped snapshot without evaluation or dispatch.
+retained payloads. `restore` validates a scoped snapshot without evaluating events;
+`replay` consumes an isolated recovery owner, reevaluates one original event and
+compares the complete regenerated batch before returning the owner. Both leave
+durable delivery to the journal/outbox and do not dispatch effects. See the
+[recovery profiles](machine-storage.md#storage-recovery-and-bounds).
 
 The [optional SQLite journal](machine-storage.md) provides authorized admission,
 coherent snapshots, exact lookup and bounded history. Its source-bound outbox

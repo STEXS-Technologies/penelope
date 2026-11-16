@@ -81,3 +81,9 @@ It does not reconstruct earlier pending batches, replay history, verify the
 predecessor chain, or authenticate the source. A trusted coherent journal read is
 still required. The SQLite adapter supplies that transaction boundary; checked
 recovery bytes alone do not establish durability.
+
+For event-based recovery, `MachineStoredCommit::replay` checks a contiguous record
+against an isolated predecessor by reusing `prepare_machine_commit`. It consumes
+the recovery owner, compares the complete regenerated batch and discards staged
+intents. The [recovery profiles](machine-storage.md#storage-recovery-and-bounds)
+describe genesis/snapshot selection, pinning and the caller's history bounds.

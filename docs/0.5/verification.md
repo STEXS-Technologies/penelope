@@ -7,61 +7,57 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
-All ten library crates use candidate version 0.5.0. The production baseline is
-connection-level SQLite query-plan stability at `cefa55f`; a subsequent event-replay
-recovery method now reuses normal preparation and exact stored-batch comparison.
-Its targeted evidence below does not qualify final packages or replace full
-campaign reconciliation. The
-[current checkpoint](evidence/qualification/history-partition-checkpoint.json)
-qualifies all ten clean archives at `ce93ff8`, including the subsequent generated
-machine and exhaustive history-partition test additions. Dependencies and production outside the replay recovery helper remain unchanged
-from the [production checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json).
-Both retain commands, source/archive identities, raw logs and full LLVM JSON.
-**Full release qualification remains open.** Earlier checkpoints retain their
-original source scopes.
+All ten library crates use candidate version 0.5.0. The
+[current checkpoint](evidence/qualification/event-replay-checkpoint.json)
+qualifies all ten clean archives at `9084239`, including isolated event replay,
+the generated-machine/history-partition/repeated-kill tests and the nested/shared
+examples. It retains commands, source/archive identities, raw logs, unchanged
+external dependency identities and full LLVM JSON. The
+[earlier checkpoint](evidence/qualification/history-partition-checkpoint.json)
+retains its `ce93ff8` scope. **Full release qualification remains open.**
 
 | Gate | Verified result and scope |
 | --- | --- |
-| CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; a new CI run and final archive reconciliation remain required |
-| CI | All seven jobs pass at [`ce93ff8`](https://github.com/STEXS-Technologies/penelope/actions/runs/43814541688): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
+| CI | All seven jobs pass at [`9084239`](https://github.com/STEXS-Technologies/penelope/actions/runs/43823780958): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
-| Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. Only test/fuzz inputs change; production remains `cefa55f`. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
+| Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
 | Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; the current checkpoint includes the test in both extracted-workspace runs and fresh coverage |
 | Replay-mutation fuzz follow-up | [Initial checks](evidence/qualification/replay-mutation-initial.json) pass for the augmented SQLite target: ten deterministic seeds, 1,000-run smoke, strict Clippy and formatting. Reverse exact retries, future-head refusal and checksummed scope/model/event-digest substitutions are exercised. A separate immutable-source three-round/100,000-run campaign is running; completion is not yet claimed |
-| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. Final packages, coverage, fuzz and full-source campaign reconciliation remain open |
-| Repeated journal kills | [Growing-journal crash/model check](evidence/qualification/repeated-machine-kill.json): three seeds, 16 successive SIGKILLs per database, all eight commit boundaries twice per seed. Both compilers pass all nine machine unit tests; every retained prefix, payload/intent, row count and exact retry is checked after each death and reopen. Test-only addition; this is separate from clean-reopen fuzzing and final package reconciliation |
-| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 696 passes on each compiler, with both new tests observed and every Penelope dependency resolved from those archives |
-| Locks | Six active locks retain every external package identity and checksum; extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`, then both compiler runs use the same lock with `--locked` |
+| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. The current checkpoint includes packages, coverage and CI; supplementary fuzz and full-source campaign reconciliation remain open |
+| Repeated journal kills | [Growing-journal crash/model check](evidence/qualification/repeated-machine-kill.json): three seeds, 16 successive SIGKILLs per database, all eight commit boundaries twice per seed. Both compilers pass all nine machine unit tests; every retained prefix, payload/intent, row count and exact retry is checked after each death and reopen. Test-only addition; the current archive checkpoint includes it on both compilers, separately from clean-reopen fuzzing |
+| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 700 passes on each compiler, with the added replay and repeated-kill tests observed and every Penelope dependency resolved from those archives |
+| Locks | Extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`; every retained external identity/checksum is unchanged and both compiler runs use the same lock with `--locked`. Earlier six-lock inventories retain their recorded scope |
 | Frozen compatibility | 33,278 task/timeline observations and 3,136 saga observations match original 0.4; both legacy and prepared saga facade paths pass on both compilers; frozen corpora and baseline locks are unchanged |
 | Static API review | [Fourteen package/feature profiles](evidence/maintenance/public-api-audit.json) retain the checked original export bindings and pass the local-item signature checks. Independent export traversal and the unchanged consumer catch a facade reexport removal missed by the signature checker; a public-field removal is also caught |
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
-| Nested example | [Runnable hierarchy follow-up](evidence/qualification/nested-example.json) checks six event attempts on stable/MSRV: exact hook order, guarded failures without hooks/state changes, external self-reentry and parent cancellation. Independent-consumer Clippy passes on both compilers; the workspace lint follow-up above records the additional policy fixes. Production is unchanged and package reconciliation remains separate |
-| Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. All 72 coverage-reported production files remain unchanged; the all-ten archive checkpoint above retains its `ce93ff8` scope |
+| Nested example | [Runnable hierarchy follow-up](evidence/qualification/nested-example.json) checks six event attempts on stable/MSRV: exact hook order, guarded failures without hooks/state changes, external self-reentry and parent cancellation. Independent-consumer Clippy passes on both compilers; the workspace lint follow-up above records the additional policy fixes. The current archive checkpoint includes the corrected example |
+| Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. That example follow-up records unchanged production at its source revision; the current all-ten archive checkpoint includes the example |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
-| Coverage | **14,880 / 15,814 lines = 94.0938%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
+| Coverage | **14,927 / 15,860 lines = 94.1173%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
 
 Earlier unsuccessful attempts remain in the preceding checkpoint. Current
 commands use the pinned conformance source and exclude the separate fuzz package
 from library tests. Debug benchmark smokes are not release timing measurements,
-and line coverage is not branch completeness or a safety proof. The current checkpoint also retains a rejected
-attempt that reused an older compiled target and omitted the new history test.
-Its successful command exits were not accepted as qualification. A fresh target,
-explicit observations of both new tests and retained test-name comparison establish
-the recorded package results; subprocess-split output is documented in the recorder.
+and line coverage is not branch completeness or a safety proof. The earlier
+history-partition checkpoint retains a rejected attempt that reused an older
+compiled target and omitted its new history test. Its successful command exits
+were not accepted as qualification. Both that follow-up and the current checkpoint
+use a fresh target, explicit added-test observations and retained test-name
+comparison; subprocess-split output is documented in the recorders.
 
 ## Open release gates
 
-- Complete the full campaign on the immutable `cefa55f` checkout and reconcile
-  the subsequent production event-replay addition with final-source qualification:
-  three rounds,
+- Complete the full campaign on the immutable `9084239` checkout: three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
-  does not replace it. The earlier `be774e6` campaign and development rehearsal
-  continue separately and retain their original source scopes.
+  does not replace it. Earlier `cefa55f`/`be774e6` campaigns, the development
+  rehearsal and supplementary augmented-target campaigns continue separately
+  and retain their original source/harness scopes.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.
@@ -73,10 +69,11 @@ the recorded package results; subprocess-split output is documented in the recor
 
 No regression acceptance is recorded. Diagnosis, intervals spanning zero and a
 smaller number of flags do not by themselves establish equivalence or waive a
-sustained regression. Coverage passes narrowly and is lower than the preceding
-94.0976% checkpoint; the supported SQLite configuration's error conversion remains
-unexercised. All 15 invariant-owner mappings and 33 boundary-test references were
-rechecked against current passing results; their 27 owner source files are unchanged.
+sustained regression. Current coverage passes at 94.1173%, compared with the
+history-partition checkpoint's 94.0938%; aggregate coverage does not prove every
+new branch is exercised. The 15-invariant audit retains its recorded 27 owner
+source hashes and 33 boundary-test references. The replay addition has separate
+current evidence; final reconciliation must include that additional path.
 
 The [phase work audit](evidence/maintenance/phase-audit.json) maps all 50 work
 items and nine gates in plan §11 to 67 source/evidence files. It distinguishes
@@ -97,8 +94,9 @@ checked capability, not final release qualification. The preceding checkpoint,
 static API and capability archives were rechecked against all 480 recorded member
 hashes before the SQLite change. The production checkpoint adds 164 verified
 archive members and revalidates all 27 invariant-owner source hashes; the current
-test/package follow-up adds 65 verified members. Full chaos and final
-release/artifact reconciliation remain open.
+history-partition follow-up adds 65 verified members; the current event-replay
+checkpoint adds 42 verified members. Full chaos and final release/artifact
+reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |
 | --- | --- |
@@ -106,7 +104,7 @@ release/artifact reconciliation remain open.
 | No mandatory extras | Verified portable core bare/serde builds on both compilers; allocation probes cover allocation-free consumer types. The hosted umbrella facade is not the no-std target |
 | Real integration | Implemented: prepared saga/task views and the durable consumer exercise native admission, verified worker result, subsequent machine transition and saga admission. Native engines retain execution authority |
 | No new rewind engine | Implemented: `MachineTimeline` delegates to the existing correction engine; frozen timeline observations and adapter tests pass. Timeline performance findings remain open |
-| Durability exists | Implemented: journal/CAS, exact retries, snapshots, source-bound outbox, migration and eight kill boundaries have checked evidence. Full candidate chaos remains open |
+| Durability exists | Implemented: journal/CAS, exact retries, snapshots, verified event replay, source-bound outbox, migration and eight kill boundaries have checked evidence. Full candidate chaos remains open |
 | No effect guessing | Enforced in the audited native handoff, unknown-outcome and generation/reconciliation boundaries. Durable admission does not establish exactly-once external execution |
 | Proven compatibility | Frozen observations, unchanged consumer, static signatures/export bindings and actual old-writer upgrade pass. Upgrade/backup-restore obligations are documented; unsupported downgrade is not offered |
 | One public API | Canonical facade, migration table and source-derived first-machine tutorial are checked on stable/MSRV. Advanced durable metadata remains explicit; no local convenience layer is claimed |
@@ -203,6 +201,10 @@ The [15-invariant audit](evidence/maintenance/invariant-audit.json) binds each
 plan §10 requirement to owners, source identities and passing negative/boundary
 tests in the candidate archive. It records scoped evidence, not completion of
 the remaining performance, campaign or release gates.
+The [core/hierarchy/atomic-commit audit](evidence/maintenance/core-contract-audit.json)
+maps all 26 explicit bullets in plan §4.1, §4.4 and §7.2 to source owners and
+33 named tests observed passing on stable/MSRV CI at `9084239`. Its scope does
+not include every remaining normative paragraph in the plan.
 
 ## Evidence policy
 

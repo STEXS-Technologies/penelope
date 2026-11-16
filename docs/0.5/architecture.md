@@ -76,8 +76,11 @@ different content conflicts. An absent ACK is unknown until authoritative lookup
 A content digest identifies bytes and does not authenticate a rewritten store.
 No claim of cross-store atomicity or persistent timeline correction follows.
 The initial recovery profile retains a complete state snapshot per accepted event;
-restoration does not execute events. History is append-only within explicit limits
-and refuses further admission rather than discarding deduplication evidence.
+snapshot restoration does not execute events. Event replay reuses canonical
+preparation on an isolated recovery owner and compares the complete regenerated
+batch before advancing it; staged intents are discarded. Both profiles require
+trusted source bytes and the original pinned model/codec. History is append-only
+within explicit limits and refuses further admission rather than discarding deduplication evidence.
 SQLite schema 7 adds separate journal tables; schema 8 adds bounded delivery
 metadata without rewriting accepted event bytes.
 

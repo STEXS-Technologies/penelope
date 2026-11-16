@@ -1,0 +1,576 @@
+{
+  "scope": "Every26 explicit required-property/HSM/atomic-commit bullet in plan4.1,4.4,7.2, individually mapped to current implementation and actual passing stable/MSRV CI tests. This is a scoped contract audit, not all normative plan prose or release qualification. User callback purity and authenticated sources remain consumer obligations; finite fixtures do not prove all executions.",
+  "source_commit": "9084239e859e98f8095a1b66e5b6e274dcd8c421",
+  "plan_sha256": "c0dea1ab385516a337e28936496907bcc8e932a9a8028bf8a1276180cd0f50a1",
+  "counts": {
+    "requirements": 26,
+    "named_tests": 33,
+    "source_files": 13
+  },
+  "items": [
+    {
+      "id": "4.1.1",
+      "plan_line": 211,
+      "requirement": "All state changes are returned as a candidate value, never by mutating the published state.",
+      "assessment": "Native owner exposes immutable state and evaluates an owned candidate; preparation/drop does not change the published tuple.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "decisions_prepare_without_publishing_and_drop_aborts"
+      ]
+    },
+    {
+      "id": "4.1.2",
+      "plan_line": 212,
+      "requirement": "A guard refusal is a typed result. `Unhandled` means no handler accepted the event; it is **not** the same as `Rejected` or an execution error.",
+      "assessment": "Business rejection, unhandled fallback and concrete model errors retain separate enum/result variants.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch"
+      ]
+    },
+    {
+      "id": "4.1.3",
+      "plan_line": 213,
+      "requirement": "Tentative effects produced before a rejection/error are dropped; they never reach the authoritative outbox.",
+      "assessment": "Staging is private to the attempt, including ignored errors and caught payload-destructor panic; refusal/error drops it.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+        "a_caught_destructor_panic_cannot_unpoison_staging"
+      ]
+    },
+    {
+      "id": "4.1.4",
+      "plan_line": 214,
+      "requirement": "`Machine::transition` has no blanket `Clone`, `Serialize`, `Send`, `Sync`, `std`, or `alloc` bound. Concrete storage profiles add only their necessary bounds.",
+      "assessment": "The base trait has no Clone/Serde/Send/Sync or allocator bound. The concrete non-Clone fixture compiles/runs; allocation-free profiles have separate allocator-probe evidence.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt"
+      ]
+    },
+    {
+      "id": "4.1.5",
+      "plan_line": 215,
+      "requirement": "A successful `Transition` does not mean it is committed. A `PreparedTransition`/`ReadyTransition` token binds the expected head and the exact candidate; only the machine owner or durable store may publish it.",
+      "assessment": "Exclusive borrow-bound prepared handle is consumed on local publication; durable preparation verifies exact receipt coordinates before publishing.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine.rs"
+      ],
+      "tests": [
+        "drop_and_every_receipt_coordinate_substitution_abort_local_publication"
+      ]
+    },
+    {
+      "id": "4.1.6",
+      "plan_line": 216,
+      "requirement": "`MemoryMachine::handle` owns published state and swaps it only after all validation succeeds. Reading state is borrowing, not exposing mutable references that bypass transitions.",
+      "assessment": "Owner validates then publishes state/head/provenance/intents coherently, with retired destructors run after the tuple changes; read returns no mutable state reference.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "superseded_state_drop_panics_only_after_all_published_values_agree",
+        "publication_retains_prior_intents_and_their_exact_origins_until_taken"
+      ]
+    },
+    {
+      "id": "4.1.7",
+      "plan_line": 217,
+      "requirement": "Keep source error types precise; use typed `thiserror` wrappers for infrastructure failures, preserving application errors in generic variants.",
+      "assessment": "MachineFailure and hosted preparation wrappers retain concrete application/codec errors rather than erasing them to strings.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-ports/src/machine.rs"
+      ],
+      "tests": [
+        "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch",
+        "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged"
+      ]
+    },
+    {
+      "id": "4.4.1",
+      "plan_line": 263,
+      "requirement": "A finite active leaf path and explicitly declared parents/superstates.",
+      "assessment": "A single active leaf maps through explicit parents into bounded inline StatePath storage; no runtime registry.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "every_pair_of_tree_states_matches_an_independent_path_oracle"
+      ]
+    },
+    {
+      "id": "4.4.2",
+      "plan_line": 264,
+      "requirement": "Event dispatch from the active leaf outward through parent handlers until handled or explicitly rejected.",
+      "assessment": "Selection visits leaf then parents in declared order; the oracle checks dispatch and LCA action order.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact"
+      ]
+    },
+    {
+      "id": "4.4.3",
+      "plan_line": 265,
+      "requirement": "Distinguish **unhandled** (can bubble) from **rejected** (terminal refusal).",
+      "assessment": "Only Unhandled bubbles. Rejection and typed evaluation faults stop selection.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path"
+      ]
+    },
+    {
+      "id": "4.4.4",
+      "plan_line": 266,
+      "requirement": "Guards evaluated for the chosen transition; no side effects in guards.",
+      "assessment": "select receives immutable inputs and no sink. Deterministic/pure user predicates remain a documented consumer obligation; Rust cannot prevent arbitrary user I/O.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path"
+      ]
+    },
+    {
+      "id": "4.4.5",
+      "plan_line": 267,
+      "requirement": "Deterministic exit actions from leaf to least common ancestor; transition action; entry actions from ancestor to target leaf. Exact self-transition/internal-transition semantics must be specified and tested.",
+      "assessment": "External transitions exit active leaf to LCA, run action, then enter target path; external self reenters and internal retains the leaf.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "internal_and_external_self_transitions_are_distinct",
+        "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact"
+      ]
+    },
+    {
+      "id": "4.4.6",
+      "plan_line": 268,
+      "requirement": "Entry/exit *effects* are staged intents, never executed during evaluation. If any stage fails, the complete candidate is discarded.",
+      "assessment": "Hook intents are staged in the native attempt and any failure discards candidate and all prior hooks; ignored sink errors stop later hooks.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs",
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "each_hook_failure_bad_candidate_and_invariant_failure_discards_the_whole_attempt",
+        "ignored_hook_staging_failure_stops_the_remaining_hooks"
+      ]
+    },
+    {
+      "id": "4.4.7",
+      "plan_line": 269,
+      "requirement": "Stable typed state/transition identifiers for provenance (not user-authored string IDs); an enum-based `StatePath` interface may provide the relationship. Avoid runtime reflection requirements.",
+      "assessment": "Typed Copy+Eq nodes and typed TransitionId supply stable model-owned identities. Definition pinning is a host/model contract; strings are not reflection keys.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "every_pair_of_tree_states_matches_an_independent_path_oracle"
+      ]
+    },
+    {
+      "id": "4.4.8",
+      "plan_line": 270,
+      "requirement": "Cycles and repeated events are permitted but bounded by the caller's per-dispatch depth/step/intent budgets; no accidental infinite implicit transition loops.",
+      "assessment": "Finite paths refuse repeated parent nodes/depth overflow, while repeated event dispatch and cyclic transition tables remain allowed under per-attempt intent limits. There are no implicit completion loops.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs",
+        "crates/penelope-core/src/machine/memory.rs"
+      ],
+      "tests": [
+        "malformed_or_exhausted_paths_fail_before_any_handler",
+        "internal_and_external_self_transitions_are_distinct",
+        "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed"
+      ]
+    },
+    {
+      "id": "4.4.9",
+      "plan_line": 271,
+      "requirement": "No orthogonal/parallel regions in 0.5.0; this must be explicit in docs rather than pretending nesting covers all Statig HSM features.",
+      "assessment": "The public HierarchyModel contract explicitly excludes orthogonal regions. This is a deliberate supported-profile limit, not a claim of all HSM semantics.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs"
+      ],
+      "tests": [
+        "every_pair_of_tree_states_matches_an_independent_path_oracle"
+      ]
+    },
+    {
+      "id": "7.2.1",
+      "plan_line": 451,
+      "requirement": "Check the exact machine scope and pinned model/schema fingerprint.",
+      "assessment": "Host authorization precedes scoped access; transaction admission pins exact complete scope and definition/schema.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/read.rs"
+      ],
+      "tests": [
+        "authorization_precedes_existence_duplicates_and_all_reads",
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state"
+      ]
+    },
+    {
+      "id": "7.2.2",
+      "plan_line": 452,
+      "requirement": "Validate the expected revision/CAS and event uniqueness under the transaction lock.",
+      "assessment": "Read-only preflight may resolve old work, but new commits revalidate under immediate transaction lock. Independent workers compete against one predecessor.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs"
+      ],
+      "tests": [
+        "simultaneous_independent_workers_admit_one_competing_head",
+        "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot"
+      ]
+    },
+    {
+      "id": "7.2.3",
+      "plan_line": 453,
+      "requirement": "If the same event ID and same immutable payload/commit identity already exist, return a verifiably identical duplicate receipt, not an additional transition.",
+      "assessment": "Exact old event/content is resolved before predecessor CAS and returns the original complete-batch receipt.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/read.rs"
+      ],
+      "tests": [
+        "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery"
+      ]
+    },
+    {
+      "id": "7.2.4",
+      "plan_line": 454,
+      "requirement": "If the same ID exists with different content, reject with conflict. Never treat it as idempotent.",
+      "assessment": "Same event ID with different immutable content is conflict, not a duplicate success.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/read.rs"
+      ],
+      "tests": [
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state"
+      ]
+    },
+    {
+      "id": "7.2.5",
+      "plan_line": 455,
+      "requirement": "Atomically commit accepted event, new revision/head and state identity, replay payload/storage references as required, and **all** outgoing intent records. All-or-nothing.",
+      "assessment": "Event/record/intent/head/usage writes share one transaction; silent suppressed writes, later intent conflicts and post-write corruption roll back.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs"
+      ],
+      "tests": [
+        "suppressed_write_rolls_back_entire_batch_and_quota_refusal_is_atomic",
+        "second_intent_identity_conflict_rolls_back_the_entire_inserted_prefix",
+        "post_write_substitution_and_deferred_commit_failure_never_issue_success_receipts"
+      ]
+    },
+    {
+      "id": "7.2.6",
+      "plan_line": 456,
+      "requirement": "A rejected/unhandled evaluation must not call the transition-commit path as though it succeeded.",
+      "assessment": "Only accepted native preparation can construct the private admission batch. Rejected/unhandled outcomes retain no commit batch.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-ports/src/machine.rs"
+      ],
+      "tests": [
+        "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch"
+      ]
+    },
+    {
+      "id": "7.2.7",
+      "plan_line": 457,
+      "requirement": "Ensure a crash after commit and before receipt can be resolved by reading authoritative persisted records, not by guessing whether the action succeeded.",
+      "assessment": "Actual SIGKILL boundaries include commit-before-receipt; reopening and exact retry resolve all-or-nothing accepted history. This is process-death evidence, not arbitrary hardware power-loss proof.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/read.rs"
+      ],
+      "tests": [
+        "sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack",
+        "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry"
+      ]
+    },
+    {
+      "id": "7.2.8",
+      "plan_line": 458,
+      "requirement": "Never dispatch an effect before the **verifiable committed receipt** and authorization checks.",
+      "assessment": "Preparation and the outbox never dispatch effects. Source authorization and trusted native receiver verification gate handoff/ACK; private preparation verifies the full commit receipt before local publication. External execution remains under native task/saga/host authority.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-ports/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/delivery.rs"
+      ],
+      "tests": [
+        "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+        "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup",
+        "dto_reconstruction_cannot_substitute_lease_or_committed_source"
+      ]
+    },
+    {
+      "id": "7.2.9",
+      "plan_line": 459,
+      "requirement": "Enforce scoped quotas, record-size limits, history retention, resource bounds, and integer overflow prevention before irreversible partial mutation.",
+      "assessment": "Staging/wire/payload bounds and journal/delivery scoped quotas preflight mutations with checked arithmetic; history is append-only and refuses overflow rather than evicting dedupe or uncertain work.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine.rs",
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/delivery.rs"
+      ],
+      "tests": [
+        "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+        "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+        "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens"
+      ]
+    },
+    {
+      "id": "7.2.10",
+      "plan_line": 460,
+      "requirement": "Preserve a coherent read of state/head/event for concurrent readers; a state-byte payload and the revision that describes it cannot become independently visible.",
+      "assessment": "Snapshot reads verify one coherent head/state/event tuple under a read transaction; competing reader/writer test checks no mixed tuple is returned.",
+      "status": "implementation_and_named_checks_supported_final_qualification_open",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/read.rs"
+      ],
+      "tests": [
+        "concurrent_reader_sees_one_coherent_state_head_receipt_tuple"
+      ]
+    }
+  ],
+  "named_tests": {
+    "decisions_prepare_without_publishing_and_drop_aborts": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 147,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch": {
+      "path": "crates/penelope-ports/tests/machine_preparation.rs",
+      "line": 362,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 207,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "a_caught_destructor_panic_cannot_unpoison_staging": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 365,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt": {
+      "path": "crates/penelope-ports/tests/machine_preparation.rs",
+      "line": 234,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "drop_and_every_receipt_coordinate_substitution_abort_local_publication": {
+      "path": "crates/penelope-ports/tests/machine_preparation.rs",
+      "line": 311,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "superseded_state_drop_panics_only_after_all_published_values_agree": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 429,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "publication_retains_prior_intents_and_their_exact_origins_until_taken": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 178,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged": {
+      "path": "crates/penelope-ports/tests/machine_preparation.rs",
+      "line": 402,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "every_pair_of_tree_states_matches_an_independent_path_oracle": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 489,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 237,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 270,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "internal_and_external_self_transitions_are_distinct": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 313,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "each_hook_failure_bad_candidate_and_invariant_failure_discards_the_whole_attempt": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 415,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "ignored_hook_staging_failure_stops_the_remaining_hooks": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 467,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "malformed_or_exhausted_paths_fail_before_any_handler": {
+      "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "line": 356,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed": {
+      "path": "crates/penelope-core/tests/machine.rs",
+      "line": 247,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "authorization_precedes_existence_duplicates_and_all_reads": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 46,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 99,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "simultaneous_independent_workers_admit_one_competing_head": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 305,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot": {
+      "path": "crates/penelope-sqlite/src/machine/tests.rs",
+      "line": 147,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 18,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "suppressed_write_rolls_back_entire_batch_and_quota_refusal_is_atomic": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 185,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "second_intent_identity_conflict_rolls_back_the_entire_inserted_prefix": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 443,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "post_write_substitution_and_deferred_commit_failure_never_issue_success_receipts": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 365,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack": {
+      "path": "crates/penelope-sqlite/src/machine/tests.rs",
+      "line": 63,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry": {
+      "path": "crates/penelope-sqlite/src/machine/tests.rs",
+      "line": 567,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup": {
+      "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+      "line": 232,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "dto_reconstruction_cannot_substitute_lease_or_committed_source": {
+      "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+      "line": 278,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "every_byte_limit_and_input_digest_is_enforced_before_local_publication": {
+      "path": "crates/penelope-ports/tests/machine_preparation.rs",
+      "line": 445,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "full_history_refuses_new_events_but_preserves_exact_retries_and_rows": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 615,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens": {
+      "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+      "line": 304,
+      "stable_and_msrv_ci_pass_observed": true
+    },
+    "concurrent_reader_sees_one_coherent_state_head_receipt_tuple": {
+      "path": "crates/penelope-sqlite/tests/machines.rs",
+      "line": 337,
+      "stable_and_msrv_ci_pass_observed": true
+    }
+  },
+  "source_sha256": {
+    "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+    "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+    "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+    "crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+    "crates/penelope-ports/src/machine.rs": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+    "crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+    "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+    "crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+    "crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+    "crates/penelope-sqlite/src/machine/read.rs": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+    "crates/penelope-sqlite/src/machine/tests.rs": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+    "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+    "crates/penelope-sqlite/src/machine/delivery.rs": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51"
+  },
+  "ci": {
+    "run_id": 43823780958,
+    "archive": "../qualification/event-replay-checkpoint.tar.gz",
+    "raw_log_sha256": "37781c7b29756345141cfa78ae30727f5b8b8dcf518882322c11de7c99eaeb7b"
+  },
+  "remaining": [
+    "Audit remaining detailed prose/clauses outside these26 bullets using the existing phase, test-layer, invariant, compatibility and maintenance audits without assuming those scopes close the entire plan.",
+    "Complete current-source full campaign and supplementary fuzz, resolve retained performance findings, reconcile final artifacts and dated release notes.",
+    "Historical baseline/compile-fixture sequencing remains explicitly unproven; later passing observations are not rewritten as prior completion."
+  ],
+  "generator": "core-contract-audit.py.gz"
+}
