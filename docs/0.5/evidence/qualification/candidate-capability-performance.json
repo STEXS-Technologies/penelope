@@ -1,0 +1,527 @@
+{
+  "scope": "Refresh of existing new-capability measurement harnesses on immutable versioned0.5 source. Finite measurements and invariant checks, not resolved performance acceptance or final release qualification.",
+  "source_commit": "31c0cdebe69edbef89342cb1c6197b5b6dc2edb6",
+  "code_equivalence": "Rust source, manifests, locks, CI and scripts match9a5a1db and immutable chaos checkoutbe774e6; later revisions only change documentation/evidence.",
+  "commands_and_environment": "Raw checks.json,metadata.json,host-build-context.json and archived driver record exact commands, pinned CPUs, versions, filesystem, build flags and source identities. All builds finish before measurement; wrappers explicitly disabled.",
+  "processes": {
+    "stable_runs_per_harness": 3,
+    "msrv_runs_per_harness": 1,
+    "harnesses": 7,
+    "measurement_processes": 28,
+    "retained_executables": 14,
+    "aggregated_stable_metric_profiles": 576
+  },
+  "profiles": {
+    "machine_operations": "396 profiles:8/256/4096/65536-byte owned state;2/8/32 states and events;0/1/8/32 intents, rejection and quota refusal. Fixed capacity32 even when requesting0 intents.",
+    "machine_hierarchy": "60 profiles:depths1/2/4/8/16;leaf/parent/root;internal/external/rejected/unhandled;32-byte state and0 intents. Active-path prefix cycle checks have quadratic worst-case work in configured depth.",
+    "machine_state_cost": "12 profiles:owned copy+counter,consumer transition and MemoryMachine publication at8/256/4096/65536-byte state, capacity0.",
+    "machine_timeline": "64 profiles:native versus MachineTimeline live input and correction at four state widths and horizons1/8/32/128, no effects. Adapter metadata/ownership work differs; no legacy0.4 equivalence claim.",
+    "machine_store": "Four independent-writer profiles1/2/8/32;one accepted CAS and intent per race;exact retry,coherent snapshot,slowest stale and last finish;integrity/row/payload checks. Race statistics are not individual refusal latency distributions.",
+    "machine_backpressure": "Queue capacities1/8 and bursts32/128;first-poll refusal,accepted first poll and intentionally gated completion. Pooled per-call populations vary with worker scheduling; not a runtime saturation or normal-latency SLA.",
+    "native_pipeline": "Sequential real Linux worker withmax_live1,8-byte input/output,existing64MiB address-space limit. Twelve phases include durable transition,intent,native task admission,lost ACK,reopen,worker completion,verified result,subsequent transition and saga admission. Saga action is undispatched."
+  },
+  "sample_scope": {
+    "core": "101 chronological elapsed batch samples per profile;32 operations per batch,128 warmup operations. Reported p50/p95/p99 describe integer batch means, not individual event tails. Allocation probe follows timing and its allocation positive control remains enabled.",
+    "timeline": "101 individual call samples,8 warmups,one separate allocation probe per operation/configuration with a positive control. Deallocations not counted.",
+    "sqlite": "101 races/rounds,8 warmups,unchanged public capacities/timeouts/WAL/FULL. Data and native tempfile roots use recorded NVMe Btrfs filesystem.",
+    "native_pipeline": "101 measured and8 warmup workflows per process;all109 full paths checked. Worker compilation precedes timing.",
+    "aggregation": "Medians of three stable per-run reported quantiles;not pooled quantiles,confidence intervals or evidence of equivalence. MSRV observations verify compatibility and are excluded from latency aggregation."
+  },
+  "allocation_result": "Measured pure core and timeline fixtures retain zero allocation counts in their stated probes. Hosted storage/runtime allocation and stack use are not instrumented.",
+  "source_and_binary_integrity": "Tracked source hashes match before/after;immutable worktree has no tracked diff. All14 retained executable hashes match after timing. ELF sections and executable sizes retained;these are benchmark artifacts,not arbitrary application binary or runtime memory bounds.",
+  "selected_observations": [
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 1,
+        "operation": "commit"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          752004,
+          699923,
+          724060
+        ],
+        "p95_ns": [
+          852117,
+          864000,
+          903237
+        ],
+        "p99_ns": [
+          900171,
+          1050461,
+          1188127
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 724060,
+        "p95_ns": 864000,
+        "p99_ns": 1050461
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 1,
+        "operation": "release_to_last_finish"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          755160,
+          703050,
+          727276
+        ],
+        "p95_ns": [
+          855233,
+          867307,
+          906393
+        ],
+        "p99_ns": [
+          904098,
+          1054018,
+          1191284
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 727276,
+        "p95_ns": 867307,
+        "p99_ns": 1054018
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 2,
+        "operation": "commit"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          776081,
+          733899,
+          772153
+        ],
+        "p95_ns": [
+          1766717,
+          870804,
+          884981
+        ],
+        "p99_ns": [
+          1958347,
+          994222,
+          960457
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 772153,
+        "p95_ns": 884981,
+        "p99_ns": 994222
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 2,
+        "operation": "release_to_last_finish"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          1135676,
+          1138281,
+          1135956
+        ],
+        "p95_ns": [
+          3203575,
+          1181495,
+          1310735
+        ],
+        "p99_ns": [
+          3239594,
+          1469321,
+          1437319
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 1135956,
+        "p95_ns": 1310735,
+        "p99_ns": 1469321
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 8,
+        "operation": "commit"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          933996,
+          1005244,
+          941120
+        ],
+        "p95_ns": [
+          1071972,
+          1209398,
+          1089066
+        ],
+        "p99_ns": [
+          1144673,
+          1280105,
+          1107582
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 941120,
+        "p95_ns": 1089066,
+        "p99_ns": 1144673
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 8,
+        "operation": "release_to_last_finish"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          78561838,
+          33849542,
+          53494798
+        ],
+        "p95_ns": [
+          78664806,
+          78736064,
+          78612887
+        ],
+        "p99_ns": [
+          103640911,
+          78886816,
+          78620591
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 53494798,
+        "p95_ns": 78664806,
+        "p99_ns": 78886816
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 32,
+        "operation": "commit"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          1131257,
+          1010414,
+          952211
+        ],
+        "p95_ns": [
+          65275287,
+          5763444,
+          12130015
+        ],
+        "p99_ns": [
+          371335696,
+          73339950,
+          473583463
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 1010414,
+        "p95_ns": 12130015,
+        "p99_ns": 371335696
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "machine_store",
+      "dimensions": {
+        "writers": 32,
+        "operation": "release_to_last_finish"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          429902923,
+          529562234,
+          429461469
+        ],
+        "p95_ns": [
+          1229664024,
+          1029916581,
+          1129691336
+        ],
+        "p99_ns": [
+          1630168551,
+          1229855655,
+          1429944577
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 429902923,
+        "p95_ns": 1129691336,
+        "p99_ns": 1429944577
+      },
+      "raw_sample_count_per_run": [
+        101,
+        101,
+        101
+      ],
+      "measured_rounds_per_run": 101,
+      "allocation_scope": "Not instrumented."
+    },
+    {
+      "benchmark": "native_pipeline",
+      "dimensions": {
+        "phase": "outer_iteration_total"
+      },
+      "reported_quantiles_per_run": {
+        "p50_ns": [
+          40062004,
+          39370777,
+          46878454
+        ],
+        "p95_ns": [
+          43352316,
+          43233246,
+          71667908
+        ],
+        "p99_ns": [
+          45747067,
+          44959033,
+          82384199
+        ]
+      },
+      "median_reported_quantiles": {
+        "p50_ns": 40062004,
+        "p95_ns": 43352316,
+        "p99_ns": 45747067
+      },
+      "raw_sample_count_per_run": 101,
+      "allocation_scope": "Not instrumented; one live worker,8-byte input/output, existing64MiB address-space limit. Sequential recovery scenario, not saturation or isolated worker CPU."
+    }
+  ],
+  "assessment": "At32 writers,median of run p50 last-finish times is429.90ms and median run p99 is1429.94ms;preflight does not eliminate a queue when writers all see the old head. Earlier local229\u2192179ms observations retain their original revision/conditions and do not establish a general improvement. Protected workflow median is40.06ms. Shared-host scheduling,frequency,cache,memory and I/O interference remain uncontrolled despite CPU affinity. No latency guarantee or regression waiver.",
+  "open": [
+    "Resolve original0.4 equivalent-work encoding/timeline and SQLite findings under plan13.2.",
+    "Finish the full immutable-source3round/100k-per-target chaos campaign.",
+    "Complete final requirement/source/artifact reconciliation and final dated release notes;tagging/publication remain separately authorized."
+  ],
+  "archive": {
+    "file": "candidate-capability-performance.tar.gz",
+    "sha256": "f050a42ce3b84e0633f90c8f10ebbbcd4578deb61829daa5178937fcf37f4083",
+    "member_count": 162,
+    "members_sha256": {
+      "raw/summary.json": "25253da66aec8b81f80b0e4c52838d2e0b1c105f4dee470c0c0510788330bc85",
+      "raw/run-1.89.0-1-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-native_pipeline.stdout": "bf273e939b10335a8fd507d6d5411c553a6074bdc90840046f5aca6bea70b42a",
+      "raw/run-1.89.0-1-native_pipeline.resources.json": "1547eeb94f69d77435efa6a55c9122665d9f2465fd5cd54a6fc2ff9875aad950",
+      "raw/run-1.89.0-1-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_backpressure.stdout": "624d679d1b366ac1ad34226cc86647396e41a8bc78fce557f1b7f221e1b6307f",
+      "raw/run-1.89.0-1-machine_backpressure.resources.json": "7639d9339711324049c837a4fbdac557b5c88e98b275f3d749c1c3bcd0820768",
+      "raw/run-1.89.0-1-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_store.stdout": "72b68ceb4ce09503a25e4147953d791f5567c18cf1ab4d0959cb6c285aaa9138",
+      "raw/run-1.89.0-1-machine_store.resources.json": "6b8f4744c0705d9ca0c2f91a5f90a5bfd7d5b3a866e75e6195f254a085bd93f3",
+      "raw/run-1.89.0-1-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_timeline.stdout": "e7e7648bd48832b43974788b8dec93b8cdb074c132880f484cfab82f51d4ed3e",
+      "raw/run-1.89.0-1-machine_timeline.resources.json": "6cf55cbce3caa56249a5f24a350b7184ba5aa3c246ed073defda07d5445c50ee",
+      "raw/run-1.89.0-1-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_state_cost.stdout": "9c54b8be5efac29d8bf98a7d71c78710a35a770bff14780bf91a13bfe7bf016b",
+      "raw/run-1.89.0-1-machine_state_cost.resources.json": "9837a85702767e584a2b79c6fdaa168bed2a63de547839d8cc499c2b6778cfe3",
+      "raw/run-1.89.0-1-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_hierarchy.stdout": "cdc85a1567c466c3aeb5545d1b4efe11a9528c0f6178aae986f3a5345ad07a29",
+      "raw/run-1.89.0-1-machine_hierarchy.resources.json": "d1a082be1d7740bc4bb11af6b51912dd21d0968a2ae8cf213d51b3c9e6324c09",
+      "raw/run-1.89.0-1-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.89.0-1-machine_operations.stdout": "0e862b8031dd594b354ce8a794f10e7b7cfa002296c488d774fa2127bcf2fe46",
+      "raw/run-1.89.0-1-machine_operations.resources.json": "28d42a2eb68d00914d783422b089b037c1fc220a71bf6d6a792ed56390e3879b",
+      "raw/run-1.100.0-3-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_hierarchy.stdout": "5a3bf2cb924d0959a728786996ef651e42dc4d25cd4896b3a776014ef4ac981e",
+      "raw/run-1.100.0-3-machine_hierarchy.resources.json": "62a817862d6821b4574c50453424bb486cb4f0c00e92a229fe0d3ac1880c8ad2",
+      "raw/run-1.100.0-3-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_operations.stdout": "0ea540352e921b19327c7ec75e511001741abe5d05a613995d95119f9467a62f",
+      "raw/run-1.100.0-3-machine_operations.resources.json": "0c18867fce5536c9ea596011d3802036bec05cb6227cd4e13212838e6a4981b9",
+      "raw/run-1.100.0-3-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-native_pipeline.stdout": "c60a37f24a59400e5626e19f72ce411a1d57779002fa04c90dd7446253efcabf",
+      "raw/run-1.100.0-3-native_pipeline.resources.json": "ca3201698dccdd2a2d98cc1e6498d0a90d632fd561d682980f2770af7fc68778",
+      "raw/run-1.100.0-3-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_backpressure.stdout": "d753e2c3d955568d412cb9cda09c8bd76fe3358e7d395cc418f16b141c5738d4",
+      "raw/run-1.100.0-3-machine_backpressure.resources.json": "3b3fc89fddc96187e87e2938c10e9dd03abeace9812d90d6cf69d49f2a79048d",
+      "raw/run-1.100.0-3-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_store.stdout": "c2acfe7c6fc148f0066d33cc2098dcbef94857c26ddb8abd71586759990a43b9",
+      "raw/run-1.100.0-3-machine_store.resources.json": "9db039b0981209dbb43c01c9c81237c11d37e327a0c4b9735da2241a8979e234",
+      "raw/run-1.100.0-3-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_timeline.stdout": "3056370e8a19b21c0236bf42c5a655fda359dd563ae8afe2270b114fdb5f00e6",
+      "raw/run-1.100.0-3-machine_timeline.resources.json": "73bfce0e8866c3b088a7650740069b9d5b6df6dcd16678c28a67da111b5771d4",
+      "raw/run-1.100.0-3-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-3-machine_state_cost.stdout": "3f46f9b9b10609861e1dd0f51ee9cd8240b07adda4fd7312cc0e2d3a098046c6",
+      "raw/run-1.100.0-3-machine_state_cost.resources.json": "0f86a6c66625c97966147adf31fdc0cbcda78bd17d97dd44814f283e9db2864d",
+      "raw/run-1.100.0-2-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_operations.stdout": "28e80c6879b683a2a23b679186ad771d5d6d3f193a7d2620d6ee500021f41acf",
+      "raw/run-1.100.0-2-machine_operations.resources.json": "54553eceae5412823b1dc6334b7a81080c82c4b4579b3b10a24328771f0d4a0b",
+      "raw/run-1.100.0-2-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-native_pipeline.stdout": "24c9419aa971e58c0c76f9bb82522b786fb77592c5eb1540044469122d01d260",
+      "raw/run-1.100.0-2-native_pipeline.resources.json": "3f5b619fad9825582f034665461397a3910575192dbc4a5cfe9dae7fe2508ae9",
+      "raw/run-1.100.0-2-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_backpressure.stdout": "0410f631d8d71310a7dc8ffc68865c06edda69604dd3cd9aba2e584d587b06ac",
+      "raw/run-1.100.0-2-machine_backpressure.resources.json": "1ecc3697131f035eea8bd0faf0f05b46f95f907c35d0af3ac9658e76a00a0d61",
+      "raw/run-1.100.0-2-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_store.stdout": "dc78bbe53714a0a56b78308c9219de1af61a7d20046874996c9a66dddf5fcdca",
+      "raw/run-1.100.0-2-machine_store.resources.json": "f10a839c4b46e76b5302dd410b47de9b0da9369be06488b3ed8ff2be7c36ebb4",
+      "raw/run-1.100.0-2-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_timeline.stdout": "4c184783cde7f777e0e11f196cbe416a1a667099f96e6b609c78c0d248662b12",
+      "raw/run-1.100.0-2-machine_timeline.resources.json": "b1b74a1130bd65188e4b76529e5f9fa23cfa3ac9ce11012a26f9372ec81209ae",
+      "raw/run-1.100.0-2-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_state_cost.stdout": "94ff05483eb0203d600caf8fc3653855a88b4891685b1bdb2ad5f06ed8442a02",
+      "raw/run-1.100.0-2-machine_state_cost.resources.json": "037e9b7e30e651e36fd30e83024fb624b4526469f9f506dcd8cad980aad7ab38",
+      "raw/run-1.100.0-2-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-2-machine_hierarchy.stdout": "098a30845e93eaad4d61b592c1713a431870692ee64ad6b1c224c347d542188d",
+      "raw/run-1.100.0-2-machine_hierarchy.resources.json": "207865571c7f7929d3a1e64c1e8ae2372c9c80f6e555e9abedd0795519fd9175",
+      "raw/run-1.100.0-1-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-native_pipeline.stdout": "1667e5140c76788371075fe3d826a60da4dfedbc8c63142866a29ddacc27a5cf",
+      "raw/run-1.100.0-1-native_pipeline.resources.json": "538b7d020fbb67a9309f172cd6de9ee23c69bb4bf0c9a3249770568dc9090841",
+      "raw/run-1.100.0-1-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_backpressure.stdout": "70f46f77ee49d304a348519d79430cfb6fb447aebac8615b1cd0bcb45b323fb4",
+      "raw/run-1.100.0-1-machine_backpressure.resources.json": "fc06056a80f8b93a944e023309b8e4de845cd70e5d9875500efda3cd7a17f2d4",
+      "raw/run-1.100.0-1-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_store.stdout": "f2753ca791240f99ebc1ca843dc13fb173bc1ea5e5cd27f37651179c9be6e817",
+      "raw/host-build-context.json": "8ba73fe8d9ba6bcf2c24a514b594ad7cabd129244f0d3a88f39bfa6761dd9349",
+      "raw/run-1.100.0-1-machine_store.resources.json": "7d6bbe8bb09383a1f84688301c492e892be6df60420d0d28c55145954d4dbc6a",
+      "raw/run-1.100.0-1-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_timeline.stdout": "6b2f670f0d2e66fc4b027ff6b4dc61be85c438614588a4a4b9d93214e213f7f9",
+      "raw/run-1.100.0-1-machine_timeline.resources.json": "17fb77792a6577d78f2b0636e24b4b1ee113205995cabb02951f1cc0f04d4dbc",
+      "raw/run-1.100.0-1-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_state_cost.stdout": "de00095b3ea5f7ec8bee94a03f6fb74a4fe75fce8dee423632b1c1a5de4856c2",
+      "raw/run-1.100.0-1-machine_state_cost.resources.json": "ecae7b0eb4d6ae9520357ecb9d6b5f390bcded69c5e43565b0fc097779d6ccc1",
+      "raw/run-1.100.0-1-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_hierarchy.stdout": "ea3b0b01c926720d3f0e3e8b716d33ca866a286922c3de817819a37fbab9ff43",
+      "raw/run-1.100.0-1-machine_hierarchy.resources.json": "7c157e0a5f53f35d63167071580aed7f60a15d13b801753334fa3971ced08663",
+      "raw/run-1.100.0-1-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/run-1.100.0-1-machine_operations.stdout": "f2a6bf781d414a9d5b59097f379ea81a5dbf0c704e8a4a704463b581b96b763e",
+      "raw/run-1.100.0-1-machine_operations.resources.json": "b28f947b0e9e147a646d13d6ec6e35905ad8cbe1bc310ff2e125d7379b5b0c82",
+      "raw/sections-1.89.0-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-native_pipeline.stdout": "cf9fb5eaacc3c7ecb1ff69924e9e9d742b94a2285b61b8afde0a5cf61190822b",
+      "raw/1.89.0-native_pipeline.bin": "83a86d7c8c086feb109592a7c7146c9ccdc7dde6b2465ef13cf19eddcc8a9cd6",
+      "raw/build-1.89.0-native_pipeline.stderr": "b0c8bb9531dc88052f4e116538f5d3fb23201e7bffcadcd96c5685dbd78d205a",
+      "raw/build-1.89.0-native_pipeline.stdout": "3d790ba655ed57a110c46b8bd37347cbf46e872e5ee32763afc4a8dbe4efabae",
+      "raw/sections-1.89.0-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_backpressure.stdout": "42268814497ed1fedb908952b4e24142c748e760771c13700baab398117e7204",
+      "raw/1.89.0-machine_backpressure.bin": "49933e86903e8aac58a4be04096d30c84db26c1c8509bff1a1e0195270ba6b86",
+      "raw/build-1.89.0-machine_backpressure.stderr": "aab30c1921802a19151d8bb3f6c45ed7299db29e7ab8723219cc59a47b1d2cbc",
+      "raw/build-1.89.0-machine_backpressure.stdout": "b476d28364713bb3f43e25ad05944d3737e3619d34b3b3bb713b10ef61eacd95",
+      "raw/sections-1.89.0-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_store.stdout": "4878f68ae2c9181bc80cfccdf629a7a3bb1a9c5ce942e23b330b659a57658743",
+      "raw/1.89.0-machine_store.bin": "8e634e18bb6024a212b0c09e7c7dfb4fed3058149f0d7ddbf6c48daff0bfd12d",
+      "raw/build-1.89.0-machine_store.stderr": "7fc644531449fd57902163e1a8a2e4075026d09b75565ba183a58f2b74dcf5f0",
+      "raw/build-1.89.0-machine_store.stdout": "765472cb363c23a8853f4c6051ca37b5145406c368027bff572c0fca05c6ee9a",
+      "raw/sections-1.89.0-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_timeline.stdout": "51c7819585f4820de6f673f7e72535d2bfeedcf490a9997de35ce38aad41cffd",
+      "raw/1.89.0-machine_timeline.bin": "da3086994d27de5b7e95a2cce3995c2095e62bd9319e964b80246ce064eb04d4",
+      "raw/build-1.89.0-machine_timeline.stderr": "d9dc2706d308dcc2a64df0d315b21e2168d5636fc266c933a41c4c0464bca33a",
+      "raw/build-1.89.0-machine_timeline.stdout": "c349cc615c8c44ca1b6c4688762ec09098a424f8810c8e010756a95baa47cfab",
+      "raw/sections-1.89.0-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_state_cost.stdout": "95aa309c4e29248f0dd81cfaa0032b522a7d9e2f749994a3bf29498faada86c5",
+      "raw/1.89.0-machine_state_cost.bin": "e11321925e9baacdd587aaa73e600fda14dd7ab763a8659231d905a6cb59363f",
+      "raw/build-1.89.0-machine_state_cost.stderr": "4d702a362e3401d3122dfc72137bb54243ea8646265d369165f64116c1140123",
+      "raw/build-1.89.0-machine_state_cost.stdout": "671233f2a0005388ca188e3caee81f8e358909b8d0ff59aa773d950771715341",
+      "raw/sections-1.89.0-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_hierarchy.stdout": "a0a19dadb40147c5ca054ee8596bb4cfb3bdb45a1dad102c02b9d614588bbfb4",
+      "raw/1.89.0-machine_hierarchy.bin": "10e6d05d8d70fee0bcfda50793f90a0870df86d3eb0f189abab60517f4e84753",
+      "raw/build-1.89.0-machine_hierarchy.stderr": "4dc553cd109c0c0e5211dca06f755dfb237f890afe60085b78f22207ff21b911",
+      "raw/build-1.89.0-machine_hierarchy.stdout": "35ba5f716a5035a95f813df1b29c46ac501c59721212ee2b5b0e61097a00ee5e",
+      "raw/sections-1.89.0-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.89.0-machine_operations.stdout": "11dca9a5e16637222cc01ce586982f48fc93061dab9932db871115ebb9c3c3bd",
+      "raw/1.89.0-machine_operations.bin": "7fc6e140c1713c5dc6a373c0138b255d1f7a0654ad532c276c8e3035ce255b56",
+      "raw/build-1.89.0-machine_operations.stderr": "760733968d6f3a081e9db743d341f480689b698ec5b4328e27c09ffe4591c635",
+      "raw/build-1.89.0-machine_operations.stdout": "57bb05984d8b62652de0fc34a8681cf465ea0cc8cad92146e014ce7343d87c6a",
+      "raw/sections-1.100.0-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-native_pipeline.stdout": "39fce8823fa46e4870b95b9e29ed773547153f076e8112320c970c4d38363f50",
+      "raw/1.100.0-native_pipeline.bin": "cc77687223390b8dbe2f4d8224253863c90577458b2408e277a4679b916f6acb",
+      "raw/build-1.100.0-native_pipeline.stderr": "7ee5974180b77c88835ed328ffd210288fb79ab81b7f8a28c51808f5f9b0c212",
+      "raw/build-1.100.0-native_pipeline.stdout": "e678ce24adaf214fae5e8ee21ac1177e939650036331d52a718c1767a2968696",
+      "raw/sections-1.100.0-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_backpressure.stdout": "b1be2b918856b10ee6c8b8608a538fcb6c4c39c1b7ff948d6c53b63908bb45ef",
+      "raw/1.100.0-machine_backpressure.bin": "5c6bcdd9bc35bfa7517863634f6d6d0392918e87d75e087d1362c527760c0ca0",
+      "raw/build-1.100.0-machine_backpressure.stderr": "ae07ac5272e2647651a3cc37ffe26737367c70d2defce8125b8a9480ef52a0d5",
+      "raw/build-1.100.0-machine_backpressure.stdout": "7b5c6cabc1ece8fa76d70cf0c01eefe3b432546ba625b0155a0a45d334a55714",
+      "raw/sections-1.100.0-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_store.stdout": "48bb44fb5c205311e88245f5b5d9daba49de3a92ed7534c259e2a581f91f4bd6",
+      "raw/1.100.0-machine_store.bin": "7870c85025c248c777633a2d9aea76318cd0de069113ac5662f52f144e9f63d4",
+      "raw/build-1.100.0-machine_store.stderr": "74b538eca605393d53d92eb4d0520ae3a6c391ceca5eec296319f0332402cc1f",
+      "raw/build-1.100.0-machine_store.stdout": "2c07c8fd7a3cd8d5f661332524d337826d481f47b4540329af9b985d149ba24f",
+      "raw/sections-1.100.0-machine_timeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_timeline.stdout": "db753feffacac55d8c42057d663491270d6c3e203bf1fee0d37b71b65572a6d0",
+      "raw/1.100.0-machine_timeline.bin": "ffbe75dbc93ee6f7a3251e2b82354726d44d3753e555b673aeca5edc8b098283",
+      "raw/build-1.100.0-machine_timeline.stderr": "f03a786b8f258982bf88ca56a593418c77c7a1e786cbfe8a0c84bd2625efd0a0",
+      "raw/build-1.100.0-machine_timeline.stdout": "bc4334664e5c10f9b6c50011b92e1b2c451c3537accf2d64ae974f435405daad",
+      "raw/sections-1.100.0-machine_state_cost.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_state_cost.stdout": "9a046d22c6356056b1f4d19eed01ced68eddf671da4b2e43f86c23f878f014b8",
+      "raw/1.100.0-machine_state_cost.bin": "9865231d424006f2453fbf86788040252ecfaf15e4f91ed8407a83286470e770",
+      "raw/build-1.100.0-machine_state_cost.stderr": "7263fccede1099cb1b4afbca97616f0eb12a5cf63ba35377096b49de16001d53",
+      "raw/build-1.100.0-machine_state_cost.stdout": "28dd4bdda5e8d416ba8704878bbead58abfc86ed38c03fd178fd3b31f92e9960",
+      "raw/sections-1.100.0-machine_hierarchy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_hierarchy.stdout": "c8f128efe7f796ca5e9e52312b178a80c9ccc55c4c2bdbb051d6b4c0a7f7c325",
+      "raw/1.100.0-machine_hierarchy.bin": "2df6203ade22f0e342e27c27b60a1900ce494356756eafc3bca757d3a9f9cc56",
+      "raw/build-1.100.0-machine_hierarchy.stderr": "4d702a362e3401d3122dfc72137bb54243ea8646265d369165f64116c1140123",
+      "raw/build-1.100.0-machine_hierarchy.stdout": "e1d7f2ad03dcc9faf189364836eeb1bfec5fede13c25ac9e45cb610ebe727f82",
+      "raw/sections-1.100.0-machine_operations.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/sections-1.100.0-machine_operations.stdout": "54bcc7e6df25e611bc1068eadfc33e10f343bdb4c25f838f994f5d34c233a48f",
+      "raw/1.100.0-machine_operations.bin": "d9e9dcca914b43edd40dbe76d2eef71458fb3db67bf96f3d605dafb5e5420c77",
+      "raw/build-1.100.0-machine_operations.stderr": "6fb128f72ff4eaecae9dbd0bbcde856a4930b33b1715308c7124cd024280ac1b",
+      "raw/build-1.100.0-machine_operations.stdout": "2eb105fb6b8100674d165bddb7e0d4d6c40bb9b2a94ccbfa3b54f106a59b57a0",
+      "raw/checks.json": "a556ba7184014d52ea29689b905130f720770e3d37ea3a8bfa498bb24442ca12",
+      "raw/metadata.json": "f2bb3e101e72bc4962509067906a922fa14855260b5ad2192c453341c008f4f4",
+      "drivers/penelope-050-refresh-capability-performance.py": "f3af9db6481e43e8feff58b57ab8336eab733e56d993a8ee919062ea17685a60",
+      "drivers/penelope-050-refresh-capability-performance.log": "4b7c8fd42bc130616f37e68bf2c80c27f8115e72064f74483afa0f35cfaf2324",
+      "drivers/penelope-050-summarize-capability-performance.py": "5c72b599b80a573b15aca449f7132d61515d31f6b50da94870b87891ea14cf13",
+      "drivers/penelope-record-050-capability-performance.py": "5e25baea3f5e0fc733a2e9132e0684b28c38814bd7dbdf52a4c4a7230d34acaf"
+    }
+  }
+}

@@ -57,14 +57,16 @@ the preceding failure-path checkpoint.
 
 ## Performance evidence
 
-These measurements describe their recorded development revisions, not a completed
-performance qualification of the versioned candidate. Same-work comparisons keep
-original fixtures and independent locked builds. CPU affinity, cache policy,
-shared-host interference and resource scope are recorded; no isolated-host or
-worst-case latency guarantee is implied.
+Measurements retain their recorded revision scope. The new-capability refresh
+uses the versioned candidate; legacy performance acceptance remains open.
+Same-work comparisons keep original fixtures and independent locked builds.
+CPU affinity, cache policy, shared-host interference and resource scope are
+recorded; no isolated-host or worst-case latency guarantee is implied.
 
 | Workload or finding | Retained evidence and disposition |
 | --- | --- |
+| Versioned candidate capabilities | [Frozen-source refresh](evidence/qualification/candidate-capability-performance.json) at `31c0cde`: seven existing harnesses, three stable runs and one MSRV run each, full 101-sample release profiles, all 14 executables retained. Flat/hierarchy/owned-state/timeline allocation probes pass within their recorded scope; SQLite races, bounded queues and real-worker recovery preserve their invariants. These observations do not accept legacy regressions |
+| Current contention and recovery | In that refresh, the 32-writer race has a median run p50 last-finish time of **429.90 ms** and median run p99 of **1,429.94 ms**; the sequential protected recovery workflow has median run p50 **40.06 ms**. Writers that all see the old head can still queue. Earlier local preflight improvements do not establish a general latency improvement or bound |
 | Versioned 0.5 versus 0.4 | [Complete 31-pair comparison](evidence/legacy-balanced/versioned-candidate.json): all 496 measured processes and 16 binary identities retained. DTO encoding loop means are 312.95 → 357.19 ns (+14.14%, 27/31 pairs over 5%); timeline retains 31 p50 and 9 p95 flags, including five handwritten Ring control flags. Saga/task loop-mean profiles do not cross the review threshold; that does not establish equivalence |
 | Inherited reads in the versioned candidate | One-word/one-step inherited collection p50 is 211 → 291 ns (+37.91%); p95 is 231 → 301 ns (+30.30%), each crossing its threshold in 29/31 pairs. Additional inherited horizons/correction paths are flagged. Timeline production source and the shared core helper are unchanged since `94a7396`; this observation does not identify the cause or waive the new findings |
 | Legacy saga/task/timeline | [Initial comparison](evidence/legacy-performance/manifest.json), [task/timeline extension](evidence/legacy-runtime/manifest.json), [31-pair follow-up](evidence/legacy-balanced/manifest.json): raw observations and all flags remain retained; process loop means and timeline p50/p95/p99 are distinct measurements |

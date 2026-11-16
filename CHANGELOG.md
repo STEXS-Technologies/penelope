@@ -49,6 +49,14 @@ release is published.
   to address RUSTSEC-2026-0459; upgrade `rustix` to 1.1.6 for
   RUSTSEC-2026-0486. Conformance uses the same patched dependencies.
 
+### Candidate qualification
+
+Reviewed 2026-11-16. Candidate CI, packaged-crate tests, MSRV, frozen compatibility,
+signed-source conformance and coverage pass within their recorded scopes. Full
+immutable-source chaos qualification and legacy performance findings remain open,
+including measured encoding and timeline regressions. See the
+[verification record](docs/0.5/verification.md) before adopting the development API.
+
 ## [0.4.0] - 2026-11-02
 
 Penelope adds rewindable computation alongside the saga orchestration and
