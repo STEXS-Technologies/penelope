@@ -31,8 +31,15 @@ not change the exit domain. Cycles, exhausted depth and candidate/target mismatc
 fail closed. A hook error or staging poison stops subsequent hooks and discards
 the candidate. There are no parallel regions or implicit completion loops.
 
-The examples `counter_machine` and `nested_order` compile unchanged in the
-independent `ci/machine-consumer` package, which depends only on the facade.
+The [flat enum example](../../crates/penelope/examples/door_machine.rs) uses one
+state enum, one event enum and one `Machine` implementation. It checks eight
+accepted, rejected and unhandled events, including variant-local key data,
+unchanged refused state/revision and exact accepted provenance. It needs no
+hierarchy, codec, registration table or effects. Run it with
+`cargo run --example door_machine -p penelope --locked`.
+
+The examples `door_machine`, `counter_machine` and `nested_order` compile unchanged
+in the independent `ci/machine-consumer` package, which depends only on the facade.
 The nested enum example prints the source/event and guard code on refusal.
 Its staged trace shows exit/action/entry order, external self-reentry and parent
 cancellation; rejected events emit no hook trace. Logging happens after publication,

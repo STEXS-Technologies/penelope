@@ -34,6 +34,7 @@ jobs:
       - run: cargo clippy --manifest-path ci/compat-0.4/Cargo.toml --all-targets --all-features --locked -- -D warnings
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
+      - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin door --locked
       - run: python3 scripts/check-nested-example.py
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked
@@ -99,6 +100,7 @@ jobs:
       - run: cargo test --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
+      - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin door --locked
       - run: python3 scripts/check-nested-example.py
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked

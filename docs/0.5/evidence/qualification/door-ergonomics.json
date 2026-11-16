@@ -1,0 +1,281 @@
+{
+  "scope": "Plan9.1 refined to the actual API: one non-Clone state enum with variant-local data, one event enum, one Machine implementation and no SQL/registration/runtime service. Exact same public example runs through a facade-only external package. This adds an example, not a local metadata convenience API or a new engine.",
+  "base_commit": "c4e98460526fc50967b42bc07f40dc96d53d97be",
+  "source_sha256": {
+    "crates/penelope/examples/door_machine.rs": "a320d09191db9d49b315034df11162d5df8b658cd2efc375d327f4185087cf57",
+    "ci/machine-consumer/Cargo.toml": "be7461607216403931a3729c2146d5509b39281d487e5276dc72f12359fbfed6",
+    ".github/workflows/ci.yml": "d51f9021737b971d19ae934c5aceed3ad14f9087739d8aac53defd24b3682c2d",
+    ".github/workflows/release.yml": "3d646c1524f59d63c41fe4ef2d69d3497ed850b4e198d7dda09b3ce75ce105e9",
+    "docs/0.5/machine.md": "c6425ad8886e41f5bdff784d25eeb29db87a3763eb1ba4002b5331f0f1e784d2",
+    "docs/RELEASE.md": "ca7cdae461cdb38c75d1423e0d50e1f6c8285f8f0d837686dd33f661ac11eb98",
+    "docs/getting-started.md": "0d61f32c7b78f87841ad659a01f3fd72de19aab2eb56a791deec2088c6f30283"
+  },
+  "checked_production_files_unchanged": 72,
+  "checks": [
+    {
+      "label": "door-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15663888299604878
+    },
+    {
+      "label": "tutorial-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.138316697004484
+    },
+    {
+      "label": "workspace-example-clippy-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "-p",
+        "penelope",
+        "--example",
+        "door_machine",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06727806299750227
+    },
+    {
+      "label": "door-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.057824965013423935
+    },
+    {
+      "label": "tutorial-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21931471698917449
+    },
+    {
+      "label": "workspace-example-clippy-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "clippy",
+        "-p",
+        "penelope",
+        "--example",
+        "door_machine",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 6.485736473012366
+    },
+    {
+      "label": "restored-door",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.14854593499330804
+    },
+    {
+      "label": "format",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6287135849997867
+    },
+    {
+      "label": "pins",
+      "command": [
+        "./scripts/check-action-pins.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.007332046996452846
+    }
+  ],
+  "negative_controls": [
+    {
+      "label": "guard-code",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "source_sha256": "5490ba13fe64361f56ebc4fe9711588cd1380730a88d41af1a2327d729b2eb86",
+      "replacement_before": "reason: RejectCode::new(1)",
+      "replacement_after": "reason: RejectCode::new(9)",
+      "exit_code": 1,
+      "compiled_and_rejected_by_runtime_oracle": true
+    },
+    {
+      "label": "guard-predicate",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "source_sha256": "8ff6e7806df36454e14ec232f2214ef135eab53c215ded5cf5a6f364b598bb15",
+      "replacement_before": "if key != expected {",
+      "replacement_after": "if key == expected {",
+      "exit_code": 1,
+      "compiled_and_rejected_by_runtime_oracle": true
+    },
+    {
+      "label": "unhandled-category",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "source_sha256": "40bb968443eb5d052e6e5a913a71cc9f1e229d43f21ce69dd2ab0a094940b856",
+      "replacement_before": "return Ok(Transition::Unhandled);",
+      "replacement_after": "return Ok(Transition::Rejected { reason: RejectCode::new(99) });",
+      "exit_code": 1,
+      "compiled_and_rejected_by_runtime_oracle": true
+    },
+    {
+      "label": "transition-identity",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "door",
+        "--locked"
+      ],
+      "source_sha256": "bd5797c75ea3aed381233ab9abd1c8231987334d3f90fe5b482e1ba85515ae0c",
+      "replacement_before": "(Door::Open, 1)",
+      "replacement_after": "(Door::Open, 11)",
+      "exit_code": 1,
+      "compiled_and_rejected_by_runtime_oracle": true
+    }
+  ],
+  "source_restored_exactly": true,
+  "expected_trace": [
+    "Open -> Ok(true); revision=1 state=Open",
+    "Lock { key: 7 } -> Err(2); revision=1 state=Open",
+    "Close -> Ok(true); revision=2 state=Closed",
+    "Lock { key: 7 } -> Ok(true); revision=3 state=Locked { key: 7 }",
+    "Unlock { key: 8 } -> Err(1); revision=3 state=Locked { key: 7 }",
+    "Open -> Ok(false); revision=3 state=Locked { key: 7 }",
+    "Unlock { key: 7 } -> Ok(true); revision=4 state=Closed",
+    "Close -> Ok(false); revision=4 state=Closed"
+  ],
+  "archive": {
+    "file": "door-ergonomics.tar.gz",
+    "sha256": "f860126ce4377eee2620f3a6f0d751f8dbe9aa0c01b3040c0b9d2792988fca2b",
+    "members_sha256": {
+      "raw/pins.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/pins.stdout": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "raw/format.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/format.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/restored-door.stderr": "adc857237c2e638954ad6d19147083a68819c3fd532fc6a776085e0ec0e9b5bd",
+      "raw/restored-door.stdout": "cfd05ad52169a46bddb27abc338c538ccfb64724ca0706296fa4c3f86fbf122a",
+      "raw/control-transition-identity.stderr": "e97408ca9eb87c56aece90b27e7fbedca22c93f54b70322639af8ddd28d8aa66",
+      "raw/control-transition-identity.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/control-unhandled-category.stderr": "382352c8152a35592a2a91b50d03c33b186e4624571211fbc8f4b135179d538b",
+      "raw/control-unhandled-category.stdout": "b1b76231c389cff76fe7d4aeb1817306e53fc1418e7b9f0f3115d973f026fd12",
+      "raw/control-guard-predicate.stderr": "e97408ca9eb87c56aece90b27e7fbedca22c93f54b70322639af8ddd28d8aa66",
+      "raw/control-guard-predicate.stdout": "295ccfec53f1d1f6603c4367da63fde861ad696d275393e32989f93afa70d32f",
+      "raw/control-guard-code.stderr": "61eeed31cde926d7b4e729a34e05a74e964de7c923a70c21ad4f448ebae87c65",
+      "raw/control-guard-code.stdout": "295ccfec53f1d1f6603c4367da63fde861ad696d275393e32989f93afa70d32f",
+      "raw/workspace-example-clippy-1.89.0.stderr": "04739c73bcbfacc2812900ffbfff330dacaf4b6657e25b4e882b43c895f8b6d5",
+      "raw/workspace-example-clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/tutorial-1.89.0.stderr": "de69f99263d8fe96d5e1becb0eaa0a4d4018a6ace0878908bbc5678c02e70562",
+      "raw/tutorial-1.89.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "raw/door-1.89.0.stderr": "55ede3259dba6be371be7b7c1d039842e39f9c40da97da2dc0d31cba69cda04e",
+      "raw/door-1.89.0.stdout": "cfd05ad52169a46bddb27abc338c538ccfb64724ca0706296fa4c3f86fbf122a",
+      "raw/workspace-example-clippy-1.100.0.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "raw/workspace-example-clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/tutorial-1.100.0.stderr": "f61a8fea05b7653f46360f9950b7af9ee28b27be05d601fa1c979ab109cb7f14",
+      "raw/tutorial-1.100.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "raw/manifest.json": "5f589398551c62d56bed346c2d598d1e0e725d5be2b4eb8447b1362f95a97160",
+      "raw/door-1.100.0.stderr": "83a2910bc93b6e87fbaaa1f4b612711d91b5177a787033e11b41ece5019fd8c7",
+      "raw/door-1.100.0.stdout": "cfd05ad52169a46bddb27abc338c538ccfb64724ca0706296fa4c3f86fbf122a",
+      "driver.py": "90274265adc1c9b439b4542e00e921a179352d51f6aed95af38ae85299241e41",
+      "recorder.py": "c30856a26154599bd3b3c4d526cbb5a0f0807155e98d93f54a3e8d62cf1092bd",
+      "source/crates/penelope/examples/door_machine.rs": "a320d09191db9d49b315034df11162d5df8b658cd2efc375d327f4185087cf57",
+      "source/ci/machine-consumer/Cargo.toml": "be7461607216403931a3729c2146d5509b39281d487e5276dc72f12359fbfed6",
+      "source/.github/workflows/ci.yml": "d51f9021737b971d19ae934c5aceed3ad14f9087739d8aac53defd24b3682c2d",
+      "source/.github/workflows/release.yml": "3d646c1524f59d63c41fe4ef2d69d3497ed850b4e198d7dda09b3ce75ce105e9",
+      "source/docs/0.5/machine.md": "c6425ad8886e41f5bdff784d25eeb29db87a3763eb1ba4002b5331f0f1e784d2",
+      "source/docs/RELEASE.md": "ca7cdae461cdb38c75d1423e0d50e1f6c8285f8f0d837686dd33f661ac11eb98",
+      "source/docs/getting-started.md": "0d61f32c7b78f87841ad659a01f3fd72de19aab2eb56a791deec2088c6f30283"
+    }
+  },
+  "limits": [
+    "Source hashes bind the exact pre-commit example/workflow/documentation bytes retained in this archive; the base commit alone does not contain the new files.",
+    "The example uses explicit fixture scope/event/digest/logical-time metadata. It does not reduce that setup or establish durable identity/authentication/deduplication.",
+    "This is a finite eight-event truth table, not exhaustive application-model correctness or a user study.",
+    "No effects are staged by this minimal model. Existing counter/nested and durable progression examples cover staged effects and native admission.",
+    "Remote CI for this follow-up and final all-ten package reconciliation remain pending. Prior packages/coverage and live full chaos retain their original source/harness scopes."
+  ]
+}

@@ -75,7 +75,9 @@ events; errors return through `Result`. This example keeps state in memory and
 performs no external effects or historical event deduplication.
 
 Use `prepare` when you need to inspect or persist a candidate before publishing
-it. Dropping the prepared handle leaves the current state unchanged.
+it. Dropping the prepared handle leaves the current state unchanged. For an
+enum state/event model with guards, see the runnable
+[door example](../crates/penelope/examples/door_machine.rs).
 
 The fixed IDs are demonstration values. In an application, assign stable tenant,
 instance and event identities, pin the definition/schema identity, and bind each

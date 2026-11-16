@@ -28,6 +28,10 @@ name = "flat"
 path = "../../crates/penelope/examples/counter_machine.rs"
 
 [[bin]]
+name = "door"
+path = "../../crates/penelope/examples/door_machine.rs"
+
+[[bin]]
 name = "nested"
 path = "../../crates/penelope/examples/nested_order.rs"
 
