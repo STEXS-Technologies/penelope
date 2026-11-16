@@ -298,6 +298,46 @@ fn bootstrap(
     transaction.commit().map_err(|e| db_error(&e))
 }
 
+enum CommitAdmission {
+    Existing(MachineCommitReceipt),
+    New(MachineSnapshot),
+}
+
+fn admission<const N: usize>(
+    connection: &Connection,
+    batch: &MachineCommitBatch<N>,
+    payloads: MachinePayloadLimits,
+) -> Result<CommitAdmission, MachineStoreError> {
+    let header = batch.record().header();
+    let expected = header.transition.context.expected;
+    let head = read_head_in::<N>(connection, expected.scope, payloads)?
+        .ok_or(MachineStoreError::Conflict)?;
+    if let Some(stored) = read_commit::<N>(
+        connection,
+        expected.scope,
+        header.transition.context.event,
+        payloads,
+    )? {
+        let previous = stored.batch();
+        if previous.record().identity() != batch.record().identity()
+            || previous.record().header() != batch.record().header()
+            || previous.event() != batch.event()
+            || previous.state() != batch.state()
+            || !previous.intents().eq(batch.intents())
+        {
+            return Err(MachineStoreError::Conflict);
+        }
+        return Ok(CommitAdmission::Existing(stored.receipt()));
+    }
+    if head.head() != expected {
+        return Err(MachineStoreError::StaleHead);
+    }
+    if head.digest() != header.previous_state_digest {
+        return Err(MachineStoreError::Conflict);
+    }
+    Ok(CommitAdmission::New(head))
+}
+
 fn commit<const N: usize>(
     connection: &mut Connection,
     batch: &MachineCommitBatch<N>,
@@ -318,36 +358,40 @@ fn commit<const N: usize>(
     }
     #[cfg(all(test, unix))]
     tests::cut("before-transaction");
+    // A read snapshot may resolve an immutable duplicate or an already stale
+    // head without joining the writer queue. The query is only a hint: the same
+    // complete validation runs here and again under the write lock for new work.
+    {
+        let snapshot = connection.transaction().map_err(|e| db_error(&e))?;
+        let resolved: bool = snapshot
+            .prepare_cached(
+                "SELECT EXISTS(SELECT 1 FROM machine_heads WHERE machine_key=?1 AND revision<>?2)",
+            )
+            .map_err(|e| db_error(&e))?
+            .query_row(
+                params![
+                    key(expected.scope).as_slice(),
+                    expected.revision.get().to_be_bytes().as_slice()
+                ],
+                |row| row.get(0),
+            )
+            .map_err(|e| db_error(&e))?;
+        if resolved {
+            match admission(&snapshot, batch, payloads)? {
+                CommitAdmission::Existing(receipt) => return Ok(receipt),
+                CommitAdmission::New(_) => {}
+            }
+        }
+    }
     let transaction = connection
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|e| db_error(&e))?;
     #[cfg(all(test, unix))]
     tests::cut("after-begin");
-    let head = read_head_in::<N>(&transaction, expected.scope, payloads)?
-        .ok_or(MachineStoreError::Conflict)?;
-    if let Some(stored) = read_commit::<N>(
-        &transaction,
-        expected.scope,
-        header.transition.context.event,
-        payloads,
-    )? {
-        let previous = stored.batch();
-        if previous.record().identity() != batch.record().identity()
-            || previous.record().header() != batch.record().header()
-            || previous.event() != batch.event()
-            || previous.state() != batch.state()
-            || !previous.intents().eq(batch.intents())
-        {
-            return Err(MachineStoreError::Conflict);
-        }
-        return Ok(stored.receipt());
-    }
-    if head.head() != expected {
-        return Err(MachineStoreError::StaleHead);
-    }
-    if head.digest() != header.previous_state_digest {
-        return Err(MachineStoreError::Conflict);
-    }
+    let head = match admission(&transaction, batch, payloads)? {
+        CommitAdmission::Existing(receipt) => return Ok(receipt),
+        CommitAdmission::New(head) => head,
+    };
     let (used, count): (i64, u32) = transaction
         .query_row(
             "SELECT bytes_used,event_count FROM machine_heads WHERE machine_key=?1",

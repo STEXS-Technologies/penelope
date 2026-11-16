@@ -879,3 +879,45 @@ The explicit pair controls placement; its ELF section ordering differs from the
 normal link. No production linker setting, code padding, serializer change or
 performance waiver was adopted. The original paired flag and final qualification
 remain open.
+
+
+## Read-only resolution before machine writer admission
+
+The [scoped preflight evidence](evidence/machine-preflight-performance/manifest.json)
+records a cached read-only head-revision hint and one shared complete admission
+check. An exact retry or already stale request can resolve from committed data
+without entering the writer queue. New writes still repeat full validation under
+`BEGIN IMMEDIATE`; authorization, payload bounds, CAS, resource accounting and
+post-write verification remain in force. No new public API or concurrency limit
+is introduced.
+
+A regression test holds a real SQLite write transaction open while checking stale,
+conflicting-event and exact duplicate requests. The original implementation fails
+the stale assertion with `Unavailable` after its five-second busy timeout; the
+candidate returns the validated outcomes while the lock remains held. The full
+SQLite suites pass on Rust 1.100 and MSRV 1.89, including corruption, independent
+writer races, deferred commit failures and actual process-death boundaries.
+Strict all-target/all-feature SQLite Clippy and formatting also pass. Both
+compiler debug runs exercise all writer and bounded queue-pressure profiles; an
+additional complete release writer fixture also passes on MSRV 1.89.
+
+Six full unchanged writer fixtures run in B/C/C/B/B/C order with 101 measured
+rounds per 1/2/8/32-writer profile. At 32 writers, the median of run p50 race times
+moves from 229.08 to 179.31 ms (21.7% lower). This remains a same-head race with one
+winner, not independent-machine throughput. One candidate run still has a
+1030.55 ms p99; simultaneous callers can all observe the old head and wait for
+the write lock. There is no bounded worst-case latency claim.
+
+The first candidate showed an adverse single-writer pilot. Follow-up controls
+restrict the identical fixture to one writer and alternate 15 pairs. Removing an
+unnecessary event-index probe simplifies the hint; caching its prepared statement
+also avoids repeated SQL compilation. In the retained cached variant, the median
+per-pair p50 change is +1.06% for commits and -1.31% for exact retries. Full-fixture
+single-writer run medians differ by +4.52%; storage and host variation remain.
+Raw samples, all three candidate iterations and exploratory bootstrap intervals
+are retained. These measurements do not prove universal equivalence or waive the
+separate legacy encoding/timeline findings.
+
+The ongoing multi-round chaos campaign began before this source change. Its
+results remain development rehearsal evidence; exact final-source coverage, CI,
+chaos and package qualification are still required.

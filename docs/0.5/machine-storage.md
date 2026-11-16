@@ -35,6 +35,15 @@ identities remain unique throughout a machine's retained history. A duplicate
 compares the entire header, content identity, event/state and ordered metadata/
 payloads; different content under the same event ID conflicts.
 
+Before requesting the write lock, a cached read-only query checks whether the
+head revision has changed. If so, the same complete admission checks run in that
+read snapshot: exact retained duplicates return their past receipt, conflicting
+event content is refused, and other stale requests return `StaleHead`. A hint
+never authorizes a new write. New work repeats all checks under the immediate
+write transaction. This avoids waiting behind another writer for requests already
+resolved by committed data; simultaneous arrivals may still observe the same old
+head and contend. See the [scoped contention evidence](evidence/machine-preflight-performance/manifest.json).
+
 The returned receipt binds full scope/new revision, event and complete batch
 identity. `PreparedMachineCommit::publish` verifies those coordinates before
 consuming the original local handle. A committed receipt attests to that past

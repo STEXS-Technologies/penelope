@@ -584,3 +584,29 @@ fn second_intent_identity_conflict_rolls_back_the_entire_inserted_prefix() {
         .unwrap();
     assert_eq!(counts, (1, 2));
 }
+
+#[test]
+fn resolved_commits_do_not_wait_for_an_unrelated_writer() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("machine.db");
+    let store = open(&path);
+    block_on(store.bootstrap(&true, genesis())).unwrap();
+    let accepted = batch(&mut owner(), 8, 4);
+    block_on(store.commit(&true, Arc::clone(&accepted))).unwrap();
+    let connection = rusqlite::Connection::open(&path).unwrap();
+    connection.execute_batch("BEGIN IMMEDIATE").unwrap();
+    assert_eq!(
+        block_on(store.commit(&true, batch(&mut owner(), 9, 5))).err(),
+        Some(MachineStoreError::StaleHead)
+    );
+    assert_eq!(
+        block_on(store.commit(&true, batch(&mut owner(), 9, 4))).err(),
+        Some(MachineStoreError::Conflict)
+    );
+    assert_eq!(
+        block_on(store.commit(&true, accepted)).unwrap().disposition,
+        MachineCommitDisposition::AlreadyCommitted
+    );
+    connection.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(*restore(&store).read().1, 13);
+}

@@ -1,0 +1,1943 @@
+{
+  "schema": 1,
+  "base_revision": "0032740",
+  "source_sha256": {
+    "crates/penelope-sqlite/src/machine.rs": "048ae8cd4a81b4c42f830ca24a34d00af921811f61a265c8987ed04b8f939749",
+    "crates/penelope-sqlite/tests/machines.rs": "e0ab348459270bb34370239f881cf1d30aea1348f731d198183fb6d1435d25c7"
+  },
+  "status": "Scoped local qualification; not exact final 0.5 certification",
+  "change": "Cached read-only stale-head hint; duplicate/conflict/head/digest validation shared with BEGIN IMMEDIATE write admission. No write or new committed receipt is authorized by the hint.",
+  "correctness": {
+    "full_sqlite_suites": [
+      "1.100.0",
+      "1.89.0"
+    ],
+    "new_regression": "Hold a real BEGIN IMMEDIATE lock on another connection: stale, conflicting-event and exact retry requests resolve without the writer lock. Original source fails stale assertion after its five-second busy timeout.",
+    "unchanged_authorities": "Host authorization and payload bounds precede the preflight; full coherent head, scope, retained payload and event identity checks preserve precedence; every new write revalidates transactionally.",
+    "debug_benchmarks": "machine_store and machine_backpressure pass on Rust 1.100 and 1.89; all writer and bounded queue dimensions retained. One additional full release machine_store run passes on MSRV 1.89.",
+    "existing_coverage": "Corruption, two-writer CAS races, coherent snapshots, write suppression/substitution, deferred commit failure, actual SIGKILL commit/outbox cuts and task/process tests remain passing."
+  },
+  "full_fixture_method": "Six full machine_store runs in B,C,C,B,B,C order, 101 measured + 8 warmup per 1/2/8/32-writer profile. Same unchanged benchmark fixture, WAL/FULL, pinned CPU 4-7, same NVMe Btrfs data parent; OS caches uncontrolled. Three run summaries per variant are exploratory, not a formal equivalence proof.",
+  "full_fixture_final": {
+    "1": {
+      "commit": {
+        "50": {
+          "baseline": [
+            741103,
+            938956,
+            842449
+          ],
+          "candidate": [
+            880523,
+            914078,
+            854161
+          ]
+        },
+        "95": {
+          "baseline": [
+            1059379,
+            5807982,
+            1118934
+          ],
+          "candidate": [
+            5681668,
+            5358482,
+            5801691
+          ]
+        },
+        "99": {
+          "baseline": [
+            29869837,
+            6259695,
+            4868886
+          ],
+          "candidate": [
+            6095168,
+            5711386,
+            6234157
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            71959,
+            79624,
+            75967
+          ],
+          "candidate": [
+            73292,
+            68673,
+            69715
+          ]
+        },
+        "95": {
+          "baseline": [
+            125072,
+            113189,
+            92359
+          ],
+          "candidate": [
+            92759,
+            95705,
+            117828
+          ]
+        },
+        "99": {
+          "baseline": [
+            157365,
+            137145,
+            105775
+          ],
+          "candidate": [
+            127096,
+            108701,
+            124501
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            746633,
+            944397,
+            846387
+          ],
+          "candidate": [
+            885303,
+            927664,
+            857458
+          ]
+        },
+        "95": {
+          "baseline": [
+            1151126,
+            5811128,
+            1128493
+          ],
+          "candidate": [
+            5686417,
+            5363973,
+            5804877
+          ]
+        },
+        "99": {
+          "baseline": [
+            29874917,
+            6263122,
+            4872273
+          ],
+          "candidate": [
+            6102172,
+            5714532,
+            6238064
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            35569,
+            39246,
+            37051
+          ],
+          "candidate": [
+            30800,
+            30729,
+            32373
+          ]
+        },
+        "95": {
+          "baseline": [
+            50829,
+            58362,
+            43494
+          ],
+          "candidate": [
+            52170,
+            53043,
+            57441
+          ]
+        },
+        "99": {
+          "baseline": [
+            64294,
+            74324,
+            51790
+          ],
+          "candidate": [
+            56870,
+            67871,
+            70517
+          ]
+        }
+      }
+    },
+    "2": {
+      "commit": {
+        "50": {
+          "baseline": [
+            704092,
+            929597,
+            899610
+          ],
+          "candidate": [
+            877507,
+            841497,
+            848852
+          ]
+        },
+        "95": {
+          "baseline": [
+            1161437,
+            5881745,
+            5224174
+          ],
+          "candidate": [
+            6032727,
+            4972847,
+            5470019
+          ]
+        },
+        "99": {
+          "baseline": [
+            24469182,
+            6041444,
+            47554417
+          ],
+          "candidate": [
+            6198277,
+            5411546,
+            7439578
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            58633,
+            71528,
+            69354
+          ],
+          "candidate": [
+            59044,
+            64695,
+            58573
+          ]
+        },
+        "95": {
+          "baseline": [
+            92849,
+            102728,
+            99172
+          ],
+          "candidate": [
+            96256,
+            99552,
+            87680
+          ]
+        },
+        "99": {
+          "baseline": [
+            1133302,
+            147936,
+            115243
+          ],
+          "candidate": [
+            97388,
+            106205,
+            113931
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            1143902,
+            1166186,
+            1150255
+          ],
+          "candidate": [
+            1292310,
+            1162919,
+            1147189
+          ]
+        },
+        "95": {
+          "baseline": [
+            3235548,
+            8411156,
+            8346030
+          ],
+          "candidate": [
+            8329548,
+            8307977,
+            8282247
+          ]
+        },
+        "99": {
+          "baseline": [
+            33765500,
+            8624700,
+            53507309
+          ],
+          "candidate": [
+            8534805,
+            8493385,
+            8353636
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            29066,
+            32603,
+            37572
+          ],
+          "candidate": [
+            30669,
+            33765,
+            29567
+          ]
+        },
+        "95": {
+          "baseline": [
+            43574,
+            52943,
+            49837
+          ],
+          "candidate": [
+            51470,
+            57821,
+            45989
+          ]
+        },
+        "99": {
+          "baseline": [
+            56419,
+            94834,
+            52472
+          ],
+          "candidate": [
+            58382,
+            61869,
+            57742
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            1138923,
+            1160554,
+            1146157
+          ],
+          "candidate": [
+            1168189,
+            1154242,
+            1142680
+          ]
+        },
+        "95": {
+          "baseline": [
+            3225709,
+            8380868,
+            8343135
+          ],
+          "candidate": [
+            8305021,
+            8287918,
+            8279703
+          ]
+        },
+        "99": {
+          "baseline": [
+            33761442,
+            8620251,
+            53502230
+          ],
+          "candidate": [
+            8478156,
+            8358074,
+            8295312
+          ]
+        }
+      }
+    },
+    "8": {
+      "commit": {
+        "50": {
+          "baseline": [
+            1111399,
+            940298,
+            1007177
+          ],
+          "candidate": [
+            979475,
+            1056643,
+            1015324
+          ]
+        },
+        "95": {
+          "baseline": [
+            175523171,
+            5186500,
+            5739249
+          ],
+          "candidate": [
+            5937933,
+            5893658,
+            1306947
+          ]
+        },
+        "99": {
+          "baseline": [
+            366172926,
+            30558057,
+            22934524
+          ],
+          "candidate": [
+            6328109,
+            640830856,
+            1512405
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            95885,
+            90355,
+            93922
+          ],
+          "candidate": [
+            96888,
+            96677,
+            92710
+          ]
+        },
+        "95": {
+          "baseline": [
+            158286,
+            125012,
+            141273
+          ],
+          "candidate": [
+            125994,
+            131274,
+            135653
+          ]
+        },
+        "99": {
+          "baseline": [
+            312274,
+            137436,
+            1736308
+          ],
+          "candidate": [
+            128920,
+            145070,
+            161382
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            33915831,
+            33491862,
+            33479397
+          ],
+          "candidate": [
+            33536918,
+            33624077,
+            33511559
+          ]
+        },
+        "95": {
+          "baseline": [
+            529103502,
+            78769987,
+            79072281
+          ],
+          "candidate": [
+            103775505,
+            103767790,
+            54139231
+          ]
+        },
+        "99": {
+          "baseline": [
+            829408062,
+            178830567,
+            103924534
+          ],
+          "candidate": [
+            104180839,
+            929488923,
+            79627926
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            36621,
+            34356,
+            37743
+          ],
+          "candidate": [
+            34156,
+            37503,
+            35589
+          ]
+        },
+        "95": {
+          "baseline": [
+            50308,
+            55948,
+            63663
+          ],
+          "candidate": [
+            57491,
+            61810,
+            52251
+          ]
+        },
+        "99": {
+          "baseline": [
+            67190,
+            77409,
+            77630
+          ],
+          "candidate": [
+            72250,
+            70767,
+            72410
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            33571916,
+            33411646,
+            33439280
+          ],
+          "candidate": [
+            33475489,
+            33499435,
+            33465851
+          ]
+        },
+        "95": {
+          "baseline": [
+            529008309,
+            78750008,
+            78675183
+          ],
+          "candidate": [
+            103696302,
+            103685882,
+            53811448
+          ]
+        },
+        "99": {
+          "baseline": [
+            829301977,
+            178793415,
+            103895438
+          ],
+          "candidate": [
+            103773301,
+            929287743,
+            78655855
+          ]
+        }
+      }
+    },
+    "32": {
+      "commit": {
+        "50": {
+          "baseline": [
+            1139654,
+            1027006,
+            1082012
+          ],
+          "candidate": [
+            1136408,
+            1042476,
+            1114505
+          ]
+        },
+        "95": {
+          "baseline": [
+            5439179,
+            517092404,
+            6238565
+          ],
+          "candidate": [
+            6090569,
+            6170854,
+            6342025
+          ]
+        },
+        "99": {
+          "baseline": [
+            6880707,
+            1505340414,
+            44054949
+          ],
+          "candidate": [
+            6913841,
+            6289523,
+            261553889
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            107187,
+            102759,
+            100584
+          ],
+          "candidate": [
+            102959,
+            102228,
+            111656
+          ]
+        },
+        "95": {
+          "baseline": [
+            146644,
+            141383,
+            136564
+          ],
+          "candidate": [
+            139169,
+            134570,
+            144259
+          ]
+        },
+        "99": {
+          "baseline": [
+            190027,
+            447054,
+            145561
+          ],
+          "candidate": [
+            148648,
+            145962,
+            183245
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            179498449,
+            229077792,
+            229346201
+          ],
+          "candidate": [
+            129517849,
+            179306658,
+            179389177
+          ]
+        },
+        "95": {
+          "baseline": [
+            729513784,
+            1529843561,
+            829870857
+          ],
+          "candidate": [
+            429264400,
+            630110884,
+            729497111
+          ]
+        },
+        "99": {
+          "baseline": [
+            930256367,
+            2530521960,
+            1030327548
+          ],
+          "candidate": [
+            529414684,
+            829769832,
+            1030547303
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            40328,
+            36220,
+            37513
+          ],
+          "candidate": [
+            38935,
+            36470,
+            40879
+          ]
+        },
+        "95": {
+          "baseline": [
+            67851,
+            72751,
+            60346
+          ],
+          "candidate": [
+            60778,
+            65927,
+            77530
+          ]
+        },
+        "99": {
+          "baseline": [
+            87460,
+            151292,
+            81077
+          ],
+          "candidate": [
+            82159,
+            78602,
+            105023
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            179064700,
+            228830072,
+            228899548
+          ],
+          "candidate": [
+            128985891,
+            178844094,
+            178850966
+          ]
+        },
+        "95": {
+          "baseline": [
+            729275843,
+            1529727787,
+            829385428
+          ],
+          "candidate": [
+            429017913,
+            629112463,
+            729218743
+          ]
+        },
+        "99": {
+          "baseline": [
+            929473082,
+            2530223824,
+            1029761343
+          ],
+          "candidate": [
+            529151787,
+            829215400,
+            1029938776
+          ]
+        }
+      }
+    }
+  },
+  "first_candidate_pilot": {
+    "1": {
+      "commit": {
+        "50": {
+          "baseline": [
+            686597,
+            875203,
+            703230
+          ],
+          "candidate": [
+            683301,
+            794627,
+            831368
+          ]
+        },
+        "95": {
+          "baseline": [
+            1063126,
+            1574535,
+            938515
+          ],
+          "candidate": [
+            795539,
+            943064,
+            2259991
+          ]
+        },
+        "99": {
+          "baseline": [
+            5696978,
+            4008252,
+            1049831
+          ],
+          "candidate": [
+            820636,
+            972461,
+            4251963
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            57822,
+            83832,
+            62481
+          ],
+          "candidate": [
+            66358,
+            63283,
+            74605
+          ]
+        },
+        "95": {
+          "baseline": [
+            79895,
+            100314,
+            104733
+          ],
+          "candidate": [
+            79844,
+            86197,
+            91107
+          ]
+        },
+        "99": {
+          "baseline": [
+            84593,
+            116726,
+            109742
+          ],
+          "candidate": [
+            97789,
+            99593,
+            111085
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            691537,
+            878469,
+            706426
+          ],
+          "candidate": [
+            687390,
+            797853,
+            834944
+          ]
+        },
+        "95": {
+          "baseline": [
+            1067565,
+            1577901,
+            942152
+          ],
+          "candidate": [
+            801941,
+            952682,
+            2263517
+          ]
+        },
+        "99": {
+          "baseline": [
+            5701447,
+            4012340,
+            1053157
+          ],
+          "candidate": [
+            824535,
+            975527,
+            4255460
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            27944,
+            42662,
+            29898
+          ],
+          "candidate": [
+            28805,
+            27974,
+            30549
+          ]
+        },
+        "95": {
+          "baseline": [
+            43745,
+            58143,
+            62741
+          ],
+          "candidate": [
+            39396,
+            50928,
+            39857
+          ]
+        },
+        "99": {
+          "baseline": [
+            56780,
+            64264,
+            75376
+          ],
+          "candidate": [
+            57090,
+            63162,
+            47261
+          ]
+        }
+      }
+    },
+    "2": {
+      "commit": {
+        "50": {
+          "baseline": [
+            731825,
+            886144,
+            736805
+          ],
+          "candidate": [
+            730603,
+            817461,
+            850404
+          ]
+        },
+        "95": {
+          "baseline": [
+            922604,
+            1252653,
+            870153
+          ],
+          "candidate": [
+            854111,
+            935629,
+            1086792
+          ]
+        },
+        "99": {
+          "baseline": [
+            6140135,
+            1320203,
+            931402
+          ],
+          "candidate": [
+            940148,
+            980887,
+            4742842
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            60287,
+            62121,
+            59325
+          ],
+          "candidate": [
+            60376,
+            63523,
+            62010
+          ]
+        },
+        "95": {
+          "baseline": [
+            83241,
+            81909,
+            78111
+          ],
+          "candidate": [
+            83061,
+            86688,
+            83451
+          ]
+        },
+        "99": {
+          "baseline": [
+            92028,
+            90475,
+            86397
+          ],
+          "candidate": [
+            84133,
+            93401,
+            89493
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            1138602,
+            1137139,
+            1137560
+          ],
+          "candidate": [
+            1145205,
+            1138191,
+            1153611
+          ]
+        },
+        "95": {
+          "baseline": [
+            1429163,
+            3193396,
+            1429574
+          ],
+          "candidate": [
+            1372825,
+            1321005,
+            1454984
+          ]
+        },
+        "99": {
+          "baseline": [
+            8264133,
+            3215759,
+            1518116
+          ],
+          "candidate": [
+            1465885,
+            1595967,
+            8278420
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            29728,
+            32192,
+            33285
+          ],
+          "candidate": [
+            28505,
+            28946,
+            30860
+          ]
+        },
+        "95": {
+          "baseline": [
+            42463,
+            44426,
+            49867
+          ],
+          "candidate": [
+            40478,
+            47623,
+            53383
+          ]
+        },
+        "99": {
+          "baseline": [
+            46650,
+            50548,
+            59405
+          ],
+          "candidate": [
+            45488,
+            53213,
+            60978
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            1133362,
+            1133502,
+            1133993
+          ],
+          "candidate": [
+            1142380,
+            1134273,
+            1149653
+          ]
+        },
+        "95": {
+          "baseline": [
+            1424855,
+            3190019,
+            1425546
+          ],
+          "candidate": [
+            1363597,
+            1317068,
+            1448642
+          ]
+        },
+        "99": {
+          "baseline": [
+            8249625,
+            3213795,
+            1514269
+          ],
+          "candidate": [
+            1443963,
+            1580978,
+            8273160
+          ]
+        }
+      }
+    },
+    "8": {
+      "commit": {
+        "50": {
+          "baseline": [
+            900562,
+            967401,
+            919388
+          ],
+          "candidate": [
+            872287,
+            905200,
+            942763
+          ]
+        },
+        "95": {
+          "baseline": [
+            3593690,
+            1181705,
+            1243445
+          ],
+          "candidate": [
+            1001146,
+            1118012,
+            1857383
+          ]
+        },
+        "99": {
+          "baseline": [
+            6308701,
+            1432831,
+            2373300
+          ],
+          "candidate": [
+            1187457,
+            1452319,
+            5327593
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            70116,
+            86687,
+            79664
+          ],
+          "candidate": [
+            74684,
+            69384,
+            77510
+          ]
+        },
+        "95": {
+          "baseline": [
+            114531,
+            117748,
+            118329
+          ],
+          "candidate": [
+            107488,
+            105915,
+            143538
+          ]
+        },
+        "99": {
+          "baseline": [
+            119782,
+            137646,
+            140351
+          ],
+          "candidate": [
+            112127,
+            110965,
+            164148
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            33431364,
+            33455240,
+            33444439
+          ],
+          "candidate": [
+            33451233,
+            33425122,
+            18822471
+          ]
+        },
+        "95": {
+          "baseline": [
+            78659382,
+            78607512,
+            78634354
+          ],
+          "candidate": [
+            78586862,
+            78573005,
+            78553348
+          ]
+        },
+        "99": {
+          "baseline": [
+            78827136,
+            78867495,
+            79005181
+          ],
+          "candidate": [
+            78668570,
+            78616640,
+            78795786
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            32503,
+            40699,
+            35518
+          ],
+          "candidate": [
+            32994,
+            33535,
+            36120
+          ]
+        },
+        "95": {
+          "baseline": [
+            45849,
+            54144,
+            49315
+          ],
+          "candidate": [
+            41931,
+            54295,
+            59715
+          ]
+        },
+        "99": {
+          "baseline": [
+            54796,
+            59104,
+            66689
+          ],
+          "candidate": [
+            50077,
+            63954,
+            113830
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            33348434,
+            33400193,
+            33405584
+          ],
+          "candidate": [
+            33390766,
+            33359686,
+            18523513
+          ]
+        },
+        "95": {
+          "baseline": [
+            78599176,
+            78569799,
+            78576422
+          ],
+          "candidate": [
+            78553377,
+            78545402,
+            78493552
+          ]
+        },
+        "99": {
+          "baseline": [
+            78627330,
+            78627310,
+            78637059
+          ],
+          "candidate": [
+            78639594,
+            78574929,
+            78754486
+          ]
+        }
+      }
+    },
+    "32": {
+      "commit": {
+        "50": {
+          "baseline": [
+            1354419,
+            974114,
+            1066001
+          ],
+          "candidate": [
+            984885,
+            901755,
+            1121769
+          ]
+        },
+        "95": {
+          "baseline": [
+            53262466,
+            1301477,
+            267377561
+          ],
+          "candidate": [
+            1281789,
+            1161998,
+            3876507
+          ]
+        },
+        "99": {
+          "baseline": [
+            633532803,
+            6118512,
+            496347495
+          ],
+          "candidate": [
+            1336535,
+            1745716,
+            5599369
+          ]
+        }
+      },
+      "exact_retry": {
+        "50": {
+          "baseline": [
+            103971,
+            101726,
+            111585
+          ],
+          "candidate": [
+            102037,
+            97038,
+            99362
+          ]
+        },
+        "95": {
+          "baseline": [
+            134269,
+            135572,
+            133608
+          ],
+          "candidate": [
+            140051,
+            131785,
+            132275
+          ]
+        },
+        "99": {
+          "baseline": [
+            138909,
+            674774,
+            142706
+          ],
+          "candidate": [
+            146754,
+            157274,
+            146092
+          ]
+        }
+      },
+      "release_to_last_finish": {
+        "50": {
+          "baseline": [
+            229325551,
+            179064599,
+            229159770
+          ],
+          "candidate": [
+            128751016,
+            104106896,
+            128771867
+          ]
+        },
+        "95": {
+          "baseline": [
+            1129676293,
+            629323862,
+            1130268498
+          ],
+          "candidate": [
+            429113248,
+            429103108,
+            429545473
+          ]
+        },
+        "99": {
+          "baseline": [
+            1530113243,
+            729827039,
+            1930196438
+          ],
+          "candidate": [
+            529450704,
+            829372915,
+            929546183
+          ]
+        }
+      },
+      "snapshot_read": {
+        "50": {
+          "baseline": [
+            39928,
+            40068,
+            40237
+          ],
+          "candidate": [
+            36371,
+            37402,
+            36501
+          ]
+        },
+        "95": {
+          "baseline": [
+            65246,
+            57482,
+            57912
+          ],
+          "candidate": [
+            54646,
+            56810,
+            59224
+          ]
+        },
+        "99": {
+          "baseline": [
+            84423,
+            71799,
+            75787
+          ],
+          "candidate": [
+            76207,
+            73272,
+            72681
+          ]
+        }
+      },
+      "slowest_stale_per_round": {
+        "50": {
+          "baseline": [
+            228889748,
+            178705725,
+            228800115
+          ],
+          "candidate": [
+            128535870,
+            103608362,
+            128517164
+          ]
+        },
+        "95": {
+          "baseline": [
+            1129465125,
+            629243407,
+            1129605075
+          ],
+          "candidate": [
+            428817005,
+            428921597,
+            428960432
+          ]
+        },
+        "99": {
+          "baseline": [
+            1529599639,
+            729176852,
+            1929928951
+          ],
+          "candidate": [
+            529216070,
+            829191273,
+            929430139
+          ]
+        }
+      }
+    }
+  },
+  "single_writer_controls": {
+    "original-hint": {
+      "commit_p50_ns": {
+        "baseline_median": 733508,
+        "candidate_median": 740202,
+        "median_pair_change_percent": 2.006658414086826,
+        "pairs_over_5_percent": 3,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          0.17932961278290804,
+          2.9051422723784137
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      },
+      "retry_p50_ns": {
+        "baseline_median": 57501,
+        "candidate_median": 62752,
+        "median_pair_change_percent": 7.462712664580096,
+        "pairs_over_5_percent": 13,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          7.061711079943889,
+          12.215439731482935
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      }
+    },
+    "head-only-hint": {
+      "commit_p50_ns": {
+        "baseline_median": 781701,
+        "candidate_median": 817872,
+        "median_pair_change_percent": 4.062076139575743,
+        "pairs_over_5_percent": 5,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          -2.990184945338925,
+          5.57151136749412
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      },
+      "retry_p50_ns": {
+        "baseline_median": 64535,
+        "candidate_median": 67741,
+        "median_pair_change_percent": 6.244926359735592,
+        "pairs_over_5_percent": 9,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          -3.503693613454184,
+          13.281364047765031
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      }
+    },
+    "cached-head-only-hint": {
+      "commit_p50_ns": {
+        "baseline_median": 791871,
+        "candidate_median": 797152,
+        "median_pair_change_percent": 1.0581396375878072,
+        "pairs_over_5_percent": 2,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          -1.7433749993727488,
+          1.4588207128600539
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      },
+      "retry_p50_ns": {
+        "baseline_median": 57311,
+        "candidate_median": 56629,
+        "median_pair_change_percent": -1.3103941651689932,
+        "pairs_over_5_percent": 1,
+        "exploratory_pair_median_bootstrap_95_percent": [
+          -6.514913657770805,
+          1.8284640540589425
+        ],
+        "bootstrap_seed": 505,
+        "bootstrap_samples": 10000
+      }
+    }
+  },
+  "single_writer_method": "Same machine_store fixture restricted to [1] in two isolated worktrees, 15 alternating paired processes, 101 + 8 commits each; complete per-call samples retained. Bootstrap interval is exploratory and does not control host/cache/storage drift.",
+  "limitations": [
+    "Fast path helps requests whose read snapshot already observes a changed head. Simultaneous contenders can all read the old head and still serialize on BEGIN IMMEDIATE. No bounded worst-case completion claim.",
+    "Read-only duplicates attest to the immutable past commit, not ownership of the latest head. Invalid or false hint results never authorize a write.",
+    "The first hint unnecessarily probed the event index. The second removed that probe. The retained third also caches statement compilation; all earlier adverse measurements are preserved.",
+    "Single-writer controls use the same candidate logic before final formatting and a restricted benchmark fixture; full-profile qualification archives the exact retained source.",
+    "Single-writer v2 driver was not preserved separately; its build JSON, source patch, result files and metadata remain. The preserved v1/final drivers differ in their output-directory names.",
+    "Copied diagnostic executables excluded from the archive; SHA-256 was recorded before single-writer execution. Full-profile runner did not record binary hashes before execution.",
+    "Benchmark authorization uses the existing fast trusted-host fixture, not a real authentication service. No cold-cache, allocation or stack instrumentation claim.",
+    "Legacy encoding and timeline regression findings remain open; this is not a legacy performance waiver.",
+    "Full final-revision CI, coverage, chaos, artifact and version qualification remain outstanding."
+  ],
+  "artifact": {
+    "path": "qualification.tar.gz",
+    "sha256": "556abc8f5c145f2ae9f695407045cb7d3c7be0c7f0e6abf8bac280f7d6f465d4",
+    "members": {
+      "first-candidate/baseline-held-writer-negative.stderr": "d2aafaad03a5c0b4e58c527fd831c117331e58042e42f31b308dd88c99e63a29",
+      "first-candidate/baseline-held-writer-negative.stdout": "d478aa3684626550fa541ce5aa743a322203e3f6cff73284208412ae5b79efc4",
+      "first-candidate/candidate/crates/penelope-sqlite/src/machine.rs": "5c36ac3cc813776e4714618e442a3e956470568e2977266513bae1092f1cfee2",
+      "first-candidate/candidate/crates/penelope-sqlite/tests/machines.rs": "e0ab348459270bb34370239f881cf1d30aea1348f731d198183fb6d1435d25c7",
+      "first-candidate/candidate.patch": "5f06bf12ea44ca568c6368baa54680f10548912455630df9c0ba8d2760260c7b",
+      "first-candidate/checks.json": "bd6d5f21de4b1e86b392512535fb938eee640626b08f15f9c9f0e9f7a78550f7",
+      "first-candidate/clippy.stderr": "445f48e34ab2427135968089e95e9e0970516a557fbef4e246075e50cce83ff3",
+      "first-candidate/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-1-baseline/build.jsonl": "5712dbd8236539fe0575d8049abbfe2594b182835716ee13ca2662a4bb2d395b",
+      "first-candidate/measure-1-baseline/build.stderr": "f9bb5535a5dc83ad12c72ed0742663159e0d6fcab3a6d6a70382f9bebfbff299",
+      "first-candidate/measure-1-baseline/metadata.json": "cd10e21e2614fd84a101d9ce679da89dc24de74beb972e0a371a47f19af3e4ec",
+      "first-candidate/measure-1-baseline/run-1.json": "65fe339b00a8a0769eac6e1f0015ff6812c730e50276f3c4c09b4dc8188c105b",
+      "first-candidate/measure-1-baseline/run-1.resources.json": "0e00e9223f305f9e3338b00a44c3ba436b32c0e93882f609a35321e000d79e64",
+      "first-candidate/measure-1-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-1-baseline.stdout": "f33cdc565575fdaf56f3ebd6e58b5e93b68978efa6e9ab5c852c91b059f9d228",
+      "first-candidate/measure-2-candidate/build.jsonl": "68288ac62713df3dc6b78e02282f27b6cce6619584de6bee00f99e78d1a10aac",
+      "first-candidate/measure-2-candidate/build.stderr": "08cd306282fd779912534dfb9234fa28209f5510063922ac742f10291cdd227c",
+      "first-candidate/measure-2-candidate/metadata.json": "77aed0b5a41e5b06d72adfe98f0d0951df2f552941fd4d99c78494b6b232b562",
+      "first-candidate/measure-2-candidate/run-1.json": "d1827c7cc20e43b7e6afdc9e77424d655465dfe3cbb57baedaff4405d669afe2",
+      "first-candidate/measure-2-candidate/run-1.resources.json": "5a34bcec719af746a5fcef794e0f88aff846da49d7bb4cf9981717df2fc5179d",
+      "first-candidate/measure-2-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-2-candidate.stdout": "6dc8a2c2c64e4e3e384b73ceeed3f89d6664cc6a8fe41bb8820a98e62f49fe05",
+      "first-candidate/measure-3-candidate/build.jsonl": "ab997b82cac902401c5790c96e8adfc6a86e070c9c2f7b48e7214be7b6e1708c",
+      "first-candidate/measure-3-candidate/build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "first-candidate/measure-3-candidate/metadata.json": "167da84d8740743c6e2b24dff26b863672970bfcfc003244997347167829c409",
+      "first-candidate/measure-3-candidate/run-1.json": "656346decf52672c26436665a82008e0c7a579eb986bd9b1121ef63f198d6a9b",
+      "first-candidate/measure-3-candidate/run-1.resources.json": "f51e0b9e2c8c4b4224e23a4f8a17555d9b7095130ed58558f21dc1dc71ab3927",
+      "first-candidate/measure-3-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-3-candidate.stdout": "84e9bd3c94714d030a33e1974d9ab2aa71deb442707344d3facc7a45fde747ac",
+      "first-candidate/measure-4-baseline/build.jsonl": "f6e5fdd5ab3af28e1f9f364f974d5f8be98731f2c3645c1f3aecd71c34d6858e",
+      "first-candidate/measure-4-baseline/build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "first-candidate/measure-4-baseline/metadata.json": "8620bb647c59bd7c8976c28a84ef499a3101b610b0d29d1eb524868089a9f3cd",
+      "first-candidate/measure-4-baseline/run-1.json": "65e0e2f8ef3fa6f118fe4c5a5b5568a92934b3128278cb4a08948edd8fe59614",
+      "first-candidate/measure-4-baseline/run-1.resources.json": "36c0bb4c10c1aded15fee234bcbe4a0a3b8f495a4b05a5bfcc0cc3b9e086b4a0",
+      "first-candidate/measure-4-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-4-baseline.stdout": "c08eafed4943b587514c212bdb3bc90ee3c2da4fe2961de0c3818bd09d1d2ee3",
+      "first-candidate/measure-5-baseline/build.jsonl": "f57159d379f6b5d89f75424688d0610803f3178f029297966093dc04e2b7f680",
+      "first-candidate/measure-5-baseline/build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "first-candidate/measure-5-baseline/metadata.json": "434674a5f6c4ef332c0bf240d56172238ee8535a71ce4651cceb9b9d9a00fdbc",
+      "first-candidate/measure-5-baseline/run-1.json": "35bac080cc1c6169494cea0d54d7dfb2499eaf82ea66f20b08f3367c8218408e",
+      "first-candidate/measure-5-baseline/run-1.resources.json": "1b1d4c3d97198dbd6f20679998a49db6a7ddc480715277269da5232b506b7d09",
+      "first-candidate/measure-5-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-5-baseline.stdout": "b543262f2e0a4b178acaa4776fd22c31ec93498b0bcfbe3ceb98e68ae19e6a4e",
+      "first-candidate/measure-6-candidate/build.jsonl": "116883f29cc7e4891d7538de217ec9f8e3ef93448c672b8a921e4e79b8365890",
+      "first-candidate/measure-6-candidate/build.stderr": "6a38fc0fa73e3b8ace0f456f450d646d017aac445f5a3f1226f292eddc770b2f",
+      "first-candidate/measure-6-candidate/metadata.json": "0981a647ae4bbe59a94198a3b9b27d733a7c2b508ca171b67ddb24bf679af9fd",
+      "first-candidate/measure-6-candidate/run-1.json": "7673ce4dec94d71a3f55fd03903eccf2ef3cd0768e6b8469b94f033762e10aa4",
+      "first-candidate/measure-6-candidate/run-1.resources.json": "1d1b6c9744e208e703871382ff422ee099a25132f3fbce3658ca1d81cb6e7179",
+      "first-candidate/measure-6-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-candidate/measure-6-candidate.stdout": "9a3dd43af76f9ee10cf55ce1d663c62bd041c1ddd9009015a6a3f0410f641699",
+      "first-candidate/tests-1.100.0.stderr": "fb9eabd90efa7dbac1137de5bf899b90c88f8e6b2dc377cc02988304a3d5da8e",
+      "first-candidate/tests-1.100.0.stdout": "f6c28fbbc12d300ed007516253e506a5e0c53090009c2effadb5f9cb98e62ce9",
+      "first-candidate/tests-1.89.0.stderr": "e87bb8e7ad564f0dd68fbe6da82676b4b043fef8627a5cb297c63ddaa3f9e4bf",
+      "first-candidate/tests-1.89.0.stdout": "e4726eca0af25df7c69c527840922b10faa51bba0df19956dbe990ce533523fe",
+      "final-candidate/baseline-held-writer-negative.stderr": "fe752d92a866c53f7121d5cd3ebb1ab4044c5a0d9aa01cc3c0ade852fb5e7cc4",
+      "final-candidate/baseline-held-writer-negative.stdout": "b95d5c7bd110f9fd692f616294d187f15cd66213124c518738564fb164e4bc8b",
+      "final-candidate/candidate/crates/penelope-sqlite/src/machine.rs": "048ae8cd4a81b4c42f830ca24a34d00af921811f61a265c8987ed04b8f939749",
+      "final-candidate/candidate/crates/penelope-sqlite/tests/machines.rs": "e0ab348459270bb34370239f881cf1d30aea1348f731d198183fb6d1435d25c7",
+      "final-candidate/candidate.patch": "4d756f8cece24d3488c41703f8c7815e0611591fe9f9efd9bf8ad24d8399ccea",
+      "final-candidate/checks.json": "d3255d6b83b18510810de56dde15ec6dfaf59d82c2fac21f1e8deb9adbf5fe70",
+      "final-candidate/clippy.stderr": "c1d567ae5090685c73b3e05d09822009d4c270d9cc51f59922f70e7ab10afdc1",
+      "final-candidate/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-1-baseline/build.jsonl": "02d57aefb36b67fb20bca0eded9d47bac28f340f3969a6130575ffc5f6b6114e",
+      "final-candidate/measure-1-baseline/build.stderr": "6a38fc0fa73e3b8ace0f456f450d646d017aac445f5a3f1226f292eddc770b2f",
+      "final-candidate/measure-1-baseline/metadata.json": "243b658e32f2dd6646544cfc61863e725e3046b3ae68db8018b76556a2db5262",
+      "final-candidate/measure-1-baseline/run-1.json": "49afb5b1becb8a3f742c9abb3373fe872ac572ceba201e0ad6dad26ed012b88e",
+      "final-candidate/measure-1-baseline/run-1.resources.json": "54ccd7794d75a00fa04e52b619d273c7e36cb4577f1c33231fdd831d3b390ef8",
+      "final-candidate/measure-1-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-1-baseline.stdout": "fbb7a462bb2d7d8821d32f1ff8316dedc2703a6a8951d9d70aa8930fb46828cd",
+      "final-candidate/measure-2-candidate/build.jsonl": "37c152c67ceaf956c51e42b34342989d6438912e243da0ba8b850cf1be2760ec",
+      "final-candidate/measure-2-candidate/build.stderr": "954fcda5c0856d76e0588e5d52b4111fdf4e77f2dd312aca4751b65b7895c6b0",
+      "final-candidate/measure-2-candidate/metadata.json": "e820af449d69c683a9180855fef30207ec0421635af5e85484badd600e7626fa",
+      "final-candidate/measure-2-candidate/run-1.json": "a2799d042f958ac391777a753ccdd7bf24ad9c5ca9452e56d36b542a4a3c9357",
+      "final-candidate/measure-2-candidate/run-1.resources.json": "a24f79fd984e57db7eb2cd9988b61552dbab1fe592ea7cbbc97a1fe3609bf600",
+      "final-candidate/measure-2-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-2-candidate.stdout": "71ce1a3761e35dddec584afaf1585d3c53f0367537fc08e0893daf32538a529b",
+      "final-candidate/measure-3-candidate/build.jsonl": "464c32f841a5d3ef0fd6940006d3b584da8e2f5b5c9656a710c6d5c3cb65d50f",
+      "final-candidate/measure-3-candidate/build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "final-candidate/measure-3-candidate/metadata.json": "24143db38de8df65c4fe9d87ef997b5a6883634750075beb745da1ed5eeebde5",
+      "final-candidate/measure-3-candidate/run-1.json": "9e8be06cdcd43ba5e4cb07ad84109955664242a88b7121d7d568c3884391f26d",
+      "final-candidate/measure-3-candidate/run-1.resources.json": "8e6b1ac238b2df99dc36c91ccfdd4e0e856cc00a55ebe3b04b07102fb166f692",
+      "final-candidate/measure-3-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-3-candidate.stdout": "e2ff3ca25159a8ed0bc28c1de5fbf50fed1d887aad8f785c9d78829bc4478da3",
+      "final-candidate/measure-4-baseline/build.jsonl": "6ca9ae751b38a4eb5c58f28d0b332d8177b788e697fa8c585c02dcecd5e02504",
+      "final-candidate/measure-4-baseline/build.stderr": "7447ca0a32ab3b82a0b1a597e39bd6602207a3fe90c1e2e7263135cbb9cbfd05",
+      "final-candidate/measure-4-baseline/metadata.json": "2bb85d0c505efcd8f299cddbd3c893bf0b5c856e7026e909395255ad9dedd266",
+      "final-candidate/measure-4-baseline/run-1.json": "4b41ae7ae0268529275cdbc7e3d10638e0424ef32520d3fc7bb4bac70122cc65",
+      "final-candidate/measure-4-baseline/run-1.resources.json": "7d851b608b093babbdf91665d1446cdcf9376fa680e7b6255c950d317726eae2",
+      "final-candidate/measure-4-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-4-baseline.stdout": "08a31b70f318b543bbd6ba515b76f5aa101e93158a1c47ef4c928d1125e9f966",
+      "final-candidate/measure-5-baseline/build.jsonl": "d4d6ce6387b47cfea12c4ba7e3450308d0fd0c852830eeae7430012c1afbcdf6",
+      "final-candidate/measure-5-baseline/build.stderr": "6a38fc0fa73e3b8ace0f456f450d646d017aac445f5a3f1226f292eddc770b2f",
+      "final-candidate/measure-5-baseline/metadata.json": "6f9d9c0865e44e6d92e4558d8b545b779b1a0e44a527233ab639fba03ccef7bd",
+      "final-candidate/measure-5-baseline/run-1.json": "028eae0d64b66e18c4c3bcde2aea24dc0611701f4568bc2472e052cf52ba01da",
+      "final-candidate/measure-5-baseline/run-1.resources.json": "098564ade193adeeb1d5be04a8715d0ff7f0f378b0c65a37cfabe9512d23466c",
+      "final-candidate/measure-5-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-5-baseline.stdout": "36a6dfd662290bf9c557fdeb369d64909a44f8724498aa20f0c13e38bc942efc",
+      "final-candidate/measure-6-candidate/build.jsonl": "912f1272f8bf0a5763e3e9a5e00f34aeafa002d23564f8f786e7a65866fa2936",
+      "final-candidate/measure-6-candidate/build.stderr": "6a38fc0fa73e3b8ace0f456f450d646d017aac445f5a3f1226f292eddc770b2f",
+      "final-candidate/measure-6-candidate/metadata.json": "bf7d9f23748febb5fa2408ae6e65bafd0e920159022dcc7f77c6396d5f4b5ea0",
+      "final-candidate/measure-6-candidate/run-1.json": "e864bddd0e34ff588ef138519d5721c612cef9171dd10e1e0254c30c24633616",
+      "final-candidate/measure-6-candidate/run-1.resources.json": "d3bbd8c965a7a3fecf6a4bd01869b4db9fc64b842631168854666d0591120e91",
+      "final-candidate/measure-6-candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-candidate/measure-6-candidate.stdout": "3442913cf49bcd3356c4f92e32ae48aa33f62e8acd4314bd27a6a806116c7948",
+      "final-candidate/tests-1.100.0.stderr": "57390096374c1351ad93d8e59fb970e2f684614ec1cebe9bffd391ab7fd60d79",
+      "final-candidate/tests-1.100.0.stdout": "a68f1bfffb5e6972109566fcbdb0211530640d4bea3c66a8c68bfab0289ed168",
+      "final-candidate/tests-1.89.0.stderr": "8ed75abc6f89e7e45ea04877b5122abe9dd26b14b5f7af656cc0a1ce1619cb97",
+      "final-candidate/tests-1.89.0.stdout": "27fac4be9cfdddab4abd52458567fde65e107612eab5436302fffddd163b6932",
+      "single-writer-v1/baseline/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v1/baseline/crates/penelope-sqlite/src/machine.rs": "0eee57a3584efa4b723badf71e1330113029ebf4f28e091ce7f57d61c085e7d0",
+      "single-writer-v1/baseline-build.jsonl": "76b3c6b08de1293096534cdd732a18c366175be8ba0d892f3f4c11e331e2e348",
+      "single-writer-v1/baseline-build.stderr": "2b8f1081c884a1acc889f431602f71b3968f0f2b258f4f8094b1f2951df1655e",
+      "single-writer-v1/baseline-diff.patch": "4a547390c9dc9f04553a24682388a574d7169c538172f77aaf10debd3e00bf50",
+      "single-writer-v1/candidate/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v1/candidate/crates/penelope-sqlite/src/machine.rs": "5c36ac3cc813776e4714618e442a3e956470568e2977266513bae1092f1cfee2",
+      "single-writer-v1/candidate-build.jsonl": "532e2cdeb13fcdd5e3a4e144ac874938d8092e6ce7297adf1331918f92373dba",
+      "single-writer-v1/candidate-build.stderr": "934016b9ef1b670573fae02df25e863d49fbe714cfee54b6ebe8fbfdced8bdc7",
+      "single-writer-v1/candidate-diff.patch": "f954d3d61b1645866609450d481f8e5aeb44bb80741e202b43d53d6a5fa8c685",
+      "single-writer-v1/metadata.json": "8209be3e5c59d8525af1ac646c04d0eea81a3e11dcd872c6ee15e3fa32d3f9bc",
+      "single-writer-v1/round-1-baseline.json": "17195d6452fe30788f693fd0df43cd63786a161ba585ef02cc187d2d21b2490f",
+      "single-writer-v1/round-1-baseline.resources.json": "b315a4947cfcca7ebfe2af6a8d94d7f8c524fc05940a659d90e7ae59a464ed54",
+      "single-writer-v1/round-1-candidate.json": "591390aa63bfa1b41398c12f2ea2abdbd88b30bca53536f93a16ebd29eab0f15",
+      "single-writer-v1/round-1-candidate.resources.json": "8651a89b310d19d9c0cc5e4ed001fe5ddd144708cb05167c0e2d0236300564d1",
+      "single-writer-v1/round-10-baseline.json": "8bad5fdf8cbf3cdc117995a382d756ad425cc8a19a2954ff5e5b12a13f90128d",
+      "single-writer-v1/round-10-baseline.resources.json": "ad928949caf79082a6fcc1365a3cb1fda1160899c9a24febf0ed2371bdd0e063",
+      "single-writer-v1/round-10-candidate.json": "5d9a269d47748fae28eaba53b20dd14cc3a6eec736f17210cafff34d63fb85ca",
+      "single-writer-v1/round-10-candidate.resources.json": "1c68ac00611e0916ef6d0f47ce35acfab200118bbda68e54b617b387efa60dae",
+      "single-writer-v1/round-11-baseline.json": "a53472f1e324fea6586e48cebcbfcbb54874c725d6ed881b05d6e1effef73018",
+      "single-writer-v1/round-11-baseline.resources.json": "d5a3c1dada202ce1d8c1c23987dd69ea62a92bf2a62ed7e7887267f40924e33a",
+      "single-writer-v1/round-11-candidate.json": "4242999f17117fd2711da181ece8a05573c26c815307ef625661d51448c53785",
+      "single-writer-v1/round-11-candidate.resources.json": "f35f89abd866ad62f937980906e61c2f969dff9f7ec62526363c5f8ebb154118",
+      "single-writer-v1/round-12-baseline.json": "a3fc60bbf07b94f512d79a152dc00a45675383f9e163897774296457dc471542",
+      "single-writer-v1/round-12-baseline.resources.json": "2f2e8c8134b3ced544274ae1f46fa5a9b4514d48eae98407025bdbdf7f26f7a9",
+      "single-writer-v1/round-12-candidate.json": "d86ce8836c369c5d504ee567c758362a4dca188efc712c22e60453f0cdce005a",
+      "single-writer-v1/round-12-candidate.resources.json": "550ef741305b422e802ebe668df8e281ba0f4e3651a2e27bc6662d7c085cc3d3",
+      "single-writer-v1/round-13-baseline.json": "e416128bb4f620a1a3aedd0be934f27b6c15c248eafb20f5464a022001eedd34",
+      "single-writer-v1/round-13-baseline.resources.json": "d260d59fe27b93ca7c19306dbbb393d369f8f83f02f5103f9931f38becc46171",
+      "single-writer-v1/round-13-candidate.json": "f2bade45899649e43865af18e63413a3f8e18d021551af978af88e4b2a372187",
+      "single-writer-v1/round-13-candidate.resources.json": "e2d78c232b1a16b721bfa561402fc31035596756df6bd8009f3315a4a04d6ea3",
+      "single-writer-v1/round-14-baseline.json": "3f50c921c3b9838991fdb663d0e02585c7aa4c9b72bf9ada923aa90e8c4f155b",
+      "single-writer-v1/round-14-baseline.resources.json": "d3d74198e7e04779b8da62b54edd514c0a35a35980c56278bf7e4f1fe2cdcf8d",
+      "single-writer-v1/round-14-candidate.json": "9e63a0d804b9e31c24334a2459ca4a5d64b9a2fceac8dc92d0db4250b636b603",
+      "single-writer-v1/round-14-candidate.resources.json": "bedfffb8f4238309fda74790a3bfea34e887e6db67a8dccce2d78551a5ba5079",
+      "single-writer-v1/round-15-baseline.json": "0475b01f0bd4b22220ba8afdee6b93a0a00f6c1dbf24d481785645fd6d7029b5",
+      "single-writer-v1/round-15-baseline.resources.json": "3bc6e596d82a9c7cefaf89703f73bd8fa0601970db187577a5618174176906e5",
+      "single-writer-v1/round-15-candidate.json": "3cc8020f871ae2dca52500a1796161a25de51112ea751f63fe69ab4f0cc1041a",
+      "single-writer-v1/round-15-candidate.resources.json": "4572088acb6aea55f4e458f954f5dd0c8c385c7cc31b25f5e9416ba0234d0038",
+      "single-writer-v1/round-2-baseline.json": "a88744db542b59c2d3fd3c4e7a89ccfbd2a5c34dee14e22e32fea5c39336e31c",
+      "single-writer-v1/round-2-baseline.resources.json": "fa272a948e2e54d36df7cc094fad63c6a3ffe69eb5f6281e702676ab9ecfaeb4",
+      "single-writer-v1/round-2-candidate.json": "587a72e99bc718a9b96117eea9fb199bc82edd733d3ecea2e2eb15b5066db9db",
+      "single-writer-v1/round-2-candidate.resources.json": "3755fe0fcc72f80b6496f5cb9d150b43e13c7752f052d12361e63dd5b533ca9c",
+      "single-writer-v1/round-3-baseline.json": "a450516b4381a8eb13b51137d3b96352af6b4ff4f747462ad38104a396d256f6",
+      "single-writer-v1/round-3-baseline.resources.json": "ede847b0a6bb84d6b53e7bdf0751c284725eb9441740c5ba852bc99235ad3332",
+      "single-writer-v1/round-3-candidate.json": "28e202a2bc3893d0b0cdc3c1efdc8b3111fba558db8a9d34ef7c43df5ac9e4db",
+      "single-writer-v1/round-3-candidate.resources.json": "0e181b30269c0f26a527c5a8c4d65a6b8eff072f6158142c79ad758e0b751fc8",
+      "single-writer-v1/round-4-baseline.json": "476c9b47d67a61d8ed1b46a9f9513869efd1a14871a2e5072f915948e811ad97",
+      "single-writer-v1/round-4-baseline.resources.json": "afd434bf52fdbf9b6e15bd4a8411f276475a2d02f88818fff6868068d69e79f8",
+      "single-writer-v1/round-4-candidate.json": "1633fa6b2691a38afc8622163dc7ff9b116be98ee29bc1c44ca7fa140c175111",
+      "single-writer-v1/round-4-candidate.resources.json": "4786e4e1a1533d01d52682316772730303ec4958ef3b8a9417ccf703f77581b6",
+      "single-writer-v1/round-5-baseline.json": "3806ad1df10350a6d59624d6d461857da89f2d680925ac3ae03d537718cdf2dd",
+      "single-writer-v1/round-5-baseline.resources.json": "22d127f41d12578439357df1cab1b6d0117c23834f16b969fdcbef5154a425f2",
+      "single-writer-v1/round-5-candidate.json": "8271039e322d87eb981a1c486edf280e2aa45a8d376764963b1c2e04f44802e0",
+      "single-writer-v1/round-5-candidate.resources.json": "bedfffb8f4238309fda74790a3bfea34e887e6db67a8dccce2d78551a5ba5079",
+      "single-writer-v1/round-6-baseline.json": "4b4493958508b9ebd7e45d8c0a47b1e33ca4866cbadd120f1d595bd922d07de5",
+      "single-writer-v1/round-6-baseline.resources.json": "b2b9ce875366ada2e7ef636e20316b77b14b407f3e17c3f88c2e09fd4ab711e5",
+      "single-writer-v1/round-6-candidate.json": "ce0fe0d6fa8bb5b02d1c065a1f38e2a9dde0defe3308ebf27f590c05ec50ad2b",
+      "single-writer-v1/round-6-candidate.resources.json": "1c68ac00611e0916ef6d0f47ce35acfab200118bbda68e54b617b387efa60dae",
+      "single-writer-v1/round-7-baseline.json": "d1e44a908214787dba8e1b628c39a82c710e82197d280b48990a32d793586342",
+      "single-writer-v1/round-7-baseline.resources.json": "1c68ac00611e0916ef6d0f47ce35acfab200118bbda68e54b617b387efa60dae",
+      "single-writer-v1/round-7-candidate.json": "8c78f38e4507159bb94a821f3b5de1f46e2de04c794205c6c9d66b5131499811",
+      "single-writer-v1/round-7-candidate.resources.json": "fcb907f5158109564e2632c96271b7c0b4bb2a7bd4da72e5856adba5c01ffd0d",
+      "single-writer-v1/round-8-baseline.json": "55f3d97f5604103d52b70ed3207502d9a41b4c6201defd3946f9b95e1c29d546",
+      "single-writer-v1/round-8-baseline.resources.json": "c3f72e234b683ec1cada06f313899408d24ca92feca45b5bb1d67f898343f9e2",
+      "single-writer-v1/round-8-candidate.json": "25f7f9b6509a4bbc5dc0dd433e38df47eb6efd1de7263d7720ef40e0804f4be1",
+      "single-writer-v1/round-8-candidate.resources.json": "3240531bdb11bc8e06f22b9494e2089ea3d8e3a3db99527adfd6ec3604d6afa1",
+      "single-writer-v1/round-9-baseline.json": "12496646637c7220b3989ef6491fd7cf4f2d665570a49604315197567c784b50",
+      "single-writer-v1/round-9-baseline.resources.json": "7c6201a9480701cfe77d24243430db3555c5d5fe30b7fc92034b464b059adcae",
+      "single-writer-v1/round-9-candidate.json": "67b70415da17c495e4969445907fb34015f51ecd5110ce737f28a9a981705c5b",
+      "single-writer-v1/round-9-candidate.resources.json": "0e07ef58415e4e265c4f5049ccda4e4556483605bf4b3bacde640599beb9d964",
+      "single-writer-v1/summary.json": "e021918fe7a6db6058e08a7ba92e252e1865b5bbc83a24548801e380c2de6604",
+      "single-writer-v2/baseline/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v2/baseline/crates/penelope-sqlite/src/machine.rs": "0eee57a3584efa4b723badf71e1330113029ebf4f28e091ce7f57d61c085e7d0",
+      "single-writer-v2/baseline-build.jsonl": "d964fc6a5bbc68cfada397b1e6fb7898a7edc2a8a506db3fb6a7581ed9416cf5",
+      "single-writer-v2/baseline-build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "single-writer-v2/baseline-diff.patch": "4a547390c9dc9f04553a24682388a574d7169c538172f77aaf10debd3e00bf50",
+      "single-writer-v2/candidate/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v2/candidate/crates/penelope-sqlite/src/machine.rs": "fd2d913b034f9d2e91e0fb72e39c718b70b28407b6e4cab381e1230523388134",
+      "single-writer-v2/candidate-build.jsonl": "4a0995fc415d237c0ddb1ff5ad37aa5c105b4f8f9a2d54898e74a4acc16cca0b",
+      "single-writer-v2/candidate-build.stderr": "332e51dabf2de4f9b55d13a4f077788b91991223f741823c2f961718db7ab7d7",
+      "single-writer-v2/candidate-diff.patch": "44f2d195228e4c9d0ac283a0f9ed99db7c55d996486dfd3d9eee5bf24b74e044",
+      "single-writer-v2/metadata.json": "b92090261b93ef259e765eb6edeafd6ef9cd4fdf04e79985fa692996752d50bf",
+      "single-writer-v2/round-1-baseline.json": "ee10de675f9759d92bf75f704edfe113ae56e7696a959a66a800ac92d2e57487",
+      "single-writer-v2/round-1-baseline.resources.json": "042eac480577eca3642134bc16aec554261c94e65f653ef84cae32d1376effac",
+      "single-writer-v2/round-1-candidate.json": "dd7695075b8c79590a6e55cdcd9ad240774b177eb658e3d234b30f035e3ffde4",
+      "single-writer-v2/round-1-candidate.resources.json": "cd52b45f2893a49097fa35baac40b6ef922e8b2d13b7812d78f4beebdf51ebc8",
+      "single-writer-v2/round-10-baseline.json": "f82652a4f4dfc333eea49845c1c3e20ae0b2f81f152efdab688799b3e336da8a",
+      "single-writer-v2/round-10-baseline.resources.json": "1be0803624860bff761bfb171da72de4e49ece12b46662b0590660802bc8b746",
+      "single-writer-v2/round-10-candidate.json": "9beec443d25e27bf75ddb3ba6363b0d15792277daaa9be0aa095383dcbfb3f61",
+      "single-writer-v2/round-10-candidate.resources.json": "4819f416cde3088344a86821f5e43b5f76addcb55245c807adad5a870aee30fe",
+      "single-writer-v2/round-11-baseline.json": "23c1cf8afcbf358b9a033d07afedcb57047b8edd73d542f2715b984cb8fa66ca",
+      "single-writer-v2/round-11-baseline.resources.json": "79da057d132441689a698e90d7ff78df8bea6b1ff42a6159992bc28422826659",
+      "single-writer-v2/round-11-candidate.json": "c37af1df1b2bd67ea8b62859331e4a5626ff52ed8d73600494831be05673069c",
+      "single-writer-v2/round-11-candidate.resources.json": "f016d5567260ed5b174bfd3a5e2ec131f6463bec8978fc3ff9110a71f268eee8",
+      "single-writer-v2/round-12-baseline.json": "069cdd37176903b1d9a17df8d3e1652b43eb337cb788ede52c007ed07d6d3ad7",
+      "single-writer-v2/round-12-baseline.resources.json": "2ee695940eff73930520d10be2d24db10abda4c79b32470601058363179d3808",
+      "single-writer-v2/round-12-candidate.json": "290190a5574e433a0fac5591cccb96d739bd0f21ba5c9ace783e53a461d001ea",
+      "single-writer-v2/round-12-candidate.resources.json": "0c3ae53afdb61e43fe3718378e3ce65392c2c83bab07af41622196daab49f694",
+      "single-writer-v2/round-13-baseline.json": "3aa483d054554dc089b32a4ed7ee1bf196dcf92a8f1376bfd14d073a8d70ce98",
+      "single-writer-v2/round-13-baseline.resources.json": "f016d5567260ed5b174bfd3a5e2ec131f6463bec8978fc3ff9110a71f268eee8",
+      "single-writer-v2/round-13-candidate.json": "27171c70d3f740fe6ccea948a8a66e7bee1dbf4db935567c716720bc35ad9f4a",
+      "single-writer-v2/round-13-candidate.resources.json": "840bc7618fcdd2b217e975e6f1dfdcd3af3a2b5f4175fba80aa6c5e26895381e",
+      "single-writer-v2/round-14-baseline.json": "2fd0df8d28b7a49313f6872f1093962d13bdb53b01c17a3d96f0f7977c4bc34b",
+      "single-writer-v2/round-14-baseline.resources.json": "c305577405a3ee81ed96a0f8ca603eb5fe66d7a03392a49ac30cfd50d92635f1",
+      "single-writer-v2/round-14-candidate.json": "e457ec81c8bc4784add94f88604704f85a0d90ab0653ea5ef8068e4a471d3f20",
+      "single-writer-v2/round-14-candidate.resources.json": "dbc4d67d47ff60db4088aba909fe3acef8bcbd17c421f7ef2a1c9747d9213b36",
+      "single-writer-v2/round-15-baseline.json": "b19dcaa5f3a581c894f9c50765a40992054805738b121cf065ead01f6248bfa9",
+      "single-writer-v2/round-15-baseline.resources.json": "fcb907f5158109564e2632c96271b7c0b4bb2a7bd4da72e5856adba5c01ffd0d",
+      "single-writer-v2/round-15-candidate.json": "b2c6883a07985ceead8fa632d9c3eb38a1d5b206e9f37d3b78b992f17f83a368",
+      "single-writer-v2/round-15-candidate.resources.json": "b76fdf0b12015ae648c65c86eb7627726377c77c4a2523a3b7589de38c84cb65",
+      "single-writer-v2/round-2-baseline.json": "d0784768eb287cbc89ea7227b639f884bbb9e9ff31ae1932eaf962e6b8b8b8fb",
+      "single-writer-v2/round-2-baseline.resources.json": "b6138c999ca25fb63a8c7f2c366a8f67b545cac73735302663dec7e5646c18b3",
+      "single-writer-v2/round-2-candidate.json": "2eb7e44f79e5cf2ecade553d87f521b2b9169c7eb39aedb2b33f232e06c4c51d",
+      "single-writer-v2/round-2-candidate.resources.json": "f35f89abd866ad62f937980906e61c2f969dff9f7ec62526363c5f8ebb154118",
+      "single-writer-v2/round-3-baseline.json": "75f9dbc7c476bbdb34da96d03c25a1d6995534584093f8d5953fee5c11f64611",
+      "single-writer-v2/round-3-baseline.resources.json": "bedfffb8f4238309fda74790a3bfea34e887e6db67a8dccce2d78551a5ba5079",
+      "single-writer-v2/round-3-candidate.json": "4c4de260b22d28cd7d76a72ab03e8d37059e5a2859c721342c1106a517fb36d9",
+      "single-writer-v2/round-3-candidate.resources.json": "b76fdf0b12015ae648c65c86eb7627726377c77c4a2523a3b7589de38c84cb65",
+      "single-writer-v2/round-4-baseline.json": "6f63814e239c9d14eecc83ce1fa2c759dba2957ee59881981c4e34e82f8b03d1",
+      "single-writer-v2/round-4-baseline.resources.json": "be66fd15b9d48628686588aa65e162aaeec0c49cf22435036c7f805c51e4addb",
+      "single-writer-v2/round-4-candidate.json": "a2755824824bc76fb4a478868571c5c667cb7a020a77af7a9238a59b4e1f91a5",
+      "single-writer-v2/round-4-candidate.resources.json": "105b1b8912ffece72338421d39b28f95c076d67b1c2656a7c0e21cc17c93658b",
+      "single-writer-v2/round-5-baseline.json": "cb0503286aabfbfb5dc299214fcff52a5e8211dab7f1cfdd5ca17b3570a00f5f",
+      "single-writer-v2/round-5-baseline.resources.json": "8a71ea78af5524756d0fe30c5c2488372c177608f4888b81ff87cea0ab049c58",
+      "single-writer-v2/round-5-candidate.json": "3bec5a37563a6123bbe011edf09a66ddc72daa8e8b1bc135017e002d1f100bd8",
+      "single-writer-v2/round-5-candidate.resources.json": "3627bc3beb418d95b57d0992519174f1bf3c9dd5e308937df14ae33ec5aba42e",
+      "single-writer-v2/round-6-baseline.json": "5c919ec4094b20cdccb5c8d6a8ab29935055c6fe5e6327c78cebb8c07b764553",
+      "single-writer-v2/round-6-baseline.resources.json": "55d32b5b22f73699e10d76e1451b9ea21bbf7553b51aa24c10758bf2000d7147",
+      "single-writer-v2/round-6-candidate.json": "fa925f46b255feb833c73b79cdb2eb81d514c8b792d7d95268199f10fde45818",
+      "single-writer-v2/round-6-candidate.resources.json": "2845be47749a31d01781c9bcae63cdb356fa852ac5388de83a4b1be128c5ac44",
+      "single-writer-v2/round-7-baseline.json": "f550f632e6114d302604ce72441e2b28efde4010c4f3acc820f8a93b5f2a40ad",
+      "single-writer-v2/round-7-baseline.resources.json": "a008f38f1817e116e34830cc9b4b130df044cb9f05aab98dbfc1b29726c70eb8",
+      "single-writer-v2/round-7-candidate.json": "1b994c5ad405a90ac4317c6a651058811b8b8e5ae16ce758ae587e89009fc4c6",
+      "single-writer-v2/round-7-candidate.resources.json": "393e059c507f799344a55f72bad28e7481d8f296e998ca4db9d5ccf073b22b2b",
+      "single-writer-v2/round-8-baseline.json": "4f3892bf73aaaaaab4e3995bba256fea1272aa84d8c6dc6cede0919e4dd7d624",
+      "single-writer-v2/round-8-baseline.resources.json": "4c557e6951ecac2b59bc8b98c86dc34041e110075a42b97999356a6e26159ca8",
+      "single-writer-v2/round-8-candidate.json": "be01b0186f9e99f6b75296bb4242fbb85056a87048044ccbad069b67f712f635",
+      "single-writer-v2/round-8-candidate.resources.json": "af7c15e9b9b4366510670608cfaa139c16e88a7b945a2ebf9b965c0cc735aa23",
+      "single-writer-v2/round-9-baseline.json": "44495e993f4b818fd7c40ec409c5a25b40c0fd5d812effb8055f7dd89de9683c",
+      "single-writer-v2/round-9-baseline.resources.json": "6c33fa175145ed6f58d9fae4ce14fdc6932ee3b61eeb428ce686155de0ba9742",
+      "single-writer-v2/round-9-candidate.json": "719870d2a215a04a0b606739b51e1422234ee3ceca14f3f758d2648324a8bb2c",
+      "single-writer-v2/round-9-candidate.resources.json": "55d32b5b22f73699e10d76e1451b9ea21bbf7553b51aa24c10758bf2000d7147",
+      "single-writer-v2/summary.json": "2124024283462b7d2eea5558d3a8655bfbb848aea5b531a467fd47afafa7273f",
+      "single-writer-v3/baseline/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v3/baseline/crates/penelope-sqlite/src/machine.rs": "0eee57a3584efa4b723badf71e1330113029ebf4f28e091ce7f57d61c085e7d0",
+      "single-writer-v3/baseline-build.jsonl": "9d562d5c9543eb79161512e917f3507398203f52e938e4f6f7ca34ca22d90397",
+      "single-writer-v3/baseline-build.stderr": "cee04e492ed2c4825c7eccf776bfe8d701dca184d262fcd74a6c533c53cf008b",
+      "single-writer-v3/baseline-diff.patch": "4a547390c9dc9f04553a24682388a574d7169c538172f77aaf10debd3e00bf50",
+      "single-writer-v3/candidate/crates/penelope-sqlite/benches/machine_store.rs": "d8f42a6c34e3e2a2b899a8e383a85c394e46555f28de0bca901100430eeab078",
+      "single-writer-v3/candidate/crates/penelope-sqlite/src/machine.rs": "d226d82febd0d2db1d734efff0ae79eebcc15326a523f64502582d7a36a48363",
+      "single-writer-v3/candidate-build.jsonl": "a72115dcefc13f9aba6305ad9d04f89d736eef2e69612be0643244bae01727ec",
+      "single-writer-v3/candidate-build.stderr": "0813eb988686435c6a917a5913918ecea36fe44568215c905866c40bce81bb32",
+      "single-writer-v3/candidate-diff.patch": "4d81ebae873cb6d2c92b0b12696ccc3af7370c31d195067dedef8583fa14506b",
+      "single-writer-v3/metadata.json": "03cd2eddf548f4f445ce1fb0d165565fe7fa1c68e90693564138892f3b63eec8",
+      "single-writer-v3/round-1-baseline.json": "985d553319a37583368aa317171b3b43f13cb8dfc5a18f3dcf1390572294c618",
+      "single-writer-v3/round-1-baseline.resources.json": "8087ebdb753299069b849e25ccbf5001e7aa9b94906fb7bbff757e6ce1424d8c",
+      "single-writer-v3/round-1-candidate.json": "5dc21c5f2ab1878d80b9693dff546b0dbaa5867cc4b3ea5397398afa648a66ac",
+      "single-writer-v3/round-1-candidate.resources.json": "9e23b86486405041afee96ceab959e63f867dc172af9997f309050331645e3c5",
+      "single-writer-v3/round-10-baseline.json": "0dc79e8cf2dd579f400d055c2505d6714b298ca97dc48b6a12a2beade8a58ff9",
+      "single-writer-v3/round-10-baseline.resources.json": "e84b38a5faa8d7021039d090a478fd65cc51049454e13d6508d69ef2eb5b4536",
+      "single-writer-v3/round-10-candidate.json": "bacb67968aa6a424b41425d8c2e4d833857db7b5a39c099ec0487951ef2188bf",
+      "single-writer-v3/round-10-candidate.resources.json": "3e6530b686509c9bba4ec4175ea7d57e7ea582c9c47886cde20f74b05e428051",
+      "single-writer-v3/round-11-baseline.json": "cd7cc293d00f98c0b1bd43cb3ea3ddb6273ea452476bbde42b4303ed3bd4276e",
+      "single-writer-v3/round-11-baseline.resources.json": "27af6ddefab4cdce55ad40c2e2d21b6312805a0bd5777f9b3810cc32eba871a2",
+      "single-writer-v3/round-11-candidate.json": "1454f0ac91cb878cbec9473c41c48a840c1061bc71b3bf18cd4d77b39ea72d64",
+      "single-writer-v3/round-11-candidate.resources.json": "9bcb58b91efb7f5e31cd09124d0287eb984899bba1b94b0c57a659791b2fec6c",
+      "single-writer-v3/round-12-baseline.json": "b27eddd2452aa37a13257d8af986207661543694fb5373a76eeafb53ed53e64d",
+      "single-writer-v3/round-12-baseline.resources.json": "69f01d72d627a3da5eaa8aeacab0ca9d3f101f77c2d5442c65bbd4bab154b273",
+      "single-writer-v3/round-12-candidate.json": "e0c7573a9a83db6cfeb5a85fef434f024743d00e75917fcf2d8e2c5bdfd34cf9",
+      "single-writer-v3/round-12-candidate.resources.json": "6c33fa175145ed6f58d9fae4ce14fdc6932ee3b61eeb428ce686155de0ba9742",
+      "single-writer-v3/round-13-baseline.json": "606aebcfdb37d27e1aa729b5ebbe6d5607e5168a477e23e937514e5c6162ad9e",
+      "single-writer-v3/round-13-baseline.resources.json": "ca60527d725b7bfae6a98897cb9bd6b895a12d8fc08edd513ffc9d3cd6ab0fd6",
+      "single-writer-v3/round-13-candidate.json": "31326cdd9c0791dd4bf1bd239ab6878c46ada28472b52dc0134887f58657180c",
+      "single-writer-v3/round-13-candidate.resources.json": "0e6e29f07f5d9bfb7362689ecc2dcf86aa5da9b5310531acfd2e5c0f6188ba5f",
+      "single-writer-v3/round-14-baseline.json": "00e8dda9ed04b977cea49b7ad245525aae65ce6439996b947a6d9623cc00a2d3",
+      "single-writer-v3/round-14-baseline.resources.json": "5584541c82cbd37bd67aaae53d0b163c9d761e40d38dcf505f83ce09144e9bdd",
+      "single-writer-v3/round-14-candidate.json": "18c158715b0e54a7266af8e16880e74f6228027aabfcaa8fff123af5c8c70e99",
+      "single-writer-v3/round-14-candidate.resources.json": "efaf04966f636aee383787758e8b99c61f04e1b787d954a8ef84a0edb8296b5b",
+      "single-writer-v3/round-15-baseline.json": "015752112bc86f9efbad8dcfc6a2303d6bc8875e42f2896314c97635941f81ff",
+      "single-writer-v3/round-15-baseline.resources.json": "55d32b5b22f73699e10d76e1451b9ea21bbf7553b51aa24c10758bf2000d7147",
+      "single-writer-v3/round-15-candidate.json": "c9f90c131df4984d3dc904cc24ffb3f2096a1a3c49e0dfa33029040139228d70",
+      "single-writer-v3/round-15-candidate.resources.json": "4f09a89d26c889062acf6231068f6ac286f69ae154288ac458d56ba5cba38fe9",
+      "single-writer-v3/round-2-baseline.json": "1dd5ce22deec846b7c97eb2782195fd567dbc6b1d614b333c439c43fc7a5081d",
+      "single-writer-v3/round-2-baseline.resources.json": "bdd77328231ecff6ea531bd01c530893159769810b9455b1f3f6823267e1fb3b",
+      "single-writer-v3/round-2-candidate.json": "3d71f2e2d204c4ae770a542e16885eaa465f9d02a73a3c5babdd270666ccad0e",
+      "single-writer-v3/round-2-candidate.resources.json": "7cabf54e6a83c55f2dca7b43d0bcefc1966905a5e64f7889f9e568f114c2b2d3",
+      "single-writer-v3/round-3-baseline.json": "2fbf19e2bace3a55487917fe7665a8580716224a840b9b6e448223c1a6bf640b",
+      "single-writer-v3/round-3-baseline.resources.json": "eaff9e22bffea2fe19f41a2ab3f8cba965f2b1e26f2adbc80fbfa84aa91fa34e",
+      "single-writer-v3/round-3-candidate.json": "4bb41b40bb2ef475eadc90d46b2fa4d824e6b3bf51216b8d5184259f88b6e1bf",
+      "single-writer-v3/round-3-candidate.resources.json": "9473732303f2870ccb8427efb3dd7d60176b237d3692a4f76124388becf4585b",
+      "single-writer-v3/round-4-baseline.json": "7bf43cb7c109734629387f24d190d43e42b34726ca00ad767f9841480b53b134",
+      "single-writer-v3/round-4-baseline.resources.json": "d8b019de70bac5bb1c9f434404ea2f48b98123e744758b60262387f2045be68f",
+      "single-writer-v3/round-4-candidate.json": "b526e58180cb1ec22183e51f1354ec6de71d65ec6bff34079417a23d7b76a33a",
+      "single-writer-v3/round-4-candidate.resources.json": "165e3b3dae471d83eb484905146c68bb6649d5ce4e6fd232cd24e081131e9b01",
+      "single-writer-v3/round-5-baseline.json": "20def67991999c1308c198144bdaf13b0cfbd27bc7754e1c0b971549329b7ad3",
+      "single-writer-v3/round-5-baseline.resources.json": "7599c9fda880f11c71b7d1394509a0786822847011911a0a94296539296e2585",
+      "single-writer-v3/round-5-candidate.json": "59cf953072a50cd453ee51c57ea30cf0c7f6545f50207444056eb710a3fa574f",
+      "single-writer-v3/round-5-candidate.resources.json": "390efcf4f3dd291eb4d2fc898e678dd4c4b91ee9f3251e84f93229357a8a46b4",
+      "single-writer-v3/round-6-baseline.json": "6da0925addc8b2bde49cb9b1ee1f00a30e5cd06152b9b527d63d6691aa55f2f3",
+      "single-writer-v3/round-6-baseline.resources.json": "375c3b55879f77f700e3a9010287e7e7421f94e517885a356c69b04a44134bf1",
+      "single-writer-v3/round-6-candidate.json": "56a72c30d3d0270fb0aa8bf946163e0a136a940386fc738b07aa5864d7f8c303",
+      "single-writer-v3/round-6-candidate.resources.json": "d7c39c0a2af00f81805b0c0ab1fc84ad47e1f8c86252dcf38b58e241bc84b626",
+      "single-writer-v3/round-7-baseline.json": "738e3e9c7603113284afd18d606e18b0bb722d9b132a4ab4c7ec3644d8e2edb8",
+      "single-writer-v3/round-7-baseline.resources.json": "496925fb21f92562f0fdca382aaabca99ce639de1621c7ec91b307b9a1b70807",
+      "single-writer-v3/round-7-candidate.json": "28bc7e86d66e7f808ba5442965ed72b70c71daa9d7cf2993873ed1a4c3504770",
+      "single-writer-v3/round-7-candidate.resources.json": "146d013921b32accf56daba663db5086b95f12eb63d77b2ba04d11493c0a4ce9",
+      "single-writer-v3/round-8-baseline.json": "0c3f5a64cf67ec521aeb62742e7e4d88c446de5bac84cae19d3bebc33dd11fed",
+      "single-writer-v3/round-8-baseline.resources.json": "3d7a30e9cdf98c0c052e3e2c5747c5667093f8ef71e051b73078370a51bf772e",
+      "single-writer-v3/round-8-candidate.json": "2fb96e4c525b322cf37f6d09c1e59e106be44a39b921539efceab03c461f0b87",
+      "single-writer-v3/round-8-candidate.resources.json": "968e5d5d7da03e9be3b7ae6075545d2bd5c63056b57a175e8741ca9a620953c9",
+      "single-writer-v3/round-9-baseline.json": "da51f074cdc4d7cb0293398d473ad8276e2fd1dffa786020a43a2ee3eee80b04",
+      "single-writer-v3/round-9-baseline.resources.json": "e39db26fcfc27b41d540a80a1d1159c363c527c5d78aaba6680a9f30b9f050ee",
+      "single-writer-v3/round-9-candidate.json": "457bb3c800b2a9da3d94955cabcaf351b966fe0d721e91022c63c416ced08c79",
+      "single-writer-v3/round-9-candidate.resources.json": "d07e8a717b68a17f241d08e02fcef43bb4b5daef23572c08e0dc766a7ce194b4",
+      "single-writer-v3/summary.json": "402e0d2d10ea362243b42daa93f5bb418b7d7d373af4eead3158e8a1d46c548a",
+      "drivers-and-logs/penelope-qualify-machine-preflight.py": "111bf341b712b2bf4c8fb603aa28b905c2f37d0003d75d3e149c43ddcc2f847a",
+      "drivers-and-logs/penelope-qualify-machine-preflight-final.py": "a56fdfed14a110fc49f03c7f448ddf4fed4eb8698c2ec37d5edd35e8a8aa3c92",
+      "drivers-and-logs/penelope-machine-preflight-single-v1.py": "a805c7264b88a584bd4d34ed54a18f8b1103af6439d1af697e863a02f0ba5a85",
+      "drivers-and-logs/penelope-machine-preflight-single.py": "950f2019cd067342bbd643d85e60c9e20e128b1ac90fde3a033b01a2d74143ef",
+      "drivers-and-logs/penelope-machine-preflight-evaluation.log": "b746d89f589d536aaac63fa1f233a2c9a9fbda76111f02df57dd19b4dd7edd12",
+      "drivers-and-logs/penelope-machine-preflight-final-evaluation.log": "b746d89f589d536aaac63fa1f233a2c9a9fbda76111f02df57dd19b4dd7edd12",
+      "drivers-and-logs/penelope-machine-preflight-single.log": "fbcc07790e0d69cbb87121ae21a788181e8432f6dd85a95ff5d2d5ee54d2751c",
+      "drivers-and-logs/penelope-machine-preflight-single-v2.log": "fbcc07790e0d69cbb87121ae21a788181e8432f6dd85a95ff5d2d5ee54d2751c",
+      "drivers-and-logs/penelope-machine-preflight-single-v3.log": "fbcc07790e0d69cbb87121ae21a788181e8432f6dd85a95ff5d2d5ee54d2751c",
+      "drivers-and-logs/penelope-machine-preflight-extra-checks.py": "74f0cfe586706e0d52caaf05a4df05a20ac7659c4a5f68acbf3ed7259266dded",
+      "drivers-and-logs/penelope-machine-preflight-extra-checks.log": "43cc1e0cb2cf5b19863321f95f6c82601600afbd9787fd5738b7def30cadc085",
+      "drivers-and-logs/penelope-machine-preflight-graph-update.log": "ee11d02855c9bc289c1b71f1c086ba669eddc93bfff7463348efd0e2979a8e48",
+      "extra-checks/msrv-performance.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "extra-checks/msrv-performance.stdout": "4bf1e7e638c994f86c459dd787c293f355f0b8478389dd74efe24b1fabd7afeb",
+      "extra-checks/debug-1.89.0-machine_backpressure.stderr": "6186444339b48cce541a0f39bf8fc3efb11882ec7eef91c5499ab0ad45df0d2a",
+      "extra-checks/debug-1.89.0-machine_backpressure.stdout": "80d7b081c89fb51e3246cfad74c61d173d77fb907a5ed75646c2c935bb184fca",
+      "extra-checks/debug-1.89.0-machine_store.stderr": "9552f5b5a8cb966e1bd4b5758c36373a28bbf31d88dd1100778ca1f1e4cba6fe",
+      "extra-checks/debug-1.89.0-machine_store.stdout": "f343a7b6c2644986d8273f4b118d6f640b9aa5e95e54ec48afb44141880fc796",
+      "extra-checks/debug-1.100.0-machine_backpressure.stderr": "35824dd51d6d29af3934d3d386daa35e48ff7469213d8c2bf9b5032ace2b9559",
+      "extra-checks/debug-1.100.0-machine_backpressure.stdout": "c8b3f7d621eb1181d1bb1c572e1c32d35cca017dccfae525eecab0fc19b5b905",
+      "extra-checks/checks.json": "761c2f7a719db243dc2c3e5dd89a6e2beb8c1ce2d8c8056f998eccdac13f87c9",
+      "extra-checks/debug-1.100.0-machine_store.stderr": "c4c3ea57816ccefda74f6b85f0ef062fd8598960767ffa6f6e185ce85ebc0c49",
+      "extra-checks/debug-1.100.0-machine_store.stdout": "97331b2d3e7a25da43d5aac22039080b35232abbd213352ca04e8a9a2acc2b61",
+      "extra-checks/msrv-performance/run-1.resources.json": "382a6b15caafc00af9b754c0acd8bcf887724344f4d6ea8b346a065944223e22",
+      "extra-checks/msrv-performance/run-1.json": "d1f34ab143d7a5b0e12c6b6b3faa04c8f5b5f7845f9a629a64543c8bcffccad9",
+      "extra-checks/msrv-performance/metadata.json": "20ce12b76f3b6dad7b0be3489ff98b96bd3e68eaf8cbffb53b61e084b03d56c4",
+      "extra-checks/msrv-performance/build.stderr": "b8b3f8626679607eabe6119d7b4f4c19798f4b22912ed1df24abc8d4a7dd21bf",
+      "extra-checks/msrv-performance/build.jsonl": "eef3fab826f710c619fde2b9f7403dad74261cc02c40d66933fc011ff9ec0a0b"
+    }
+  }
+}
