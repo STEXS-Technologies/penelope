@@ -2,7 +2,7 @@
 #[path = "support/counter.rs"]
 mod counter;
 use counter::{Counter, DEFINITION};
-use penelope::{core::task::Digest, machine::*, timeline::*};
+use penelope::{machine::*, timeline::*};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let machine_scope = MachineScope {

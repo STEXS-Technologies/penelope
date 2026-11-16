@@ -26,7 +26,7 @@ To try the included example first:
 ```sh
 git clone --branch refactor/unified-state-execution https://github.com/STEXS-Technologies/penelope.git
 cd penelope
-cargo run -p penelope --example counter_machine --locked
+cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked
 ```
 
 For the published API, use `cargo add penelope@0.4.0` and its

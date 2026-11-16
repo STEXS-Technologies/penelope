@@ -1,6 +1,6 @@
 [package]
 name = "penelope"
-description = "Deterministic saga orchestration, recoverable task execution and optional rewindable timelines."
+description = "Typed state machines, saga coordination, recoverable tasks and optional rewindable timelines."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

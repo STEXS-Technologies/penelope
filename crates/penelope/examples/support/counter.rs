@@ -36,7 +36,7 @@ impl Machine for Counter {
         intents.stage(ProposedIntent {
             metadata: IntentMetadata {
                 identity: MachineIntentId::from_bytes(context.event.bytes()),
-                digest: penelope::core::task::Digest::of(&next.to_le_bytes()).0,
+                digest: Digest::of(&next.to_le_bytes()).0,
                 payload_bytes: 8,
             },
             payload: next,

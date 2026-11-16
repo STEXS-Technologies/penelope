@@ -20,6 +20,10 @@ timeline = ["penelope/timeline"]
 protected = ["durable", "dep:penelope-process-runtime"]
 
 [[bin]]
+name = "first-machine"
+path = "first_machine.rs"
+
+[[bin]]
 name = "flat"
 path = "../../crates/penelope/examples/counter_machine.rs"
 

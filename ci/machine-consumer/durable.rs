@@ -7,7 +7,7 @@ use penelope::saga::{
     StepPlan,
 };
 use penelope::task::{
-    Digest, EffectContract, ExecutionBudget, MachineTaskReceiver, RecoveryMode, TaskDefinition,
+    EffectContract, ExecutionBudget, MachineTaskReceiver, RecoveryMode, TaskDefinition,
     TaskRecoveryPolicy, TaskSequence, TaskTick,
 };
 use penelope::{ContentDigest, LogicalTime, ProcessActionKind};
@@ -114,7 +114,7 @@ fn commit_counter(
     let context = TransitionContext {
         expected: machine.read().0,
         event: event_id,
-        event_digest: penelope::core::task::Digest::of(&event.to_le_bytes()).0,
+        event_digest: Digest::of(&event.to_le_bytes()).0,
         logical_time: MachineLogicalTime::new(logical_time),
     };
     let mut state = [0; 8];

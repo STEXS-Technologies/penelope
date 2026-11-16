@@ -15,6 +15,8 @@ mod memory;
 mod view;
 mod wire;
 
+/// Shared SHA-256 content identity; hashing does not authenticate an event.
+pub use crate::task::Digest;
 pub use contracts::*;
 pub use hierarchy::*;
 pub use identities::*;

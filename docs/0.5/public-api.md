@@ -6,7 +6,7 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 
 | Entry point | Current role | Compiled consumer |
 | --- | --- | --- |
-| `penelope::machine` | Pure model, bounded owner, consuming local publication, hierarchy | `counter_machine`, `nested_order` |
+| `penelope::machine` | Pure model, bounded owner, consuming local publication, hierarchy | `first-machine` tutorial consumer, `counter_machine`, `nested_order` |
 | `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `ci/saga-parity` |
 | `penelope::task` | Task record/projection/control contracts, prepared record inspection, hosted supervisor | `prepared_decisions`, existing recovery examples |
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
@@ -18,6 +18,11 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 by diagnostics. Its associated types preserve each engine's native state,
 provenance and intents. It is not a generic commit/dispatch trait. Application
 implementations of this inspection trait are likewise not admission evidence.
+
+Start with `MemoryMachine::handle` for immediate local preparation, validation
+and publication. `machine::Digest` reexports the shared SHA-256 content identity;
+existing `task::Digest` imports name that same type. Local hashing authenticates
+neither the caller nor an external result.
 
 `MemoryMachine::prepare` returns an exclusive consuming handle; dropping aborts,
 and `publish` makes the local state/head/intent tuple visible. Its view contains

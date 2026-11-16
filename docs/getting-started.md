@@ -57,12 +57,11 @@ fn main() -> Result<(), MachineFailure<MachineError>> {
     let context = TransitionContext {
         expected: counter.read().0,
         event: MachineEventId::from_bytes([4; 32]),
-        event_digest: penelope::core::task::Digest::of(&event.to_le_bytes()).0,
+        event_digest: Digest::of(&event.to_le_bytes()).0,
         logical_time: MachineLogicalTime::new(1),
     };
-    if let PrepareDecision::Ready(prepared) = counter.prepare(&event, context)? {
-        prepared.publish();
-    }
+    let outcome = counter.handle(&event, context)?;
+    assert!(matches!(outcome, HandleOutcome::Accepted(_)));
     println!("count = {}", counter.read().1);
     Ok(())
 }
@@ -70,9 +69,13 @@ fn main() -> Result<(), MachineFailure<MachineError>> {
 
 Run `cargo run`. It prints `count = 3`.
 
-`Counter` defines the transition. `prepare` computes and validates a candidate;
-`publish` makes it visible. Dropping the prepared handle leaves the current state
-unchanged. This example keeps state in memory and performs no external effects.
+`Counter` defines the transition. `handle` prepares, validates and publishes it in
+one call. Its `HandleOutcome` distinguishes accepted, rejected and unhandled
+events; errors return through `Result`. This example keeps state in memory and
+performs no external effects or historical event deduplication.
+
+Use `prepare` when you need to inspect or persist a candidate before publishing
+it. Dropping the prepared handle leaves the current state unchanged.
 
 The fixed IDs are demonstration values. In an application, assign stable tenant,
 instance and event identities, pin the definition/schema identity, and bind each
