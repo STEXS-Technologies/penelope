@@ -1,0 +1,459 @@
+{
+  "schema": 1,
+  "source_revision": "83c361ad3c2778af89643211edd880bc8496f32f",
+  "benchmark": "crates/penelope-sqlite/benches/machine_backpressure.rs",
+  "scope": "Authorized public machine commits submitted in one burst while an independent SQLite connection holds BEGIN IMMEDIATE. Queue capacities 1/8, burst sizes 32/128; one shared head, distinct event identities and the real shared bounded worker.",
+  "reuse": "Existing journal integration model/codec/preparation/async driver and durable measurement runner. No new evaluator, worker or queue implementation. Legacy runner default and fixtures preserved.",
+  "profiles": {
+    "capacities": [
+      1,
+      8
+    ],
+    "bursts": [
+      32,
+      128
+    ],
+    "measured_rounds": 101,
+    "warmup_rounds": 8,
+    "current_runs": 3,
+    "rust_current": "1.100.0",
+    "msrv_runs": 1,
+    "rust_msrv": "1.89.0",
+    "debug": "All dimensions/invariants, 1 warmup and 3 measured smoke rounds; the actual measurement helper refuses these results.",
+    "storage": "NVMe Btrfs, existing SQLite WAL/FULL configuration and busy timeout, CPU4. Independent writer lock released immediately after submitting the burst; no sleeps or private queue access."
+  },
+  "oracle": "Each burst accepts between 1 and capacity+1 requests, refuses every other request as Capacity during its first poll, then produces exactly one Committed receipt and admitted-1 StaleHead results after lock release. Winner identity, exact retry, full retained payload/intent, snapshot state/revision, final event/intent counts and SQLite integrity checked. Each profile ends with 109 events/intents including warmup.",
+  "timing": "Individual call construction + first poll for refusal and accepted admission. Future destruction after a ready refusal is outside timing. Accepted completion includes deliberate writer-lock gating, burst submission and sequential caller draining. These are separate populations. Raw samples are chronological pooled per-call values; raw per-round counts give population sizes. Model preparation and post-call assertions are untimed. No timer subtraction or outlier removal.",
+  "qualification": {
+    "checks": [
+      {
+        "label": "measure-1.100.0",
+        "args": [
+          "python3",
+          "scripts/benchmark-durable-store.py",
+          "/tmp/penelope-machine-backpressure-qualification/1.100.0",
+          "--data-parent",
+          "/home/ac/projects/penelope/target",
+          "--cpu",
+          "4",
+          "--benchmark",
+          "machine_backpressure",
+          "--runs",
+          "3",
+          "--toolchain",
+          "1.100.0"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 14.157299757003784
+      },
+      {
+        "label": "debug-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-sqlite",
+          "--bench",
+          "machine_backpressure"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.15440583229064941
+      },
+      {
+        "label": "worker-tests-1.100.0",
+        "args": [
+          "cargo",
+          "+1.100.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-sqlite",
+          "--lib",
+          "worker::tests"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 2.313519239425659
+      },
+      {
+        "label": "measure-1.89.0",
+        "args": [
+          "python3",
+          "scripts/benchmark-durable-store.py",
+          "/tmp/penelope-machine-backpressure-qualification/1.89.0",
+          "--data-parent",
+          "/home/ac/projects/penelope/target",
+          "--cpu",
+          "4",
+          "--benchmark",
+          "machine_backpressure",
+          "--runs",
+          "1",
+          "--toolchain",
+          "1.89.0"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 6.505437135696411
+      },
+      {
+        "label": "debug-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-sqlite",
+          "--bench",
+          "machine_backpressure"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.9277100563049316
+      },
+      {
+        "label": "worker-tests-1.89.0",
+        "args": [
+          "cargo",
+          "+1.89.0",
+          "test",
+          "--locked",
+          "-p",
+          "penelope-sqlite",
+          "--lib",
+          "worker::tests"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.09220623970031738
+      },
+      {
+        "label": "legacy-runner-default",
+        "args": [
+          "python3",
+          "scripts/benchmark-durable-store.py",
+          "/tmp/penelope-machine-backpressure-qualification/legacy-default",
+          "--data-parent",
+          "/home/ac/projects/penelope/target",
+          "--cpu",
+          "4",
+          "--runs",
+          "1"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 5.320943117141724
+      },
+      {
+        "label": "expected-debug-refusal",
+        "args": [
+          "python3",
+          "scripts/benchmark-durable-store.py",
+          "/tmp/penelope-machine-backpressure-qualification/expected-debug-refusal",
+          "--data-parent",
+          "/home/ac/projects/penelope/target",
+          "--cpu",
+          "4",
+          "--benchmark",
+          "machine_backpressure",
+          "--runs",
+          "1"
+        ],
+        "exit_code": 1,
+        "expected_exit": 1,
+        "seconds": 4.06756067276001
+      },
+      {
+        "label": "clippy",
+        "args": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "-p",
+          "penelope-sqlite",
+          "--bench",
+          "machine_backpressure",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.0856935977935791
+      },
+      {
+        "label": "format",
+        "args": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.6334850788116455
+      },
+      {
+        "label": "diff",
+        "args": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit": 0,
+        "seconds": 0.004078388214111328
+      }
+    ],
+    "worker_tests": "Four existing worker queue/cancellation/panic tests pass on each compiler.",
+    "clippy": "Strict selected benchmark/all-feature Clippy passed.",
+    "script_tests": "75 script tests passed; py_compile, formatting and diff checks passed.",
+    "default_runner": "Actual unchanged-default legacy durable_store run passed.",
+    "negative_mode": "CARGO_PROFILE_BENCH_DEBUG_ASSERTIONS=true actual helper run exits1 with full-release-profile refusal after all smoke invariants pass.",
+    "package": "Benchmark and shared fixture included by package --list; no package build/publication claim.",
+    "graph": "AST update completed."
+  },
+  "assessment": [
+    "All measured bounds, receipts, histories, raw counts/ranks and expected debug-mode refusal passed. Current refusal medians were 60 ns; pooled p99 ranged 140-260 ns across profiles/runs. These tiny intervals include timer/allocator/codegen effects and clock quantization; they are not latency guarantees.",
+    "Queue occupancy can be capacity or capacity+1 depending on worker scheduling; the active job is separate from the bounded channel. The fixture tolerates this real scheduling variation without widening configured limits.",
+    "Capacity is a broader public error class. Here known valid requests, fixed bounds and the controlled writer gate identify queue pressure. Other Capacity errors may represent payload/history/storage limits.",
+    "The native pipeline remains a separate real execution measurement. This profile measures machine-store queue backpressure, not native process max_live saturation, task scheduler throughput or external effect CPU.",
+    "The candidate API immediately refuses excess valid requests and preserves one authoritative transition. Gated accepted-completion observations are not steady-state latency or a service-capacity estimate. No performance waiver, security downgrade or weakened check.",
+    "Whole-process RSS is retained by the runner; allocations/stack and per-operation disk writes are not measured. CPU pinning does not isolate frequency/system load; the long chaos campaign runs on CPUs8-15. Final qualification and legacy performance findings remain open."
+  ],
+  "binary_hashes_recorded_after_checks": {
+    "1.100.0": {
+      "path": "/home/ac/projects/penelope/target/sqlite-performance-after/release/build/penelope-sqlite/cfc9ad679a77777b/out/machine_backpressure-cfc9ad679a77777b",
+      "sha256": "9bd410fbb3aabed1d2245f207e9b5cbb1bb75b1829afb63ff00e4d20d4714160",
+      "timing": "Hash read after checks; positive release artifact retained separately from debug-assertion override."
+    },
+    "1.89.0": {
+      "path": "/home/ac/projects/penelope/target/sqlite-performance-after/release/deps/machine_backpressure-c9a21514a9de53c1",
+      "sha256": "1a9ed5ec98121f9e5e00f7f60e4b83c776c38caaec56a08e1a2409d1178bbbdb",
+      "timing": "Hash read after checks; positive release artifact retained separately from debug-assertion override."
+    }
+  },
+  "selected_observations": {
+    "1.100.0/run-1.json": [
+      {
+        "queue_capacity": 1,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 150,
+        "refusal_p99_ns": 221,
+        "refusal_samples": 3131,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 1,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 90,
+        "refusal_p99_ns": 160,
+        "refusal_samples": 12827,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 150,
+        "refusal_p99_ns": 230,
+        "refusal_samples": 2424,
+        "admitted_samples": 808
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 81,
+        "refusal_p99_ns": 151,
+        "refusal_samples": 12120,
+        "admitted_samples": 808
+      }
+    ],
+    "1.100.0/run-2.json": [
+      {
+        "queue_capacity": 1,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 130,
+        "refusal_p99_ns": 220,
+        "refusal_samples": 3131,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 1,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 90,
+        "refusal_p99_ns": 140,
+        "refusal_samples": 12827,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 160,
+        "refusal_p99_ns": 260,
+        "refusal_samples": 2424,
+        "admitted_samples": 808
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 81,
+        "refusal_p99_ns": 160,
+        "refusal_samples": 12119,
+        "admitted_samples": 809
+      }
+    ],
+    "1.100.0/run-3.json": [
+      {
+        "queue_capacity": 1,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 130,
+        "refusal_p99_ns": 191,
+        "refusal_samples": 3131,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 1,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 90,
+        "refusal_p99_ns": 150,
+        "refusal_samples": 12827,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 32,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 141,
+        "refusal_p99_ns": 230,
+        "refusal_samples": 2424,
+        "admitted_samples": 808
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 128,
+        "refusal_p50_ns": 60,
+        "refusal_p95_ns": 80,
+        "refusal_p99_ns": 150,
+        "refusal_samples": 12120,
+        "admitted_samples": 808
+      }
+    ],
+    "1.89.0/run-1.json": [
+      {
+        "queue_capacity": 1,
+        "burst": 32,
+        "refusal_p50_ns": 70,
+        "refusal_p95_ns": 161,
+        "refusal_p99_ns": 270,
+        "refusal_samples": 3130,
+        "admitted_samples": 102
+      },
+      {
+        "queue_capacity": 1,
+        "burst": 128,
+        "refusal_p50_ns": 71,
+        "refusal_p95_ns": 191,
+        "refusal_p99_ns": 371,
+        "refusal_samples": 12827,
+        "admitted_samples": 101
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 32,
+        "refusal_p50_ns": 80,
+        "refusal_p95_ns": 220,
+        "refusal_p99_ns": 370,
+        "refusal_samples": 2424,
+        "admitted_samples": 808
+      },
+      {
+        "queue_capacity": 8,
+        "burst": 128,
+        "refusal_p50_ns": 71,
+        "refusal_p95_ns": 200,
+        "refusal_p99_ns": 381,
+        "refusal_samples": 12120,
+        "admitted_samples": 808
+      }
+    ]
+  },
+  "artifact": {
+    "path": "qualification.tar.gz",
+    "sha256": "ee43b7a36609c9164d074c211721f32f5f2e9bf189048de926162c049ab80da1",
+    "members": {
+      "1.100.0/build.jsonl": "49f9f456fa90afd3a5d8226d22330fcf07a996b2e68b76dc04b43f40f1122221",
+      "1.100.0/build.stderr": "f42af071283a935f4472807c6d3a7683ada658557bc34b8a0e9c9f6359d4629c",
+      "1.100.0/metadata.json": "d50c035bbccfd9d2503b41a11c11e176e137a04c26d1477e613c537828694b65",
+      "1.100.0/run-1.json": "414a4b53a6e33166cc9994357b8687181e66ffee3be5672a6ed382e4dc956673",
+      "1.100.0/run-1.resources.json": "3b39e97696fc652b60cf80aeb480422ff10c099bd36801a3eddead89584334ca",
+      "1.100.0/run-2.json": "e08655ac392e2ded7899ed0a80690eca6fd4e2e480f00e115a7e2ea7ddefcfd9",
+      "1.100.0/run-2.resources.json": "d48d945c65214c6b545b1a33be6a69d5737f30e52e9134da9d66742cd15e57bc",
+      "1.100.0/run-3.json": "3bcdc7a9f936e111353d89e4482e74301d4fa016c8e5d7c68642c2c91e4d6a8a",
+      "1.100.0/run-3.resources.json": "0fd6d08e6f9d503265b75a8d667ce11d8978e39fb8a16ced5c185a85ae10dae1",
+      "1.89.0/build.jsonl": "b24d40241d68928c0c377d9c1c604f65c8061c42e99745017e55006d7b76f14c",
+      "1.89.0/build.stderr": "b3686649537393af64f305505d69e2443602d724f64b1f9ed531aa5205e87bc3",
+      "1.89.0/metadata.json": "19e5ff97755675fefdddf4515719b8e0360c8486e397b04f764ca47502bf5704",
+      "1.89.0/run-1.json": "a742d7220729010d692bf671a6b6c79b0001b0d2c697880f01544dfbdd9a580c",
+      "1.89.0/run-1.resources.json": "40220b6a9ac71646760f5dec5218b7707315f2d52a9520976a1e578ede72f9c7",
+      "checks.json": "062f58c01799c70699bb01c8348a9dea94eab140d7492efb6d574cacd11ee09a",
+      "clippy.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "debug-1.100.0.stderr": "b04cb83e57701130787b5ba9583bb1d057b9866ad17496af8ad4461c15301f08",
+      "debug-1.100.0.stdout": "00cf2f56df9b4d8e85cbc21244a7256533ab87ba898de0b0f9bdb3b2c226f062",
+      "debug-1.89.0.stderr": "a3b8c757fba4c65792a80c3a774e144beb0ccd5f415c8c900f3aa60e0de8ed95",
+      "debug-1.89.0.stdout": "1bf43fae5b3c0836ce71ced52c0adf9751ed6821951ec9a390124f0357492e9b",
+      "diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected-debug-refusal.stderr": "720fa611abac2ca09aedf13afc486464bfec9aef409d8bf452bcaf82654a6eca",
+      "expected-debug-refusal.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected-debug-refusal/build.jsonl": "327afb4d6c9c02960b892e6437dfa9adfef361ec54f7df818c7e9a84ab977639",
+      "expected-debug-refusal/build.stderr": "4a11dcca428cc3ecce66de3d3e852ca287f657609c5969665fb540883fc02761",
+      "expected-debug-refusal/metadata.json": "fc7cf7617819f05b7d7330d708c8a76eac3bbab03712a3b86b321091773cd346",
+      "expected-debug-refusal/run-1.json": "5ca443010c2c9eee437acee57015363f5630afef81311b7c6cbbe8af7d688e92",
+      "expected-debug-refusal/run-1.resources.json": "cbf3f946c11ebc49010a55a155e1bdfc8f683d7a1e4b7b37c38a9498f6a49495",
+      "format.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "graph-update.log": "64581086c6c228e6dec9bdfe396e578d2a5a5a771e828ecc7b2d893d82627aa9",
+      "legacy-default/build.jsonl": "e51b4fa0ba363e3db033b1167c8c06730f97566b2f0d64261f1d5ed1595ce5fb",
+      "legacy-default/build.stderr": "fee730c95fef323e481625164fc4adf7227e392e174623f8dfdf5fe6b32681a7",
+      "legacy-default/metadata.json": "ae1e860761143d6f6c57851131fc3f37cee3f4a59a3327ced753b130b8e298c7",
+      "legacy-default/run-1.json": "1465661d1a673f599b0f751118aa21d044d901f229662aa590bddd414c4028b9",
+      "legacy-default/run-1.resources.json": "aa06a1748da33e6a98f88a2e2abf3f986be702867458b8e40a7e0781841a5c73",
+      "legacy-runner-default.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "legacy-runner-default.stdout": "b5ea7a91ed9f76f41ef99e3c65b4b6980370c6fcc5347f1a44a89ba53361916d",
+      "measure-1.100.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "measure-1.100.0.stdout": "3592585aa4a9cdfa36bbe8a89fab7eb10a1324753be2dd51a5b7e3bc806351ab",
+      "measure-1.89.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "measure-1.89.0.stdout": "7dbb956158d9072a11d31e41889d50f88e999617b80f4b10b5e022dd4379ac01",
+      "metadata.json": "b6dc7aedb76d446cb3cea0e8069f313e3503c62258db89664193b2bdeb3605c8",
+      "package-list.log": "1c7365fa846b1653a5789f1d13f4c804c28f43eaa34ae707b86b6dbc1e9bd824",
+      "qualification.log": "31b79fca503220046c6fae1311b47295cfdcf79f107b8e4c041477d12f174930",
+      "run-as-recorded.py": "af3726a4331f02a575aeb8e6bdab1a9149543287de58b47f12bea39c4f4ccb0f",
+      "script-tests.log": "5a44451fbc4036c1f03eefcabd83904cc8470d1c68c10185280daa942b38d2cc",
+      "source/crates/penelope-sqlite/benches/machine_backpressure.rs": "eca67a70467004b4e75e4b80e8e483c197b1ed7b4472dd6448b41b1f2fcfcce4",
+      "source/crates/penelope-sqlite/tests/support/machines.rs": "25015435cc9a00ef9e3c5516c1bfbeed63e90a60f8ad2bcaeb145baa35c3d80a",
+      "source/scripts/benchmark-durable-store.py": "7f212cbb5db8db553d5365a51213f6b0735fa6e5442b525897caf6ca1d33936f",
+      "worker-tests-1.100.0.stderr": "111e01e033d84e13d5cb0348bd43066145676cd7427546749ee0b39fb3ba57f6",
+      "worker-tests-1.100.0.stdout": "1470cd4f043f57544fe3f94611cd97a6adf0f4cbdd1ca28864da0aebcb09d8f6",
+      "worker-tests-1.89.0.stderr": "20e4d6b0061e07165ddac44591bff7c1eac1828821b85723207d382950ca1d75",
+      "worker-tests-1.89.0.stdout": "6f6af00ed121a838da0d1a38a075e36bc13744f28c64b71ccb52e92f83f1de58"
+    }
+  }
+}

@@ -835,3 +835,26 @@ fsync and cleanup. The native leg includes worker execution, IPC, polling sleeps
 durable completion and fencing; worker CPU is not isolated. The saga action is
 admitted but remains undispatched. Queue saturation/backpressure performance,
 other payload/effect profiles and exact release qualification remain open.
+
+## Bounded journal backpressure
+
+[The queue pressure measurements](evidence/machine-backpressure-performance/manifest.json)
+cover capacities 1/8 and bursts 32/128 through the real public machine journal.
+An independent SQLite writer lock prevents commit progress while the burst fills
+the shared worker queue. Excess requests return `Capacity` on their first poll.
+After release, exactly one admitted request commits and the rest refuse the
+stale head. Every round checks the exact retry, retained payload/intent, snapshot,
+revision and final row counts; SQLite integrity remains valid.
+
+Three Rust 1.100 runs and one Rust 1.89 run each pass 101 rounds after eight
+warmups. Debug smokes retain all dimensions and checks, and an actual debug-mode
+measurement attempt is refused. Four existing worker queue/cancellation/panic
+tests pass on both compilers, alongside strict benchmark Clippy, 75 script tests,
+formatting, package inclusion and the runner's unchanged legacy default. The
+sampler reuses the existing integration fixture and measurement tool.
+
+First-poll refusal and deliberately gated completion have separate per-call
+sample populations. Tiny refusal timings include clock/allocator/codegen effects.
+This measures machine journal backpressure; native process saturation and isolated
+worker CPU remain outside its scope. Final source qualification and existing
+legacy performance findings remain open.

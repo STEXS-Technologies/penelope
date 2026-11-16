@@ -23,6 +23,14 @@ boundaries behind the facade.
 | F7 — Coherence and maintenance | Canonical facade/tutorial, shared helpers, docs cleanup and maintenance inventory | [Extraction boundaries](architecture.md#adr-050-06-extraction-boundaries), [verification](verification.md); performance matrix and final audit remain open |
 | F8 — Candidate | Pending | Exact-candidate CI, chaos, coverage, performance conclusions, versions/changelog and release evidence |
 
+## Stabilization focus
+
+The architecture is frozen for stabilization. Finish exact-source qualification
+and targeted coverage of new failure paths, diagnose retained performance findings,
+review same-instance contention, and simplify local onboarding. Ergonomic changes
+must reuse the existing owner, prepared transition and publication rules. Prefer
+documentation, examples and shared helpers before another public abstraction.
+
 ## Acceptance policy
 
 Share concepts and helpers where semantics, error precedence and publication
