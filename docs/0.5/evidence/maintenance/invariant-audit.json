@@ -1,0 +1,539 @@
+{
+  "scope": "Requirement-by-requirement ownership and negative/boundary-test audit for the 15 invariants in plan section10. Source review plus verified archived test observations, not proof of all possible failures or completion of sections13/14.",
+  "audited_commit": "e5f4b78929eaeae6cf69241b74971860f709ec0f",
+  "qualified_code_checkpoint": "9a5a1dbef9cbb1cf5453f403264ffcb82e303cbf",
+  "code_equivalence": "Rust source, manifests, locks, CI and scripts match 9a5a1db; later changes are documentation/evidence only.",
+  "plan_sha256": "c0dea1ab385516a337e28936496907bcc8e932a9a8028bf8a1276180cd0f50a1",
+  "evidence": {
+    "manifest": "../packaging/candidate-checkpoint.json",
+    "archive_sha256": "0f4cfa65a2dd50b3d58116100ffe19a9acc20e426b6f4e60e307b387b55a4c50",
+    "archive_members_sha256": {
+      "checkpoint/library-tests.log": "1f9d52a0d67482d4506d219c23a58d36f1bd7c0e020aa6526868c17d61c047d8",
+      "checkpoint/library-msrv-tests.log": "b83ef272a2f8db25d154385e30865b59007f50b7113bb8ad44d5892dbd90a637",
+      "checkpoint/conformance.log": "51a08da34033732a1dd1f677eb8bc2a3ccdd099f47b057e558bd8a97c9679c45"
+    },
+    "conformance_upstream": "ae3d94bc22c7835eaa3fdcd766e3c117929c12bb",
+    "compiler_scope": "Workspace negative/boundary tests pass on Rust1.100 and1.89; pinned signed-source conformance runs on1.100 only."
+  },
+  "invariants": [
+    {
+      "plan_invariant_number": 1,
+      "requirement": "Candidate never mutates accepted state",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "decisions_prepare_without_publishing_and_drop_aborts",
+          "line": 147,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+          "line": 311,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "The consuming prepared handle borrows the only owner; failed or dropped durable candidates do not publish.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 2,
+      "requirement": "Refused/failed event never dispatches effects",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+          "line": 207,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch",
+          "line": 362,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Refusal never yields an accepted batch; tentative intents remain separate from published intents.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 3,
+      "requirement": "Accepted event has exact scope/definition/schema",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs",
+        "crates/penelope-sqlite/src/machine.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+          "line": 247,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged",
+          "line": 402,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Context, model, codec and durable coordinates are checked before publication.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 4,
+      "requirement": "Duplicate event ID with different bytes fails",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-sqlite/tests/machines.rs",
+          "function": "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+          "line": 99,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "The shared admission helper compares record, header, event, state and each intent for exact retry; conflicting content is refused.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 5,
+      "requirement": "Stale expected revision cannot publish",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-sqlite/src/machine.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+          "line": 247,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/tests/machines.rs",
+          "function": "simultaneous_independent_workers_admit_one_competing_head",
+          "line": 305,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/src/machine/tests.rs",
+          "function": "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot",
+          "line": 136,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Read preflight conveys no authority; full admission is repeated under the write transaction.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 6,
+      "requirement": "Replay performs zero outbound I/O",
+      "owners": [
+        "crates/penelope-ports/src/machine/recovery.rs",
+        "crates/penelope-timeline/src/session.rs",
+        "crates/penelope-timeline/src/machine.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "stored_bytes_reconstruct_exact_receipt_and_non_clone_snapshot_without_pending_effects",
+          "line": 811,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-timeline/tests/machine.rs",
+          "function": "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+          "line": 215,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-timeline/tests/determinism.rs",
+          "function": "uncaptured_dependency_is_detected_only_when_same_baseline_verification_is_enabled",
+          "line": 154,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Restoration does not repopulate local dispatch intents; correction stages effects separately from explicit handoff. Rust cannot sandbox arbitrary I/O inside user callbacks. Consumer purity remains a documented contract; same-baseline validation detects the tested uncaptured dependency, not all possible impurity.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 7,
+      "requirement": "Definition migration cannot reinterpret old state",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+          "line": 957,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Pinned scope/model/codec and canonical re-encoding prevent silent reinterpretation. There is no global definition registry or automatic cross-version migration; an explicit reviewed application migration is required.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 8,
+      "requirement": "Timeline correction cannot reverse committed effects",
+      "owners": [
+        "crates/penelope-timeline/src/live.rs",
+        "crates/penelope-timeline/src/session.rs",
+        "crates/penelope-timeline/src/effects.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-timeline/tests/machine.rs",
+          "function": "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+          "line": 215,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "The machine adapter reuses existing finality: correction crossing the independently finalized frontier returns ReconciliationRequired without publication.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 9,
+      "requirement": "Task retry cannot bypass effect reconciliation",
+      "owners": [
+        "crates/penelope-core/src/task/control.rs",
+        "crates/penelope-core/src/task/projection.rs",
+        "crates/penelope-executor/src/machine_task.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-executor/tests/task_recovery.rs",
+          "function": "effect_interruption_requires_evidence_and_unknown_never_restarts",
+          "line": 155,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope/tests/prepared_lifecycles.rs",
+          "function": "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+          "line": 127,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Native task control owns reconciliation and generation admission; shared inspection does not confer permission to restart.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 10,
+      "requirement": "Saga result cannot be substituted across action IDs",
+      "owners": [
+        "crates/penelope-executor/src/graph.rs",
+        "crates/penelope-executor/src/engine.rs",
+        "crates/penelope-executor/src/machine_saga.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope/tests/prepared_lifecycles.rs",
+          "function": "graph_preparation_retains_scope_and_refuses_foreign_action_without_mutation",
+          "line": 70,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-executor/tests/machine_saga.rs",
+          "function": "changed_receiver_policy_and_foreign_native_receipt_cannot_acknowledge_source",
+          "line": 287,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Native action/scope checks remain authoritative, including downstream receipt-to-source binding.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 11,
+      "requirement": "Canonical external event is independently verified",
+      "owners": [
+        "crates/penelope-statechronicle/src/implementation.rs",
+        "scripts/conformance/statechronicle.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "scripts/conformance/statechronicle.rs",
+          "function": "signed_committed_source_binds_atomic_commit_and_deduplicates_after_reopen",
+          "line": 189,
+          "passing_archive_members": [
+            "checkpoint/conformance.log"
+          ]
+        }
+      ],
+      "assessment": "The library adapter validates correlation, not signatures or source commitment. The host must supply independently verified committed evidence; the pinned signed-source conformance test rejects uncommitted rows, wrong keys and substituted tenant, intent, body and event data.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 12,
+      "requirement": "Resource consumption is bounded",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs",
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/delivery.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+          "line": 247,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+          "line": 445,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/tests/machines.rs",
+          "function": "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+          "line": 615,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+          "function": "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens",
+          "line": 304,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Count, byte, history and delivery bounds refuse new work atomically; exact retries remain available.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 13,
+      "requirement": "Cross-tenant information does not leak through diagnostics",
+      "owners": [
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/delivery.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-sqlite/tests/machines.rs",
+          "function": "authorization_precedes_existence_duplicates_and_all_reads",
+          "line": 46,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+          "function": "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup",
+          "line": 232,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Host-owned authorization runs before store reads and duplicate lookup, including foreign-tenant denial. This verifies library admission/error disclosure, not a host transport policy or arbitrary application logging; explicitly formatted user values are outside this claim.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 14,
+      "requirement": "PANIC/unwind during evaluation never leaks a staged published state",
+      "owners": [
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine/store.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+          "line": 207,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "a_caught_destructor_panic_cannot_unpoison_staging",
+          "line": 365,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-core/tests/machine.rs",
+          "function": "superseded_state_drop_panics_only_after_all_published_values_agree",
+          "line": 429,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-ports/tests/machine_preparation.rs",
+          "function": "codec_panics_before_and_after_evaluation_leave_the_original_owner_coherent",
+          "line": 707,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Evaluation and codec failures retain the previous tuple; superseded-value destructor panic occurs only after the new tuple is coherent. This is unwind isolation, not recovery from abort or arbitrary unsafe user code.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    },
+    {
+      "plan_invariant_number": 15,
+      "requirement": "Ambiguous commit/dispatch ACK is not treated as success or failure",
+      "owners": [
+        "crates/penelope-ports/src/machine/recovery.rs",
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/machine/delivery.rs",
+        "crates/penelope-core/src/task/control.rs"
+      ],
+      "negative_and_boundary_tests": [
+        {
+          "path": "crates/penelope-sqlite/tests/machines.rs",
+          "function": "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+          "line": 18,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+          "function": "downstream_acceptance_lost_ack_is_reconstructed_and_exact_retry_is_idempotent",
+          "line": 177,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        },
+        {
+          "path": "crates/penelope-executor/tests/task_recovery.rs",
+          "function": "no_commit_or_lost_acknowledgement_never_dispatches",
+          "line": 86,
+          "passing_archive_members": [
+            "checkpoint/library-tests.log",
+            "checkpoint/library-msrv-tests.log"
+          ]
+        }
+      ],
+      "assessment": "Durable lookup reconstructs acceptance separately from external execution. Unknown delivery remains uncertain and requires independent reconciliation; no exactly-once external execution claim.",
+      "status": "scoped_checks_pass; final_release_qualification_open"
+    }
+  ],
+  "source_sha256": {
+    "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+    "crates/penelope-ports/src/machine/store.rs": "9a9b723a4b25b791cd72368346c43c361c61bb3fa69b1c7007107643b52d8158",
+    "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+    "crates/penelope-ports/tests/machine_preparation.rs": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+    "crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+    "crates/penelope-sqlite/tests/machines.rs": "f45d70ff8c43bbdc8be8b09612613d2dd8dbdb05deb5f1246e912daaad8938af",
+    "crates/penelope-sqlite/src/machine/tests.rs": "5dfa0153b97cacc8a052958a3f9d57cda4cf0ef3a9507f250f41c9f42e006840",
+    "crates/penelope-ports/src/machine/recovery.rs": "c01148135021aae2c0896e1d74906285f7e6b876fa85d850adc24a7f508bc5e4",
+    "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+    "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+    "crates/penelope-timeline/tests/machine.rs": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+    "crates/penelope-timeline/tests/determinism.rs": "8dea5de0cae186774c933d684a4e975adb6763d0dbbad17996771bf4f15f9420",
+    "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+    "crates/penelope-timeline/src/effects.rs": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+    "crates/penelope-core/src/task/control.rs": "d265358ef05df8b6fb44bc7e9564ca799fd0633e8568f5aa06abfcd712a58229",
+    "crates/penelope-core/src/task/projection.rs": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+    "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+    "crates/penelope-executor/tests/task_recovery.rs": "77432a01dab0467aca8ffb102c933bfa32fbfaaadc7e368f2b30887c253460ba",
+    "crates/penelope/tests/prepared_lifecycles.rs": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+    "crates/penelope-executor/src/graph.rs": "ef53355db5568f7b154a93595112471bc7cef4aa00f04d2a8d00faa46f3247e1",
+    "crates/penelope-executor/src/engine.rs": "d54e067575ca5c919be6be5e9c5609433368a94174d5a8129c501d5800f7b70f",
+    "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+    "crates/penelope-executor/tests/machine_saga.rs": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d",
+    "crates/penelope-statechronicle/src/implementation.rs": "ac48d4363126352b723e67623e9275fbe33e19346425ace22bb21ccac89675be",
+    "scripts/conformance/statechronicle.rs": "1ada8de34589c61fc202c3dbb41399b0cfb19c46f5e85dd8475b411e927f51f1",
+    "crates/penelope-sqlite/src/machine/delivery.rs": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51",
+    "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1"
+  },
+  "open_release_requirements": [
+    "Finish immutable-source three-round chaos qualification.",
+    "Resolve all performance review blockers under plan13.2; no regression acceptance recorded.",
+    "Complete the remaining plan requirement and maintenance audit, dated release notes and final source/artifact reconciliation."
+  ],
+  "limits": "A named passing test is evidence for the assertions it contains, not formal verification or a substitute for the full campaign. Host authorization, callback purity, correct payload implementations, trustworthy external evidence and storage assumptions remain explicit boundaries."
+}

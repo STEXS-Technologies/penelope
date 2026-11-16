@@ -117,6 +117,10 @@ older measurements retain their original meaning.
 explain what is shared and why specialized task generations, saga compensation,
 timeline finality and native transactions remain separate. Sharing inspection or
 candidate vocabulary does not create universal execution authority.
+The [15-invariant audit](evidence/maintenance/invariant-audit.json) binds each
+plan §10 requirement to owners, source identities and passing negative/boundary
+tests in the candidate archive. It records scoped evidence, not completion of
+the remaining performance, campaign or release gates.
 
 ## Evidence policy
 

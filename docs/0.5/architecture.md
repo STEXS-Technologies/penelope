@@ -116,6 +116,12 @@ The consolidation audit tracks these authoritative owners:
 | Full source-to-receiver identity | `MachineIntentSource::binding_identity`: task and saga receivers | Host-pinned task/saga policies and native identities remain distinct |
 | Repository structure and newtype fuzz inventory | `ci/compat-0.4/tests/architecture.rs`, run by stable/MSRV/release CI | Checkout-only validation stays outside published library tests |
 
+The [invariant audit](evidence/maintenance/invariant-audit.json) maps all 15
+cross-cutting invariants in the plan to implementation owners and 33 negative or
+boundary-test references, checked against archived passing results. It also
+records the limits of callback purity, host authorization and external evidence;
+these are not guarantees a common inspection interface can enforce.
+
 Separate machine/task/process transactions remain necessary: each authenticates
 different history and scope, and only its native owner may advance that history.
 The machine outbox and process action leases also protect different authorities;
