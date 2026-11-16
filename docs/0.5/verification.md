@@ -97,8 +97,8 @@ current evidence; final reconciliation must include that additional path.
 The [phase work audit](evidence/maintenance/phase-audit.json) maps all 50 work
 items and nine gates in plan §11 to 67 source/evidence files. It distinguishes
 scoped implementation support from open performance/release work and unproven
-historical sequencing. Named test sets and the detailed clauses outside §11
-still require separate review; this is not a completion certificate. The
+historical sequencing. The whole-plan index below adds the separate clause and
+named-test reviews; none is a completion certificate. The
 [required test-layer audit](evidence/maintenance/test-layer-audit.json) maps all
 28 clauses in §13.1 to 29 observed stable/MSRV tests and 20 archived external
 gates. It retains the live campaign obligation and distinguishes seeded process
@@ -113,10 +113,11 @@ boundaries and conditional extraction decisions remain explicit; the orchestrati
 performance item and final release qualification stay open.
 
 The [whole-plan review index](evidence/maintenance/plan-review-index.json) covers
-prose, tables and illustrative APIs. It records actual owners, proposed file-name
-refinements, deployment duties and scoped evidence. Historical sequencing,
-unreviewed blocks and open release gates remain explicit; indexing does not
-certify completion.
+all 514 prose, table and illustrative-API blocks. It records actual owners,
+file-name/API refinements, deployment duties and scoped evidence, including 58
+named checks reobserved in current stable/MSRV CI. Historical sequencing and the
+candidate-version order deviation remain explicit. Review coverage does not close
+open qualification, performance or release gates or certify semantic completeness.
 
 ### Release acceptance review — November 16, 2026
 

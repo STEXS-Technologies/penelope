@@ -149,7 +149,7 @@
   "release_acceptance_review": {
     "production_source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
     "review_document": "../../verification.md",
-    "review_document_sha256": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2",
+    "review_document_sha256": "41440cfd4194131ef935c1cba5aa99e94a8ef46e86960edefbab2fc4ab9130a6",
     "conditions": [
       {
         "plan_line": 980,
@@ -636,6 +636,333 @@
     "reviewed_blocks": 20,
     "scope": "Actual trait refinements, context/owned-state boundaries, shared-helper extraction and flat/nested ergonomics. Illustrative sketches are distinct from compiling public fixtures; pre-implementation chronology remains unproven."
   },
+  "phase_prose_and_integration_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "CHANGELOG.md": "47f53e8caea68aa1610c9133a990964a1339bc0e2dbd72f81d1b0786733324b9",
+      "Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "ci/machine-consumer/durable.rs": "e104f7a04cb9650d89a70f63d80fd3641a69b572a954319bf0b36fdd20039d76",
+      "crates/penelope-core/tests/generated_machines.rs": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+      "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "crates/penelope-core/tests/machine_wire.rs": "c24744aef241836d87e688eb86e5087366ee86241482df4cc3ec02b56a05009f",
+      "crates/penelope-core/tests/prepared_task.rs": "8738404c75f0bb0b8e24e24c82a68df02e1e3df8aaaa7ed0ad577743b55d5ef3",
+      "crates/penelope-executor/tests/machine_saga.rs": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d",
+      "crates/penelope-executor/tests/machine_task.rs": "dc3fd7250ee360a9a3d5b0ac52a417c8601b9ffdf3c5d450e02d4d65dc485337",
+      "crates/penelope-executor/tests/task_control.rs": "7f4084ee4376a8c9e5c31470a9ec67d3c55defd9db382e6a10b9b53f7d20fc16",
+      "crates/penelope-executor/tests/task_control_failures.rs": "10f52dc0f8418e4371183095788fa280301f4620e9b3e733b774d8784465c263",
+      "crates/penelope-executor/tests/task_verified_result.rs": "fb00351b5bafb0962437894bae619229fe3e1ce1c3fbd11471a0fbd588d6e138",
+      "crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+      "crates/penelope-sqlite/src/machine/tests.rs": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+      "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+      "crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+      "crates/penelope-statechronicle/tests/task_checkpoint.rs": "f8097584f6aaa35a28b0173e85d5aacf93bf46f81da0252618bc7911c759fbb6",
+      "crates/penelope-timeline/tests/machine.rs": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+      "crates/penelope/tests/prepared_lifecycles.rs": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82",
+      "docs/0.5/baseline.md": "fa0864234a11c059d2fc5346deeee075908c77bea13844e47236eccf5cfa4a1f",
+      "docs/0.5/compatibility-matrix.md": "0d4aa74c96dd736c23139303e7bb30b65c329159578729304aa5d25d87ee2bd6",
+      "docs/0.5/machine-wire.md": "dbbfa770c33333cfb8149dc45fdc7a6bb36d946beac890a2d6332c8a3abeb4db",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/RELEASE.md": "ca7cdae461cdb38c75d1423e0d50e1f6c8285f8f0d837686dd33f661ac11eb98",
+      "scripts/publish-order.py": "d8e90a71c84faa19564e8d21c60c0b8a76acf8db2347ddacde3cc6f5f53c57b9",
+      "scripts/run-supervised-saga-example.sh": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0"
+    },
+    "reviewed_blocks": 27,
+    "current_named_checks": [
+      {
+        "path": "crates/penelope-core/tests/generated_machines.rs",
+        "function": "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "a_caught_destructor_panic_cannot_unpoison_staging",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "decisions_prepare_without_publishing_and_drop_aborts",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "publication_retains_prior_intents_and_their_exact_origins_until_taken",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "superseded_state_drop_panics_only_after_all_published_values_agree",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "each_hook_failure_bad_candidate_and_invariant_failure_discards_the_whole_attempt",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "every_pair_of_tree_states_matches_an_independent_path_oracle",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "ignored_hook_staging_failure_stops_the_remaining_hooks",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "internal_and_external_self_transitions_are_distinct",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "malformed_or_exhausted_paths_fail_before_any_handler",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_hierarchy.rs",
+        "function": "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_wire.rs",
+        "function": "every_truncation_mutation_and_trailing_byte_fails_closed",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/machine_wire.rs",
+        "function": "independent_goldens_bind_endianness_causation_order_and_full_width_counters",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-core/tests/prepared_task.rs",
+        "function": "preparation_matches_frozen_record_validation_and_supervisory_decisions",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_saga.rs",
+        "function": "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_task.rs",
+        "function": "damaged_native_blob_never_becomes_verified_receiver_acceptance",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_task.rs",
+        "function": "lost_native_commit_ack_leaves_pending_source_and_reconstructs_the_original_intent",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_task.rs",
+        "function": "receipt_schema_scope_input_and_tick_substitution_never_acknowledge_the_source",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_task.rs",
+        "function": "redelivery_of_running_or_faulted_task_never_submits_a_second_intent_or_generation",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_task.rs",
+        "function": "shared_and_separate_stores_reconstruct_native_acceptance_after_lost_ack",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/task_control.rs",
+        "function": "ambiguous_commit_poisoning_matches_hosted_profile",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/task_control_failures.rs",
+        "function": "invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-executor/tests/task_verified_result.rs",
+        "function": "effectful_completion_requires_matching_independent_evidence",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/tests.rs",
+        "function": "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/tests.rs",
+        "function": "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/tests.rs",
+        "function": "sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "dto_reconstruction_cannot_substitute_lease_or_committed_source",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "authorization_precedes_existence_duplicates_and_all_reads",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "concurrent_reader_sees_one_coherent_state_head_receipt_tuple",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "post_write_substitution_and_deferred_commit_failure_never_issue_success_receipts",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "second_intent_identity_conflict_rolls_back_the_entire_inserted_prefix",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "simultaneous_independent_workers_admit_one_competing_head",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "suppressed_write_rolls_back_entire_batch_and_quota_refusal_is_atomic",
+        "from_review": "core-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-statechronicle/tests/task_checkpoint.rs",
+        "function": "returned_evidence_must_match_every_scope_generation_and_blob_coordinate",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "complete_non_clone_state_uses_existing_prepare_live_step_path",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "content_hash_binds_every_captured_context_role_and_application_payload",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+        "from_review": "test-layer-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "hierarchical_correction_reuses_native_hooks_and_stops_on_ignored_capacity_failure",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "scope_definition_stale_head_exhaustion_and_quota_failures_do_not_publish",
+        "from_review": "integration-contract-audit.json"
+      },
+      {
+        "path": "crates/penelope/tests/prepared_lifecycles.rs",
+        "function": "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+        "from_review": "test-layer-audit.json"
+      }
+    ],
+    "scope": "Remaining integration context, phase purpose/files/tests and advisory prose. Current58 named stable/MSRV checks supplement scoped historical reviews; campaign/performance/release gates and strict chronology remain open. Candidate version bump before final gates is a recorded literal-plan sequencing deviation."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -646,23 +973,24 @@
     },
     "by_review_state": {
       "reviewed_historical_proposal_metadata": 1,
-      "individually_reviewed_scoped_support": 200,
+      "individually_reviewed_scoped_support": 213,
       "individually_reviewed_qualification_open": 2,
-      "release_condition_open": 5,
+      "release_condition_open": 6,
       "reviewed_historical_baseline": 18,
       "table_layout": 7,
-      "illustrative_architecture_reviewed": 3,
-      "section_label": 26,
-      "implementation_path_refinement_reviewed": 2,
+      "illustrative_architecture_reviewed": 4,
+      "section_label": 27,
+      "implementation_path_refinement_reviewed": 3,
       "API_supported_historical_sequence_unproven": 1,
       "illustrative_API_refinement_reviewed": 2,
       "scoped_evidence_indexed": 163,
-      "needs_individual_review": 27,
       "individually_reviewed_release_notes_open": 1,
+      "version_sequence_deviation_recorded": 1,
+      "historical_sequence_unproven": 3,
+      "required_test_paragraph_scoped_qualification_open": 5,
       "individually_reviewed_measurement_scope": 14,
       "performance_acceptance_open": 2,
-      "advisory_pr_breakdown": 15,
-      "historical_sequence_unproven": 1,
+      "advisory_pr_breakdown": 17,
       "historical_source_reference": 24
     }
   },
@@ -684,7 +1012,7 @@
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
     "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
-    "../../verification.md": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2",
+    "../../verification.md": "41440cfd4194131ef935c1cba5aa99e94a8ef46e86960edefbab2fc4ab9130a6",
     "../manifest.json": "3060456c52ddd98c26cfb39f73b6efa1e051e328fa9fccb063b14786581cefec",
     "../qualification/candidate-capability-performance.json": "6ac56974102c755ea60f44fffd89884b8a84db776b677ba9d49f174d2de80528",
     "../legacy-balanced/versioned-candidate.json": "6c95fa6b5801454859c1e5058947f39f78ea790dd3b5c8780281d2cd0863d362",
@@ -3193,8 +3521,25 @@
       "kind": "paragraph",
       "sha256": "6f3980675f2b9fa3f9db5a532dbc35257a0d3d1f84c299678bc3a978ca051145",
       "preview": "Existing public code: `crates/penelope-executor/src/engine.rs`, `graph.rs`, `graph_outcomes.rs` and domain/por",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The named native saga owners remain in executor engine/graph/graph_outcomes and domain/ports. Canonical saga reexports and prepared views delegate to them; the20-item integration audit retains detailed source/test mappings and its original revision scope."
     },
     {
       "line": 362,
@@ -3325,8 +3670,25 @@
       "kind": "paragraph",
       "sha256": "10cedd2d8622e3f972756396bb5a5d800d85d8991ad386f605a72fa9e99f0556",
       "preview": "**Critical:** The legacy graph saga does **not** become a general application HSM just because it has transiti",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Graph sagas remain result-category orchestration rather than application HSMs. Typed machine-to-saga admission uses committed intent identity and native receipts; no mutually recursive evaluator or hidden cross-state mutation is introduced."
     },
     {
       "line": 376,
@@ -3335,8 +3697,25 @@
       "kind": "paragraph",
       "sha256": "9a9493392958d644e4a916c475ff2f376816316de5eec97ec610cb8574856610",
       "preview": "Existing public code: `penelope-core/src/task/{contracts,projection,control,runtime}.rs`, `penelope-executor/s",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Task contracts/projection/control/runtime and hosted executor task supervision remain the native owners. Shared candidate validation and prepared inspection retain task v1 bytes and generation/reconciliation authority; current frozen and named checks supplement the original integration audit."
     },
     {
       "line": 378,
@@ -3451,8 +3830,25 @@
       "kind": "paragraph",
       "sha256": "a5b8fb63e3cb5c5b726b3886da1bd38551151018b633a18b629891b9e57c3b0b",
       "preview": "Existing public code: `penelope-core/src/timeline/*`, `penelope-timeline/src/{contracts,step,session,live,hist",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Timeline contracts/step/session/live/history/effects/handoff remain the existing engine owners. MachineTimeline adapts captured inputs and provenance to that engine, without a second persistent history, state publisher or finality implementation."
     },
     {
       "line": 391,
@@ -3583,8 +3979,25 @@
       "kind": "code",
       "sha256": "0da51b2c203201fe490b0fa681fc2e62d91a8627c18c8fa9604815ac07a84f24",
       "preview": "```text\nOrder machine receives Submit\n   -> commits AwaitingPayment + RequestPayment intent\n   -> durable outb",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "illustrative_architecture_reviewed",
+      "assessment": "This payment-order diagram is an illustrative domain composition, not a runnable payment integration. The protected counter workflow demonstrates the corresponding durable intent, native task recovery, verified result, next machine transition and saga admission boundaries. Actual payment authority, compensation and remote settlement remain application protocols; optional timeline cannot repeat finalized effects."
     },
     {
       "line": 417,
@@ -3593,8 +4006,25 @@
       "kind": "paragraph",
       "sha256": "7111f8ee901c5e2ca0672a3df711fa8c8807159ddd6b46ca4fd98987bcba1ca9",
       "preview": "No component directly mutates another's state as a hidden side effect. All cross-component causal edges are ty",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Cross-component state changes use explicit admitted events and typed source/native receipt bindings. Machine and native stores commit independently and recover acknowledgement gaps. Host orchestration verifies task output before making the next machine event; no generic view silently mutates another owner."
     },
     {
       "line": 425,
@@ -5998,8 +6428,25 @@
       "kind": "paragraph",
       "sha256": "de3f44711ca4be08df92b312e8b32e5a70caa3a50e670aa42a564ee1d49ef2b5",
       "preview": "The following plan is dependency ordered. **No version bump or release tag until the end.** Every phase lands ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "version_sequence_deviation_recorded",
+      "assessment": "Matching tests/docs and retained native parity are checked per extraction, with safety gates still open. The literal no-version-bump-until-end order was not followed: candidate manifests are0.5.0 to qualify actual archives before final gates complete. This is recorded as a sequencing deviation, not concealed as compliance or publication authorization. No release tag/publish is performed by this review."
     },
     {
       "line": 694,
@@ -6008,8 +6455,25 @@
       "kind": "paragraph",
       "sha256": "b532aa69e646652c7af5a4b9d6015c310f29107daa26911c8066b8417c3deaf4",
       "preview": "**Purpose:** Establish an actual reproducible baseline, not infer performance/correctness from the existence o",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "historical_sequence_unproven",
+      "assessment": "Actual original-source baseline checks, metadata, fixtures, advisories and completed chaos are retained. Later immutable-source evidence cannot prove that all required baseline profiles completed before every refactor; that historical ordering remains unproven."
     },
     {
       "line": 696,
@@ -6108,8 +6572,25 @@
       "kind": "paragraph",
       "sha256": "78c15e35939dbc7ea942c27d0d81ef5345ca5fdf527407f5752df0624477b463",
       "preview": "**Files:** `docs/0.5/baseline.md` (**NEW**), `docs/0.5/compatibility-matrix.md` (**NEW**), CI or reproducible ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The planned baseline.md and compatibility-matrix.md exist, with source/package/facade inventories and command/evidence links. Original baseline source is pinned to42ec187 and remains independently reproducible; this file inventory does not establish full pre-refactor timing."
     },
     {
       "line": 706,
@@ -6134,8 +6615,25 @@
       "kind": "paragraph",
       "sha256": "e62abeb5d575db4f563ee86c164c3f04adfb6031b3b73d046d496e7b1651be7c",
       "preview": "**Purpose:** Decide semantics before moving implementation. Avoid creating another ad hoc state engine.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "historical_sequence_unproven",
+      "assessment": "ADRs define the shared semantics and native authority distinctions. Commit topology proves initial ADRs precede kernel implementation, while the same first ADR commit also modifies the facade and some fixtures arrive later. The stricter before-all-migration/implementation sequencing is not retroactively certified."
     },
     {
       "line": 712,
@@ -6250,8 +6748,25 @@
       "kind": "paragraph",
       "sha256": "e8f01c766210582b61a6f72bb76a703565ce0d81cac5da5cc5ea344cc4305bc0",
       "preview": "**Files:** `docs/0.5/architecture.md` (**NEW**), `docs/0.5/machine-wire-v1.md` (**NEW**), `docs/0.5/public-api",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "implementation_path_refinement_reviewed",
+      "assessment": "Architecture/public-api docs and compiling fixtures exist. The proposed machine-wire-v1.md responsibility is implemented by machine-wire.md and independent v1 vectors; the filename refinement does not create a second protocol or missing compatibility surface."
     },
     {
       "line": 723,
@@ -6276,8 +6791,25 @@
       "kind": "paragraph",
       "sha256": "6717d2eb60ca39e9924292f3b592aa4e933b9a199c8c0b272d8b148003042ca5",
       "preview": "**Purpose:** Make arbitrary application machines a lightweight first-class component.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The portable kernel supports arbitrary typed application models with bounded owner/staging/hierarchy and no blanket Clone/serialization/hosting requirement. Arbitrary user computation/purity is not automatically bounded or proven."
     },
     {
       "line": 729,
@@ -6392,8 +6924,25 @@
       "kind": "paragraph",
       "sha256": "c1b1660f2dea9492919d70baafb2e21400cb1c30fd6c6856b892bd4a27b0daf6",
       "preview": "**Tests:** transition truth tables, attempted illegal edges, parent bubbling, guard refusal, panic safety, rej",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "required_test_paragraph_scoped_qualification_open",
+      "assessment": "Current named tests cover truth tables/independent arithmetic, leaf-parent behavior, terminal guards, panic/poison/drop, malformed/exhausted paths and owned state. Generated-machine and enum allocation probes supplement them on documented compiler profiles. Finite models and compile checks do not claim every possible hierarchy or callback; final full fuzz/property campaign remains open."
     },
     {
       "line": 740,
@@ -6418,8 +6967,25 @@
       "kind": "paragraph",
       "sha256": "bc8be5c2cbccf941d5427968c831de337a0ecc97a53e8bc1c386748a0ddf3af6",
       "preview": "**Purpose:** Integrate what Penelope already does, rather than expose a separate engine to users.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Canonical saga namespace, native prepared views and typed durable receiver integrate existing engines without replacing compensation, error precedence, action identity or wire semantics. Remaining comparative performance findings are not waived by integration."
     },
     {
       "line": 746,
@@ -6518,8 +7084,25 @@
       "kind": "paragraph",
       "sha256": "77f183922d52a619aa34a83acb0d762aceb61b24ce99f26f6b20fae7ec9fc5f6",
       "preview": "**Tests:** generate identical legacy inputs/history under 0.4 and 0.5 and compare projections, next actions, s",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "required_test_paragraph_scoped_qualification_open",
+      "assessment": "Both legacy and prepared saga paths reproduce3136 original observations over196 deterministic histories and successful-prefix replay, including statuses/errors/actions/bytes, graph limits, invalid definitions and unknown effects. This finite differential corpus is supplemented by native tests, not advertised as exhaustive behavior for all possible graphs."
     },
     {
       "line": 756,
@@ -6544,8 +7127,25 @@
       "kind": "paragraph",
       "sha256": "5ff0fe44b5be299bd19aabe5cb9ffbd95db179d03a42b247a9ade3a8e6b328ce",
       "preview": "**Purpose:** Expose the recoverable task lifecycle consistently while retaining safety-specific behavior.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Task lifecycle is exposed through canonical inspection/admission while generation, checkpoints, journal-first start and recovery remain native. A generic prepared view cannot authorize a forbidden retry or manufacture effect evidence."
     },
     {
       "line": 762,
@@ -6644,8 +7244,25 @@
       "kind": "paragraph",
       "sha256": "408c1eeb397a43f9db75cb80e5ae8e4b4e7cefa229dcda80307f9a7369fad42a",
       "preview": "**Tests:** existing portable task/SQLite worker fuzz, injected failures, real-thread arbitrations, stale gener",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "required_test_paragraph_scoped_qualification_open",
+      "assessment": "Current invariant/integration/test-layer checks cover task journal/runtime failure, stale generations, checkpoint/receipt corruption, poisoning and typed bridge retry; real worker progression and wrong-result refusal pass on both compilers. Runtime subprocess/fencing suites and bounded fuzz retain their scopes. Full three-round campaign is still required; these observations are not deployment chaos certification."
     },
     {
       "line": 772,
@@ -6670,8 +7287,25 @@
       "kind": "paragraph",
       "sha256": "2ca2d5d7c9688954407c87f8ff06bd26094772d8c5d1eb7fd14a37ea2ca93515",
       "preview": "**Purpose:** Make rewindable state an optional mode over deterministic machines.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineTimeline adapts the model to the existing bounded scratch/replay/finality engine. Eligible captured dependencies and a complete isolated restore remain explicit consumer requirements; normal machines do not become speculative by default."
     },
     {
       "line": 778,
@@ -6770,8 +7404,25 @@
       "kind": "paragraph",
       "sha256": "4260eb7507a62ccbfd13d5e780fb3525215ac08c08d3ac84a90715f8ef63dd14",
       "preview": "**Tests:** existing `penelope-timeline` property/fuzz campaigns plus hierarchy replay, invalid correction, mis",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "required_test_paragraph_scoped_qualification_open",
+      "assessment": "Current timeline checks cover hierarchy correction, captured context, invalid/missing/stale heads, exhaustion/quotas, finalized handoff and non-Clone restoration, plus existing client/history/replay suites. Supplementary models and allocation probes have explicit scope; the full immutable-source timeline fuzz campaign and performance acceptance remain open."
     },
     {
       "line": 788,
@@ -6796,8 +7447,25 @@
       "kind": "paragraph",
       "sha256": "4b4a431e122f1d4547065e08092c815721c6fc1eed8d7b29e612b584922e86d7",
       "preview": "**Purpose:** Deliver the value of Penelope's reliability infrastructure for user-defined machines.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Independent machine protocol/journal and native typed handoff provide recovery of committed state/pending intents under the documented local SQLite profile. This implemented capability is not a claim of qualified release or distributed/exactly-once external execution."
     },
     {
       "line": 794,
@@ -6912,8 +7580,25 @@
       "kind": "paragraph",
       "sha256": "5185f18bec1e32e5c83fea2b596ffda3b02d8aecc0707bc4bf4d8015d3ee9e1b",
       "preview": "**Tests:** process-kill at precommit/postcommit/pre-receipt/pre-dispatch/post-dispatch stages; double writers;",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "required_test_paragraph_scoped_qualification_open",
+      "assessment": "Migration/transaction SIGKILL checks, repeated eight-boundary journal kills, competing writers, corruption/scope/duplicate/history/quota checks, native receiver lost-ACK recovery and bounded queue tests retain actual process/boundary scopes. Protected worker progression separately checks execution and verified result admission. Clean-reopen fuzz is not substituted for process kills, and local process kills are not physical power-loss certification. Final full campaign remains open."
     },
     {
       "line": 805,
@@ -6938,8 +7623,25 @@
       "kind": "paragraph",
       "sha256": "23c9b0b079057c9aa622e004227a60f5abb4f533e861e66d7daba965d31202ea",
       "preview": "**Purpose:** Finish the cohesive product rather than leaving old and new layers side by side indefinitely.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade-first onboarding, native inspection/bridges, shared helpers, explicit diagnostics and retained compatibility compose the framework. Source grew with capabilities; recorded owner consolidation and rejected simplifications do not by themselves prove all semantic duplication absent or finish open performance/release gates."
     },
     {
       "line": 811,
@@ -7086,8 +7788,25 @@
       "kind": "paragraph",
       "sha256": "34d8c114565cc6f2ee60a34b90a7646afcf1d2714124ff9a6acaab6cfe43e4b9",
       "preview": "**Purpose:** Make 0.5.0 a controlled production-quality release.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "This release-qualification purpose is still open. Current packages/coverage/CI pass in their stated source scope, while the final-source campaign, performance review and final dated release/artifact reconciliation remain pending. Publication requires separate explicit authorization."
     },
     {
       "line": 827,
@@ -7192,8 +7911,25 @@
       "kind": "table",
       "sha256": "66f6f51e4657d035fe92eea67c42c034c031bc03860592e05842842cfbb7aab9",
       "preview": "| Surface | 0.5.0 strategy | Validation |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "section_label",
+      "assessment": "Compatibility table header; thirteen surfaces and source-change policy are individually reviewed above, with finite compatibility and deployment limits preserved."
     },
     {
       "line": 842,
@@ -8613,8 +9349,25 @@
       "kind": "paragraph",
       "sha256": "23ddc41e336081b60689da50c8aff1a55da256b487da499dec9656ee2b8aa418",
       "preview": "The refactor must **remove** duplicated plumbing rather than merely add another layer:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The shared admit_intent and bounded wire helpers are concrete extractions used by multiple production owners, alongside native projection/storage consolidation. Remaining protocol differences are documented and rejected slower simplifications retained. Numeric source/doc/clone counts are context, not proof that further removal would preserve semantics or that all fragmentation is eliminated."
     },
     {
       "line": 964,
@@ -8983,8 +9736,25 @@
       "kind": "paragraph",
       "sha256": "b8a1114e343bf58f83c1015b511379c9540ec7a3f9ab2a0795c3685d53cbf0fe",
       "preview": "The following units are intentionally reviewable. A PR can map to one phase or a narrow vertical slice within ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "advisory_pr_breakdown",
+      "assessment": "The following PR/issue table is advisory review grouping. Implemented work spans multiple small commits on the authorized branch; this suggested grouping is not a mandatory artifact or release acceptance substitute."
     },
     {
       "line": 1001,
@@ -9153,8 +9923,25 @@
       "kind": "paragraph",
       "sha256": "516ff04e2698c50ff59a660229686e6aa59dd8c6d59fdc5b80131dab671bee34",
       "preview": "**Suggested review order:** Kernel semantics before macros; adapter correctness before deleting old helpers; S",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "phase-audit.json",
+          "pointer": "/phases",
+          "scope_status": "fifty_work_items_nine_gates_with_original_open_and_historical_dispositions"
+        },
+        {
+          "file": "test-layer-audit.json",
+          "pointer": "/items",
+          "scope_status": "named_test_and_external_gate_scope_retained"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current58_named_checks_observed_stable_and_MSRV_not_complete_campaign"
+        }
+      ],
+      "review_state": "advisory_pr_breakdown",
+      "assessment": "The suggested review order prioritizes kernel semantics, adapter parity, durability and finally performance/cleanup. Current evidence is organized by those responsibilities and retains failed attempts. Git history does not prove every human review followed this exact advisory order, nor is the sentence used as a completion certificate."
     },
     {
       "line": 1024,
