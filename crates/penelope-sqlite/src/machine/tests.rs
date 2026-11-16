@@ -45,7 +45,18 @@ fn commit_process_helper() {
         return;
     };
     let store = support::open(Path::new(&path));
-    block_on(store.commit(&true, batch(&mut owner(), 8, 4))).unwrap();
+    let request = std::env::var("PENELOPE_MACHINE_CHAIN_EVENT").map_or_else(
+        |_| batch(&mut owner(), 8, 4),
+        |event| {
+            let (amount, id) = event.split_once(',').unwrap();
+            batch(
+                &mut restore(&store),
+                amount.parse().unwrap(),
+                id.parse().unwrap(),
+            )
+        },
+    );
+    block_on(store.commit(&true, request)).unwrap();
     panic!("commit cut not reached");
 }
 #[test]
@@ -500,6 +511,162 @@ fn sigkill_v8_receiver_migration_preserves_pending_uncertainty_and_accepted_rece
                     Err(MachineStoreError::Conflict)
                 );
             }
+        }
+    }
+}
+
+// Check the entire journal, not just its latest snapshot, after successive deaths.
+fn assert_killed_chain(
+    path: &Path,
+    store: &SqliteMachineStore<Policy, 2>,
+    expected: &[std::sync::Arc<MachineCommitBatch<2>>],
+    state: u64,
+) {
+    let snapshot = block_on(store.load_head(&true, SCOPE)).unwrap().unwrap();
+    assert_eq!(snapshot.head().revision.get(), expected.len() as u64);
+    assert_eq!(snapshot.state(), state.to_le_bytes());
+    let page = block_on(store.history(
+        &true,
+        MachineHistoryRequest {
+            scope: SCOPE,
+            after: MachineRevision::ZERO,
+            through: MachineRevision::new(expected.len() as u64),
+            max_records: 32,
+            max_bytes: 32 * 1024,
+        },
+    ))
+    .unwrap();
+    assert_eq!(page.records.len(), expected.len());
+    assert_eq!(page.next, None);
+    for (stored, original) in page.records.iter().zip(expected) {
+        assert_eq!(stored.batch().record(), original.record());
+        assert_eq!(stored.batch().event(), original.event());
+        assert_eq!(stored.batch().state(), original.state());
+        assert_eq!(
+            stored.batch().intents().collect::<Vec<_>>(),
+            original.intents().collect::<Vec<_>>()
+        );
+        let found = block_on(store.lookup(&true, SCOPE, stored.receipt().event))
+            .unwrap()
+            .unwrap();
+        assert_eq!(found.receipt(), stored.receipt());
+    }
+    let connection = rusqlite::Connection::open(path).unwrap();
+    let rows: (u32, u32) = connection
+        .query_row(
+            "SELECT (SELECT count(*) FROM machine_events), (SELECT count(*) FROM machine_intents)",
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )
+        .unwrap();
+    let count = u32::try_from(expected.len()).unwrap();
+    assert_eq!(rows, (count, count));
+}
+
+#[test]
+fn repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry() {
+    let phases = [
+        "before-transaction",
+        "after-preflight",
+        "after-begin",
+        "after-event",
+        "after-intents",
+        "after-head",
+        "after-validation",
+        "after-commit",
+    ];
+    for seed in [1_u64, 2, 3] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("chain.db");
+        let store = support::open(&path);
+        block_on(store.bootstrap(&true, genesis())).unwrap();
+        drop(store);
+        let mut random = seed;
+        let mut state = 5_u64;
+        let mut expected = Vec::new();
+        for id in 1_u8..=16 {
+            random ^= random << 13;
+            random ^= random >> 7;
+            random ^= random << 17;
+            let amount = 1 + (random & 255);
+            let phase = *phases
+                .get((usize::from(id) - 1 + seed as usize) % phases.len())
+                .unwrap();
+            // Expected state/revision come from arithmetic and the accepted prefix,
+            // never from the production journal's restored snapshot.
+            let mut native = MemoryMachine::<_, 2>::restore(
+                Model,
+                MachineHead {
+                    scope: SCOPE,
+                    revision: MachineRevision::new(expected.len() as u64),
+                },
+                state,
+                INTENTS,
+            )
+            .unwrap();
+            let request = batch(&mut native, amount, id);
+            assert_eq!(request.event(), amount.to_le_bytes());
+            assert_eq!(request.state(), (state + amount).to_le_bytes());
+            {
+                let mut intents = request.intents();
+                let (metadata, payload) = intents.next().unwrap();
+                assert_eq!(payload, (state + amount).to_le_bytes());
+                assert_eq!(metadata.identity, MachineIntentId::from_bytes([id; 32]));
+                assert_eq!(metadata.digest, penelope_core::task::Digest::of(payload).0);
+                assert_eq!(metadata.payload_bytes, 8);
+                assert!(intents.next().is_none());
+            }
+            let marker = directory.path().join(format!("marker-{id}"));
+            let mut child = Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "machine::tests::commit_process_helper",
+                    "--nocapture",
+                ])
+                .env("PENELOPE_MACHINE_DB", &path)
+                .env("PENELOPE_MACHINE_CHAIN_EVENT", format!("{amount},{id}"))
+                .env("PENELOPE_MACHINE_CUT", phase)
+                .env("PENELOPE_MACHINE_MARKER", &marker)
+                .spawn()
+                .unwrap();
+            wait_for_marker(&mut child, &marker, phase);
+            child.kill().unwrap();
+            assert_eq!(child.wait().unwrap().signal(), Some(9));
+            let committed = phase == "after-commit";
+            if committed {
+                expected.push(std::sync::Arc::clone(&request));
+            }
+            let reopened = support::open(&path);
+            assert_killed_chain(
+                &path,
+                &reopened,
+                &expected,
+                state + if committed { amount } else { 0 },
+            );
+            let found =
+                block_on(reopened.lookup(&true, SCOPE, MachineEventId::from_bytes([id; 32])))
+                    .unwrap();
+            assert_eq!(found.is_some(), committed);
+            let receipt =
+                block_on(reopened.commit(&true, std::sync::Arc::clone(&request))).unwrap();
+            assert_eq!(
+                receipt.disposition,
+                if committed {
+                    MachineCommitDisposition::AlreadyCommitted
+                } else {
+                    MachineCommitDisposition::Committed
+                }
+            );
+            if let Some(found) = found {
+                assert_eq!(receipt.identity, found.receipt().identity);
+            } else {
+                expected.push(request);
+            }
+            state += amount;
+            drop(reopened);
+            let recovered = support::open(&path);
+            assert_killed_chain(&path, &recovered, &expected, state);
+            println!("chain seed={seed} event={id} phase={phase} signal=9 exact_prefix=true");
         }
     }
 }

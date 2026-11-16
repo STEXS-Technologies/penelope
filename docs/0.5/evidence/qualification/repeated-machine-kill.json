@@ -1,0 +1,625 @@
+{
+  "scope": "Supplementary serialized SQLite crash/model qualification. Three seeded growing journals undergo16 successive real SIGKILLs each, rotating all eight commit boundaries twice per seed. Full history, snapshot, raw event/intent row counts and exact retries are checked after each death and after a second reopen. The accepted-prefix arithmetic and event/intent bytes/identities are checked independently of the journal restore used by the child.",
+  "base_commit": "7be52804dc21d1c6a5b7e1e47919b869c4e57762",
+  "source": {
+    "path": "crates/penelope-sqlite/src/machine/tests.rs",
+    "sha256": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+    "production_change": false,
+    "test_only_unix_module": true
+  },
+  "checks": [
+    {
+      "label": "machine-tests-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "test",
+        "-p",
+        "penelope-sqlite",
+        "--lib",
+        "--locked",
+        "machine::tests::",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "seconds": 2.866780325995933
+    },
+    {
+      "label": "machine-tests-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "test",
+        "-p",
+        "penelope-sqlite",
+        "--lib",
+        "--locked",
+        "machine::tests::",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "seconds": 3.5710008879977977
+    },
+    {
+      "label": "clippy",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "-p",
+        "penelope-sqlite",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "format_check_exit_code": 0,
+  "observations": [
+    {
+      "compiler": "1.100.0",
+      "machine_unit_tests_passed": 9,
+      "chain_sigkills": 48,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "accepted_chain_length_per_database": 16,
+      "each_commit_boundary_per_seed": 2,
+      "verified_rows": [
+        [
+          "1",
+          "1",
+          "after-preflight"
+        ],
+        [
+          "1",
+          "2",
+          "after-begin"
+        ],
+        [
+          "1",
+          "3",
+          "after-event"
+        ],
+        [
+          "1",
+          "4",
+          "after-intents"
+        ],
+        [
+          "1",
+          "5",
+          "after-head"
+        ],
+        [
+          "1",
+          "6",
+          "after-validation"
+        ],
+        [
+          "1",
+          "7",
+          "after-commit"
+        ],
+        [
+          "1",
+          "8",
+          "before-transaction"
+        ],
+        [
+          "1",
+          "9",
+          "after-preflight"
+        ],
+        [
+          "1",
+          "10",
+          "after-begin"
+        ],
+        [
+          "1",
+          "11",
+          "after-event"
+        ],
+        [
+          "1",
+          "12",
+          "after-intents"
+        ],
+        [
+          "1",
+          "13",
+          "after-head"
+        ],
+        [
+          "1",
+          "14",
+          "after-validation"
+        ],
+        [
+          "1",
+          "15",
+          "after-commit"
+        ],
+        [
+          "1",
+          "16",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "1",
+          "after-begin"
+        ],
+        [
+          "2",
+          "2",
+          "after-event"
+        ],
+        [
+          "2",
+          "3",
+          "after-intents"
+        ],
+        [
+          "2",
+          "4",
+          "after-head"
+        ],
+        [
+          "2",
+          "5",
+          "after-validation"
+        ],
+        [
+          "2",
+          "6",
+          "after-commit"
+        ],
+        [
+          "2",
+          "7",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "8",
+          "after-preflight"
+        ],
+        [
+          "2",
+          "9",
+          "after-begin"
+        ],
+        [
+          "2",
+          "10",
+          "after-event"
+        ],
+        [
+          "2",
+          "11",
+          "after-intents"
+        ],
+        [
+          "2",
+          "12",
+          "after-head"
+        ],
+        [
+          "2",
+          "13",
+          "after-validation"
+        ],
+        [
+          "2",
+          "14",
+          "after-commit"
+        ],
+        [
+          "2",
+          "15",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "16",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "1",
+          "after-event"
+        ],
+        [
+          "3",
+          "2",
+          "after-intents"
+        ],
+        [
+          "3",
+          "3",
+          "after-head"
+        ],
+        [
+          "3",
+          "4",
+          "after-validation"
+        ],
+        [
+          "3",
+          "5",
+          "after-commit"
+        ],
+        [
+          "3",
+          "6",
+          "before-transaction"
+        ],
+        [
+          "3",
+          "7",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "8",
+          "after-begin"
+        ],
+        [
+          "3",
+          "9",
+          "after-event"
+        ],
+        [
+          "3",
+          "10",
+          "after-intents"
+        ],
+        [
+          "3",
+          "11",
+          "after-head"
+        ],
+        [
+          "3",
+          "12",
+          "after-validation"
+        ],
+        [
+          "3",
+          "13",
+          "after-commit"
+        ],
+        [
+          "3",
+          "14",
+          "before-transaction"
+        ],
+        [
+          "3",
+          "15",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "16",
+          "after-begin"
+        ]
+      ]
+    },
+    {
+      "compiler": "1.89.0",
+      "machine_unit_tests_passed": 9,
+      "chain_sigkills": 48,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "accepted_chain_length_per_database": 16,
+      "each_commit_boundary_per_seed": 2,
+      "verified_rows": [
+        [
+          "1",
+          "1",
+          "after-preflight"
+        ],
+        [
+          "1",
+          "2",
+          "after-begin"
+        ],
+        [
+          "1",
+          "3",
+          "after-event"
+        ],
+        [
+          "1",
+          "4",
+          "after-intents"
+        ],
+        [
+          "1",
+          "5",
+          "after-head"
+        ],
+        [
+          "1",
+          "6",
+          "after-validation"
+        ],
+        [
+          "1",
+          "7",
+          "after-commit"
+        ],
+        [
+          "1",
+          "8",
+          "before-transaction"
+        ],
+        [
+          "1",
+          "9",
+          "after-preflight"
+        ],
+        [
+          "1",
+          "10",
+          "after-begin"
+        ],
+        [
+          "1",
+          "11",
+          "after-event"
+        ],
+        [
+          "1",
+          "12",
+          "after-intents"
+        ],
+        [
+          "1",
+          "13",
+          "after-head"
+        ],
+        [
+          "1",
+          "14",
+          "after-validation"
+        ],
+        [
+          "1",
+          "15",
+          "after-commit"
+        ],
+        [
+          "1",
+          "16",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "1",
+          "after-begin"
+        ],
+        [
+          "2",
+          "2",
+          "after-event"
+        ],
+        [
+          "2",
+          "3",
+          "after-intents"
+        ],
+        [
+          "2",
+          "4",
+          "after-head"
+        ],
+        [
+          "2",
+          "5",
+          "after-validation"
+        ],
+        [
+          "2",
+          "6",
+          "after-commit"
+        ],
+        [
+          "2",
+          "7",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "8",
+          "after-preflight"
+        ],
+        [
+          "2",
+          "9",
+          "after-begin"
+        ],
+        [
+          "2",
+          "10",
+          "after-event"
+        ],
+        [
+          "2",
+          "11",
+          "after-intents"
+        ],
+        [
+          "2",
+          "12",
+          "after-head"
+        ],
+        [
+          "2",
+          "13",
+          "after-validation"
+        ],
+        [
+          "2",
+          "14",
+          "after-commit"
+        ],
+        [
+          "2",
+          "15",
+          "before-transaction"
+        ],
+        [
+          "2",
+          "16",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "1",
+          "after-event"
+        ],
+        [
+          "3",
+          "2",
+          "after-intents"
+        ],
+        [
+          "3",
+          "3",
+          "after-head"
+        ],
+        [
+          "3",
+          "4",
+          "after-validation"
+        ],
+        [
+          "3",
+          "5",
+          "after-commit"
+        ],
+        [
+          "3",
+          "6",
+          "before-transaction"
+        ],
+        [
+          "3",
+          "7",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "8",
+          "after-begin"
+        ],
+        [
+          "3",
+          "9",
+          "after-event"
+        ],
+        [
+          "3",
+          "10",
+          "after-intents"
+        ],
+        [
+          "3",
+          "11",
+          "after-head"
+        ],
+        [
+          "3",
+          "12",
+          "after-validation"
+        ],
+        [
+          "3",
+          "13",
+          "after-commit"
+        ],
+        [
+          "3",
+          "14",
+          "before-transaction"
+        ],
+        [
+          "3",
+          "15",
+          "after-preflight"
+        ],
+        [
+          "3",
+          "16",
+          "after-begin"
+        ]
+      ]
+    }
+  ],
+  "production_files_unchanged_from_current_package_checkpoint": 72,
+  "initial_attempts": "Retained compiler failures used unsupported SQLite FromSql count types (usize, then u64); corrected to checked u32. First passing test runs preceded three strict-Clippy style fixes; final qualified source was rerun on both compilers and passes strict Clippy. No production failure is inferred.",
+  "limits": [
+    "This is a seeded crash/model test, not a claim that the clean-reopen libFuzzer target performs process kills. Three seed profiles do not cover arbitrary operation sequences or power loss.",
+    "Independent arithmetic/byte expectations still use production preparation to form the exact requested record; retained record equality complements independently checked event/state/intent payload semantics.",
+    "The long full-target fuzz campaign retains its older test/harness source scope. This supplements it; it does not restart or silently replace that campaign.",
+    "Current all-ten package and coverage checkpoint predates this test addition. Final source/harness/artifact reconciliation, retained performance findings and remaining plan review stay open."
+  ],
+  "archive": {
+    "file": "repeated-machine-kill.tar.gz",
+    "sha256": "6b91eaef8156afb6e34c6a248022dc4b2ff5c981195d8aef1cd7f06d298b4485",
+    "members_sha256": {
+      "qualified/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "qualified/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "qualified/clippy.stderr": "729d582c6133a99fb9cad816eb89a1b34cedb1b3c80032d5b4ee5e6b9eeaa1fb",
+      "qualified/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "qualified/machine-tests-1.89.0.stderr": "88075754c196f8043f168852e0f9a0349b3f4140ca0ec3ef6b5d0b671a0333f4",
+      "qualified/machine-tests-1.89.0.stdout": "250e1a1463ca56dc71a331e6d3b1a0f2eee3129b96bd2bd99c66bf358f9e2c01",
+      "qualified/checks.json": "be95848b12199478ff5277d1f81c7bbf6e6cd325fc387d4d21aee52c2bb52ffd",
+      "qualified/machine-tests-1.100.0.stderr": "c8990fb1107ca87976940e652fc13236303d23c20421078fdbef141ad1b4c2b4",
+      "qualified/machine-tests-1.100.0.stdout": "337f05d85b4595acc0ecc79d4233db46a6d365f0de1f1901533db8e07d109c35",
+      "initial-compile-type-error/checks.json": "124642200a789ec234830a1a9576f6c12e08b71677f606f5af9189110f8c0deb",
+      "initial-compile-type-error/machine-tests-1.100.0.stderr": "d0ac1e63e23ce93641b44be4704743353aa0a2207507448ed7cf9d633ae221f1",
+      "initial-compile-type-error/machine-tests-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "second-compile-type-error/checks.json": "14c6d78b94cc411b0f1876501524ba7c1e48b6dd15d35667e202f953f53bb9fc",
+      "second-compile-type-error/machine-tests-1.100.0.stderr": "e2e0cd64eddccf482ce56e1902e68ddab53ccbd7f7aae171f20f99ca5d781c6e",
+      "second-compile-type-error/machine-tests-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passing-tests-before-lint-fixes/clippy.stderr": "362b83f440b1ee6d6dd21b426596d03aa3ff2277ae428ff02aa9928b370811db",
+      "passing-tests-before-lint-fixes/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passing-tests-before-lint-fixes/machine-tests-1.89.0.stderr": "b969f77f163d18df34cefdee4f15a115289074c48e84489a752599fbc5c5baa1",
+      "passing-tests-before-lint-fixes/machine-tests-1.89.0.stdout": "aa9e0d427751a516d31555c003e55a19dca38e0142c43acf265610784c388a0e",
+      "passing-tests-before-lint-fixes/checks.json": "dc251dc80a2360d4017355014e3e53aca329dd0da3626e75c0a46383c473a176",
+      "passing-tests-before-lint-fixes/machine-tests-1.100.0.stderr": "1e007833e07338765d4ab35278ac2bfb10e61e40492fb5b947443f7462d9e152",
+      "passing-tests-before-lint-fixes/machine-tests-1.100.0.stdout": "7fa824fd0d5691582abfe27178c624f5ff6547c68a99cc5fa21874f2c993816b",
+      "drivers/penelope-050-repeated-kill-qualified.py": "0f1a1a31f86959414502b17af7bc52f67e6fcc60072091edc57e4589ffa42c1d",
+      "drivers/penelope-050-repeated-kill-final.py": "f7c0fbee9d43285b34046c36b6a1498207095438ff001422b37833bd404457e2",
+      "drivers/penelope-050-repeated-kill-followup.py": "d15f5eac8e5541107903bee86ad1dd9ddc019c3cfd245b08f410a1bcaa82ddec",
+      "drivers/penelope-050-repeated-kill.py": "150092143d7b364d5c9bd7d2226c32e6bf958e221d8bf0e8df606c1b9d08b1ca",
+      "recorder.py": "03d10b6a35e96c912552bebaf6b25849d3b21f4e2788f2953832b143eb07e9f2",
+      "tests.rs": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903"
+    }
+  }
+}
