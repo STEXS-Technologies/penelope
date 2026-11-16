@@ -70,6 +70,11 @@ comparison; subprocess-split output is documented in the recorders.
   does not replace this. The already-running `9084239`/`cefa55f`/`be774e6`
   campaigns and development rehearsal retain their original source/harness scopes;
   none is relabeled as the final revision.
+  The [first final-source attempt](evidence/qualification/final-chaos-toolchain-interruption.json)
+  stopped on a compiler-version tooling error after 21 fuzz batches, with unchanged
+  source hashes. A fresh attempt uses installed `nightly-2026-08-05` through a
+  retained invocation wrapper; its 1,000-run worker-protocol preflight passes.
+  Neither the failed attempt nor this preflight closes full qualification.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.

@@ -149,7 +149,7 @@
   "release_acceptance_review": {
     "production_source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
     "review_document": "../../verification.md",
-    "review_document_sha256": "f479dfa7e0b01b5ffdc3c56a02339943475c532d0ee5d62ace8cde4784d55e96",
+    "review_document_sha256": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2",
     "conditions": [
       {
         "plan_line": 980,
@@ -306,7 +306,7 @@
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
     "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
-    "../../verification.md": "f479dfa7e0b01b5ffdc3c56a02339943475c532d0ee5d62ace8cde4784d55e96"
+    "../../verification.md": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2"
   },
   "blocks": [
     {

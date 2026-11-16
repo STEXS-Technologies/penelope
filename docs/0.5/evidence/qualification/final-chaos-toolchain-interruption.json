@@ -1,0 +1,71 @@
+{
+  "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+  "disposition": "incomplete_tooling_failure_not_release_qualification",
+  "failed_attempt": {
+    "exit_code": 1,
+    "start_utc": "2026-11-16T09:54:45.380168+00:00",
+    "end_utc": "2026-11-16T10:07:15.713295+00:00",
+    "seconds": 750.3329242420004,
+    "completed_100000_run_fuzz_batches": 21,
+    "required_batches": 84,
+    "failure_before_target": "fuzz_worker_protocol",
+    "terminal_error": "Rust version string does not start with 'rustc'!",
+    "source_before_after_identical": true,
+    "tracked_diff": ""
+  },
+  "diagnosis": {
+    "observed_utc": "2026-11-16T10:10:29.125134+00:00",
+    "rolling_nightly_rustc_mtime_utc": "2026-11-16T10:07:21.319421+00:00",
+    "rolling_version_now": "rustc 1.102.0-nightly (5f4effd57 2026-11-13)\nbinary: rustc\ncommit-hash: 5f4effd579500175af844241eb179e756190f1e7\ncommit-date: 2026-11-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.102.0-nightly\nLLVM version: 23.1.5\n",
+    "dated_version": "rustc 1.99.0-nightly (1ed2df61a 2026-08-04)\nbinary: rustc\ncommit-hash: 1ed2df61a19042f231709eb05d032ae9e2cb2084\ncommit-date: 2026-08-04\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0-nightly\nLLVM version: 22.1.8\n",
+    "limit": "The rolling rustc file was replaced near the parser error. This supports an environment-change diagnosis, not proof of the exact subprocess bytes seen at failure. A subsequent1000-run worker-protocol smoke passed on the new rolling toolchain; it is not full qualification. Retry will use a dated toolchain via an explicit retained cargo shim."
+  },
+  "retry": {
+    "status_at_recording": "running",
+    "pid": 2901709,
+    "raw_directory": "/tmp/penelope-050-final-qualified-chaos-pinned",
+    "source_sha256_matches_failed_attempt": true,
+    "selection": "Retained PATH cargo shim maps only explicit+nightly to installednightly-2026-08-05. All other cargo invocations preserve their declared toolchain. Rolling nightly is not changed.",
+    "pinned_worker_smoke_exit_code": 0,
+    "toolchain_versions": {
+      "nightly-2026-08-05": "rustc 1.99.0-nightly (1ed2df61a 2026-08-04)\nbinary: rustc\ncommit-hash: 1ed2df61a19042f231709eb05d032ae9e2cb2084\ncommit-date: 2026-08-04\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0-nightly\nLLVM version: 22.1.8\n",
+      "1.100.0": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5\n"
+    },
+    "tool_sha256": {
+      "/home/ac/.rustup/toolchains/nightly-2026-08-05-x86_64-unknown-linux-gnu/bin/rustc": "38570ba67019444f2b8333b0711d4e977c4e9a4df14419c43c62fb22ba896644",
+      "/home/ac/.rustup/toolchains/nightly-2026-08-05-x86_64-unknown-linux-gnu/bin/cargo": "8f66988acae8cc7362f9753990672d82261a38851518acee657daad5264ad286",
+      "/home/ac/.rustup/toolchains/nightly-2026-08-05-x86_64-unknown-linux-gnu/bin/rustdoc": "57fbcbbccab153fc8bf11b994a8608be1650899f6a5fbb5d9ddb2ebfb2ee4449",
+      "/home/ac/.rustup/toolchains/1.100.0-x86_64-unknown-linux-gnu/bin/rustc": "5073422953727c9427a76b7fce03aa9404da46315e5a1e4965389512a41e8db0",
+      "/home/ac/.rustup/toolchains/1.100.0-x86_64-unknown-linux-gnu/bin/cargo": "84d55d77232a921da96bcf2e1f78532ef5c5221803aae4448d9e220d48ebd808",
+      "/home/ac/.rustup/toolchains/1.100.0-x86_64-unknown-linux-gnu/bin/rustdoc": "e4caf2a2cb59463219d5f0db3d6bfd1dc48416d1278764d48f291b4d43cca410",
+      "/home/ac/.cargo/bin/cargo-fuzz": "230d136d7555ca857af901cbbf4bcd97255f6555fffa33a3250f25eb065b7b0b",
+      "/tmp/penelope-050-final-pinned-tools/cargo": "15901431b87fffdebeed15f2ba0b8a7fd903f0bb758364393049a4dd28e87768"
+    },
+    "limit": "This start record is not a terminal campaign result. Source and tool identities must be checked again after completion. The failed attempt contributes no completed-round certification."
+  },
+  "archive": {
+    "file": "final-chaos-toolchain-interruption.tar.gz",
+    "sha256": "77c3299df9175be992fe624392a806c1105ee3f6f285c6fdf44b348e79e5a148",
+    "members": 11791,
+    "non_corpus_members_sha256": {
+      "failed/manifest.json": "e67f43c0696b4c6cc1bc3f4522a42670611bba0b0cbad679288ed89c55081ec1",
+      "failed/campaign.log": "a46badd095f41f788ad1e06e504765f1e65565579813dbb1c554beec691d22b9",
+      "failed/toolchain-diagnosis.json": "be95be57995afd1b7a80dae47ea4f33db603c8a880ba972483daef065af035af",
+      "drivers/failed.py": "488d1d51a2e10efaa10c418081c405dbade8a4a4a5a9fce46065b51fdc561ff1",
+      "drivers/retry.py": "877d66e64a353fd682b74016493ec1097fb45ffa8edb9d72c0234e668fa4e4d9",
+      "drivers/cargo": "15901431b87fffdebeed15f2ba0b8a7fd903f0bb758364393049a4dd28e87768",
+      "retry/initial-manifest.json": "ff4d408a5faae40cefae849d7d0efbacc9ba0ecb3dbf005b662d0abe155edf1f",
+      "retry/pinned-worker-smoke.log": "283156e052877b8cc96ee2b69c2cb832da58879554f51b8bbf3f18e5ba70ab49",
+      "drivers/recorder.py": "3f77b0cd2a023495e61f88504dd9d24137f1fe8f4e48c1c8955071cfc652011b"
+    },
+    "corpus_members": 11782,
+    "corpus_tree_sha256": "5593fccf2aa447849d29235c911f7a577b719d8c030eeb32f183034dc017955b",
+    "corpus_tree_algorithm": "Sorted archive names; hash name UTF8, NUL, lowercase SHA256 of member bytes, newline. Corpus was moved after the subsequent rolling-nightly1000-run worker smoke; its worker entries include that diagnostic and are not misrepresented as failed-run inputs."
+  },
+  "limits": [
+    "The failure is a real terminal nonzero tool invocation, not an observation timeout or an inferred stop.",
+    "The rolling nightly file replacement was observed near failure; exact failing subprocess stdout was not captured separately, so causation remains an inference.",
+    "Other campaign drivers were left running. No product source or global toolchain was changed for the retry.",
+    "The installed dated nightly is mapped only for this qualification invocation through the retained PATH shim; development stable and MSRV policies are unchanged."
+  ]
+}
