@@ -71,6 +71,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             action_id: "act_graph_work".try_into()?,
         },
     )?;
+    // Graph start owns its decision; it does not retain the definition.
+    drop(graph_definition);
     inspection::inspect("graph saga", &graph);
     println!(
         "graph saga candidate={:?}; atomic admission required",

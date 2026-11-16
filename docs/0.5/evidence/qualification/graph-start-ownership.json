@@ -1,0 +1,252 @@
+{
+  "base_commit": "13825266044414d8391a867c200e665b86e3ca03",
+  "scope": "Remove an unnecessary definition borrow from the new0.5 graph-start adapter. It returns an owned graph decision with no predecessor, so its PreparedGraphSaga lifetime can be static. Graph-result retains its real predecessor borrow; linear preparation retains its actual input/definition borrows.",
+  "source_sha256": {
+    "crates/penelope-executor/src/saga_machine.rs": "e60c0882db124c3430c8c6d5d620c058cd709a9c1600dfa8e748cf25cdf2e38e",
+    "crates/penelope/examples/prepared_decisions.rs": "a9d410fa986d815021cfadbb0850325f25d0c588a87d16b039bb5b240653f938",
+    "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3"
+  },
+  "production_change": {
+    "file": "crates/penelope-executor/src/saga_machine.rs",
+    "start_function_body_byte_identical": true,
+    "only_changes": "Documentation, removal of the input definition lifetime parameter and static lifetime on the owned return. No evaluator, wire, dispatch, commit, error or validation body changed.",
+    "other_coverage_reported_files_identical_to_c8fda4c": 71
+  },
+  "negative_control": {
+    "original_signature": "The same facade consumer fails E0505 when dropping graph_definition before inspecting the prepared candidate.",
+    "fixed_signature": "Both compilers run that consumer without cloning or retaining the definition."
+  },
+  "checks": [
+    {
+      "label": "consumer-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8909532889956608
+    },
+    {
+      "label": "saga-parity-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 5.342336670000805
+    },
+    {
+      "label": "executor-tests-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "-p",
+        "penelope-executor",
+        "--all-targets",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 67.69978573800472
+    },
+    {
+      "label": "workspace-example-clippy-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "-p",
+        "penelope",
+        "--example",
+        "prepared_decisions",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 2.7666510400013067
+    },
+    {
+      "label": "consumer-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 6.806845500002964
+    },
+    {
+      "label": "saga-parity-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 5.625889112998266
+    },
+    {
+      "label": "executor-tests-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "-p",
+        "penelope-executor",
+        "--all-targets",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 75.13747353800863
+    },
+    {
+      "label": "workspace-example-clippy-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "clippy",
+        "-p",
+        "penelope",
+        "--example",
+        "prepared_decisions",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 3.5757350509957178
+    },
+    {
+      "label": "fmt",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6276864959945669
+    }
+  ],
+  "executor_tests": [
+    {
+      "compiler": "1.100.0",
+      "harness_summaries": 25,
+      "passed": 152,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "compiler": "1.89.0",
+      "harness_summaries": 25,
+      "passed": 152,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "frozen_parity": [
+    {
+      "label": "prepared-parity-1.100.0",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--features",
+        "prepared",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.27316992499982007,
+      "exact_frozen_rows": 3136,
+      "legacy_and_prepared_equal_frozen_baseline": true
+    },
+    {
+      "label": "prepared-parity-1.89.0",
+      "command": [
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--features",
+        "prepared",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.41452574299182743,
+      "exact_frozen_rows": 3136,
+      "legacy_and_prepared_equal_frozen_baseline": true
+    }
+  ],
+  "archive": {
+    "file": "graph-start-ownership.tar.gz",
+    "sha256": "a4b858660f0933f1b15e02f2d5f3a3e195281208906bf56551dfb16a48da228f",
+    "members_sha256": {
+      "raw/saga_machine-original.rs": "848b8dd4e96a04dc309458c96c593bae18d47f11919c1f58fac36422b43da40e",
+      "raw/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/workspace-example-clippy-1.89.0.stderr": "74a99c944f076c57cde600d1d8d17e1104ab511ab04d74a5dc4ad37a8a16c0a8",
+      "raw/workspace-example-clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/executor-tests-1.89.0.stderr": "bc9df421a31e9a791236883153c1e09c89f524770d499ff0b80786e423ba3a71",
+      "raw/executor-tests-1.89.0.stdout": "409584546a64871c2068925e327db8b6dfff526c85b0e5f374006505c0c9bb91",
+      "raw/prepared-parity-1.89.0.stderr": "5f8e54c5bb9942f735421dc279d380090a9f07ecbd5f59440da497a077ae5311",
+      "raw/prepared-parity-1.89.0.stdout": "1e78e040cbb8db6e073b1415b4f391482d863555f4a0a09bbc9e10169e165357",
+      "raw/prepared-parity-checks.json": "859398cfbb9db5ed394cf8cf6d4c566e854b772d2401e3c42ba8cfd252336cf9",
+      "raw/prepared-parity-1.100.0.stderr": "cd90d600ac2af2d9c3f411a577ce55f6e8d6df67efd214bddc5d8cbb71b774e7",
+      "raw/prepared-parity-1.100.0.stdout": "1e78e040cbb8db6e073b1415b4f391482d863555f4a0a09bbc9e10169e165357",
+      "raw/saga-parity-1.89.0.stderr": "ae63e877aadea65a8a984d698581a9a04d6ff2a961a7c767a0c305c0eadda265",
+      "raw/saga-parity-1.89.0.stdout": "1e78e040cbb8db6e073b1415b4f391482d863555f4a0a09bbc9e10169e165357",
+      "raw/consumer-1.89.0.stderr": "4fe81bd56f80b39ce89ab7b5d24fc90ceaad2ddbe6aeec333bab63999919e43f",
+      "raw/consumer-1.89.0.stdout": "dcd8bfe324d8cfb06fe25261ec3985f9632b9df271cf1177c3789bcb3983757e",
+      "raw/workspace-example-clippy-1.100.0.stderr": "e297eb5f6e4c30bda8f06e7dd1c7bbf309c13bba3f9bf3eeb8ce8e6511f132f6",
+      "raw/workspace-example-clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/executor-tests-1.100.0.stderr": "28aa18bf1b179cd326214f2f1a2655ecdead31a0253625de8d02656123e55f53",
+      "raw/executor-tests-1.100.0.stdout": "b06b023cca17f5b23cd0b967e190af3478e14c0edfdbc5481dc16c2538b8e1e6",
+      "raw/saga-parity-1.100.0.stderr": "cd1fe2de92a2f7807c369716ba779017bb24b95b0a0134dfd5b9bffe1b8bb5cb",
+      "raw/saga-parity-1.100.0.stdout": "1e78e040cbb8db6e073b1415b4f391482d863555f4a0a09bbc9e10169e165357",
+      "raw/checks.json": "0bc84fa8b298511eb4453271ba41e9196a48ba7edfab82bdcbb7bbfcfb2f0664",
+      "raw/consumer-1.100.0.stderr": "5d5e760d8165cc485a42cbf031c6782b88cd94723c2c5903e0a825b8664818df",
+      "raw/consumer-1.100.0.stdout": "dcd8bfe324d8cfb06fe25261ec3985f9632b9df271cf1177c3789bcb3983757e",
+      "source/crates/penelope-executor/src/saga_machine.rs": "e60c0882db124c3430c8c6d5d620c058cd709a9c1600dfa8e748cf25cdf2e38e",
+      "source/crates/penelope/examples/prepared_decisions.rs": "a9d410fa986d815021cfadbb0850325f25d0c588a87d16b039bb5b240653f938",
+      "source/docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "drivers-and-logs/penelope-050-graph-start-qualification.py": "46504fe3fd1d49f679d28cb0e5ab56f7eca60d8040174028f8805e842ebc5d00",
+      "drivers-and-logs/penelope-050-graph-start-parity.py": "c7bf0de97633d2d5c702b2c6b7e375072fa04f0778a7e827d4c4c1b295f219a4",
+      "drivers-and-logs/penelope-050-graph-start-original.log": "9d747281b339582f1355297604c5a90d5788fa7f2eaebf639c5ecb4ad3ee0a37",
+      "drivers-and-logs/penelope-050-graph-start-graphify.log": "b7ed21317c8346405106bade90b35b0f50c054e3c479cd047c63e77f25eb7ac1",
+      "recorder.py": "36958eadab49188ab55ed6d24a770b94a70ea9f5143c84a443bf5d94daaac0ae"
+    }
+  },
+  "limits": [
+    "This demonstrates lifetime/ownership usability and retained decision behavior, not authorization or durable admission.",
+    "Source hashes bind the exact pre-commit follow-up. The preceding c0e9997 package/CI checkpoint does not contain this signature or example change.",
+    "Remote CI, final package/coverage reconciliation and full exact-source campaign qualification remain open. Existing running campaigns keep their frozen source identities.",
+    "No performance finding is waived and no new execution abstraction or engine is introduced."
+  ]
+}

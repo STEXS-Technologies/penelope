@@ -52,7 +52,8 @@
     "../qualification/nested-ergonomics.json": "c30fd40b4ff5a6682612920b98dbdcc7836c9c1f242aa7f82b1c64fb14cbcd56",
     "../sqlite-upgrade/manifest.json": "b479eb206a793c1c8be467e610f3e16596d7d99f0248d8de4810eb392f823cbb",
     "../qualification/current-package-checkpoint.json": "282cc40bf2d9f5b6249f152fcd98b3c976c58e9979c56e673f2f6c64c277ad9e",
-    "../qualification/door-ergonomics.json": "22cf479a74283e51e2f1c49a3af0d863a80e3a9472c48394a586ef67e3337776"
+    "../qualification/door-ergonomics.json": "22cf479a74283e51e2f1c49a3af0d863a80e3a9472c48394a586ef67e3337776",
+    "../qualification/door-package-checkpoint.json": "c710ed934a265390c40d2700436925306bca836de90cb302f21a944ce4a275d5"
   },
   "blocks": [
     {
@@ -2522,11 +2523,16 @@
         {
           "file": "../qualification/door-ergonomics.json",
           "pointer": "/scope",
-          "scope_status": "local_example_followup_remote_CI_and_packages_pending"
+          "scope_status": "local_example_followup_separately_reconciled_at_c0e9997"
+        },
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
         }
       ],
       "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block or final CI/package qualification."
+      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
     },
     {
       "line": 566,
@@ -2539,11 +2545,16 @@
         {
           "file": "../qualification/door-ergonomics.json",
           "pointer": "/scope",
-          "scope_status": "local_example_followup_remote_CI_and_packages_pending"
+          "scope_status": "local_example_followup_separately_reconciled_at_c0e9997"
+        },
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
         }
       ],
       "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block or final CI/package qualification."
+      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
     },
     {
       "line": 612,
@@ -2556,11 +2567,16 @@
         {
           "file": "../qualification/door-ergonomics.json",
           "pointer": "/scope",
-          "scope_status": "local_example_followup_remote_CI_and_packages_pending"
+          "scope_status": "local_example_followup_separately_reconciled_at_c0e9997"
+        },
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
         }
       ],
       "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block or final CI/package qualification."
+      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
     },
     {
       "line": 616,

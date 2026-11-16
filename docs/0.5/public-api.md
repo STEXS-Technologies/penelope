@@ -79,8 +79,9 @@ acknowledges its own durable admission through the existing native protocol.
 source input and definition. `into_parts` produces the original replay event and
 `SagaDecision` together. `prepare_graph_start` and `prepare_graph_result` delegate
 to the corresponding original graph operations; `into_decision` preserves their
-original event, projection and action. There is no new saga interpreter or state
-owner. Persist and verify the existing atomic process commit before dispatch,
+original event, projection and action. Graph start owns its decision and does
+not retain the definition; graph result borrows its predecessor for inspection.
+There is no new saga interpreter or state owner. Persist and verify the existing atomic process commit before dispatch,
 and route timer actions through their existing timer schedule path.
 
 Linear source tenant/process are supplied by the caller; the legacy linear

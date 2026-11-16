@@ -109,15 +109,17 @@ impl PreparedDecision for PreparedGraphSaga<'_> {
     }
 }
 
-/// Prepares the original graph start; no second graph interpreter or state owner.
+/// Prepares the original graph start; the returned decision owns its data.
+/// The definition is used only during evaluation, unlike the borrowed predecessor
+/// retained by `prepare_graph_result`. No commit or dispatch occurs.
 /// # Errors
 /// Returns the original start_graph error and validation precedence.
-pub fn prepare_graph_start<'definition>(
-    definition: &'definition ProcessGraphDefinition,
+pub fn prepare_graph_start(
+    definition: &ProcessGraphDefinition,
     tenant: TenantId,
     process: ProcessId,
     input: GraphSagaInput,
-) -> Result<PreparedGraphSaga<'definition>, GraphEngineError> {
+) -> Result<PreparedGraphSaga<'static>, GraphEngineError> {
     Ok(PreparedGraphSaga {
         before: None,
         decision: start_graph(definition, tenant, process, input)?,

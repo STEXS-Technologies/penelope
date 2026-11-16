@@ -19,9 +19,25 @@ retains its `ce93ff8` scope. **Full release qualification remains open.**
 The later [nested ergonomics follow-up](evidence/qualification/nested-ergonomics.json)
 adds a shared CI trace checker, genuine root-policy/leaf-refusal example and
 nested-enum allocation fixture. Both compilers pass the local checks and three
-semantic controls are caught. All 72 production files match `9084239`; these
-later test/example/workflow files now pass the current package and CI checkpoint.
+semantic controls are caught. At that checkpoint all 72 production files match
+`9084239`; those test/example/workflow files pass its package and CI checks.
 This closes that scoped follow-up, while full release qualification remains open.
+
+The [flat enum follow-up](evidence/qualification/door-package-checkpoint.json)
+qualifies all ten clean archives and all seven CI jobs at `c0e9997`. Both compilers
+report 97 test harness summaries and 700 passing checks; the exact packaged door
+example also runs and matches its eight-event oracle. The initial recorder used
+the previous 96-harness count; that validator failure and the resumed remaining
+commands are retained. No new coverage measurement is claimed.
+
+A later [graph-start ownership simplification](evidence/qualification/graph-start-ownership.json)
+removes a definition lifetime that the owned decision does not need. The same
+facade consumer fails to compile against the old signature when it drops that
+definition, and passes on stable/MSRV after the change. Both compilers pass all
+152 executor checks and exact legacy/prepared saga parity. The function body is
+byte-identical; the other 71 coverage-reported production files are unchanged.
+CI, package, coverage and final campaign reconciliation for this follow-up remain
+open; the earlier checkpoints retain their original source scopes.
 
 | Gate | Verified result and scope |
 | --- | --- |
@@ -41,7 +57,7 @@ This closes that scoped follow-up, while full release qualification remains open
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
-| Flat enum example | [Local ergonomics follow-up](evidence/qualification/door-ergonomics.json): one non-Clone state enum with variant-local data, one event enum and one `Machine` implementation. The same source runs as a facade-only consumer on Rust 1.100/MSRV 1.89. An eight-event oracle checks decisions, guard codes, state, revision and provenance; four compiled semantic mutations are caught. All 72 production sources and both locks are unchanged. This example retains explicit fixture metadata and stages no effects; remote CI and final archive reconciliation for this follow-up remain pending |
+| Flat enum example | [Local ergonomics follow-up](evidence/qualification/door-ergonomics.json): one non-Clone state enum with variant-local data, one event enum and one `Machine` implementation. The same source runs as a facade-only consumer on Rust 1.100/MSRV 1.89. An eight-event oracle checks decisions, guard codes, state, revision and provenance; four compiled semantic mutations are caught. At `c0e9997` all 72 production sources and both locks are unchanged. This example retains explicit fixture metadata and stages no effects. Its [all-ten archive and CI follow-up](evidence/qualification/door-package-checkpoint.json) passes on both compilers |
 | Nested example | [Eight ergonomic criteria](evidence/qualification/nested-ergonomics.json): one checker asserts all six complete traces; root fallback, terminal leaf refusal, guards, parent transition and self-reentry. Stable/MSRV pass; wrong guard/effect and removed leaf refusal are caught. A non-Clone nested enum with variant-local data now participates in the zero-allocation probe. Both compiler CI jobs run the checker; the current checkpoint also verifies exact packaged example/fixture bytes |
 | Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. That example follow-up records unchanged production at its source revision; the current all-ten archive checkpoint includes the example |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
