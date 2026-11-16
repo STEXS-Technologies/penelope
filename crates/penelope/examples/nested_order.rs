@@ -115,9 +115,9 @@ impl HierarchyModel for Order {
             }
             (Node::AwaitingPayment, OrderEvent::PaymentConfirmed(_)) => (Node::Paid, 2),
             (Node::Paid, OrderEvent::RefreshReceipt) => (Node::Paid, 4),
-            // Both open leaves bubble cancellation to their common parent.
-            (Node::Open, OrderEvent::Cancel) => (Node::Cancelled, 3),
-            (Node::Paid, OrderEvent::Cancel) => {
+            // The root policy applies unless a closed leaf explicitly refuses it.
+            (Node::Root, OrderEvent::Cancel) => (Node::Cancelled, 3),
+            (Node::Paid | Node::Cancelled, OrderEvent::Cancel) => {
                 return Ok(HierarchyDecision::Rejected {
                     reason: RejectCode::new(2),
                 });
@@ -239,5 +239,5 @@ fn main() -> Result<(), MachineFailure<HierarchyFailure<MachineError>>> {
         (4, OrderEvent::RefreshReceipt), // External self-edge exits and reenters Paid.
         (5, OrderEvent::Cancel),         // Paid refuses; the parent cannot override it.
     ])?;
-    run(&[(1, OrderEvent::Cancel)]) // Draft bubbles to Open's cancellation handler.
+    run(&[(1, OrderEvent::Cancel)]) // Draft bubbles through Open to the root policy.
 }

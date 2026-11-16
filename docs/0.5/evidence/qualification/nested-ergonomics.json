@@ -1,0 +1,160 @@
+{
+  "scope": "Plan9.2 eight ergonomic criteria: CI trace checker, genuine leaf/root refusal example and actual unboxed nested-enum allocation fixture. Test/example/workflow additions only; all72 production source identities remain byte-identical to9084239. Not all-ten fresh archive qualification or a user ergonomics study.",
+  "base_commit": "f9afe9bc2b73d0766bbfd5f24318404062a053c0",
+  "source_sha256": {
+    "scripts/check-nested-example.py": "baf366c56eb70bc3355a73e1935c27099a08478976605b110889b0bde5459b55",
+    ".github/workflows/ci.yml": "1660beb86f99032c178afd4b651f29df251f8ac18f4154fda18258599c7b73d4",
+    ".github/workflows/release.yml": "e766fa53b0aa7e17715289e78316202e6c6703baa7237fa4f4085d28f9e13f42",
+    "crates/penelope/examples/nested_order.rs": "ed1292014e8d16f0616b25d99c00ca39b7dad2dbd43eb6edf5f436d9a1a0f4f8",
+    "crates/penelope-core/tests/machine_allocations.rs": "73e1dfb19f91ee8dfb41db55c804ef528c92537c02d1b8641b63dddf470af422",
+    "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+    "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+    "crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d"
+  },
+  "production_files_unchanged": 72,
+  "criteria": [
+    {
+      "id": "9.2.1",
+      "requirement": "State hierarchy is expressed with Rust types/traits; user authors each state and event **once**.",
+      "assessment": "OrderState/Open own the nested state data once and OrderEvent owns event variants once. Node is a separate typed identity key, with explicit leaf/parent mapping; no claim of eliminating that mapping boilerplate.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.2",
+      "requirement": "No repeating state names in several string transition tables.",
+      "assessment": "The model uses Rust matches and typed Node keys, with no string transition tables or reflection registry.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.3",
+      "requirement": "Parent fallback and leaf override are explicit and predictable.",
+      "assessment": "Draft bubbles through Open to the root cancellation policy. Paid and Cancelled explicitly reject it. Removing the paid refusal lets root cancellation run and is caught by the checker.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.4",
+      "requirement": "Exit/entry order is asserted by runnable tests, including self-transitions, parent transitions, and guarded failures.",
+      "assessment": "One checked-in golden verifies all six complete public traces, including ordered hooks, both guards without hooks/state changes, external self-reentry and parent cancellation. Stable/MSRV local runs pass and CI/release are wired to the same checker; remote execution of this new wiring remains pending.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.5",
+      "requirement": "State-local data cannot appear on the wrong enum variant.",
+      "assessment": "Receipt data exists only in OrderState::Paid; enum layout enforces that structural distinction. Runtime domain validity remains a separate model check.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.6",
+      "requirement": "Runtime restoration validates that the active nested path is structurally legal.",
+      "assessment": "MemoryMachine::restore calls model validation; Hierarchical validation constructs the bounded StatePath before application validation. Existing malformed/depth/path tests pass in9084239 CI, not inferred from console output.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.7",
+      "requirement": "The API can be used with an unboxed, allocation-free nested enum where application state permits.",
+      "assessment": "The existing allocator probe now owns an inline, non-Clone Connection::{Disconnected,Connected::{Idle,Active{messages}}}. Both compilers observe zero allocation/reallocation/deallocation/requested bytes across10000 flat and10000 hierarchical attempts, with independent expected state per step and the existing positive allocator control retained.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    },
+    {
+      "id": "9.2.8",
+      "requirement": "It is possible to inspect a rejected transition with its source leaf, attempted event, and guard code.",
+      "assessment": "The golden contains source state, attempted event and stable guard code for both refusals. Inspection is local; rejected events do not acquire an accepted journal record.",
+      "status": "supported_in_stated_scope_final_qualification_open"
+    }
+  ],
+  "checks": {
+    "nested_public_trace_stable_exit": 0,
+    "nested_public_trace_msrv_exit": 0,
+    "enum_allocation_probe_stable_exit": 0,
+    "enum_allocation_probe_msrv_exit": 0,
+    "msrv_probe_clippy_exit": 0,
+    "stable_workspace_clippy_exit": 0,
+    "script_unit_tests": 75,
+    "action_pins_exit": 0,
+    "format_exit": 0
+  },
+  "negative_controls": {
+    "source_sha256": "ed1292014e8d16f0616b25d99c00ca39b7dad2dbd43eb6edf5f436d9a1a0f4f8",
+    "restored_byte_exact": true,
+    "restored_check_exit_code": 0,
+    "negative_controls": [
+      {
+        "mutation": "wrong-guard",
+        "exit_code": 1,
+        "compiled_example_completed_all_six_attempts": true,
+        "checker_rejected_changed_trace": true
+      },
+      {
+        "mutation": "missing-leaf-refusal",
+        "exit_code": 1,
+        "compiled_example_completed_all_six_attempts": true,
+        "checker_rejected_changed_trace": true
+      },
+      {
+        "mutation": "wrong-effect",
+        "exit_code": 1,
+        "compiled_example_completed_all_six_attempts": true,
+        "checker_rejected_changed_trace": true
+      }
+    ]
+  },
+  "retained_failures": "Initial MSRV Clippy rejected an existing unwrap in the allocation fixture. The fixture now returns its typed capacity error; final checks pass. Initial two example controls retain their earlier source hash; follow-up controls bind the current example and add missing-leaf-refusal mutation.",
+  "archive": {
+    "file": "nested-ergonomics.tar.gz",
+    "sha256": "acad3628958e875d1304e4688caad7e91e2b9518657d44cf68f1c7fe27da1541",
+    "member_count": 45,
+    "members_sha256": {
+      "source/scripts/check-nested-example.py": "baf366c56eb70bc3355a73e1935c27099a08478976605b110889b0bde5459b55",
+      "source/.github/workflows/ci.yml": "1660beb86f99032c178afd4b651f29df251f8ac18f4154fda18258599c7b73d4",
+      "source/.github/workflows/release.yml": "e766fa53b0aa7e17715289e78316202e6c6703baa7237fa4f4085d28f9e13f42",
+      "source/crates/penelope/examples/nested_order.rs": "ed1292014e8d16f0616b25d99c00ca39b7dad2dbd43eb6edf5f436d9a1a0f4f8",
+      "source/crates/penelope-core/tests/machine_allocations.rs": "73e1dfb19f91ee8dfb41db55c804ef528c92537c02d1b8641b63dddf470af422",
+      "source/crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "source/crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "source/crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "logs/penelope-050-nested-ci-format-qualified.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logs/penelope-050-nested-ci-workspace-clippy-qualified.log": "aafc3c7ab72cfa219e848d64e61d4df62256affa6f9e4fdd63def4a437b99794",
+      "logs/penelope-050-nested-ci-msrv-final.log": "6dea9d0266b7b0d8d84071efaeddb06d7498af07f5bc797e835d3dd7ba4f66d0",
+      "logs/penelope-050-nested-ci-stable-final.log": "f4bf1f7f80c2b61c9a2ba896a1afda0dec68d685ac1fa16a20beb1c01bc1572b",
+      "logs/penelope-050-nested-ci-format-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logs/penelope-050-nested-ci-format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logs/penelope-050-nested-ci-action-pins.log": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "logs/penelope-050-nested-ci-script-tests.log": "e8ec6279b595e7bf50ff26ed0a130fc874252432f8da8b07e45768fe06997fe0",
+      "logs/penelope-050-nested-ci-msrv.log": "57ad7dac3c5ec480e09bc8a4f4b2be5d30c5807bfd80c9750585fe2da3224397",
+      "logs/penelope-050-nested-ci-stable.log": "04cd3653fae65a9b453578b22db97b7205c3990ebf3dfa22dae7a0909bd22ea6",
+      "logs/penelope-050-nested-enum-clippy-final.log": "7585f6c8264d765505e443df7bbd236cef4b0ba505d0c7b1f56ff2be91f9a598",
+      "logs/penelope-050-nested-enum-stable-final.log": "26aa900ec940116873a62d474ca4fc3d99f789b1772c73a4ec7972e978e39dac",
+      "logs/penelope-050-nested-enum-msrv-final.log": "000c2e7b7c1e42b5309ecf028c7c4ef1342a909a0c8618995abf8f1b047368ff",
+      "logs/penelope-050-nested-enum-msrv-clippy-final.log": "43244c734b635c266781614ace0c6601762a982971415d60d280ca857871316e",
+      "logs/penelope-050-nested-enum-msrv-clippy.log": "48c7c9b4ec29935f2208c121b2c13c4a7fe828bccfea35d352abce916715de16",
+      "logs/penelope-050-nested-enum-clippy.log": "ccbb823fd4903de4537f1e2a7c886b6a884bd40e52d5300edeba13c1ded7132e",
+      "logs/penelope-050-nested-enum-msrv.log": "5a86d6907de66aa1e31d406ed6ab6b894b628aea670427eda9b6410be60fcd00",
+      "logs/penelope-050-nested-enum-stable.log": "bd340049d28268b8562719880409aeb1c55d3a9da23aaca1dfaf1fe6f86d52a7",
+      "penelope-050-nested-ci-controls/manifest.json": "b838ce2225460f27a142c8312b05601adc40cb74618c0e2da9e7e5ede2fc9c6c",
+      "penelope-050-nested-ci-controls/restored.stderr": "b7b600cbf87d25887bca794f0da6aa8a89d249499ee6fca07f60d8ae57896424",
+      "penelope-050-nested-ci-controls/restored.stdout": "28dfe8dd2df2c1e2e031e0def76aa322cd41f9e6253e3f2a315ee97f2747be84",
+      "penelope-050-nested-ci-controls/wrong-effect.stderr": "753bd02fddb8f0065f1217db543379d30a8f79b52c1cfb07d894309908b710e4",
+      "penelope-050-nested-ci-controls/wrong-effect.stdout": "986ef6ec69146ef32c1be633c1ae1d55733a1cab1d3836148813a89ada68f094",
+      "penelope-050-nested-ci-controls/wrong-guard.stderr": "938a1555ec58d50a06ac5e5e0bd8aea7e195f9b1613461eba06ba27b32e69c39",
+      "penelope-050-nested-ci-controls/wrong-guard.stdout": "15588489b6e5e75d57e18d4e8759c91a35782d5554e8599a96cda1b218621145",
+      "drivers/penelope-050-nested-ci-controls.py": "8c2c79c3d8c963ef21e86f846716e526cf077dd137b19ed904d7c9cb2faa549c",
+      "penelope-050-nested-ci-controls-followup/manifest.json": "92899c3e58cdee181b3eb369854de0ac9e199b4f863cc038cb2911b39f5bb177",
+      "penelope-050-nested-ci-controls-followup/restored.stderr": "dec2c069816b2d972d93469469c13bb34a58942e8192f661dd57b06aaec05a94",
+      "penelope-050-nested-ci-controls-followup/restored.stdout": "28dfe8dd2df2c1e2e031e0def76aa322cd41f9e6253e3f2a315ee97f2747be84",
+      "penelope-050-nested-ci-controls-followup/wrong-effect.stderr": "753bd02fddb8f0065f1217db543379d30a8f79b52c1cfb07d894309908b710e4",
+      "penelope-050-nested-ci-controls-followup/wrong-effect.stdout": "986ef6ec69146ef32c1be633c1ae1d55733a1cab1d3836148813a89ada68f094",
+      "penelope-050-nested-ci-controls-followup/missing-leaf-refusal.stderr": "4bfce0cbe01d24c8b463ccb8a46472a1b89ac14937e94e580135484e5329172f",
+      "penelope-050-nested-ci-controls-followup/missing-leaf-refusal.stdout": "9ad9b47ffc0de7869d29a690b41724ce25ddfcb87e676895d9a08f1b5f7e5ac2",
+      "penelope-050-nested-ci-controls-followup/wrong-guard.stderr": "c8d44241bfde8d8ffc02f72ad1dd3bf2fb7a404e6cfda79187219d0127d68617",
+      "penelope-050-nested-ci-controls-followup/wrong-guard.stdout": "15588489b6e5e75d57e18d4e8759c91a35782d5554e8599a96cda1b218621145",
+      "drivers/penelope-050-nested-ci-controls-followup.py": "19f97164c9c2e10cd4db36413b9f865c22970d31380a28a3fa6c404d8a7bfcb7",
+      "recorder.py": "b8b68aa6fe2f9e1c81db940927299edba4619cd59983861d9ec0eb375ef08b2a"
+    }
+  },
+  "remaining": [
+    "New remote CI wiring and final package/source reconciliation retain their own scopes.",
+    "Production full-source and supplementary fuzz campaigns remain running; no restart or completion is inferred.",
+    "Performance findings and remaining normative plan clauses remain open.",
+    "No new public API, mandatory macro, runtime, heap requirement or publication/tag authorization is introduced."
+  ]
+}

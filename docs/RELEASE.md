@@ -91,6 +91,8 @@ cargo fmt --all -- --check
 cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
 cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz
 cargo +1.89.0 test --workspace --all-targets --all-features --locked --exclude penelope-fuzz
+python3 scripts/check-nested-example.py
+RUSTUP_TOOLCHAIN=1.89.0 python3 scripts/check-nested-example.py
 cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz
 cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked

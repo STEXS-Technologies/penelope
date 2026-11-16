@@ -16,6 +16,12 @@ external dependency identities and full LLVM JSON. The
 [earlier checkpoint](evidence/qualification/history-partition-checkpoint.json)
 retains its `ce93ff8` scope. **Full release qualification remains open.**
 
+The later [nested ergonomics follow-up](evidence/qualification/nested-ergonomics.json)
+adds a shared CI trace checker, genuine root-policy/leaf-refusal example and
+nested-enum allocation fixture. Both compilers pass the local checks and three
+semantic controls are caught. All 72 production files match `9084239`; these
+later test/example/workflow files still need final package and CI reconciliation.
+
 | Gate | Verified result and scope |
 | --- | --- |
 | CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
@@ -34,7 +40,7 @@ retains its `ce93ff8` scope. **Full release qualification remains open.**
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
-| Nested example | [Runnable hierarchy follow-up](evidence/qualification/nested-example.json) checks six event attempts on stable/MSRV: exact hook order, guarded failures without hooks/state changes, external self-reentry and parent cancellation. Independent-consumer Clippy passes on both compilers; the workspace lint follow-up above records the additional policy fixes. The current archive checkpoint includes the corrected example |
+| Nested example | [Eight ergonomic criteria](evidence/qualification/nested-ergonomics.json): one checker asserts all six complete traces; root fallback, terminal leaf refusal, guards, parent transition and self-reentry. Stable/MSRV pass; wrong guard/effect and removed leaf refusal are caught. A non-Clone nested enum with variant-local data now participates in the zero-allocation probe. The new CI/release wiring and final archive reconciliation remain pending |
 | Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. That example follow-up records unchanged production at its source revision; the current all-ten archive checkpoint includes the example |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |

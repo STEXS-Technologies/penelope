@@ -91,15 +91,26 @@ impl Machine for Counter {
                 transition: TransitionId::new(1),
             }),
             _ => Ok(Transition::Accepted {
-                next: current.checked_add(1).unwrap(),
+                next: current.checked_add(1).ok_or(MachineError::Capacity)?,
                 transition: TransitionId::new(1),
             }),
         }
     }
 }
+// Nested state is inline and deliberately non-Clone. Only Active carries data.
+#[derive(Debug, PartialEq, Eq)]
+enum Connected {
+    Idle,
+    Active { messages: u64 },
+}
+#[derive(Debug, PartialEq, Eq)]
+enum Connection {
+    Disconnected,
+    Connected(Connected),
+}
 struct Tree;
 impl HierarchyModel for Tree {
-    type State = u8;
+    type State = Connection;
     type Event = ();
     type Effect = u64;
     type Error = MachineError;
@@ -107,25 +118,44 @@ impl HierarchyModel for Tree {
     fn definition(&self) -> MachineDefinition {
         definition()
     }
-    fn leaf(&self, state: &u8) -> u8 {
-        *state
+    fn leaf(&self, state: &Connection) -> u8 {
+        match state {
+            Connection::Disconnected => 1,
+            Connection::Connected(Connected::Idle) => 3,
+            Connection::Connected(Connected::Active { .. }) => 4,
+        }
     }
     fn parent(&self, node: u8) -> Option<u8> {
-        if node == 0 { None } else { Some(0) }
+        match node {
+            0 => None,
+            3 | 4 => Some(2),
+            _ => Some(0),
+        }
     }
-    fn validate(&self, _: &u8) -> Result<(), MachineError> {
-        Ok(())
+    fn validate(&self, state: &Connection) -> Result<(), MachineError> {
+        if matches!(
+            state,
+            Connection::Connected(Connected::Active { messages: 0 })
+        ) {
+            Err(MachineError::InvalidHierarchy)
+        } else {
+            Ok(())
+        }
     }
     fn select(
         &self,
         node: u8,
-        current: &u8,
+        current: &Connection,
         (): &(),
         _: &TransitionContext,
     ) -> Result<HierarchyDecision<u8>, MachineError> {
-        if node == 0 {
+        if node == 0 || node == 2 {
             Ok(HierarchyDecision::Selected(HierarchyPlan {
-                target: if *current == 1 { 2 } else { 1 },
+                target: match current {
+                    Connection::Disconnected => 3,
+                    Connection::Connected(Connected::Idle) => 4,
+                    Connection::Connected(Connected::Active { .. }) => 1,
+                },
                 kind: TransitionKind::External,
                 transition: TransitionId::new(1),
             }))
@@ -136,17 +166,22 @@ impl HierarchyModel for Tree {
     fn candidate(
         &self,
         plan: HierarchyPlan<u8>,
-        _: &u8,
+        _: &Connection,
         (): &(),
         _: &TransitionContext,
-    ) -> Result<u8, MachineError> {
-        Ok(plan.target)
+    ) -> Result<Connection, MachineError> {
+        match plan.target {
+            1 => Ok(Connection::Disconnected),
+            3 => Ok(Connection::Connected(Connected::Idle)),
+            4 => Ok(Connection::Connected(Connected::Active { messages: 1 })),
+            _ => Err(MachineError::InvalidHierarchy),
+        }
     }
     fn action<S: IntentSink<u64>>(
         &self,
         _: HierarchyPlan<u8>,
-        _: &u8,
-        _: &mut u8,
+        _: &Connection,
+        _: &mut Connection,
         context: &TransitionContext,
         sink: &mut S,
     ) -> Result<(), MachineError> {
@@ -155,8 +190,13 @@ impl HierarchyModel for Tree {
 }
 fn exercise() {
     let mut flat = MemoryMachine::<_, 2>::new(Counter, scope(), 0, limits()).unwrap();
-    let mut nested =
-        MemoryMachine::<_, 2>::new(Hierarchical::<_, 2>::new(Tree), scope(), 1, limits()).unwrap();
+    let mut nested = MemoryMachine::<_, 2>::new(
+        Hierarchical::<_, 3>::new(Tree),
+        scope(),
+        Connection::Disconnected,
+        limits(),
+    )
+    .unwrap();
     for step in 0..10_000 {
         let event = u8::try_from(step % 8).unwrap();
         let context = context(flat.read().0, step);
@@ -168,6 +208,12 @@ fn exercise() {
         let _ = black_box(flat.take_intents());
         let nested_context = self::context(nested.read().0, step);
         black_box(nested.handle(&(), nested_context).unwrap());
+        let expected = match step % 3 {
+            0 => Connection::Connected(Connected::Idle),
+            1 => Connection::Connected(Connected::Active { messages: 1 }),
+            _ => Connection::Disconnected,
+        };
+        assert_eq!(nested.read().1, &expected);
         let _ = black_box(nested.take_intents());
     }
 }

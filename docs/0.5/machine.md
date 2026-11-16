@@ -37,6 +37,8 @@ The nested enum example prints the source/event and guard code on refusal.
 Its staged trace shows exit/action/entry order, external self-reentry and parent
 cancellation; rejected events emit no hook trace. Logging happens after publication,
 not inside model evaluation.
+`python3 scripts/check-nested-example.py` checks all six complete traces; stable,
+MSRV and release verification run the same checker against the facade consumer.
 Neither example requires Clone, a state registration map or a serializer.
 
 Validation includes generated transition tables and parent forests, flat arithmetic
@@ -45,7 +47,8 @@ guard and hook failures, abort, stale heads, revision/byte/count bounds, duplica
 intents and destructor panic boundaries. Compile-fail examples cover identity
 separation and exclusive consuming handles. The allocator probe has a positive
 control and observes zero allocations across 10,000 flat and 10,000 hierarchical
-operations. A bounded fuzz target checks decisions, retained intents and revision
+operations, including an inline non-Clone nested enum with variant-local data and
+an independent expected-state check on every step. A bounded fuzz target checks decisions, retained intents and revision
 against an independent reference model at capacities zero, one and four.
 
 The metadata admission preflight is [shared with timeline](staging-extraction.md),
