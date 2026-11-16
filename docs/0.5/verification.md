@@ -1193,3 +1193,13 @@ and evidence, with source/manifests/locks/CI/scripts identical to `9a5a1db`.
 Current coverage therefore preserves the narrow margin rather than claiming an
 improvement over the preceding failure-path checkpoint. Candidate CI, the full
 immutable-source chaos campaign and performance decisions remain open.
+
+
+All seven jobs in [candidate CI run 43794270936](https://github.com/STEXS-Technologies/penelope/actions/runs/43794270936)
+passed for `be774e6`: stable, MSRV, bounded fuzz, signed-source conformance,
+portable core, supply-chain and secrets. The completed source-bound job record is
+retained in the checkpoint archive. This CI bounded fuzz run does not replace the
+full three-round/100,000-run-per-target campaign. That campaign runs separately
+from an immutable `be774e6` checkout, with per-round seeds 1/2/3 and pre/post source
+hashes; it remains pending. Versioned legacy performance comparison and final
+release audit also remain open.

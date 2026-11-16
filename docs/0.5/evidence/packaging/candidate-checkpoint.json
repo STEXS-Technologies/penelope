@@ -813,11 +813,54 @@
     "excluded_tests": "No library test is skipped. Checkout-only architecture tests run separately in the compatibility harness.",
     "scope": "All-target/all-feature library tests and debug benchmark smokes on both compilers, not release performance or doctests."
   },
-  "open": "Candidate CI and full chaos campaign, performance dispositions and final release audit remain open. No tag or publication.",
+  "ci": {
+    "source_commit": "be774e678e7d982b337bf3925b4f88632c90103b",
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/43794270936",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "Stable verification",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Minimum supported Rust",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Bounded fuzzing",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Optional StateChronicle signed-event conformance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Supply-chain verification",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Allocation-free portable core",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Secret scanning",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "open": "Full immutable-source chaos campaign, versioned comparative performance dispositions and final release audit remain open. No tag or publication.",
   "archive": {
     "file": "candidate-checkpoint.tar.gz",
-    "sha256": "a2265e0bd2dccafd1e639b9260656ec7bc09206c80cc2a40857d7d3f323a6361",
-    "member_count": 165,
+    "sha256": "0f4cfa65a2dd50b3d58116100ffe19a9acc20e426b6f4e60e307b387b55a4c50",
+    "member_count": 166,
     "members_sha256": {
       "initial/checks.json": "af594a84b6d621eca7a0f0a1b8ea3929469743251cf210cff6b0871fdb598db6",
       "initial/compat-fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -866,7 +909,7 @@
       "checkpoint/workspace-tests.log": "ae4eaf0fede6e3d407467e1d07dbad96c2fb9d427c74bb97f610d0bc853b08d3",
       "checkpoint/workspace-msrv-tests.log": "0e2e17c13b75bf7c265597e9715bd097c1985bae7ff84b5c92fac2b957560982",
       "drivers/penelope-check-050-candidate.py": "b244bafe10aa0c4a1dfb55df9fb1acd1501c135dd23332154103c5654cff4efa",
-      "drivers/penelope-record-050-candidate-checkpoint.py": "32e3ec04361a05ecc0e8e4d65f04890ae0eb1df39d679fb1fb74cc0c730118e5",
+      "drivers/penelope-record-050-candidate-checkpoint.py": "7b0ff15f64f831db81ac15ebd4b8d25c57acc4799c4c6e136e895e44e39bf2ec",
       "archives/penelope-0.5.0.crate": "3cbe1815a669b547702f2c759f287721d745b1a661de94ec8f2155dca3982c77",
       "archives/penelope-core-0.5.0.crate": "789f085276849fc344b3d044fb40ff2801f92eb26c527337c03e78b5c6552b0e",
       "archives/penelope-domain-0.5.0.crate": "eb4127b804a99bfb87691fc57039aa71b5f7fbcba5b1afb96e73feb31dae12f9",
@@ -983,7 +1026,8 @@
       "coverage/ratchet.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "coverage/ratchet.stdout": "3cb8917528923485d1723f2ebdd4f9a2682c2daa0e0f41d299b85bc1be3d796a",
       "drivers/penelope-050-test-packaged-workspace.py": "03e25a3a9e8ebf1d4c7a7edae525e80e916e91368af3fa97541c7af5b773b2df",
-      "drivers/penelope-050-run-coverage.py": "8f2d114f274f94c352ab6cf5ac26995968916e0ac4f6487f650bee3bea6ac626"
+      "drivers/penelope-050-run-coverage.py": "8f2d114f274f94c352ab6cf5ac26995968916e0ac4f6487f650bee3bea6ac626",
+      "ci/be774e6.json": "3208e7c7c4f0aa20341a425a1c8612c60ec5a499ec1b0cfaac386677b5684526"
     }
   }
 }
