@@ -1,0 +1,123 @@
+{
+  "source_commit": "8315bb45bafd597da864b729192348c7a5ed704e",
+  "source": "crates/penelope-process-runtime/tests/support/launch_contracts.rs",
+  "source_sha256": "f8fd85f72b9ba3049498a3e5b55ea0c5d1da262a5da55590150a1e8498373d15",
+  "scope": "Expanded existing real Linux runtime admission regression at max_live=1; correctness, not throughput, CPU isolation or general saturation performance qualification",
+  "checks": [
+    {
+      "label": "runtime-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-process-runtime",
+        "--all-features",
+        "--test",
+        "runtime"
+      ],
+      "exit_code": 0,
+      "seconds": 5.342506296001375
+    },
+    {
+      "label": "runtime-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-process-runtime",
+        "--all-features",
+        "--test",
+        "runtime"
+      ],
+      "exit_code": 0,
+      "seconds": 6.030219175998354
+    },
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "--locked",
+        "-p",
+        "penelope-process-runtime",
+        "--all-features",
+        "--test",
+        "runtime",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.39359537900600117
+    },
+    {
+      "label": "fmt",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6035438960025203
+    },
+    {
+      "label": "diff",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.00599088599847164
+    }
+  ],
+  "oracle": "First sleeping worker preserves exact reserved retries and registry identity while a second durably authorized task is refused twice at capacity. After first generation is fenced, the same second TaskStart is admitted, exact retry succeeds, poll is Pending, and fencing prevents its later restart. Failed supervisor remains subject to reconstruction.",
+  "development_failures": "Initial strict Clippy rejected a shadowed runtime binding. A partial rename then failed compilation; final source passes both full runtime suites, Clippy, fmt and diff. Failed logs and source copies retained.",
+  "archive": "native-slot-reuse.tar.gz",
+  "archive_sha256": "1d5721849cccdf35855870bf6207c4ed02b3ee93e09d4c05c2242dd48e134653",
+  "members_sha256": {
+    "penelope-native-slot-reuse-first.log": "05167b893fb8d2432db4946338ec5e00f6165334eaa564e425c865f163f61f16",
+    "penelope-native-slot-reuse-graph-final.log": "605ee5a7abd74d02c97f8a7c6de1b7cab536151b4941e399e8df04119b88a0a9",
+    "penelope-native-slot-reuse-graph.log": "c5d80632374a82df5115b6a88eaf26875f45eea594edfb7270a06115cdd6bbc5",
+    "penelope-native-slot-reuse-qualification-final.log": "a3338a12c22455e993bd1e39b15344c4fab9889b49c175a5bc954e9139caef07",
+    "penelope-native-slot-reuse-qualification-final/checks.json": "92dc2a8e5735c5810b32e098d948f8bb84d6099091ed223705858204c43cfa79",
+    "penelope-native-slot-reuse-qualification-final/clippy.stderr": "c38681800181c3190015da91126773a02b03fe4cd5a8bc4540ca5c7707137b88",
+    "penelope-native-slot-reuse-qualification-final/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification-final/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification-final/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification-final/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification-final/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification-final/launch_contracts.rs": "f8fd85f72b9ba3049498a3e5b55ea0c5d1da262a5da55590150a1e8498373d15",
+    "penelope-native-slot-reuse-qualification-final/runtime-1.100.0.stderr": "37ccdaae0d379c35287720b44641a33173afff9a017c3035e4b1c08124a465e4",
+    "penelope-native-slot-reuse-qualification-final/runtime-1.100.0.stdout": "125285534b16c3bb4cf736d57acab8df25f6b8864ccf9e361a546a11efb5dde5",
+    "penelope-native-slot-reuse-qualification-final/runtime-1.89.0.stderr": "f443f8f96ac03f16cd365c6e8886959b4d7d4734e12fead9d82e9a33d3ddfd07",
+    "penelope-native-slot-reuse-qualification-final/runtime-1.89.0.stdout": "9efa77eee820604598d243c85b7c0ae1dc501d01d3a2de313665815dfe685f9a",
+    "penelope-native-slot-reuse-qualification-final/source.patch": "b4a175150b47ef1443d846f2cc3d739e3f4a3f40981d399c0b2a998a8828612d",
+    "penelope-native-slot-reuse-qualification-rename-failure.log": "fdb161998c020320d80f9f03a4458e32feb786c50921ffbba6c451dc5f141d36",
+    "penelope-native-slot-reuse-qualification-rename-failure/checks.json": "c602798b106dd7a4685bb88e9903eab8973faf6b10c5b78e369f61b16e294345",
+    "penelope-native-slot-reuse-qualification-rename-failure/launch_contracts.rs": "5238a569164335f7d4bc0ea714de12aacd996171ce5b6dbcf4c45f67164d4fa3",
+    "penelope-native-slot-reuse-qualification-rename-failure/runtime-1.100.0.stderr": "ac6d9fd02ea68d60674a4268110d1aa5b47bbfad9799faee055dfa0bfe96358c",
+    "penelope-native-slot-reuse-qualification-rename-failure/runtime-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification.log": "f9bd60871b8d79f4924ce71901c7ab0e34876f2fe8846845125ef64488715252",
+    "penelope-native-slot-reuse-qualification/checks.json": "596516f24975ebf493cb0ca00113b318d1b6e5b1dce9647058e0d0e9be7ed2fc",
+    "penelope-native-slot-reuse-qualification/clippy.stderr": "d4a68cccf114de01c48ed65c994da6df4b0c865b912a9abaf0c3263df37bc459",
+    "penelope-native-slot-reuse-qualification/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-native-slot-reuse-qualification/launch_contracts-before-clippy-fix.rs": "4b683542d03057e7b09310a97e6a9edebc6cdf00c62a54394ffe697dc4bf0c91",
+    "penelope-native-slot-reuse-qualification/runtime-1.100.0.stderr": "63fed766be89f1a74c4766741e42269c9a3299ddeaf132f0b2640219ac15087a",
+    "penelope-native-slot-reuse-qualification/runtime-1.100.0.stdout": "7a1d407450558c7ae39e47a8c206aa63e0ad6e2a85403eecf4f2d807d3e23c93",
+    "penelope-native-slot-reuse-qualification/runtime-1.89.0.stderr": "83a511a4026423b05eb42f524ae42ad6a3001b61ad0b0cdcb9e798124735655e",
+    "penelope-native-slot-reuse-qualification/runtime-1.89.0.stdout": "2615429d85c3241f52f58a21bbf73c749654b25b204608751e7e5d35b9c95442",
+    "penelope-qualify-native-slot-reuse-initial.py": "a9c1dd12e63f8b14a860518a3d58de961fc0d5a6bd4fb8323a114e6e05c2aabf",
+    "penelope-qualify-native-slot-reuse.py": "6422472942c2018c93df58e92d7d59ac218227c040706d3781ccf98945dd0857",
+    "penelope-record-native-slot-reuse.py": "8426e798b7a82631631cef56f248ff6dca2efae4cfb3f69354c4f23360cb8aab"
+  },
+  "open": "Performance policy answer, remaining performance matrix, full chaos and exact final release candidate qualification remain open."
+}

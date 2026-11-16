@@ -1086,3 +1086,22 @@ Raw assembly, normalization output, all measurements, binaries, hashes, temporar
 source and build arguments remain in the archive; all 317 members passed hash
 verification. No focused benchmark, linker flag or production change is retained.
 The exact microarchitectural cause and performance acceptance remain open.
+
+
+## Native worker capacity and slot reuse
+
+The [native slot-reuse checkpoint](evidence/qualification/native-slot-reuse.json)
+qualifies source `8315bb4`. The existing one-worker admission test now durably
+authorizes a second task through the real supervisor/journal. Capacity refusals
+preserve the first sleeping worker's registry identity. Fencing it permits the
+exact second request to start; its reserved retry succeeds, polling remains
+pending, and fencing prevents a later restart. The supervisor whose dispatch
+failed still requires reconstruction; runtime slot reuse does not bypass that
+control rule. No production behavior changes.
+
+All 67 runtime integration tests pass on Rust 1.100 and MSRV 1.89. Strict runtime
+test Clippy, formatting and diff checks pass. Initial Clippy/partial-rename
+failures remain in the archive; all 34 archived members passed hash verification.
+This is correctness evidence at `max_live=1`, not worker throughput, CPU isolation
+or a general saturation-performance qualification. Those scopes and final
+release qualification remain distinct and open.
