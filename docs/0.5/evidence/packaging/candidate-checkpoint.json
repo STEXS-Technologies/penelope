@@ -278,6 +278,410 @@
       "exit_code": 0,
       "reported_harness_summaries": 95,
       "scope": "Library tests and debug benchmark smoke runs; not release performance or doctests."
+    },
+    {
+      "label": "first-machine-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.538457982998807
+    },
+    {
+      "label": "flat-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "flat",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.14274870500230463
+    },
+    {
+      "label": "nested-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.16015629899629857
+    },
+    {
+      "label": "decisions-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.172773058002349
+    },
+    {
+      "label": "timeline-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "timeline",
+        "--locked",
+        "--features",
+        "timeline"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.31412922000163235
+    },
+    {
+      "label": "durable-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "durable",
+        "--locked",
+        "--features",
+        "durable"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 2.4834647879979457
+    },
+    {
+      "label": "portable-penelope-core-None-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 2.1807666339955176
+    },
+    {
+      "label": "portable-penelope-core-serde-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "serde"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.5524265260028187
+    },
+    {
+      "label": "portable-penelope-timeline-None-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.3604891330032842
+    },
+    {
+      "label": "portable-penelope-timeline-alloc-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "alloc"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.170972496001923
+    },
+    {
+      "label": "first-machine-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 1.8194862410018686
+    },
+    {
+      "label": "flat-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "flat",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.27415834199928213
+    },
+    {
+      "label": "nested-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.27763797200168483
+    },
+    {
+      "label": "decisions-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.3523866339965025
+    },
+    {
+      "label": "timeline-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "timeline",
+        "--locked",
+        "--features",
+        "timeline"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.5447167120000813
+    },
+    {
+      "label": "durable-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "durable",
+        "--locked",
+        "--features",
+        "durable"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 3.5100668759987457
+    },
+    {
+      "label": "portable-penelope-core-None-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 2.8627935250042356
+    },
+    {
+      "label": "portable-penelope-core-serde-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "serde"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 1.8822781409980962
+    },
+    {
+      "label": "portable-penelope-timeline-None-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.37942921099602245
+    },
+    {
+      "label": "portable-penelope-timeline-alloc-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "alloc"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.17885827599820914
+    },
+    {
+      "label": "doctests",
+      "args": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--doc",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.7019567820025259
+    },
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 13.851509467000142
+    },
+    {
+      "label": "compat-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.8442893570027081
+    },
+    {
+      "label": "docs",
+      "args": [
+        "cargo",
+        "doc",
+        "--workspace",
+        "--no-deps",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 2.6200323400044
+    },
+    {
+      "label": "diff",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.00465524299943354
     }
   ],
   "external_lock_identities": "All external name/version/source/checksum identities unchanged in the six active lockfiles; frozen baseline locks and corpora untouched.",
@@ -297,11 +701,12 @@
       "reason": "Missing --exclude penelope-fuzz launched an unbounded target; owned processes deliberately stopped. Correct documented library commands rerun. Separate chaos rehearsal unaffected."
     }
   ],
+  "public_gate_checkout": "feabc53: only docs/evidence differ from the source commit; Rust source, manifests, locks, CI and scripts match",
   "open": "Exact final-source CI/coverage/chaos, performance dispositions, extracted-archive all-target tests and final release audit remain separate. No tag or publication.",
   "archive": {
     "file": "candidate-checkpoint.tar.gz",
-    "sha256": "e89e61c24143fe25a23ead2e70b57e98bc8824fd5008292206ef855287060b2c",
-    "member_count": 89,
+    "sha256": "97168c052a09bd85cf4a7e78e1b13e4478c564c489f4fdb968fb3925e6a11100",
+    "member_count": 141,
     "members_sha256": {
       "initial/checks.json": "af594a84b6d621eca7a0f0a1b8ea3929469743251cf210cff6b0871fdb598db6",
       "initial/compat-fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -350,7 +755,7 @@
       "checkpoint/workspace-tests.log": "ae4eaf0fede6e3d407467e1d07dbad96c2fb9d427c74bb97f610d0bc853b08d3",
       "checkpoint/workspace-msrv-tests.log": "0e2e17c13b75bf7c265597e9715bd097c1985bae7ff84b5c92fac2b957560982",
       "drivers/penelope-check-050-candidate.py": "b244bafe10aa0c4a1dfb55df9fb1acd1501c135dd23332154103c5654cff4efa",
-      "drivers/penelope-record-050-candidate-checkpoint.py": "fc5d9cda18fa5a7158cb3b80c362ba7091456dbb5b5a797d382d2ffaa8e6e9fc",
+      "drivers/penelope-record-050-candidate-checkpoint.py": "474877a596bb8be4a157f677543b12fc0e64ad29087398882475eeadbe6c9974",
       "archives/penelope-0.5.0.crate": "3cbe1815a669b547702f2c759f287721d745b1a661de94ec8f2155dca3982c77",
       "archives/penelope-core-0.5.0.crate": "789f085276849fc344b3d044fb40ff2801f92eb26c527337c03e78b5c6552b0e",
       "archives/penelope-domain-0.5.0.crate": "eb4127b804a99bfb87691fc57039aa71b5f7fbcba5b1afb96e73feb31dae12f9",
@@ -391,7 +796,59 @@
       "source/scripts/check-package-includes.py": "426de902462db665a831648bdb42f82b488b57d5f1cec3265b663e68b8d551c2",
       "source/scripts/conformance/Cargo.lock": "23d2ba4ad47b43768b671f5a2fc21b96e72a5566401198871fc1a231e0c39648",
       "source/scripts/publish-crates.sh": "953743d875453849e3a5efdfdcff8473daa92089f4fb11f1b836a677d5392cd4",
-      "source/scripts/run-statechronicle-conformance.py": "4bcb614368003378eee226133f6c6119596d89a683c9652e3c9cf51386c0dd14"
+      "source/scripts/run-statechronicle-conformance.py": "4bcb614368003378eee226133f6c6119596d89a683c9652e3c9cf51386c0dd14",
+      "public/checks.json": "a3dbb650226d6c798c75f29ed915546e197a43d88a578d7eaa57790534ea4882",
+      "public/clippy.stderr": "2bab375bebd680060e8237dd0714ef5cc641f0f3f4e86b8ed8414b67af705aa0",
+      "public/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/compat-clippy.stderr": "30379c73c651a441ad82945e9e469bb8bec632bee95d5e760b1d8247c8369494",
+      "public/compat-clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/decisions-1.100.0.stderr": "382bf804ddf2b95adcf33f5b627d4a3be5337862d60ad0c7563fb77ae4e12b67",
+      "public/decisions-1.100.0.stdout": "503f2d6d6cdb7e9b984e3705187b5dcde742ed1739e4dfd8b6bbd4b02a3c10fb",
+      "public/decisions-1.89.0.stderr": "44a1e0498387011fc5fbeecacac8caa74952d4390295bdfc4676806e9336d40c",
+      "public/decisions-1.89.0.stdout": "503f2d6d6cdb7e9b984e3705187b5dcde742ed1739e4dfd8b6bbd4b02a3c10fb",
+      "public/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/docs.stderr": "58cb32b66fb74b9905da58a7761c9b22f0f977aa2bfe081ac8abfd9eac90bb80",
+      "public/docs.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/doctests.stderr": "7c49ce2b07074403325ea9e0330417a4e4e28e75b0525c814da9bafe4b8ff9a6",
+      "public/doctests.stdout": "b996ace9b4b79868836ea6368ded06c0a50c095f262783d0596d6fc1614ed0af",
+      "public/durable-1.100.0.stderr": "271ba352c7bc49d4a420a76b59181add474e6ee089a4425276e57756fefcffd3",
+      "public/durable-1.100.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "public/durable-1.89.0.stderr": "598c211efa9b34f6797bbb7b1e41236da1f124cf2e7b610f4e3ce13ecdc5dc98",
+      "public/durable-1.89.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "public/first-machine-1.100.0.stderr": "2894ccaa23012c0e908b31dabc34999ae164bc445b51e71b08ed0ecebb068294",
+      "public/first-machine-1.100.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "public/first-machine-1.89.0.stderr": "40e7694d325418a43d4d303b7de228ad6e5602b5d752cb8a24a0500ec2556f5f",
+      "public/first-machine-1.89.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "public/flat-1.100.0.stderr": "4b4ee89b443e579e071de79f20d719a950ffd5023bfa54a64f575a3e412cd692",
+      "public/flat-1.100.0.stdout": "05aab6c4c48063ae2e27c58944f20ed59b2deeca0523a85dccd17815204b164f",
+      "public/flat-1.89.0.stderr": "774559896681faa7f8c1f5f68ed09aebca1eb58fd7b21b5c7c9d0cc69339bf84",
+      "public/flat-1.89.0.stdout": "05aab6c4c48063ae2e27c58944f20ed59b2deeca0523a85dccd17815204b164f",
+      "public/nested-1.100.0.stderr": "c268f1517582fd528d91cefb429dadf2a81318c76685d5ca26fa3ff6c1a457c8",
+      "public/nested-1.100.0.stdout": "604fc016efd63f1d600b058d2870adcf4d122366be8dc71120c187ce5458f1ad",
+      "public/nested-1.89.0.stderr": "44a000cb373a2519c0674648ef22e815253cb1a7cb2f06dd714c10f7e74cc0c1",
+      "public/nested-1.89.0.stdout": "604fc016efd63f1d600b058d2870adcf4d122366be8dc71120c187ce5458f1ad",
+      "public/portable-penelope-core-None-1.100.0.stderr": "ee64288dc481d52a65dc1fe103573ee14371c26b606822c98bc947d752f9b6f6",
+      "public/portable-penelope-core-None-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-None-1.89.0.stderr": "f1716da590a6d064a193c9a06f4f88a8d56a406f005b632278052a57e8ce4159",
+      "public/portable-penelope-core-None-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-serde-1.100.0.stderr": "1d0db7bed45075a0a961022cd3a85abc4ced95b45c489357fb92f93c391aa680",
+      "public/portable-penelope-core-serde-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-serde-1.89.0.stderr": "edc592c9986012b599c6324f278180b7b0e3f7664447c137a170dbd2f1d4ff47",
+      "public/portable-penelope-core-serde-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-None-1.100.0.stderr": "cded3db6c8f75425f25ab8856c0d2d086b002b71c87ae6bc728c3b1d63d85bcc",
+      "public/portable-penelope-timeline-None-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-None-1.89.0.stderr": "62812e155eef263574c696f19e219c1e3b02489f893a121c784ea784c54a340e",
+      "public/portable-penelope-timeline-None-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-alloc-1.100.0.stderr": "344fa530759ddfff8dffd332da765ca0dda9aa51aaca3a04767bfb5d08a889fd",
+      "public/portable-penelope-timeline-alloc-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-alloc-1.89.0.stderr": "344fa530759ddfff8dffd332da765ca0dda9aa51aaca3a04767bfb5d08a889fd",
+      "public/portable-penelope-timeline-alloc-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/timeline-1.100.0.stderr": "075270d7b3afe3382e066ec7be58e08c4359399afec56006dc1d6682e4526c8d",
+      "public/timeline-1.100.0.stdout": "ed946523fcfd8f6e7e5d1d344472dad2f0abb0c9c4aacdebfb5183906c2a913f",
+      "public/timeline-1.89.0.stderr": "d23aa374bab38d9841c7c6d15ba92c76b6b3339003b2868c9da91e2173a8f898",
+      "public/timeline-1.89.0.stdout": "ed946523fcfd8f6e7e5d1d344472dad2f0abb0c9c4aacdebfb5183906c2a913f",
+      "drivers/penelope-050-check-public-gates.py": "f68224a01947aab0871c876eb73c4197d80b35daaca88edef283811b22f687b6"
     }
   }
 }

@@ -1163,3 +1163,13 @@ fuzz targets. The corrected documented library commands passed; the separate
 bounded chaos rehearsal was untouched. This checkpoint is neither final release
 qualification nor publication. Extracted-archive tests, final-source CI, coverage,
 chaos and performance decisions remain separate gates.
+
+
+The same candidate code also passes all six canonical consumer binaries on Rust
+1.100 and 1.89, including the actual first-machine tutorial and durable
+machine/task/saga progression. Both compilers check core (bare and serde) and
+timeline (bare and alloc) on `riscv32imafc-unknown-none-elf`. Stable doctests,
+strict all-target/all-feature Clippy (workspace and compatibility harness), and
+warning-denying API documentation pass. The checkpoint archive includes all
+commands and logs. These checks ran at `feabc53`, whose source/manifests/locks,
+CI and scripts match `9a5a1db`; only documentation and evidence differ.
