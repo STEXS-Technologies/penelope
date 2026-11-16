@@ -80,6 +80,32 @@
     },
     "scope": "API, durable contracts, guarantee tiers and ADR content; historical sequencing and release/performance gates remain open."
   },
+  "refactor_map_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope-core/src/lib.rs": "2c25e3253bda3fff9becc244dc65b09ba408ca76328e5b21a9b3d0c6de1e6757",
+      "crates/penelope-core/src/__private.rs": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+      "crates/penelope-core/src/task/projection.rs": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+      "crates/penelope-executor/src/lib.rs": "af3547eec6631f8e04934902e24bd6db551168a8d6faa507d4c390403d5fb116",
+      "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+      "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+      "crates/penelope-executor/src/saga_machine.rs": "e60c0882db124c3430c8c6d5d620c058cd709a9c1600dfa8e748cf25cdf2e38e",
+      "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "crates/penelope-timeline/src/effects.rs": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+      "crates/penelope-sqlite/src/async_tasks.rs": "6ec0fd3402d86965e21221e3ef733929a16096f27cfe73630d523e41ab172be5",
+      "ci/compat-0.4/tests/architecture.rs": "b34a1c41c959b9782935d68150c1340c4fee86290c3ec8513901034ef34c3a79",
+      "scripts/check-layer-boundaries.sh": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392",
+      "scripts/publish-order.py": "d8e90a71c84faa19564e8d21c60c0b8a76acf8db2347ddacde3cc6f5f53c57b9",
+      "crates/penelope/Cargo.toml": "5724eb84430f49db048753d86bd8efb99fb17704b6d370aee44074d4276dcb26",
+      "Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "README.md": "34531b38bf0de86c2d25fdecf05dadc572e14c233d123c3579daffd514a2ca70",
+      "docs/RELEASE.md": "ca7cdae461cdb38c75d1423e0d50e1f6c8285f8f0d837686dd33f661ac11eb98",
+      "CHANGELOG.md": "47f53e8caea68aa1610c9133a990964a1339bc0e2dbd72f81d1b0786733324b9"
+    },
+    "reviewed_blocks": 36,
+    "scope": "Actual module owners, proposed path refinements and shared-extraction criteria; final release/dated notes and performance gates remain open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -89,11 +115,13 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 226,
+      "needs_individual_review": 190,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 54,
+      "individually_reviewed_scoped_support": 88,
+      "implementation_path_refinement_reviewed": 1,
+      "individually_reviewed_release_notes_open": 1,
       "advisory_pr_breakdown": 15,
       "historical_sequence_unproven": 1,
       "historical_source_reference": 24
@@ -2595,8 +2623,20 @@
       "kind": "paragraph",
       "sha256": "d81b424455dcee06b5669d78abf334867c5d8187880db4adf831788ef2f74427",
       "preview": "This section maps proposed changes to files and modules that **actually exist in 0.4.0**. New paths are marked",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The section is a proposed responsibility/file map. Refined module names are identified below rather than asserted to exist under the sketch names."
     },
     {
       "line": 509,
@@ -2605,8 +2645,20 @@
       "kind": "table",
       "sha256": "864ab86db02b77855667ec4d622306e46391c6c3e177f48fc6cf871b798aae3f",
       "preview": "| Current location | 0.5.0 action | Ownership after refactor |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Table header; the following rows map actual owners and retained protocol boundaries."
     },
     {
       "line": 510,
@@ -2625,8 +2677,20 @@
       "kind": "table",
       "sha256": "005867dd027acae7e6891a89b5985154c81bfb285979a4ed7c20911e100c2acd",
       "preview": "| `crates/penelope-core/src/lib.rs` | Add `pub mod machine` (**NEW**) | Portable shared transition contract an",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Portable core exports machine as a module. Kernel ownership stays in penelope-core, without a new published machine package."
     },
     {
       "line": 512,
@@ -2635,8 +2699,20 @@
       "kind": "table",
       "sha256": "0911a016118a161b64dd441a3c886576c2e6d951ed5e814111e190703e27a851",
       "preview": "| `crates/penelope-core/src/task/{contracts,projection,control}.rs` | Integrate shared candidate/provenance ad",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "TaskProjection preparation shares its private record evaluator and PreparedDecision view. TaskControl/runtime and hosted supervisor remain their native recovery owners; no task-wire rewrite or generic Machine publication is introduced."
     },
     {
       "line": 513,
@@ -2645,8 +2721,20 @@
       "kind": "table",
       "sha256": "a2ac2d9375e3550a7dfdf1672c3b402d0f25a47870591080126d6bafc461b1e1",
       "preview": "| `crates/penelope-core/src/timeline/{contracts,projection,replay_plan,wire}.rs` | Reuse stable model/identity",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine/timeline codecs reuse bounded byte cursors. Timeline branch/revision/finality, record decoding and recovery semantics retain their own owners. Other identity/model validation is shared only where actual semantics match."
     },
     {
       "line": 514,
@@ -2655,8 +2743,20 @@
       "kind": "table",
       "sha256": "7c6dfca7c8ecf6b41e9c00b3c89fe4eba65f3b0cc94d613cbb7fccd450bf7e8a",
       "preview": "| `crates/penelope-core/src/machine/{contracts,decision,hierarchy,projection,identity}.rs` (**NEW**) | Define ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The finalized modules are contracts.rs, memory.rs, identities.rs, hierarchy.rs, view.rs and wire.rs. memory replaces draft decision/projection filenames; identities replaces identity. These are implementation-layout refinements, not missing additional evaluators."
     },
     {
       "line": 515,
@@ -2665,8 +2765,20 @@
       "kind": "table",
       "sha256": "85b3359eed0bb9b2bda84fa787191afd396c249fc4d3bb36ffbe0bf5bae5b996",
       "preview": "| `crates/penelope-domain/src/implementation.rs` | Leave existing saga DTO serialization and identifiers untou",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Legacy saga DTOs/identifiers and wire stay in domain. The new machine types are in core. Thin shared effect-key encoding forwards preserve typed domain APIs; compatibility corpus/export evidence retain their scopes."
     },
     {
       "line": 516,
@@ -2675,8 +2787,20 @@
       "kind": "table",
       "sha256": "55ea140c988e16ee2793c898d839f5a82224b6dd77480d644692a362c22060ad",
       "preview": "| `crates/penelope-executor/src/engine.rs` | Refactor behind canonical saga facade/adapters; keep old function",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Linear engine remains authoritative. saga_machine prepares and exposes its native decisions through the facade; legacy functions and root reexports remain."
     },
     {
       "line": 517,
@@ -2685,8 +2809,20 @@
       "kind": "table",
       "sha256": "dd04d5dbaf4f05b8e642dcd67e0952abeaaa0b6688f6da7e66f9dc292b4da6a1",
       "preview": "| `crates/penelope-executor/src/graph.rs` | Deduplicate common graph validation and event/transition helper lo",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Graph validation/result/replay stay native. Its reachability and outcome-category semantics do not match bounded active-parent-path HSM validation, so no forced generic graph validator is extracted. Conditional shared extraction is not a requirement to merge unlike checks."
     },
     {
       "line": 518,
@@ -2695,8 +2831,20 @@
       "kind": "table",
       "sha256": "aba4e46795589dfd4b748cb7fac665bbb80a703670de67440c84f5875b2a184f",
       "preview": "| `crates/penelope-executor/src/task.rs` | Expose typed machine-to-task effect composition; preserve hosted ta",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hosted task supervisor retains native journal/generation/poison semantics. Typed machine-to-task admission is implemented in machine_task.rs, not mixed into task.rs; it does not bypass journal-first launch or effect reconciliation."
     },
     {
       "line": 519,
@@ -2705,8 +2853,20 @@
       "kind": "table",
       "sha256": "7a2eff7f432d30c2fe7e7efb894b45cce0211594336bca485af312f4e336a90d",
       "preview": "| `crates/penelope-executor/src/machine.rs` (**NEW**) | Canonical application prepare/publish/commit orchestra",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "implementation_path_refinement_reviewed",
+      "assessment": "The proposed executor/machine.rs umbrella was not created. Local owner/publication is in portable core; canonical durable preparation is backend-neutral in ports::machine; hosted native composition lives in executor::{machine_task,machine_saga}. The facade composes these owners. An extra forwarding module/interpreter would duplicate the canonical surface without owning a distinct protocol. This is an explicit implementation-path refinement, not a claim that the proposed file exists."
     },
     {
       "line": 520,
@@ -2715,8 +2875,20 @@
       "kind": "table",
       "sha256": "fd4e17952d88cbd37f05ef27a189a39f83be285216538c22b4fbbce7e07794e7",
       "preview": "| `crates/penelope-ports/src/implementation.rs` | Retain v1 port definitions and direct reexports; factor priv",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Original process ports and legacy exhaustive authorization operations retain their definitions and facade reexports. Machine-specific types/operations are separate; shared receipt proof is private and native."
     },
     {
       "line": 521,
@@ -2725,8 +2897,20 @@
       "kind": "table",
       "sha256": "80275a0c976d14e555ebf9e6842bf5f406f4d4be9da754e23d711aec65b98fc9",
       "preview": "| `crates/penelope-ports/src/machine.rs` (**NEW**) | Machine commit/journal/codec/authorization/intent port co",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine codec/preparation, store/history/recovery, authorization, delivery and native task contracts are implemented under ports::machine and narrow submodules."
     },
     {
       "line": 522,
@@ -2735,8 +2919,20 @@
       "kind": "table",
       "sha256": "5fe3df435e971954c17ae2cc041768c3e1e2b786236ea8de6aad95303a1841c7",
       "preview": "| `crates/penelope-sqlite/src/{schema,process,tasks,worker}.rs` | Reuse worker, WAL/FULL, quota/atomicity infr",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "DatabaseWorker<State> is shared by process, machine and async task adapters. Native task journal still owns its connection/cache/SQL; WAL/FULL, bounded column reads, quotas and transactional write checks are reused without replacing native record interpretation."
     },
     {
       "line": 523,
@@ -2745,8 +2941,20 @@
       "kind": "table",
       "sha256": "6f1140ece7a1b7341322a40fa58a0a1421333c48b711a367b2640508e6a14451",
       "preview": "| `crates/penelope-sqlite/src/machine.rs` (**NEW**) | Machine journal, transactional CAS, history, optional sn",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "SQLite machine.rs plus read/delivery submodules implement journal, atomic CAS, exact lookup/history, snapshots and fenced outbox. It is a local single-host adapter; full release qualification is still open."
     },
     {
       "line": 524,
@@ -2755,8 +2963,20 @@
       "kind": "table",
       "sha256": "e931f3b8026b1cfc1dc5f8979a4cfde8cfad6e0044d0a2092c5dd5aaad840ec5",
       "preview": "| `crates/penelope-timeline/src/{contracts,live,session,step,effects,handoff}.rs` | Add narrow `Machine` model",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "timeline::MachineTimeline adapts the Machine model to the existing RewindableComputation path. Existing live/session/step/effect/handoff engines own correction and finality; there is no parallel machine rewind evaluator."
     },
     {
       "line": 525,
@@ -2765,8 +2985,20 @@
       "kind": "table",
       "sha256": "a3ec67951a06711db89c3c4a0766bdea9dae5a64d0b400564846e533d176f32c",
       "preview": "| `crates/penelope/src/lib.rs` | Canonical `machine/saga/task/timeline/storage/runtime/diagnostics` exports an",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade supplies all canonical namespaces and compatibility imports. Independent consumers compile exact public examples through the facade; internal modules remain implementation/deployment boundaries."
     },
     {
       "line": 526,
@@ -2775,8 +3007,20 @@
       "kind": "table",
       "sha256": "35673afe5dbd4b7e249841954ddca89bbf3bcd779eac13ce606f040377020ead",
       "preview": "| `crates/penelope/Cargo.toml` | Add only required optional feature gates; keep `default=[]` unless separately",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade retains default=[] and only the optional timeline feature. SQLite/protected worker composition is separately selected. The facade is hosted; no_std/no-alloc support belongs to the portable core/timeline profiles."
     },
     {
       "line": 527,
@@ -2785,8 +3029,20 @@
       "kind": "table",
       "sha256": "7a109fe6a8c89c2ecad1fced1d97cfa35e83a2ec1716e673d6892665c0c97a4f",
       "preview": "| `Cargo.toml`, `Cargo.lock` | 0.5.0 workspace version, new source modules and necessary dependencies only | R",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "All ten library versions are candidate0.5; patched dependencies and MSRV1.89 are explicit approved changes. Locked package/feature checks retain exact external identities. Versioning is not evidence of release qualification or publication."
     },
     {
       "line": 528,
@@ -2795,8 +3051,20 @@
       "kind": "table",
       "sha256": "96122e2af28cd81ff01df1822e6a3a85599027a2b55837f0a2fd41b62d90bf3b",
       "preview": "| `scripts/check-layer-boundaries.sh` | Update exact allowlisted dependencies for new modules without loosenin",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The exact allowlisted dependency guard remains; separate checks keep SQLite/conformance dependencies dev-only where required. CI runs it along with architecture/feature/portable checks. The allowed topology is not replaced with a broad wildcard."
     },
     {
       "line": 529,
@@ -2805,8 +3073,20 @@
       "kind": "table",
       "sha256": "a1eb3d5a48a1b1445e6958ea161ca0f0955ccd7c6f450725172683d5c9553dcc",
       "preview": "| `scripts/publish-order.py` | Keep inferred dependency-first packaging; add no manually ordered duplicate pub",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Publish order is derived from cargo metadata with deterministic dependency-first ordering, including verification dependencies and excluding unpublished members. No second manually maintained release sequence is added."
     },
     {
       "line": 530,
@@ -2815,8 +3095,20 @@
       "kind": "table",
       "sha256": "163efe1b3b861453e2c4021e972f56c0265f28f07209184b17486c611a90df0b",
       "preview": "| `docs/RELEASE.md`, `README.md`, `CHANGELOG.md` | Rewrite documentation around unified model and preserve his",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_release_notes_open",
+      "assessment": "README is short with executable branch setup and one canonical tutorial; RELEASE preserves commands and history remains in CHANGELOG. The0.5 entry is intentionally Unreleased while campaigns/performance/final audit remain open. Final dated release notes are not yet achieved."
     },
     {
       "line": 532,
@@ -2825,8 +3117,20 @@
       "kind": "paragraph",
       "sha256": "a487b5439dd77e5f8d2bfb28d3b072fa0413a32ec3ea25640908fd5a76d26a0c",
       "preview": "**Prefer not to create additional publishable crates.** The current ten-library-crate topology can support thi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Ten publishable library packages remain. No penelope-machine or mandatory macro package is added; pure core machines require neither SQL nor macro expansion."
     },
     {
       "line": 536,
@@ -2835,8 +3139,20 @@
       "kind": "paragraph",
       "sha256": "59bb3a1778ea6843a13f81ccf7d94e265b9d663b80826926d03f9f64af39241e",
       "preview": "A refactor is accepted only when:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The extraction acceptance introduction applies to the concrete owners reviewed in the following six clauses; it is not a blanket equivalence claim."
     },
     {
       "line": 538,
@@ -2845,8 +3161,20 @@
       "kind": "item",
       "sha256": "475781c265e53d25222fa154c5cf0b113acd4ceeda38dda5c70215b8a9c51ff0",
       "preview": "- At least two real implementations use the extracted component (not a hypothetical future consumer).",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Bounded intent admission has machine and timeline callers; wire cursors have two protocol callers; DatabaseWorker serves process/machine/native task adapters; source binding serves task and saga receivers. Each extraction has real current callers."
     },
     {
       "line": 539,
@@ -2855,8 +3183,20 @@
       "kind": "item",
       "sha256": "aa5f3af1022252b7fcdcaa8fc5e778f7133bb665ded686982a7da6c00ec90f8c",
       "preview": "- The extraction removes duplicate semantics or code, not merely moves a `match` into a generic callback.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "These helpers centralize admission/cursor/worker/receipt/source-binding semantics, not only callback-shaped matches. The maintenance inventory separately records unchanged thin forwarders and rejects an overall production-LOC reduction claim."
     },
     {
       "line": 540,
@@ -2865,8 +3205,20 @@
       "kind": "item",
       "sha256": "30a35fb3e48d14c1a92bc3364ab460f09f54f62f2d2c8ee9be5b4be95626f6ca",
       "preview": "- No previously validated invariant becomes the responsibility of an untrusted downstream adapter without an e",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Native supervisors, effect reconciliation, finality and receipt authority remain with their original owners. Shared inspection supplies no admission capability. Model/codec purity and host authentication were already explicit application boundaries, not checks silently removed by a shared trait."
     },
     {
       "line": 541,
@@ -2875,8 +3227,20 @@
       "kind": "item",
       "sha256": "c6d372c03d209526a4140cdc72fed87eff0f7ab911ddcfb20246f698f8606f39",
       "preview": "- Old event/record encodings and failure categories retain their meaning.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Frozen task/timeline/saga observations and wire goldens retain original meaning, errors and bounded interpretation. New machine wire is independent. This is bounded differential evidence, not every possible history."
     },
     {
       "line": 542,
@@ -2885,8 +3249,20 @@
       "kind": "item",
       "sha256": "4013f934a7ec26e3e256c1261d0bba29b9bc8853eba9456da9bd0fb22ff3144e",
       "preview": "- Generic dispatch does not induce unnecessary allocations, heap indirection or virtual calls on existing fast",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Core machine/HSM/staging paths remain generic and inline without mandatory boxes or allocation. Allocation probes cover configured non-Clone enum paths. Hosted existing worker/async trait boundaries retain their distinct costs; aggregate performance acceptance remains open."
     },
     {
       "line": 543,
@@ -2895,8 +3271,20 @@
       "kind": "item",
       "sha256": "8ad67c19810749470e0900060dee8abb64406c0f12be363a8deecf34013d7e58",
       "preview": "- A dependency boundary test catches any future reversal of the agreed layering.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Exact dependency allowlist and repository architecture checks remain executed CI gates. Any direct back-edge or moved production adapter dependency violates that declared graph; declaration-only and explicit newtype-fuzz inventory tests remain separate checks."
     },
     {
       "line": 545,
@@ -2905,8 +3293,20 @@
       "kind": "paragraph",
       "sha256": "5520b8e1390aa3be8804e547054f735e883af174f8aa00b2c2a259a9781700c0",
       "preview": "Example: share a bounded `PreparedTransition` lifecycle and provenance *interface*; do **not** replace `TaskPr",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The common PreparedDecision interface only inspects native before/candidate/provenance/intents. Task record phases and timeline speculative revisions remain different typed protocols; there is no generic publication operation."
     },
     {
       "line": 549,
@@ -2915,8 +3315,20 @@
       "kind": "paragraph",
       "sha256": "b1c1dea6e31281980ab7af57402f0e50f03aae45244635781ad6096cff43f26b",
       "preview": "Prefer names that reflect what users are doing (`Machine`, `Event`, `State`, `Transition`, `handle`, `prepare`",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Canonical public names teach machine handle/prepare/publish, saga, task, storage and integration. No string-named transition table, mandatory scheduler or builder macro is introduced. Native legacy engine/graph APIs remain compatibility paths."
     },
     {
       "line": 551,
@@ -2925,8 +3337,20 @@
       "kind": "paragraph",
       "sha256": "c2880a044618b74b94610ef7f8b88d80094aa5630e69adb8ad367a0cbfbb9a0a",
       "preview": "Two stable categories of API:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The two-category API label is implemented by the following canonical and retained-legacy policy; it does not imply identical execution engines."
     },
     {
       "line": 553,
@@ -2935,8 +3359,20 @@
       "kind": "item",
       "sha256": "a65bfd6accb0d9906ac6b8e567e007ae90428725b4c3439630b07587dcfde356",
       "preview": "- **Canonical 0.5 API:** concise, domain-specific public modules with documentation/tests and safe default con",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Canonical modules have trait-based runnable facade examples and explicit guarantee boundaries. New convenience does not manufacture authorized receipts or hide external-effect uncertainty."
     },
     {
       "line": 554,
@@ -2945,8 +3381,20 @@
       "kind": "item",
       "sha256": "a3a433ed9d4729f68d2ecbd411f9351dd4bd8eea28574c2c6de270a6a2a33748",
       "preview": "- **Legacy 0.4 API:** public paths retained where feasible, with explicit migration guidance. Do not use a bre",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Legacy facade/root/executor/ports/statechronicle paths remain, with an old-to-canonical migration table. No breaking rename is used as evidence of consolidation."
     },
     {
       "line": 556,
@@ -2955,8 +3403,20 @@
       "kind": "paragraph",
       "sha256": "a5b5ff65821a5c507c7b17ce43ae3712f2d695fb64fbb1165c8de7b864abba53",
       "preview": "Do not mark legacy functions deprecated until the new canonical alternatives offer **equivalent behavior**, in",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_owner_and_retained_boundary_review_with_recorded_revision_scope"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_ownership_signature_simplification_separately_qualified"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "No new legacy deprecation is introduced by this refactor. Native alternatives retain their original decision/wire/recovery semantics; future deprecation requires an explicit compatibility policy, not this performance work."
     },
     {
       "line": 564,

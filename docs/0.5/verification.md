@@ -120,24 +120,18 @@ boundaries and conditional extraction decisions remain explicit; the orchestrati
 performance item and final release qualification stay open.
 
 The [whole-plan review index](evidence/maintenance/plan-review-index.json) covers
-all 514 source blocks, including prose, tables and 13 fenced examples/diagrams.
-It links scoped audits and separately reviews all seven existing-deployment
-clauses against current CI and the original-writer rollback evidence. Blocks are
-not atomic requirements; indexing does not certify completion. Unreviewed blocks
-remain visible instead of being inferred complete from adjacent checks.
+prose, tables and illustrative APIs. It records actual owners, proposed file-name
+refinements, deployment duties and scoped evidence. Historical sequencing,
+unreviewed blocks and open release gates remain explicit; indexing does not
+certify completion.
 
 ### Release acceptance review — November 16, 2026
 
 This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negotiable)
-to its evidence and remaining obligation. “Implemented” below describes the
-checked capability, not final release qualification. The preceding checkpoint,
-static API and capability archives were rechecked against all 480 recorded member
-hashes before the SQLite change. The production checkpoint adds 164 verified
-archive members and revalidates all 27 invariant-owner source hashes; the current
-history-partition follow-up adds 65 verified members; the current event-replay
-checkpoint adds 42 verified members; the current package checkpoint reconciles
-the later example/fixture changes and CI. Full chaos and final release/artifact
-reconciliation remain open.
+to its evidence and remaining obligation. “Implemented” describes the checked
+capability, not final release qualification. Each linked artifact retains its own
+source identity, checks and limits; full chaos, performance acceptance and final
+release reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |
 | --- | --- |
