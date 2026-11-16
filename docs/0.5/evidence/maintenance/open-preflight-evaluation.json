@@ -1,0 +1,673 @@
+{
+  "source_commit": "c0e99972a7103ea349f78178446b7e19fb0b6ff9",
+  "decision": "Not adopted. Seven shared-host pairs do not establish a reliable performance fix. Keep the current candidate production bytes unchanged; an isolated larger comparison and migration/concurrency qualification are required before reconsidering.",
+  "change": "Diagnostic only: return after a read-only user_version check when the schema is9; old schemas retain transactional revalidation and migration.",
+  "conditions": "Rust1.100; both binaries fully built before timing; one unmeasured warmup pair, seven alternating-order measured pairs, CPU4, actual local filesystem WAL/FULL. Other qualification jobs remain active on this shared host; this is not an isolated latency benchmark.",
+  "metrics": [
+    {
+      "metric": "/process/claim_to_ack_without_external_execution/p50_ns",
+      "control_median_ns": 1285656,
+      "probe_median_ns": 1260357,
+      "paired_change_percent": [
+        1.6670525584626006,
+        10.418372064092729,
+        -8.009829706166006,
+        -6.58444953260563,
+        -1.967789206444026,
+        -0.42759111440136,
+        4.952863644778693
+      ],
+      "median_paired_change_percent": -0.42759111440136
+    },
+    {
+      "metric": "/process/claim_to_ack_without_external_execution/p95_ns",
+      "control_median_ns": 1540028,
+      "probe_median_ns": 1479310,
+      "paired_change_percent": [
+        -0.1777703166563671,
+        3.9147623303664947,
+        -0.7030202609565883,
+        -4.824133067710457,
+        0.6324433865550816,
+        -8.643580644083194,
+        4.933653506464686
+      ],
+      "median_paired_change_percent": -0.1777703166563671
+    },
+    {
+      "metric": "/process/claim_to_ack_without_external_execution/p99_ns",
+      "control_median_ns": 3090146,
+      "probe_median_ns": 3016664,
+      "paired_change_percent": [
+        91.71498937614169,
+        -30.856683944225573,
+        -12.201018052041846,
+        -17.807151384454222,
+        31.969094896253146,
+        -23.445435537912186,
+        -5.965316849106806
+      ],
+      "median_paired_change_percent": -12.201018052041846
+    },
+    {
+      "metric": "/process/commits/p50_ns",
+      "control_median_ns": 853831,
+      "probe_median_ns": 820958,
+      "paired_change_percent": [
+        -2.3421697138845565,
+        16.251153984111767,
+        -9.000849738750539,
+        -8.8187490830399,
+        -5.768469760942829,
+        -3.850059320872634,
+        4.574865291724395
+      ],
+      "median_paired_change_percent": -3.850059320872634
+    },
+    {
+      "metric": "/process/commits/p95_ns",
+      "control_median_ns": 1027086,
+      "probe_median_ns": 1016666,
+      "paired_change_percent": [
+        -1.9481328730018732,
+        7.387682226408043,
+        0.9093798479624882,
+        -3.792117949629814,
+        -2.8756011362102485,
+        -17.943043287359885,
+        3.096225781699591
+      ],
+      "median_paired_change_percent": -1.9481328730018732
+    },
+    {
+      "metric": "/process/commits/p99_ns",
+      "control_median_ns": 1344400,
+      "probe_median_ns": 1873613,
+      "paired_change_percent": [
+        39.89598966616641,
+        16.925413387684408,
+        51.716304671228805,
+        14.191629813470064,
+        -12.22578714844098,
+        -24.707854092660796,
+        -22.313474218877417
+      ],
+      "median_paired_change_percent": 14.191629813470064
+    },
+    {
+      "metric": "/process/exact_retry_after_ack/p50_ns",
+      "control_median_ns": 51018,
+      "probe_median_ns": 50197,
+      "paired_change_percent": [
+        -1.9419498676890412,
+        43.08889529377857,
+        -19.488658672868407,
+        -6.223293739464508,
+        -3.77020843924758,
+        -4.517613938978926,
+        -2.446051401423366
+      ],
+      "median_paired_change_percent": -3.77020843924758
+    },
+    {
+      "metric": "/process/exact_retry_after_ack/p95_ns",
+      "control_median_ns": 70206,
+      "probe_median_ns": 69625,
+      "paired_change_percent": [
+        -1.560180427086899,
+        19.49906640214727,
+        -0.8763894395756089,
+        -2.0126484915819143,
+        -0.8120666444711433,
+        -1.0544715562692764,
+        -4.028143515470706
+      ],
+      "median_paired_change_percent": -1.0544715562692764
+    },
+    {
+      "metric": "/process/exact_retry_after_ack/p99_ns",
+      "control_median_ns": 77120,
+      "probe_median_ns": 77821,
+      "paired_change_percent": [
+        -5.313309674963474,
+        40.4683434518647,
+        0.7903242385134623,
+        4.560242393778191,
+        1.1332181054984458,
+        -21.46619927933574,
+        -0.42920124481328203
+      ],
+      "median_paired_change_percent": 0.7903242385134623
+    },
+    {
+      "metric": "/tasks/0/checkpoint_append/p50_ns",
+      "control_median_ns": 627293,
+      "probe_median_ns": 635509,
+      "paired_change_percent": [
+        -5.164915147359428,
+        4.3843945333361,
+        2.796374262628709,
+        -5.966225295524918,
+        -9.161711387224702,
+        12.551858767893865,
+        6.210777358288744
+      ],
+      "median_paired_change_percent": 2.796374262628709
+    },
+    {
+      "metric": "/tasks/0/checkpoint_append/p95_ns",
+      "control_median_ns": 739080,
+      "probe_median_ns": 905471,
+      "paired_change_percent": [
+        -12.575430976267265,
+        47.92328509236381,
+        18.03356687608013,
+        -62.996115182826706,
+        357.99453374465554,
+        27.134237265669945,
+        3.7377371324918807
+      ],
+      "median_paired_change_percent": 18.03356687608013
+    },
+    {
+      "metric": "/tasks/0/checkpoint_append/p99_ns",
+      "control_median_ns": 739080,
+      "probe_median_ns": 905471,
+      "paired_change_percent": [
+        -12.575430976267265,
+        47.92328509236381,
+        18.03356687608013,
+        -62.996115182826706,
+        357.99453374465554,
+        27.134237265669945,
+        3.7377371324918807
+      ],
+      "median_paired_change_percent": 18.03356687608013
+    },
+    {
+      "metric": "/tasks/0/new_database_open_ns",
+      "control_median_ns": 6901417,
+      "probe_median_ns": 6202746,
+      "paired_change_percent": [
+        -18.638682727424204,
+        -5.355179818820465,
+        -11.548768877182603,
+        -3.6836887482811442,
+        -10.190202440123386,
+        6.208632849010121,
+        -11.422219523903564
+      ],
+      "median_paired_change_percent": -10.190202440123386
+    },
+    {
+      "metric": "/tasks/0/reopen_and_record_and_blob_replay/p50_ns",
+      "control_median_ns": 437576,
+      "probe_median_ns": 322734,
+      "paired_change_percent": [
+        -39.47363405215628,
+        -1.816821110658151,
+        4.699593982730543,
+        -38.43046608131664,
+        -26.54030385578734,
+        -1.851450750716932,
+        -8.111391270885148
+      ],
+      "median_paired_change_percent": -8.111391270885148
+    },
+    {
+      "metric": "/tasks/0/reopen_and_record_and_blob_replay/p95_ns",
+      "control_median_ns": 526679,
+      "probe_median_ns": 419872,
+      "paired_change_percent": [
+        -37.73571388523763,
+        -2.7319796601531277,
+        7.653431653616272,
+        -30.96181556195965,
+        -21.28943815872666,
+        7.254252253817817,
+        -1.9363420887147487
+      ],
+      "median_paired_change_percent": -2.7319796601531277
+    },
+    {
+      "metric": "/tasks/0/reopen_and_record_and_blob_replay/p99_ns",
+      "control_median_ns": 526679,
+      "probe_median_ns": 419872,
+      "paired_change_percent": [
+        -37.73571388523763,
+        -2.7319796601531277,
+        7.653431653616272,
+        -30.96181556195965,
+        -21.28943815872666,
+        7.254252253817817,
+        -1.9363420887147487
+      ],
+      "median_paired_change_percent": -2.7319796601531277
+    },
+    {
+      "metric": "/tasks/0/warm_record_and_blob_replay/p50_ns",
+      "control_median_ns": 180138,
+      "probe_median_ns": 130382,
+      "paired_change_percent": [
+        -33.375909622919956,
+        -1.0097386738307512,
+        5.198448320082072,
+        -34.42703749339905,
+        -27.899166194806202,
+        -1.76340333176912,
+        -3.0773642428084114
+      ],
+      "median_paired_change_percent": -3.0773642428084114
+    },
+    {
+      "metric": "/tasks/0/warm_record_and_blob_replay/p95_ns",
+      "control_median_ns": 268309,
+      "probe_median_ns": 195007,
+      "paired_change_percent": [
+        -30.041909581694924,
+        0.7871451902999649,
+        -3.505604860067668,
+        -26.29361349184407,
+        -27.715805284205896,
+        5.0379876432455895,
+        0.811168715586974
+      ],
+      "median_paired_change_percent": -3.505604860067668
+    },
+    {
+      "metric": "/tasks/0/warm_record_and_blob_replay/p99_ns",
+      "control_median_ns": 268309,
+      "probe_median_ns": 195007,
+      "paired_change_percent": [
+        -30.041909581694924,
+        0.7871451902999649,
+        -3.505604860067668,
+        -26.29361349184407,
+        -27.715805284205896,
+        5.0379876432455895,
+        0.811168715586974
+      ],
+      "median_paired_change_percent": -3.505604860067668
+    },
+    {
+      "metric": "/tasks/1/checkpoint_append/p50_ns",
+      "control_median_ns": 655448,
+      "probe_median_ns": 660267,
+      "paired_change_percent": [
+        -2.0471625576665486,
+        10.655209245484553,
+        -7.315574425727201,
+        -2.4136932122175936,
+        -4.6618378621603345,
+        2.9761323552745633,
+        -5.2174517685009025
+      ],
+      "median_paired_change_percent": -2.4136932122175936
+    },
+    {
+      "metric": "/tasks/1/checkpoint_append/p95_ns",
+      "control_median_ns": 770169,
+      "probe_median_ns": 831007,
+      "paired_change_percent": [
+        12.965364417724912,
+        21.399491059279118,
+        -10.445853587480292,
+        -16.913757006280903,
+        -4.194478235886157,
+        28.38999351871292,
+        -8.923106487017785
+      ],
+      "median_paired_change_percent": -4.194478235886157
+    },
+    {
+      "metric": "/tasks/1/checkpoint_append/p99_ns",
+      "control_median_ns": 1234116,
+      "probe_median_ns": 2210986,
+      "paired_change_percent": [
+        172.93865816037436,
+        370.8091432458037,
+        70.51614430411557,
+        -63.104530694339104,
+        -33.46698975169564,
+        161.90759623019218,
+        -41.17619413410084
+      ],
+      "median_paired_change_percent": 70.51614430411557
+    },
+    {
+      "metric": "/tasks/1/new_database_open_ns",
+      "control_median_ns": 5910590,
+      "probe_median_ns": 5806048,
+      "paired_change_percent": [
+        -9.840878829355448,
+        24.37321200369913,
+        14.230297677065252,
+        -10.33868563406286,
+        -10.743116878933357,
+        1.4272122517641872,
+        22.652130663353454
+      ],
+      "median_paired_change_percent": 1.4272122517641872
+    },
+    {
+      "metric": "/tasks/1/reopen_and_record_and_blob_replay/p50_ns",
+      "control_median_ns": 1385039,
+      "probe_median_ns": 1447840,
+      "paired_change_percent": [
+        -33.3267722155192,
+        45.077214432228985,
+        -6.639615313145408,
+        8.823903015762413,
+        -2.652248192997275,
+        4.251658396926183,
+        -8.879446367202393
+      ],
+      "median_paired_change_percent": -2.652248192997275
+    },
+    {
+      "metric": "/tasks/1/reopen_and_record_and_blob_replay/p95_ns",
+      "control_median_ns": 2024545,
+      "probe_median_ns": 1980460,
+      "paired_change_percent": [
+        -2.1775263083804064,
+        7.570861266179452,
+        -4.0796202827823596,
+        33.80699838524883,
+        16.875071578168633,
+        -28.76453235911256,
+        -0.15020290484324406
+      ],
+      "median_paired_change_percent": -0.15020290484324406
+    },
+    {
+      "metric": "/tasks/1/reopen_and_record_and_blob_replay/p99_ns",
+      "control_median_ns": 2024545,
+      "probe_median_ns": 1980460,
+      "paired_change_percent": [
+        -2.1775263083804064,
+        7.570861266179452,
+        -4.0796202827823596,
+        33.80699838524883,
+        16.875071578168633,
+        -28.76453235911256,
+        -0.15020290484324406
+      ],
+      "median_paired_change_percent": -0.15020290484324406
+    },
+    {
+      "metric": "/tasks/1/warm_record_and_blob_replay/p50_ns",
+      "control_median_ns": 1095579,
+      "probe_median_ns": 1124775,
+      "paired_change_percent": [
+        -31.774642440314636,
+        45.83065210267814,
+        -2.0546425696198467,
+        5.386663718372997,
+        -1.414095054725173,
+        2.3284324023525205,
+        -5.9110140947166485
+      ],
+      "median_paired_change_percent": -1.414095054725173
+    },
+    {
+      "metric": "/tasks/1/warm_record_and_blob_replay/p95_ns",
+      "control_median_ns": 1618671,
+      "probe_median_ns": 1591729,
+      "paired_change_percent": [
+        -1.6644518867638958,
+        13.173993958938857,
+        0.20614032210841682,
+        35.70683800425527,
+        -15.309347815380757,
+        -29.318757530341767,
+        -2.0990390416905758
+      ],
+      "median_paired_change_percent": -1.6644518867638958
+    },
+    {
+      "metric": "/tasks/1/warm_record_and_blob_replay/p99_ns",
+      "control_median_ns": 1618671,
+      "probe_median_ns": 1591729,
+      "paired_change_percent": [
+        -1.6644518867638958,
+        13.173993958938857,
+        0.20614032210841682,
+        35.70683800425527,
+        -15.309347815380757,
+        -29.318757530341767,
+        -2.0990390416905758
+      ],
+      "median_paired_change_percent": -1.6644518867638958
+    },
+    {
+      "metric": "/tasks/2/checkpoint_append/p50_ns",
+      "control_median_ns": 685856,
+      "probe_median_ns": 674013,
+      "paired_change_percent": [
+        -8.473757147348927,
+        0.7858227395873607,
+        5.862949772123849,
+        -2.97306449313246,
+        -3.6586514852163576,
+        1.0090217000359614,
+        -2.839808939485844
+      ],
+      "median_paired_change_percent": -2.839808939485844
+    },
+    {
+      "metric": "/tasks/2/checkpoint_append/p95_ns",
+      "control_median_ns": 828672,
+      "probe_median_ns": 819054,
+      "paired_change_percent": [
+        -18.57708027095756,
+        2.817278730305839,
+        14.987194865356667,
+        0.37949509140799975,
+        -0.09212355679139028,
+        -3.0353039506661017,
+        -2.3178741589470975
+      ],
+      "median_paired_change_percent": -0.09212355679139028
+    },
+    {
+      "metric": "/tasks/2/checkpoint_append/p99_ns",
+      "control_median_ns": 1264004,
+      "probe_median_ns": 1298541,
+      "paired_change_percent": [
+        -1.1938784792933421,
+        79.71976795119711,
+        85.24134417296148,
+        11.832706653599123,
+        -24.62639433374767,
+        8.591347523612193,
+        -27.496671020760143
+      ],
+      "median_paired_change_percent": 8.591347523612193
+    },
+    {
+      "metric": "/tasks/2/new_database_open_ns",
+      "control_median_ns": 6317247,
+      "probe_median_ns": 6145305,
+      "paired_change_percent": [
+        -23.340525079164564,
+        -4.676685850397988,
+        12.403293609718924,
+        18.311138976704754,
+        -15.149811302296712,
+        3.35148057070791,
+        5.8473757095865775
+      ],
+      "median_paired_change_percent": 3.35148057070791
+    },
+    {
+      "metric": "/tasks/2/reopen_and_record_and_blob_replay/p50_ns",
+      "control_median_ns": 5136824,
+      "probe_median_ns": 5038745,
+      "paired_change_percent": [
+        16.141788741092846,
+        46.763067807465866,
+        -40.71677129863558,
+        -13.186901013683094,
+        -3.5959378791253105,
+        -39.5297606398346,
+        2.1131334592366713
+      ],
+      "median_paired_change_percent": -3.5959378791253105
+    },
+    {
+      "metric": "/tasks/2/reopen_and_record_and_blob_replay/p95_ns",
+      "control_median_ns": 7045506,
+      "probe_median_ns": 6979828,
+      "paired_change_percent": [
+        -0.932197062922091,
+        43.28194856929619,
+        -15.09879963628683,
+        -9.094644645645712,
+        5.3889621777518215,
+        -14.119928019261973,
+        -4.211857547400477
+      ],
+      "median_paired_change_percent": -4.211857547400477
+    },
+    {
+      "metric": "/tasks/2/reopen_and_record_and_blob_replay/p99_ns",
+      "control_median_ns": 7045506,
+      "probe_median_ns": 6979828,
+      "paired_change_percent": [
+        -0.932197062922091,
+        43.28194856929619,
+        -15.09879963628683,
+        -9.094644645645712,
+        5.3889621777518215,
+        -14.119928019261973,
+        -4.211857547400477
+      ],
+      "median_paired_change_percent": -4.211857547400477
+    },
+    {
+      "metric": "/tasks/2/warm_record_and_blob_replay/p50_ns",
+      "control_median_ns": 4493981,
+      "probe_median_ns": 4461428,
+      "paired_change_percent": [
+        4.027858672012652,
+        13.41133515592885,
+        -41.25866386268582,
+        -17.988661653549165,
+        -0.7243688836245599,
+        -40.47021637958017,
+        1.788033605864725
+      ],
+      "median_paired_change_percent": -0.7243688836245599
+    },
+    {
+      "metric": "/tasks/2/warm_record_and_blob_replay/p95_ns",
+      "control_median_ns": 6496584,
+      "probe_median_ns": 6069157,
+      "paired_change_percent": [
+        -6.739061753770448,
+        3.2568574702960484,
+        -29.598196872380377,
+        -3.034937363814927,
+        9.967400779138691,
+        -29.86935077205729,
+        -4.250757013224183
+      ],
+      "median_paired_change_percent": -4.250757013224183
+    },
+    {
+      "metric": "/tasks/2/warm_record_and_blob_replay/p99_ns",
+      "control_median_ns": 6496584,
+      "probe_median_ns": 6069157,
+      "paired_change_percent": [
+        -6.739061753770448,
+        3.2568574702960484,
+        -29.598196872380377,
+        -3.034937363814927,
+        9.967400779138691,
+        -29.86935077205729,
+        -4.250757013224183
+      ],
+      "median_paired_change_percent": -4.250757013224183
+    },
+    {
+      "metric": "/total_wall_ns",
+      "control_median_ns": 930241959,
+      "probe_median_ns": 906807690,
+      "paired_change_percent": [
+        -2.916342670512151,
+        10.440889929662678,
+        -5.034154680112013,
+        -4.5358861092615115,
+        -3.3431100047810247,
+        -6.7966461585841405,
+        0.27022270346164223
+      ],
+      "median_paired_change_percent": -3.3431100047810247
+    }
+  ],
+  "correctness": {
+    "sqlite_unit_tests": 59,
+    "focused_lock_test": "Probe opens schema9 with zero busy timeout while another connection holds BEGIN IMMEDIATE, then refuses schema10 without rewriting it. Original production fails the writer-lock oracle; restored probe passes.",
+    "limits": "Diagnostic test only; not an exhaustive concurrent schema-change model or final release qualification. Two initial test-authoring compile errors were corrected before the semantic control; they are not treated as model failures."
+  },
+  "candidate_schema_sha256": "f5e1cb0b2940a78237309555c245dce0bde76c270bda6910ccb6f4156ce401e4",
+  "probe_schema_sha256": "11bc937869a5d8254c97ee861cc93784c22e80de0c1a8aa2d6dba1e926ab3a67",
+  "archive": {
+    "file": "open-preflight-evaluation.tar.gz",
+    "sha256": "00e8d95771e118727ba8272382597c9a9ad6b8dff4e0f9381c0cb34a14b4ea58",
+    "members_sha256": {
+      "raw/graphify.log": "21e79cdbf6f0b99d513dca124e5918935ff0ec6513631a506204dcae20d0d1da",
+      "raw/restored-probe-lock-test.log": "1f860dd3d08d127e1175781b0126cd45d396f6afb6f6a6f48fc77f2cb1c8bf5e",
+      "raw/original-lock-negative-control.log": "0ea45cdaffdface39e2f2dd6acfe884d404ddf0d253dab39cbfbb26f94e1f747",
+      "raw/open-control-test-final.log": "b1198d7cbf377985893e4a5f7f2154114c9817a83e57a9e3537495d1f1c98114",
+      "raw/open-control-test.log": "aa8766e7f06df2c76338a1984f288bfb5855a20db20ab3984038951f2b716186",
+      "raw/sqlite-tests.stderr": "50d362680eab00f314597c4b2de1166eccc1e43a7dd24074c0b5a8d9f8d1aa62",
+      "raw/sqlite-tests.stdout": "1362f2d11379ca703d7128ea3019b57eb5c87ef9ca97466f336eff24b47bce17",
+      "raw/round-7-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-7-control.stdout": "cd7bd3f27882cb9247c8bf00b98f1386ea08368f1d94f3904554ee49ca0d0fe7",
+      "raw/round-7-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-7-probe.stdout": "aa4dc04f1caa772512598cfa38748554fc7c0c18b4e7b90be3fd53336b66c5a1",
+      "raw/round-6-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-6-probe.stdout": "b329c3e007e42564728d099ea5f6448cf976bf0c6b790565923d9385df2acd9d",
+      "raw/round-6-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-6-control.stdout": "8daf4d0c5998eb3699f46ed6fdb82055ed40b873dff7be5f92285f87ae7b442f",
+      "raw/round-5-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-5-control.stdout": "e4a6597252c2c2a3d8cdf4fa2ec94c9410be8d9c96abc3b74b6fcc8852243373",
+      "raw/round-5-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-5-probe.stdout": "de65a8184cf205fd36b354dcc256f419c3788e05cea0295d72ab04e1175a1803",
+      "raw/round-4-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-4-probe.stdout": "047d220b889a017fd8d2449211207421840e54b26d4675dc131d2eb908a20b48",
+      "raw/round-4-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-4-control.stdout": "fe016141b58f9fe83a455a422626632b6e92dc2be29c1a60b5f879ede65579ad",
+      "raw/round-3-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-3-control.stdout": "c943059e5d44cfa7528eb171e6cfed36395f2b51b3f141baa52d0b8e498eaa1b",
+      "raw/round-3-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-3-probe.stdout": "f52d29e991b24e37edf99a8ea5bac0a781f6484c1adb96731ca24a9a03b4c93f",
+      "raw/round-2-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-2-probe.stdout": "84fc4b3c1c0c2eb37802a84171665007da779ac02badb7c0b558da50aacb313f",
+      "raw/round-2-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-2-control.stdout": "82d2535dea675aa17062712488145da92aa47c7e6a430c826ed85785adadbf57",
+      "raw/round-1-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-1-control.stdout": "3fb03261296665ac59e181472adcea9966948f933e05a55c65c2dd07d0d23cc3",
+      "raw/round-1-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/round-1-probe.stdout": "f84e940af50c09205d766e7944cdf3b53eefeb47fb48fc0efc46b446f965a12d",
+      "raw/warmup-probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/warmup-probe.stdout": "bc496980ab8d36ad276d9ce3c617435e08b6f9551cff7f00364e1326557e2c76",
+      "raw/warmup-control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/warmup-control.stdout": "6559197e55fc532188289b9709a8cee65505d1d1cbbdbcbde3f891878485a1af",
+      "raw/source.patch": "df66e6aea1d8fdca4b203e009cb5372f870b3e6e3280f966fb2feeeadd375cf9",
+      "raw/probe.bin": "aa96870648119b9a889c85b4125010ebe3ad44575307166107d4b7c0802d1789",
+      "raw/build-probe.stderr": "daebcd1306be4a3e03d09008baf908284a66a4f2539c8d40d376d78f802ea3e3",
+      "raw/build-probe.stdout": "31c512e7d5b4b1faa84a7361db14b3923321cefcbbc2e6776f9b279fad0547d3",
+      "raw/schema-probe.rs": "11bc937869a5d8254c97ee861cc93784c22e80de0c1a8aa2d6dba1e926ab3a67",
+      "raw/control.bin": "779ed2719b292b708ba3fb71a4b3eb8f221afe5ba093d34d29ff082ba075abf7",
+      "raw/checks.json": "036f13b8abb1ed9295d225e3127a18c79422ceac5103f08bb73e56ffbdbe0278",
+      "raw/build-control.stderr": "f9da3365d2a2281205e2401cdb63020d371f50cd22e24f2d0bcc6d048a008a03",
+      "raw/build-control.stdout": "085925dbaf2c4cc86ca1586120eb06ba47a3d4a134a5ce371229b5602b28062c",
+      "raw/schema-before.rs": "f5e1cb0b2940a78237309555c245dce0bde76c270bda6910ccb6f4156ce401e4",
+      "driver.py": "618144995fd56e7ff86c5ce127577172daab01c888e93ae96cff3ac8497b605a",
+      "recorder.py": "d8f41f092e052d3a218351ae1a9325161f189e3281278c4899873b4fbe1da3d9",
+      "lock-test.rs": "77c4a6a8f33c7dca41d17bc95a1cbbb9953a1b3ea74cf72aef4f0b225ab0835c"
+    }
+  }
+}
