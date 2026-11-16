@@ -131,8 +131,8 @@ contracts and the allocation-free core boundary. The
 [measured maintenance inventory](evidence/maintenance/manifest.json) records size,
 dependencies, build/test cost and the limits of these consolidation claims.
 Its production-source follow-up excludes comments and test-only modules: 14,356
-token-covered source lines at the baseline versus 18,867 at candidate `9a5a1db`, with a net
-101-line increase across existing paths. New capabilities therefore increased
+token-covered source lines at the baseline versus 18,873 at candidate `cefa55f`, with a net
+107-line increase across existing paths. New capabilities therefore increased
 total production source. The two exact whole-function clone groups are unchanged:
 thin forwards to the shared effect-key encoder and native DTO scope projections.
 This limited clone check supplements the owner audit; it cannot establish absence

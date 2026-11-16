@@ -227,5 +227,45 @@
       "after": 59
     },
     "limits": "Exact source inventory, not proof of lower complexity, runtime equivalence, reduced test cost, flake rate or final release qualification. New capabilities increased total production source; no numeric deletion target."
+  },
+  "qpsg_source_followup": {
+    "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+    "baseline_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "commands": [
+      "uv run --python 3.13 --with tree-sitter==0.25.2 --with tree-sitter-rust==0.24.2 python docs/0.5/evidence/maintenance/production_inventory.py --before 42ec187c9adfc7403b06215f405f2575f53c35c2 --after cefa55f",
+      "python3 docs/0.5/evidence/maintenance/inventory.py --before 42ec187c9adfc7403b06215f405f2575f53c35c2 --after cefa55f"
+    ],
+    "artifacts": {
+      "qpsg-production-inventory.json.gz": {
+        "raw_sha256": "ec19845f5fd0d3dc542cd7329f6d5888a5328160b2b1993a4ab78ec33c6caeca",
+        "gzip_sha256": "61746d66234b70ba9c3e91a6cb8234fc102358d8527c573d08ba59b701e7888c"
+      },
+      "qpsg-inventory.json.gz": {
+        "raw_sha256": "8a373c97540e4725f64bbbc7f831a32d2128cf5d8d38924d29f92cd1193177ab",
+        "gzip_sha256": "e2e669df9485bea73011de8d0ef76776b0cb38c3e6703d730fceb29da8a24ea5"
+      }
+    },
+    "production_lines": {
+      "before": 14356,
+      "after": 18873,
+      "existing_path_delta": 107
+    },
+    "exact_function_body_clone_groups": {
+      "before": 2,
+      "after": 2,
+      "minimum_tokens": 40,
+      "disposition": "Same thin forwards to the existing shared effect-key encoder and native DTO scope projections. Public legacy methods remain distinct; no new whole-function clone group found. This check cannot exclude partial, renamed, macro-expanded or semantic duplication."
+    },
+    "declared_dependency_edges": {
+      "before": 72,
+      "after": 69
+    },
+    "tracked_markdown_files": {
+      "before": 171,
+      "after": 59
+    },
+    "limits": "Exact source inventory, not proof of lower complexity, runtime equivalence, reduced test cost, flake rate or final release qualification. New capabilities increased total production source; no numeric deletion target.",
+    "previous_followup": "candidate_source_followup",
+    "change_scope": "Eight physical source lines in SQLite connection configuration, six token-covered lines; two comments excluded. Exact clone groups and declared dependency edges unchanged."
   }
 }
