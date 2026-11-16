@@ -1,0 +1,59 @@
+{
+  "scope": "Plan13.1 arbitrary-page reconstruction check: all256 partitions of nine accepted records under both record-count and byte limits,512 partition configurations in total. Reopen between pages, stable upper revision despite a later commit, exact independently expected payload/state/intent/receipt data and checked snapshot restoration. A missing middle record must refuse both across and exactly at page boundaries.",
+  "production_source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+  "test_source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+  "checks": [
+    {
+      "toolchain": "1.100.0",
+      "command": "cargo +1.100.0 test -p penelope-sqlite --test machines --all-features --locked",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "toolchain": "1.89.0",
+      "command": "cargo +1.89.0 test -p penelope-sqlite --test machines --all-features --locked",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "clippy": "Strict stable Clippy passes for the complete machines integration target. Workspace rustfmt check passes.",
+  "negative_control": {
+    "mutation": "Remove next-revision continuity check in history reader",
+    "owner": "crates/penelope-sqlite/src/machine/read.rs",
+    "original_sha256": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+    "exit_code": 101,
+    "compiled_and_test_failed": true,
+    "source_restored": true
+  },
+  "negative_control_removed": "if Some(revision) != last.checked_next() { return Err(MachineStoreError::Corrupt); }",
+  "archive": {
+    "file": "machine-history-partitions.tar.gz",
+    "sha256": "36809bc264850df23ef329844dd6bf343071775e1074668280f0bf020446622b",
+    "member_count": 15,
+    "members_sha256": {
+      "penelope-050-history-partitions-clippy-final.log": "ffbb6922b115ad61af1f47f3dd30825b2acc32e22021ded5c41999c8df7c7a20",
+      "penelope-050-history-partitions-msrv-final.log": "50b76645d7d6ddd56412881d296e73ca89c822456183f34e4cd0434d000f19c1",
+      "penelope-050-history-partitions-graph.log": "87f156eee58e58dfedb35b5ff90f235974150d556dd0682c5aa6a2537804a97c",
+      "penelope-050-history-partitions-stable-final.log": "a3bea0d1cc4a155a2946857682339f6e82de045fa59f3fe055e7cbd40ad61215",
+      "penelope-050-history-partitions-clippy.log": "db6d09aff852d564abe4180b89b19b3002c6ecd4424b8c901f741d0e23cd0cbd",
+      "penelope-050-history-partitions-msrv.log": "12fbba74d052c48b947fd30a3b148a43c72330c94ee05694d505be7b732f9ad3",
+      "penelope-050-history-partitions-stable.log": "13a1503ff9f8bbd84a951f27a2167b69ca8bc5ef46d9f04e900424d386e35daa",
+      "control/manifest.json": "7c527625bbbdfd9be99c210d98caea4f6525bb6a512deb07a66975bb48389ed4",
+      "control/missing-continuity.log": "60bb60c6ebb403270eb18cb40437377c2fde041bb75694cfe8aa7775aee369f2",
+      "source/crates/penelope-sqlite/tests/machines.rs": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "source/crates/penelope-sqlite/tests/support/machines.rs": "25015435cc9a00ef9e3c5516c1bfbeed63e90a60f8ad2bcaeb145baa35c3d80a",
+      "source/crates/penelope-sqlite/src/machine/read.rs": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+      "source/Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "source/Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "source/crates/penelope-sqlite/Cargo.toml": "40f835c592dda731fbeb748233f68d36132131cabe9cb1772cfe0a94c6e2c054"
+    }
+  },
+  "limits": [
+    "Finite exhaustive partitions, not arbitrary-size history or deployment certification.",
+    "Corruption is deliberately injected with foreign_keys OFF; this models malformed retained storage, not a normal admitted transaction.",
+    "No production/library/dependency change or performance waiver.",
+    "Final source/package/coverage reconciliation after the test addition remains open."
+  ]
+}

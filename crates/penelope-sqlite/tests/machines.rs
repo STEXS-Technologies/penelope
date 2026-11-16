@@ -651,3 +651,163 @@ fn full_history_refuses_new_events_but_preserves_exact_retries_and_rows() {
     assert_eq!(restored.read().0.revision, MachineRevision::new(4));
     assert_eq!(*restored.read().1, 9);
 }
+
+#[test]
+fn every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("machine.db");
+    let mut store = open(&path);
+    block_on(store.bootstrap(&true, genesis())).unwrap();
+    let mut expected_state = 5_u64;
+    let mut expected = Vec::new();
+    for revision in 1..=9_u8 {
+        let event = u64::from(revision) * 3;
+        expected_state += event;
+        let request = batch(&mut restore(&store), event, revision);
+        assert_eq!(request.byte_len(), 425);
+        let mut receipt = block_on(store.commit(&true, request)).unwrap();
+        assert_eq!(receipt.head.revision.get(), u64::from(revision));
+        receipt.disposition = MachineCommitDisposition::AlreadyCommitted;
+        expected.push((
+            receipt,
+            event.to_le_bytes().to_vec(),
+            expected_state.to_le_bytes().to_vec(),
+            vec![(
+                IntentMetadata {
+                    identity: MachineIntentId::from_bytes([revision; 32]),
+                    digest: penelope_core::task::Digest::of(&expected_state.to_le_bytes()).0,
+                    payload_bytes: 8,
+                },
+                expected_state.to_le_bytes().to_vec(),
+            )],
+        ));
+    }
+    let signature = |stored: &MachineStoredCommit<2>| {
+        (
+            stored.receipt(),
+            stored.batch().event().to_vec(),
+            stored.batch().state().to_vec(),
+            stored
+                .batch()
+                .intents()
+                .map(|(metadata, bytes)| (*metadata, bytes.to_vec()))
+                .collect::<Vec<_>>(),
+        )
+    };
+    let request = MachineHistoryRequest {
+        scope: SCOPE,
+        after: MachineRevision::ZERO,
+        through: MachineRevision::new(9),
+        max_records: 9,
+        max_bytes: 9 * 425,
+    };
+    let contiguous = block_on(store.history(&true, request)).unwrap();
+    assert!(contiguous.next.is_none());
+    assert_eq!(
+        contiguous
+            .records
+            .iter()
+            .map(&signature)
+            .collect::<Vec<_>>(),
+        expected
+    );
+    // Later writes must not change any partition of the captured upper revision.
+    block_on(store.commit(&true, batch(&mut restore(&store), 99, 10))).unwrap();
+    for byte_limited in [false, true] {
+        // Eight optional cuts enumerate every partition of nine accepted records.
+        for cuts in 0..256_u16 {
+            let mut after = 0_u64;
+            let mut reconstructed = Vec::new();
+            for end in 1..=9_u64 {
+                if end != 9 && cuts & (1 << (end - 1)) == 0 {
+                    continue;
+                }
+                drop(store);
+                store = open(&path);
+                let count = u32::try_from(end - after).unwrap();
+                let page = block_on(store.history(
+                    &true,
+                    MachineHistoryRequest {
+                        after: MachineRevision::new(after),
+                        max_records: if byte_limited { 9 } else { count },
+                        max_bytes: if byte_limited {
+                            usize::try_from(count).unwrap() * 425
+                        } else {
+                            9 * 425
+                        },
+                        ..request
+                    },
+                ))
+                .unwrap();
+                assert_eq!(page.records.len(), usize::try_from(count).unwrap());
+                assert_eq!(
+                    page.next,
+                    if end == 9 {
+                        None
+                    } else {
+                        Some(MachineRevision::new(end))
+                    }
+                );
+                for stored in &page.records {
+                    let restored = stored
+                        .restore(Model, &Codec, SCOPE, &mut [0; 8], INTENTS)
+                        .unwrap();
+                    assert_eq!(restored.read().0, stored.receipt().head);
+                    assert_eq!(restored.pending_intents().count(), 0);
+                }
+                reconstructed.extend(page.records.iter().map(&signature));
+                after = end;
+            }
+            assert_eq!(
+                reconstructed, expected,
+                "cuts={cuts} byte_limited={byte_limited}"
+            );
+        }
+    }
+    // A missing record cannot be skipped within or exactly at a page boundary.
+    let connection = rusqlite::Connection::open(&path).unwrap();
+    connection
+        .pragma_update(None, "foreign_keys", "OFF")
+        .unwrap();
+    connection
+        .execute(
+            "DELETE FROM machine_events WHERE revision=?1",
+            [5_u64.to_be_bytes().as_slice()],
+        )
+        .unwrap();
+    let first = block_on(store.history(
+        &true,
+        MachineHistoryRequest {
+            max_records: 3,
+            ..request
+        },
+    ))
+    .unwrap();
+    assert_eq!(first.next, Some(MachineRevision::new(3)));
+    assert_eq!(
+        block_on(store.history(
+            &true,
+            MachineHistoryRequest {
+                after: first.next.unwrap(),
+                ..request
+            }
+        ))
+        .err(),
+        Some(MachineStoreError::Corrupt)
+    );
+    assert_eq!(
+        block_on(store.history(
+            &true,
+            MachineHistoryRequest {
+                after: MachineRevision::new(4),
+                ..request
+            }
+        ))
+        .err(),
+        Some(MachineStoreError::Corrupt)
+    );
+    assert_eq!(
+        block_on(store.history(&true, request)).err(),
+        Some(MachineStoreError::Corrupt)
+    );
+}
