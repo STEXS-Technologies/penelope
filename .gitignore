@@ -17,3 +17,7 @@ fuzz/corpus/
 *.sqlite3
 *.db
 *.log
+
+graphify-out/
+.codex/
+.opencode/
