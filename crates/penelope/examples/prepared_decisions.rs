@@ -11,7 +11,11 @@ mod inspection;
 use penelope::{
     ContentDigest, ProcessId, TenantId,
     machine::*,
-    saga::{LinearSagaDefinition, LinearSagaInput, RetryPolicy, StepPlan, prepare_linear},
+    saga::{
+        GraphSagaInput, GraphTransition, GraphTransitionOutcome, LinearSagaDefinition,
+        LinearSagaInput, ProcessGraphDefinition, RetryPolicy, StepPlan, prepare_graph_start,
+        prepare_linear,
+    },
     storage::machine::*,
     task::*,
 };
@@ -41,6 +45,36 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!(
         "saga candidate={:?}; atomic admission required",
         decision.projection.status
+    );
+
+    // Reuse the same work plan with an explicit graph edge and visit bound.
+    // A prepared graph uses the same inspection interface, not a second owner.
+    let graph_definition = ProcessGraphDefinition {
+        definition_id: "def_graph_example".try_into()?,
+        definition_version: definition.definition_version,
+        definition_digest: ContentDigest([6; 32]),
+        steps: definition.steps,
+        entry_step_id: "stp_work".try_into()?,
+        transitions: vec![GraphTransition {
+            from_step: "stp_work".try_into()?,
+            on: GraphTransitionOutcome::Succeeded,
+            to_step: None,
+        }],
+        max_step_visits: std::num::NonZeroU32::MIN,
+    };
+    let graph = prepare_graph_start(
+        &graph_definition,
+        tenant,
+        "prc_graph_example".try_into()?,
+        GraphSagaInput::Start {
+            input_id: "inp_graph_start".try_into()?,
+            action_id: "act_graph_work".try_into()?,
+        },
+    )?;
+    inspection::inspect("graph saga", &graph);
+    println!(
+        "graph saga candidate={:?}; atomic admission required",
+        graph.into_decision().projection.status
     );
 
     let input_bytes = [1, 2];

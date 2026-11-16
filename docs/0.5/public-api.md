@@ -7,7 +7,7 @@ Use Rust 1.89 or later. The facade defaults and existing imports remain supporte
 | Entry point | Current role | Example or check |
 | --- | --- | --- |
 | `penelope::machine` | Pure model, bounded owner, consuming local publication, hierarchy | `first-machine` tutorial consumer, `counter_machine`, `nested_order` |
-| `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `ci/saga-parity` |
+| `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `prepared_decisions` (linear and graph), `ci/saga-parity` |
 | `penelope::task` | Task record/projection/control contracts, prepared record inspection, hosted supervisor | `prepared_decisions`, existing recovery examples |
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
 | `penelope::storage` | Process/task ports; machine codec, journal and authorization contracts | Durable examples, `prepared_decisions` |

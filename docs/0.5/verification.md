@@ -31,6 +31,7 @@ original source scopes.
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
+| Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. All 72 coverage-reported production files remain unchanged; the all-ten archive checkpoint above retains its `ce93ff8` scope |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
 | Coverage | **14,880 / 15,814 lines = 94.0938%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |

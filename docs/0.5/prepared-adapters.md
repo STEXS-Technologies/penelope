@@ -53,6 +53,11 @@ well as exercising legacy behavior. The task oracle above supplies an independen
 old implementation; same-build fuzz comparisons additionally exercise the new
 view and transfer paths. Fuzzing and differential tests complement each other.
 
+The shared [`prepared_decisions` example](../../crates/penelope/examples/prepared_decisions.rs)
+inspects local machines, linear and graph sagas, and tasks through one helper.
+[Targeted stable/MSRV checks](evidence/qualification/graph-example.json) exercise
+the graph view without admission or dispatch.
+
 The [durable consumer](../../ci/machine-consumer/durable.rs) composes machine
 publication, recovery and native admission. [Timeline composition](timeline-machines.md)
 uses the existing correction engine. Their evidence and remaining performance,

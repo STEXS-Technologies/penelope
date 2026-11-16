@@ -1,0 +1,119 @@
+{
+  "scope": "Plan F3 runnable graph-preparation example. Extends the existing prepared-decisions consumer through the same facade and shared inspection helper; no new engine, library API, dependency or commit/dispatch authority. This is targeted source-consumer qualification, not fresh package or full release qualification.",
+  "base_commit": "6132a1908c4e3c8c959343df6b79fb48c44af422",
+  "source": {
+    "path": "crates/penelope/examples/prepared_decisions.rs",
+    "sha256": "54c3e42e9d95826687235aeb1d9ac3cac43cba9b524b8a4d5285e8d3b82b4731"
+  },
+  "checks": [
+    {
+      "label": "run-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 6.0915720900011365
+    },
+    {
+      "label": "clippy-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 3.3416442800007644
+    },
+    {
+      "label": "run-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 8.026038048999908
+    },
+    {
+      "label": "clippy-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 2.725294271003804
+    }
+  ],
+  "format_check_exit_code": 0,
+  "production_sources_unchanged_from_checkpoint": {
+    "checkpoint": "history-partition-checkpoint.json",
+    "verified_files": 72
+  },
+  "observed": "Both compilers print all four prepared views, graph Running with one planned intent and explicit atomic-admission requirement, and aborted machine state still0.",
+  "limits": [
+    "Only graph start/inspection is demonstrated here; graph result routing, foreign-action refusal, unknown outcomes and replay remain independently tested by prepared_lifecycles and frozen saga parity.",
+    "The example does not admit or dispatch graph work; no durable receipt is fabricated.",
+    "Full chaos, retained performance findings and final source/artifact reconciliation remain open."
+  ],
+  "archive": {
+    "file": "graph-example.tar.gz",
+    "sha256": "75027c7ff31830bf6566f69439a368b5b7a212ba990725b473be8dffeb342d93",
+    "members_sha256": {
+      "fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clippy-1.89.0.stderr": "c48f414224379f301038fb62b770ade091d622e2f53f03487873a0973eb170e3",
+      "clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "run-1.89.0.stderr": "20cc5d5e4c22e04149963393a4ba5676be3fa598370c1da9bc52c1bef7a70850",
+      "run-1.89.0.stdout": "dcd8bfe324d8cfb06fe25261ec3985f9632b9df271cf1177c3789bcb3983757e",
+      "clippy-1.100.0.stderr": "734f4bf98b922f8fcad185fb52867a17a77a0a430ca271b3d8ee1a1e667e805e",
+      "clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checks.json": "9a6861acda3a06c9e77629330282c5dd68f15c0783963994b299d1f95278a94f",
+      "run-1.100.0.stderr": "598de425f5a97f30ba1ae8c7d0dbbf97333a9c988bd34aa8231aad1229d5d5c9",
+      "run-1.100.0.stdout": "dcd8bfe324d8cfb06fe25261ec3985f9632b9df271cf1177c3789bcb3983757e",
+      "driver.py": "0af443d3d783794a576ddf9738dc6f59a446dee32ee93fb910a38baec2e6ca6e",
+      "recorder.py": "ad70d78bf72f13f5abfdc0942aad9562612f1b0f205f1a4773d6a3d040c677cb",
+      "prepared_decisions.rs": "54c3e42e9d95826687235aeb1d9ac3cac43cba9b524b8a4d5285e8d3b82b4731"
+    }
+  }
+}
