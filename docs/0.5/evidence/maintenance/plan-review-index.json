@@ -24,6 +24,62 @@
     "conflicting_genesis_scope_count_and_exact_scope_bytes_keep_existing_state",
     "every_truncation_mutation_and_trailing_byte_fails_closed"
   ],
+  "api_storage_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82",
+      "docs/0.5/compatibility-matrix.md": "0d4aa74c96dd736c23139303e7bb30b65c329159578729304aa5d25d87ee2bd6",
+      "docs/0.5/machine.md": "c6425ad8886e41f5bdff784d25eeb29db87a3763eb1ba4002b5331f0f1e784d2",
+      "docs/0.5/machine-wire.md": "dbbfa770c33333cfb8149dc45fdc7a6bb36d946beac890a2d6332c8a3abeb4db",
+      "docs/0.5/machine-storage.md": "c54f561f89f12a95aa6b5e999dab9a35fff1aa6710d2304606dcf7aaf87bd661",
+      "docs/0.5/machine-preparation.md": "cd87ac50876dddb580d20d28cf6d60fcc37217d9367b7477d523d517a688545b",
+      "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+      "crates/penelope/src/storage.rs": "f8e9291dcc922c6bf48ac110ee8898c76dd5233ee5bb999c27c0b13563ff747a",
+      "crates/penelope/src/runtime.rs": "f717a838ba267dd28c4a1d0f55f6e77786704ce0f05a28251f88531d60bf7d18",
+      "crates/penelope/src/integration.rs": "08c15eaf60c6546f321caa7a49613991b94aded678733922a13387859f5b751e",
+      "crates/penelope/src/diagnostics.rs": "25dd75120e746ebbea57893fdb33a3af3ad4100a8480266bec30d9d79af23819",
+      "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "crates/penelope-core/src/machine/wire.rs": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+      "crates/penelope-ports/src/machine.rs": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+      "crates/penelope-ports/src/machine/store.rs": "9a9b723a4b25b791cd72368346c43c361c61bb3fa69b1c7007107643b52d8158",
+      "crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+      "crates/penelope-ports/src/machine/delivery.rs": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+      "crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+      "crates/penelope-sqlite/src/machine/read.rs": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+      "crates/penelope-sqlite/src/machine/delivery.rs": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51",
+      "crates/penelope-sqlite/src/schema.rs": "f5e1cb0b2940a78237309555c245dce0bde76c270bda6910ccb6f4156ce401e4",
+      "crates/penelope-sqlite/src/worker.rs": "88138a000f046fc91d49cdf945f5450b91aa4e4471155c7fabeaf61dab661dc4"
+    },
+    "ci_source_commit": "c0e99972a7103ea349f78178446b7e19fb0b6ff9",
+    "named_tests_observed_both_compilers": [
+      "codec_reference_rejects_wrong_type_trailing_bytes_and_preserves_non_clone_values",
+      "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+      "event_replay_reconstructs_every_prefix_without_pending_effects_and_can_resume_from_snapshot",
+      "event_replay_refuses_wrong_predecessor_model_codec_limits_and_duplicate_revision",
+      "event_replay_refuses_validly_rechecksummed_transition_and_event_substitutions",
+      "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+      "authorization_precedes_existence_duplicates_and_all_reads",
+      "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+      "simultaneous_independent_workers_admit_one_competing_head",
+      "concurrent_reader_sees_one_coherent_state_head_receipt_tuple",
+      "every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap",
+      "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing",
+      "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup"
+    ],
+    "reviewed_blocks": 47,
+    "chronology": {
+      "initial_adr_commit": "6555ce2bb848bbcb1edec340d090d5ffc32475db",
+      "initial_adr_sha256": "b9a2b40e40ce2162039db6854f5ba0fd902547206349a37db921d1281b45df1e",
+      "first_kernel_commit": "cce1217030006a7ee05a40c43cc0c0d025656a2b",
+      "adr_commit_precedes_kernel": true,
+      "same_commit_changes_facade": true,
+      "limit": "ADRs existed before the new kernel, wire and SQLite implementation, but the first ADR commit also changes facade code. Commit topology does not establish authoring order within it or satisfy the strict before-any-code-migration clause."
+    },
+    "scope": "API, durable contracts, guarantee tiers and ADR content; historical sequencing and release/performance gates remain open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -33,12 +89,13 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 274,
+      "needs_individual_review": 226,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 7,
+      "individually_reviewed_scoped_support": 54,
       "advisory_pr_breakdown": 15,
+      "historical_sequence_unproven": 1,
       "historical_source_reference": 24
     }
   },
@@ -53,7 +110,12 @@
     "../sqlite-upgrade/manifest.json": "b479eb206a793c1c8be467e610f3e16596d7d99f0248d8de4810eb392f823cbb",
     "../qualification/current-package-checkpoint.json": "282cc40bf2d9f5b6249f152fcd98b3c976c58e9979c56e673f2f6c64c277ad9e",
     "../qualification/door-ergonomics.json": "22cf479a74283e51e2f1c49a3af0d863a80e3a9472c48394a586ef67e3337776",
-    "../qualification/door-package-checkpoint.json": "c710ed934a265390c40d2700436925306bca836de90cb302f21a944ce4a275d5"
+    "../qualification/door-package-checkpoint.json": "c710ed934a265390c40d2700436925306bca836de90cb302f21a944ce4a275d5",
+    "../qualification/graph-start-ownership.json": "65435824904b37ace9ff5f903aedc5f11d2ce69d32d911bb0e770f52b4e6d6d5",
+    "../qualification/event-replay-fuzz-complete.json": "a0479bb105c23ba98f0d8f166ed7d220e8f446f7af86480f2be75112fe423a10",
+    "../maintenance/integration-contract-audit.json": "f4862f7f198a402a151d96fda75eb018a2a7ac2a1ff8a6e3ba1df266a44acb86",
+    "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
+    "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda"
   },
   "blocks": [
     {
@@ -1259,8 +1321,20 @@
       "kind": "paragraph",
       "sha256": "622333b0c1f3e8e2475401d51a196e5fa89ea7efc4f2683312d20ae54e9910cf",
       "preview": "Public facade (target, canonical):",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Navigation label for the following canonical namespace diagram; actual facade exports are reviewed with that diagram."
     },
     {
       "line": 301,
@@ -1269,8 +1343,20 @@
       "kind": "code",
       "sha256": "65f0a0e5a424d02b6ffa2cc28f33004b5b5d6bfc3575a479f1b6934aa3a07269",
       "preview": "```text\npenelope::machine     state/event machine, transition decisions, HSM, in-memory owner\npenelope::saga  ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "All eight canonical namespaces exist in the facade. Timeline is feature-gated; integration::statechronicle is the retained typed evidence bridge. Internal packages remain deployment/dependency boundaries rather than separate competing public lifecycle APIs."
     },
     {
       "line": 312,
@@ -1279,8 +1365,20 @@
       "kind": "paragraph",
       "sha256": "e16ea62d719fdbcce0028a0ffaf891e082b205f86d5f3592063525ab7aaeac0a",
       "preview": "The old `penelope::executor`, root `decide`/`start`/`apply_graph_result`, and existing `task`, `timeline`, `po",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade root saga exports, executor alias, task, ports, statechronicle and optional timeline remain. The compatibility matrix provides the requested old-to-canonical import table. Frozen consumer/export checks retain their original scope; the approved Rust1.89 change is explicit."
     },
     {
       "line": 316,
@@ -1289,8 +1387,20 @@
       "kind": "paragraph",
       "sha256": "c299eec7a9dc459a8f157321c312d9dbdfc32906f2c438e86a264a0ec60028cf",
       "preview": "For local machines:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Local usage label; the following sketch is explicitly pseudocode, not a literal signature."
     },
     {
       "line": 318,
@@ -1299,8 +1409,20 @@
       "kind": "code",
       "sha256": "8524c78ab70dabdedcbc8b9b963438abd1c4ee6166c0af9818cda9ead3091aee",
       "preview": "```rust\nlet machine = MemoryMachine::new(definition, initial_state, limits);\nlet outcome = machine.handle(even",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The sketch is implemented by MemoryMachine::new/handle with explicit scope/context/limits and borrowed events. Accepted publication is coherent; rejected/unhandled outcomes preserve the owner. Canonical tutorial and exact packaged examples use the actual signatures."
     },
     {
       "line": 324,
@@ -1309,8 +1431,20 @@
       "kind": "paragraph",
       "sha256": "7e0d601dcf3200098a39ac6248bbb5aa3897a9a56d6c63b4c8d6be98d2d31b83",
       "preview": "For durable machines:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Durable usage label; the following sketch is explicitly pseudocode, not a literal signature."
     },
     {
       "line": 326,
@@ -1319,8 +1453,20 @@
       "kind": "code",
       "sha256": "b590907c2f59c2d96ede60509ef6f52e14030f9e2ef47ec7a54d19ef6d3490d2",
       "preview": "```rust\nlet current = store.load_exact(scope, revision).await?;\nlet candidate = model.prepare(&current, event,",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The actual lifecycle is load_head plus prepare_machine_commit, MachineStore::commit and consuming PreparedMachineCommit::publish after exact receipt checks. Pending unknown ACKs resolve by authoritative lookup/retry; authentication of receipt source remains a host duty."
     },
     {
       "line": 334,
@@ -1329,8 +1475,20 @@
       "kind": "paragraph",
       "sha256": "ac5f6fe45f652786037fd6c0f43c96a59c70b98f8c1747989194ec03a4fb885c",
       "preview": "These are **pseudocode**, not implemented APIs. Actual API must avoid a lifetime/ownership model that prevents",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Private borrow-bound prepared handles consume on publish or abort on drop. Low-level preparation, batch access, receipt verification and storage ports remain public and separately exercised. No extra high-level durable convenience method is required by this paragraph."
     },
     {
       "line": 338,
@@ -1339,8 +1497,20 @@
       "kind": "paragraph",
       "sha256": "a7b3b7fe62c2946eb33905a74c5bc0fb5ee838b1f697d0c8c712902abda7a0ad",
       "preview": "A canonical diagnostic view should answer:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Diagnostic-view introduction; the following field list is reviewed as stage-specific evidence rather than one universal execution record."
     },
     {
       "line": 340,
@@ -1349,8 +1519,20 @@
       "kind": "code",
       "sha256": "ddd34cef91c8bab904e4b38e7e57a5a26308f29135842d212026a1462cbfb49d",
       "preview": "```text\nmachine scope / instance            exact tenant + machine + definition\nprevious state path and revisi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "PreparedDecision retains native before/candidate/provenance/intents; machine records carry scope, exact predecessor/next revision, event digest, transition and causation. Runtime paths derive from typed state. Commit disposition, outbox admission and native verified outcomes are inspected at their separate authoritative stages, as mapped in public-api.md. Proposed views alone never assert commitment or success."
     },
     {
       "line": 352,
@@ -1359,8 +1541,20 @@
       "kind": "paragraph",
       "sha256": "f01f704c94a768000ba162a95fd809102743f8b444feb39c8a71cf93a111976e",
       "preview": "No new universal public `StateChanged` enum should be forged for old histories. Implement **lossless adapters*",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "There is no synthetic universal StateChanged history. Native legacy projections/events remain typed, with missing legacy fields explicitly absent. Local refusal leaves the head unchanged; the nested example logs source/event/reason outside evaluation. A separate bounded refusal-audit service is optional and is not implemented or promised."
     },
     {
       "line": 360,
@@ -1779,8 +1973,20 @@
       "kind": "paragraph",
       "sha256": "20f3e428fd203e59b8e0e6824633a3cf0d8bcef12649b829a8b7b5bfc4433508",
       "preview": "Introduce `penelope.machine.v1` **independent** of saga v1, task history v1, and `penelope.timeline.v1`.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine wire uses its own literal penelope.machine.v1 tag and decoder; saga/task/timeline protocols remain independent."
     },
     {
       "line": 427,
@@ -1789,8 +1995,20 @@
       "kind": "paragraph",
       "sha256": "33004325d307d87f13a3fd0354567502967d34a8255608546d32348512813b42",
       "preview": "Candidate durable record fields (contract to finalize in F1):",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The proposed field inventory is finalized by the following actual metadata mapping; it is a contract sketch rather than a demand for identically named Rust fields."
     },
     {
       "line": 429,
@@ -1799,8 +2017,20 @@
       "kind": "code",
       "sha256": "2f27213a09bd1cec05a058a05f53d9ee60df0436bd86ebdb00dc686aad6f3092",
       "preview": "```text\nprotocol_tag/version\nmachine_scope              tenant + machine ID + definition ID/fingerprint\nmodel_",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineCommitHeader/Record bind complete tenant/instance/definition+schemas, expected/next revisions, event identity/type/digest, prior/next state digests, transition, optional causation and ordered intent metadata. Final SHA256 binds every preceding encoded byte. Exact event/state/intent payloads are retained separately in the same accepted batch; metadata alone cannot authenticate them."
     },
     {
       "line": 445,
@@ -1809,8 +2039,20 @@
       "kind": "paragraph",
       "sha256": "be6e4d68b2066d80898ef26989df7f58217921fba77ffd7d655cc5feaaccf557",
       "preview": "Persist the exact encoded event bytes or an authenticated immutable blob reference as required for replay. Rec",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Prepared batches retain exact event bytes, and stored decoding checks all payload hashes/counts/charges before owned copies. History is explicitly count/byte bounded and contiguous. Traits/docs identify canonical codecs and authentic storage as consumer/host obligations; a rewritten payload plus checksum is not treated as authenticated evidence."
     },
     {
       "line": 449,
@@ -1819,8 +2061,20 @@
       "kind": "paragraph",
       "sha256": "aaa18160b4438c2ea38565b9eb982232a11c0be32b216e5486c2628e62fe0737",
       "preview": "`MachineStore::commit` must be a *single local transaction* with these guarantees:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The atomicity introduction is implemented by the store transaction and read-only preflight with mandatory transactional revalidation. The ten numbered obligations retain their separate core/invariant audits."
     },
     {
       "line": 451,
@@ -1989,8 +2243,20 @@
       "kind": "paragraph",
       "sha256": "7ae36d7ef7382e9221d0351deda0c8271db7dc20bc0a51ac9c4c56606f15a285",
       "preview": "Add `penelope-ports/src/machine.rs` for narrow types/traits such as:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The new ports live in machine.rs with narrow store/recovery/delivery/task submodules. This split preserves the requested namespace without requiring one oversized file."
     },
     {
       "line": 466,
@@ -1999,8 +2265,20 @@
       "kind": "item",
       "sha256": "9e8b14d1f232cb3a834c65fb7df38bffcd98a7ecff0191f6b39506667e8b9bcb",
       "preview": "- `MachineStore` \u2014 atomic transition admission, `load_head`, bounded paginated history, exact committed-record",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineStore exposes bootstrap, commit, load_head, exact event lookup and bounded history. Stored commits/receipts verify structural coordinates; source authentication and authorization remain explicit, not properties of a DTO constructor."
     },
     {
       "line": 467,
@@ -2009,8 +2287,20 @@
       "kind": "item",
       "sha256": "8286616117d63219abb693b8e31dc602f30c0f62a36e3895394e7bd1173b7664",
       "preview": "- `MachineCodec` \u2014 application-supplied bounded canonical encoding and schema-aware decoding of state/event pa",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineCodec separates bounded application canonical state/event/effect encoding and decoding from core. It pins a full definition and typed event code and imposes no Clone/Serde bound. Implementations must refuse noncanonical/unknown schemas; generic code cannot enforce arbitrary application purity or a decoder predicate."
     },
     {
       "line": 468,
@@ -2019,8 +2309,20 @@
       "kind": "item",
       "sha256": "cfee2a2f334bd454c31d421bd072f061f4f4a3f0f306a86e623f05fb723cd844",
       "preview": "- `MachineIntentOutbox` \u2014 optional bounded claimed/acknowledged intents, stable identities and effect reconcil",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineIntentOutbox bounds claim/read/validate/ack operations and binds scope, source, receiver policy and fenced lease metadata. Native acceptors own execution/reconciliation; acknowledgement means admission, not external completion. Shared DatabaseWorker is reused; domain-specific leases are intentionally retained."
     },
     {
       "line": 469,
@@ -2029,8 +2331,20 @@
       "kind": "item",
       "sha256": "9917a718f65069379c0399dc277a11e24f554e850386c3f46d3f9ee22ad31e05",
       "preview": "- `MachineAuthorizer` (or precise reuse of existing authorization policy interface through a typed adapter) \u2014 ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineAuthorizer has host-owned associated context and domain-specific operations, checked before reads/duplicate existence. A caller-supplied scope/digest never authenticates itself. Native receiver policies keep their separate authority."
     },
     {
       "line": 471,
@@ -2039,8 +2353,20 @@
       "kind": "paragraph",
       "sha256": "9c32ac004d3a2fbe2a9329208f6e767d0778d1a6ae8bb513572ac66f5503cc3e",
       "preview": "Do not grow the legacy `ProcessAuthorizationOperation` enum or change task wire types by convenience alone: ol",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The original ProcessAuthorizationOperation enum is text-identical to42ec187; machine operations use a new enum. Frozen task/timeline and saga observations preserve original protocol interpretation, within their bounded corpus scopes."
     },
     {
       "line": 475,
@@ -2049,8 +2375,20 @@
       "kind": "paragraph",
       "sha256": "85e5f6d0c6aaf8a363d34660176f20da263c0a104fdc8070cbe8c7bda44ec2be",
       "preview": "Target: `crates/penelope-sqlite/src/machine.rs` plus a **versioned, forward-only** SQLite schema migration in ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "SQLite machine implementation and forward-only schema migrations exist at the target paths. Schema7 journal,8 delivery and9 receiver pinning preserve old tables; migration and old-writer reopen evidence remain independently scoped."
     },
     {
       "line": 477,
@@ -2059,8 +2397,20 @@
       "kind": "paragraph",
       "sha256": "175b8c5178287534b91929567f2443a0241e55bf27b52394c6d4e6ed1d4dc8e4",
       "preview": "Suggested *logical* tables, names to be finalized against existing migrations:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Suggested logical table introduction; the plan permits finalized names and layout, so separate payload/snapshot tables are not mandatory."
     },
     {
       "line": 479,
@@ -2069,8 +2419,20 @@
       "kind": "code",
       "sha256": "8fd7f9aadf703c0e15327d81beb86342ac21f41409d0d47041d10666541b2a85",
       "preview": "```text\nmachine_heads          primary key(scope), definition/schema, sequence, state reference\nmachine_events",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "machine_heads retains genesis/current coherent snapshot, machine_events retains exact records/event/state payloads, machine_intents retains ordered payloads and machine_intent_delivery retains delivery/receiver state. Payloads and snapshots are inline with their authoritative rows rather than duplicate digest tables. All accepted fields share one local transaction."
     },
     {
       "line": 487,
@@ -2079,8 +2441,20 @@
       "kind": "paragraph",
       "sha256": "40246e9ffc79efd25269276ada846a6d94a498ce0d0aa1d6498d968e747f405f",
       "preview": "Reuse the actual `DatabaseWorker`, WAL/FULL setup, transaction practices, bounded record/blob read helpers, re",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The real bounded DatabaseWorker and WAL/FULL open path are shared with existing stores, along with bounded column reads, error mapping and single-row write checks. Machine query/receipt semantics stay domain-specific; no whole saga SQL engine is copied or universal transaction protocol introduced."
     },
     {
       "line": 489,
@@ -2089,8 +2463,20 @@
       "kind": "paragraph",
       "sha256": "50941b7223c546fccd479012d6c96b3f733d44d1d4d64afc37bae12d42a9596c",
       "preview": "Use SQLite transactions on the bounded worker, not direct blocking calls on an async reactor. Validate both co",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Async port methods authorize then enqueue bounded blocking work; synchronous open/migration is explicitly documented outside latency-sensitive reactors. Competing-head, coherent-reader, lost-ACK/reopen and migration-kill tests are retained. Optional SQLite does not enter the portable core dependency graph."
     },
     {
       "line": 493,
@@ -2099,8 +2485,20 @@
       "kind": "paragraph",
       "sha256": "c55acc372314b2db456f749d6c2f19eac579d8c1e8b35419ad6b4a2d67ebcc3f",
       "preview": "Define two supported persistence profiles clearly:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Both persistence profiles are documented in machine-storage.md and use distinct restore/replay entry points; delivery recovery remains separate."
     },
     {
       "line": 495,
@@ -2109,8 +2507,20 @@
       "kind": "item",
       "sha256": "3ea2cd183857f94de509f04c2a9ea1d6a9b496037f7a7fa2500add32089b2b80",
       "preview": "- **Event replay profile:** replay exact accepted events under the original pinned model/schema, verify sequen",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "StoredCommit::replay consumes an isolated owner, decodes the original event, reuses normal preparation and compares the complete regenerated record and every payload before returning it. Pending intents are discarded. Original model/codec, trusted genesis/history and deterministic pure callbacks are required; final full-source campaign qualification is still open."
     },
     {
       "line": 496,
@@ -2119,8 +2529,20 @@
       "kind": "item",
       "sha256": "6dcced5bca8597d486055b720169703dd821014435b9b03ead44cf9e33d14f01",
       "preview": "- **Snapshot-accelerated profile:** an atomically bound verified snapshot reduces replay cost. Snapshot retent",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineSnapshot/StoredCommit restoration verifies exact scope/head, schema/definition, canonical re-encoding and model invariants. SQLite head reads use coherent snapshots and validate the indexed last event/receipt/state. There is no automatic retention/eviction that deletes event deduplication evidence, or implicit migration to a changed definition."
     },
     {
       "line": 498,
@@ -2129,8 +2551,20 @@
       "kind": "paragraph",
       "sha256": "eab4e1d44b9a1e69374d753ad4729489944abccb468565fd1d1457aaaebb3f0a",
       "preview": "Do not claim that the standalone machine journal is a durable timeline branch/correction store. Reconciliation",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Documentation refuses durable timeline correction claims and separates unknown external-effect reconciliation from replay/snapshot restoration. Host deployments must retain executable/model versions and refuse unavailable interpretation; the library supplies no automatic executable registry or migration service."
     },
     {
       "line": 502,
@@ -2139,8 +2573,20 @@
       "kind": "paragraph",
       "sha256": "21064b06ba37dc35c4db00c9a3d06ba4fcd5a8f7ca022f471737a8f0e165a8bf",
       "preview": "A Penelope machine may represent a derived view or controller for a StateChronicle-backed domain. It must not ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The integration facade retains independently verified canonical event/commit correlation. A local machine receipt is local history evidence only. Cross-store outbox/source acknowledgements are separate recoverable transactions; pinned signed-source conformance retains its own upstream revision and does not establish a new universal authority."
     },
     {
       "line": 507,
@@ -2743,8 +3189,20 @@
       "kind": "paragraph",
       "sha256": "c8647817daa202fb4b9deccebd6bb66dc48b192dfb6f63fcaa2abc03de676e92",
       "preview": "Document guarantees in three tiers:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "public-api.md documents the required three tiers together with the limits of each."
     },
     {
       "line": 635,
@@ -2753,8 +3211,20 @@
       "kind": "item",
       "sha256": "6dd2da0cb5b15379e2e3ee3581d9b94da1daa802a8a46cf84255eba55b4686a6",
       "preview": "- **Compile-time:** well-typed State/Event/Effect, enum-associated state-local data, exhaustive user matches, ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The compile-time tier covers associated types, enum-local data, exhaustive application matches and consuming borrowed handles. No general typestate workflow API is supplied or required; dynamic domain legality is not claimed unrepresentable."
     },
     {
       "line": 636,
@@ -2763,8 +3233,20 @@
       "kind": "item",
       "sha256": "ec155e5ab82ff2c4cd0ceb0d3466550d5536c58e69d9b2d1b0210eebaff2d1e6",
       "preview": "- **Runtime determinism:** guard and transition checks, rejection of illegal dynamic events, one chosen transi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The runtime tier documents guards/invariants, terminal refusal versus bubbling, one selected transition, explicit HSM order and bounded staging/path depth. Arbitrary callback runtime and determinism remain consumer duties; capacity is not a CPU bound."
     },
     {
       "line": 637,
@@ -2773,8 +3255,20 @@
       "kind": "item",
       "sha256": "54ce3ab9c5a4fe0f758a81b39b20f2c83e8f9c90a620a2eea27ab901bd39102c",
       "preview": "- **Durable fault tolerance:** exact event identity and revision CAS, verified commit, reconstruction without ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The durable tier explicitly requires configured journal authority, exact event/revision/receipt verification, replay without dispatch and native outbox/admission/reconciliation. Local publication does not inherit these guarantees."
     },
     {
       "line": 639,
@@ -2783,8 +3277,20 @@
       "kind": "paragraph",
       "sha256": "624fc0a7ad8d7a40965d8940fa77eeaf05b64ca08e64d5e3d0e83fb13b5a01e1",
       "preview": "Never collapse these tiers into a claim that all invalid state transitions are unrepresentable. Incorrect appl",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The public API guide explicitly refuses universal invalid-transition unrepresentability and identifies hidden I/O, mutable aliases, nondeterminism and incorrect predicates as consumer hazards."
     },
     {
       "line": 645,
@@ -5922,7 +6428,8 @@
       "sha256": "c6edef492acd9bcd8029adae8bf06d5bb72549308f95b629acc493ed6b657398",
       "preview": "Record these decisions explicitly before code migration:",
       "evidence": [],
-      "review_state": "needs_individual_review"
+      "review_state": "historical_sequence_unproven",
+      "assessment": "The ADR content exists and is individually reviewed below, but the strict before-code-migration temporal requirement is not proven by present-day documents. It cannot be retroactively certified. The initial ADR commit6555ce2 precedes kernel commitcce1217, but also modifies the facade; commit topology cannot prove within-commit authoring order."
     },
     {
       "line": 1026,
@@ -5931,8 +6438,20 @@
       "kind": "item",
       "sha256": "74523e41959be75b7de6f5355c028d9ff968b9bd9294c8cc18b748c77ffe0098",
       "preview": "1. **ADR-050-01 \u2014 Machine contract:** Reference-based pure reducer returning owned state, or isolated scratch/",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05001 records reference-based input and owned candidates without Clone. Large-state representation remains application-owned; retained state-cost profiles separately measure8B through64KiB copying and owner work. These are bounded workload observations, not a large-state latency promise. Historical pre-migration sequencing remains unproven."
     },
     {
       "line": 1027,
@@ -5941,8 +6460,20 @@
       "kind": "item",
       "sha256": "9bcb8704c20a9986adcb1f6bdf07d48d0ff5c95398fffa4d66935ff7b487bb9a",
       "preview": "2. **ADR-050-02 \u2014 HSM model:** Typed nested path representation, exact event bubbling/guard precedence and ent",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05002 defines a bounded single active path, stable model IDs, leaf-to-parent Unhandled fallback, terminal refusal and exact external/internal hook order. Parent selection does not change the exit domain; orthogonal regions and implicit completion loops are unsupported. Historical sequencing remains unproven."
     },
     {
       "line": 1028,
@@ -5951,8 +6482,20 @@
       "kind": "item",
       "sha256": "38f79b1f057cc15fae4beefb20bc8fdad993c7b33340dec1acdc3ac1b8b96d59",
       "preview": "3. **ADR-050-03 \u2014 Candidate/publication:** How `PreparedTransition` binds state, event, head and intents; whet",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05003 records private consuming borrow-bound preparation, exact head/scope/event/intents, coherent publication before destructor cleanup and no live mutable accessor. Durable publication requires independently authenticated exact receipts. Historical sequencing remains unproven."
     },
     {
       "line": 1029,
@@ -5961,8 +6504,20 @@
       "kind": "item",
       "sha256": "e305c509cac0f540f9f4570d5ef5d3cd497da6590a18b6a506c5a28d713fecfc",
       "preview": "4. **ADR-050-04 \u2014 Protocol:** Machine v1 canonical encoding, stable IDs, schema/definition pinning, event dige",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05004 plus machine-wire.md specify independent protocol tag/layout, model/schema identities, event/state/intent digest binding and complete batch receipts. Golden fixtures are independent of Rust encoding. Historical sequencing remains unproven."
     },
     {
       "line": 1030,
@@ -5971,8 +6526,20 @@
       "kind": "item",
       "sha256": "557f745658f4594b83ce54809ae0706e7560a2c6541a4f61400de9f10a7a99e6",
       "preview": "5. **ADR-050-05 \u2014 Durability:** Head vs event log authority, local transaction scope, immutable payload retent",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05005 and storage guide specify accepted history authority, coherent head snapshots, local atomicity, immutable event/state/intent retention, isolated event replay and snapshot restore. External effect authority remains native. Historical sequencing remains unproven."
     },
     {
       "line": 1031,
@@ -5981,8 +6548,20 @@
       "kind": "item",
       "sha256": "d9b38203812c7a032028b23a0a62238ab3d1d107dd9ad4e81dfb1db9c24f76c1",
       "preview": "6. **ADR-050-06 \u2014 Refactor limits:** Shared code extraction map vs preserved saga/task/timeline semantic types",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05006 lists concrete shared helpers/owners and intentionally separate saga correlation, task generations, timeline finality and domain transactions. Inventory documents source growth and limited clone scope; it does not claim universal deduplication. Historical sequencing remains unproven."
     },
     {
       "line": 1032,
@@ -5991,8 +6570,20 @@
       "kind": "item",
       "sha256": "b5d8d446f29a83e8610c3729aace3bba6c999c160d0e1dde889fb95f012d81d3",
       "preview": "7. **ADR-050-07 \u2014 Hosted authorization:** New machine action scopes and compatibility with current `ProcessAut",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05007 records host context and machine-specific authorization operations, denial before scoped existence/duplicate reads and preserved legacy enum semantics. It does not authenticate pure reducers or arbitrary caller assertions. Historical sequencing remains unproven."
     },
     {
       "line": 1033,
@@ -6001,8 +6592,20 @@
       "kind": "item",
       "sha256": "1729d36b46288cc2ce91bbefbca75dd1aca42338ea005c6eec4d1078d9ba87f3",
       "preview": "8. **ADR-050-08 \u2014 Feature/defaults:** Which modules/features the user sees by default, any optional macro, and",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05008 retains facade defaults, optional timeline/SQLite/runtime composition and allocation-free/no_std qualification at core. There is no mandatory macro. Feature/dependency and portable checks remain independent gates. Historical sequencing remains unproven."
     },
     {
       "line": 1034,
@@ -6011,8 +6614,20 @@
       "kind": "item",
       "sha256": "d05ec9df20717a2434c8b97817d8e925f4bdbc1a16a03257b5dff5c45ce8feba",
       "preview": "9. **ADR-050-09 \u2014 Migration:** What constitutes schema-compatible restart, when an explicit transformation is ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05009 requires pinned interpretation, explicit authenticated migration when changing it and separately restored old backups for rollback. No automatic downgrade or unsupported schema reinterpretation is offered. Historical sequencing remains unproven."
     },
     {
       "line": 1035,
@@ -6021,8 +6636,20 @@
       "kind": "item",
       "sha256": "c42ab095ef414fb8fdb54cb2867345163012920a7f21960c1e6f9658495e6d4d",
       "preview": "10. **ADR-050-10 \u2014 Performance policy:** Same-work baseline, tolerances, release exceptions and evidence reten",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/door-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "c0_source_tests_observed_unchanged_storage_and_core_owners"
+        },
+        {
+          "file": "../qualification/graph-start-ownership.json",
+          "pointer": "/production_change",
+          "scope_status": "later_graph_signature_change_separately_scoped"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "ADR05010 records same-work baseline, variance-informed tolerances, retained unsuccessful/raw evidence and explicit review of sustained findings. This policy does not mean performance acceptance is achieved; flagged workloads remain release blockers. Historical sequencing remains unproven."
     },
     {
       "line": 1041,
