@@ -8,49 +8,37 @@ how to run the gates. Tagging and publication require separate authorization.
 ## Current candidate
 
 All ten library crates use candidate version 0.5.0. The
-[current checkpoint](evidence/qualification/current-package-checkpoint.json)
-qualifies all ten clean archives at `c8fda4c`, including isolated event replay,
-the generated-machine/history-partition/repeated-kill tests and the nested/shared
-examples. It retains commands, source/archive identities, raw logs, unchanged
-external dependency identities and full LLVM JSON. The
-[earlier checkpoint](evidence/qualification/history-partition-checkpoint.json)
-retains its `ce93ff8` scope. **Full release qualification remains open.**
+[current checkpoint](evidence/qualification/graph-start-package-checkpoint.json)
+qualifies ten clean archives at `8dfe89d`, with 700 passing checks on Rust 1.100
+and MSRV 1.89, explicit packaged-example runs, fresh coverage and seven green CI
+jobs. It retains source/archive identities, raw logs, external dependency identities
+and full LLVM JSON. **Full release qualification remains open.**
 
-The later [nested ergonomics follow-up](evidence/qualification/nested-ergonomics.json)
-adds a shared CI trace checker, genuine root-policy/leaf-refusal example and
-nested-enum allocation fixture. Both compilers pass the local checks and three
-semantic controls are caught. At that checkpoint all 72 production files match
-`9084239`; those test/example/workflow files pass its package and CI checks.
-This closes that scoped follow-up, while full release qualification remains open.
+The [graph-start ownership fix](evidence/qualification/graph-start-ownership.json)
+removes an unnecessary definition borrow while retaining the original function
+body. Its facade consumer fails with the old signature and passes on both
+compilers after the change. The current checkpoint reconciles its packages,
+coverage and CI; final campaign qualification remains open.
 
-The [flat enum follow-up](evidence/qualification/door-package-checkpoint.json)
-qualifies all ten clean archives and all seven CI jobs at `c0e9997`. Both compilers
-report 97 test harness summaries and 700 passing checks; the exact packaged door
-example also runs and matches its eight-event oracle. The initial recorder used
-the previous 96-harness count; that validator failure and the resumed remaining
-commands are retained. No new coverage measurement is claimed.
-
-A later [graph-start ownership simplification](evidence/qualification/graph-start-ownership.json)
-removes a definition lifetime that the owned decision does not need. The same
-facade consumer fails to compile against the old signature when it drops that
-definition, and passes on stable/MSRV after the change. Both compilers pass all
-152 executor checks and exact legacy/prepared saga parity. The function body is
-byte-identical; the other 71 coverage-reported production files are unchanged.
-CI, package, coverage and final campaign reconciliation for this follow-up remain
-open; the earlier checkpoints retain their original source scopes.
+Earlier [nested](evidence/qualification/nested-ergonomics.json) and
+[flat enum](evidence/qualification/door-package-checkpoint.json) follow-ups retain
+their original checks and failed attempts. The
+[c8fda4c checkpoint](evidence/qualification/current-package-checkpoint.json) and
+[history-partition checkpoint](evidence/qualification/history-partition-checkpoint.json)
+retain their earlier source scopes.
 
 | Gate | Verified result and scope |
 | --- | --- |
 | CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
-| CI | All seven jobs pass at [`c8fda4c`](https://github.com/STEXS-Technologies/penelope/actions/runs/43829769107): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`8dfe89d`](https://github.com/STEXS-Technologies/penelope/actions/runs/43840278717): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
 | Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; the current checkpoint includes the test in both extracted-workspace runs and fresh coverage |
 | Replay-mutation fuzz follow-up | [Initial checks](evidence/qualification/replay-mutation-initial.json) pass for the augmented SQLite target: ten deterministic seeds, 1,000-run smoke, strict Clippy and formatting. Reverse exact retries, future-head refusal and checksummed scope/model/event-digest substitutions are exercised. The [supplementary campaign](evidence/qualification/replay-mutation-complete.json) completes all three 100,000-run rounds with unchanged source/binary and retained terminal corpora. Its `f36b77d` base predates isolated event replay; it does not qualify that newer method |
-| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. The current checkpoint includes packages, coverage and CI. The [supplementary SQLite campaign](evidence/qualification/event-replay-fuzz-complete.json) completes three 100,000-run rounds at `9084239`, with actual model-reevaluation replay, retained corpora and unchanged source/binary. All 72 production sources match the current checkpoint. Full-source campaign qualification remains open |
+| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. The current checkpoint includes packages, coverage and CI. The [supplementary SQLite campaign](evidence/qualification/event-replay-fuzz-complete.json) completes three 100,000-run rounds at `9084239`, with actual model-reevaluation replay, retained corpora and unchanged source/binary. Its production scope remains `9084239`; the later graph-start lifetime refinement is qualified separately. Full-source campaign qualification remains open |
 | Repeated journal kills | [Growing-journal crash/model check](evidence/qualification/repeated-machine-kill.json): three seeds, 16 successive SIGKILLs per database, all eight commit boundaries twice per seed. Both compilers pass all nine machine unit tests; every retained prefix, payload/intent, row count and exact retry is checked after each death and reopen. Test-only addition; the current archive checkpoint includes it on both compilers, separately from clean-reopen fuzzing |
-| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 700 passes on each compiler, with the added replay and repeated-kill tests observed and every Penelope dependency resolved from those archives |
+| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 97 harness summaries and 700 passes on each compiler, with the added replay and repeated-kill tests observed and every Penelope dependency resolved from those archives |
 | Locks | Extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`; every retained external identity/checksum is unchanged and both compiler runs use the same lock with `--locked`. Earlier six-lock inventories retain their recorded scope |
 | Frozen compatibility | 33,278 task/timeline observations and 3,136 saga observations match original 0.4; both legacy and prepared saga facade paths pass on both compilers; frozen corpora and baseline locks are unchanged |
 | Static API review | [Fourteen package/feature profiles](evidence/maintenance/public-api-audit.json) retain the checked original export bindings and pass the local-item signature checks. Independent export traversal and the unchanged consumer catch a facade reexport removal missed by the signature checker; a public-field removal is also caught |
@@ -76,12 +64,12 @@ comparison; subprocess-split output is documented in the recorders.
 
 ## Open release gates
 
-- Complete the full campaign on the immutable `9084239` checkout: three rounds,
+- Qualify the final immutable library sources at `8dfe89d`: three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
-  does not replace it. Earlier `cefa55f`/`be774e6` campaigns, the development
-  rehearsal and supplementary augmented-target campaigns continue separately
-  and retain their original source/harness scopes.
+  does not replace this. The already-running `9084239`/`cefa55f`/`be774e6`
+  campaigns and development rehearsal retain their original source/harness scopes;
+  none is relabeled as the final revision.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.
