@@ -1016,3 +1016,38 @@ mutation-driver output-directory collision before any build. All 38 archived
 members were verified against their recorded hashes. This remains a development
 checkpoint; final-source release qualification and performance disposition remain
 open.
+
+
+## Current-source legacy timeline comparison
+
+The [current timeline checkpoint](evidence/legacy-balanced/timeline-current.json)
+compares original 0.4 source `42ec187` with `94a7396`: 31 alternating measured
+pairs, 640 unchanged profiles and 1,000 samples per profile per process. The
+existing driver performs one warmup pair. All observations and p50/p95/p99
+measurements remain in the archive, alongside whole-process counters, exact
+source fixtures, original binaries, code sections and symbols. Original binary
+hashes match the measured artifacts; copies transformed while extracting code
+sections are identified separately. No measured executable was modified.
+
+Two p50 profiles and one p95 profile cross the existing review thresholds:
+
+| Profile | Metric | Original | Current | Change |
+| --- | --- | --- | --- | --- |
+| `history_capture`, 1 word, 1 step | p50 | 251 ns | 270 ns | +7.57% |
+| `ring_replay`, 128 words, 1 step | p50 | 50 ns | 60 ns | +20.00% |
+| `history_append`, 128 words, 32 steps | p95 | 291 ns | 321 ns | +10.31% |
+
+The first profile repeats a historical flag. The latter two exploratory paired
+intervals span zero; this is not an equivalence test or permission to discard
+them. The earlier nine p50/two p95 findings remain retained. Different current
+flags do not establish their cause, statistical equivalence or acceptance. The
+next focused diagnostic is the recurring history-capture case.
+
+Measurements use CPU 4; the concurrent chaos root was observed on CPUs 8–15.
+Shared host applications, frequency, caches and memory bandwidth remain
+uncontrolled. Binary copying and inspection occurred during the campaign; no
+observations were removed. All 101 archived members passed hash verification.
+The archive also records all seven successful GitHub CI jobs for the exact
+measured revision ([run 43786989284](https://github.com/STEXS-Technologies/penelope/actions/runs/43786989284)).
+This is a development checkpoint, not final candidate or packaged-release
+qualification. Performance disposition and the full chaos campaign remain open.
