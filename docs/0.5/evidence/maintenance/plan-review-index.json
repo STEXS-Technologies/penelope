@@ -106,6 +106,20 @@
     "reviewed_blocks": 36,
     "scope": "Actual module owners, proposed path refinements and shared-extraction criteria; final release/dated notes and performance gates remain open."
   },
+  "adoption_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "docs/0.5/compatibility-matrix.md": "0d4aa74c96dd736c23139303e7bb30b65c329159578729304aa5d25d87ee2bd6",
+      "docs/reliable-execution-operations.md": "2ec33f5244834b248f784791efab96926e35c065d619584bf4aebd0df9161690",
+      "docs/getting-started.md": "0d61f32c7b78f87841ad659a01f3fd72de19aab2eb56a791deec2088c6f30283",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/0.5/machine-storage.md": "c54f561f89f12a95aa6b5e999dab9a35fff1aa6710d2304606dcf7aaf87bd661",
+      "ci/machine-consumer/durable.rs": "e104f7a04cb9650d89a70f63d80fd3641a69b572a954319bf0b36fdd20039d76",
+      "scripts/run-supervised-saga-example.sh": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0"
+    },
+    "reviewed_blocks": 7,
+    "scope": "Six explicit adoption steps and rollback/reconciliation documentation; no production rollout, automatic state conversion or external-effect rollback is certified."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -115,11 +129,11 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 190,
+      "needs_individual_review": 183,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 88,
+      "individually_reviewed_scoped_support": 95,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
       "advisory_pr_breakdown": 15,
@@ -143,7 +157,8 @@
     "../qualification/event-replay-fuzz-complete.json": "a0479bb105c23ba98f0d8f166ed7d220e8f446f7af86480f2be75112fe423a10",
     "../maintenance/integration-contract-audit.json": "f4862f7f198a402a151d96fda75eb018a2a7ac2a1ff8a6e3ba1df266a44acb86",
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
-    "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda"
+    "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
+    "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f"
   },
   "blocks": [
     {
@@ -5667,8 +5682,15 @@
       "kind": "item",
       "sha256": "87441e42586e4c4d005a0c12833f1e776f41b6726307e22d0f9952f0de918c58",
       "preview": "- **Step A:** Upgrade Penelope to 0.5.0 while continuing to use old saga/task/timeline APIs. No history conver",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The compatibility guide retains old imports and original history decoders without machine conversion. Frozen external consumers, task/timeline and saga corpora, plus the actual old-writer upgrade fixture supply bounded support; they do not certify arbitrary downstream applications."
     },
     {
       "line": 872,
@@ -5677,8 +5699,15 @@
       "kind": "item",
       "sha256": "82ee483dd6edd5823b844886acdf1592fcf006d89f453699a2a7864d9678f788",
       "preview": "- **Step B:** Adopt canonical `penelope::saga`/`penelope::task` imports and common inspection/diagnostics, wit",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The old-to-canonical import table and public API map expose the same native saga/task implementations and shared read-only PreparedDecision inspection. Native publication and runtime authority are preserved; changing imports does not substitute one universal evaluator."
     },
     {
       "line": 873,
@@ -5687,8 +5716,15 @@
       "kind": "item",
       "sha256": "9238dabdc77de874ca8b18784dd251f60f19e405d4bd0d9175195e0811b1118d",
       "preview": "- **Step C:** Introduce `penelope::machine` to a new or carefully isolated business-state domain; test its eve",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The first-machine tutorial introduces one isolated Counter domain with a pure transition, checked arithmetic and in-memory publication. Flat and nested examples add guards and domain-local enum data. Callback purity and absence of mutable aliases remain application duties; the library cannot automatically prove arbitrary user code pure."
     },
     {
       "line": 874,
@@ -5697,8 +5733,15 @@
       "kind": "item",
       "sha256": "85eef883638430eb8b52fc0efb2540075257c067ce2856dfb50b81ca1e44952e",
       "preview": "- **Step D:** Opt into machine journal persistence and outbound intents where crash recovery is needed; config",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The journal guide explicitly requires a pinned scope/model/codec, bounded payload/history/storage quotas and host-owned MachineAuthorizer context. Persistence and outbound intents are optional adoption steps; no default allow-all policy or inferred authenticated caller is promised."
     },
     {
       "line": 875,
@@ -5707,8 +5750,15 @@
       "kind": "item",
       "sha256": "6759fe0b2100201cb78244f8879f1377913abd2bccd0f2a043a124983c38fff6",
       "preview": "- **Step E:** Compose task/saga effects through the verified event bridge; adopt optional timeline for bounded",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The public API and journal guide distinguish typed native task/saga receiver admission from verified execution results. The separately protected Linux consumer exercises machine-to-task-to-verified-result-to-machine-to-saga on both compilers in current CI; the plain durable consumer demonstrates admission without certifying task completion. Timeline stays opt-in and delegates bounded speculation/correction to its native engine; final performance and full chaos acceptance remain open."
     },
     {
       "line": 876,
@@ -5717,8 +5767,15 @@
       "kind": "item",
       "sha256": "7196dbd0096f064b450bb2ef7e509f11799849598bc870286981aaea66be2d1b",
       "preview": "- **Step F:** Migrate old imperative domain state only by writing explicit adapters and invariants; no blanket",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "No automatic conversion of arbitrary imperative state is offered. The model owns transition validation and invariants; callers explicitly choose identities, schema, canonical bytes and migration/recovery policy. Existing adapters expose native evidence without persisting fake machine histories."
     },
     {
       "line": 880,
@@ -5727,8 +5784,15 @@
       "kind": "paragraph",
       "sha256": "cf22a3919e084a6086888bfe62aecd52e4aefd7c2f9ab0293ccfb7ecdafaa373",
       "preview": "Before production migration, maintain a backup of the 0.4 database and the exact old binary/source used for re",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/",
+          "scope_status": "current_all_ten_archive_consumer_and_compatibility_checks_with_host_duties_separate"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The upgrade/restore procedures require a consistent prior database and matching deployment/registry, quiesced authority, isolated replay/integrity checks and external-effect reconciliation before dispatch. An old binary refuses the new schema. Restoring an older backup cannot erase later external effects or establish exclusive authority; forward reconciliation or explicit domain compensation remains a host operation, not an automated rollback guarantee."
     },
     {
       "line": 888,
