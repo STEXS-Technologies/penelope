@@ -1,0 +1,110 @@
+{
+  "source_commit": "bd9ab62d5e9116deefef87b304322227d513e524",
+  "baseline_commit": "2358e4d",
+  "scope": "Development failure-path qualification; not final release certification",
+  "coverage": {
+    "sqlite_before": [
+      {
+        "count": 3505,
+        "covered": 3073,
+        "percent": 87.67475035663338
+      }
+    ],
+    "sqlite_after": [
+      {
+        "count": 3506,
+        "covered": 3075,
+        "percent": 87.70678836280662
+      }
+    ],
+    "workspace": [
+      {
+        "count": 15807,
+        "covered": 14874,
+        "percent": 94.09755171759348
+      }
+    ]
+  },
+  "ratchet": "Line coverage: 94.0976% (ratchet: 94.0759%)\n",
+  "mutation_checks": [
+    {
+      "name": "skip-transactional-admission",
+      "argv": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--lib",
+        "machine::tests::commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 101,
+      "expected": 101
+    },
+    {
+      "name": "omit-history-ceiling",
+      "argv": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--locked",
+        "-p",
+        "penelope-sqlite",
+        "--test",
+        "machines",
+        "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 101,
+      "expected": 101
+    }
+  ],
+  "archive": "machine-failures.tar.gz",
+  "archive_sha256": "08112ee8f702e5d8702cd95f1bc10550e8f28d396b7d8bcc39de9391c348373c",
+  "members_sha256": {
+    "penelope-machine-failure-checks.log": "7b8a6af4b0a0cb61a298a59483b47794315b72bce9989f0c422aebe92b72972d",
+    "penelope-machine-failure-checks/checks.json": "ec905440f84656c27e01e5fc5f8d56c1e12891f29dba2262534a6ce64e810806",
+    "penelope-machine-failure-checks/clippy.stderr": "039b8a70d29c3becbac3cb7b83ded7d7c6a6393b374841a397ca026e782aaa37",
+    "penelope-machine-failure-checks/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-checks/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-checks/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-checks/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-checks/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-checks/source/crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+    "penelope-machine-failure-checks/source/crates/penelope-sqlite/src/machine/tests.rs": "5dfa0153b97cacc8a052958a3f9d57cda4cf0ef3a9507f250f41c9f42e006840",
+    "penelope-machine-failure-checks/source/crates/penelope-sqlite/tests/machines.rs": "f45d70ff8c43bbdc8be8b09612613d2dd8dbdb05deb5f1246e912daaad8938af",
+    "penelope-machine-failure-checks/sqlite-1.100.0.stderr": "fef9619f10c43789abb94d736a19275bad2b9ce8242c84d32996e04e7e89babf",
+    "penelope-machine-failure-checks/sqlite-1.100.0.stdout": "73c2d8b175dcd2a41f7bdd856c90d23af3a43861ff6e69dcd3212c74573397f8",
+    "penelope-machine-failure-checks/sqlite-1.89.0.stderr": "74d889f7fdd7f10e1d69d060dce45bfbd1c687d7679d04721c0804ef3f0ea31f",
+    "penelope-machine-failure-checks/sqlite-1.89.0.stdout": "446a74b16eeab6a21898b01c8bea2b983f3c90eaeacacf39d4fbae576c6119e0",
+    "penelope-machine-failure-coverage-after.json": "7fa4ba10d237177c34dfe33a0fd69a38177979d9b41804adc872801016c091ae",
+    "penelope-machine-failure-coverage-after.log": "5bcd80f0b6e01ae6a2a3c1c2e7902dec7185506d4da0a0f0e120ba1604c9d5f5",
+    "penelope-machine-failure-coverage-before.json": "55944f7f23aa73a6d6955536ceed8d971db26b903f48a32cf93187c7bcc9acd4",
+    "penelope-machine-failure-coverage-before.log": "e33338814904c1c31765743a5f61371f7e6bdf8653ce6cd5e8727c22e548c5a4",
+    "penelope-machine-failure-graph-update.log": "49afea49999e79c73b23d834c53d6e02ea6fa83770386c20f8d63b5787cff731",
+    "penelope-machine-failure-mutation-results/checks.json": "605d527091e06e78ac79f1ec5f65c1eac20a523dd77cc3c1cb5e273454070418",
+    "penelope-machine-failure-mutation-results/omit-history-ceiling.patch": "01ececbce92dd33e9d5bf42e7fcafae96498a940625b00170ca6741f960c8aa4",
+    "penelope-machine-failure-mutation-results/omit-history-ceiling.stderr": "d3edfa531ee52b839fcc4ad31c05ae7a6122bb46558b92f2923919264ecec141",
+    "penelope-machine-failure-mutation-results/omit-history-ceiling.stdout": "d2332d46147fd3c6a937a83fead9945ba3e8a06355c90b334a05b9459e9ad238",
+    "penelope-machine-failure-mutation-results/skip-transactional-admission.patch": "3461642f2a2966e5b33e2c82bc27cfc57a66b555b77f84644ffbd5a5b00d3890",
+    "penelope-machine-failure-mutation-results/skip-transactional-admission.stderr": "3daa4861b1c90ffc00a55652a9d779d968bdfa8bd0dbefe9092a8b0a530b4309",
+    "penelope-machine-failure-mutation-results/skip-transactional-admission.stdout": "7b078b63bbf323d4c7054ce74642637d1fea3e2f05855c30eb1355d8c53fea1f",
+    "penelope-machine-failure-mutations-initial.log": "356d87520ce8c9d4603529c1260b3bb96a85a429d9cb56e8afe322a79e455c4c",
+    "penelope-machine-failure-mutations.log": "b00bba2834fbb93b476712dedfd11595e9df071b0ac454762015a47a3f679014",
+    "penelope-machine-failure-workspace-clean.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "penelope-machine-failure-workspace-coverage.json": "973df9d2b7dc3c49e9ff2674950e75c41eb2eb1ffd082b6a5efbc39510be10b3",
+    "penelope-machine-failure-workspace-coverage.log": "3e5ba924fb0a8153f7e4b75eb6115d43fec80d018716c6d859f839ef9bd6daec",
+    "penelope-machine-failure-workspace-ratchet.log": "3cb8917528923485d1723f2ebdd4f9a2682c2daa0e0f41d299b85bc1be3d796a",
+    "penelope-mutate-machine-failures-initial.py": "934bfe14862e7abc6b3d33fdc3218bccc41ea1dd3f96f09132cb9616445b2d6f",
+    "penelope-mutate-machine-failures.py": "4f44010b495f3ced91820771815daa38b0656f66ad86fccbf07cb05986cc6cd8",
+    "penelope-preflight-race-first.log": "49606db898086a8c248800747c6dc45a30f6611740ea5d1c6132882b9e50e329",
+    "penelope-qualify-machine-failures.py": "7e9332e475a35ae50ca96110436a660c41776eca091421759d52a16ada9d80ac",
+    "penelope-record-machine-failures.py": "75539a910df055ebd21113657badf70ef5cb3082c8c6a5cd339ae214c71899f3"
+  }
+}

@@ -984,3 +984,35 @@ exception is adopted. Raw source patches, code bytes, binary identities, compile
 commands, counters and every timing remain available, including the driver's
 initial invalid-reference failure before any build. Original encoding/timeline
 findings and exact final-source release qualification remain open.
+
+
+## Deterministic preflight and bounded-history failure paths
+
+The [failure-path checkpoint](evidence/qualification/machine-failures.json)
+qualifies source `bd9ab62`. A child process pauses after its read preflight has
+observed the old head and released its snapshot. A second connection commits
+before the child acquires its write transaction. Duplicate, conflicting identity
+and stale-head cases then assert the required result and unchanged complete
+head/event/intent rows. The pause hook exists only in Unix test builds.
+
+A full-history test fills the configured four-record bound, rejects a fifth event
+without changing rows, and reconciles an exact old retry with its original
+receipt. Scoped SQLite coverage newly observes the transactional duplicate-return
+region and history-capacity return. Removing transactional admission makes the
+new race test fail at duplicate reconciliation (remaining consistency checks
+return `Corrupt`); removing the history ceiling makes the new capacity test fail.
+These mutation controls do not establish that the first mutant commits bad data.
+
+The same test-only pause also extends commit SIGKILL recovery to eight boundaries.
+Four repeated marker waits share one helper, preserving deadlines, process
+cleanup and crash assertions. Full SQLite tests pass on Rust 1.100 and MSRV 1.89;
+strict all-target/all-feature SQLite Clippy and workspace formatting pass.
+
+Fresh workspace all-feature coverage records 14,874/15,807 lines, **94.0976%**,
+above the unchanged 94.0759% ratchet. The margin is narrow; this is not evidence
+of complete failure-path coverage. The archive retains full region reports,
+commands, source snapshots, mutation patches and logs, including an initial
+mutation-driver output-directory collision before any build. All 38 archived
+members were verified against their recorded hashes. This remains a development
+checkpoint; final-source release qualification and performance disposition remain
+open.
