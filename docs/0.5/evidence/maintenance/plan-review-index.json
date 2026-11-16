@@ -146,6 +146,86 @@
     ],
     "scope": "Thirteen compatibility surfaces and the explicit source-change policy. Frozen finite corpora and supported host profiles are not universal compatibility proof; full campaign and performance acceptance remain open."
   },
+  "release_acceptance_review": {
+    "production_source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "review_document": "../../verification.md",
+    "review_document_sha256": "f479dfa7e0b01b5ffdc3c56a02339943475c532d0ee5d62ace8cde4784d55e96",
+    "conditions": [
+      {
+        "plan_line": 980,
+        "condition": "Unified programming model",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "0d034b4a8d31b2ca0faae1d76302abef42dcedef6e6a664b48aec8a02e4ab889"
+      },
+      {
+        "plan_line": 981,
+        "condition": "No mandatory extras",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "856f9c1ad894e207712fc1919628a5dc9016fadc785bfe868656639c5f91e22e"
+      },
+      {
+        "plan_line": 982,
+        "condition": "Real integration",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "95acc97d9b67aeb8372ebcfc6bae27252ad0d24aed7f7459667219ead7acd627"
+      },
+      {
+        "plan_line": 983,
+        "condition": "No new rewind engine",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "a0d31dd8598c8bd44da6c40b1369e9e1b19db826eb9db80a1e3c52e9e52f9073"
+      },
+      {
+        "plan_line": 984,
+        "condition": "Durability exists",
+        "disposition": "implemented_with_qualification_open",
+        "review_row_sha256": "aa94b9650bf708dec68ad697fecfd8979f96c27240f9db321c12e9d3755c59e3"
+      },
+      {
+        "plan_line": 985,
+        "condition": "No effect guessing",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "81210d84dcf9f2bdd70a31f0e2c5485db668a1306a85560d641857020149d13e"
+      },
+      {
+        "plan_line": 986,
+        "condition": "Proven compatibility",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "e2566e627388fffdb91927d5ae3cbe05e5cf77991d4ead84369573d210a0966c"
+      },
+      {
+        "plan_line": 987,
+        "condition": "One public API",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "a22b3296da567e60b42542b02ee1b402353681b8caf222a4cb521a025a738efb"
+      },
+      {
+        "plan_line": 988,
+        "condition": "Reduced fragmentation",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "a073966d6baf64db297709b8b552c06a35848a97a7e082f5140b728d8e32611a"
+      },
+      {
+        "plan_line": 989,
+        "condition": "Portable and bounded",
+        "disposition": "scoped_implementation_support",
+        "review_row_sha256": "91a529756ee5859d672640339381ba5aa347544ce4624d0be28296814b90ebf5"
+      },
+      {
+        "plan_line": 990,
+        "condition": "Qualification complete",
+        "disposition": "release_condition_open",
+        "review_row_sha256": "cc5db7a138a10178f70bee4aba5febfa1396d2d5a210dfa40c4defa0823c335c"
+      },
+      {
+        "plan_line": 991,
+        "condition": "Release controlled",
+        "disposition": "release_condition_open",
+        "review_row_sha256": "1c18ec9b078c9103c06d4767df710d9297efdfc06ef49ae93aff33467e28a8de"
+      }
+    ],
+    "scope": "Positional twelve-condition reconciliation with the existing human-readable review. Implemented capability is distinct from release qualification; no gate is closed solely by this index."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -155,13 +235,15 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 169,
+      "needs_individual_review": 155,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 109,
+      "individually_reviewed_scoped_support": 118,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
+      "release_condition_open": 4,
+      "individually_reviewed_qualification_open": 1,
       "advisory_pr_breakdown": 15,
       "historical_sequence_unproven": 1,
       "historical_source_reference": 24
@@ -184,7 +266,8 @@
     "../maintenance/integration-contract-audit.json": "f4862f7f198a402a151d96fda75eb018a2a7ac2a1ff8a6e3ba1df266a44acb86",
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
-    "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f"
+    "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
+    "../../verification.md": "f479dfa7e0b01b5ffdc3c56a02339943475c532d0ee5d62ace8cde4784d55e96"
   },
   "blocks": [
     {
@@ -6745,8 +6828,15 @@
       "kind": "paragraph",
       "sha256": "319210d706ae7a9d6ac92aab410fc2b3f27b0cd59691952e0e42cd96f74652dd",
       "preview": "Penelope 0.5.0 is **not complete** if only a `penelope-machine` crate is added, if sagas/tasks remain unrelate",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Open release gates",
+          "scope_status": "explicit_open_release_disposition"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "The candidate remains explicitly unreleased and not release-qualified. Native integration and durable protocols exist, but immutable full chaos, performance acceptance and final release reconciliation remain open. No advertised scope reduction or completion claim is made."
     },
     {
       "line": 978,
@@ -6765,8 +6855,15 @@
       "kind": "item",
       "sha256": "4341065b462a6654b9dddd6d9d4108d382cbf2d1c1f97c04c174522ed1fceb92",
       "preview": "- [ ] **Unified programming model:** Flat and nested application state machines are first-class, with typed st",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Unified programming model",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Implemented: kernel/hierarchy checks, facade consumers and the 15-invariant audit cover typed dispatch, rejection, publication and provenance. Callback determinism remains a consumer obligation"
     },
     {
       "line": 981,
@@ -6775,8 +6872,15 @@
       "kind": "item",
       "sha256": "56f28150f38570162f32946ffa87bf6c824ef5a530a1ecf521adfe686f716922",
       "preview": "- [ ] **No mandatory extras:** A pure in-memory machine compiles/runs without a database, saga, task superviso",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/No mandatory extras",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Verified portable core bare/serde builds on both compilers; allocation probes cover allocation-free consumer types. The hosted umbrella facade is not the no-std target"
     },
     {
       "line": 982,
@@ -6785,8 +6889,15 @@
       "kind": "item",
       "sha256": "d1d0125f767c55c73bd862c705952252a9f1aa75c2efb2c138836794d094f5d6",
       "preview": "- [ ] **Real integration:** Existing saga and task implementations are accessible as specialized machine lifec",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Real integration",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Implemented: prepared saga/task views and the protected Linux consumer exercise native admission, verified worker result, subsequent machine transition and saga admission. Native engines retain execution authority"
     },
     {
       "line": 983,
@@ -6795,8 +6906,15 @@
       "kind": "item",
       "sha256": "71eb3bd876fb15768f304c8a9e781f27d14764798d2f50c5025a4122adf588db",
       "preview": "- [ ] **No new rewind engine:** Optional timeline machine use reuses the real 0.4.0 timeline correction/finali",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/No new rewind engine",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Implemented: `MachineTimeline` delegates to the existing correction engine; frozen timeline observations and adapter tests pass. Timeline performance findings remain open"
     },
     {
       "line": 984,
@@ -6805,8 +6923,15 @@
       "kind": "item",
       "sha256": "2d38c80a4dc027c61761190f71c75cb3b18a33767dd44a76e5d0d6f30fe130db",
       "preview": "- [ ] **Durability exists:** Machine-specific versioned event protocol, atomic head/CAS, duplicate/conflict ha",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Durability exists",
+          "scope_status": "implemented_with_qualification_open"
+        }
+      ],
+      "review_state": "individually_reviewed_qualification_open",
+      "assessment": "Implemented: journal/CAS, exact retries, snapshots, verified event replay, source-bound outbox, migration and eight kill boundaries have checked evidence. Full candidate chaos remains open"
     },
     {
       "line": 985,
@@ -6815,8 +6940,15 @@
       "kind": "item",
       "sha256": "095420d4a33340717ee52698e285a69ee1df0f1ee867ea49ab66c154533f8124",
       "preview": "- [ ] **No effect guessing:** Unknown external outcomes, crash ambiguity and reconciliation rules are enforced",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/No effect guessing",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Enforced in the audited native handoff, unknown-outcome and generation/reconciliation boundaries. Durable admission does not establish exactly-once external execution"
     },
     {
       "line": 986,
@@ -6825,8 +6957,15 @@
       "kind": "item",
       "sha256": "a8a24a668afaf45806f5034ba8853de5273474cdfd346f5520c01689fdf87298",
       "preview": "- [ ] **Proven compatibility:** Frozen 0.4.0 saga/task/timeline wire fixtures and external API usage tests pas",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Proven compatibility",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Frozen observations, unchanged consumer, static signatures/export bindings and actual old-writer upgrade pass. Upgrade/backup-restore obligations are documented; unsupported downgrade is not offered"
     },
     {
       "line": 987,
@@ -6835,8 +6974,15 @@
       "kind": "item",
       "sha256": "85cebe498e968ddfe29637e44ac0e04e9c76f54471078e6672358a5c03e14170",
       "preview": "- [ ] **One public API:** Canonical `penelope::*` namespaces and cohesive docs replace subsystem-by-subsystem ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/One public API",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Canonical facade, migration table and source-derived first-machine tutorial are checked on stable/MSRV. Advanced durable metadata remains explicit; no local convenience layer is claimed"
     },
     {
       "line": 988,
@@ -6845,8 +6991,15 @@
       "kind": "item",
       "sha256": "bf35d32b355a64fdc5f331473484e9e598704c1ae0429c920173ab469e3cce03",
       "preview": "- [ ] **Refactor actually reduces fragmentation:** Common verified concepts and helpers have one implementatio",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Reduced fragmentation",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Shared owners and retained protocol boundaries are documented in ADR-050-06; inventories and rejected simplifications are retained. Production source grew with capabilities; exact clone counts do not prove absence of semantic duplication"
     },
     {
       "line": 989,
@@ -6855,8 +7008,15 @@
       "kind": "item",
       "sha256": "3081dfc2507b465d449b2b046f38a1d294bd046891e9344a89f129b13c34b143",
       "preview": "- [ ] **Portable and bounded:** New core meets current `no_std`/MSRV/architecture limits and demonstrates fail",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Portable and bounded",
+          "scope_status": "scoped_implementation_support"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Stable/MSRV RISC-V compilation, allocation probes, capacity/fault tests and invariant audit pass in their stated profiles. No physical-board, arbitrary callback or whole-process memory bound is inferred"
     },
     {
       "line": 990,
@@ -6865,8 +7025,15 @@
       "kind": "item",
       "sha256": "1e6165033eb0ca8f4dbf222270df1702ac2dd16f989c790f76c66fd0a06debec",
       "preview": "- [ ] **Qualification complete:** Existing CI, chaos/property/fuzz, conformance, migration, and performance ga",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Qualification complete",
+          "scope_status": "release_condition_open"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "**Open:** immutable full chaos, legacy performance findings and final source/artifact reconciliation. Seven green CI jobs and passing extracted packages do not close these obligations"
     },
     {
       "line": 991,
@@ -6875,8 +7042,15 @@
       "kind": "item",
       "sha256": "5925d9584f8a21b917bf3732ac70cb016a90ff3ec9926f586bb631b0b80f84e3",
       "preview": "- [ ] **Release controlled:** Version/changelog/docs/package order are accurate, and publication is separately",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review/Release controlled",
+          "scope_status": "release_condition_open"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "Candidate versions/order and unreleased notes are prepared. **Open:** final dated release entry and artifact reconciliation after qualification; tagging/publication still require separate authorization"
     },
     {
       "line": 993,
@@ -6885,8 +7059,15 @@
       "kind": "paragraph",
       "sha256": "279862c6710c4e5cbfaa990682e6b6bdea47a1f89ffea5323b22d58d6cfa5e65",
       "preview": "**If one major gate is incomplete:** Do not advertise a complete unified 0.5.0. Either finish the work or deli",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Open release gates",
+          "scope_status": "explicit_open_release_disposition"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "The candidate remains explicitly unreleased and not release-qualified. Native integration and durable protocols exist, but immutable full chaos, performance acceptance and final release reconciliation remain open. No advertised scope reduction or completion claim is made."
     },
     {
       "line": 999,

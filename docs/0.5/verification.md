@@ -123,9 +123,9 @@ release reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |
 | --- | --- |
-| Unified programming model | Implemented: kernel/hierarchy checks, six consumer binaries and the 15-invariant audit cover typed dispatch, rejection, publication and provenance. Callback determinism remains a consumer obligation |
+| Unified programming model | Implemented: kernel/hierarchy checks, facade consumers and the 15-invariant audit cover typed dispatch, rejection, publication and provenance. Callback determinism remains a consumer obligation |
 | No mandatory extras | Verified portable core bare/serde builds on both compilers; allocation probes cover allocation-free consumer types. The hosted umbrella facade is not the no-std target |
-| Real integration | Implemented: prepared saga/task views and the durable consumer exercise native admission, verified worker result, subsequent machine transition and saga admission. Native engines retain execution authority |
+| Real integration | Implemented: prepared saga/task views and the protected Linux consumer exercise native admission, verified worker result, subsequent machine transition and saga admission. Native engines retain execution authority |
 | No new rewind engine | Implemented: `MachineTimeline` delegates to the existing correction engine; frozen timeline observations and adapter tests pass. Timeline performance findings remain open |
 | Durability exists | Implemented: journal/CAS, exact retries, snapshots, verified event replay, source-bound outbox, migration and eight kill boundaries have checked evidence. Full candidate chaos remains open |
 | No effect guessing | Enforced in the audited native handoff, unknown-outcome and generation/reconciliation boundaries. Durable admission does not establish exactly-once external execution |
