@@ -858,3 +858,24 @@ sample populations. Tiny refusal timings include clock/allocator/codegen effects
 This measures machine journal backpressure; native process saturation and isolated
 worker CPU remain outside its scope. Final source qualification and existing
 legacy performance findings remain open.
+
+## Encoding layout followup
+
+[The controlled encoding experiments](evidence/legacy-balanced/encoding-layout.json)
+retain two sets of fifteen rotated three-variant rounds. Removing only the unused
+domain-to-core dependency edge from the patched original reproduces part of the
+slowdown, not its full magnitude. The serializer implementation and frozen
+fixture are byte-identical across that comparison.
+
+Two further diagnostic links of current source have identical 279510-byte `.text`
+sections, placed 32 bytes apart. Their median encoding-loop rates are 358.35 and
+310.24 ns/op; the normal current layout measures 360.03 ns/op in these rounds.
+This reproduces a layout effect comparable to the original performance flag.
+Raw code bytes, ELF layouts, symbols, whole-process counters and every timing
+remain available. The exact microarchitectural mechanism is not isolated.
+
+These are medians of process-loop averages, not individual-call latency tails.
+The explicit pair controls placement; its ELF section ordering differs from the
+normal link. No production linker setting, code padding, serializer change or
+performance waiver was adopted. The original paired flag and final qualification
+remain open.

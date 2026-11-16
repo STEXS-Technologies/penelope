@@ -94,5 +94,9 @@
       }
     },
     "assessment": "Patched baseline encoding remains near original baseline; candidate is slower with nearly identical whole-process instruction counts. The dependency stack alone does not explain this encoding flag. Crate-graph/codegen/layout effects remain hypotheses, not an accepted diagnosis. No production change made from this diagnostic."
+  },
+  "encoding_layout_followup": {
+    "manifest": "encoding-layout.json",
+    "result": "Controlled link placement reproduces the encoding difference with identical .text bytes. The unused edge alone is insufficient. No production linker flags or performance waiver accepted."
   }
 }
