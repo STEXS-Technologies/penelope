@@ -1,0 +1,73 @@
+{
+  "source_commit": "9a8134fb39c47a0839e8d88068b537a51d8f4c5a",
+  "scope": "Actual clean0.5 core archive includes byte-identical generated model test and shared fixture. Extracted-crate targeted test passes on stable and MSRV using the same unchanged normalized Cargo lock. This supplements, not replaces, all-ten archive/full-workspace qualification.",
+  "checks": [
+    {
+      "label": "package",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "package",
+        "-p",
+        "penelope-core",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5999577045440674
+    },
+    {
+      "label": "tests-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--test",
+        "generated_machines",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 4.859855890274048
+    },
+    {
+      "label": "tests-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--test",
+        "generated_machines",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 5.56797194480896
+    }
+  ],
+  "archive": {
+    "file": "generated-machine-package.tar.gz",
+    "sha256": "60c29111c6a2f703a0d38933489f198ab05ac8fcd1a744544da826fdc64d421a",
+    "member_count": 10,
+    "members_sha256": {
+      "tests-1.89.0.log": "8629b0603db20d7418d16cae64ce5a8ff9ff35ec310595ecf2886c5d1ac31dd8",
+      "tests-1.100.0.log": "1f7d978056e58c0bbb9afa2e3b46bcb0550d37c429c3408c000f6cac4ce1701a",
+      "package.log": "9085d70fb3275bda37dbfcbeb306876ddf83fc765cce3d11644189d2f8bcb5b9",
+      "manifest.json": "5db46c1a49474cf36ac3f677357efcf84decf1e051e1c659731e797b51390cb0",
+      "penelope-core-0.5.0.crate": "5133d9d3eb6540a8c0e2c524f58d50368b5852a2117d95b965715402fac235be",
+      "driver.py": "d30227eccb9490200d44c25c0c5ded5615a8025250468df219f2d006837d0c1e",
+      "initial-driver.py": "a570465f1a3bf77a4a031e9ababbb157b44b53a565452e225596e8a4ebfb3ba3",
+      "initial-driver.log": "aec45fcc8fb237e2537a17cec02ddbaf84dfd774f873d0ba5227d102f54174f4",
+      "initial-package.log": "27b174c9b0d4ef9089f8b10a091c0b2b0df7582f1f4c1de5b2686747fcd5a952",
+      "driver.log": "fa8333dd3b3e17fdd6ba8375820bd166d7cc2041fc22534ee927a3c561e1a703"
+    }
+  },
+  "archive_sha256": "5133d9d3eb6540a8c0e2c524f58d50368b5852a2117d95b965715402fac235be",
+  "package_vcs": {
+    "git": {
+      "sha1": "9a8134fb39c47a0839e8d88068b537a51d8f4c5a"
+    },
+    "path_in_vcs": "crates/penelope-core"
+  },
+  "extracted_lock_sha256": "1f8b1f51b4a309d077d782053882eb11c9be5e69bcc5be802c3bfa4c75de100c",
+  "initial_collection_failure": "The first package verification passed, but the collector assumed clean .cargo_vcs_info.json contains dirty:false. Cargo omits that optional field when clean. Collector corrected to default absent dirty to false; full package and extracted test checks then passed. Original driver and failure retained."
+}
