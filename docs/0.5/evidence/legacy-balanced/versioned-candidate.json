@@ -1,0 +1,1988 @@
+{
+  "scope": "Actual versioned 0.5 candidate versus original 0.4, unchanged legacy workloads. All review flags retained; not completed performance or release qualification.",
+  "revisions": {
+    "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "after": "be774e678e7d982b337bf3925b4f88632c90103b"
+  },
+  "pairs": 31,
+  "records": 496,
+  "benchmarks": [
+    "linear_saga",
+    "graph_saga",
+    "replay_saga",
+    "parallel_linear_saga",
+    "parallel_graph_saga",
+    "contract_throughput",
+    "task_poll",
+    "timeline_operations"
+  ],
+  "timeline_profiles": 640,
+  "timeline_samples_per_profile_per_process": 1000,
+  "reported_metrics": 1936,
+  "review_flags": [
+    {
+      "benchmark": "contract_throughput",
+      "operation": "canonical DTO encoding",
+      "operations": 100000,
+      "metric": "ns_per_operation",
+      "median_before": 312.94667,
+      "median_after": 357.19493,
+      "median_delta_percent": 14.139233371615688,
+      "absolute_delta_ns": 44.248260000000016,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 27,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 312.94667,
+          "min": 301.96874,
+          "max": 566.43817
+        },
+        "after": {
+          "median": 357.19493,
+          "min": 347.05994,
+          "max": 611.74367
+        },
+        "median_delta_percent": 14.139233371615688,
+        "paired_geometric_mean_delta_percent": 16.310133863318224,
+        "paired_bootstrap_percentile_95_percent": [
+          7.472826458606528,
+          26.608329706556567
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 14,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 130,
+          "min": 130,
+          "max": 171
+        },
+        "after": {
+          "median": 140,
+          "min": 121,
+          "max": 191
+        },
+        "median_delta_percent": 7.692307692307687,
+        "paired_geometric_mean_delta_percent": 5.705289817005651,
+        "paired_bootstrap_percentile_95_percent": [
+          1.3283706507144772,
+          10.798719143189746
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 260,
+      "median_after": 281,
+      "median_delta_percent": 8.07692307692307,
+      "absolute_delta_ns": 21,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 23,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 260,
+          "min": 250,
+          "max": 400
+        },
+        "after": {
+          "median": 281,
+          "min": 271,
+          "max": 451
+        },
+        "median_delta_percent": 8.07692307692307,
+        "paired_geometric_mean_delta_percent": 14.693134113081936,
+        "paired_bootstrap_percentile_95_percent": [
+          7.454226002033545,
+          22.90672736140984
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 14,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 130,
+          "min": 130,
+          "max": 180
+        },
+        "after": {
+          "median": 140,
+          "min": 121,
+          "max": 191
+        },
+        "median_delta_percent": 7.692307692307687,
+        "paired_geometric_mean_delta_percent": 5.001960651183104,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.13515304026193375,
+          10.625762250793764
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 261,
+      "median_after": 290,
+      "median_delta_percent": 11.111111111111116,
+      "absolute_delta_ns": 29,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 25,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 261,
+          "min": 241,
+          "max": 381
+        },
+        "after": {
+          "median": 290,
+          "min": 271,
+          "max": 451
+        },
+        "median_delta_percent": 11.111111111111116,
+        "paired_geometric_mean_delta_percent": 18.96584210347646,
+        "paired_bootstrap_percentile_95_percent": [
+          10.32068247410761,
+          28.72695535461176
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 271,
+      "median_after": 301,
+      "median_delta_percent": 11.070110701107016,
+      "absolute_delta_ns": 30,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 19,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 271,
+          "min": 251,
+          "max": 451
+        },
+        "after": {
+          "median": 301,
+          "min": 281,
+          "max": 521
+        },
+        "median_delta_percent": 11.070110701107016,
+        "paired_geometric_mean_delta_percent": 12.731014207605973,
+        "paired_bootstrap_percentile_95_percent": [
+          1.2288375788572619,
+          25.69693842806005
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 14,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 130,
+          "min": 121,
+          "max": 160
+        },
+        "after": {
+          "median": 140,
+          "min": 121,
+          "max": 200
+        },
+        "median_delta_percent": 7.692307692307687,
+        "paired_geometric_mean_delta_percent": 5.885011978772741,
+        "paired_bootstrap_percentile_95_percent": [
+          0.8167093537757424,
+          11.705624264983436
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 260,
+      "median_after": 281,
+      "median_delta_percent": 8.07692307692307,
+      "absolute_delta_ns": 21,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 24,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 260,
+          "min": 250,
+          "max": 391
+        },
+        "after": {
+          "median": 281,
+          "min": 271,
+          "max": 441
+        },
+        "median_delta_percent": 8.07692307692307,
+        "paired_geometric_mean_delta_percent": 14.90750622712737,
+        "paired_bootstrap_percentile_95_percent": [
+          6.691418831332106,
+          23.923210189818327
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 12,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 130,
+          "min": 121,
+          "max": 160
+        },
+        "after": {
+          "median": 140,
+          "min": 130,
+          "max": 191
+        },
+        "median_delta_percent": 7.692307692307687,
+        "paired_geometric_mean_delta_percent": 6.217648018657799,
+        "paired_bootstrap_percentile_95_percent": [
+          1.612597122628678,
+          11.580830014519533
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 261,
+      "median_after": 281,
+      "median_delta_percent": 7.662835249042144,
+      "absolute_delta_ns": 20,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 23,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 261,
+          "min": 241,
+          "max": 401
+        },
+        "after": {
+          "median": 281,
+          "min": 271,
+          "max": 451
+        },
+        "median_delta_percent": 7.662835249042144,
+        "paired_geometric_mean_delta_percent": 15.071752750988857,
+        "paired_bootstrap_percentile_95_percent": [
+          9.136217311038006,
+          22.316015895186382
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "ring_full_correction",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 61,
+      "median_after": 70,
+      "median_delta_percent": 14.754098360655732,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 11,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 61,
+          "min": 61,
+          "max": 71
+        },
+        "after": {
+          "median": 70,
+          "min": 61,
+          "max": 80
+        },
+        "median_delta_percent": 14.754098360655732,
+        "paired_geometric_mean_delta_percent": 3.2844417611792474,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.39739134403899157,
+          7.102374665364645
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 15,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 130,
+          "min": 121,
+          "max": 161
+        },
+        "after": {
+          "median": 140,
+          "min": 121,
+          "max": 201
+        },
+        "median_delta_percent": 7.692307692307687,
+        "paired_geometric_mean_delta_percent": 5.559021123075147,
+        "paired_bootstrap_percentile_95_percent": [
+          0.9115800275748092,
+          10.786283854969179
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 261,
+      "median_after": 300,
+      "median_delta_percent": 14.942528735632177,
+      "absolute_delta_ns": 39,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 24,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 261,
+          "min": 251,
+          "max": 420
+        },
+        "after": {
+          "median": 300,
+          "min": 280,
+          "max": 491
+        },
+        "median_delta_percent": 14.942528735632177,
+        "paired_geometric_mean_delta_percent": 15.525179570263129,
+        "paired_bootstrap_percentile_95_percent": [
+          8.657524839253044,
+          23.983457490990425
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_capture",
+      "state_words": 1,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 290,
+      "median_after": 321,
+      "median_delta_percent": 10.689655172413804,
+      "absolute_delta_ns": 31,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 18,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 290,
+          "min": 261,
+          "max": 471
+        },
+        "after": {
+          "median": 321,
+          "min": 291,
+          "max": 571
+        },
+        "median_delta_percent": 10.689655172413804,
+        "paired_geometric_mean_delta_percent": 13.093943560033914,
+        "paired_bootstrap_percentile_95_percent": [
+          2.632026801392727,
+          25.211803708179136
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 128,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 180,
+      "median_after": 190,
+      "median_delta_percent": 5.555555555555558,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 14,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 180,
+          "min": 170,
+          "max": 241
+        },
+        "after": {
+          "median": 190,
+          "min": 171,
+          "max": 250
+        },
+        "median_delta_percent": 5.555555555555558,
+        "paired_geometric_mean_delta_percent": 4.217843901060172,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.9339253875972194,
+          9.533726055364971
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "replay_yield8",
+      "state_words": 128,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 411,
+      "median_after": 441,
+      "median_delta_percent": 7.299270072992692,
+      "absolute_delta_ns": 30,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 12,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 411,
+          "min": 401,
+          "max": 631
+        },
+        "after": {
+          "median": 441,
+          "min": 401,
+          "max": 641
+        },
+        "median_delta_percent": 7.299270072992692,
+        "paired_geometric_mean_delta_percent": 4.846367793699412,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.19276510335014752,
+          10.30083817556906
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "replay_yield8",
+      "state_words": 128,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 1613,
+      "median_after": 1703,
+      "median_delta_percent": 5.5796652200867936,
+      "absolute_delta_ns": 90,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 15,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 1613,
+          "min": 1523,
+          "max": 2415
+        },
+        "after": {
+          "median": 1703,
+          "min": 1573,
+          "max": 2485
+        },
+        "median_delta_percent": 5.5796652200867936,
+        "paired_geometric_mean_delta_percent": 5.40516760325101,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.34478581764483357,
+          11.70973066862509
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 128,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 180,
+      "median_after": 190,
+      "median_delta_percent": 5.555555555555558,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 16,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 180,
+          "min": 170,
+          "max": 250
+        },
+        "after": {
+          "median": 190,
+          "min": 170,
+          "max": 261
+        },
+        "median_delta_percent": 5.555555555555558,
+        "paired_geometric_mean_delta_percent": 5.603469714785126,
+        "paired_bootstrap_percentile_95_percent": [
+          0.7166492930449525,
+          10.63074973743405
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "scoped_full_correction",
+      "state_words": 128,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 6693,
+      "median_after": 7074,
+      "median_delta_percent": 5.69251456745854,
+      "absolute_delta_ns": 381,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 13,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 6693,
+          "min": 6292,
+          "max": 10039
+        },
+        "after": {
+          "median": 7074,
+          "min": 6332,
+          "max": 10430
+        },
+        "median_delta_percent": 5.69251456745854,
+        "paired_geometric_mean_delta_percent": 3.3519859599244626,
+        "paired_bootstrap_percentile_95_percent": [
+          -2.345752776654223,
+          9.530622309339225
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "owned_apply_input",
+      "state_words": 128,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 180,
+      "median_after": 190,
+      "median_delta_percent": 5.555555555555558,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 15,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 180,
+          "min": 170,
+          "max": 251
+        },
+        "after": {
+          "median": 190,
+          "min": 170,
+          "max": 280
+        },
+        "median_delta_percent": 5.555555555555558,
+        "paired_geometric_mean_delta_percent": 6.251079331796862,
+        "paired_bootstrap_percentile_95_percent": [
+          1.2926371438561068,
+          11.9807917959464
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "scoped_full_correction",
+      "state_words": 128,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 24989,
+      "median_after": 26702,
+      "median_delta_percent": 6.855016207131137,
+      "absolute_delta_ns": 1713,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 14,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 24989,
+          "min": 23726,
+          "max": 37823
+        },
+        "after": {
+          "median": 26702,
+          "min": 23836,
+          "max": 39676
+        },
+        "median_delta_percent": 6.855016207131137,
+        "paired_geometric_mean_delta_percent": 4.54531279232999,
+        "paired_bootstrap_percentile_95_percent": [
+          -1.047055137242391,
+          10.66447332132842
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "replay_yield8",
+      "state_words": 128,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 26761,
+      "median_after": 30689,
+      "median_delta_percent": 14.678076305070809,
+      "absolute_delta_ns": 3928,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 13,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 26761,
+          "min": 25319,
+          "max": 38675
+        },
+        "after": {
+          "median": 30689,
+          "min": 25971,
+          "max": 44747
+        },
+        "median_delta_percent": 14.678076305070809,
+        "paired_geometric_mean_delta_percent": 9.28872277591962,
+        "paired_bootstrap_percentile_95_percent": [
+          2.197935344684597,
+          16.8644532376615
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "ring_restore",
+      "state_words": 512,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 61,
+      "median_after": 70,
+      "median_delta_percent": 14.754098360655732,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 12,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 61,
+          "min": 60,
+          "max": 90
+        },
+        "after": {
+          "median": 70,
+          "min": 60,
+          "max": 90
+        },
+        "median_delta_percent": 14.754098360655732,
+        "paired_geometric_mean_delta_percent": 4.30763361389697,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.7725552898395005,
+          9.762622273720007
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "ring_promote",
+      "state_words": 512,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 81,
+      "median_after": 90,
+      "median_delta_percent": 11.111111111111116,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 13,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 81,
+          "min": 71,
+          "max": 130
+        },
+        "after": {
+          "median": 90,
+          "min": 71,
+          "max": 191
+        },
+        "median_delta_percent": 11.111111111111116,
+        "paired_geometric_mean_delta_percent": 6.704365914721731,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.5825668493193182,
+          15.519561874193371
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "ring_restore",
+      "state_words": 512,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 61,
+      "median_after": 70,
+      "median_delta_percent": 14.754098360655732,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 9,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 61,
+          "min": 60,
+          "max": 90
+        },
+        "after": {
+          "median": 70,
+          "min": 60,
+          "max": 91
+        },
+        "median_delta_percent": 14.754098360655732,
+        "paired_geometric_mean_delta_percent": 1.753326798258472,
+        "paired_bootstrap_percentile_95_percent": [
+          -3.4912772810177644,
+          7.291971585301013
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "ring_promote",
+      "state_words": 512,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 81,
+      "median_after": 90,
+      "median_delta_percent": 11.111111111111116,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 13,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 81,
+          "min": 71,
+          "max": 140
+        },
+        "after": {
+          "median": 90,
+          "min": 71,
+          "max": 141
+        },
+        "median_delta_percent": 11.111111111111116,
+        "paired_geometric_mean_delta_percent": -1.4561470210175376,
+        "paired_bootstrap_percentile_95_percent": [
+          -8.57285171213412,
+          6.502365447049328
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_root",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 71,
+      "median_after": 80,
+      "median_delta_percent": 12.676056338028175,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 10,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 71,
+          "min": 70,
+          "max": 90
+        },
+        "after": {
+          "median": 80,
+          "min": 70,
+          "max": 90
+        },
+        "median_delta_percent": 12.676056338028175,
+        "paired_geometric_mean_delta_percent": 1.5582991864349272,
+        "paired_bootstrap_percentile_95_percent": [
+          -1.9315912055005848,
+          5.155121552358071
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 211,
+      "median_after": 291,
+      "median_delta_percent": 37.914691943127956,
+      "absolute_delta_ns": 80,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 29,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 211,
+          "min": 210,
+          "max": 360
+        },
+        "after": {
+          "median": 291,
+          "min": 290,
+          "max": 481
+        },
+        "median_delta_percent": 37.914691943127956,
+        "paired_geometric_mean_delta_percent": 38.022546094559814,
+        "paired_bootstrap_percentile_95_percent": [
+          30.407601321771878,
+          45.845430762664094
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 231,
+      "median_after": 301,
+      "median_delta_percent": 30.303030303030297,
+      "absolute_delta_ns": 70,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 29,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 231,
+          "min": 211,
+          "max": 410
+        },
+        "after": {
+          "median": 301,
+          "min": 291,
+          "max": 531
+        },
+        "median_delta_percent": 30.303030303030297,
+        "paired_geometric_mean_delta_percent": 33.25163746558957,
+        "paired_bootstrap_percentile_95_percent": [
+          24.24774452527388,
+          42.746036537192936
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 1693,
+      "median_after": 2235,
+      "median_delta_percent": 32.01417601890135,
+      "absolute_delta_ns": 542,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 23,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 1693,
+          "min": 1643,
+          "max": 2855
+        },
+        "after": {
+          "median": 2235,
+          "min": 2194,
+          "max": 3848
+        },
+        "median_delta_percent": 32.01417601890135,
+        "paired_geometric_mean_delta_percent": 24.218899241207694,
+        "paired_bootstrap_percentile_95_percent": [
+          16.28971306533626,
+          32.70741306489192
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_full_correction_inherited",
+      "state_words": 1,
+      "steps": 8,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 5030,
+      "median_after": 5451,
+      "median_delta_percent": 8.369781312127245,
+      "absolute_delta_ns": 421,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 27,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 5030,
+          "min": 4880,
+          "max": 6983
+        },
+        "after": {
+          "median": 5451,
+          "min": 5320,
+          "max": 7755
+        },
+        "median_delta_percent": 8.369781312127245,
+        "paired_geometric_mean_delta_percent": 7.349240991763508,
+        "paired_bootstrap_percentile_95_percent": [
+          3.0685095343547237,
+          11.62004987029519
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 7134,
+      "median_after": 9058,
+      "median_delta_percent": 26.969442108214192,
+      "absolute_delta_ns": 1924,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 28,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 7134,
+          "min": 6954,
+          "max": 11492
+        },
+        "after": {
+          "median": 9058,
+          "min": 8827,
+          "max": 15520
+        },
+        "median_delta_percent": 26.969442108214192,
+        "paired_geometric_mean_delta_percent": 26.862972738794777,
+        "paired_bootstrap_percentile_95_percent": [
+          20.74362414074976,
+          33.58339356207829
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_full_correction_inherited",
+      "state_words": 1,
+      "steps": 32,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 14157,
+      "median_after": 15681,
+      "median_delta_percent": 10.764992583174404,
+      "absolute_delta_ns": 1524,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 30,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 14157,
+          "min": 13667,
+          "max": 20239
+        },
+        "after": {
+          "median": 15681,
+          "min": 15360,
+          "max": 22834
+        },
+        "median_delta_percent": 10.764992583174404,
+        "paired_geometric_mean_delta_percent": 12.34782915205321,
+        "paired_bootstrap_percentile_95_percent": [
+          8.171436723872715,
+          16.97036439660086
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 33646,
+      "median_after": 39517,
+      "median_delta_percent": 17.44932532841943,
+      "absolute_delta_ns": 5871,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 28,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 33646,
+          "min": 33104,
+          "max": 50117
+        },
+        "after": {
+          "median": 39517,
+          "min": 37903,
+          "max": 65998
+        },
+        "median_delta_percent": 17.44932532841943,
+        "paired_geometric_mean_delta_percent": 15.907223249510672,
+        "paired_bootstrap_percentile_95_percent": [
+          10.391470479519462,
+          21.7594569390935
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 38644,
+      "median_after": 43203,
+      "median_delta_percent": 11.797432977952592,
+      "absolute_delta_ns": 4559,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 21,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 38644,
+          "min": 33294,
+          "max": 53423
+        },
+        "after": {
+          "median": 43203,
+          "min": 39887,
+          "max": 69945
+        },
+        "median_delta_percent": 11.797432977952592,
+        "paired_geometric_mean_delta_percent": 22.398144317140467,
+        "paired_bootstrap_percentile_95_percent": [
+          15.026948807602647,
+          30.575365201384543
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_full_correction_inherited",
+      "state_words": 1,
+      "steps": 128,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 55357,
+      "median_after": 59445,
+      "median_delta_percent": 7.384793251079347,
+      "absolute_delta_ns": 4088,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 26,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 55357,
+          "min": 54365,
+          "max": 77079
+        },
+        "after": {
+          "median": 59445,
+          "min": 58172,
+          "max": 85996
+        },
+        "median_delta_percent": 7.384793251079347,
+        "paired_geometric_mean_delta_percent": 8.68767481155364,
+        "paired_bootstrap_percentile_95_percent": [
+          4.175312234883923,
+          13.56862819636096
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "history_read_all_inherited",
+      "state_words": 1,
+      "steps": 512,
+      "samples": 1000,
+      "metric": "p95_ns",
+      "median_before": 194857,
+      "median_after": 215998,
+      "median_delta_percent": 10.8494947576941,
+      "absolute_delta_ns": 21141,
+      "review_threshold_percent": 10,
+      "review_flag": true,
+      "paired_threshold_exceedances": 12,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 194857,
+          "min": 188986,
+          "max": 315781
+        },
+        "after": {
+          "median": 215998,
+          "min": 192432,
+          "max": 367982
+        },
+        "median_delta_percent": 10.8494947576941,
+        "paired_geometric_mean_delta_percent": 10.974558765320662,
+        "paired_bootstrap_percentile_95_percent": [
+          2.9524527604206585,
+          20.39901595562841
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "snapshot_restore_inherited",
+      "state_words": 1,
+      "steps": 1,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 141,
+      "median_after": 150,
+      "median_delta_percent": 6.382978723404253,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 15,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 141,
+          "min": 130,
+          "max": 191
+        },
+        "after": {
+          "median": 150,
+          "min": 140,
+          "max": 211
+        },
+        "median_delta_percent": 6.382978723404253,
+        "paired_geometric_mean_delta_percent": 3.3064602854374106,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.4928264780032668,
+          7.5616066839721805
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "snapshot_at_root",
+      "state_words": 1,
+      "steps": 63,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 110,
+      "median_after": 120,
+      "median_delta_percent": 9.090909090909083,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 17,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 110,
+          "min": 110,
+          "max": 160
+        },
+        "after": {
+          "median": 120,
+          "min": 110,
+          "max": 180
+        },
+        "median_delta_percent": 9.090909090909083,
+        "paired_geometric_mean_delta_percent": 5.536917100449253,
+        "paired_bootstrap_percentile_95_percent": [
+          -0.2613947589958578,
+          11.559262761333406
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "snapshot_at_child_snapshot",
+      "state_words": 1,
+      "steps": 63,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 111,
+      "median_after": 120,
+      "median_delta_percent": 8.108108108108114,
+      "absolute_delta_ns": 9,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 20,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 111,
+          "min": 110,
+          "max": 150
+        },
+        "after": {
+          "median": 120,
+          "min": 111,
+          "max": 160
+        },
+        "median_delta_percent": 8.108108108108114,
+        "paired_geometric_mean_delta_percent": 4.42744615374115,
+        "paired_bootstrap_percentile_95_percent": [
+          1.7636769561034882,
+          6.548469473909001
+        ]
+      }
+    },
+    {
+      "benchmark": "timeline_operations",
+      "operation": "snapshot_at_imported",
+      "state_words": 1,
+      "steps": 63,
+      "samples": 1000,
+      "metric": "p50_ns",
+      "median_before": 110,
+      "median_after": 120,
+      "median_delta_percent": 9.090909090909083,
+      "absolute_delta_ns": 10,
+      "review_threshold_percent": 5,
+      "review_flag": true,
+      "paired_threshold_exceedances": 16,
+      "exploratory_paired_statistics": {
+        "samples_per_revision": 31,
+        "before": {
+          "median": 110,
+          "min": 110,
+          "max": 150
+        },
+        "after": {
+          "median": 120,
+          "min": 110,
+          "max": 170
+        },
+        "median_delta_percent": 9.090909090909083,
+        "paired_geometric_mean_delta_percent": 3.6495833130527573,
+        "paired_bootstrap_percentile_95_percent": [
+          0.7150478802849982,
+          6.305235441645138
+        ]
+      }
+    }
+  ],
+  "flag_counts": {
+    "encoding_loop_mean": 1,
+    "timeline_p50": 31,
+    "timeline_p95": 9,
+    "handwritten_timeline_controls": 5
+  },
+  "profile_roles": {
+    "ring_restore": "Fixture-owned Ring/State operation. Timed closure does not call a Penelope transition/history/replay API; retained as a control, never subtracted or used to waive library findings.",
+    "ring_promote": "Fixture-owned Ring/State operation. Timed closure does not call a Penelope transition/history/replay API; retained as a control, never subtracted or used to waive library findings.",
+    "ring_full_correction": "Fixture-owned Ring/State operation. Timed closure does not call a Penelope transition/history/replay API; retained as a control, never subtracted or used to waive library findings."
+  },
+  "conditions": "Measured processes pinned to CPU4 or parallel CPUs4-7. Separate chaos sessions observed on CPUs8-15 and16-23 during the campaign. Shared-host frequency, caches, memory bandwidth, I/O and other applications uncontrolled. One warmup process per binary/revision excluded by the existing runner policy; all496 measured records retained.",
+  "measurement_limits": "Encoding/task/saga values are loop means, not individual-call percentiles. Timeline reports per-process fixture p50/p95/p99, summarized across processes. Whole-process perf/RSS counters include other phases; exploratory intervals do not establish equivalence or acceptance.",
+  "retention": "Temporary driver changes only repository location and input/binary retention; original driver and modified driver are archived. All16 retained measured binaries match metadata SHA256. No workload, threshold, production hint or linker placement is changed.",
+  "source_comparison": "Timeline production sources and core shared admission helper have no changes between94a7396 andbe774e6; the new result alone does not identify its cause.",
+  "archive": "versioned-candidate.tar.gz",
+  "archive_sha256": "b6a23c1298023b29cd238c648e09f29a7ecf9d60c94ad00da66b3c8d47df4097",
+  "members_sha256": {
+    "summary.json": "c03781b2db4373a0751519f3c934846eec810cbd4a14f158546d5078517be0fd",
+    "run-31-before-timeline_operations.json": "c025c3a11e44b17a6622147dbcc3b42911072a6ae6ac827c6bdc983a49fe4a4e",
+    "run-31-before-contract_throughput.json": "c23a434f5a71e299f9282f14f4bef73d2b56f1feff95a9060b25b001de2361cb",
+    "run-31-before-task_poll.json": "de638f01ca0701a271478a7d793d8c1126cc6494fe0152ecc582a4f89541e819",
+    "run-31-before-parallel_graph_saga.json": "2ac83e743884c09d8bdc1e028ef2e5b42bfd0f966ea2f42aa752f1bbecb75048",
+    "run-31-before-parallel_linear_saga.json": "ba774ba530d1c8293b0d91557ec5ba9373c3a9cdce6bc83996b675fc609cf5ad",
+    "run-31-before-replay_saga.json": "6efdf74b9ec531cd82fba83449a9329ab763ad2cf2112233eb7edba4343f488e",
+    "run-31-before-graph_saga.json": "9350322aa62ac2beb3709fbe1793aec6d309fd024c03ca132a8ebbb35fb1cbf4",
+    "run-31-before-linear_saga.json": "f08a312655efaee2ca1c035bf726054a466872ca29e3116135304b2d8d244fb4",
+    "run-31-after-timeline_operations.json": "37a80f81d9cbd26260cd9dd4a9221071decdbbe2ef4d8991220773635dcb3ebc",
+    "run-31-after-contract_throughput.json": "a85db7f7580c616bbfb4891f8767b9feef58d431612336389e2aa4dfabd40fa2",
+    "run-31-after-task_poll.json": "8f30cd83d0440e7378671cf4d06687d58761dc1eb8dd575f6f2339697362c417",
+    "run-31-after-parallel_graph_saga.json": "48a2638e0d268a57b9121cbc0062aee91138c2916db55b0cf859e1d7e6b42b9f",
+    "run-31-after-parallel_linear_saga.json": "99c73fe4c60fe73622f40f1eafd615fba8c5ee445ff036616532b16062f32e12",
+    "run-31-after-replay_saga.json": "b5e9eed0f2e4b0751602fa99e5177c8f97d467867c3ca166618184e9a68b4942",
+    "run-31-after-graph_saga.json": "0d1d1194ad90a743f4ea9eab42c6883df86ede15217c4c5e08f145083d10185d",
+    "run-31-after-linear_saga.json": "45a54a2fb790fea7ea4ad2c521e9b15e597f11132fb72d0731398bba7ed56258",
+    "run-30-after-timeline_operations.json": "86bf535341e56bc5e5235778689e968d22aa4ad06ee702b6ea94974b4ae0eb44",
+    "run-30-after-contract_throughput.json": "8e64961db18855eba031ed977f66bb316f3ed1b6869ed70b05da3e0b589b1cc1",
+    "run-30-after-task_poll.json": "dcfd0c879be49c209f45e39a0cb897dd1d61baf768c4023872318c8ec0b83d56",
+    "run-30-after-parallel_graph_saga.json": "928040b897a1942cf7336b100ed9167ee8db02fc60ecefc25c026a9d8d505290",
+    "run-30-after-parallel_linear_saga.json": "1664927b18b0cd8a0615963091a62df18939fed1210a7c69d011ef1786614abb",
+    "run-30-after-replay_saga.json": "2af39bd4484fa200e93dd0deec126a51daa58f4d854e87c4b9afc277055f9181",
+    "run-30-after-graph_saga.json": "236bd96f09325b34285c93e3c5365698a9e740fba7a61a40fd79c8aa8156abd7",
+    "run-30-after-linear_saga.json": "b871a31380adb028a30edfa9103718ac49ade7cf8b447447f91ecd49cfc307f5",
+    "run-30-before-timeline_operations.json": "4c16ccb6d930730fa34c7c44aad996afd82395efb1005cac5eeaa6dfc7c049b6",
+    "run-30-before-contract_throughput.json": "717c1a676a646814e17ff68f32f7b268e5f694d011e4d8f249811a7712d2cca9",
+    "run-30-before-task_poll.json": "08c29f2aaf44ff2229bbc8e8bec8d3fb25b07b6b163ff8daa50333c11f82ac99",
+    "run-30-before-parallel_graph_saga.json": "8f8adc657d7199106560903e3825dfc5dca69bc0e81f186478a026904760d645",
+    "run-30-before-parallel_linear_saga.json": "14926fecdad2e38205213e70b8c3e2bffb1e6827438df907a5f51d898d629f6d",
+    "run-30-before-replay_saga.json": "75af0bcf617186f5d9ba3b8089562830803d757806681f0fc131148e638d284e",
+    "run-30-before-graph_saga.json": "e607f56ba875e4d56f5d4babb8d8a570122110b06ee7d793f2e1b365c0b2ec87",
+    "run-30-before-linear_saga.json": "b74d617aeb3287f797b5e46907a8b4321160510679d9d6109bc3f21ee1653784",
+    "run-29-before-timeline_operations.json": "3291b9fd1840be4995321829e27085d516e24495a09c3ff1d5dd9fef83e0384e",
+    "run-29-before-contract_throughput.json": "3e7624847f9727f6bc707336a2da53158658f6a639cc0fca7c9e6eb14d93b0d9",
+    "run-29-before-task_poll.json": "027e3d67d28270d1183692db897bb1b15c441431284adc0dfa9ab83b76933ff1",
+    "run-29-before-parallel_graph_saga.json": "837ad5035328ec897cc5882e20725526424f0fcf91410d95e0d09d52f785c909",
+    "run-29-before-parallel_linear_saga.json": "76193642661a126ad3129f84395d8d2742b5c2da2a21db3e64da2fdbc1daa30f",
+    "run-29-before-replay_saga.json": "ce9d3d9066cf85c451d81813e37c8a9c33278f1491f24d4282df15a964a04ce0",
+    "run-29-before-graph_saga.json": "8ebd05aba4af20a255f0b31cdf5eea9db7f6721489208f362cf463e89b5580e4",
+    "run-29-before-linear_saga.json": "6c008fa80bbcaf131346fda95ad409c4be1df1b142e5ae8ea1a56736e1d31538",
+    "run-29-after-timeline_operations.json": "7ffb3f5f4c352b2dea6cb112a254f89f300734bfd455b5a8cc5614183bafd9c4",
+    "run-29-after-contract_throughput.json": "407022872152b4122956d797fe84082c56dff34df1a97e11c08da3e0176dbee4",
+    "run-29-after-task_poll.json": "7e1b96b5df4fa4083da2d031e83420c5b3e4d454a5fb3f0aaaa0edf122364db9",
+    "run-29-after-parallel_graph_saga.json": "db70f45163dc02a3d581a0388a91755525687f61c7eb865a815652eea3aee297",
+    "run-29-after-parallel_linear_saga.json": "514dcc0d304a1628a90a5e251e42226da7a2849a7b018fcee23fcb547d9edfee",
+    "run-29-after-replay_saga.json": "b3993eddfd86741cbc16d38cc9701c67920d2181bfabe5d9ddf33c3131ba8fcd",
+    "run-29-after-graph_saga.json": "49e1a45b45d55b8b58396fed5ad7ab2333454fa0019390dbc2d14c755975794f",
+    "run-29-after-linear_saga.json": "51ab3db05706a05644d3a08a30f3770541209e69aa6bd7793764dec93c19fdf6",
+    "run-28-after-timeline_operations.json": "12041b3c25a3c19c95b9ad9e0290b1992f5eb7273642f5c4bc4eebedbc66c064",
+    "run-28-after-contract_throughput.json": "60fe811f83457f383918ff57d8a7f953f5d6d2aec8666ba380a6551fdd02d11e",
+    "run-28-after-task_poll.json": "2270dde4031e7e02ef13e3bdc009392b1d4604e5587f58c750693ce0603c2623",
+    "run-28-after-parallel_graph_saga.json": "a455a4e4ec8b981c768e1a77b23691294252a28abc24061f3da611d4e3fd8481",
+    "run-28-after-parallel_linear_saga.json": "67ff0128137184ae56b7101fb086297ebc6971aabb46d0b17d1da2d557c30e92",
+    "run-28-after-replay_saga.json": "237534ba73e05b91dfbaa9b22199cb611d62a006fe06c6521f957f95ed2b282b",
+    "run-28-after-graph_saga.json": "bf549c5e17bf87f8a99d0027237cbe4e04de9d09a222bb8272712263071c75f2",
+    "run-28-after-linear_saga.json": "b46eca32b9177c3c72f3fe26891094c360e43a455b1873047b6aead15e1e1788",
+    "run-28-before-timeline_operations.json": "1aefeaab9510e3da70d160738cc11f4189cb5e982d3f5aa5e82e944319afd9b0",
+    "run-28-before-contract_throughput.json": "b504998345d6cd1e7b9461f3f597ebaf523b2d876ab5ebec1f04d1c0ce1be72e",
+    "run-28-before-task_poll.json": "64b60fa1dd453bbb0d925485bc2916bfad1265d3df23d26b771a01a55bc82f12",
+    "run-28-before-parallel_graph_saga.json": "c358cb402f0b5382deaeb54ac307f9e2a1f5d641e68f422dd4394da9b7789527",
+    "run-28-before-parallel_linear_saga.json": "85ee99914fb7db2907834d781b1332aa4bb98c7d4e472e4ae872f59d7f302396",
+    "run-28-before-replay_saga.json": "db38655ddd108884949ed12bc7485cf1f36724ca0a00f83f25863e2afff8b0db",
+    "run-28-before-graph_saga.json": "ee1e92046a93ca2d98cd2b8db36640b700cb13c1f755ac6859ff9fc11a417778",
+    "run-28-before-linear_saga.json": "a3380f05209950c51679d4bbab217ff81c5d6081d0e8fa7389f323857d13d11e",
+    "run-27-before-timeline_operations.json": "1e2066472773439f99c57e2777101e5a904eaf1fb851ef0e91f82bed6e1d11ab",
+    "run-27-before-contract_throughput.json": "41f10c68c44edc370d4a1ae679b89cfb450183e77690e393e0b44f40fb92f2d2",
+    "run-27-before-task_poll.json": "ca0c00024df68a84946dcca93982f859ae6e54c0c1d8aa0930f0500917e7c739",
+    "run-27-before-parallel_graph_saga.json": "9e1e5bf708de61da0ae8d3a2cbd136b343a319c03fd853b8ce4462d5780e7f50",
+    "run-27-before-parallel_linear_saga.json": "33f5017313421b53458445635b2470a7f9db8410dccf16b6afaf0dc8ae4237bb",
+    "run-27-before-replay_saga.json": "4423a567f5812a7ddf74ad9d67c3470bafdcf5b57de7062082ab0aa31fb40d26",
+    "run-27-before-graph_saga.json": "6646e22f4e61ad133c558e64162f2a95ea436f3217e0b60b998920211e14d4f0",
+    "run-27-before-linear_saga.json": "824026f7298cc687c67d3a3b5534841f731f36d920472c9104c9a725795510ac",
+    "run-27-after-timeline_operations.json": "5dc176bd8b2e4a23c4cbf3fdea01157fd77cdd89a95db232d5360c92935b8e0d",
+    "run-27-after-contract_throughput.json": "0351e7f9bced4d63bc49efd80426c5099ea6d6f1e8320be210e4bf2b2a54f701",
+    "run-27-after-task_poll.json": "70faf50c57fbbe4230fb85b109e9a961a359f4200ea4f1ffa52b8ef3299b2cbc",
+    "run-27-after-parallel_graph_saga.json": "74f8d9e665cbbc1032db1e07490b09916a50570e2780a2a21388a59616cee628",
+    "run-27-after-parallel_linear_saga.json": "086f64a91b3b7624038fb008604b662dfe9ea7f745628dbeef1e609d68cbc161",
+    "run-27-after-replay_saga.json": "8a81bef5fe25aa4db2212be0c39f1a13a9e21d30b37af73b9123c20608683490",
+    "run-27-after-graph_saga.json": "70960ab97af7ee0470c0750e9fc6c0d4bf3335d60440d418cc119033f932d3d8",
+    "run-27-after-linear_saga.json": "c14299f0ac5c0d0b266a5b1792eb1ac9ac2dd0656f1daf24cb2118524c4c2c1b",
+    "run-26-after-timeline_operations.json": "9808ac0aa1ca0ff195579eb627bb7626b7e3feaf7f5fddefcc705ca65088bff4",
+    "run-26-after-contract_throughput.json": "c87c690a957cff22285e73ca7473b916575dabf97ffd172bef14875f1ebe8383",
+    "run-26-after-task_poll.json": "3221b1c2dfd851437068e5ff31662a51928e76a3b537e63675e1df18cfb0b90a",
+    "run-26-after-parallel_graph_saga.json": "1b68b30464d744959363bba9119b3cdd31ed0380318ca7a4b07a5cd0a7ed583e",
+    "run-26-after-parallel_linear_saga.json": "d411348113c50461c88e2ce19a5b3d3f7a78775ee2ca61da9aa3c06316b95e23",
+    "run-26-after-replay_saga.json": "5874405590a0ec47980f6e3a09b7378aa3912c40cae62d24b1f2df8961d7001b",
+    "run-26-after-graph_saga.json": "239806e201e6f6260c63e1bd50884e82d6c5d7c68f78286a249ba9e08aeca79d",
+    "run-26-after-linear_saga.json": "5dcb5aa19bebea7919111a56bf495057ae3cd19037fd7a77f41d1a1d5fbb0736",
+    "run-26-before-timeline_operations.json": "67b5306c6b731d87fe553616473ef9662df361cd1e6583e3c97a1b3e671a3122",
+    "run-26-before-contract_throughput.json": "51eefec87f6b158fea9f2e175e765b1e8b5eb311766c8684718fa8b94f4d73b0",
+    "run-26-before-task_poll.json": "850113f52aa00838a6b1ca12fd3acd9d6f4158f1132b3ee332d0dfa2f2c917b6",
+    "run-26-before-parallel_graph_saga.json": "2871e1540afa2f6f058aafdbd72f35b7d95dbd08ad2354cdc51dcb7181b691ee",
+    "run-26-before-parallel_linear_saga.json": "116a029875a37b0e96987c94bfa05730bec2f8cf27e3eea1dc9af6643cc848a5",
+    "run-26-before-replay_saga.json": "ad0ec18a3effff91c3bb9bcac9aaf63c510bf46325a7fd7a63e9933f442aa8d5",
+    "run-26-before-graph_saga.json": "da8f5dbdbd02972b45f05d125fcd47b5030a0dbdf16d0309d3d52644ef8eb74f",
+    "run-26-before-linear_saga.json": "88a4f2d668ce8065480409947c2bea17f75fe3ad023542b2fa00000c90ed0b9b",
+    "run-25-before-timeline_operations.json": "5f0ac2052ad7bb1ec373009d5a35860e634ec30d35820334a592618dc55eb8b8",
+    "run-25-before-contract_throughput.json": "fe782147914be287f8ad0b0865809ecae47bffeb78064dd9be26a9dce099be31",
+    "run-25-before-task_poll.json": "660c869168a0f975d8193f933e6093c7359a4bd8234262bc25a3f615daa82d71",
+    "run-25-before-parallel_graph_saga.json": "d1c6011ff7d67a2998f62903059f2a05d9c2915ff3168b5acfc8dd80c68b8404",
+    "run-25-before-parallel_linear_saga.json": "57592334d3849ec7c536b9c5471fbcdf8cade97fa29585b95a23e7d0b1b5512b",
+    "run-25-before-replay_saga.json": "625a4b4b792f758bf81fc5a0ca91ebe8a1de3fb627ab3159f6de7214df9c719b",
+    "run-25-before-graph_saga.json": "8a0f4e5f85874bca84527f513d783e288c734b922ac20cbd0cc42fc7d344f93e",
+    "run-25-before-linear_saga.json": "7056985443906c76fdbdff43c21d5d98bd90798bf12a3b6a8f14381ae7315322",
+    "run-25-after-timeline_operations.json": "936a80ddd1e058c5fbbf91f43ad481a12c23b6baa6e024252720f9256853663d",
+    "run-25-after-contract_throughput.json": "a45c32c03696bddd3a3b1d2adecf6351b4378663bb7cccbaf874e1c6ea64061c",
+    "run-25-after-task_poll.json": "d581b1caf1cd45a03cffef8f1f86fe5f91926eb1ea06c1f782819f26087b8e1d",
+    "run-25-after-parallel_graph_saga.json": "c6b15c69178b4353e2eee9ca9b265cb593c53f028b56b46bda1f7669e78f873e",
+    "run-25-after-parallel_linear_saga.json": "b691b9e86e5451191dac83c98197e3e7250275b84f70605bb887035b2661660b",
+    "run-25-after-replay_saga.json": "14cebdb028a1b2fdfb90348c1e59ef44aaeb02c4d3cd50b8586af740f6ac5fb7",
+    "run-25-after-graph_saga.json": "dba13811ffcd93592bf2948115e07d63335ba01d3de117f2dc61e19fec8444c8",
+    "run-25-after-linear_saga.json": "52a6165494db5ce9915252e187814e2fa363355811402f869e1a2b1159f9342b",
+    "run-24-after-timeline_operations.json": "fa8bd980748b574a05b76500bce24844fc6d9b0884139354cb29289c125e5cbf",
+    "run-24-after-contract_throughput.json": "776e40842db36876d2caeecabb58dd4871c02d022bf0bc7515d56f60c3a8d5b4",
+    "run-24-after-task_poll.json": "e3cd3dab67c5417a5ba15004378b0d1b562bb6816f4f8ad5b3edff78db514456",
+    "run-24-after-parallel_graph_saga.json": "e450b34f5ba6e2ba32d3fa1da688d9bf76f266d7c07c83759ab88bccaf2ff08c",
+    "run-24-after-parallel_linear_saga.json": "707567e3b2240196a9d55654caca6eb319c8de29815c45ab60f9973f11893c9d",
+    "run-24-after-replay_saga.json": "aa80ee1698c8b40b570295473e399394e74104fb5fc237f1e676ce0837436d5d",
+    "run-24-after-graph_saga.json": "42e6c27371a89869658c128f94ced78c2b4ff6329bcd161ac067bbbdd3289588",
+    "run-24-after-linear_saga.json": "0f9ba59b804472ab0b39fff5f50ab03b7728149455e4e2d7221a895f3e805013",
+    "run-24-before-timeline_operations.json": "585495b359875e745e9aeebc6180fe2c2288e646e0caba4de587cfed9e9179a5",
+    "run-24-before-contract_throughput.json": "a4b276827d80ccf01f3f24a12ede9e7c12ab6e8910a885a7d52589761f95b149",
+    "run-24-before-task_poll.json": "a3d6aaf29e88f74d090866f993a4905dabfed23913aacd3ecaeb666aeb364b6b",
+    "run-24-before-parallel_graph_saga.json": "4f267398737cdda7b3131bef6cb6e7282e2e38c49a456e828a542dfd7b5df5b7",
+    "run-24-before-parallel_linear_saga.json": "e57d15e40e4d49a108af40819b22933e41bd43063160294a068003b149df8f54",
+    "run-24-before-replay_saga.json": "ce49ba56556695063837a11b6991876711ad66abb797905457513d4f0272a2a1",
+    "run-24-before-graph_saga.json": "44aba0a79d700466aa556e5e7c70933c1b3153f063df9607f0d7dba82a0f2b3c",
+    "run-24-before-linear_saga.json": "d29161369ff5062b456098ee950ed171d718f6a122d79484da6bbdffb3e03256",
+    "run-23-before-timeline_operations.json": "d9a259caed8d15b44d9e1f213493836be20f826e62afe0f0cb1065226ede8582",
+    "run-23-before-contract_throughput.json": "254adbf4e1813aa87faccab91ccb33fb55bb54fe5af63dd6037f5b0f8cf23436",
+    "run-23-before-task_poll.json": "06c7d38544328414b58957061d88588a6e5b27baf30d9c60de7df59799edf42f",
+    "run-23-before-parallel_graph_saga.json": "d0d88abee6ac5a25c149dd7d05dbc013842ce08d802ca2c46e946ef578afe4e7",
+    "run-23-before-parallel_linear_saga.json": "8a82c451a13559ecf143395a0e5a29869101c47c90456feec31cef9c5a983176",
+    "run-23-before-replay_saga.json": "d6af7a4aaaea5cbe3036b8fbefe76c4378ccbd30684bdde1d816da0f4b59d1ea",
+    "run-23-before-graph_saga.json": "4fb4342c0032d182841a6f7ccfde885f427bd5da131727bd750ffde270f82206",
+    "run-23-before-linear_saga.json": "d511bdb61e60cb407901dbf7706bfda8c9ebfedc4bc1b72affb768f126448c49",
+    "run-23-after-timeline_operations.json": "64b0fdf44f835f0005f812612ebcea6979561443a941a760175a9539f6664556",
+    "run-23-after-contract_throughput.json": "9d64f3b4ce129aac41793c0eb6fba4d94a66ffae2e2d79926e9d1f5e8064bb19",
+    "run-23-after-task_poll.json": "8f196117909ab93a004dce38b3ba4fca3ef1a0346842b8a69ea4b4ec12975572",
+    "run-23-after-parallel_graph_saga.json": "5588bb82f900458a511cdb5eb718263548c3f0dc9c05b82eaa8d04160e5a1ef4",
+    "run-23-after-parallel_linear_saga.json": "f06a114e9e668cb09b7910d71754c3d19ff4bbc2f35207e633d9ea788580436e",
+    "run-23-after-replay_saga.json": "d4146fc8cc1b58a5cbe2dc60b8d7bfc91a7399e9cb2800f79322635fdef2215b",
+    "run-23-after-graph_saga.json": "bc708a46395a0f3ac6cc1e73ab2de2b383ebb500a197c8b424f46763541199db",
+    "run-23-after-linear_saga.json": "e90e46e62d17ce4d27008f4070421a2f475113f2c686b65ce42538705f283a3f",
+    "run-22-after-timeline_operations.json": "59a8092a4602946cf18a17308a0f144bef96aec524d6b44629c1508ed51a94fa",
+    "run-22-after-contract_throughput.json": "e0a2217ee3e62b5af9f3b529c4fe6c81af0c4f14949aacdbb42e47f28a8782e3",
+    "run-22-after-task_poll.json": "d3266b627e5b8faecad8c86ade7996429fa3a5ac55da823f9ca36bb5d1673449",
+    "run-22-after-parallel_graph_saga.json": "b2068b9f8eb48a22e9b21cf71247b9bd7bba1f89b2a5063a3614a445a82509d9",
+    "run-22-after-parallel_linear_saga.json": "dff0bf0f04824b9c34c7c76b93a859486eba0791585059a6141ba4024105ebc6",
+    "run-22-after-replay_saga.json": "a0c4cefa4b57cd98e710b1f8ff549312ef7da9e6aa0bc9337db34d21d744cf92",
+    "run-22-after-graph_saga.json": "ae667274386c085bbfe95344537097797ec5f949dc0da87e4a2740421e3e702f",
+    "run-22-after-linear_saga.json": "bd051527bf5ecd67e476e5b650b6640f805612973b9456619248fe6d856af0d4",
+    "run-22-before-timeline_operations.json": "70bdadbbcd82863775f6ef08972aa87cf2499a78980fc95dd0aef1c05f17d696",
+    "run-22-before-contract_throughput.json": "a3a2420766da4c4410ceb753aae4d1477919bf41f99d351b9e86c5db878a8435",
+    "run-22-before-task_poll.json": "1464ab5657a28e4cd22abba9a65578672ea9549914cfddb08a03c75f764b12d2",
+    "run-22-before-parallel_graph_saga.json": "52255e02c644c63e61e188d38c45ff96274fe4cca6364c20206f1a0873bf77ca",
+    "run-22-before-parallel_linear_saga.json": "fbea1b2d792ab53ec8fa2ffc012089ce7143146706e8e4d30e15abd4f635098f",
+    "run-22-before-replay_saga.json": "a3b42692e985c7ab26aa0ca14ac2b0dfe5a14bbf80cb39996ccd2250f99b722a",
+    "run-22-before-graph_saga.json": "34bfadad1c87e8cfd4234dfb0f8c497912ca1ffd6dbc7c46e7a8267e4ef164d3",
+    "run-22-before-linear_saga.json": "725af685a194f48920c35c46e7e43d2f7d9e8f4650154a1f740f2b5b58c5da5c",
+    "run-21-before-timeline_operations.json": "aad3d022d2aade8c9ab9725980bc7de13a164d0ae1e62de8b9f88a5dc3c29b32",
+    "run-21-before-contract_throughput.json": "374933604250cef6a2635324025280e147bdeb79dd1be25c5ae16db81d866ccd",
+    "run-21-before-task_poll.json": "a2e4559358a2f05200d932d4fef99f9c44110a9fe2f85225369cbf36f0f31624",
+    "run-21-before-parallel_graph_saga.json": "893270173838cbaedf41e44c308a6f2400ce31c18fc031a1e03dd0d34b836f6e",
+    "run-21-before-parallel_linear_saga.json": "1680a9658c9704031641d86e029e45f90f4ed76c141f8d5d35636cc243026669",
+    "run-21-before-replay_saga.json": "e8bb853a90f1f1088db93b90afab540b4addc37f03a047019f1e6e905e23aae1",
+    "run-21-before-graph_saga.json": "6698605fad6973412ab7106cf459c6bbde65adafc679beacc85c01c05cefc63d",
+    "run-21-before-linear_saga.json": "86b24972afbbd064e3c5422bbe2ae3c3c2157484682a33fc91789bf54b58ba71",
+    "run-21-after-timeline_operations.json": "9478412acd282e78b0812bbc72ebc119919af1b540b9d31c0726bacb5f36f8a6",
+    "run-21-after-contract_throughput.json": "9db0aa75f146f3d100238777bf439c0c8ff26d1d146a952ce53db254d24828d8",
+    "run-21-after-task_poll.json": "3ac0acb7bd33fc4672ac98349184816bd6f0a44bfbc2a0085a05cdd9e44c81d9",
+    "run-21-after-parallel_graph_saga.json": "a1332ab7443e86da794da55c867eb84670a931e743aa972146e1afce4136996a",
+    "run-21-after-parallel_linear_saga.json": "bf0a180282668538d45d801a6ec572e7a810d04c2f12dfaad071fc75f72b18d5",
+    "run-21-after-replay_saga.json": "eafd690b6aac7c23c387aa8cf418be40e89489072d0b51b6a4402c93ba17e08a",
+    "run-21-after-graph_saga.json": "6ed645c69b195accbea09152194d86580cee37c8128b36ec12dce44ff4d7353d",
+    "run-21-after-linear_saga.json": "c6bbf4728d63b819441b028eb563f63dee0a338f8923f87771ead03848d84071",
+    "run-20-after-timeline_operations.json": "34a8f0623ec348079e4820a2c4654c3d56d779daa2b2b22c47db11a4f4db4cff",
+    "run-20-after-contract_throughput.json": "22f8052b207c19061cc357b9d1b1d332b73b3fde8c6d47b1be4b42922f3f5bb0",
+    "run-20-after-task_poll.json": "87cf523107ecaface7e4e4e920d676a68c97ddfcbdb46ca5511eadfda97cdc78",
+    "run-20-after-parallel_graph_saga.json": "6c93db093c2b543c4e7a227558fb1bdb8b5b04be43dfef21e5ef3164e4f60b0a",
+    "run-20-after-parallel_linear_saga.json": "21eb658352ab55ce9cf1cc184530e29b3f3e06936e7a82ee0360388f7db79c42",
+    "run-20-after-replay_saga.json": "89340df04b907d3aea2a5fc6ccdc34de66c4e065fb6ea877db0dd4d8aea5be61",
+    "run-20-after-graph_saga.json": "7cf912de2e2909b3b40034cca12bdd2af2e94f50ce4439caf673549e406b87ff",
+    "run-20-after-linear_saga.json": "57bb8e5522ae5385ec42cb299d20f1cb2f6ba51235553b92504d2695269e62e5",
+    "run-20-before-timeline_operations.json": "ac861438feb4d95fe222b2fee2988c1c416b49fcd88a34c695d706417b5ab57e",
+    "run-20-before-contract_throughput.json": "ba27826d14c3e4e4e7822bd02e880a0852a9d575446cd6a09119517157319986",
+    "run-20-before-task_poll.json": "f3358d98f03f8ab00de4bc7d02c0fd5964f7e87b40539e06ef37cca4264c776d",
+    "run-20-before-parallel_graph_saga.json": "c88d24339a63746fd96f6ae1c331337985071fc9b4e9a2e82c3cfd4583a50653",
+    "run-20-before-parallel_linear_saga.json": "35ff49764824eafbd65a9e996ab997ff877ba8b3ad3d85420c90713fe5a946d0",
+    "run-20-before-replay_saga.json": "a50125091bfdbda8cc768e6f921ccbbfff5828e47bd552096bfba07166e29744",
+    "run-20-before-graph_saga.json": "912064392ef9f5850108ed52e60a30ff384f342a2e105e6e6c9dbb7dcfa0d803",
+    "run-20-before-linear_saga.json": "10c18fb5b1f169c00cc50675ee6d1a1d45813f2a89ddc51a43f072717d754543",
+    "run-19-before-timeline_operations.json": "f764250a1e8b1a6c83630531198bb2ad04c8115b928f1ad23fe68c028d6f3bdf",
+    "run-19-before-contract_throughput.json": "27ce09c36c44cf92e96e0a69a65674ac29f72bc92851d7ba46a174917169c14e",
+    "run-19-before-task_poll.json": "e8e038dc1bdb3357ff7725d86a4fde1257c5fa3503904c8ec860e1e7b630b9ef",
+    "run-19-before-parallel_graph_saga.json": "1e5289d1271c7a2cf5df160d7ee0817d49d783d6ec3f79e8421e3994fa01f737",
+    "run-19-before-parallel_linear_saga.json": "f86bdb9d7df311ec500adb1d8c4352b30f216babc40c2cd249f59d3759349787",
+    "run-19-before-replay_saga.json": "5e56c3055e305688cd3baf7908b2057bc7640bf618268f369925f21452ca3982",
+    "run-19-before-graph_saga.json": "3abdadb2826c5358f182aeff04ee07cbbc96c69f072f69fb265152aa60842de7",
+    "run-19-before-linear_saga.json": "f599c09c568d5e5d5d514b8f605ec287b3d072e71b1f75eb26868ca76ea7013c",
+    "run-19-after-timeline_operations.json": "6e2c0eaa470ed23f940bfb6a1d5d901c1c14f26d83ed5fb23f4b59e690c3e386",
+    "run-19-after-contract_throughput.json": "14a4281448a1c22a8a8b912c12bf45e30ee01ed611d38410a83b703c97b31319",
+    "run-19-after-task_poll.json": "8783ba4da2a27ac1b443512f2cd535c628cd65fa2fe8dd58dbe6340e3ddb76f0",
+    "run-19-after-parallel_graph_saga.json": "ecaec2225edbc3f17047f4fa5d757d048452296c85435d7bd042210abc1a9ad1",
+    "run-19-after-parallel_linear_saga.json": "644ac63f0de37c43135ea82be0bc6cf7648e38098f60e2a3ada3f13fba98732d",
+    "run-19-after-replay_saga.json": "5d5b32d27a8ed25bfeed7499832ded01c9e2476cd2360e13687548f7aa3cd6e1",
+    "run-19-after-graph_saga.json": "9f07591c06478a923dfa845f01851d542b9148abb5f3c4e4608e3b74f59110b3",
+    "run-19-after-linear_saga.json": "671603e96413d9ee6e77af15ab8755b6fd040b19dc600886ad950e6c108a5d66",
+    "run-18-after-timeline_operations.json": "308e5da39b94c947193da3829e684a4575b3e3604b6fdc909b7c03941d284270",
+    "run-18-after-contract_throughput.json": "0a7f170247fcb5a6b149ebd0fce3c782dc1b59524ff7e6116db1bdf61cdd8f65",
+    "run-18-after-task_poll.json": "63ad4b7a1bc80b4d456124e0b1bf33c0fa39853ac464af924ddf51a9e1000137",
+    "run-18-after-parallel_graph_saga.json": "d20f0288c016272c6f6fcf29425914bdd4da462880da56025f409d4e1751ec8b",
+    "run-18-after-parallel_linear_saga.json": "fa3b6efc8dfe09fe10776d901fce5c55e6ba1f042ac8850a68b72ed80718d21c",
+    "run-18-after-replay_saga.json": "76b9941ed66eafd05e84a18f6dc638961aeea5e7c58d77594da3b23370706945",
+    "run-18-after-graph_saga.json": "2604b753da436f17ba8dffc5d58c7cb9906d718b5a195d038d8d3f2fc4acc7d6",
+    "run-18-after-linear_saga.json": "4905b883297063405e386ebf5f4c7c6d71cc84289332e4f8c6e87cd40346053d",
+    "run-18-before-timeline_operations.json": "1d7ef963db017b1c5fb041ac96c90844642c9ac275a19ef888c926907faba3f5",
+    "run-18-before-contract_throughput.json": "643c748f032f4af7d2f889393c2f0ec59726033e1e6862e56e52e6598dc1345d",
+    "run-18-before-task_poll.json": "6b0d4df86dcb03d127bdfb27aff2cba1a56435bd5b08d8f867331b1d186a6877",
+    "run-18-before-parallel_graph_saga.json": "9c547ae795dc9ff537e8174c79b76fd61a45516cf0d253ebc2facc897ebf4307",
+    "run-18-before-parallel_linear_saga.json": "c0e2f762638f4f975773d4e1d48f4d19837754d059dc79aab77e0f3f58173f03",
+    "run-18-before-replay_saga.json": "d167fa3334a9a7bb9b7180377914a1f853dc383e8986335e85171148f405f4a9",
+    "run-18-before-graph_saga.json": "01412d8be95571a552f5779ad3206ef62370d32d972e26278882efe93ba83019",
+    "run-18-before-linear_saga.json": "056c9aa5eea8a2509e87db00da1445b5b16862e7b1862d9c31cd748b99e71175",
+    "run-17-before-timeline_operations.json": "0e828642d58979b71e24a86ec8a91b778fe53d37269b50399a233e7e616f8677",
+    "run-17-before-contract_throughput.json": "b63d1106a42de02b372a835630fa957625770e2f2cffabb6ca0ecd0ff0026f07",
+    "run-17-before-task_poll.json": "167d31e9bbca3a78a34e9017e3c6602d8c9ba3b61aaef1221648874d27b06b40",
+    "run-17-before-parallel_graph_saga.json": "1384a9e2831dac212b647e3b0b6690cb12d3396eae436645d8b77216480c7ac8",
+    "run-17-before-parallel_linear_saga.json": "e34d30630b14a06a85f04c6af771532689c2463dffadabe5e978c8d5a80dae21",
+    "run-17-before-replay_saga.json": "a92974d5f30532dbdab0faffe3a02c8ba1d044f64aa810a0559719d1cfe8ef72",
+    "run-17-before-graph_saga.json": "a3b69668397364c03c556fe050a0a1bfc59f0459989390b0e84db47af450f72c",
+    "run-17-before-linear_saga.json": "518f4a75c570a50c7f3756269d7b7ba601d0e62c6043718cfd4be0f6d725bd30",
+    "run-17-after-timeline_operations.json": "048b4d7d9c16cdb48e1671f1a368c6cc46a4295a46f1e6ec51020f68ecfe37b6",
+    "run-17-after-contract_throughput.json": "3875cb3b240bf679fdbd135cb3668a60d80d361191016a86097e77da618abd63",
+    "run-17-after-task_poll.json": "01dcf85c1a5fde8b342b1480af3b4f0abd46111ff35237527cf87e8a75203198",
+    "run-17-after-parallel_graph_saga.json": "d954c4aa42b0d107d1f3f908b68993d70a44373bc9d008b14026428e1b8f755e",
+    "run-17-after-parallel_linear_saga.json": "9bcc137993c0e8f0da36c4bb6b4aa4d620bfd78e3d41d2bd3124cdf3247d94a1",
+    "run-17-after-replay_saga.json": "8c29dd1a7b0094bf256d7cae66cf1377f9d831800bc71e742545db2beb31ab05",
+    "run-17-after-graph_saga.json": "bd0b7afbc12a95e952e9c5cff70a2e005d0ea1e42766fae72f6adec14ac87635",
+    "run-17-after-linear_saga.json": "4bc688e2a560c8ec18e6c5940f478b9e0629f9a4e524605df510ee829279b960",
+    "run-16-after-timeline_operations.json": "843f585b0f89a2b9a35c12e0ecacfa51804e69062ee672d946579422affbae9a",
+    "run-16-after-contract_throughput.json": "fe6d7e5198ba238c6edeeb7c2d58bab04f3a6e7de1d9f0720267965b4e577b9b",
+    "run-16-after-task_poll.json": "c2076417bdbec22e634cdfc2528306bfcd781d61d1dff60e694af8a012f3ac3b",
+    "run-16-after-parallel_graph_saga.json": "92584a7435b1f9346863a9ab815946d33365166bec4a8cb3f1193ff54520214d",
+    "run-16-after-parallel_linear_saga.json": "bc0d870f8d5fa75fbda3e704a013c3cea3b7f8759b83e5d71daf75b8f7c3684e",
+    "run-16-after-replay_saga.json": "f3f72e8bb880db75e1e4641dc9142defbacccf543f11e5e701ea88c9e34aff22",
+    "run-16-after-graph_saga.json": "548299e3a715fac11829ff1cee092bcab7af57615725501fa36f80cee996e0cb",
+    "run-16-after-linear_saga.json": "62050915f4e78c508e391855f11c54749360c7bdd348adbddb9fc35f84598760",
+    "run-16-before-timeline_operations.json": "cb8fc32a6f5f6df7275d68abc74d8b27e1656c5aca33c6fb14ad464b7192a2b5",
+    "run-16-before-contract_throughput.json": "132cd9815c9da55e9707841cd2eb5ec83b53d2aaf9ec23de67b327f8122a9784",
+    "run-16-before-task_poll.json": "268c4c5ea33ddd9e8fcdd2f67d57da3fb41eb648cf7ce8f157402c0f88f761d2",
+    "run-16-before-parallel_graph_saga.json": "52c55649e6b012b0432af2f32ed120b4dbfbe903286435cd1b59bc160af3d3dc",
+    "run-16-before-parallel_linear_saga.json": "2cb0895a54686e5f88308863fcb82e5feee1058bef6718d3ba349394534683f5",
+    "run-16-before-replay_saga.json": "8496899a65d0afb05b04922e419c33d1d0c3fde5b2c56e8f5190daff526e5153",
+    "run-16-before-graph_saga.json": "6cf3a1b457949c99db48ff1cfe2507e411a88076fd1f3b72f91683f04151c02b",
+    "run-16-before-linear_saga.json": "c1480d63a87773b5e24d91b62128fce47f24956989cb77d16d98536d9cb65c23",
+    "run-15-before-timeline_operations.json": "d41559bce84c4580cda917e2d40eca9d98ed0e8f1b37bbe01aab53b524daf84d",
+    "run-15-before-contract_throughput.json": "f2fce21929f28c95c80fed7335128f2f431f4a14ef2070542604d61152249e38",
+    "run-15-before-task_poll.json": "64e73ca9ff8c52f322714b862095040890a18bbaed0b4b1edda6efd8069e5e73",
+    "run-15-before-parallel_graph_saga.json": "8ace9cc9d7c503ac09bb46a59c2c61ab33902ab96906c6319defa288c4e1b1ab",
+    "run-15-before-parallel_linear_saga.json": "b1c07f7417a08d92e0411dd10f374e64bccde6f836269497754c8a3414c847a3",
+    "run-15-before-replay_saga.json": "cf785dccd203e04ea9ee2b2928ba3e84414fa8998ade00dfee4dfe234644dd1a",
+    "run-15-before-graph_saga.json": "ad020c56bd4dc6e54e31bb6ca0cc21af6be382c417aa327725f09059a46111c2",
+    "run-15-before-linear_saga.json": "92f356c3a3c3f8a3bafd26adba7868764dc6404c298170de89363ccf0ffff8a3",
+    "run-15-after-timeline_operations.json": "109b0c1305288e349ff26af10d3cea569ffb310db8c28fe06c57c4437ff45ffa",
+    "run-15-after-contract_throughput.json": "e4af4a78b82135a186f4a9062f0bfaa71827fc9538fedf2498ff583997e41782",
+    "run-15-after-task_poll.json": "5939f2f4d1bc0a2a1c0c090360754c91e1937e4558c5e017ddf589e8735f6ca1",
+    "run-15-after-parallel_graph_saga.json": "12ece63f2708e96b4427831aeeba215776c2aa1a6a64b1fbbabf34cba1d1445d",
+    "run-15-after-parallel_linear_saga.json": "e5a0fd0d5cab929e1ddcaccb42bd11e24af821528426bff965363fd4cc562d9d",
+    "run-15-after-replay_saga.json": "b1bdde6d7810e1c531e05ee46e561503cda716eed8358da7ac3d84bae33e0ad9",
+    "run-15-after-graph_saga.json": "e9955b8b396cd72f395fcacb35d08abc272dd721a1f866b78d6fc4530418414c",
+    "run-15-after-linear_saga.json": "4d5b62293f6e7bfa4f18e58dfd98e11de42bf3a4bbf1a2b6fcd3b4560db269d7",
+    "run-14-after-timeline_operations.json": "76b0706daecbe7dd99247e306eb437123d9cb29ac256669830523f51b64027b0",
+    "run-14-after-contract_throughput.json": "97ab1122d8f566947de6e8a2ddee84cfd5a062391711d86fef410626de0357cd",
+    "run-14-after-task_poll.json": "db81e6b6d494a365a8c7bf92a8a2002cdc5d35a6820ff362379557aed4f02565",
+    "run-14-after-parallel_graph_saga.json": "8f3d08a276ae5b1176e1b3a86e83b59d061a0ed65b0cf86fce1ac40e13c855c9",
+    "run-14-after-parallel_linear_saga.json": "4c6b4cfdb6ed91adbb25993fbb742fce48c34fb76e246e739a0e08fb3fec5ec0",
+    "run-14-after-replay_saga.json": "f4f4c62e06d5b3c3e544d9591e63a3ceaa054476afefc791c2eda68c5560541d",
+    "run-14-after-graph_saga.json": "a60b17a51730450cfdda92532c749923243b296035d9dfdb1db6c13fe2f1d657",
+    "run-14-after-linear_saga.json": "732fa7435e395ef4ca4a403381a758ffd82cc263673e84d67d06443ecf1757f8",
+    "run-14-before-timeline_operations.json": "5e5748a724919ae4b626a1f823325e790ed17092ad8ab70d0f1c2a20f1533afc",
+    "run-14-before-contract_throughput.json": "3325cf177192d825420b03d59668f92d42b5a42285f724efffb2e1ca88e5ccaf",
+    "run-14-before-task_poll.json": "c882821c24d1ec4e0c6b9b5358cb7693d884fca7ac09a3e172c85c4ddcb6ab58",
+    "run-14-before-parallel_graph_saga.json": "17d31c6846d949822401f3d17277662044ed7f8cc517216e2e7a9f819c267777",
+    "run-14-before-parallel_linear_saga.json": "9ab7e59b62e44d41da9ca0fb8bbe5687e64f18bcbc005649f4a86e67f9d8cb3f",
+    "run-14-before-replay_saga.json": "8858f69593e1cc92e16f9d1e8bc59470fbe87c295d5c5c9b41c5e3f799552e96",
+    "run-14-before-graph_saga.json": "a81da429310cc0c60b0d82769e79c34ba3087c0b3080a8f1a304232cd3b86167",
+    "run-14-before-linear_saga.json": "a4752872b2b99533564a9d74b97b7868bcfb6d3dd8d7aba1fbb8529cd1006bc8",
+    "run-13-before-timeline_operations.json": "5ff8154a39919a79c725c320f5b4c95756497108d9ceb3ea8e50b06d0e9ecd18",
+    "run-13-before-contract_throughput.json": "c220a727aa1dcb2178309f79e053992a8503ec844361fd7581b0fa930260e7a1",
+    "run-13-before-task_poll.json": "5e4a50b560b09b0d1e90b659b7463f6aa4d7766021854285b36f2abe99f062b7",
+    "run-13-before-parallel_graph_saga.json": "4f41ae89f2a5b636c1c8aa1c13da5cf21bb2f809c053df7350a3250cd9023292",
+    "run-13-before-parallel_linear_saga.json": "ddc50c187dba76bc9ba24cdf358d54b21de7f73df6ae2c6ad2b1d924dfe38c84",
+    "run-13-before-replay_saga.json": "8809edc6ab3e6c94e2d371aef1e3b9f9289a163fe7b78c442aa7aa22d45cfe68",
+    "run-13-before-graph_saga.json": "2805c6b205d1107fbafc9dfb5e64a46e988025917c96f2cdb45b1fbca9e3f97f",
+    "run-13-before-linear_saga.json": "b59177b16a936ab14b3f75a7b586cad1205b1bfec64be94aa1f5f183bcb579a6",
+    "run-13-after-timeline_operations.json": "68d2099537b0e86daa79e0fd856cc894e50e514dcbed54676b18376821003725",
+    "run-13-after-contract_throughput.json": "8f607512d5da0893e293b196c328cff8c0410cd759383228ee4bfb3ef432d7c1",
+    "run-13-after-task_poll.json": "22c7abfbde92fb2b8cd31e57858e792e1af46870cd0f8ced1af454bf095d2a69",
+    "run-13-after-parallel_graph_saga.json": "07bd060097152331992157bf6535274164adb810829162cc4c46586d34e15017",
+    "run-13-after-parallel_linear_saga.json": "88934cb6eebd48a51e6a549625f4d231488252aa6a94398587c01f56c38dd728",
+    "run-13-after-replay_saga.json": "d13678e1579c7466d15cb3fd99be9595d078c9f80924932834ea7bfc86fc5d34",
+    "run-13-after-graph_saga.json": "429b36323beb6faf7b94ca1ba269a838f042358aff961b0fa18767ab064f6da4",
+    "run-13-after-linear_saga.json": "f88c679e1918fa4a2741afab792c175be235890a6896d3f1a2d02b4e1c8f631a",
+    "run-12-after-timeline_operations.json": "eadf1aaadc2dabe2e5e799dec03c7222de0ecd2348d5276dd498343d2e65e556",
+    "run-12-after-contract_throughput.json": "7fac212ec40f897d2bc2701aea2f0c4ef0f913e974332c09658066818258fdf3",
+    "run-12-after-task_poll.json": "0dccc5bf315247edb37833ecc491d1277f4ac7865b6a825390834021821836fb",
+    "run-12-after-parallel_graph_saga.json": "401aa45c8098c3e60679fe61a83ae40ea8316a78433ab1e787f60fa54386088e",
+    "run-12-after-parallel_linear_saga.json": "59cecde38c3df79e3e6e3788788c918abf857ec371da6fdc0859ceb4bf1eb28f",
+    "run-12-after-replay_saga.json": "9672f9d00f2251fd16a5c5a8584d70c1d1637c000a37ecbd3b8c2fd5da1ebb1d",
+    "run-12-after-graph_saga.json": "cff8df54e7a0cf69f0ca4b91a9ff464e0b0b3aa1d3a04f56b74f34fd24c8ab2e",
+    "run-12-after-linear_saga.json": "3f1f341376473e81e7646bba818c06a8303c5ad3e9e97119b8a7024f8aca09bb",
+    "run-12-before-timeline_operations.json": "2289944dba4b71d0a018590f62cba34826b0d3724e41a711d26a793133b2a24a",
+    "run-12-before-contract_throughput.json": "9506b8500b49bca0e93ca1ffebf687171388bcfcc54ab7eb53e5b581d00f07f2",
+    "run-12-before-task_poll.json": "865621723752b364064137416ea0e980b0a1acd67dab5771df4f033a3d9358f2",
+    "run-12-before-parallel_graph_saga.json": "20548b628e1168a5ff7c2328c550437fa1d1ff1628cb7e54948715cecb9ad54d",
+    "run-12-before-parallel_linear_saga.json": "d0113ea653ec90255466c767e8900cf10057d1bdaa9475542f1e085389d2a2b3",
+    "run-12-before-replay_saga.json": "dcdf4ef5a27eaff092c66d1984e7a6f75eea395a96e2068199addad3a9c6c8f2",
+    "run-12-before-graph_saga.json": "318bcf14bc7039d6161c0b3d7a6eee8223844b8d89a1bad2c846b2a64724c51a",
+    "run-12-before-linear_saga.json": "2cf8e9cf27a0021060b37c42381cab5715be08ab96ad6b97792b251c684bdb2d",
+    "run-11-before-timeline_operations.json": "34dce0090ca64246faca8a4a184e28a556962695abae97d8a009b2b1b47b1ea7",
+    "run-11-before-contract_throughput.json": "78d1d65ce494c3c4a5810c0e7f26a5222e40087e81b9ff760e6d24f31ff05707",
+    "run-11-before-task_poll.json": "84ce7d7aa8b7525b904c501485a9da19999a2104d654ee02f559e4076022c585",
+    "run-11-before-parallel_graph_saga.json": "e87fc29e49728047b48cf14b1504a98f8ba071bd8eba2b62972bcda1a1436442",
+    "run-11-before-parallel_linear_saga.json": "54b49865a298c86f7be0a7fdea854556366ff1d9a38e4dd3a388551556692e0a",
+    "run-11-before-replay_saga.json": "20767d1af567c0d2b5c30540d011917552b42dd21fdbf2956f9fca046647bc56",
+    "run-11-before-graph_saga.json": "bdeef5a488bfbe55c4d584fcee61218ef955c548195f7da4aea20188c28ec1fc",
+    "run-11-before-linear_saga.json": "50eeafb22563b51f4ed351f923c1bfe62f6dcbc63f85a1ac41481f7985de23ed",
+    "run-11-after-timeline_operations.json": "451458a861bdc132465378db69dc725b32fd1db5bd7e8f6b8f8fab965a07deac",
+    "run-11-after-contract_throughput.json": "8509a83dfee5b72d7acde16d25d901f0d3bbe837ca883d4ee359b5279a345ad6",
+    "run-11-after-task_poll.json": "6a974f2ba03a1a9fa67b9dbd2635f82a8866acde52975191211e9638f7b7675f",
+    "run-11-after-parallel_graph_saga.json": "b25399eec5c39794aba108d2657a352df9fe99615356175a9e55dc3d2f1c2f0e",
+    "run-11-after-parallel_linear_saga.json": "6b268729ea34a2fbe9be9801cf9d5df4d7c0820b81fdd9e19d842e276f36b017",
+    "run-11-after-replay_saga.json": "347e3c39ec9c7d61d7c2aef0d854a195788a4cd6a8d262eb7d10b6189c56ef72",
+    "run-11-after-graph_saga.json": "2f6e4f276e610d1be22c7b93656d3b524eebb784102a903833b6c659967b6242",
+    "run-11-after-linear_saga.json": "8391d10639e1efdeeef2c7d681b3cd1b90ddd5729b90e32a5d71c2ac7992d4e1",
+    "run-10-after-timeline_operations.json": "cf9ac72037a35ddc8010e641e8de1bad667d890d9fc02238c032d964fa1bba1c",
+    "run-10-after-contract_throughput.json": "d5e41b2be8f367f5d9aab81026c007a9f90e337c798defcb25a375f08aaf749c",
+    "run-10-after-task_poll.json": "686ffbc46bbc57f8f51be280955cd7c41ba4e03b1153bf09fc03ec8ad6c6db5d",
+    "run-10-after-parallel_graph_saga.json": "737affb0d8daba73ede386f5a13cd298a455db6a0ecbdba1ef27f624dcc02a63",
+    "run-10-after-parallel_linear_saga.json": "be585cead9d6b62f58881b545f41d173e11998bc1e26dd77fb2252f0409b6d88",
+    "run-10-after-replay_saga.json": "0d2843d7ab04de8480d9574cdd19013107398d671e22f2d10701dccd534e9c17",
+    "run-10-after-graph_saga.json": "2ad179f0190a400ddc8fde12d664e671e599cdfd4d95cc27633ccf910cca91a1",
+    "run-10-after-linear_saga.json": "34f65ad52e7e80b9bbc957a3e7bc6aa4fe7f456c857085571a02c57f3d9e9cdb",
+    "run-10-before-timeline_operations.json": "e097509ebec8c77d9b7cd999bfc08415d47da094a9162024e4868ccc8e23f821",
+    "run-10-before-contract_throughput.json": "476e89d36a12018bf8e2e4d6d9197091ab9a983bdfaa849ef4cd15862b9c5019",
+    "run-10-before-task_poll.json": "83bcc5c9168aea5c2b5a44b7d4fd913ed2dd585bb39386930de4af9023846b4e",
+    "run-10-before-parallel_graph_saga.json": "450ccae39b8e32e9bb2cf626f9e752db5f5938f007a73c06996cd71bfc75aff9",
+    "run-10-before-parallel_linear_saga.json": "d62afa6fc036c58f97789a384c476a2c9087abadc80a1c2eeeeae4a2dc825807",
+    "run-10-before-replay_saga.json": "13551d6fe11f759ca025c319f7b1299b121689c963f170f06ae2f4189356d232",
+    "run-10-before-graph_saga.json": "af5a04a02cdf02af363de42101f3d32c03eb843d1c09400e1b683dffbf70361f",
+    "run-10-before-linear_saga.json": "6046a2c3e60fe72ab8c2f76e2b71e560b4a7bb82c38f430f9baeeefa4e8a33a2",
+    "run-9-before-timeline_operations.json": "8df2d9597fc54880203a68f76daa5cdd27b103dfef5b5a46b3d0c74dadc73f69",
+    "run-9-before-contract_throughput.json": "2f326c6f94dc82b1d91e3c2ceb292397aec06c48cde42b9b5dddef1f95018a60",
+    "run-9-before-task_poll.json": "f232a77a7855085269d868aae87310f4db12c0808a746af1ff42706972482bc2",
+    "run-9-before-parallel_graph_saga.json": "96fd7561577bed432a8873b2ad0a336d9b00620e18fa720527601fc8c1b6f32c",
+    "run-9-before-parallel_linear_saga.json": "07ee9be0606173b480577915e4080211591b408e2cd15e47b6b1ad7c23ee1578",
+    "run-9-before-replay_saga.json": "0532b5d415599084068d483b3d5b9b2fcb33130f822751456d50b7994abd3986",
+    "run-9-before-graph_saga.json": "7033eb1ec5f15ee180a03ce37831872949d04d1e9d82186daac47f9bc5874d15",
+    "run-9-before-linear_saga.json": "668e5a9a512e2dabdf95f5c145ed8ff6c6861abaf5fd9ac188124d2a6262cdc0",
+    "run-9-after-timeline_operations.json": "d2d0f6e615c7fa08a6fa9324d2d7c27204b1248adf15ffcea7ddd1743a8411c0",
+    "run-9-after-contract_throughput.json": "8252d3604f8f8864636678c68f15ff294b6b7dac8ace61e8eedcdedb7e80be2f",
+    "run-9-after-task_poll.json": "2289e37c7216ccd3718369392934606e0f18458c5d43185bf5d05099e8bd0c32",
+    "run-9-after-parallel_graph_saga.json": "a350781077cb194822cfa50a6ad223964d732ebc2ec3a5b1f14da8ac6d898a93",
+    "run-9-after-parallel_linear_saga.json": "96e4b7790c7bb2fc3ac63191106942b97f53f7fae1711686d2411684a124f753",
+    "run-9-after-replay_saga.json": "11a339bb93e6bc1461733ed737e93f98ee8def82e6f84910b07603bf50b14ab3",
+    "run-9-after-graph_saga.json": "49b420b268ba9fc7bddf9ca395426eba19e4e082ac6d55ceed85aca793eb97d8",
+    "run-9-after-linear_saga.json": "33db5e918c1e198ce4c08fa9262e0618deefc5aeffbcb6a6189881f993e473fb",
+    "run-8-after-timeline_operations.json": "485b7f22ebb97a0ae72b2e62fd3922d693f05f41c9babe195dc601e4665bcfee",
+    "run-8-after-contract_throughput.json": "00b127d9d873027bb1e154e3c8a1d3f78c3e4edcebd971ff81979cb89f8b17b0",
+    "run-8-after-task_poll.json": "90c3618275f0feacd7c0ac863d22807a5ca4ac8e74d637257dcddf385fe9a268",
+    "run-8-after-parallel_graph_saga.json": "eb58397178040ea08b921a91c3d80c71e196f3c890564ad9d6d6e85902432f3d",
+    "run-8-after-parallel_linear_saga.json": "1c3b495c15b009d2a7e64fea723f15a1397668a9442eec9d3b7a48340852b94c",
+    "run-8-after-replay_saga.json": "93384f9404d8b4c434d28072be95d9aa769c240d84fcabe83526c51a17a10025",
+    "run-8-after-graph_saga.json": "9fba9c64ebde6b5b6579624f90301b653c2d1c56ee894465f6cb86255f4c7c54",
+    "run-8-after-linear_saga.json": "052978e0e65b6037168b7d40d807b7cd9040a5b4fde6d1a887aa88944af3ff68",
+    "run-8-before-timeline_operations.json": "83f3d194fd2d3e114cf975ff5c83c9338daa52595e055d1cae95dac7be4dac3f",
+    "run-8-before-contract_throughput.json": "491d85602ceba95fd69d418ff9e48875801565fb8feb4f1cd08a5f1f84ce59d7",
+    "run-8-before-task_poll.json": "83a04d705b263ef2d936e67ba21b7b5b152f1a57eb5ff025fa60ce6c0b75fc87",
+    "run-8-before-parallel_graph_saga.json": "da1d306e2c6e864f77cd4be828f17680f012c36f7dafa8129616b14e895ca069",
+    "run-8-before-parallel_linear_saga.json": "a57aadcd02c4398b4dd2a9b0804bde6b21a5b2b2d276240110600bda9f91ad5b",
+    "run-8-before-replay_saga.json": "889a1400b3374ac0f495c727b19159de75ffecb89f951aa42cb7f2bc8c441a67",
+    "run-8-before-graph_saga.json": "b616f42a3de3601a1e7f42188185a27b7d4ab0e31a157c49e7825a4d6bdfd8d1",
+    "run-8-before-linear_saga.json": "a64cfc874c0f5e82795843ba392443b03950cc362a66b318df9279a7ee69e6b5",
+    "run-7-before-timeline_operations.json": "bee6227a01724f59d5da66e6a3bb5f176d9e2103d5c37ec4d6a0b8a189c3d969",
+    "run-7-before-contract_throughput.json": "2c10cfb948ad3a1db5c02d40acb22f2c43505705e69659772817d013c768d6ed",
+    "run-7-before-task_poll.json": "bdb80976c541015cfc99c42f8fcd42a328569b348739e1cf489c9b327f604a79",
+    "run-7-before-parallel_graph_saga.json": "28bd64daca8c884996924780a48177ff72bc66bf8c1eb8b350da65d6712579ed",
+    "run-7-before-parallel_linear_saga.json": "131618a1ca6344f8cddc50163e85295a7d8c2420bb3d0a23c94921676cfc891e",
+    "run-7-before-replay_saga.json": "fe4252050b7f6fcbdde35a71d3aa8af5487c90261863671dbe9ab1f5dfec02d6",
+    "run-7-before-graph_saga.json": "c1497eae87186670269145ce4974cc6624adaf6058ecd633674860cd563b2d64",
+    "run-7-before-linear_saga.json": "b6ddf6831315b8cde89989c08ceeec30bd55bf76fa176aa8438824223840f6fd",
+    "run-7-after-timeline_operations.json": "241b3533e5cc94ea99c038d22963117e0e1787b4826008ed09dea531cea548e1",
+    "run-7-after-contract_throughput.json": "1f12e4ef566fed9874d9b981c838d55a647a3a124a560a09467a0942804209d4",
+    "run-7-after-task_poll.json": "6e4c6570afb1670679d1cd140852c4eef58cf81d55ac1f6c3619e30d080a04cc",
+    "run-7-after-parallel_graph_saga.json": "c9f44041f482db50b4f55a01a77c9fd975955bf3ba8da3d987195f129192b372",
+    "run-7-after-parallel_linear_saga.json": "9c3cceb04cb372bf02d04ca92d3abdfc3e34177694f27be0fa42bf97e9080794",
+    "run-7-after-replay_saga.json": "7a84d78ce182415815d425adce5afd027be4d4ad4adef70e91bcdc3ac34b2929",
+    "run-7-after-graph_saga.json": "d5c99fb92738bc16991556178fa5eb74376822cc243e9df1b73be988dd9b7b5b",
+    "run-7-after-linear_saga.json": "fd9326880fe06018e7b818ce008c693385b8b1f2f19945c35cddf3b7b5c18aa6",
+    "run-6-after-timeline_operations.json": "a5733a75699c182cffbde4f8e1ba41c31af0eed035a1c87e9321fb65101f4042",
+    "run-6-after-contract_throughput.json": "b4f676a02b766ee656371694c53b10a85e28d46e159aec009e362e5968f22479",
+    "run-6-after-task_poll.json": "c975b5e3b439c91bfdb32eaa14e68ed74fe4963c5c7925e0a48ef09ee360d970",
+    "run-6-after-parallel_graph_saga.json": "1d1a3b4b9969ff71224edb77e9173f41a047c3485cb6d8e8a2e287509962f7a1",
+    "run-6-after-parallel_linear_saga.json": "3c070ee638fc5b5ad489e3c5c606b1671700df221586ae12de6756260254c735",
+    "run-6-after-replay_saga.json": "169637c07fdebb09839d07ce745c784f2037ebac157b03b981b056d0702b59bf",
+    "run-6-after-graph_saga.json": "193e40e8f51baa5ca57e317571e26149419b33fd12eda52de11e5c7955f59a81",
+    "run-6-after-linear_saga.json": "731b08194f29ccebad5112bc3c4042c413d004c5e8479f55a98f6a6b629cb657",
+    "run-6-before-timeline_operations.json": "156aa850b0c095106aa7858f9d41931613526dfad1374fce64c82a6ab3b709de",
+    "run-6-before-contract_throughput.json": "059e79061b0e8a919e11e4c12a566f6278cfbe217de55ab6a75d273d9f53429c",
+    "run-6-before-task_poll.json": "097c5afe252feb5aa98921634801ea6e558289786ad8373a3e87a79e26e4775f",
+    "run-6-before-parallel_graph_saga.json": "6423fcb00b61998b9b29f3dd2f74d6be6932111d68525c832cf076c368fdca71",
+    "run-6-before-parallel_linear_saga.json": "6e4368030399c4686e45e58582eeba199575efc9e2f9d5bf0f14fc168fa528f0",
+    "run-6-before-replay_saga.json": "d10d94d726e651e8658c574c849c1f0cc8df3e2ad69664d8fb70ec1c75be1364",
+    "run-6-before-graph_saga.json": "72645b08d73f850249ae42026474ec04780158a94cae7402aa15f67fe74178a6",
+    "run-6-before-linear_saga.json": "5242b06681a369ad849081a92a72ddc3fef590e3c534f92947c53a2568e01ee5",
+    "run-5-before-timeline_operations.json": "b1d076a3ab2715f0eaf0d90e23484b35f079338d5119a7d9531741c953ac597d",
+    "run-5-before-contract_throughput.json": "91a4dae26abdd609f11e03ebcdea3621ab8514d520dfd474d6f8feabc1ac39fa",
+    "run-5-before-task_poll.json": "24872e3506d0d25ef3149e067bc73aa783e36e075aed197714ddfe14207ebbe8",
+    "run-5-before-parallel_graph_saga.json": "18c34acdf4e68e6170571b79bc41ac237c48e132474dc134ab70007d12fca8f1",
+    "run-5-before-parallel_linear_saga.json": "ec420639c038f283814572b32d8e581cbf9db2bf023d86703325ac47492872f9",
+    "run-5-before-replay_saga.json": "740e4d8ec18f3af2c09710c236517f6f6bb5b203b8fb096a04a976a6eb576928",
+    "run-5-before-graph_saga.json": "ecfeb00883760f1e041d6b4079af2c94d1e129ea3b80e5f8556d264710703bd2",
+    "run-5-before-linear_saga.json": "9ac3b7674853f846c45765d9f1aca5d843d4d3e09633445023f2e9207508aa77",
+    "run-5-after-timeline_operations.json": "88abba037c1982c57fb762dff44f519878253285da252793d460d989443bb23f",
+    "run-5-after-contract_throughput.json": "431bf7c41e86def9f2283bbb6d6d3d7b92350f4cdb34c15f5eedc7b0af602501",
+    "run-5-after-task_poll.json": "2712bda0d0d3d67b34ca2694b36201b4cfe8de7906c40dfbf016f29ee147ee14",
+    "run-5-after-parallel_graph_saga.json": "31e694450973e77d3fdc660971ede51877ab130ab702bd797b8d85a06f17df5d",
+    "run-5-after-parallel_linear_saga.json": "7cff36e62eb8db06e1c365bb5e501cfcaebf89e5616a9bb7fcf641f3f0904208",
+    "run-5-after-replay_saga.json": "5d653097fafd48a954fc02dff4b7d71e7ec20bddc6f3c498c78da1d5aa0455a5",
+    "run-5-after-graph_saga.json": "7ed732ae12eed8b30502d36789b1a84a4ee5fbb2d98cdd20b85dbd970b7690f7",
+    "run-5-after-linear_saga.json": "e203bac3088f82838d4af0a59799fcd2d245983e1d24be23920d0511140d1f5e",
+    "run-4-after-timeline_operations.json": "881086b0d27f44135e634bd6ebfbd6ea2332647e976c3118c4db099592c0702c",
+    "run-4-after-contract_throughput.json": "07e06883a7e3f7582224d1822223f9254b1d9d48fc5188af4c742fe64f97115b",
+    "run-4-after-task_poll.json": "755914110ec4c3463606c3a74cfa38d29758b6796c13cf0f50abafc043af2998",
+    "run-4-after-parallel_graph_saga.json": "17f2c0369ccc37898f377fb7515cf3a34e8b2469d27f51b097f3bd880b8d13ed",
+    "run-4-after-parallel_linear_saga.json": "f932ede5321f331e33b127be8111288918ca9a87ee5ef47e8563f1b871d3ee82",
+    "run-4-after-replay_saga.json": "28c3ffcd0e69d7ec3583bc04e5b89deb36fc6af8608a2e186b3b94bf162e3dd3",
+    "run-4-after-graph_saga.json": "a751b334ee07e73e57ec1eacad1bc16bae696f4511ee2826eb11588cb2b81988",
+    "run-4-after-linear_saga.json": "ac97d185bd5d546d75c409d780c5dc0340aa00be9a20b91eaaccaa9712b2cea3",
+    "run-4-before-timeline_operations.json": "ac7c73eade2d65137acead1129159fbce7da71488e300dd7e025e1c9bde44db2",
+    "run-4-before-contract_throughput.json": "cc9b5662faceeeca2dac2dce5cb6a59abdf488363882a5ac40f8f83db7393368",
+    "run-4-before-task_poll.json": "a26ad7b2ae074cf135571816be172a51f479095c0b2f920ea972f9f638bbed03",
+    "run-4-before-parallel_graph_saga.json": "a5d186cd9ac9a14c34ec47bf960cbf604bd3d5b55bd7763445b58ecbd645f17e",
+    "run-4-before-parallel_linear_saga.json": "1daf230d8502822ceecb4a294bd97e830015810809b07d12cef9c364139b1f2c",
+    "run-4-before-replay_saga.json": "e311752dd9f4432b4857aaa231bd2f362a56e0c9f1e402476ccac0444c11c2d2",
+    "run-4-before-graph_saga.json": "e8b7a1af77ff80b20b0afcc7e3810299400218d81b15db27a9a624a757d1bf1c",
+    "run-4-before-linear_saga.json": "70cfafe28d1880541e8b52cf81bf9e4dd3c133e789d6bf1cd241f9052289c76f",
+    "run-3-before-timeline_operations.json": "62db4d81276904994ab32ccc1f033e6f2bfb1a5d49bf5cfe4abb797a62cf3839",
+    "run-3-before-contract_throughput.json": "3832703d09e260c2f1f70d350b0c1bfe292bb3093169d261bb1287830f50aa90",
+    "run-3-before-task_poll.json": "bd92a4d7958be309ff0bbcf4594fab24b497fefb26a3eb2b1f0cee2fee482a2d",
+    "run-3-before-parallel_graph_saga.json": "dfb06146ca9cea439ad93f8b096ef3d1d210a330b0eee4d77ff2afa75365c560",
+    "run-3-before-parallel_linear_saga.json": "93b79839fa295bb963243ef34fcf87704f93f9a5408beeb457dc543810b52735",
+    "run-3-before-replay_saga.json": "bfe13f951c87e789354330a2ee061839ac039998161efeaa4d7abfb95fcaa2b9",
+    "run-3-before-graph_saga.json": "44458ef33d8a36bf94527a40870ede3d694ae385aa2c99e7407eb305bb76f7b4",
+    "run-3-before-linear_saga.json": "e79ef1e17eb06a78b6190e4325fa604b4916b41940c5b5a900d9e367c3207d60",
+    "run-3-after-timeline_operations.json": "948005307d4ec0d7077e15d912b2f9e9d63a06de36fa5e7b607813bf3a30f0b0",
+    "run-3-after-contract_throughput.json": "e5538bba96cd6664b17c43735e9b4be02685afcbe915b19a47d86ffbf99357fa",
+    "run-3-after-task_poll.json": "19796b97a5cd72bc4e10d396fba72fe67808bd7fc826e739927d005064e2c494",
+    "run-3-after-parallel_graph_saga.json": "10c08b76f5d4cd28c50a81ff4bd34a17380b513244e256eece441b4e94cabdd4",
+    "run-3-after-parallel_linear_saga.json": "053a17f42e9df51e2cff0a1916f4838bf478e080728d2d58aed71b0cfda1cc5d",
+    "run-3-after-replay_saga.json": "8f552b76df7de7a169681a6465ed2c4487d46bcea262db9ef679628927266f6f",
+    "run-3-after-graph_saga.json": "7eaac55aa5019a3e0c300a0c9c89c1ab7c951232fe3222184f5f735f62256636",
+    "run-3-after-linear_saga.json": "7d50626def965b1c814b0efcc6183bfdddd2537698a65563b80f85eaa63732eb",
+    "run-2-after-timeline_operations.json": "65cfec26f0c26c693ccca3fe536a66d805a6aefe57fa16c25759ef5c1b878972",
+    "run-2-after-contract_throughput.json": "820c234fc642e16cfd0093eee9223b8a0ccde65c318faf24b8c9017ff7537ee1",
+    "run-2-after-task_poll.json": "0710e3df0684e32fbf3f55b8a485898b09512652ca988426f53cf9c02c713c95",
+    "run-2-after-parallel_graph_saga.json": "e1736399770c4bc7aa3f4cfd61731400ca5cd997a40f40d872f530eecdd57570",
+    "run-2-after-parallel_linear_saga.json": "120eb97a0f60371e11cba9829de2825070b06dd196d1bb16dc0f2fcd5c5bb8ad",
+    "run-2-after-replay_saga.json": "a2c26d60a54dac62ff21e987306e867b9debfadda578b43e9f1493e89589d62e",
+    "run-2-after-graph_saga.json": "9b9b416359cd37350777d6ebf66ea958ba22267404ef2b46fd57aec7166bbe7d",
+    "run-2-after-linear_saga.json": "ab1008bc67ecc11d4fcfbb653450cdd2260b93903b5e9c580b0053edf3d01133",
+    "run-2-before-timeline_operations.json": "967d9cdc066c7552a5296cf67d963f693983673364856c17aec73dfcf9e4e0df",
+    "run-2-before-contract_throughput.json": "1dbadaa2201c3cef3350bae2f09112cb7077d243b2e7ca75c60085ed88f65dda",
+    "run-2-before-task_poll.json": "7d2b878126b4c1553d4e781de82451c12210bb5537b2098c699c8528dd060fa0",
+    "run-2-before-parallel_graph_saga.json": "33e8902cce0dcd409e4ef22eb0b714f24a6aac3141c08b67c72c7bf360bd386a",
+    "run-2-before-parallel_linear_saga.json": "176e36005a80cde23ee8daa11023a37702fede7dbe41955357312ff93acc2f9c",
+    "run-2-before-replay_saga.json": "58f3b62c93621e4836fb1e5707d4fe914bd62aff3b16cf6f688edcd77505a274",
+    "run-2-before-graph_saga.json": "7c0801135a03aea5a9414595d776b99791c37e7ca964b1c4ff918410e975d6f6",
+    "run-2-before-linear_saga.json": "861e420c760e15a2803dfbab74e60f1da0f6d0f6e12bbfcc384e03044c8c25ed",
+    "run-1-before-timeline_operations.json": "8700621759d4d15ce65580071844bf1f0e8d37ee9a75acf047be528be4f42398",
+    "run-1-before-contract_throughput.json": "510d2846c253b0791904b6c1a63e27a5d0c86f3fb3e2f5f48ba8d27b4f4c1aa5",
+    "run-1-before-task_poll.json": "bfcab19ba459bab2e1aa48d3c665ffa038010ab4a2ad8050a44ca428d55ca365",
+    "run-1-before-parallel_graph_saga.json": "381bfa6d1e1e7396147ffbcd247353179df6688d7ea424497d061e08b2526ca1",
+    "run-1-before-parallel_linear_saga.json": "90764b0e1cc6bb943db00a8875e3a2de19dd90d88ab2c4de4662da04b8fa3ef2",
+    "run-1-before-replay_saga.json": "0c187a1c0aaba0887353957d859902ecb61f32ff4ba8a03bf8b4e001d1d3ceba",
+    "run-1-before-graph_saga.json": "81d0d7085b1c7dd495d1de9bd627620fa1ee7683ac7d27ebf6c08f6a255e1de1",
+    "run-1-before-linear_saga.json": "6ae839ee237ef50627df62487bcf0c34ff5a5beea7542b1520e199e934d8c364",
+    "run-1-after-timeline_operations.json": "cb8dc4fc49892a883ebf128ebbf1b51fba8b53603582a4b38f7f098ae93549a2",
+    "run-1-after-contract_throughput.json": "5a4e8b0cca287922cb6936603ad4c01b87a17161f1c8fd9e044024a0baa98599",
+    "run-1-after-task_poll.json": "79eaf00b22620c68c2d1c6b95cfd75f47b12cfe7dd75559f78107458d84983a0",
+    "run-1-after-parallel_graph_saga.json": "5d2e78bbba169e2d5bb5a047deb93b36040bd57f789cd9649b01fbf633a711c0",
+    "run-1-after-parallel_linear_saga.json": "6458eb4b86deea62e33a8e2e844874dce8124ea2357495898cc9005e3333343a",
+    "run-1-after-replay_saga.json": "4a71ae2bc7517747fd657eb53916674966f072581425ff29b4326d5f9d95f10d",
+    "run-1-after-graph_saga.json": "7572b6e3d58569c9fe3cecaad25e8db7744ef23c323247e1ff25f5463127ae7e",
+    "run-1-after-linear_saga.json": "6475c1d62b78aac09845e7adbba8832f94f9fcea81703f564912294034b67a6c",
+    "metadata.json": "5fa525251deffa462c4ad0a17823c847ba5ba90af575be1f59b89473a3349b9f",
+    "binaries/after/timeline_operations": "8969dbcb79545cb7e24a11a27a2470ddff0a3e8c68c31dc464fad049ff841e65",
+    "binaries/after/contract_throughput": "ac0355037aaa7f5f3eceb69b1949ed733b5c95e62eb92332da18ffb688040427",
+    "binaries/after/task_poll": "d53ef0a43938de8b438f6e85554230f6a571d2694a68418fdb062abd4aad44f1",
+    "binaries/after/parallel_graph_saga": "e7472eb1b2206d674e968ec2d4d8981f9fdbab82aa1f39f0853d58e21397773e",
+    "binaries/after/parallel_linear_saga": "622a74fd8e33b8497872c00377c7efa3519cf9f14aeb5cbc6981b85d7cdd1ac3",
+    "binaries/after/replay_saga": "f64c42dbf91230a877c59f8d3b36d994a4ba0294730c5186a5916b399a0e41ad",
+    "binaries/after/graph_saga": "dac71824d525602a72657254ae6ffb9beaa6c23d7ebe6817419d96cb68ae7eaf",
+    "binaries/after/linear_saga": "e1ca8b4345bf8901c63f8c90588858abb71c5167c40b579a3ad66c18f674917a",
+    "binaries/before/timeline_operations": "21cd18fb6cca3c7e9c545a8491ffd3cea2dc2c5c296c1ec06f1830560765414c",
+    "binaries/before/contract_throughput": "4bef2aab8e475f666b5a7e12898f8775865b35f4d96dc225abe4d2fa45ed04d5",
+    "binaries/before/task_poll": "5b12506e81709b95cad542d1130724ed720028af7cd6a5d513d8c8a56f061374",
+    "binaries/before/parallel_graph_saga": "76b01d4889101695639f82e0a2228dcc411013adef0eabda5ebee91f19ce4f02",
+    "binaries/before/parallel_linear_saga": "44492c0dfa0944a171cd0ad9e04f11c1a8183e04019d66b0741a9bd77d77349a",
+    "binaries/before/replay_saga": "4cf552c6d2e42af3ec21bcad5b08b1fe61ef9ff408b14d07f9ed433a19ba6031",
+    "binaries/before/graph_saga": "9cfcd4640e436f3628c294c91b01cc51cc2e41e748afe9cfd7d2c993853cd48c",
+    "binaries/before/linear_saga": "c9df4e233209d8727047b77e8142b463bbda68bce6c0c3e4cbc61f0291ab8873",
+    "inputs/after/rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d",
+    "inputs/after/Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+    "inputs/after/Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+    "inputs/before/rust-toolchain.toml": "0825b0dd5ce327e08440351f42880e728f21cf5be410aac844fc4281096dd8ab",
+    "inputs/before/Cargo.lock": "794f41d57f5a79c16fccc5577540d64527f2d19aa9b8cc049363748197d0a7fe",
+    "inputs/before/Cargo.toml": "67b98276ff7fbdea688537955b2a45a6bc170a2fab94c0672e45f5e555700f35",
+    "inputs/before/crates/penelope-executor/benches/task_poll.rs": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+    "inputs/before/crates/penelope-executor/benches/parallel_graph_saga.rs": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+    "inputs/before/crates/penelope-executor/benches/parallel_linear_saga.rs": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+    "inputs/before/crates/penelope-executor/benches/replay_saga.rs": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+    "inputs/before/crates/penelope-executor/benches/graph_saga.rs": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+    "inputs/before/crates/penelope-executor/benches/linear_saga.rs": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+    "inputs/before/crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "inputs/before/crates/penelope-ports/benches/contract_throughput.rs": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+    "inputs/before/crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "inputs/before/crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c",
+    "inputs/before/crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+    "inputs/before/crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+    "inputs/before/crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "inputs/after/crates/penelope-executor/benches/task_poll.rs": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+    "inputs/after/crates/penelope-executor/benches/parallel_graph_saga.rs": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+    "inputs/after/crates/penelope-executor/benches/parallel_linear_saga.rs": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+    "inputs/after/crates/penelope-executor/benches/replay_saga.rs": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+    "inputs/after/crates/penelope-executor/benches/graph_saga.rs": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+    "inputs/after/crates/penelope-executor/benches/linear_saga.rs": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+    "inputs/after/crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "inputs/after/crates/penelope-ports/benches/contract_throughput.rs": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+    "inputs/after/crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "inputs/after/crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c",
+    "inputs/after/crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+    "inputs/after/crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+    "inputs/after/crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "driver.py": "4ef593b6d90effe5b24093ead1b08ed59c620efedb341602ad6c5a5f46d06768",
+    "driver-original.py": "b59111bab73e1a2990aaad263b40b3c7a76e9aca508eec90259c3dfcd65e9834",
+    "summarize.py": "9cf901d12dc4932e2363c28c1ed9bec0893fa906454893c512b1496f210b39d0",
+    "summarize-decision-perf.py": "f2009403d9ab30a5d87b8131b48659acdbb5c8f8bdf869a1bc858568ad252e99",
+    "driver.log": "62ba1b0001516b5d74b5105ebf710b97187491cac863790c90ac975489cfc326",
+    "record.py": "cfbf9da44531aebe74c76459101e181d59acb3ec24d81d5b5834dbe7a86cb98b"
+  },
+  "open": "Encoding and library timeline flags require diagnosis and explicit disposition. No historical finding is removed; full immutable-source chaos and final audit remain open."
+}

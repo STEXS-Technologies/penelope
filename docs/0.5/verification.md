@@ -40,10 +40,11 @@ measurements, and line coverage is not branch completeness or a safety proof.
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
   does not replace it. The older development rehearsal remains separate evidence.
-- Finish the versioned same-workload performance comparison against original
-  0.4 (`42ec187`): 31 alternating pairs across all eight selected legacy
-  benchmarks, with 1,000 samples per timeline profile. Retain every finding and
-  resolve review blockers under [plan §13.2](plan.md#132-baseline-performance-methodology).
+- Resolve findings from the completed versioned same-workload performance
+  comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
+  eight selected legacy benchmarks, with 1,000 samples per timeline profile.
+  Retain every finding and resolve review blockers under
+  [plan §13.2](plan.md#132-baseline-performance-methodology).
 - Finish the requirement-by-requirement maintenance/release audit, dated release
   notes and final source/artifact reconciliation. Passing earlier checkpoints
   does not qualify later source automatically.
@@ -63,6 +64,8 @@ worst-case latency guarantee is implied.
 
 | Workload or finding | Retained evidence and disposition |
 | --- | --- |
+| Versioned 0.5 versus 0.4 | [Complete 31-pair comparison](evidence/legacy-balanced/versioned-candidate.json): all 496 measured processes and 16 binary identities retained. DTO encoding loop means are 312.95 → 357.19 ns (+14.14%, 27/31 pairs over 5%); timeline retains 31 p50 and 9 p95 flags, including five handwritten Ring control flags. Saga/task loop-mean profiles do not cross the review threshold; that does not establish equivalence |
+| Inherited reads in the versioned candidate | One-word/one-step inherited collection p50 is 211 → 291 ns (+37.91%); p95 is 231 → 301 ns (+30.30%), each crossing its threshold in 29/31 pairs. Additional inherited horizons/correction paths are flagged. Timeline production source and the shared core helper are unchanged since `94a7396`; this observation does not identify the cause or waive the new findings |
 | Legacy saga/task/timeline | [Initial comparison](evidence/legacy-performance/manifest.json), [task/timeline extension](evidence/legacy-runtime/manifest.json), [31-pair follow-up](evidence/legacy-balanced/manifest.json): raw observations and all flags remain retained; process loop means and timeline p50/p95/p99 are distinct measurements |
 | DTO encoding | The 31-pair development comparison measured 306.56 → 354.14 ns median **process loop means** (+15.52%, about 48 ns); this is not an individual-call percentile. [Layout controls](evidence/legacy-balanced/encoding-layout.json) reproduce sensitivity with identical text bytes; [inlining diagnostic](evidence/legacy-balanced/encoding-inline.json) rejects an unstable hint. No production hint or linker workaround is retained |
 | Legacy timeline | [Later 31-pair comparison](evidence/legacy-balanced/timeline-current.json) retains history-capture p50 251 → 270 ns and history-append p95 291 → 321 ns flags. Its flagged `ring_replay` profile is a handwritten control, not a Penelope replay API call; it is neither subtracted nor used to waive library findings |
