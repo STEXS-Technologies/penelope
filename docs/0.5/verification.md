@@ -68,6 +68,12 @@ sustained regression. Coverage passes narrowly and is lower than the preceding
 unexercised. All 15 invariant-owner mappings and 33 boundary-test references were
 rechecked against current passing results; their 27 owner source files are unchanged.
 
+The [phase work audit](evidence/maintenance/phase-audit.json) maps all 50 work
+items and nine gates in plan §11 to 67 source/evidence files. It distinguishes
+scoped implementation support from open performance/release work and unproven
+historical sequencing. Named test sets and the detailed clauses outside §11
+still require separate review; this is not a completion certificate.
+
 ### Release acceptance review — November 16, 2026
 
 This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negotiable)
