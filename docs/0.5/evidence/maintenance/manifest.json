@@ -189,5 +189,43 @@
     "validation": "Both source revisions parse without Rust syntax errors; all crate src files reachable from library roots or excluded test modules. Nested lease_clock_tests and schema_inbox_tests correctly excluded. The exact clone groups and their source coordinates are unchanged from baseline.",
     "limits": "Conservative source-token inventory across cfg/platforms, not compiled code size. Includes macro definitions unexpanded, excludes comments and provably test-only items/files. Whole-body exact clones miss partial/renamed/semantic duplication. No numeric deletion target, no claim of net production-code reduction or complete absence of duplication.",
     "discarded_tool_attempt": "System Python 3.14/tree-sitter 0.26.0 crashed in Point access during scratch analysis. No result used; rerun completed using Python 3.13.13/tree-sitter 0.25.2/tree-sitter-rust 0.24.2. This was the measurement tool, not a library runtime failure."
+  },
+  "candidate_source_followup": {
+    "source_commit": "9a5a1dbef9cbb1cf5453f403264ffcb82e303cbf",
+    "baseline_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "commands": [
+      "uv run --python 3.13 --with tree-sitter==0.25.2 --with tree-sitter-rust==0.24.2 python docs/0.5/evidence/maintenance/production_inventory.py --before 42ec187c9adfc7403b06215f405f2575f53c35c2 --after 9a5a1db",
+      "python3 docs/0.5/evidence/maintenance/inventory.py --before 42ec187c9adfc7403b06215f405f2575f53c35c2 --after 9a5a1db"
+    ],
+    "artifacts": {
+      "candidate-production-inventory.json.gz": {
+        "raw_sha256": "d6b869e48b518b5fe07741881f75f65b25350b7490e06a0179ea5b46f5324713",
+        "gzip_sha256": "8ad6ebd303db871e37d1099b266cff966c0da95025e4413660952adce913e3b0"
+      },
+      "candidate-inventory.json.gz": {
+        "raw_sha256": "c6b879edd0fc5e4d6b90af10557875d9dd6ca743fe2161e0ba125cd208b2b25e",
+        "gzip_sha256": "2f67af0f0afc2dd15384954dfe5c1fa400b3f66919ae37d989cb7cf4441bac65"
+      }
+    },
+    "production_lines": {
+      "before": 14356,
+      "after": 18867,
+      "existing_path_delta": 101
+    },
+    "exact_function_body_clone_groups": {
+      "before": 2,
+      "after": 2,
+      "minimum_tokens": 40,
+      "disposition": "Same thin forwards to the existing shared effect-key encoder and native DTO scope projections. Public legacy methods remain distinct; no new whole-function clone group found. This check cannot exclude partial, renamed, macro-expanded or semantic duplication."
+    },
+    "declared_dependency_edges": {
+      "before": 72,
+      "after": 69
+    },
+    "tracked_markdown_files": {
+      "before": 171,
+      "after": 59
+    },
+    "limits": "Exact source inventory, not proof of lower complexity, runtime equivalence, reduced test cost, flake rate or final release qualification. New capabilities increased total production source; no numeric deletion target."
   }
 }
