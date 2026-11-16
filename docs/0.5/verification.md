@@ -55,6 +55,41 @@ smaller number of flags do not by themselves establish equivalence or waive a
 sustained regression. Coverage passes narrowly; its margin has not improved over
 the preceding failure-path checkpoint.
 
+### Release acceptance review — November 16, 2026
+
+This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negotiable)
+to its evidence and remaining obligation. “Implemented” below describes the
+checked capability, not final release qualification. The checkpoint, static API
+and capability archives have been rechecked against all 480 recorded member
+hashes; all 27 invariant-owner source hashes still match. Runtime/build inputs
+remain identical to `9a5a1db`. Documentation and package metadata still need final
+artifact reconciliation.
+
+| Acceptance condition | Evidence and disposition |
+| --- | --- |
+| Unified programming model | Implemented: kernel/hierarchy checks, six consumer binaries and the 15-invariant audit cover typed dispatch, rejection, publication and provenance. Callback determinism remains a consumer obligation |
+| No mandatory extras | Verified portable core bare/serde builds on both compilers; allocation probes cover allocation-free consumer types. The hosted umbrella facade is not the no-std target |
+| Real integration | Implemented: prepared saga/task views and the durable consumer exercise native admission, verified worker result, subsequent machine transition and saga admission. Native engines retain execution authority |
+| No new rewind engine | Implemented: `MachineTimeline` delegates to the existing correction engine; frozen timeline observations and adapter tests pass. Timeline performance findings remain open |
+| Durability exists | Implemented: journal/CAS, exact retries, snapshots, source-bound outbox, migration and eight kill boundaries have checked evidence. Full candidate chaos remains open |
+| No effect guessing | Enforced in the audited native handoff, unknown-outcome and generation/reconciliation boundaries. Durable admission does not establish exactly-once external execution |
+| Proven compatibility | Frozen observations, unchanged consumer, static signatures/export bindings and actual old-writer upgrade pass. Upgrade/backup-restore obligations are documented; unsupported downgrade is not offered |
+| One public API | Canonical facade, migration table and source-derived first-machine tutorial are checked on stable/MSRV. Advanced durable metadata remains explicit; no local convenience layer is claimed |
+| Reduced fragmentation | Shared owners and retained protocol boundaries are documented in ADR-050-06; inventories and rejected simplifications are retained. Production source grew with capabilities; exact clone counts do not prove absence of semantic duplication |
+| Portable and bounded | Stable/MSRV RISC-V compilation, allocation probes, capacity/fault tests and invariant audit pass in their stated profiles. No physical-board, arbitrary callback or whole-process memory bound is inferred |
+| Qualification complete | **Open:** immutable full chaos, legacy performance findings and final source/artifact reconciliation. Seven green CI jobs and passing extracted packages do not close these obligations |
+| Release controlled | Candidate versions/order and unreleased notes are prepared. **Open:** final dated release entry and artifact reconciliation after qualification; tagging/publication still require separate authorization |
+
+The §13.2 measurement audit also retains a scope gap: the legacy SQLite paired
+comparison uses earlier candidate `e8a701d`, whereas the versioned eight-benchmark
+comparison excludes that workload. Reconcile or refresh that comparison against
+the frozen release source before closing database performance review. Current
+machine-store timings and process resource observations do not supply measured
+WAL size, per-commit physical disk writes or a general throughput bound. Earlier
+empty `rlib_artifacts` inventories likewise supply no binary-size evidence;
+the refreshed executable sizes apply only to the retained benchmark binaries.
+Single-run maintenance test timings supply observations, not a flake-rate estimate.
+
 ## Performance evidence
 
 Measurements retain their recorded revision scope. The new-capability refresh
