@@ -953,3 +953,34 @@ This improves the existing entry path without introducing an identity policy,
 state owner or evaluator. Scope, event identity, digest and logical time remain
 application-supplied. Full exact-candidate release qualification and the remaining
 performance findings are still open.
+
+
+## Portable encoding hint evaluated without retention
+
+The [inlining diagnostic](evidence/legacy-balanced/encoding-inline.json) compares
+source `a49f58a` with one isolated `#[inline]` attribute on the macro-generated
+canonical-wire methods. The frozen fixture remains byte-identical to original
+0.4 source. A separate diagnostic cycles four DTOs, black-boxes both the input
+and complete output, checks full bytes against `serde_json::to_vec` before timing,
+and verifies aggregate output size.
+
+Across 15 rotated rounds, normal frozen loop medians are 366.02 versus 361.22
+ns/op; the median paired change is -0.60%, with an exploratory interval spanning
+zero. The opaque profile improves from 371.61 to 335.84 ns/op, and whole-process
+instruction medians fall from about 861.08M to 813.59M. Frozen whole-process
+instructions likewise decrease from about 854.80M to 805.03M. Counters include
+outcome-log append; they do not isolate serialization instructions.
+
+A diagnostic-only four-position link grid retains identical `.text` bytes within
+each source/fixture variant. The hint improves the sampled opaque profile at all
+four placements, but frozen elapsed time is worse at three matched placements
+and better at one. This does not establish a reliable elapsed-time fix for the
+retained frozen-workload finding. These are process-loop mean measurements, not
+individual-call latency percentiles, allocation or stack measurements.
+
+The hint and extra benchmark are not retained. Production serialization, capacity
+hints and the frozen fixture stay unchanged; no linker setting or performance
+exception is adopted. Raw source patches, code bytes, binary identities, compiler
+commands, counters and every timing remain available, including the driver's
+initial invalid-reference failure before any build. Original encoding/timeline
+findings and exact final-source release qualification remain open.
