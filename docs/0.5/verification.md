@@ -32,7 +32,7 @@ This closes that scoped follow-up, while full release qualification remains open
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
 | Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; the current checkpoint includes the test in both extracted-workspace runs and fresh coverage |
 | Replay-mutation fuzz follow-up | [Initial checks](evidence/qualification/replay-mutation-initial.json) pass for the augmented SQLite target: ten deterministic seeds, 1,000-run smoke, strict Clippy and formatting. Reverse exact retries, future-head refusal and checksummed scope/model/event-digest substitutions are exercised. The [supplementary campaign](evidence/qualification/replay-mutation-complete.json) completes all three 100,000-run rounds with unchanged source/binary and retained terminal corpora. Its `f36b77d` base predates isolated event replay; it does not qualify that newer method |
-| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. The current checkpoint includes packages, coverage and CI; supplementary fuzz and full-source campaign reconciliation remain open |
+| Event replay | [Recovery follow-up](evidence/qualification/event-replay.json): original events are reevaluated through normal preparation, with complete regenerated record/payload comparison and discarded intents. Stable/MSRV ports tests and SQLite history tests pass; all 512 small-history pagination configurations now also check replayed state. Two compiled negative controls must fail. The current checkpoint includes packages, coverage and CI. The [supplementary SQLite campaign](evidence/qualification/event-replay-fuzz-complete.json) completes three 100,000-run rounds at `9084239`, with actual model-reevaluation replay, retained corpora and unchanged source/binary. All 72 production sources match the current checkpoint. Full-source campaign qualification remains open |
 | Repeated journal kills | [Growing-journal crash/model check](evidence/qualification/repeated-machine-kill.json): three seeds, 16 successive SIGKILLs per database, all eight commit boundaries twice per seed. Both compilers pass all nine machine unit tests; every retained prefix, payload/intent, row count and exact retry is checked after each death and reopen. Test-only addition; the current archive checkpoint includes it on both compilers, separately from clean-reopen fuzzing |
 | Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 700 passes on each compiler, with the added replay and repeated-kill tests observed and every Penelope dependency resolved from those archives |
 | Locks | Extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`; every retained external identity/checksum is unchanged and both compiler runs use the same lock with `--locked`. Earlier six-lock inventories retain their recorded scope |
@@ -91,9 +91,9 @@ historical sequencing. Named test sets and the detailed clauses outside §11
 still require separate review; this is not a completion certificate. The
 [required test-layer audit](evidence/maintenance/test-layer-audit.json) maps all
 28 clauses in §13.1 to 29 observed stable/MSRV tests and 20 archived external
-gates. It retains the live campaign obligation, distinguishes seeded process
-kills from clean-reopen fuzzing, and leaves targeted replay-mutation coverage
-partially open.
+gates. It retains the live campaign obligation and distinguishes seeded process
+kills from clean-reopen fuzzing. Its earlier targeted replay-mutation gap now has
+separate completed supplementary follow-up evidence above.
 
 The [integration contract audit](evidence/maintenance/integration-contract-audit.json)
 maps all 20 numbered saga/task/timeline work items in §6.1–6.3 to 29 source files
@@ -101,6 +101,13 @@ and 13 named tests observed on both compilers at `7d24718`. It also retains the
 real-worker progression and wrong-result refusal from stable CI. Native authority
 boundaries and conditional extraction decisions remain explicit; the orchestration
 performance item and final release qualification stay open.
+
+The [whole-plan review index](evidence/maintenance/plan-review-index.json) covers
+all 514 source blocks, including prose, tables and 13 fenced examples/diagrams.
+It links scoped audits and separately reviews all seven existing-deployment
+clauses against current CI and the original-writer rollback evidence. Blocks are
+not atomic requirements; indexing does not certify completion. Unreviewed blocks
+remain visible instead of being inferred complete from adjacent checks.
 
 ### Release acceptance review — November 16, 2026
 
