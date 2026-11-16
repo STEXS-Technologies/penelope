@@ -120,6 +120,32 @@
     "reviewed_blocks": 7,
     "scope": "Six explicit adoption steps and rollback/reconciliation documentation; no production rollout, automatic state conversion or external-effect rollback is certified."
   },
+  "compatibility_matrix_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope/Cargo.toml": "5724eb84430f49db048753d86bd8efb99fb17704b6d370aee44074d4276dcb26",
+      "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+      "ci/compat-0.4/README.md": "92b23ccf857911848131c335c677a8683589ce55bc9f48bcf050f9e4ca7696b4",
+      "ci/compat-0.4/src/lib.rs": "6b6051b07684777077359316f83b4ded7a00c48e9fae76b5d32a9c5b59503b24",
+      "ci/compat-0.4/src/protocols.rs": "f8bfa20c3b88935d3160321e1c650fae1e6ed3102499eb614ccda120af8a9705",
+      "ci/compat-0.4/baseline/manifest.json": "93fff0f881d7e7018c9696f12161cba2e1420733b0389e5cd77c905e30aa0573",
+      "ci/saga-parity/README.md": "df41ed07e5d3c9feb4d263818c9d2e2ac895241bf62f34982b6246081919235a",
+      "ci/saga-parity/src/main.rs": "2c2893572926f69fa8390ddedf8c893ee41152875e91f71fbd0cf160debd858e",
+      "ci/saga-parity/baseline/manifest.json": "c6ce3ee1dfdad93ffc44f5c9fc79752d41d6743e6fcee82529a7e125900763ff",
+      "scripts/check-saga-machine-parity.sh": "d723691d8c2e9b7f1cd4da429619eebdb1e9ed2fd564183309754ebc144d2860",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82"
+    },
+    "reviewed_blocks": 14,
+    "named_tests_observed_both_compilers": [
+      "independent_goldens_bind_endianness_causation_order_and_full_width_counters",
+      "independently_assembled_v1_golden_records_are_canonical",
+      "checkpoint_restoration_preserves_authority_finality_and_consumed_branch_ids",
+      "delayed_dispatch_cannot_revive_a_generation_fenced_by_reconstruction",
+      "checkpoint_upgrade_requires_explicit_application_authorized_import",
+      "ignored_process_commit_writes_cannot_return_partial_success"
+    ],
+    "scope": "Thirteen compatibility surfaces and the explicit source-change policy. Frozen finite corpora and supported host profiles are not universal compatibility proof; full campaign and performance acceptance remain open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -129,11 +155,11 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 183,
+      "needs_individual_review": 169,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 95,
+      "individually_reviewed_scoped_support": 109,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
       "advisory_pr_breakdown": 15,
@@ -5388,8 +5414,15 @@
       "kind": "table",
       "sha256": "52a2554673d1eb8e1f644b9c72a3da894808a40125a170a847249a0244705d96",
       "preview": "| Old linear saga API/imports | Keep functioning; canonical new `saga` path | Compile external 0.4 consumer fi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The unchanged external import fixture and frozen linear saga observations pass through both legacy and canonical prepared facade paths on stable/MSRV. Existing exports remain aliases/reexports of the native contracts; the new graph-start lifetime relaxation is separately qualified."
     },
     {
       "line": 844,
@@ -5398,8 +5431,15 @@
       "kind": "table",
       "sha256": "38b407911168bbf365d654f8f9874a101e3cf9e01da9642cd8ba720d95e6357a",
       "preview": "| Old graph saga API/imports | Keep functioning; new adapter/view | Exhaustive graph parity and replay tests |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The graph adapter delegates to the native engine. The frozen corpus covers196 deterministic linear/graph histories,3136 observations and successful-prefix replay; native graph definition/action/scope tests remain. The plan wording exhaustive graph parity is bounded by these finite input models, not a claim that all possible graphs and downstream programs are enumerated."
     },
     {
       "line": 845,
@@ -5408,8 +5448,15 @@
       "kind": "table",
       "sha256": "506fa64cb94d8f74a0144eb065245edbd983ba337dd423f1ef1af4df169d92a0",
       "preview": "| Saga v1 wire and outcome contracts | **No reinterpretation/rewrite** | Golden byte fixtures and cross-versio",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Legacy process wire/outcome interpretation remains independent of machine wire. Both saga facade paths reproduce exact original bytes, errors and replay observations. This is bounded cross-version compatibility evidence, not equivalence for every hypothetical serialized input."
     },
     {
       "line": 846,
@@ -5418,8 +5465,15 @@
       "kind": "table",
       "sha256": "5c1b1fa270e2eb352b63a6b379ad7e13ec616be083ba2ffd74a593967acd347b",
       "preview": "| Task history v1, checkpoint schemas | **No reinterpretation/rewrite** | Frozen task history, recovery and mi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The frozen33278-observation task/timeline corpus checks original history bytes, selected exhaustive enum matches, recovery policies and checkpoint restoration. Current tests separately reject unauthorized checkpoint migration and substitution. New machine schemas do not reinterpret task v1."
     },
     {
       "line": 847,
@@ -5428,8 +5482,15 @@
       "kind": "table",
       "sha256": "1c869209e346c86a8aa845f24775ddd7e7bd70e869da593f06e59e11d9808b7c",
       "preview": "| `TaskControl` restart/fencing semantics | Preserve exact authority gates | State-model fuzz + subprocess cra",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "TaskControl and native supervisor authorities remain at their original source owners. Stable/MSRV observe delayed-dispatch generation-fencing and checkpoint-authorized-import tests; process-death and model evidence retains its separate scope. New machine admission does not supersede fencing or certify remote exactly-once effects."
     },
     {
       "line": 848,
@@ -5438,8 +5499,15 @@
       "kind": "table",
       "sha256": "cc8e0f1b09851ce38ef88c3963f417ad06402e53edcdebf801eda6753ed56586",
       "preview": "| Timeline `penelope.timeline.v1` metadata | Preserve independent format and correction frontiers | Golden cod",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Timeline metadata keeps its independent v1 decoder and finality/frontier rules. Original task/timeline observations remain frozen, and independently assembled golden records plus checkpoint/finality restoration checks pass on both compilers. Machine adaptation does not reuse the timeline protocol tag for durable machine commits."
     },
     {
       "line": 849,
@@ -5448,8 +5516,15 @@
       "kind": "table",
       "sha256": "af068d21a6b7cda71d20f721b3c45a50ed4f9c375bfb106a1ae48f3841f1a04c",
       "preview": "| Timeline `LiveTimeline` and facade feature | Preserve, add optional machine adapter | External compile and c",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "LiveTimeline remains the native implementation, reexported only when the facade timeline feature is selected. The optional adapter delegates correction/replay to that engine. External consumers and current CI cover both feature selections; timeline performance findings remain open."
     },
     {
       "line": 850,
@@ -5458,8 +5533,15 @@
       "kind": "table",
       "sha256": "8dcb50b985489141a6e6582a8d64bb0526d78e6b2d4e0434338f19586195d4bb",
       "preview": "| `AtomicProcessCommit` and process stores | Retain as saga-specific contract | Existing SQLite/process confor",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "AtomicProcessCommit remains a saga-specific exported storage contract. Existing process conformance and suppressed-write checks remain current tests; machine commit/receipt types are independent. Shared SQLite helpers do not merge process authority with machine publication."
     },
     {
       "line": 851,
@@ -5468,8 +5550,15 @@
       "kind": "table",
       "sha256": "09dc33c22988c191a0302514714e83391e86b7b8771c4d110ae3af91778674d7",
       "preview": "| Existing SQLite databases | Upgrade with forward-only machine schema; no deletion/conversion of existing tab",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The actual0.4-writer fixture preserves15 legacy tables and native replay through schema6-to9 plus two reopens. Transactional migration/process-kill checks and old-binary refusal retain their scope; no automatic downgrade or every-real-database claim is made."
     },
     {
       "line": 852,
@@ -5478,8 +5567,15 @@
       "kind": "table",
       "sha256": "5005323643cf54113d7d2f4f8554ff38c1941bd5f10038d510bc15aec904108b",
       "preview": "| New machine protocol | `penelope.machine.v1`, separately versioned | Independent golden vectors, strict deco",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine metadata has its own penelope.machine.v1 tag, strict decoder and independently assembled full-width/endianness/causation goldens. Mutation/truncation checks and bounded fuzz are separate evidence. The final full-source three-round campaign is still required before release."
     },
     {
       "line": 853,
@@ -5488,8 +5584,15 @@
       "kind": "table",
       "sha256": "ab11f8698e29b249f8e7d1222d7071a374517a086c5ed82b37ab1eace2aa2057",
       "preview": "| StateChronicle verified canonical events | Retain correlation/trust contract | Upstream pinned conformance s",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The StateChronicle integration retains independently verified canonical evidence and exact commit correlation. Current CI succeeds against pinned upstreamae3d94bc with seven selected signed-source tests. This does not transfer upstream authority to local hashes or certify unpinned future upstream revisions."
     },
     {
       "line": 854,
@@ -5498,8 +5601,15 @@
       "kind": "table",
       "sha256": "2494f5af46705f16c5ad6ab4c274a99dcafbddf208e5d8f99f7b86cfd7994768",
       "preview": "| Default facade feature set | Keep small; machine core usable by default; timeline remains opt-in | Cargo fea",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade default features are empty; timeline is the only declared optional facade feature. Core machine exports are available without timeline, runtime or SQLite dependencies. Existing hosted facade dependencies mean this is not a promise that the entire umbrella crate is no_std; portable core remains a separately checked profile."
     },
     {
       "line": 855,
@@ -5508,8 +5618,15 @@
       "kind": "table",
       "sha256": "5a6b0a23a9eba14387d3245882d56c998e5dad11ba2d3299201fbc0b947fb322",
       "preview": "| Linux process worker | Retain optional supported profile | Existing runtime isolation/fencing tests |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The optional process runtime retains the supported Linux x86-64 isolation/fencing profile. Current supervised worker progression passes on stable/MSRV with verified task output and wrong-result refusal. No portability to other host profiles, distributed fencing or arbitrary process-level memory bound is inferred."
     },
     {
       "line": 857,
@@ -5518,8 +5635,15 @@
       "kind": "paragraph",
       "sha256": "83660982fbb3751243c552f6aa12cc89d95e247ced5d818c479ff200497f8d4f",
       "preview": "An *unavoidable* source change (e.g. a new public enum variant that breaks exhaustive matches) requires a writ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_parity_and_named_tests_observed_both_compilers_with_finite_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The documented source compatibility decision explicitly records the approved Rust1.85-to1.89 minimum increase for patched SQLite. Original consumer sources and old baseline dependencies remain frozen; current consumers run at the new minimum. Static API review and negative controls retain bounded host-only scope; pre1.0 versioning is not used to waive those checks."
     },
     {
       "line": 861,
