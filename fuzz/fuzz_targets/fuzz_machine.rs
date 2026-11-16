@@ -4,6 +4,8 @@ use libfuzzer_sys::fuzz_target;
 use penelope_core::machine::*;
 use penelope_core::task::Digest;
 use penelope_timeline::*;
+#[path = "../../crates/penelope-core/tests/support/generated_machine.rs"]
+mod generated;
 
 const DEFINITION: MachineDefinition = MachineDefinition {
     fingerprint: MachineDefinitionId::from_bytes([3; 32]),
@@ -387,6 +389,7 @@ fn wire_run(data: &[u8]) {
     }
 }
 fuzz_target!(|data: &[u8]| {
+    generated::check(data);
     wire_run(data);
     match data.first().copied().unwrap_or(0) % 3 {
         0 => {

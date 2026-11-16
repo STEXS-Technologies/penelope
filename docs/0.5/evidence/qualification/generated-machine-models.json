@@ -1,0 +1,171 @@
+{
+  "scope": "Plan13.1 generated bounded machine definitions, nested paths and one-level flat equivalence. Test/fuzz strengthening only; production/library/dependency inputs match cefa55f. Separate from the running full-target campaigns and final packaged-source reconciliation.",
+  "proposal_base_commit": "f98fea61ac75a48e0a716d4ee5187065d4efa13c",
+  "production_source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+  "source_hashes": {
+    "crates/penelope-core/tests/generated_machines.rs": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+    "crates/penelope-core/tests/support/generated_machine.rs": "6f8acc942fb9708fbd3e7cf3a44279d4c6363faf6033868947d99fb082fd48ef",
+    "fuzz/fuzz_targets/fuzz_machine.rs": "fe4fde4a7ce6ce297328bece0a588c62db38f9d466ef7bbdf727e26d9d823c61"
+  },
+  "checks": {
+    "stable": "One deterministic generated-model test passes on Rust1.100.0.",
+    "msrv": "Same test passes on Rust1.89.0.",
+    "clippy": "Strict targeted Clippy passes; original lint failures retained.",
+    "format": "Workspace rustfmt check passes.",
+    "generated_inputs": "512 xorshift64 seeds each produce138 input bytes, plus all-zero/all-255 lengths0..42. Inputs vary8 nodes,4 events, immutable per-run transition tables, bounded acyclic parent forests, initial states and intent budgets. At most96 events per evaluation.",
+    "oracle": "Ordinary ancestor lists and membership choose the nearest handler and LCA; independently expected state/revision, transition coordinates, intent origins and exit/action/entry order are checked after each event. Native Table dispatch is compared with a one-level Hierarchical<Table,1>; replay repeats exact captured events and context. Cyclic restored paths and insufficient depth refuse."
+  },
+  "negative_controls": {
+    "controls": [
+      {
+        "control": "swap-exit-hook",
+        "exit_code": 101,
+        "compiled_and_test_failed": true,
+        "log": "swap-exit-hook.log"
+      },
+      {
+        "control": "suppress-parent-fallback",
+        "exit_code": 101,
+        "compiled_and_test_failed": true,
+        "log": "suppress-parent-fallback.log"
+      }
+    ],
+    "production_source_restored": true
+  },
+  "negative_mutations": [
+    {
+      "owner": "crates/penelope-core/src/machine/hierarchy.rs",
+      "before": ".exit(node, current, &mut next, context, intents)",
+      "after": ".enter(node, current, &mut next, context, intents)"
+    },
+    {
+      "owner": "crates/penelope-core/src/machine/hierarchy.rs",
+      "before": "HierarchyDecision::Unhandled => {}",
+      "after": "HierarchyDecision::Unhandled => return Ok(Transition::Unhandled),"
+    }
+  ],
+  "fuzz": {
+    "status": "complete",
+    "base_commit": "f98fea61ac75a48e0a716d4ee5187065d4efa13c",
+    "production_source": "cefa55f",
+    "source_hashes": {
+      "crates/penelope-core/tests/generated_machines.rs": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+      "crates/penelope-core/tests/support/generated_machine.rs": "6f8acc942fb9708fbd3e7cf3a44279d4c6363faf6033868947d99fb082fd48ef",
+      "fuzz/fuzz_targets/fuzz_machine.rs": "fe4fde4a7ce6ce297328bece0a588c62db38f9d466ef7bbdf727e26d9d823c61"
+    },
+    "binary_sha256": "df8a35d6bb8cb7b1a9c8ba705a7a108b6f4547895d05729cee71e3748a5e7fa6",
+    "rounds": [
+      {
+        "seed": 1,
+        "args": [
+          "taskset",
+          "-c",
+          "4-7",
+          "cargo",
+          "+nightly",
+          "fuzz",
+          "run",
+          "fuzz_machine",
+          "/tmp/penelope-050-generated-model-fuzz/corpus-1",
+          "--",
+          "-runs=100000",
+          "-seed=1",
+          "-max_len=256"
+        ],
+        "exit_code": 0,
+        "seconds": 53.101560831069946
+      },
+      {
+        "seed": 2,
+        "args": [
+          "taskset",
+          "-c",
+          "4-7",
+          "cargo",
+          "+nightly",
+          "fuzz",
+          "run",
+          "fuzz_machine",
+          "/tmp/penelope-050-generated-model-fuzz/corpus-2",
+          "--",
+          "-runs=100000",
+          "-seed=2",
+          "-max_len=256"
+        ],
+        "exit_code": 0,
+        "seconds": 50.81916093826294
+      },
+      {
+        "seed": 3,
+        "args": [
+          "taskset",
+          "-c",
+          "4-7",
+          "cargo",
+          "+nightly",
+          "fuzz",
+          "run",
+          "fuzz_machine",
+          "/tmp/penelope-050-generated-model-fuzz/corpus-3",
+          "--",
+          "-runs=100000",
+          "-seed=3",
+          "-max_len=256"
+        ],
+        "exit_code": 0,
+        "seconds": 46.99397659301758
+      }
+    ],
+    "scope": "Augmented existing fuzz_machine target only; three independent seeded corpora,100000 requested executions per round. Other full-target campaigns retain their original harness/source scopes.",
+    "source_unchanged": true,
+    "binary_unchanged": true
+  },
+  "archive": {
+    "file": "generated-machine-models.tar.gz",
+    "sha256": "67727d35be60d1ff7d8f5599d5a33018e62d99ae4786d957496457b70ba680cf",
+    "member_count": 34,
+    "members_sha256": {
+      "fuzz/source-post.json": "40f39be251a0560570f98ab0c5673bcb2985f29a3b0b0cdc5d97ab590e672562",
+      "fuzz/manifest.json": "741b54c6423d48df8fced8444a7b315f4bf74c5d2b55f80e3765705ac12cc26f",
+      "fuzz/source-pre.json": "40f39be251a0560570f98ab0c5673bcb2985f29a3b0b0cdc5d97ab590e672562",
+      "fuzz/round-3.log": "97c65d98326a059396660fca6483072772a026e6cda58e87d290b91ec548b128",
+      "fuzz/round-2.log": "c27a0ca0217efe67428e6526f0711aa1f4c4107d674d58f057be46bb1634c636",
+      "fuzz/round-1.log": "31a9c684f3f0ade436d6275380cee983acdf883e68861d794868722ba92790b6",
+      "controls/manifest.json": "86bbe26f977c060ee8977a951b0125e7c0fb70381a999d15ace9fed08d37cf99",
+      "controls/suppress-parent-fallback.log": "04c15825c58797e5eba35b4ac115d00f267a631d6882a9eef289f6cf62bc5fc6",
+      "controls/swap-exit-hook.log": "138cbb6fca69e474da63fe94b58012edab64b523bab13aa705e508d9ff96b761",
+      "checks/penelope-050-generated-model-graph-final.log": "babb8241f3fe2a30fa268a67ef932290b673279552ea2512a6dc984ad62bb73b",
+      "checks/penelope-050-generated-model-fuzz.log": "bc6994a796954e33f4f5a51987709cf0114d8ff7a99c76456b13aa0603b6d11b",
+      "checks/penelope-050-generated-model-clippy-final.log": "a0ca82894a0d18fb93f5feb93f32d177dae7877a23dc757aba17209412365ca2",
+      "checks/penelope-050-generated-model-stable-final.log": "297b1411e3051fbcfa123959daf0b7b947c2ffab06119a114a3c2de7511dc907",
+      "checks/penelope-050-generated-model-fuzz-build-final.log": "6784ef97083b5cb0e0fd2e2c6f225a40eb3b311f2e74c1dbfc3d831b5ed8bcb2",
+      "checks/penelope-050-generated-model-msrv-final.log": "6308d52faba5665a26bd06b6b08993faa3b9557b53e9b34e051cb1c8dc27e3c0",
+      "checks/penelope-050-generated-model-msrv.log": "a0ecba4423ea557cac7372aaa341cf4fb80499d57da1f287d17a2aae6c150a00",
+      "checks/penelope-050-generated-model-fuzz-build.log": "4d25f8c58a58ab0e4583f064287b23c69ca6dc21e6cdb3ef43717ac32c542dfb",
+      "checks/penelope-050-generated-model-clippy.log": "e6bf57832adf250825471b55aaaeda1349f3c304a719bda76b77a517d0607043",
+      "checks/penelope-050-generated-model-graph.log": "1800a747d0c689eab837d2bb4827e5675c25e9b64c917cd4220fcdfda943f977",
+      "checks/penelope-050-generated-model-stable-followup.log": "159eee141e2a3b8ada87cf8b84ae58389429903c20d39dc1db72566b181c573e",
+      "checks/penelope-050-generated-model-stable.log": "ca1d8e57a39f736a94a4fd5ab2b2e0362e7c0fbb76f453e89bc29b223ea63e5d",
+      "source/crates/penelope-core/tests/generated_machines.rs": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+      "source/crates/penelope-core/tests/support/generated_machine.rs": "6f8acc942fb9708fbd3e7cf3a44279d4c6363faf6033868947d99fb082fd48ef",
+      "source/fuzz/fuzz_targets/fuzz_machine.rs": "fe4fde4a7ce6ce297328bece0a588c62db38f9d466ef7bbdf727e26d9d823c61",
+      "source/Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "source/Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "source/fuzz/Cargo.toml": "309bd02cf49d8320d427f9b0946b5498e023be3bda31a4076b89a996b6edf914",
+      "source/rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d",
+      "source/crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "source/crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "driver.py": "b51e9d1f21a59faf9080979608b2e0a6f6199438f230eb94af2c4f5c593f08ab",
+      "recorder.py": "e231b0ed54a1bad27dfb0f85282316174b6d4cf36135e2f6a124ac11418f9d7d",
+      "fuzz/retained-corpora.tar.gz": "878b0d2934faafb8ba9b3fd675f9a9f80a548bcc9a9fdcd696c2599e1c6faead",
+      "versions.json": "5acbadd64478aff816d9a330675ecc312b6506584106a64f07130fa89249bf9d"
+    }
+  },
+  "limits": [
+    "Finite generated models and sanitizer fuzzing are not proof for arbitrary application handlers.",
+    "Three100000-run rounds qualify the augmented fuzz_machine target, not every fuzz target or the complete release.",
+    "No production behavior, feature, dependency, safety bound or performance waiver changed.",
+    "Source/archive/coverage reconciliation after adopting the added test is still required.",
+    "Initial syntax/format/lint attempts are retained; only final successful source hashes define the proposal."
+  ]
+}
