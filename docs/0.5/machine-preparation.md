@@ -3,9 +3,9 @@
 `penelope::storage::machine` adds hosted payload preparation around the existing
 portable machine owner. It introduces no second transition interpreter and no
 Clone, Serde or equality requirement on application state, events or effects.
-This is preparation for a journal; the [machine store and SQLite snapshot profile](machine-storage.md) are now
-implemented. Durable outbox delivery/reconciliation and downstream bridges remain
-pending.
+The [SQLite journal, snapshots, source-authorized outbox and native task/saga
+bridges](machine-storage.md) build on this preparation. Their admission and execution
+authorities remain separate from local publication.
 
 `MachineCodec<M>` pins complete deterministic payload encodings to the model's
 full definition. `prepare_machine_commit` checks the expected scope/revision and
@@ -42,10 +42,10 @@ lookup. A receipt for a committed batch does not assert that it remains the late
 head. Later writes still require authoritative predecessor CAS.
 
 The native owner's pending typed intents are a local cache, not durable outbox
-or dispatch authority. Recovery of pending effects and external delivery acknowledgement uncertainty
-require the upcoming outbox and bridge protocols. Journal reads/writes now use
-the explicit host authorization contract. An exact retained batch can support lost-ACK lookup; evaluating
-the event again against a newer head cannot substitute for that lookup.
+or dispatch authority. The [source-authorized outbox](machine-storage.md#leased-receiver-handoff)
+owns durable pending effects and delivery acknowledgement uncertainty. Journal
+reads/writes require explicit host authorization. An exact retained batch supports
+lost-ACK lookup; evaluating the event against a newer head cannot replace it.
 
 The `prepared_decisions` facade example uses the same counter model as the flat
 and timeline examples, with an explicit canonical codec. It inspects the batch
@@ -76,7 +76,7 @@ decodes the snapshot, requires byte-identical re-encoding, and invokes the nativ
 owner's invariant-checked restoration. This snapshot path evaluates no event and
 performs no dispatch. Local last-transition provenance and pending intents start
 empty, as documented by `MemoryMachine::restore`; durable pending intent bytes
-remain in the recovered batch for the upcoming authoritative outbox protocol.
+remain in the recovered batch. The journal outbox retains delivery authority.
 It does not reconstruct earlier pending batches, replay history, verify the
 predecessor chain, or authenticate the source. A trusted coherent journal read is
 still required. The SQLite adapter supplies that transaction boundary; checked

@@ -73,8 +73,9 @@ This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negot
 to its evidence and remaining obligation. “Implemented” below describes the
 checked capability, not final release qualification. The preceding checkpoint,
 static API and capability archives were rechecked against all 480 recorded member
-hashes before the SQLite change. The current checkpoint adds 164 verified archive
-members and revalidates all 27 invariant-owner source hashes. Full chaos and final
+hashes before the SQLite change. The production checkpoint adds 164 verified
+archive members and revalidates all 27 invariant-owner source hashes; the current
+test/package follow-up adds 65 verified members. Full chaos and final
 release/artifact reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |

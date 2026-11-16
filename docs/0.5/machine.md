@@ -36,7 +36,8 @@ independent `ci/machine-consumer` package, which depends only on the facade.
 The nested enum example covers parent fallback, rejection and intent staging.
 Neither example requires Clone, a state registration map or a serializer.
 
-Validation includes flat arithmetic and exhaustive seven-node tree oracles,
+Validation includes generated transition tables and parent forests, flat arithmetic
+and exhaustive seven-node tree oracles,
 guard and hook failures, abort, stale heads, revision/byte/count bounds, duplicate
 intents and destructor panic boundaries. Compile-fail examples cover identity
 separation and exclusive consuming handles. The allocator probe has a positive
@@ -48,5 +49,6 @@ The metadata admission preflight is [shared with timeline](staging-extraction.md
 with differential and performance evidence. Storage, provenance, poisoning and
 finality remain owned by their respective engines. [Flat and hierarchical
 measurements](verification.md#flat-machine-measurement-fixture) cover dispatch,
-state sizes, guards and intent quotas. Full chaos, coverage, remaining performance
-profiles and exact release-candidate qualification remain open.
+state sizes, guards and intent quotas. [Current qualification](verification.md)
+records passing coverage and package checks, with full chaos, retained performance
+findings and final release reconciliation still open.

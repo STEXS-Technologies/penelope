@@ -87,7 +87,7 @@ refusal. The machine fuzzer now also checks the adapter against an independent
 vector reference at capacities zero, one and four. Existing timeline property and
 integration tests remain in place.
 
-This establishes the initial optional adapter. It does not establish persistent
-full-timeline recovery, machine durability, deployment chaos, isolated performance
-qualification or the complete F5/F8 release gates. See the chronological
-[verification ledger](verification.md).
+The adapter supplies in-memory correction; [machine durability](machine-storage.md)
+is a separate profile and does not persist the full timeline. Current coverage,
+package checks and remaining chaos, performance and release gates are recorded
+in [verification](verification.md).

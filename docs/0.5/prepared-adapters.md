@@ -1,10 +1,11 @@
-# Prepared decision integration checkpoint
+# Prepared saga and task decisions
 
 The portable `PreparedDecision` inspection contract is now implemented by local
 machine candidates, prepared linear/graph sagas and task record candidates. The
-implemented [public API](public-api.md) and compiling facade consumers define this
-checkpoint. It does not establish machine durability, typed effect bridges or
-full F3/F4 completion.
+[public API](public-api.md) and compiling facade consumers exercise these views.
+Inspection supplies no durable admission or execution authority; the
+[SQLite journal and native bridges](machine-storage.md) provide those separate
+contracts.
 
 Saga preparation delegates to the original engines and returns their exact native
 decisions. Linear preparation binds the source input and derives its replay event
@@ -52,7 +53,7 @@ well as exercising legacy behavior. The task oracle above supplies an independen
 old implementation; same-build fuzz comparisons additionally exercise the new
 view and transfer paths. Fuzzing and differential tests complement each other.
 
-Remaining work includes final comparable latency qualification, broader composed
-examples, admitted machine-effect/task/saga bridges, optional timeline composition,
-durable protocols and the exact-revision release gates. New view names alone do
-not complete those integrations.
+The [durable consumer](../../ci/machine-consumer/durable.rs) composes machine
+publication, recovery and native admission. [Timeline composition](timeline-machines.md)
+uses the existing correction engine. Their evidence and remaining performance,
+chaos and exact-revision release gates are tracked in [verification](verification.md).
