@@ -1,0 +1,434 @@
+{
+  "source_commit": "7d24718f25165e35287965ef2ee1414a76aa5951",
+  "scope": "All20 numbered integration work items in plan6.1/6.2/6.3, mapped individually to current native owners and observed stable/MSRV checks. Conditional extraction is assessed against actual semantic differences. Not all plan prose, full qualification or performance acceptance.",
+  "plan_sha256": "c0dea1ab385516a337e28936496907bcc8e932a9a8028bf8a1276180cd0f50a1",
+  "items": [
+    {
+      "id": "6.1.1",
+      "plan_line": 364,
+      "requirement": "Introduce `penelope::saga` as the canonical facade for the existing linear and graph engines.",
+      "assessment": "Canonical saga namespace reexports the original engines and types; no replacement evaluator.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-executor/tests/machine_saga.rs",
+        "crates/penelope/src/lib.rs",
+        "crates/penelope/src/saga.rs"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.1.2",
+      "plan_line": 365,
+      "requirement": "Implement an adapter that exposes each legacy `LinearSagaProjection`/`GraphSagaProjection` as the state of a specialized machine; map legacy accepted events and `SagaDecision` into the shared prepared-transition *view*.",
+      "assessment": "Prepared linear and graph views delegate to decide/start_graph/apply_graph_result and retain native projections/events/actions. The frozen facade consumer exercises both legacy and prepared routes.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "ci/saga-parity/src/main.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-executor/tests/machine_saga.rs"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.1.3",
+      "plan_line": 366,
+      "requirement": "Preserve `LinearSagaDefinition`, `ProcessGraphDefinition`, `StepPlan`, `GraphTransition`, `SagaStatus`, action identity checks, compensation, timers, manual review and all existing error meanings.",
+      "assessment": "Native saga types and errors remain authoritative. Frozen parity covers selected histories, including retry/compensation/refusal; it is not every possible domain workflow.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-executor/src/engine.rs",
+        "crates/penelope-executor/src/graph.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-executor/tests/machine_saga.rs",
+        "scripts/check-saga-machine-parity.sh"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.1.4",
+      "plan_line": 367,
+      "requirement": "Extract graph shape checking (bounds, reachability, duplicate edges, and step identity) into shared **internal** deterministic helpers if they demonstrably serve HSM definitions; keep graph's result-category logic as a specialization.",
+      "assessment": "Conditional extraction reviewed: HSM uses a bounded active parent path, whereas saga definitions validate graph-wide edges/reachability/result categories. Sharing graph validation would combine different invariants; preserve the native checks.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/hierarchy.rs",
+        "crates/penelope-executor/src/engine.rs",
+        "crates/penelope-executor/src/graph.rs",
+        "crates/penelope-timeline/tests/machine.rs",
+        "docs/0.5/architecture.md"
+      ],
+      "tests": [
+        "hierarchical_correction_reuses_native_hooks_and_stops_on_ignored_capacity_failure"
+      ]
+    },
+    {
+      "id": "6.1.5",
+      "plan_line": 368,
+      "requirement": "Preserve fixed legacy step limits, transition limit `MAX_GRAPH_TRANSITIONS = 512`, visit limits and bounded replay. Do not widen or change a limit without separate compatibility and performance justification.",
+      "assessment": "MAX_GRAPH_TRANSITIONS remains512; native step/visit/replay bounds are not widened by the prepared view. The adapter delegates to the existing checked engine.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-executor/src/engine.rs",
+        "crates/penelope-executor/src/graph.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-executor/tests/machine_saga.rs"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.1.6",
+      "plan_line": 369,
+      "requirement": "Reuse the new machine effect lifecycle vocabulary at the facade/adapter level, while preserving the committed saga `ProcessAction` and `AtomicProcessCommit` wire records unchanged.",
+      "assessment": "Shared inspection retains native ProcessAction; receiver admission verifies native process commits. No machine record replaces saga wire.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-executor/src/machine_saga.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-executor/tests/machine_saga.rs",
+        "crates/penelope/src/saga.rs"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.1.7",
+      "plan_line": 370,
+      "requirement": "After parity qualification, remove duplicate orchestration-level glue and redundant validation pathways; avoid replacing optimized legacy executor loops with trait-object dispatch that regresses performance.",
+      "assessment": "Shared inspection/source binding and SQLite worker/receipt helpers remove duplicate plumbing with native engines retained. Final performance acceptance remains open; this item is not fully qualified.",
+      "status": "performance_acceptance_open",
+      "owners": [
+        "crates/penelope-executor/src/machine_saga.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-executor/tests/machine_saga.rs",
+        "docs/0.5/architecture.md"
+      ],
+      "tests": [
+        "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts"
+      ]
+    },
+    {
+      "id": "6.2.1",
+      "plan_line": 380,
+      "requirement": "Expose `TaskProjection`/`TaskRecord`/`TaskExecutionEvent` through a machine-compatible transition inspection and decision adapter without altering their v1 encodings.",
+      "assessment": "PreparedTask retains the exact proposed v1 record and native projection in the shared read-only view.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/task/projection.rs",
+        "crates/penelope-core/tests/prepared_task.rs",
+        "crates/penelope/src/task.rs"
+      ],
+      "tests": [
+        "preparation_matches_frozen_record_validation_and_supervisory_decisions"
+      ]
+    },
+    {
+      "id": "6.2.2",
+      "plan_line": 381,
+      "requirement": "Maintain the copied-candidate `TaskProjection::apply()` semantics and the `TaskControl` journal-first start/restart rule.",
+      "assessment": "apply/propose/prepare use one copied-candidate evaluator. TaskControl retains journal-first runtime issuance and poisoning; preparation itself has no runtime authority.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/task/control.rs",
+        "crates/penelope-core/src/task/projection.rs",
+        "crates/penelope-core/tests/prepared_task.rs"
+      ],
+      "tests": [
+        "preparation_matches_frozen_record_validation_and_supervisory_decisions"
+      ]
+    },
+    {
+      "id": "6.2.3",
+      "plan_line": 382,
+      "requirement": "Keep task generation, checkpoint schema, effect ambiguity, reconciliation, recovery modes, execution budget and fencing as task-specific types. A generic `Machine` must **not** give users a bypass around these preconditions.",
+      "assessment": "Generation, budgets, checkpoint/effect/recovery gates remain native TaskControl/TaskProjection checks; no generic view can launch or publish task work.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/machine/view.rs",
+        "crates/penelope-core/src/task/control.rs",
+        "crates/penelope-core/src/task/projection.rs",
+        "crates/penelope-core/tests/prepared_task.rs",
+        "crates/penelope-executor/tests/machine_task.rs"
+      ],
+      "tests": [
+        "preparation_matches_frozen_record_validation_and_supervisory_decisions",
+        "redelivery_of_running_or_faulted_task_never_submits_a_second_intent_or_generation"
+      ]
+    },
+    {
+      "id": "6.2.4",
+      "plan_line": 383,
+      "requirement": "Share pure event validation and structured provenance infrastructure where types align, but preserve the no-alloc task core, fixed record sizes, and supervised runtime behavior.",
+      "assessment": "Pure record evaluation is shared within TaskProjection without changing v1 record identity, fixed-size state or core allocation requirements.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-core/src/task/contracts.rs",
+        "crates/penelope-core/src/task/projection.rs",
+        "crates/penelope-core/tests/prepared_task.rs"
+      ],
+      "tests": [
+        "preparation_matches_frozen_record_validation_and_supervisory_decisions"
+      ]
+    },
+    {
+      "id": "6.2.5",
+      "plan_line": 384,
+      "requirement": "Ensure a machine's committed effect may intentionally start a recoverable task only after a typed, verified admission binding. A task result becomes a new event after scope/generation/effect evidence checks\u2014not a silent state mutation.",
+      "assessment": "Source-authorized typed admission verifies native task intent/input. Result-driven consumer verifies output bytes, meaning and provenance before accepting a new machine event; the integration fixtures use a trusted pure worker, not an arbitrary external payment proof.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "ci/machine-consumer/durable.rs",
+        "ci/machine-consumer/workflow.rs",
+        "crates/penelope-executor/src/machine_task.rs",
+        "crates/penelope-executor/tests/machine_task.rs",
+        "scripts/run-supervised-saga-example.sh"
+      ],
+      "tests": [
+        "receipt_schema_scope_input_and_tick_substitution_never_acknowledge_the_source",
+        "damaged_native_blob_never_becomes_verified_receiver_acceptance"
+      ]
+    },
+    {
+      "id": "6.2.6",
+      "plan_line": 385,
+      "requirement": "Where machine and task journals are in different stores, use an idempotent saga/outbox/inbox bridge; do not promise one cross-store atomic commit.",
+      "assessment": "Source acknowledgement is separate from native task acceptance; shared/separate database tests reconstruct exact original admission after lost ACK. No cross-store atomicity claim.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-executor/src/machine_task.rs",
+        "crates/penelope-executor/tests/machine_task.rs",
+        "crates/penelope-ports/src/machine/delivery.rs"
+      ],
+      "tests": [
+        "shared_and_separate_stores_reconstruct_native_acceptance_after_lost_ack",
+        "lost_native_commit_ack_leaves_pending_source_and_reconstructs_the_original_intent"
+      ]
+    },
+    {
+      "id": "6.3.1",
+      "plan_line": 393,
+      "requirement": "Make a machine's deterministic transition model adaptable to `RewindableComputation`, including its `Input`, `State` and `Effect` roles.",
+      "assessment": "MachineTimeline implements the existing RewindableComputation contract with captured input, complete state and tentative intents.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs"
+      ],
+      "tests": [
+        "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation"
+      ]
+    },
+    {
+      "id": "6.3.2",
+      "plan_line": 394,
+      "requirement": "Reuse `prepare_live_step`, `LiveTimeline`, bounded `ReplaySession`, `FixedHistory` and `EffectHandoff`; avoid a second snapshot or correction engine inside `machine`.",
+      "assessment": "Adapter introduces no independent owner/history/replay/correction engine; existing LiveTimeline/prepare_live_step/ReplaySession/finality machinery owns publication.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/live.rs",
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/src/session.rs",
+        "crates/penelope-timeline/tests/machine.rs"
+      ],
+      "tests": [
+        "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation",
+        "corrected_replay_uses_captured_context_and_existing_finality_and_handoff"
+      ]
+    },
+    {
+      "id": "6.3.3",
+      "plan_line": 395,
+      "requirement": "A machine event may become a timeline input if its **entire computation dependency set** is captured and versioned. Do not default every machine to \u201crewindable\u201d solely because it is deterministic in a trivial example.",
+      "assessment": "Captured context is part of input identity; configuration/random/external dependencies must also be captured by the consumer. Rust cannot enforce callback purity or snapshot alias isolation.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs",
+        "docs/0.5/timeline-machines.md"
+      ],
+      "tests": [
+        "content_hash_binds_every_captured_context_role_and_application_payload"
+      ]
+    },
+    {
+      "id": "6.3.4",
+      "plan_line": 396,
+      "requirement": "For speculative inputs, produce **tentative** effect intents; only the 0.4.0 independently finalized prefix may be handed off. Keep correction across irreversible effects forbidden by the existing frontier rules.",
+      "assessment": "Intents remain tentative and use existing independently finalized-prefix handoff. Correction across finalized history is refused by the native timeline.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/handoff.rs",
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs"
+      ],
+      "tests": [
+        "corrected_replay_uses_captured_context_and_existing_finality_and_handoff"
+      ]
+    },
+    {
+      "id": "6.3.5",
+      "plan_line": 397,
+      "requirement": "Pinned definition/schema versions must match across the correction horizon. Cross-version history migration requires an explicitly reviewed transformation, not reinterpretation.",
+      "assessment": "Adapter pins scope and definition/schema; restored or replayed mismatches fail. New schema requires a distinct replay domain or an explicitly reviewed host transformation; no automatic migration is supplied.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs",
+        "docs/0.5/timeline-machines.md"
+      ],
+      "tests": [
+        "scope_definition_stale_head_exhaustion_and_quota_failures_do_not_publish"
+      ]
+    },
+    {
+      "id": "6.3.6",
+      "plan_line": 398,
+      "requirement": "Keep the default 0.4.0 timeline supported profile: in-memory owned state / optional shared lock, immutable bounded history, user-owned complete snapshots. A persistent full-timeline adapter is **not** established by the new machine SQLite journal.",
+      "assessment": "Existing in-memory owned/shared timeline profiles remain separate from SQLite machine snapshots. Complete snapshots and isolation are consumer obligations.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs",
+        "docs/0.5/architecture.md",
+        "docs/0.5/timeline-machines.md"
+      ],
+      "tests": [
+        "complete_non_clone_state_uses_existing_prepare_live_step_path"
+      ]
+    },
+    {
+      "id": "6.3.7",
+      "plan_line": 399,
+      "requirement": "Avoid double journaling the same accepted event through unrelated persistent histories. A consuming integration must designate one authority for each record and establish an explicit correlation with any timeline history.",
+      "assessment": "Machine/timeline scopes and revisions are distinct and explicitly correlated. Adapter writes no independent durable journal; host integrations must designate one authority for each record.",
+      "status": "scoped_implementation_and_named_checks_supported_release_qualification_open",
+      "owners": [
+        "crates/penelope-timeline/src/machine.rs",
+        "crates/penelope-timeline/tests/machine.rs",
+        "docs/0.5/timeline-machines.md"
+      ],
+      "tests": [
+        "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation",
+        "content_hash_binds_every_captured_context_role_and_application_payload"
+      ]
+    }
+  ],
+  "named_tests": {
+    "linear_and_graph_bootstrap_replay_and_separate_ack_survive_reopen_in_both_layouts": {
+      "path": "crates/penelope-executor/tests/machine_saga.rs",
+      "line": 152
+    },
+    "hierarchical_correction_reuses_native_hooks_and_stops_on_ignored_capacity_failure": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 785
+    },
+    "preparation_matches_frozen_record_validation_and_supervisory_decisions": {
+      "path": "crates/penelope-core/tests/prepared_task.rs",
+      "line": 70
+    },
+    "redelivery_of_running_or_faulted_task_never_submits_a_second_intent_or_generation": {
+      "path": "crates/penelope-executor/tests/machine_task.rs",
+      "line": 179
+    },
+    "receipt_schema_scope_input_and_tick_substitution_never_acknowledge_the_source": {
+      "path": "crates/penelope-executor/tests/machine_task.rs",
+      "line": 237
+    },
+    "damaged_native_blob_never_becomes_verified_receiver_acceptance": {
+      "path": "crates/penelope-executor/tests/machine_task.rs",
+      "line": 514
+    },
+    "shared_and_separate_stores_reconstruct_native_acceptance_after_lost_ack": {
+      "path": "crates/penelope-executor/tests/machine_task.rs",
+      "line": 77
+    },
+    "lost_native_commit_ack_leaves_pending_source_and_reconstructs_the_original_intent": {
+      "path": "crates/penelope-executor/tests/machine_task.rs",
+      "line": 377
+    },
+    "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 127
+    },
+    "corrected_replay_uses_captured_context_and_existing_finality_and_handoff": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 215
+    },
+    "content_hash_binds_every_captured_context_role_and_application_payload": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 448
+    },
+    "scope_definition_stale_head_exhaustion_and_quota_failures_do_not_publish": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 357
+    },
+    "complete_non_clone_state_uses_existing_prepare_live_step_path": {
+      "path": "crates/penelope-timeline/tests/machine.rs",
+      "line": 581
+    }
+  },
+  "source_sha256": {
+    "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+    "crates/penelope/src/saga.rs": "d685773d7c4d42588bda3a1cf77f5be9f6774dc66265559e1c5f6e7c3308baef",
+    "crates/penelope-executor/tests/machine_saga.rs": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d",
+    "crates/penelope-executor/src/saga_machine.rs": "848b8dd4e96a04dc309458c96c593bae18d47f11919c1f58fac36422b43da40e",
+    "ci/saga-parity/src/main.rs": "2c2893572926f69fa8390ddedf8c893ee41152875e91f71fbd0cf160debd858e",
+    "crates/penelope-executor/src/engine.rs": "d54e067575ca5c919be6be5e9c5609433368a94174d5a8129c501d5800f7b70f",
+    "crates/penelope-executor/src/graph.rs": "ef53355db5568f7b154a93595112471bc7cef4aa00f04d2a8d00faa46f3247e1",
+    "scripts/check-saga-machine-parity.sh": "d723691d8c2e9b7f1cd4da429619eebdb1e9ed2fd564183309754ebc144d2860",
+    "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+    "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82",
+    "crates/penelope-timeline/tests/machine.rs": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+    "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+    "crates/penelope-core/src/task/projection.rs": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+    "crates/penelope/src/task.rs": "000afab91929fedd4bf95edd8290c5d012da0294d5ae9a23f5e614b2a5050e6f",
+    "crates/penelope-core/tests/prepared_task.rs": "8738404c75f0bb0b8e24e24c82a68df02e1e3df8aaaa7ed0ad577743b55d5ef3",
+    "crates/penelope-core/src/task/control.rs": "d265358ef05df8b6fb44bc7e9564ca799fd0633e8568f5aa06abfcd712a58229",
+    "crates/penelope-core/src/machine/view.rs": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+    "crates/penelope-executor/tests/machine_task.rs": "dc3fd7250ee360a9a3d5b0ac52a417c8601b9ffdf3c5d450e02d4d65dc485337",
+    "crates/penelope-core/src/task/contracts.rs": "01fe659d051a4f12fb83a47ab1182a28d6a6e79b18341037e71e6ac530ec9803",
+    "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+    "ci/machine-consumer/durable.rs": "e104f7a04cb9650d89a70f63d80fd3641a69b572a954319bf0b36fdd20039d76",
+    "ci/machine-consumer/workflow.rs": "86e4866770ea648200ef9152348b4fbda5c968b63bf445b1880f68d1d4eb2efb",
+    "scripts/run-supervised-saga-example.sh": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0",
+    "crates/penelope-ports/src/machine/delivery.rs": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+    "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+    "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+    "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+    "docs/0.5/timeline-machines.md": "be0804de15ac3149b17185fc796c69d810600eb6fe33336f737407f069b0c62f",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077"
+  },
+  "ci": {
+    "run_id": 43828997177,
+    "all_seven_jobs_success": true,
+    "both_compiler_observations_checked": true,
+    "protected_progression_stable_output": [
+      "task_result_verified=true amount=1",
+      "result_committed=true state=257 revision=2",
+      "saga_admitted=true native_actions=1 source_acknowledged=true",
+      "Wrong task result refused before machine admission"
+    ]
+  },
+  "archive": {
+    "file": "integration-contract-audit.tar.gz",
+    "sha256": "7bc75fbd0ea22a1d8f805f411554befab0c41747e54ba1df8d60aefd05b2464d",
+    "members_sha256": {
+      "ci.json": "56a269a12dfa14a44a46426751ac5c7209a4cb13340048313cf118b96e798c0f",
+      "ci.log": "8c79c5a7b8527f3e3dd473098def83c7660c1dd77a4d3b6339b38e8e36c1c123",
+      "recorder.py": "c3075ba984699fd21aacd1b8909acdf2ed57d0b929bfcf2e04fcbdea6e336770"
+    }
+  },
+  "remaining": [
+    "Full current-production chaos, final source/package/coverage reconciliation and performance findings stay open.",
+    "Plan6.4 example/prose, detailed API/port/maintenance prose and historical sequencing are separate obligations; these20 numbered items do not close them.",
+    "Canonical evidence, trusted external worker policy, callback purity and complete snapshot ownership remain explicit host responsibilities."
+  ]
+}

@@ -8,8 +8,8 @@ how to run the gates. Tagging and publication require separate authorization.
 ## Current candidate
 
 All ten library crates use candidate version 0.5.0. The
-[current checkpoint](evidence/qualification/event-replay-checkpoint.json)
-qualifies all ten clean archives at `9084239`, including isolated event replay,
+[current checkpoint](evidence/qualification/current-package-checkpoint.json)
+qualifies all ten clean archives at `c8fda4c`, including isolated event replay,
 the generated-machine/history-partition/repeated-kill tests and the nested/shared
 examples. It retains commands, source/archive identities, raw logs, unchanged
 external dependency identities and full LLVM JSON. The
@@ -20,12 +20,13 @@ The later [nested ergonomics follow-up](evidence/qualification/nested-ergonomics
 adds a shared CI trace checker, genuine root-policy/leaf-refusal example and
 nested-enum allocation fixture. Both compilers pass the local checks and three
 semantic controls are caught. All 72 production files match `9084239`; these
-later test/example/workflow files still need final package and CI reconciliation.
+later test/example/workflow files now pass the current package and CI checkpoint.
+This closes that scoped follow-up, while full release qualification remains open.
 
 | Gate | Verified result and scope |
 | --- | --- |
 | CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
-| CI | All seven jobs pass at [`9084239`](https://github.com/STEXS-Technologies/penelope/actions/runs/43823780958): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`c8fda4c`](https://github.com/STEXS-Technologies/penelope/actions/runs/43829769107): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
@@ -40,11 +41,11 @@ later test/example/workflow files still need final package and CI reconciliation
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
-| Nested example | [Eight ergonomic criteria](evidence/qualification/nested-ergonomics.json): one checker asserts all six complete traces; root fallback, terminal leaf refusal, guards, parent transition and self-reentry. Stable/MSRV pass; wrong guard/effect and removed leaf refusal are caught. A non-Clone nested enum with variant-local data now participates in the zero-allocation probe. The new CI/release wiring and final archive reconciliation remain pending |
+| Nested example | [Eight ergonomic criteria](evidence/qualification/nested-ergonomics.json): one checker asserts all six complete traces; root fallback, terminal leaf refusal, guards, parent transition and self-reentry. Stable/MSRV pass; wrong guard/effect and removed leaf refusal are caught. A non-Clone nested enum with variant-local data now participates in the zero-allocation probe. Both compiler CI jobs run the checker; the current checkpoint also verifies exact packaged example/fixture bytes |
 | Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. That example follow-up records unchanged production at its source revision; the current all-ten archive checkpoint includes the example |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
-| Coverage | **14,927 / 15,860 lines = 94.1173%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
+| Coverage | **14,925 / 15,860 lines = 94.1047%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
 
 Earlier unsuccessful attempts remain in the preceding checkpoint. Current
 commands use the pinned conformance source and exclude the separate fuzz package
@@ -75,9 +76,11 @@ comparison; subprocess-split output is documented in the recorders.
 
 No regression acceptance is recorded. Diagnosis, intervals spanning zero and a
 smaller number of flags do not by themselves establish equivalence or waive a
-sustained regression. Current coverage passes at 94.1173%, compared with the
-history-partition checkpoint's 94.0938%; aggregate coverage does not prove every
-new branch is exercised. The 15-invariant audit retains its recorded 27 owner
+sustained regression. Current coverage passes at 94.1047%, compared with the
+event-replay checkpoint's 94.1173%. The two fewer covered lines are confined to
+the SQLite payload adapter (78/91 versus 80/91); all other production file line
+totals are unchanged. The fresh result is retained. Aggregate coverage does not
+prove every new branch is exercised. The 15-invariant audit retains its recorded 27 owner
 source hashes and 33 boundary-test references. The replay addition has separate
 current evidence; final reconciliation must include that additional path.
 
@@ -92,6 +95,13 @@ gates. It retains the live campaign obligation, distinguishes seeded process
 kills from clean-reopen fuzzing, and leaves targeted replay-mutation coverage
 partially open.
 
+The [integration contract audit](evidence/maintenance/integration-contract-audit.json)
+maps all 20 numbered saga/task/timeline work items in §6.1–6.3 to 29 source files
+and 13 named tests observed on both compilers at `7d24718`. It also retains the
+real-worker progression and wrong-result refusal from stable CI. Native authority
+boundaries and conditional extraction decisions remain explicit; the orchestration
+performance item and final release qualification stay open.
+
 ### Release acceptance review — November 16, 2026
 
 This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negotiable)
@@ -101,7 +111,8 @@ static API and capability archives were rechecked against all 480 recorded membe
 hashes before the SQLite change. The production checkpoint adds 164 verified
 archive members and revalidates all 27 invariant-owner source hashes; the current
 history-partition follow-up adds 65 verified members; the current event-replay
-checkpoint adds 42 verified members. Full chaos and final release/artifact
+checkpoint adds 42 verified members; the current package checkpoint reconciles
+the later example/fixture changes and CI. Full chaos and final release/artifact
 reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |
