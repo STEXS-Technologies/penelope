@@ -1,0 +1,1142 @@
+{
+  "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+  "scope": "Post-QPSG actual versioned0.5 source checkpoint. Source/package tests, compatibility, upgrade, conformance, portable/public gates, coverage and seven CI jobs pass within stated scope. Full chaos and performance/release acceptance remain open.",
+  "checks": [
+    {
+      "group": "candidate",
+      "label": "metadata-workspace",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.06772429500415456
+    },
+    {
+      "group": "candidate",
+      "label": "metadata-compat",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.03886927300482057
+    },
+    {
+      "group": "candidate",
+      "label": "metadata-consumer",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.04916875300114043
+    },
+    {
+      "group": "candidate",
+      "label": "metadata-saga",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.040881831002479885
+    },
+    {
+      "group": "candidate",
+      "label": "metadata-upgrade",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/sqlite-upgrade/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.04178405999846291
+    },
+    {
+      "group": "candidate",
+      "label": "publish-order",
+      "args": [
+        "python3",
+        "scripts/publish-order.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.08043358899885789
+    },
+    {
+      "group": "candidate",
+      "label": "fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.6063463659957051
+    },
+    {
+      "group": "candidate",
+      "label": "compat-fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.6295906950035715
+    },
+    {
+      "group": "candidate",
+      "label": "layers",
+      "args": [
+        "./scripts/check-layer-boundaries.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.6756844699993962
+    },
+    {
+      "group": "candidate",
+      "label": "pins",
+      "args": [
+        "./scripts/check-action-pins.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.0054497539967997
+    },
+    {
+      "group": "candidate",
+      "label": "wire",
+      "args": [
+        "python3",
+        "scripts/verify-machine-wire-fixtures.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.03585670600295998
+    },
+    {
+      "group": "candidate",
+      "label": "parity-1.100.0",
+      "args": [
+        "./scripts/check-saga-machine-parity.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.5686603840003954
+    },
+    {
+      "group": "candidate",
+      "label": "upgrade-1.100.0",
+      "args": [
+        "python3",
+        "scripts/check-sqlite-upgrade.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.3838841169999796
+    },
+    {
+      "group": "candidate",
+      "label": "compat-tests-1.100.0",
+      "args": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.4482466720000957
+    },
+    {
+      "group": "candidate",
+      "label": "parity-1.89.0",
+      "args": [
+        "./scripts/check-saga-machine-parity.sh"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.5493129250025959
+    },
+    {
+      "group": "candidate",
+      "label": "upgrade-1.89.0",
+      "args": [
+        "python3",
+        "scripts/check-sqlite-upgrade.py"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 1.6628004199956194
+    },
+    {
+      "group": "candidate",
+      "label": "compat-tests-1.89.0",
+      "args": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.41407167699799174
+    },
+    {
+      "group": "candidate",
+      "label": "conformance",
+      "args": [
+        "python3",
+        "scripts/run-statechronicle-conformance.py",
+        "/home/ac/projects/.statechronicle-penelope-050"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 8.795194518999779
+    },
+    {
+      "group": "candidate",
+      "label": "diff",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.0042060859996126965
+    },
+    {
+      "group": "public",
+      "label": "first-machine-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05135192000307143
+    },
+    {
+      "group": "public",
+      "label": "flat-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "flat",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.050381980996462516
+    },
+    {
+      "group": "public",
+      "label": "nested-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05053379300079541
+    },
+    {
+      "group": "public",
+      "label": "decisions-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05199041100422619
+    },
+    {
+      "group": "public",
+      "label": "timeline-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "timeline",
+        "--locked",
+        "--features",
+        "timeline"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05075366699747974
+    },
+    {
+      "group": "public",
+      "label": "durable-1.100.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "durable",
+        "--locked",
+        "--features",
+        "durable"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.9524779429993941
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-core-None-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.059517958005017135
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-core-serde-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "serde"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05783789999986766
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-timeline-None-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.057037438004044816
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-timeline-alloc-1.100.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "alloc"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.05600840500119375
+    },
+    {
+      "group": "public",
+      "label": "first-machine-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "first-machine",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.05772098500165157
+    },
+    {
+      "group": "public",
+      "label": "flat-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "flat",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.05820797300111735
+    },
+    {
+      "group": "public",
+      "label": "nested-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.07134967199817766
+    },
+    {
+      "group": "public",
+      "label": "decisions-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "decisions",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.05955707400426036
+    },
+    {
+      "group": "public",
+      "label": "timeline-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "timeline",
+        "--locked",
+        "--features",
+        "timeline"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.058815685006265994
+    },
+    {
+      "group": "public",
+      "label": "durable-1.89.0",
+      "args": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "durable",
+        "--locked",
+        "--features",
+        "durable"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 2.1676379490018007
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-core-None-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.07334231199638452
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-core-serde-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-core",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "serde"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.06924898300349014
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-timeline-None-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.261864809996041
+    },
+    {
+      "group": "public",
+      "label": "portable-penelope-timeline-alloc-1.89.0",
+      "args": [
+        "cargo",
+        "check",
+        "-p",
+        "penelope-timeline",
+        "--no-default-features",
+        "--target",
+        "riscv32imafc-unknown-none-elf",
+        "--locked",
+        "--features",
+        "alloc"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 0.06847933999961242
+    },
+    {
+      "group": "public",
+      "label": "doctests",
+      "args": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--doc",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 1.8551003679967835
+    },
+    {
+      "group": "public",
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 4.782200210996962
+    },
+    {
+      "group": "public",
+      "label": "compat-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.06470492499647662
+    },
+    {
+      "group": "public",
+      "label": "docs",
+      "args": [
+        "cargo",
+        "doc",
+        "--workspace",
+        "--no-deps",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.37619298399658874
+    },
+    {
+      "group": "public",
+      "label": "diff",
+      "args": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.006875230006698985
+    },
+    {
+      "group": "extracted",
+      "label": "lock-normalization",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "metadata",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06408378799824277
+    },
+    {
+      "group": "extracted",
+      "label": "metadata",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05069125699810684
+    },
+    {
+      "group": "extracted",
+      "label": "tests-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 267.2661435129994
+    },
+    {
+      "group": "extracted",
+      "label": "tests-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 337.05721032099973
+    },
+    {
+      "group": "coverage",
+      "label": "clean",
+      "args": [
+        "cargo",
+        "llvm-cov",
+        "clean"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0556981969930348
+    },
+    {
+      "group": "coverage",
+      "label": "coverage",
+      "args": [
+        "cargo",
+        "llvm-cov",
+        "--workspace",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz",
+        "--json",
+        "--output-path",
+        "/tmp/penelope-050-qpsg-coverage/coverage.json"
+      ],
+      "exit_code": 0,
+      "seconds": 67.14329935400019
+    },
+    {
+      "group": "coverage",
+      "label": "ratchet",
+      "args": [
+        "./scripts/check_coverage_ratchet.sh",
+        "/tmp/penelope-050-qpsg-coverage/coverage.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2026285449974239
+    }
+  ],
+  "test_observations": {
+    "library-stable": {
+      "successful_harness_summaries": 95,
+      "reported_passes": 694,
+      "ignored": 0
+    },
+    "library-msrv": {
+      "successful_harness_summaries": 95,
+      "reported_passes": 694,
+      "ignored": 0
+    },
+    "extracted-stable": {
+      "successful_harness_summaries": 95,
+      "reported_passes": 694,
+      "ignored": 0
+    },
+    "extracted-msrv": {
+      "successful_harness_summaries": 95,
+      "reported_passes": 694,
+      "ignored": 0
+    }
+  },
+  "library_test_command": [
+    "cargo",
+    "+VERSION",
+    "test",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--locked",
+    "--exclude",
+    "penelope-fuzz"
+  ],
+  "library_scope": "Full library/integration tests and debug benchmark smokes, not release timing or doctests. Public gates separately include stable doctests. Harness totals are reported observations, not unique tests across profiles.",
+  "package_scope": "All ten clean0.5 archives identify this source. Cargo verification/include checks and extracted offline workspace all-target/all-feature tests pass on both compilers. Every Penelope dependency comes from extracted archives. No checkout-only test is skipped: six architecture checks run in compatibility harness.",
+  "lock_scope": "No runtime/build input except schema.rs changed since prior9a5 checkpoint. Extracted lock removes only fuzz-only arbitrary/jobserver/libfuzzer-sys and adds no external name/version/source/checksum. Both extracted test runs use the same normalized --locked file.",
+  "coverage": {
+    "totals": [
+      {
+        "count": 15814,
+        "covered": 14879,
+        "percent": 94.08751738965474
+      }
+    ],
+    "reported_source_files": 72,
+    "all_files_in_candidate": true,
+    "ratchet": "Line coverage: 94.0875% (ratchet: 94.0759%)\n",
+    "full_json_member": "coverage/coverage.json",
+    "assessment": "Passes narrowly; lower than previous94.0976%, not evidence of improved aggregate coverage or complete branches. SQLite configuration error conversion is unexercised on supported bundled SQLite."
+  },
+  "invariants": {
+    "base_audit": "docs/0.5/evidence/maintenance/invariant-audit.json",
+    "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+    "unchanged_owner_source_files": 27,
+    "invariants": 15,
+    "negative_boundary_references": 33,
+    "functions": [
+      "decisions_prepare_without_publishing_and_drop_aborts",
+      "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+      "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+      "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch",
+      "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+      "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged",
+      "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+      "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+      "simultaneous_independent_workers_admit_one_competing_head",
+      "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot",
+      "stored_bytes_reconstruct_exact_receipt_and_non_clone_snapshot_without_pending_effects",
+      "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+      "uncaptured_dependency_is_detected_only_when_same_baseline_verification_is_enabled",
+      "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+      "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+      "effect_interruption_requires_evidence_and_unknown_never_restarts",
+      "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+      "graph_preparation_retains_scope_and_refuses_foreign_action_without_mutation",
+      "changed_receiver_policy_and_foreign_native_receipt_cannot_acknowledge_source",
+      "signed_committed_source_binds_atomic_commit_and_deduplicates_after_reopen",
+      "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+      "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+      "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+      "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens",
+      "authorization_precedes_existence_duplicates_and_all_reads",
+      "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup",
+      "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+      "a_caught_destructor_panic_cannot_unpoison_staging",
+      "superseded_state_drop_panics_only_after_all_published_values_agree",
+      "codec_panics_before_and_after_evaluation_leave_the_original_owner_coherent",
+      "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+      "downstream_acceptance_lost_ack_is_reconstructed_and_exact_retry_is_idempotent",
+      "no_commit_or_lost_acknowledgement_never_dispatches"
+    ],
+    "scope": "All base audit named passing observations rechecked in current stable/MSRV workspace logs and pinned conformance logs; owner source identities unchanged. Full chaos and performance/release acceptance still open."
+  },
+  "ci": {
+    "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/43809187026",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "Bounded fuzzing",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Stable verification",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Supply-chain verification",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Optional StateChronicle signed-event conformance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Allocation-free portable core",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Minimum supported Rust",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Secret scanning",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "bounded_selection_review": {
+    "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+    "scope": "All seven literal production SQL lines containing LIMIT in penelope-sqlite/src have explicit ORDER BY, including tie-breakers where applicable. This checks bounded selection ordering under the planner setting; not a complete SQL parser, query-result equivalence proof or replacement for public/invariant tests.",
+    "rows": [
+      {
+        "path": "crates/penelope-sqlite/src/leases.rs",
+        "line": 137,
+        "query_line": "let mut statement = transaction.prepare_cached(\"SELECT action,checksum,attempt,action_id,effect_key FROM process_actions WHERE scope=?1 AND acknowledged=0 AND (expires_at IS NULL OR expires_at<?2) ORDER BY action_id LIMIT ?3\").map_err(|error| db_error(&error))?;",
+        "source_sha256": "b7c5ba819acc3a601c7d2ab1aad39f6d34b685e8f61bc12f7cffd1e7baba4820"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/leases.rs",
+        "line": 290,
+        "query_line": "let mut statement = transaction.prepare_cached(\"SELECT timer,checksum,attempt,action_id,due_at FROM process_timers WHERE scope=?1 AND state=0 AND due_at<=?2 AND (expires_at IS NULL OR expires_at<?2) ORDER BY due_at,action_id LIMIT ?3\").map_err(|error| db_error(&error))?;",
+        "source_sha256": "b7c5ba819acc3a601c7d2ab1aad39f6d34b685e8f61bc12f7cffd1e7baba4820"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/inbox.rs",
+        "line": 32,
+        "query_line": "\"SELECT input_id,input,checksum FROM process_inbox WHERE process_key=?1 AND commit_digest IS NULL ORDER BY input_id LIMIT ?2\"",
+        "source_sha256": "72996f4b67968939eba29e5dea69e0a6b42997b96495ca938a90c765e894ec34"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/process.rs",
+        "line": 414,
+        "query_line": "let mut statement = transaction.prepare_cached(\"SELECT sequence,record,checksum FROM process_outcomes WHERE scope=?1 AND sequence>=?2 ORDER BY sequence LIMIT ?3\").map_err(|error| db_error(&error))?;",
+        "source_sha256": "e47852e85e1496582f019cbd85eb16cdc17520816af968d17b613680be18eaba"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/tasks.rs",
+        "line": 161,
+        "query_line": "let mut statement = connection.prepare_cached(\"SELECT sequence,record,checksum FROM task_records WHERE scope=?1 ORDER BY sequence LIMIT ?2\").map_err(|error| sql_error(&error))?;",
+        "source_sha256": "ddef8f5a0a4bd1a78ecbf06cb04a5e501f305ea4eac1f27409a21e4deb5f398c"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/read.rs",
+        "line": 223,
+        "query_line": "let mut statement = transaction.prepare_cached(\"SELECT event,revision FROM machine_events WHERE machine_key=?1 AND revision>?2 AND revision<=?3 ORDER BY revision LIMIT ?4\").map_err(|e| db_error(&e))?;",
+        "source_sha256": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8"
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/delivery.rs",
+        "line": 262,
+        "query_line": "let mut statement=transaction.prepare_cached(\"SELECT i.intent FROM machine_intents i JOIN machine_events e ON e.machine_key=i.machine_key AND e.event=i.event LEFT JOIN machine_intent_delivery d ON d.machine_key=i.machine_key AND d.intent=i.intent WHERE i.machine_key=?1 AND (d.intent IS NULL OR (d.receipt IS NULL AND d.expires<=?2)) ORDER BY e.revision,i.ordinal LIMIT ?3\").map_err(|e|db_error(&e))?;",
+        "source_sha256": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51"
+      }
+    ]
+  },
+  "conformance_upstream": "ae3d94bc22c7835eaa3fdcd766e3c117929c12bb",
+  "performance_scope": "Longer isolated QPSG studies precede adoption and preserve all findings. Expression matches adopted source apart from explanatory comment; no universal performance/latency or statistical-equivalence claim.",
+  "open": "Three-round10k-property/100k-fuzz immutablecefa55f campaign, all retained performance dispositions and final release/artifact audit. Earlier campaigns retain their old source scopes. No tag or publication.",
+  "archive": {
+    "file": "qpsg-candidate-checkpoint.tar.gz",
+    "sha256": "3209d69c90640ee83a9a58b80637ea3a75a9c5098a2624506c3a491ba814e528",
+    "member_count": 164,
+    "members_sha256": {
+      "candidate/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/conformance.stderr": "e1b70d183ae3a6b1928fd63f8c1de63c55ff004ec0e335a67187157e4bdca424",
+      "candidate/conformance.stdout": "229819f9bf510fd97ff18e176a27290ee408f68e9f3d3f1d11f7705f135cc829",
+      "candidate/compat-tests-1.89.0.stderr": "ba11da262287be98e7a7f8a759126386d71334a80e2676338bcf0f25eac0e6ec",
+      "candidate/compat-tests-1.89.0.stdout": "0a99f3c35748a1c15930c4bd180abbc5cde3c0675c2ff7a74bb73257866a2e85",
+      "candidate/upgrade-1.89.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/upgrade-1.89.0.stdout": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "candidate/parity-1.89.0.stderr": "e6f231793ab92910753753685d2c0925e1f6526478f19f54dcd3882efa9647f7",
+      "candidate/parity-1.89.0.stdout": "ddbd261c0dedf262961bd5b06d9b016775b88974924f6786ef1a6aecfeecbd8f",
+      "candidate/compat-tests-1.100.0.stderr": "ea70423271ee0c89fb1ac09dfbf3c983aabdf735d23d0fcd5cb74b67b1054ffa",
+      "candidate/compat-tests-1.100.0.stdout": "b7173701e2d3f3e04ae16e5767ac8a2af861d5807db294793a903bbdb0108026",
+      "candidate/upgrade-1.100.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/upgrade-1.100.0.stdout": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "candidate/parity-1.100.0.stderr": "82426e591cafb2c154528bb35186840bbaa969ed5124ccaa4585e09e7d35d9fa",
+      "candidate/parity-1.100.0.stdout": "ddbd261c0dedf262961bd5b06d9b016775b88974924f6786ef1a6aecfeecbd8f",
+      "candidate/wire.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/wire.stdout": "b669bab0389458668298baf7a410c81f745d481dce6581e2d53863714f16595e",
+      "candidate/pins.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/pins.stdout": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "candidate/layers.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/layers.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/compat-fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/compat-fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/publish-order.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/publish-order.stdout": "5ba180433610edcfffc8e98d3af2b51cb9facfcf60274ad0847c9787b069eb54",
+      "candidate/metadata-upgrade.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/metadata-upgrade.stdout": "31e898c5ee45fee8919969bf53d84e5f5d49823ac3d56c56d329364daa9b1a5e",
+      "candidate/metadata-saga.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/metadata-saga.stdout": "94915f7ae1330ec0310ef923ee5b5125aeb760dbc988e0e835cf487f121d41d2",
+      "candidate/metadata-consumer.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/metadata-consumer.stdout": "d1364cdb7a95dd3bc290a658d86837852efbd6ddb1e7266c0613a82f653dbfd0",
+      "candidate/metadata-compat.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/metadata-compat.stdout": "5c5fad17fd7efb5311da18cba75e64ec25e4d8174e0bff2e0d15d6ab8015e7f6",
+      "candidate/checks.json": "f6b5739e434ee545bcac9bd4b9d0f2b6abbf434cb6d28d681f5bd5d665bab4c9",
+      "candidate/metadata-workspace.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidate/metadata-workspace.stdout": "f41f09a93ffcf4b2ded34809877f144fd00a67445251d7dd25bc8f0110ca74b0",
+      "public/diff.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/diff.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/docs.stderr": "df6ea59bfd7359fe6183e9c7ca78b8c19ec4f067be17ca6326294ee48401bfdd",
+      "public/docs.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/compat-clippy.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "public/compat-clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/clippy.stderr": "a80cc0f0d55ed12b04a54dd4d9a76ee5cf45725b528fe62b3e7a664b463a6c75",
+      "public/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/doctests.stderr": "72c3d87c707b258b45ed51ed2578cbfd1580fb691c4fbabad141fbc65bc0c097",
+      "public/doctests.stdout": "50704261aa6879757e0a98e599db03ef3b0cbcd33b93edcf276b6f204a70493e",
+      "public/portable-penelope-timeline-alloc-1.89.0.stderr": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd",
+      "public/portable-penelope-timeline-alloc-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-None-1.89.0.stderr": "8788e4de5069bff498a1c7adcb1b7ff80bff2e5c8b623e00ce6a1e54011c92ba",
+      "public/portable-penelope-timeline-None-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-serde-1.89.0.stderr": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd",
+      "public/portable-penelope-core-serde-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-None-1.89.0.stderr": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+      "public/portable-penelope-core-None-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/durable-1.89.0.stderr": "79cb6d8ef899bf1d03f75127f557073016e92b92572cff08a4e3e6db900c44e2",
+      "public/durable-1.89.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "public/timeline-1.89.0.stderr": "5437cc6e851655b5f743c37c64fd8d1b3e446c45782be653bfc16be5c31d0e0f",
+      "public/timeline-1.89.0.stdout": "ed946523fcfd8f6e7e5d1d344472dad2f0abb0c9c4aacdebfb5183906c2a913f",
+      "public/decisions-1.89.0.stderr": "7356a3eeb745c10c7fcd6f4296db831c6a45b5b44a75195c4cb6527e8bededb3",
+      "public/decisions-1.89.0.stdout": "503f2d6d6cdb7e9b984e3705187b5dcde742ed1739e4dfd8b6bbd4b02a3c10fb",
+      "public/nested-1.89.0.stderr": "6faeb9bea4b1e26fb47a64a5a9462781f5297f243ce21447e15fe75a23e5bd97",
+      "public/nested-1.89.0.stdout": "604fc016efd63f1d600b058d2870adcf4d122366be8dc71120c187ce5458f1ad",
+      "public/flat-1.89.0.stderr": "4ca310d10e4d994b42ae1713e93855cc8b827bfe5300f53870d3bf647e05e44c",
+      "public/flat-1.89.0.stdout": "05aab6c4c48063ae2e27c58944f20ed59b2deeca0523a85dccd17815204b164f",
+      "public/first-machine-1.89.0.stderr": "07323eb43ab93fbf93c7c3b483be138a5cc918bed6407c36df2fbfb53fc02393",
+      "public/first-machine-1.89.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "public/portable-penelope-timeline-alloc-1.100.0.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "public/portable-penelope-timeline-alloc-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-timeline-None-1.100.0.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "public/portable-penelope-timeline-None-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-serde-1.100.0.stderr": "02db5a66fa0c60ca8618bd08aac556eac4f3ec863e8630a0d353dba6a0f6e126",
+      "public/portable-penelope-core-serde-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/portable-penelope-core-None-1.100.0.stderr": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd",
+      "public/portable-penelope-core-None-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public/durable-1.100.0.stderr": "95311fd02796095e7f89ffeb1f3286c2fc30a6659314d42f54e27df2e64c48b2",
+      "public/durable-1.100.0.stdout": "9100ce0cce8107e019f435118f0aecfb6f05717f0906aca43bae80ee7cc9d858",
+      "public/timeline-1.100.0.stderr": "766d023decc6e3d91cdb76aad4e0b2b80e6efb5bcf59a567bddf72c04d956005",
+      "public/timeline-1.100.0.stdout": "ed946523fcfd8f6e7e5d1d344472dad2f0abb0c9c4aacdebfb5183906c2a913f",
+      "public/decisions-1.100.0.stderr": "7356a3eeb745c10c7fcd6f4296db831c6a45b5b44a75195c4cb6527e8bededb3",
+      "public/decisions-1.100.0.stdout": "503f2d6d6cdb7e9b984e3705187b5dcde742ed1739e4dfd8b6bbd4b02a3c10fb",
+      "public/nested-1.100.0.stderr": "74ecbd488eeff0b789410a9abcebd9a7d6b157899091cc9eacfa535fcdc873c2",
+      "public/nested-1.100.0.stdout": "604fc016efd63f1d600b058d2870adcf4d122366be8dc71120c187ce5458f1ad",
+      "public/flat-1.100.0.stderr": "f9549ea31d2e56073b531584ed2599baba7d0ba15330685a50c502d77692ba43",
+      "public/flat-1.100.0.stdout": "05aab6c4c48063ae2e27c58944f20ed59b2deeca0523a85dccd17815204b164f",
+      "public/checks.json": "1157f07f50b465741e70e6c5b047c050add30bbe929fec89eb3468f9f7313096",
+      "public/first-machine-1.100.0.stderr": "988961de60ab48ef0aaa60d33dd8edb27e52cae3da476f03ad44f91c25f6dcfe",
+      "public/first-machine-1.100.0.stdout": "72a3fc2d9e4776a44f902cbb694a759f481703e51ede39822ea7d0264a3627e9",
+      "extracted/tests-1.89.0.stderr": "ecec7dc824132fa5d47979a7f69e156de2c60678308a90126ada2ffea231b3ce",
+      "extracted/tests-1.89.0.stdout": "1aa1e32286a7c6ad3e47f22439f75602d011f47ef0d12fa3f541eeeff25233f5",
+      "extracted/tests-1.100.0.stderr": "28169cb9a956c35ce4ea1b920da9cc0f67d226dfc8bb8355d5122b4e4430e954",
+      "extracted/tests-1.100.0.stdout": "6ea9ee9b65beb2b64e788387712cf75625f62f35de692f919c4ed43b2b924238",
+      "extracted/metadata.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "extracted/metadata.stdout": "82796dfa2175adbafab25796338335a160872d52a1bf7edaa34854150f3e6343",
+      "extracted/external-lock-diff.json": "1beb1c9aabac34a9a1b10ee54cba00fba8810acd4b63c873503df88c0f6ee39a",
+      "extracted/checks.json": "09a6d0e54a880e3d9b607e38eb07462d33c644e7a945b30be17dd11db637c4c8",
+      "extracted/lock-normalization.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "extracted/lock-normalization.stdout": "82796dfa2175adbafab25796338335a160872d52a1bf7edaa34854150f3e6343",
+      "extracted/Cargo.lock-original": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "extracted/archives.json": "15d2efc74c17be2294619a08fb4894c7e9c442eb76d85831518035dedaa4b541",
+      "extracted/Cargo.lock": "4bff962e83ad86c4ce7d6031026d9b7f805785a85bd6b24257a2194e65494268",
+      "extracted/Cargo.toml": "e1d75b9256702730349e2c32aac19153b44539dc2758fefd0036863336a32808",
+      "coverage/ratchet.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "coverage/ratchet.stdout": "17c081345f57619e1585793ed88d782e0aacd1895ea51e1c607843d35a68e1a3",
+      "coverage/coverage.stderr": "6da204b71d43cb7e5f590995a3c6d8331f7881f3b29cfac001f1099e2f034faa",
+      "coverage/coverage.stdout": "b7d801cd83fb84a5c925c4d93daa3e5ea43e8f294bdd613de39968ce0b9b6d73",
+      "coverage/coverage.json": "2e7b816da9d6d538e3586376547283eb39563578fcda3682ca35dd01911a5388",
+      "coverage/checks.json": "153a9a8eaaf15f231d7a88dba528e0c2cbf5b2628f9f1c2cc515ad8c00309e84",
+      "coverage/clean.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "coverage/clean.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checkpoint/library-stable.log": "179a0bcf5599700d85bff7ad84d887211a928194d3a2419a96c3d41b187753c8",
+      "checkpoint/library-msrv.log": "e4f1a26f8c4e4395b0379f192b3e94e8e5db84610dd2c67bb09856ebf89aa8b5",
+      "checkpoint/package-checks.log": "db2cce5bf3e3828042dc64b3f021c2ce4dd9cb4f0781d4229cced0762fe52b9a",
+      "checkpoint/package-identities.json": "757628b5bc28d3b4dd2fe65d77a832398ae19136cb2236f601f41d33f0906265",
+      "checkpoint/invariant-revalidation.json": "ebc1585be8e093b1923f7ef4c8754b51f8bf5b0c11bc9b5472d8aba2ee9bf282",
+      "checkpoint/query-order-review.json": "8fa487485076bbfd5a099a72302f18df225b4b68859ad665d5827b4b448f5b19",
+      "checkpoint/graph-update.log": "fd50e3b31dccc07de3fc4d40aa70c8b827d3c4b8d21cc0d61a799fd7ef2072e6",
+      "checkpoint/ci.json": "b057e951f03d9689bf9acbea8f800f522c0144f48eef311abf9af66da17920d7",
+      "drivers/penelope-check-050-qpsg-candidate.py": "3ac824e9d13263c470ddaf09d9b61b8c9412956c2c4ae2f8151d7a77077f43eb",
+      "drivers/penelope-050-qpsg-check-public-gates.py": "94a247df7f3aecffe8e37565f091f456edcafe821b8ac4f7f73d5f2d481c1e21",
+      "drivers/penelope-050-qpsg-test-packaged-workspace.py": "29749c639abc916dd596a1b315f47e17fd9ac4ada55c6c4abc1a6884a4fa92e6",
+      "drivers/penelope-050-qpsg-run-coverage.py": "9b5046e04a7911f2a197055d527b7ed8fa98f48ef3907ecd817410fbddaa35f0",
+      "drivers/penelope-record-050-qpsg-checkpoint.py": "16237991847fd84a0e275a81305b268af89bc10916a16a0e385aded26a4b9aa6",
+      "archives/penelope-0.5.0.crate": "d8d1fd970e8fffafb28db2a8cf07a174521c567baf79eb4b80037ea390c2b6a6",
+      "archives/penelope-core-0.5.0.crate": "197a5398a44a328cd686015f38f93d730cec5a90bdfd9af8efc67139478c2076",
+      "archives/penelope-domain-0.5.0.crate": "7cbb75c158c140acd6ef5a12f230b0e06acc7750dc26d963d5dca72e144f4f21",
+      "archives/penelope-executor-0.5.0.crate": "6c3d54bb90595cfeb8b18fcc45210207e2a199a2842a57e75116e0e8b05a55a4",
+      "archives/penelope-intent-0.5.0.crate": "ba388b6e2618d2c6ef6a2ece0ad263519c653e95d5433d68fb128d44a135bc15",
+      "archives/penelope-ports-0.5.0.crate": "0375629709ecc24b2eb7ff35281c5e9384d063b491761b833c65b16517b6d0f2",
+      "archives/penelope-process-runtime-0.5.0.crate": "24cefc5f3afde9e69afc02dbffdfbf1423e1773998c6b3ed8d294c1796978b84",
+      "archives/penelope-sqlite-0.5.0.crate": "a523a33df91845e1e7475e7c24aa2e2e5e10461346d798daf1640160a7509ad9",
+      "archives/penelope-statechronicle-0.5.0.crate": "45e5e0bedfb14bb297b1fa53edb263823a99f7b7b55f62e71157131a957c18d8",
+      "archives/penelope-timeline-0.5.0.crate": "4cdc93f1f804c3f25399aebf5320ca22df821937cb682e60e599120acbbca0d3",
+      "source/Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "source/Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "source/ci/compat-0.4/Cargo.lock": "54f0232ce690283c740d81c009c30a733116e87e4d399a5b2ec26404cc8ea15f",
+      "source/ci/compat-0.4/Cargo.toml": "50c8e430fb8bbe075141f6fea7b67f181244136f39ab7f2556a53a6d474cdb76",
+      "source/ci/compat-0.4/baseline/Cargo.lock": "394c2616403a3213b16dd9d169c017102fef2d19bef16b56a2a65527052516fd",
+      "source/ci/machine-consumer/Cargo.lock": "5bb85182314bfbc69f8df40fd566d71d411eb74a460f3ce2fde77b2b1756b311",
+      "source/ci/machine-consumer/Cargo.toml": "7227ef4ef9b7db0de601d724c16aa263c986b1fec0a779a0c905428aa5025928",
+      "source/ci/saga-parity/Cargo.lock": "1c420e223e0fcb7ba39c11be83325dcdaca334a39d0cb253ca07672a540b0f4b",
+      "source/ci/saga-parity/Cargo.toml": "4b985b9e7b56c84f49a69477f4e6c9f151ec84e09841acd68f965b3fa9809798",
+      "source/ci/saga-parity/baseline/Cargo.lock": "e8047b4a99d71f584e4ef42edba8111471f1c22a2f1e3761d8a4fe73aad5d6cf",
+      "source/ci/sqlite-upgrade/Cargo.lock": "ae9cac8da58e75dc673033d4214b6ec4a13c9dd9ef06f27e46fdc59af7452993",
+      "source/ci/sqlite-upgrade/Cargo.toml": "1627a953664197002d08363c006c0db84dabb202b5b06d44a0d76e569790ea1f",
+      "source/ci/sqlite-upgrade/baseline/Cargo.lock": "5e15d390edd204d756892ee27b2b616a29852d86b3413be0983a6c99a08c04d0",
+      "source/crates/penelope-core/Cargo.toml": "42a5ccd27442d5c3efefc7ad0aa85b23f4785092c733d874e97170012aa92d2b",
+      "source/crates/penelope-domain/Cargo.toml": "7f0b47c6d5539628c9818a2117fbbf3866fc8ae9e4c3da120842673f8da33ba8",
+      "source/crates/penelope-executor/Cargo.toml": "d4e7ad96f00940f0f8cfcea35ba83fd33508eaf0829e4c27b284d5d12815f29a",
+      "source/crates/penelope-intent/Cargo.toml": "f73cb0a634c1b08d4d26bf07ac094b47c678a63579ee379c693130551eb45d05",
+      "source/crates/penelope-ports/Cargo.toml": "740173b436b98a9b77dc8d7e163b94a87fbb6ee956b1d5355373d29600b3e10a",
+      "source/crates/penelope-process-runtime/Cargo.toml": "ca9dffbe89bc6c2aa9ea37cfc7c10a765b865cafa73883a4e1eacb7c10e7b134",
+      "source/crates/penelope-sqlite/Cargo.toml": "40f835c592dda731fbeb748233f68d36132131cabe9cb1772cfe0a94c6e2c054",
+      "source/crates/penelope-sqlite/src/schema.rs": "f5e1cb0b2940a78237309555c245dce0bde76c270bda6910ccb6f4156ce401e4",
+      "source/crates/penelope-statechronicle/Cargo.toml": "ae87ede54f770b77b227be31337181520b2bb85321323c8c9d98463fc7b2d1b9",
+      "source/crates/penelope-timeline/Cargo.toml": "af42e5cab50e01185d27708e36262ecb88af4db039bdc246a65cb6be595beb56",
+      "source/crates/penelope/Cargo.toml": "5724eb84430f49db048753d86bd8efb99fb17704b6d370aee44074d4276dcb26",
+      "source/fuzz/Cargo.toml": "309bd02cf49d8320d427f9b0946b5498e023be3bda31a4076b89a996b6edf914",
+      "source/scripts/check-package-includes.py": "426de902462db665a831648bdb42f82b488b57d5f1cec3265b663e68b8d551c2",
+      "source/scripts/conformance/Cargo.lock": "23d2ba4ad47b43768b671f5a2fc21b96e72a5566401198871fc1a231e0c39648",
+      "source/scripts/publish-crates.sh": "953743d875453849e3a5efdfdcff8473daa92089f4fb11f1b836a677d5392cd4",
+      "source/runtime-build-identities.json": "1916496004646741cc39a681fa50c950e4522f7453a0af72427932a3a329d96b"
+    }
+  }
+}

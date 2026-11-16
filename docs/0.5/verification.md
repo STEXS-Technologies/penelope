@@ -9,18 +9,15 @@ how to run the gates. Tagging and publication require separate authorization.
 
 All ten library crates use candidate version 0.5.0. The latest source adds
 connection-level SQLite query-plan stability to avoid repeated compilation of
-typed journal queries. Its isolated stable/MSRV tests and measurements are
-recorded below; **full qualification of this source change is pending**.
-
-The following table describes the preceding frozen checkpoint. Its code,
-manifests, locks, CI and scripts are identical at `9a5a1db` and `be774e6`;
-it does not automatically qualify the later SQLite change. The
-[candidate checkpoint](evidence/packaging/candidate-checkpoint.json) contains
-commands, source/archive identities, raw logs and the complete LLVM JSON report.
+typed journal queries. The [current checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json)
+qualifies the following checks at `cefa55f`, with commands, source/archive
+identities, raw logs and full LLVM JSON. **Full release qualification remains
+open.** The [preceding checkpoint](evidence/packaging/candidate-checkpoint.json)
+retains its original `9a5a1db`/`be774e6` source scope.
 
 | Gate | Verified result and scope |
 | --- | --- |
-| CI | All seven jobs pass at [`be774e6`](https://github.com/STEXS-Technologies/penelope/actions/runs/43794270936): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`cefa55f`](https://github.com/STEXS-Technologies/penelope/actions/runs/43809187026): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests pass on both compilers, with every Penelope dependency resolved from those archives |
 | Locks | Six active locks retain every external package identity and checksum; extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`, then both compiler runs use the same lock with `--locked` |
@@ -31,22 +28,20 @@ commands, source/archive identities, raw logs and the complete LLVM JSON report.
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
-| Coverage | **14,874 / 15,807 lines = 94.0976%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
+| Coverage | **14,879 / 15,814 lines = 94.0875%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
 
-The archive retains unsuccessful attempts too: an unpinned conformance checkout
-was correctly refused, and two accidental unbounded fuzz launches caused by an
-omitted library-test exclusion were deliberately stopped. The corrected pinned
-conformance and documented library commands passed. Neither attempt changed the
-separate bounded chaos rehearsal. Benchmark debug smokes are not release timing
-measurements, and line coverage is not branch completeness or a safety proof.
+Earlier unsuccessful attempts remain in the preceding checkpoint. Current
+commands use the pinned conformance source and exclude the separate fuzz package
+from library tests. Debug benchmark smokes are not release timing measurements,
+and line coverage is not branch completeness or a safety proof.
 
 ## Open release gates
 
-- Complete the full campaign on the immutable `be774e6` checkout: three rounds,
+- Complete the full campaign on the immutable `cefa55f` checkout: three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
-  does not replace it. Both that run and the older development rehearsal retain
-  their source scopes; the later SQLite setting also needs full qualification.
+  does not replace it. The earlier `be774e6` campaign and development rehearsal
+  continue separately and retain their original source scopes.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.
@@ -58,18 +53,20 @@ measurements, and line coverage is not branch completeness or a safety proof.
 
 No regression acceptance is recorded. Diagnosis, intervals spanning zero and a
 smaller number of flags do not by themselves establish equivalence or waive a
-sustained regression. Coverage passes narrowly; its margin has not improved over
-the preceding failure-path checkpoint.
+sustained regression. Coverage passes narrowly and is lower than the preceding
+94.0976% checkpoint; the supported SQLite configuration's error conversion remains
+unexercised. All 15 invariant-owner mappings and 33 boundary-test references were
+rechecked against current passing results; their 27 owner source files are unchanged.
 
 ### Release acceptance review — November 16, 2026
 
 This maps every [§14 condition](plan.md#14-release-definition-of-done-non-negotiable)
 to its evidence and remaining obligation. “Implemented” below describes the
-checked capability, not final release qualification. The checkpoint, static API
-and capability archives have been rechecked against all 480 recorded member
-hashes; all 27 invariant-owner source hashes still match. Runtime/build inputs
-were identical to `9a5a1db` at that review. The subsequent SQLite setting requires
-fresh source qualification and artifact reconciliation.
+checked capability, not final release qualification. The preceding checkpoint,
+static API and capability archives were rechecked against all 480 recorded member
+hashes before the SQLite change. The current checkpoint adds 164 verified archive
+members and revalidates all 27 invariant-owner source hashes. Full chaos and final
+release/artifact reconciliation remain open.
 
 | Acceptance condition | Evidence and disposition |
 | --- | --- |
@@ -89,7 +86,7 @@ fresh source qualification and artifact reconciliation.
 The §13.2 SQLite scope gap is now covered by the separate
 [versioned 31-pair refresh](evidence/sqlite-balanced/versioned-candidate.json).
 It confirms substantial legacy replay and exact-retry findings; database
-performance acceptance remains open. The current machine-store archive does
+performance acceptance remains open. The versioned capability archive does
 record end-of-profile WAL/database sizes, race throughput and Linux process I/O
 counters. All four writer profiles in all three stable runs and the MSRV run
 retain a **3,827,512-byte WAL** and **4,096-byte main database** before close;
