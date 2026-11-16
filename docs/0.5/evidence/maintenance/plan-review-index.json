@@ -299,6 +299,20 @@
     "reviewed_blocks": 18,
     "scope": "Immutable0.4 source facts, starting subsystem boundaries and original policies. Current features and approvedMSRV are reviewed separately; chronology before every refactor is not proven."
   },
+  "performance_method_review": {
+    "records_sha256": {
+      "../qualification/candidate-capability-performance.json": "6ac56974102c755ea60f44fffd89884b8a84db776b677ba9d49f174d2de80528",
+      "../legacy-balanced/versioned-candidate.json": "6c95fa6b5801454859c1e5058947f39f78ea790dd3b5c8780281d2cd0863d362",
+      "../sqlite-balanced/versioned-candidate.json": "d7ddeb8ddf909f1035924b16f418fa879c5b31bbbe613157fa304b0f70030141",
+      "../sqlite-balanced/qpsg-balanced.json": "911f8fa04f8b34f7e6738cb134abc19fc991b4cb92f50ba619a60de86d161d13",
+      "manifest.json": "ccf1b5b8b6a4e06fd9107f5c2c3af1f0cd10ead5675a6d5f8f95f3c7dbbfb24f",
+      "../machine-performance/manifest.json": "dd9054a5e6bbe068a86de35e135cbae132e9074639a6719dc4ee4c185748eec7",
+      "../machine-performance/hierarchy.json": "efa1a6e00fb9ff273986b7e96dee67ad67c88d40364eac110d0b7d6246f019b4",
+      "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda"
+    },
+    "reviewed_blocks": 16,
+    "scope": "Same-work methodology, nine recommended workload rows and five provisional gates. Report shape, revision and environment limits remain explicit; no sustained regression is accepted and final exact-source qualification remains open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -308,7 +322,7 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 111,
+      "needs_individual_review": 95,
       "individually_reviewed_scoped_support": 142,
       "individually_reviewed_qualification_open": 2,
       "release_condition_open": 5,
@@ -318,6 +332,8 @@
       "scoped_evidence_indexed": 163,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
+      "individually_reviewed_measurement_scope": 14,
+      "performance_acceptance_open": 2,
       "advisory_pr_breakdown": 15,
       "historical_sequence_unproven": 1,
       "historical_source_reference": 24
@@ -342,7 +358,14 @@
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
     "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
     "../../verification.md": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2",
-    "../manifest.json": "3060456c52ddd98c26cfb39f73b6efa1e051e328fa9fccb063b14786581cefec"
+    "../manifest.json": "3060456c52ddd98c26cfb39f73b6efa1e051e328fa9fccb063b14786581cefec",
+    "../qualification/candidate-capability-performance.json": "6ac56974102c755ea60f44fffd89884b8a84db776b677ba9d49f174d2de80528",
+    "../legacy-balanced/versioned-candidate.json": "6c95fa6b5801454859c1e5058947f39f78ea790dd3b5c8780281d2cd0863d362",
+    "../sqlite-balanced/versioned-candidate.json": "d7ddeb8ddf909f1035924b16f418fa879c5b31bbbe613157fa304b0f70030141",
+    "../sqlite-balanced/qpsg-balanced.json": "911f8fa04f8b34f7e6738cb134abc19fc991b4cb92f50ba619a60de86d161d13",
+    "manifest.json": "ccf1b5b8b6a4e06fd9107f5c2c3af1f0cd10ead5675a6d5f8f95f3c7dbbfb24f",
+    "../machine-performance/manifest.json": "dd9054a5e6bbe068a86de35e135cbae132e9074639a6719dc4ee4c185748eec7",
+    "../machine-performance/hierarchy.json": "efa1a6e00fb9ff273986b7e96dee67ad67c88d40364eac110d0b7d6246f019b4"
   },
   "blocks": [
     {
@@ -7029,8 +7052,20 @@
       "kind": "paragraph",
       "sha256": "c3281017b7e36772b1be4d5996d864340fc417dd7d5ead1cc2e209dca963d66e",
       "preview": "Measure **same functional work** at v0.4 and v0.5. Do not compare a pure machine `match` against a durable SQL",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The same-work legacy comparison uses original0.4 fixtures and independently locked binaries; new machine capabilities are measured separately. Timeline native/adapter and QPSG variant comparisons preserve their own revision/guarantee scopes. Historical measurements and unsuccessful diagnostics remain retained; no pure-versus-durable ratio is used as a release result."
     },
     {
       "line": 938,
@@ -7049,8 +7084,20 @@
       "kind": "table",
       "sha256": "e65d8a3c1e9b55dbf6115c64d3d728f096bf717daf68c78c8db5fa195742f9be",
       "preview": "| Workload | Profiles | Report |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Recommended workload table header; row assessments below identify measured scope and differences from the suggested reports, not a promise that every possible payload/environment was measured."
     },
     {
       "line": 941,
@@ -7069,8 +7116,20 @@
       "kind": "table",
       "sha256": "2c4e03e4ec392686c43a178bf4d79cc26ab83a2a201990128437953b385413d8",
       "preview": "| Flat machine | 2/8/32 states, 2/8/32 events, guard accept/reject | p50/p95/p99 ns, allocations/op, throughpu",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The retained core matrix covers2/8/32 states/events, guard acceptance/refusal, four owned widths and0/1/8/32 intents. Quantiles are101 chronological elapsed batch means of32 operations, not individual-call latency percentiles. Allocation probes and throughput are scoped to those fixtures."
     },
     {
       "line": 943,
@@ -7079,8 +7138,20 @@
       "kind": "table",
       "sha256": "01405e4fe93c04a92f8b99afbf48c70cd07720b109946bfbc0fa84053f0dbc8e",
       "preview": "| Hierarchical dispatch | depths 1/2/4/8/16; handled at leaf/parent/root | latency by depth, bounded state-pat",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The hierarchy matrix covers depth1/2/4/8/16 and leaf/parent/root handling,32-byte state and no intents, including internal/external/refusal/unhandled paths. Workspace is bounded by configured depth; prefix cycle validation is quadratic in depth, not a claim of constant/linear total work."
     },
     {
       "line": 944,
@@ -7089,8 +7160,20 @@
       "kind": "table",
       "sha256": "0cb536ef8fbcdb187bfbeb02fe3ee3ea094da689adc5051fc06a1defcfc72b59",
       "preview": "| State representation | ~8 B, ~256 B, ~4 KiB, ~64 KiB owned state | state copy/clone cost, user-computation s",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The state-cost fixture separates owned copy/counter work, consumer transition and MemoryMachine publication at8/256/4096/65536-byte state with capacity0. These are fixture costs, not a bound on arbitrary user computation, heap behavior or aliasing."
     },
     {
       "line": 945,
@@ -7099,8 +7182,20 @@
       "kind": "table",
       "sha256": "6650a34bcade011e0ffbb0c33cf524a78d3a568f4820d8724a579f0584defa9d",
       "preview": "| Transition intent staging | 0/1/8/32 intents, quota failure | staging and publication overhead, allocations ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The flat matrix measures0/1/8/32 staged intents and quota refusal at fixed capacity32, including staging/publication and the allocation probe. Capacity remains32 even in the0-intent rows; it is not a layout comparison of all const-generic capacities."
     },
     {
       "line": 946,
@@ -7109,8 +7204,20 @@
       "kind": "table",
       "sha256": "f7ea90d29d57c469bb3fd9ca292d4645b368a32aa3e1de3525b9fc0ac4b7c162",
       "preview": "| Legacy linear/graph saga | Exact old benchmark fixtures incl. parallel variants | old vs adapted path, p50/p",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Original frozen saga fixtures, including parallel variants, are retained in the31-pair legacy comparison. Their timings are process loop means and measured resource context; they are not individual saga event p50/p95 distributions. Frozen semantic observations remain independent of timing. This report-shape refinement does not waive open comparative findings or final exact-source qualification."
     },
     {
       "line": 947,
@@ -7119,8 +7226,20 @@
       "kind": "table",
       "sha256": "2fda4a1599e33a040a04c44dd54e79a438c3929be0d9fb6bba067df4b35ae46e",
       "preview": "| Legacy task | Poll, checkpoint, startup/restart, replay | overhead, unchanged results, memory |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Legacy task poll/checkpoint/restart/replay workloads and frozen results remain measured with memory/resource observations. Same-work loop-mean comparisons do not establish event-tail latency or equivalence. Startup, supervision and protected end-to-end profiles retain distinct scopes."
     },
     {
       "line": 948,
@@ -7129,8 +7248,20 @@
       "kind": "table",
       "sha256": "48786004276111db6bf95ac92fede67d87f20c5cdb4e97cbe6f3206a8d16aaca",
       "preview": "| Timeline over machine | live input, correction horizons 1/8/32/128, state widths | correction/replay cost vs",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The adapter/native timeline matrix covers live input and correction horizons1/8/32/128 at four state widths with101 individual-call samples and separate allocation probes. Adapter provenance/context/ownership costs differ; this is not a claim of equivalence to an independently built original0.4 binary."
     },
     {
       "line": 949,
@@ -7139,8 +7270,20 @@
       "kind": "table",
       "sha256": "1fd9c8f2f802fa908431d3c9e9effd427afa31f4f94bbedceda5e61639f2535c",
       "preview": "| Durable machine SQLite | single writer, duplicate, 2/8/32 contenders, snapshot/no snapshot | commit/s, p95/p",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The SQLite fixture covers1/2/8/32 independent writers, one accepted CAS/intent per race, exact retries and separate coherent head-snapshot reads, with integrity checks. Every commit requires complete next-state bytes; no unsupported snapshot-free commit is invented. The refresh retains101 races, WAL/database sizes and process I/O/RSS context. Race quantiles are not distributions of individual refusal latency or exact physical disk writes."
     },
     {
       "line": 950,
@@ -7149,8 +7292,20 @@
       "kind": "table",
       "sha256": "89201f8682acf42e4d68928bb5f38de952f7d60b2878f161d0f4004ed535f20e",
       "preview": "| End-to-end | state transition + committed intent + task/saga result | separated commit/dispatch/effect cost ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "The protected native pipeline measures109 complete sequential workflows per process,101 retained after warmup, with12 phases across commit, admission, lost ACK/reopen, real worker, verified result and subsequent saga admission. Saga action remains undispatched. Separate queue-capacity/burst fixtures cover intentionally gated backpressure; these do not establish throughput/saturation at arbitrary concurrency."
     },
     {
       "line": 952,
@@ -7169,8 +7324,20 @@
       "kind": "item",
       "sha256": "6bc8325eb9cff95355a1cbe1859fd0768aedafcd46bfff80bb7f50d89e2a5432",
       "preview": "- Core flat transition in the `no_std` profile introduces **zero internal heap allocations** for allocation-fr",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Pure core fixtures show zero internal allocations for the checked allocation-free types, with an enabled allocation positive control. Bare/serde portable builds are separate compile gates. Neither result bounds arbitrary user allocations or demonstrates timing on physical bare-metal hardware."
     },
     {
       "line": 955,
@@ -7179,8 +7346,20 @@
       "kind": "item",
       "sha256": "03fb744ce30e61f041167378743cd2cf11fc23bdf6cfeb2bd3603f273d650b7d",
       "preview": "- Legacy saga/task/timeline paths should show **no statistically meaningful regression** under identical workl",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "performance_acceptance_open",
+      "assessment": "This gate remains open:31-pair comparisons retain encoding/timeline regressions and database findings. Diagnosis, a patched dependency attribution, a noisy control or an interval spanning zero is not explicit regression acceptance. No acceptance has been recorded."
     },
     {
       "line": 956,
@@ -7189,8 +7368,20 @@
       "kind": "item",
       "sha256": "248380968a29c9f7883a96750cd463402412a58aa93ab38a8cdecc130162f9bf",
       "preview": "- Machine HSM dispatch should show bounded scaling with active hierarchy depth; no unbounded scans over unrela",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Configured active paths bound dispatch and cycle checks; traversal does not scan unrelated machine instances. Measurements cover finite depths and include failure/refusal paths. Cycle detection is quadratic in configured depth; bounded scaling is not silently advertised as a linear latency guarantee."
     },
     {
       "line": 957,
@@ -7199,8 +7390,20 @@
       "kind": "item",
       "sha256": "252e8eff26dd5854d72f4d9bbfbdb7994aa5191b1f60b05e7eb615d1785ee7f4",
       "preview": "- Database throughput regressions must be evaluated against actual safety work/transaction contents, with WAL/",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "performance_acceptance_open",
+      "assessment": "Database comparisons retain actual WAL/FULL transaction work, cache/filesystem/shared-host conditions and original versus patched-dependency/QPSG variants. The setting addresses observed recompilation, while reopen/append-tail findings remain open. Additional safety work is described rather than subtracted or hidden by changing expected data."
     },
     {
       "line": 958,
@@ -7209,8 +7412,20 @@
       "kind": "item",
       "sha256": "0d05d93153a6b63e16a15b7ed76016d430a0be01c2601452f5f6edb0e3ffd1f2",
       "preview": "- Track cold start/build cost, per-crate dependency count, binary size, peak RSS and user-facing boilerplate. ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/candidate-capability-performance.json",
+          "pointer": "/profiles",
+          "scope_status": "recorded_new_capability_fixture_scope_not_final_performance_acceptance"
+        },
+        {
+          "file": "../legacy-balanced/versioned-candidate.json",
+          "pointer": "/measurement_limits",
+          "scope_status": "original_comparator_and_report_shape_retained"
+        }
+      ],
+      "review_state": "individually_reviewed_measurement_scope",
+      "assessment": "Maintenance evidence retains separate empty-target artifact-cold build/test observations, dependency/doc/LOC inventories, peak RSS and boilerplate examples. Registry/OS caches were warm or uncontrolled and empty rlib inventories supply no size evidence. The capability refresh retains14 actual benchmark executables; these are not linked application size or fresh-install/cold-boot measurements. Pure core has no mandatory hosted dependency. All measurements retain original source scopes; final reconciliation remains open."
     },
     {
       "line": 962,
