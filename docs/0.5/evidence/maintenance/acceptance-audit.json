@@ -1,0 +1,510 @@
+{
+  "scope": "Plan section13.3 seven-criterion source-owner and archived-observation audit. Supported within stated scope; not a complete plan/release audit, user ergonomics study or performance waiver.",
+  "review_commit": "a46b5dc6691a15151c325e81f975d74fe6a93917",
+  "qualified_source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+  "plan_sha256": "c0dea1ab385516a337e28936496907bcc8e932a9a8028bf8a1276180cd0f50a1",
+  "evidence": {
+    "checkpoint": "../packaging/qpsg-candidate-checkpoint.json",
+    "archive_sha256": "3209d69c90640ee83a9a58b80637ea3a75a9c5098a2624506c3a491ba814e528",
+    "verified_archive_members": 164,
+    "verified_test_references": 12,
+    "consumer_checks": [
+      {
+        "label": "first-machine-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "flat-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "nested-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "decisions-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "timeline-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "durable-1.100.0",
+        "exit_code": 0
+      },
+      {
+        "label": "first-machine-1.89.0",
+        "exit_code": 0
+      },
+      {
+        "label": "flat-1.89.0",
+        "exit_code": 0
+      },
+      {
+        "label": "nested-1.89.0",
+        "exit_code": 0
+      },
+      {
+        "label": "decisions-1.89.0",
+        "exit_code": 0
+      },
+      {
+        "label": "timeline-1.89.0",
+        "exit_code": 0
+      },
+      {
+        "label": "durable-1.89.0",
+        "exit_code": 0
+      }
+    ],
+    "inventory": "manifest.json#qpsg_source_followup",
+    "test_cost_scope": "manifest.json original revisions and commands, not current comparative cost"
+  },
+  "criteria": [
+    {
+      "criterion": 1,
+      "requirement": "One authoritative machine outcome, error and candidate publication contract, with specialized documented adapters.",
+      "owners": [
+        "crates/penelope-core/src/machine/contracts.rs",
+        "crates/penelope-core/src/machine/memory.rs",
+        "crates/penelope-ports/src/machine.rs",
+        "crates/penelope-executor/src/saga_machine.rs",
+        "crates/penelope-core/src/task/projection.rs"
+      ],
+      "assessment": "Transition and MachineError live in portable core. MemoryMachine owns the consuming prepared lifecycle. PreparedMachineCommit wraps that same prepared handle for verified durable publication; saga preparation delegates to native decision functions, and task preparation delegates to native projection validation. No universal commit authority is introduced.",
+      "tests": [
+        {
+          "source": "crates/penelope-core/tests/machine.rs",
+          "function": "decisions_prepare_without_publishing_and_drop_aborts",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope/tests/prepared_lifecycles.rs",
+          "function": "linear_proposals_preserve_unknown_outcomes_and_require_separate_admission",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope/tests/prepared_lifecycles.rs",
+          "function": "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        }
+      ],
+      "limits": "Native saga/task outcomes and errors retain their existing protocols. Shared inspection does not imply one evaluator or interchangeable publication authority.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 2,
+      "requirement": "Shared provenance and diagnostic view rather than unrelated conventions.",
+      "owners": [
+        "crates/penelope-core/src/machine/view.rs",
+        "crates/penelope/src/diagnostics.rs",
+        "crates/penelope/examples/support/inspection.rs",
+        "crates/penelope-timeline/src/machine.rs",
+        "docs/0.5/public-api.md"
+      ],
+      "assessment": "PreparedDecision is defined once and reexported through diagnostics; machine, linear/graph saga and task views retain native associated provenance. The same generic example inspection helper consumes the views. MachineTimeline captures TransitionContext and retains the core TransitionRecord alongside distinct timeline coordinates.",
+      "tests": [
+        {
+          "source": "crates/penelope-core/tests/machine.rs",
+          "function": "publication_retains_prior_intents_and_their_exact_origins_until_taken",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope-timeline/tests/machine.rs",
+          "function": "native_memory_and_timeline_agree_on_state_provenance_intents_and_failure_isolation",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        }
+      ],
+      "limits": "Timeline speculative steps use the existing timeline preparation/finality interface, not PreparedDecision. Missing legacy coordinates remain absent; no universal trace authentication or historical coordinate synthesis is claimed.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 3,
+      "requirement": "Reuse SQLite transaction, worker and receipt helpers.",
+      "owners": [
+        "crates/penelope-sqlite/src/worker.rs",
+        "crates/penelope-sqlite/src/process.rs",
+        "crates/penelope-sqlite/src/machine.rs",
+        "crates/penelope-sqlite/src/async_tasks.rs",
+        "crates/penelope-sqlite/src/process_commit_verifier.rs"
+      ],
+      "assessment": "DatabaseWorker<State> implements queue admission, blocking operation delivery and shutdown for process, machine and asynchronous task adapters. Native process commit retry and read-only verification call the same committed_receipt and verify_committed_batch. Native transactions remain at their authority owners.",
+      "tests": [
+        {
+          "source": "crates/penelope-sqlite/src/worker_transaction_tests.rs",
+          "function": "transaction_panics_preserve_commit_boundary_and_drain_accepted_work",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope-sqlite/tests/support/commit_integrity.rs",
+          "function": "receipt_reconstruction_rejects_missing_and_substituted_constituents",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        }
+      ],
+      "limits": "Task journal connection/cache and machine/process write transactions intentionally remain separate. Sharing the worker does not merge native journals or source-acceptance and action-execution leases.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 4,
+      "requirement": "Single canonical tutorial and machine/saga/task/timeline integration examples.",
+      "owners": [
+        "README.md",
+        "docs/README.md",
+        "docs/getting-started.md",
+        "ci/machine-consumer/build.rs",
+        "ci/machine-consumer/Cargo.toml",
+        "ci/machine-consumer/workflow.rs",
+        "crates/penelope/examples/timeline_machine.rs",
+        "scripts/run-supervised-saga-example.sh"
+      ],
+      "assessment": "Root/docs navigation points to getting-started. The consumer build extracts its sole Rust fence and compiles the exact source. Facade-only flat/nested/prepared/timeline consumers and the durable task-to-saga example are recorded passing on both compilers. The tutorial links the protected-worker result-validation path and wrong-result refusal script.",
+      "tests": [],
+      "limits": "Local scope, event identity, digest and logical time remain explicit. The tutorial is shorter and executable, but usability is not a measured user study. Protected native performance/worker evidence has its own revision scope in qualification/candidate-capability-performance.json and sqlite-balanced/qpsg-balanced.json.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 5,
+      "requirement": "Document why duplicate-looking native code remains.",
+      "owners": [
+        "docs/0.5/architecture.md",
+        "crates/penelope-core/src/__private.rs",
+        "crates/penelope-core/src/machine/wire.rs",
+        "crates/penelope-core/src/timeline/wire.rs",
+        "crates/penelope-timeline/src/effects.rs",
+        "crates/penelope-ports/src/machine/delivery.rs"
+      ],
+      "assessment": "ADR-050-06 names shared owners and retained boundaries: distinct native transactions/leases, task generation and journal-first recovery, saga compensation/manual review, timeline finality, legacy wire/error ordering and allocation-free core. Both wire codecs call bounded cursor helpers; machine/timeline intent admission uses one preflight. The two exact clone groups are native DTO projections and forwards to an existing canonical key encoder.",
+      "tests": [
+        {
+          "source": "crates/penelope-core/tests/intent_admission.rs",
+          "function": "old_timeline_and_split_machine_admission_agree_at_all_bounds",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        }
+      ],
+      "limits": "Exact-function clone inventory is not a semantic clone detector. Retained adapter code still requires judgment; no minimum line-deletion target applies.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 6,
+      "requirement": "Focused public-invariant tests and independent models.",
+      "owners": [
+        "crates/penelope-core/tests/machine.rs",
+        "crates/penelope-core/tests/machine_hierarchy.rs",
+        "crates/penelope-core/tests/prepared_task.rs",
+        "crates/penelope-core/tests/support/task_projection_0_4.rs",
+        "crates/penelope-timeline/tests/model.rs",
+        "crates/penelope-timeline/tests/support/timeline_model.rs",
+        "ci/compat-0.4/tests/architecture.rs",
+        "scripts/check-layer-boundaries.sh"
+      ],
+      "assessment": "Flat decisions compare against separate arithmetic state/revision accounting; HSM compares all state pairs with an independent path oracle; task preparation compares against frozen 0.4 source; timeline correction uses a closed-form arithmetic oracle. Existing bounded trace helpers are shared by property/exhaustive/fuzz callers rather than copying the production evaluator. Structural and dependency checks stay in checkout CI.",
+      "tests": [
+        {
+          "source": "crates/penelope-core/tests/machine.rs",
+          "function": "deterministic_sequences_match_a_separate_arithmetic_oracle",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope-core/tests/machine_hierarchy.rs",
+          "function": "every_pair_of_tree_states_matches_an_independent_path_oracle",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope-core/tests/prepared_task.rs",
+          "function": "preparation_matches_frozen_record_validation_and_supervisory_decisions",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        },
+        {
+          "source": "crates/penelope-timeline/tests/model.rs",
+          "function": "correction_matches_closed_form",
+          "passing_archive_members": [
+            "checkpoint/library-stable.log",
+            "checkpoint/library-msrv.log"
+          ]
+        }
+      ],
+      "limits": "This reviews named independent models and public-boundary tests, not every assertion in the repository. Distinct malformed-coordinate, crash and unwind cases are retained because they protect different boundaries. Full chaos remains open.",
+      "status": "supported_with_stated_scope"
+    },
+    {
+      "criterion": 7,
+      "requirement": "Measure code, duplication, dependencies and test cost without a deletion target.",
+      "owners": [
+        "docs/0.5/evidence/maintenance/manifest.json",
+        "docs/0.5/evidence/maintenance/inventory.py",
+        "docs/0.5/evidence/maintenance/production_inventory.py"
+      ],
+      "assessment": "Current cefa55f inventories record 14,356 to 18,873 token-covered production lines (+107 on existing paths), two unchanged exact whole-function clone groups, 72 to 69 declared edges and 171 to 59 tracked Markdown files. Original bounded test-cost observations retain 572 versus 685 passes, zero observed failures/ignored cases, and raw resource logs at their original revisions. Current source/package checkpoints each report 694 passes in 95 harness summaries on both compilers.",
+      "tests": [],
+      "limits": "Test counts differ by revision and command scope and are not pooled. One-run timing/zero observed failures does not estimate a flake rate or prove lower test cost. Prior empty rlib artifact lists are not size evidence. No overall production code-size reduction is claimed.",
+      "status": "supported_with_stated_scope"
+    }
+  ],
+  "reviewed_files": {
+    "README.md": {
+      "reviewed_sha256": "34531b38bf0de86c2d25fdecf05dadc572e14c233d123c3579daffd514a2ca70",
+      "qualified_source_sha256": "34531b38bf0de86c2d25fdecf05dadc572e14c233d123c3579daffd514a2ca70",
+      "same_as_qualified_source": true
+    },
+    "ci/compat-0.4/tests/architecture.rs": {
+      "reviewed_sha256": "b34a1c41c959b9782935d68150c1340c4fee86290c3ec8513901034ef34c3a79",
+      "qualified_source_sha256": "b34a1c41c959b9782935d68150c1340c4fee86290c3ec8513901034ef34c3a79",
+      "same_as_qualified_source": true
+    },
+    "ci/machine-consumer/Cargo.toml": {
+      "reviewed_sha256": "7227ef4ef9b7db0de601d724c16aa263c986b1fec0a779a0c905428aa5025928",
+      "qualified_source_sha256": "7227ef4ef9b7db0de601d724c16aa263c986b1fec0a779a0c905428aa5025928",
+      "same_as_qualified_source": true
+    },
+    "ci/machine-consumer/build.rs": {
+      "reviewed_sha256": "d30c683a06fc9f925d3fc61e7e2f8b7aa701a711335f82c369056f43a64a4f08",
+      "qualified_source_sha256": "d30c683a06fc9f925d3fc61e7e2f8b7aa701a711335f82c369056f43a64a4f08",
+      "same_as_qualified_source": true
+    },
+    "ci/machine-consumer/workflow.rs": {
+      "reviewed_sha256": "86e4866770ea648200ef9152348b4fbda5c968b63bf445b1880f68d1d4eb2efb",
+      "qualified_source_sha256": "86e4866770ea648200ef9152348b4fbda5c968b63bf445b1880f68d1d4eb2efb",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/__private.rs": {
+      "reviewed_sha256": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+      "qualified_source_sha256": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/machine/contracts.rs": {
+      "reviewed_sha256": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "qualified_source_sha256": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/machine/memory.rs": {
+      "reviewed_sha256": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "qualified_source_sha256": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/machine/view.rs": {
+      "reviewed_sha256": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+      "qualified_source_sha256": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/machine/wire.rs": {
+      "reviewed_sha256": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+      "qualified_source_sha256": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/task/projection.rs": {
+      "reviewed_sha256": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+      "qualified_source_sha256": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/src/timeline/wire.rs": {
+      "reviewed_sha256": "e3254164b25dc0ca7bbdb61cd253d5a502ededc906f33063077e4cda6916436e",
+      "qualified_source_sha256": "e3254164b25dc0ca7bbdb61cd253d5a502ededc906f33063077e4cda6916436e",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/tests/intent_admission.rs": {
+      "reviewed_sha256": "5b84e98875ab92236437e1614a52c01730dde883d5d77f665caaf6a3b11cc1f1",
+      "qualified_source_sha256": "5b84e98875ab92236437e1614a52c01730dde883d5d77f665caaf6a3b11cc1f1",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/tests/machine.rs": {
+      "reviewed_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "qualified_source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/tests/machine_hierarchy.rs": {
+      "reviewed_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "qualified_source_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/tests/prepared_task.rs": {
+      "reviewed_sha256": "8738404c75f0bb0b8e24e24c82a68df02e1e3df8aaaa7ed0ad577743b55d5ef3",
+      "qualified_source_sha256": "8738404c75f0bb0b8e24e24c82a68df02e1e3df8aaaa7ed0ad577743b55d5ef3",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-core/tests/support/task_projection_0_4.rs": {
+      "reviewed_sha256": "be2c88e75abe667ce77f437b7cf57862b990e2eec34778f545a70f9eb1caba58",
+      "qualified_source_sha256": "be2c88e75abe667ce77f437b7cf57862b990e2eec34778f545a70f9eb1caba58",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-executor/src/saga_machine.rs": {
+      "reviewed_sha256": "848b8dd4e96a04dc309458c96c593bae18d47f11919c1f58fac36422b43da40e",
+      "qualified_source_sha256": "848b8dd4e96a04dc309458c96c593bae18d47f11919c1f58fac36422b43da40e",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-ports/src/machine.rs": {
+      "reviewed_sha256": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+      "qualified_source_sha256": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-ports/src/machine/delivery.rs": {
+      "reviewed_sha256": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+      "qualified_source_sha256": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/async_tasks.rs": {
+      "reviewed_sha256": "6ec0fd3402d86965e21221e3ef733929a16096f27cfe73630d523e41ab172be5",
+      "qualified_source_sha256": "6ec0fd3402d86965e21221e3ef733929a16096f27cfe73630d523e41ab172be5",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/machine.rs": {
+      "reviewed_sha256": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+      "qualified_source_sha256": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/process.rs": {
+      "reviewed_sha256": "e47852e85e1496582f019cbd85eb16cdc17520816af968d17b613680be18eaba",
+      "qualified_source_sha256": "e47852e85e1496582f019cbd85eb16cdc17520816af968d17b613680be18eaba",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/process_commit_verifier.rs": {
+      "reviewed_sha256": "6fd2e3fc149440c01e74365fd249656073a1682ca76675071cd234a0945f67b1",
+      "qualified_source_sha256": "6fd2e3fc149440c01e74365fd249656073a1682ca76675071cd234a0945f67b1",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/worker.rs": {
+      "reviewed_sha256": "3c2f67a679e45846bc675854537a283bfcb779ef2e493bc4257e1df6e424230a",
+      "qualified_source_sha256": "3c2f67a679e45846bc675854537a283bfcb779ef2e493bc4257e1df6e424230a",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/src/worker_transaction_tests.rs": {
+      "reviewed_sha256": "32608c070ac58adad4fffba1d2376cc9cdbb385354c0d9554e96bc02ee456e11",
+      "qualified_source_sha256": "32608c070ac58adad4fffba1d2376cc9cdbb385354c0d9554e96bc02ee456e11",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-sqlite/tests/support/commit_integrity.rs": {
+      "reviewed_sha256": "2aea4d14a58f601bad3b51db5bd2b9b5ee34a0a98b19d720c7987925a239d464",
+      "qualified_source_sha256": "2aea4d14a58f601bad3b51db5bd2b9b5ee34a0a98b19d720c7987925a239d464",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-timeline/src/effects.rs": {
+      "reviewed_sha256": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+      "qualified_source_sha256": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-timeline/src/machine.rs": {
+      "reviewed_sha256": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "qualified_source_sha256": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-timeline/tests/machine.rs": {
+      "reviewed_sha256": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+      "qualified_source_sha256": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-timeline/tests/model.rs": {
+      "reviewed_sha256": "a13f45261fedc2fc74e44ffe77b969b5a5ad28d5c6591deae0f4345162e27f14",
+      "qualified_source_sha256": "a13f45261fedc2fc74e44ffe77b969b5a5ad28d5c6591deae0f4345162e27f14",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope-timeline/tests/support/timeline_model.rs": {
+      "reviewed_sha256": "455de4916e4e90d1d7254e99e46bc8d5bc4511bdada4175a2f1ebeec05ec2242",
+      "qualified_source_sha256": "455de4916e4e90d1d7254e99e46bc8d5bc4511bdada4175a2f1ebeec05ec2242",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope/examples/support/inspection.rs": {
+      "reviewed_sha256": "f3976d8214755851a8fe5ff8b2191863fde601a07eef8837afb79c0dc8b87328",
+      "qualified_source_sha256": "f3976d8214755851a8fe5ff8b2191863fde601a07eef8837afb79c0dc8b87328",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope/examples/timeline_machine.rs": {
+      "reviewed_sha256": "fbbc66e6d467cc295818669eb82eaebf8562663df329406178e69725362599f3",
+      "qualified_source_sha256": "fbbc66e6d467cc295818669eb82eaebf8562663df329406178e69725362599f3",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope/src/diagnostics.rs": {
+      "reviewed_sha256": "25dd75120e746ebbea57893fdb33a3af3ad4100a8480266bec30d9d79af23819",
+      "qualified_source_sha256": "25dd75120e746ebbea57893fdb33a3af3ad4100a8480266bec30d9d79af23819",
+      "same_as_qualified_source": true
+    },
+    "crates/penelope/tests/prepared_lifecycles.rs": {
+      "reviewed_sha256": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+      "qualified_source_sha256": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+      "same_as_qualified_source": true
+    },
+    "docs/0.5/architecture.md": {
+      "reviewed_sha256": "36eda0a7f8d5328b78ecbe36dd04f4ccbb732770c08494d6c81cc8eca499799a",
+      "qualified_source_sha256": "5b84aa02b2157df4f36325949740975c5d1f6de578133a7c9bdd8d2dfdcdb3b2",
+      "same_as_qualified_source": false
+    },
+    "docs/0.5/evidence/maintenance/inventory.py": {
+      "reviewed_sha256": "5324fe1ac1f99a0b62ba9392d6053e1efab8a7a92a2e7f7e39e3ab494f2bdca0",
+      "qualified_source_sha256": "5324fe1ac1f99a0b62ba9392d6053e1efab8a7a92a2e7f7e39e3ab494f2bdca0",
+      "same_as_qualified_source": true
+    },
+    "docs/0.5/evidence/maintenance/manifest.json": {
+      "reviewed_sha256": "ccf1b5b8b6a4e06fd9107f5c2c3af1f0cd10ead5675a6d5f8f95f3c7dbbfb24f",
+      "qualified_source_sha256": "1fdf7b941c617a923252766cfd3260063a8522e8f6a13015587f4d60cebb02e5",
+      "same_as_qualified_source": false
+    },
+    "docs/0.5/evidence/maintenance/production_inventory.py": {
+      "reviewed_sha256": "9818b17b7aa7862504e699ec4196f209b4c69359d54efc87a40bde6a7287b824",
+      "qualified_source_sha256": "9818b17b7aa7862504e699ec4196f209b4c69359d54efc87a40bde6a7287b824",
+      "same_as_qualified_source": true
+    },
+    "docs/0.5/public-api.md": {
+      "reviewed_sha256": "86b4f8e1f2805838c6ba509d873abd953d8a22d50a6995648084cbf4dda74ce0",
+      "qualified_source_sha256": "86b4f8e1f2805838c6ba509d873abd953d8a22d50a6995648084cbf4dda74ce0",
+      "same_as_qualified_source": true
+    },
+    "docs/README.md": {
+      "reviewed_sha256": "7bf13255b7ce08674d4d3952fdb55bd67b0f5533306a0c8ee6ae576f8bac6381",
+      "qualified_source_sha256": "7bf13255b7ce08674d4d3952fdb55bd67b0f5533306a0c8ee6ae576f8bac6381",
+      "same_as_qualified_source": true
+    },
+    "docs/getting-started.md": {
+      "reviewed_sha256": "b17804ee10c0f957edf8c81c2a000122a1659e98758bc3ab30b05aa840b33afb",
+      "qualified_source_sha256": "b17804ee10c0f957edf8c81c2a000122a1659e98758bc3ab30b05aa840b33afb",
+      "same_as_qualified_source": true
+    },
+    "scripts/check-layer-boundaries.sh": {
+      "reviewed_sha256": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392",
+      "qualified_source_sha256": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392",
+      "same_as_qualified_source": true
+    },
+    "scripts/run-supervised-saga-example.sh": {
+      "reviewed_sha256": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0",
+      "qualified_source_sha256": "149d4e482281e31d143f68a91774cdb767127f2d4465085805faa041a63b5fd0",
+      "same_as_qualified_source": true
+    }
+  },
+  "open": [
+    "Exact-source full chaos campaign",
+    "Disposition of all retained performance findings under plan13.2; no waiver recorded",
+    "Remaining full-plan and section14 release audit, dated release note and final artifact reconciliation",
+    "Separate publication/tag authorization after qualification"
+  ]
+}

@@ -136,7 +136,9 @@ token-covered source lines at the baseline versus 18,873 at candidate `cefa55f`,
 total production source. The two exact whole-function clone groups are unchanged:
 thin forwards to the shared effect-key encoder and native DTO scope projections.
 This limited clone check supplements the owner audit; it cannot establish absence
-of partial or semantic duplication.
+of partial or semantic duplication. The [seven-criterion maintenance audit](evidence/maintenance/acceptance-audit.json)
+connects these owners and boundaries to passing public-invariant, model and
+consumer checks, with test-cost and source-scope limits.
 
 ## ADR-050-07 and 08: authorization and features
 
