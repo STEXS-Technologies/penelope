@@ -29,7 +29,9 @@ jobs:
       - run: python3 scripts/publish-order.py --emit
       - run: cargo fmt --all --check
       - run: cargo check --manifest-path ci/compat-0.4/Cargo.toml --locked
-      - run: cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
+      - run: cargo test --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
+      - run: cargo fmt --manifest-path ci/compat-0.4/Cargo.toml --all -- --check
+      - run: cargo clippy --manifest-path ci/compat-0.4/Cargo.toml --all-targets --all-features --locked -- -D warnings
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin nested --locked
@@ -94,7 +96,7 @@ jobs:
         with:
           toolchain: 1.89.0
       - run: rustc --version
-      - run: cargo check --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
+      - run: cargo test --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked
       - run: cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin nested --locked

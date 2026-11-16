@@ -20,7 +20,6 @@ thiserror = { workspace = true }
 tempfile = "3"
 penelope-sqlite = { version = "0.4.0", path = "../penelope-sqlite" }
 rusqlite.workspace = true
-syn = { version = "2", features = ["full", "visit"] }
 proptest = { workspace = true }
 
 [[bench]]
