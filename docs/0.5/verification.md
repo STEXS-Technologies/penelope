@@ -83,9 +83,14 @@ artifact reconciliation.
 The §13.2 SQLite scope gap is now covered by the separate
 [versioned 31-pair refresh](evidence/sqlite-balanced/versioned-candidate.json).
 It confirms substantial legacy replay and exact-retry findings; database
-performance acceptance remains open. Current
-machine-store timings and process resource observations do not supply measured
-WAL size, per-commit physical disk writes or a general throughput bound. Earlier
+performance acceptance remains open. The current machine-store archive does
+record end-of-profile WAL/database sizes, race throughput and Linux process I/O
+counters. All four writer profiles in all three stable runs and the MSRV run
+retain a **3,827,512-byte WAL** and **4,096-byte main database** before close;
+these are not peak size or post-checkpoint footprint measurements. I/O counter
+deltas include warmup and verification, not per-commit physical device writes.
+Race throughput covers barrier release through the last CAS result, not a general
+application throughput bound. Earlier
 empty `rlib_artifacts` inventories likewise supply no binary-size evidence;
 the refreshed executable sizes apply only to the retained benchmark binaries.
 Single-run maintenance test timings supply observations, not a flake-rate estimate.
@@ -111,6 +116,7 @@ recorded; no isolated-host or worst-case latency guarantee is implied.
 | Legacy SQLite | [Balanced comparison and patched-dependency controls](evidence/sqlite-balanced/manifest.json) retain substantial replay/exact-retry costs. Patched original dependencies reproduce much of that cost; attribution does not accept it. No security downgrade or weaker validation is used |
 | Versioned legacy SQLite | [Fresh 31-pair comparison](evidence/sqlite-balanced/versioned-candidate.json) against original 0.4 retains all 62 measured reports, both binaries and 16 p50/p95 flags. Warm replay median run p50 increases **165.39–168.44%** across 16/128/512 records, and exact process retry increases **39.87%**, each over 5% in all 31 pairs. Earlier dependency attribution keeps its original scope; no acceptance is implied |
 | SQLite recompilation diagnostic | [CPU profiles, debugger counts and isolated query-plan stability probe](evidence/sqlite-balanced/reprepare-diagnostic.json) observe 27,157 internal recompilations in the candidate fixture versus 132 in original 0.4; the probe observes zero. Nine rotating triples reduce warm replay p50 about 62–64% versus candidate, but retain an append p95 flag and a small-history reopen flag versus original. The setting remains outside candidate code pending broader performance and correctness checks; it does not close acceptance |
+| Broader query-plan probe | [SQLite tests and full storage/recovery profiles](evidence/sqlite-balanced/qpsg-qualification.json) pass on stable/MSRV, with formatting and strict Clippy. Three stable comparison pairs per fixture plus one MSRV run each retain all 21 reports and nine binaries. The 32-writer last-finish median is about 429 ms in both variants, but native total rises 40.05 → 42.54 ms (+6.23%); all 31 descriptive p50/p95 flags remain. Three pairs do not establish causal regressions or equivalence. The global setting remains outside candidate code |
 | Timeline lookup | [Lazy validated hints](evidence/timeline-lookup/manifest.json) improve post-eviction paths while preserving original successful-hint behavior, ancestry/error precedence, digest checks and scan fallback. [All descriptive flags](evidence/timeline-lookup/lazy-triage.json.gz) remain available; the slower eager hint was rejected |
 | Durable machine | [Store profiles](evidence/machine-store-performance/manifest.json) cover single/contending writers and recovery. [Read-only preflight](evidence/machine-preflight-performance/manifest.json) resolves known stale/conflicting/duplicate requests before writer admission, then fully revalidates new work under the write transaction. The 32-writer race improves locally; writers that all observe the old head can still queue, and tail latency is not bounded |
 | Timeline over machine | [Adapter/native measurements](evidence/machine-timeline-performance/manifest.json) separate ownership, context and provenance cost; the comparator is the existing engine at that revision, not an original 0.4 binary |

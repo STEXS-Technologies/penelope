@@ -1,0 +1,907 @@
+{
+  "scope": "Broader isolated QPSG probe qualification; no candidate production change or final release/performance acceptance.",
+  "source_commit": "3dc490f569ede3e04098acd6064663883c848e2a",
+  "candidate_source_unchanged": true,
+  "probe_change": "Existing connection configuration enables query-plan stability; exact formatted diff in archived metadata. Config changes query planning,not the transaction or verification code.",
+  "checks": {
+    "stable": {
+      "reported_passes": 219,
+      "harness_summaries": 9
+    },
+    "msrv": {
+      "reported_passes": 214,
+      "harness_summaries": 8
+    }
+  },
+  "strict_checks": "Formatting and SQLite all-target/all-feature Clippy pass. Stable SQLite all-target/all-feature tests pass; MSRV SQLite lib/integration tests pass. Three release harnesses compile and run on both compilers.",
+  "processes": {
+    "stable_comparison_pairs_per_harness": 3,
+    "harnesses": 3,
+    "stable_measured_processes": 18,
+    "msrv_measured_processes": 3,
+    "retained_binaries": 9
+  },
+  "source_integrity": "Every tracked runtime/build input matches pre/post in formatted probe; all nine binaries retain their hashes, including three current binaries independently checked against archived capability identities.",
+  "selected_observations": [
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=32/release_to_last_finish/p50_ns",
+      "samples": {
+        "current": [
+          229396008,
+          429930792,
+          429253913
+        ],
+        "probe": [
+          529176279,
+          429101007,
+          329397271
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 429253913,
+        "probe": 429101007
+      },
+      "delta_percent": -0.03562134097540026,
+      "review_threshold_percent": 5,
+      "descriptive_flag": false
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "outer_iteration_total/p50_ns",
+      "samples": {
+        "current": [
+          38076276,
+          40045032,
+          45890192
+        ],
+        "probe": [
+          38781037,
+          42539398,
+          47239365
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 40045032,
+        "probe": 42539398
+      },
+      "delta_percent": 6.228902501563738,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    }
+  ],
+  "descriptive_review_flag_count": 31,
+  "all_descriptive_flags": [
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=32/commit/p50_ns",
+      "samples": {
+        "current": [
+          1237924,
+          979098,
+          970762
+        ],
+        "probe": [
+          1241823,
+          1067571,
+          941862
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 979098,
+        "probe": 1067571
+      },
+      "delta_percent": 9.036174111273843,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=32/commit/p95_ns",
+      "samples": {
+        "current": [
+          5283266,
+          4850412,
+          1356894
+        ],
+        "probe": [
+          164457513,
+          4062608,
+          128622436
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 4850412,
+        "probe": 128622436
+      },
+      "delta_percent": 2551.7837247639995,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=32/release_to_last_finish/p95_ns",
+      "samples": {
+        "current": [
+          929537078,
+          1029740812,
+          929559230
+        ],
+        "probe": [
+          1329786567,
+          830058653,
+          1029709618
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 929559230,
+        "probe": 1029709618
+      },
+      "delta_percent": 10.773965204992919,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=32/slowest_stale_per_round/p95_ns",
+      "samples": {
+        "current": [
+          929097638,
+          1029430734,
+          929435729
+        ],
+        "probe": [
+          1329350874,
+          829890343,
+          1029423244
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 929435729,
+        "probe": 1029423244
+      },
+      "delta_percent": 10.757872963155691,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=8/release_to_last_finish/p50_ns",
+      "samples": {
+        "current": [
+          33604263,
+          53568623,
+          33427530
+        ],
+        "probe": [
+          53494857,
+          53485109,
+          33844525
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 33604263,
+        "probe": 53485109
+      },
+      "delta_percent": 59.16167838586433,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_store",
+      "metric": "writers=8/slowest_stale_per_round/p50_ns",
+      "samples": {
+        "current": [
+          33520782,
+          53535699,
+          33397932
+        ],
+        "probe": [
+          53430192,
+          53450512,
+          33480310
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 33520782,
+        "probe": 53430192
+      },
+      "delta_percent": 59.39422892938475,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=1,burst=128/accepted_gated_completion/p50_ns",
+      "samples": {
+        "current": [
+          691925,
+          831169,
+          764308
+        ],
+        "probe": [
+          713227,
+          879723,
+          804125
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 764308,
+        "probe": 804125
+      },
+      "delta_percent": 5.209549029972216,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=1,burst=128/accepted_gated_completion/p95_ns",
+      "samples": {
+        "current": [
+          852590,
+          963046,
+          1104836
+        ],
+        "probe": [
+          973877,
+          2055506,
+          1899122
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 963046,
+        "probe": 1899122
+      },
+      "delta_percent": 97.19951071911414,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=1,burst=32/accepted_gated_completion/p50_ns",
+      "samples": {
+        "current": [
+          644753,
+          856989,
+          725753
+        ],
+        "probe": [
+          696464,
+          909903,
+          850635
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 725753,
+        "probe": 850635
+      },
+      "delta_percent": 17.207231661460586,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=1,burst=32/accepted_gated_completion/p95_ns",
+      "samples": {
+        "current": [
+          741573,
+          1080166,
+          1099176
+        ],
+        "probe": [
+          785048,
+          1209129,
+          5977178
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 1080166,
+        "probe": 1209129
+      },
+      "delta_percent": 11.939183421807398,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=1,burst=32/refusal_first_poll/p95_ns",
+      "samples": {
+        "current": [
+          90,
+          140,
+          101
+        ],
+        "probe": [
+          90,
+          140,
+          120
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 101,
+        "probe": 120
+      },
+      "delta_percent": 18.811881188118807,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "machine_backpressure",
+      "metric": "queue=8,burst=128/accepted_first_poll/p50_ns",
+      "samples": {
+        "current": [
+          80,
+          100,
+          81
+        ],
+        "probe": [
+          80,
+          91,
+          90
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 81,
+        "probe": 90
+      },
+      "delta_percent": 11.111111111111116,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "begin/p50_ns",
+      "samples": {
+        "current": [
+          6137623,
+          6412992,
+          7161879
+        ],
+        "probe": [
+          6331472,
+          7301192,
+          7817764
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 6412992,
+        "probe": 7301192
+      },
+      "delta_percent": 13.850009480754078,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "begin/p95_ns",
+      "samples": {
+        "current": [
+          6959032,
+          7479952,
+          9028956
+        ],
+        "probe": [
+          8199802,
+          10890974,
+          9171956
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 7479952,
+        "probe": 9171956
+      },
+      "delta_percent": 22.620519489964643,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "bootstrap_restored/p50_ns",
+      "samples": {
+        "current": [
+          714851,
+          745670,
+          815898
+        ],
+        "probe": [
+          737114,
+          802683,
+          872950
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 745670,
+        "probe": 802683
+      },
+      "delta_percent": 7.645875521343215,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "bootstrap_restored/p95_ns",
+      "samples": {
+        "current": [
+          822962,
+          884964,
+          1003175
+        ],
+        "probe": [
+          911897,
+          1122999,
+          1074024
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 884964,
+        "probe": 1074024
+      },
+      "delta_percent": 21.363580891426093,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "dispatch_return/p95_ns",
+      "samples": {
+        "current": [
+          4251348,
+          4337487,
+          5462942
+        ],
+        "probe": [
+          4389458,
+          5227270,
+          5170708
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 4337487,
+        "probe": 5170708
+      },
+      "delta_percent": 19.209763625804534,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "initial_committed/p50_ns",
+      "samples": {
+        "current": [
+          364474,
+          382649,
+          478187
+        ],
+        "probe": [
+          354214,
+          435423,
+          538404
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 382649,
+        "probe": 435423
+      },
+      "delta_percent": 13.791751709791477,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "initial_committed/p95_ns",
+      "samples": {
+        "current": [
+          506883,
+          537283,
+          657889
+        ],
+        "probe": [
+          535108,
+          607390,
+          665263
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 537283,
+        "probe": 607390
+      },
+      "delta_percent": 13.04843071528412,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "native_admitted/p50_ns",
+      "samples": {
+        "current": [
+          2522591,
+          2640232,
+          3062460
+        ],
+        "probe": [
+          2416123,
+          2802920,
+          3279644
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 2640232,
+        "probe": 2802920
+      },
+      "delta_percent": 6.16188274363767,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "native_admitted/p95_ns",
+      "samples": {
+        "current": [
+          3313481,
+          3474375,
+          4152945
+        ],
+        "probe": [
+          3285597,
+          4320573,
+          3845413
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 3474375,
+        "probe": 3845413
+      },
+      "delta_percent": 10.679273250584643,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "native_setup/p50_ns",
+      "samples": {
+        "current": [
+          3967331,
+          4064141,
+          4523090
+        ],
+        "probe": [
+          3951410,
+          4281386,
+          4551386
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 4064141,
+        "probe": 4281386
+      },
+      "delta_percent": 5.34541001407185,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "native_setup/p95_ns",
+      "samples": {
+        "current": [
+          4310423,
+          4533731,
+          6657742
+        ],
+        "probe": [
+          4876862,
+          5121873,
+          5759642
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 4533731,
+        "probe": 5121873
+      },
+      "delta_percent": 12.972582625656436,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "outer_iteration_total/p50_ns",
+      "samples": {
+        "current": [
+          38076276,
+          40045032,
+          45890192
+        ],
+        "probe": [
+          38781037,
+          42539398,
+          47239365
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 40045032,
+        "probe": 42539398
+      },
+      "delta_percent": 6.228902501563738,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "outer_iteration_total/p95_ns",
+      "samples": {
+        "current": [
+          41273349,
+          43291351,
+          53215261
+        ],
+        "probe": [
+          47664759,
+          64301828,
+          54379571
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 43291351,
+        "probe": 54379571
+      },
+      "delta_percent": 25.61301447949731,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "recovered/p50_ns",
+      "samples": {
+        "current": [
+          6816573,
+          7083465,
+          8222576
+        ],
+        "probe": [
+          6806533,
+          7852832,
+          8811079
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 7083465,
+        "probe": 7852832
+      },
+      "delta_percent": 10.861449869520069,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "result_committed/p50_ns",
+      "samples": {
+        "current": [
+          9292763,
+          9728447,
+          10940070
+        ],
+        "probe": [
+          9400023,
+          10408008,
+          11816056
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 9728447,
+        "probe": 10408008
+      },
+      "delta_percent": 6.985297858949124,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "result_committed/p95_ns",
+      "samples": {
+        "current": [
+          10848401,
+          11456582,
+          14157883
+        ],
+        "probe": [
+          12243904,
+          18867278,
+          14814118
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 11456582,
+        "probe": 14814118
+      },
+      "delta_percent": 29.306611692736983,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "result_verified/p50_ns",
+      "samples": {
+        "current": [
+          1524917,
+          1656104,
+          1925613
+        ],
+        "probe": [
+          1631836,
+          1860284,
+          2072139
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 1656104,
+        "probe": 1860284
+      },
+      "delta_percent": 12.328935863931246,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "result_verified/p95_ns",
+      "samples": {
+        "current": [
+          1743886,
+          1929500,
+          2442144
+        ],
+        "probe": [
+          2275798,
+          3203154,
+          2784715
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 1929500,
+        "probe": 2784715
+      },
+      "delta_percent": 44.3231407100285,
+      "review_threshold_percent": 10,
+      "descriptive_flag": true
+    },
+    {
+      "benchmark": "native_pipeline",
+      "metric": "saga_admitted/p50_ns",
+      "samples": {
+        "current": [
+          430493,
+          465632,
+          594775
+        ],
+        "probe": [
+          466504,
+          576700,
+          619453
+        ]
+      },
+      "median_run_quantiles": {
+        "current": 465632,
+        "probe": 576700
+      },
+      "delta_percent": 23.853171603326228,
+      "review_threshold_percent": 5,
+      "descriptive_flag": true
+    }
+  ],
+  "interpretation": "Legacy replay pilot improvement is not sufficient for retention. The wider fixture set retains every threshold flag, including native total. Three pairs on a shared host do not establish causal regressions, statistical equivalence or universal performance. Probe remains outside candidate; further decision and qualification required.",
+  "retained_failure": "Initial MSRV tests passed, then fmt check failed. Rustfmt only wrapped configuration arguments and added an optional trailing comma. Both exact source snapshots and an exact replacement check retained. A naive whitespace-only assertion refused the added comma; corrected formatting check did not change an expression. Followup reran fmt/Clippy and built measured binaries from formatted source.",
+  "limits": "Three paired stable processes per full existing fixture, median of per-run quantiles, all descriptive threshold findings retained. Not pooled percentiles, significance or universal equivalence. MSRV runs test compatibility and are excluded from timing summary.",
+  "conditions": "CPU4 except machine_store4-7; builds/tests complete before timing. NVMe Btrfs data. Both chaos campaigns8-15/16-23 and shared host remain uncontrolled. Retained original candidate binaries from versioned capability refresh.",
+  "archive": {
+    "file": "qpsg-qualification.tar.gz",
+    "sha256": "7ac91cedf0c4bf9ebfd5b00c0c442aae6a4c0bab96685156c72c2ef68baf39b1",
+    "bytes": 15329652,
+    "member_count": 106,
+    "members_sha256": {
+      "followup/summary.json": "011282061946b8cfb3aac717d285b6384ef63c1a5d8b2702d2630ea862f4c272",
+      "followup/msrv-run-native_pipeline.resources.json": "1eae909d6d3f298ce5ef18916bd233b9cdc8fcf9d385a803c8fcc4063bc222a5",
+      "followup/msrv-run-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/msrv-run-native_pipeline.stdout": "9fdd5517e3f30b70d780931b273b23d49f7aceacc8ed783acbc1d9e676ea9159",
+      "followup/msrv-run-machine_backpressure.resources.json": "7269d92ee27f92d1b9844f12c0d83d61d8bd166d5949d38e449eb4feeca85a21",
+      "followup/msrv-run-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/msrv-run-machine_backpressure.stdout": "caa3c91ec425b23323dc98af5a5db2236eaac47b9612f550485eefd1d1c675e5",
+      "followup/msrv-run-machine_store.resources.json": "4cfd47e054f53d6608318cee29fa82bd7fbb059305f6db5a82ec0fc7e4291486",
+      "followup/msrv-run-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/msrv-run-machine_store.stdout": "8ca57e6b266115a49cdf9ddca94160b00220baec6bf6d0e92e8a32a326177287",
+      "followup/run-3-probe-machine_backpressure.resources.json": "cb1c6c2a8c19edbd60f5ef301c8ad50bdcd15a7715956d1a832ab7b709e0465f",
+      "followup/run-3-probe-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-probe-machine_backpressure.stdout": "57bfc6ba4a614ceec012803acadde0cc8438694310ce7bdd0c5d3790aa71d7b5",
+      "followup/run-3-current-machine_backpressure.resources.json": "ea58c90a58984c35b296b6e7f7603a018de2de88bf16bac9c29dfc3b580f93e6",
+      "followup/run-3-current-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-current-machine_backpressure.stdout": "c17fae2676fe4ccafbd2fe90deb5b78f5a69015bb4ce3bfc1299341b437371b0",
+      "followup/run-3-probe-machine_store.resources.json": "e11a5ae022c4cf3b9f3c2c96dddfe129a7563e169ec8b2530dbb9ae6e25726d9",
+      "followup/run-3-probe-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-probe-machine_store.stdout": "46b804d2778923622d545da15c797438877183703d540768f2aaf436867ef9ee",
+      "followup/run-3-current-machine_store.resources.json": "15e2404afa084772ffd8380a52fd5cd87689dd28b19471bb40ba954efcc2142a",
+      "followup/run-3-current-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-current-machine_store.stdout": "d1cd335df2038b64467a1cc3e309042c8a9d11ff2dbe6cc3a90a2cdc61a93578",
+      "followup/run-3-probe-native_pipeline.resources.json": "30dfbe32c3d9187c04fb0b92b717f1eca33b6305cc206c2a264ec7b3534c292e",
+      "followup/run-3-probe-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-probe-native_pipeline.stdout": "5f27b9fb43677c0eace969f51a775e94afe882440cd0c365d67c73adda0a1ec7",
+      "followup/run-3-current-native_pipeline.resources.json": "f9bbd8865c72fc56f87e91f2eaea0a745514e599c7fe1d7048364233ae1f7c70",
+      "followup/run-3-current-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-3-current-native_pipeline.stdout": "3ee5b8cc5b543b7dd50b312ff0a3b0a28f141bba41a13e5bafcb7983afa30779",
+      "followup/run-2-current-machine_store.resources.json": "b0f59e3737ce56ac6f8676d4c01a11c299b9e076f432e7e8a863ce17a62d40b3",
+      "followup/run-2-current-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-current-machine_store.stdout": "7d8a5e5871891717a3a9f963314905ce653f2705f9a40e13b94869e8d309e0c7",
+      "followup/run-2-probe-machine_store.resources.json": "86edfd3c8e28a0b1599af5c2c9ce2aa1b74519dee981c747798f081d3c34e9f8",
+      "followup/run-2-probe-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-probe-machine_store.stdout": "94a1fa68cd79f5d10d65ca3858f9fc15346fe0b40b1ee88477f313e0b375ba6a",
+      "followup/run-2-current-native_pipeline.resources.json": "41c4b00b336ca48fa9cec348ed9568f86cadeb69a325b147e1ed5072ceb6cb1c",
+      "followup/run-2-current-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-current-native_pipeline.stdout": "af1f08fc81ba125201041ab08c882541e85208bf6c5245403059cd3d07a851ef",
+      "followup/run-2-probe-native_pipeline.resources.json": "2cd594f79edf6f6fbb9e7c25d81e39722a586be7b7b9891008c0a95e0b858b0f",
+      "followup/run-2-probe-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-probe-native_pipeline.stdout": "1b7a19020444bfbe02f01509c37abd514940f71a874e92f2606564b8a6ccefb9",
+      "followup/run-2-current-machine_backpressure.resources.json": "0fd0d6f8d7b1b6df3292d24f35d00e2dfbf23f110c0cac8c6826df8648115d46",
+      "followup/run-2-current-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-current-machine_backpressure.stdout": "4246abbb6a145be71e997923b0790bc6c0e8e3514df432967619ece05bdf88a3",
+      "followup/run-2-probe-machine_backpressure.resources.json": "6c85ee5762a425711c83794ac097b5dc8922bf73f4aebb7a068f270d10d88426",
+      "followup/run-2-probe-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-2-probe-machine_backpressure.stdout": "5a62871ac72a51a6e6d96cb552b763b3c6bfe1d0c90f92136dcd839efe599837",
+      "followup/run-1-probe-native_pipeline.resources.json": "b057996cfe9f10f84c4e75522d34b43866789ba6d798b0357d32ee51683da6c4",
+      "followup/run-1-probe-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-probe-native_pipeline.stdout": "e4f95b5bf3879ae073679ee4b83c9ec53b4a7cb7c9d73757db1292a051a02311",
+      "followup/run-1-current-native_pipeline.resources.json": "9538929706a6489922d5cbae3129559d0ba4deafb69c6cd002d8494ac719b199",
+      "followup/run-1-current-native_pipeline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-current-native_pipeline.stdout": "42dd33305fb860f838cdb9067953eb6e930c6742ecddb172680de73b6669a82a",
+      "followup/run-1-probe-machine_backpressure.resources.json": "587eef608a15ce770f1c0f1b2477e08bce1e9421b8b1688527d37925a2e7b106",
+      "followup/run-1-probe-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-probe-machine_backpressure.stdout": "ec6e123ee9631f9116e52ad9dea3de78b8fbce6c200ede8a2505af020caff30c",
+      "followup/run-1-current-machine_backpressure.resources.json": "4d1ab9309f6be75e78d7ed3ecee2d1546bb5501cc9e0cb4b1d81c83a2a78c5c9",
+      "followup/run-1-current-machine_backpressure.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-current-machine_backpressure.stdout": "fc52e9e9a04571c049be7e8add0e21736bab3bc70047f979473fae94d825f539",
+      "followup/run-1-probe-machine_store.resources.json": "697e7c52a7e2e6814ca3859fbbd45f413c7031dc608b5455c570c716d67e53e8",
+      "followup/run-1-probe-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-probe-machine_store.stdout": "fad3c8539db03313dc841805d9c6a77d65926d2c8987975189c0c98cb99115a5",
+      "followup/current-binary-source-verification.json": "3b67c490896e2978e826fbfc75a9086fbb775c69ab0cd2bef698e50b0c06bb9c",
+      "followup/run-1-current-machine_store.resources.json": "611d4dacea8860b2b4ee84b9f410cc1939fa53a83b387452e07d46add5589040",
+      "followup/run-1-current-machine_store.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/run-1-current-machine_store.stdout": "a5d64fb9d3924d4864c2480155f82aded9c1ca51a43787065d02c59616f1208d",
+      "followup/current-native_pipeline.bin": "cc77687223390b8dbe2f4d8224253863c90577458b2408e277a4679b916f6acb",
+      "followup/current-machine_backpressure.bin": "5c6bcdd9bc35bfa7517863634f6d6d0392918e87d75e087d1362c527760c0ca0",
+      "followup/current-machine_store.bin": "7870c85025c248c777633a2d9aea76318cd0de069113ac5662f52f144e9f63d4",
+      "followup/1.89.0-native_pipeline.bin": "75d233ca2f1712c167eddb66c5c186cb77c34f325a3959ba28b25d501f0e899d",
+      "followup/build-1.89.0-native_pipeline.stderr": "22d8358a3f37c1b64db192704e11b918b4a285747f28a254f7d725792b11b39c",
+      "followup/build-1.89.0-native_pipeline.stdout": "a142a574676e014ffec9c97d62b2567276d8e8fa7cb555139de6e916b54f6ad4",
+      "followup/1.89.0-machine_backpressure.bin": "633af82267993470eab4c00d1ca5cea08c99518f6e2d809a4eb1788adc6aa36c",
+      "followup/build-1.89.0-machine_backpressure.stderr": "dc9feb77e8296689bb428cfd060e55e3a1d379340b6e785a75b0ad6c459d7dd2",
+      "followup/build-1.89.0-machine_backpressure.stdout": "155528679de0fcacd86ff79af3f185d5eac073226ce2cc220155f2bdf9ce23df",
+      "followup/1.89.0-machine_store.bin": "4d2a2cf5865e8ae5b6cb415a56f8c69e8aff1ac6569ac500d1863fe0a9e3711d",
+      "followup/build-1.89.0-machine_store.stderr": "1b3cd24801b92468ec06d1552f48973ac4ec3d49734e3f82fa36e374c6cc742b",
+      "followup/build-1.89.0-machine_store.stdout": "44f90ee41a070c915e7655b38e69689ca5720f42f9089e05bc719f1235ae758b",
+      "followup/1.100.0-native_pipeline.bin": "7bb54fea34e12e24ee9718a7297219a622218b121df89464d686ae7fdce6dba0",
+      "followup/build-1.100.0-native_pipeline.stderr": "2e76de7464a3e78a9ae58d2ab943d23b2f144b674a1e48778488574174c24cff",
+      "followup/build-1.100.0-native_pipeline.stdout": "3836444e26dffbc049a2f2019fdd1f41c54704e9d55713565fc81f5435417809",
+      "followup/1.100.0-machine_backpressure.bin": "2aeb1d5293026c86078d7b572a4052a87affa53d291e2f097b5ccba649fcae03",
+      "followup/build-1.100.0-machine_backpressure.stderr": "9f1988d623edfb0e8398469863b42a3aceef666d70e70130be2c2e1603ae5107",
+      "followup/build-1.100.0-machine_backpressure.stdout": "c1c0ee4f471383c41ac09d9f0392cd1e7579a016d501c15079a9933cc3c190c7",
+      "followup/1.100.0-machine_store.bin": "5a7c455cf0786c2d8555f52f01db2d2a6aafd8127a96c753aa5ba058d8f89c91",
+      "followup/build-1.100.0-machine_store.stderr": "172f027e18fdbe675eed7cf9a107b057be0ba964500b7eb4dc432365e6a669db",
+      "followup/build-1.100.0-machine_store.stdout": "eb61f49bb7f1efdbd709b0d650a092c1bfd056dac750226d8801e89f3cd13b5e",
+      "followup/graph.log": "72e7c99e543935cf31cc217fb536cc7f31fa4f17dc67f42429941b8c66825d0e",
+      "followup/clippy.stderr": "ea6fb2e46bd684ca147c9dbb7f9f2c718142a67807afd69d48e1faad536e6beb",
+      "followup/clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "followup/metadata.json": "f36a45a61fef349dcf8327a0392445750fb2783982f728597b057226ae06d0a1",
+      "initial/format-correction.txt": "1b3561eb4b4a5e33ab4692e0cc40bdf31a068204618b3b30d53fc578bfe8a39c",
+      "initial/schema-after-format.rs": "a3dc96329f6ec149fd067706d6ea6c12b5c78b8df6086164d438f02c4ed26bc8",
+      "initial/schema-before-format.rs": "fc6b64d2ec96133bca974d7febb239aeb60f0d672ed5b3455d69362bd6ef2b56",
+      "initial/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/fmt.stdout": "74e7d541bd0b3cce3cc7ddb03fb642e7e70052f6324e6a053bf40ea43803a1ef",
+      "initial/msrv-tests.stderr": "a1598844e98b56cfef93f31e0b95ba2ed9b700fd40ebfc5b53b3e997448c2406",
+      "initial/msrv-tests.stdout": "daf9a067eb8da114ccaae9143d6e382cb4efa84ac750674d9c74b2c908856c31",
+      "initial/metadata.json": "32c379ee56af5cf327e89e24b3b0352cca4f2d974d1d886ddc5872f4c7383db7",
+      "drivers/penelope-050-qpsg-qualify.py": "3c6e7a16d4bd7bbfca4d0a711767aa1fa34dd247ffdd23edd4c3a08218289ec4",
+      "drivers/penelope-050-qpsg-qualify.log": "8e2c797f9c7a7f5d3ca935c67f5e4d3bbc469175257404b65f89f3f9f6f2cc67",
+      "drivers/penelope-050-qpsg-qualify-followup.py": "876cac0974932e3920d6b91f9171ab0fdcfd7f02c01c8e3f6363769aa2a7eba4",
+      "drivers/penelope-050-qpsg-qualify-followup.log": "9ea3bd315f4f62ffc97ad329274a70d44cf263f2314cc7abc12a12c48712eb3d",
+      "drivers/penelope-050-summarize-qpsg-qualification.py": "1fe7bf2366586d0b8539eee3577659de7b1293df11fa9a7a945012d31b702fc5",
+      "stable-sqlite-tests.log": "d97a4bccd87c973c85e799e884bda8b3d6ff5d8f29dab9121ece4755360d2d99"
+    }
+  }
+}
