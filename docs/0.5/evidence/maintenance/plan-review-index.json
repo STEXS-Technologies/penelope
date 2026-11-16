@@ -247,6 +247,24 @@
     ],
     "scope": "Enum data ownership, runtime guard dispositions, terminal refusal/fault and explicit purity boundaries; no automatic callback purity or universal typestate guarantee."
   },
+  "executive_scope_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+      "crates/penelope/src/saga.rs": "d685773d7c4d42588bda3a1cf77f5be9f6774dc66265559e1c5f6e7c3308baef",
+      "crates/penelope/src/runtime.rs": "f717a838ba267dd28c4a1d0f55f6e77786704ce0f05a28251f88531d60bf7d18",
+      "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/0.5/machine-storage.md": "c54f561f89f12a95aa6b5e999dab9a35fff1aa6710d2304606dcf7aaf87bd661",
+      "docs/0.5/timeline-machines.md": "be0804de15ac3149b17185fc796c69d810600eb6fe33336f737407f069b0c62f",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82",
+      "scripts/check-layer-boundaries.sh": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392"
+    },
+    "reviewed_blocks": 16,
+    "scope": "Ten executive decisions and six explicit non-goals. Shared conceptual semantics do not imply identical native evaluators; qualification and performance gates remain open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -256,15 +274,15 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 145,
+      "needs_individual_review": 129,
+      "individually_reviewed_scoped_support": 142,
+      "individually_reviewed_qualification_open": 2,
+      "release_condition_open": 5,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 128,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
-      "release_condition_open": 4,
-      "individually_reviewed_qualification_open": 1,
       "advisory_pr_breakdown": 15,
       "historical_sequence_unproven": 1,
       "historical_source_reference": 24
@@ -318,8 +336,20 @@
       "kind": "item",
       "sha256": "5e84f8ae5f19ffb0a0fd213a6aea43ae855e299eaae62271548de3c9d2eb0f85",
       "preview": "1. **One public framework.** The canonical consumer API lives under the `penelope` facade, with discoverable `",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Canonical facade namespaces and facade-only runnable consumers provide one documented entry point; internal crates remain modular. Portable-core consumers may deliberately depend on the internal core profile. Static API/import compatibility is separately checked."
     },
     {
       "line": 17,
@@ -328,8 +358,20 @@
       "kind": "item",
       "sha256": "a6ca827163dce97e4df17a3b6264f0e775f2acda2f3992a80c3b099c15061548",
       "preview": "2. **One fundamental operation.** `state + admitted event + pinned model + deterministic context -> accepted/r",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The shared conceptual operation separates evaluation, publication and execution. MemoryMachine returns an exclusive prepared candidate without changing published values; durable publication additionally requires a scope/batch-bound receipt. A local event is not automatically authenticated or durably admitted, and specialized native protocols retain their authority."
     },
     {
       "line": 18,
@@ -338,8 +380,20 @@
       "kind": "item",
       "sha256": "04c6468a68ec038c496659b9f6bddffcb21ff52513c8eb085edc74a9c0799ea5",
       "preview": "3. **First-class state machines.** Users can model arbitrary typed application states/events, guarded transiti",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Typed flat and single-path hierarchical models support explicit refusal, enum-owned local data, bounded entry/exit order and provenance. The core can run independently; the hosted facade is not the portable no_std target. Application callback work, allocations and purity are outside the internal capacity guarantee."
     },
     {
       "line": 19,
@@ -348,8 +402,20 @@
       "kind": "item",
       "sha256": "d81c101849d90a5a4ce8a304db45e2aaa9af9706ccba10121daf7aa40722032f",
       "preview": "4. **Integrate existing engines; do not erase their contracts.** Make existing linear/graph sagas and task pro",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Saga and task adapters expose PreparedDecision inspection and native outcomes without replacing the original engines or rewriting v1 histories. Shared staging, identity and storage helpers have explicit owners; native compensation, fencing and finality remain distinct. Inventory alone does not certify all possible semantic duplication absent."
     },
     {
       "line": 20,
@@ -358,8 +424,20 @@
       "kind": "item",
       "sha256": "5ff4b89a7a2abf83e99349477791895ce41946f0318940c8b7cc35772a3dd0be",
       "preview": "5. **Timeline remains a mode, not the global definition of state.** Reuse 0.4.0 `RewindableComputation`, scrat",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineTimeline delegates to RewindableComputation/LiveTimeline and existing finality/correction. Ordinary MemoryMachine/durable journal paths do not instantiate a speculative timeline owner or require Clone. Eligible timeline models must still supply isolated deterministic computation; full timeline persistence is not introduced."
     },
     {
       "line": 21,
@@ -368,8 +446,20 @@
       "kind": "item",
       "sha256": "50107fe3b4ef3ef6e292cef9ba0ffd561bd27d80925d3bb7de9808cfa7e79d60",
       "preview": "6. **Durability is opt-in and explicit.** Provide a machine-specific atomic transition journal/CAS/outbox cont",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_qualification_open",
+      "assessment": "MachineStore, independently versioned machine records and the SQLite journal implement their own CAS/receipt/outbox protocol. AtomicProcessCommit remains saga-specific. Packages, migrations and focused crash checks pass, but qualified in the release sense is still open pending the final campaign and performance disposition."
     },
     {
       "line": 22,
@@ -378,8 +468,20 @@
       "kind": "item",
       "sha256": "cd3c75706decddba90c1e63d445777ca287192b61d715f4bb2664c6324756fe2",
       "preview": "7. **Effect ambiguity is never fabricated away.** A committed state transition may authorize an effect intent;",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Task/saga effect uncertainty, generation fencing and reconciliation remain native authorities. Outbox acknowledgement certifies receiver admission, not execution success; the protected consumer admits only verified task output. No transport ACK or timeout is promoted to remote exactly-once completion."
     },
     {
       "line": 23,
@@ -388,8 +490,20 @@
       "kind": "item",
       "sha256": "a25d4648193a9633c547437053479c033a05ac8f67357dcf4c9cdbd169dd35fc",
       "preview": "8. **No default feature explosion.** The pure transition path remains `no_std`, no implicit heap allocation, a",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Portable core defaults are empty and no allocator/database/runtime/macro is required for its checked profiles. Timeline is the facade optional feature; SQLite and process runtime are separately selected adapters. Arbitrary application types or callbacks can still allocate and the umbrella facade remains hosted."
     },
     {
       "line": 24,
@@ -398,8 +512,20 @@
       "kind": "item",
       "sha256": "24c0d1f5fc7f831c7992b02ea0c1d13e5a7cf46a8c93970e39ea0bfad337688d",
       "preview": "9. **A real refactor has removal criteria.** The release is not complete while consumers must choose between c",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The public API map teaches one canonical namespace family and explicitly distinguishes local publication, durable admission, speculative finality and native recovery. Legacy paths remain compatibility reexports. Shared-owner inventory and rejected simplifications are retained; this does not waive the remaining maintenance audit or require erasing meaningful protocol distinctions."
     },
     {
       "line": 25,
@@ -408,8 +534,20 @@
       "kind": "item",
       "sha256": "6922a29e5197c3a19af9e703d41229ff3faebc9ebee386887f50f5446d02d14c",
       "preview": "10. **Qualification over feature counting.** Existing 0.4.0 reproducible benchmarks, conformance checks, prope",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "release_condition_open",
+      "assessment": "Existing CI, conformance, compatibility, crash models and comparative performance remain gates. Current source packages/coverage/CI pass, while full-source chaos and sustained performance findings remain open. No line-deletion target substitutes for those obligations."
     },
     {
       "line": 29,
@@ -418,8 +556,20 @@
       "kind": "item",
       "sha256": "c1f9574c4e5b0a3d6c704049fd5a056ab7cb7d95ffe7541262470e2db6ff234e",
       "preview": "- A general-purpose distributed scheduler, broker, database, actor system, or durable-execution SaaS.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The supplied profile is a library with optional local SQLite and supported Linux worker integration. It does not advertise a broker, distributed scheduler/database or hosted durable-execution service. Deployment coordination and external-system authority remain host responsibilities."
     },
     {
       "line": 30,
@@ -428,8 +578,20 @@
       "kind": "item",
       "sha256": "4ec06db70fba2618001967a141227b20f106f32bfcbc2569a46e75a68b467e43",
       "preview": "- A claim that Rust can statically prove every runtime event legal. State-local data is modeled in enums; lega",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Enum variants and exhaustive matches provide structural data ownership; legal runtime event/state combinations remain transition/guard checks. No universal compile-time proof of runtime legality or optional general typestate API is claimed."
     },
     {
       "line": 31,
@@ -438,8 +600,20 @@
       "kind": "item",
       "sha256": "3ea0ec53e8be84e3a85cf7256e178a0eb1d38d81563d6aa2868fa83fd97919e6",
       "preview": "- Transparent rollback of effects already committed to an external system, or automatic compensation of arbitr",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The rollback procedure explicitly requires external-effect reconciliation or domain compensation. Native saga compensation coordinates declared operations; it cannot reverse arbitrary direct application mutations or prove an external effect was undone."
     },
     {
       "line": 32,
@@ -448,8 +622,20 @@
       "kind": "item",
       "sha256": "4cfb2b879a93bc57461756f727191ced3cca6d72336c35cdc5d0e98eb695a3c0",
       "preview": "- A mandatory proc-macro DSL, generated SQL per user-defined machine, or magic interception of arbitrary direc",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine/HierarchyModel are ordinary traits; door/nested examples need no proc macro, reflection registry or generated per-model SQL. State is privately owned by MemoryMachine with no mutable state accessor; arbitrary user aliases are an explicit model contract, not intercepted field mutation."
     },
     {
       "line": 33,
@@ -458,8 +644,20 @@
       "kind": "item",
       "sha256": "0852ab7cfe7c4ddeca0764a5801ece920d638825377c678eda02acf6506c3e74",
       "preview": "- Durable persistence of the entire 0.4.0 timeline state via a feature that does not yet exist. Timeline recov",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The timeline guide distinguishes captured in-memory correction from machine journal persistence and states that full timeline persistence is not provided. No machine snapshot or journal receipt is advertised as a durable image of speculative timeline history."
     },
     {
       "line": 34,
@@ -468,8 +666,20 @@
       "kind": "item",
       "sha256": "2052f5a982a3b3b11979bcac8439b9905fbeca04b9f1585e4e1fc8e89e6ddc90",
       "preview": "- Parallel/orthogonal hierarchical regions, SCXML interpreter compatibility, or distributed transactions acros",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "current_implemented_vs_open_release_dispositions"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "recorded_shared_owners_and_native_boundaries_not_universal_duplication_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hierarchy supports one bounded active path. Parallel regions and SCXML compatibility are not supplied; machine-to-native receiver handoff uses recoverable admission/acknowledgement across stores, not a distributed transaction with StateChronicle or external systems."
     },
     {
       "line": 42,
