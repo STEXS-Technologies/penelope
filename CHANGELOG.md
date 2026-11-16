@@ -35,6 +35,8 @@ release is published.
 - Advance SQLite to schema 9, retaining legacy task/process data and machine
   acceptance evidence. Unknown original receivers fail closed. Older adapters
   refuse the upgraded schema; rollback requires a separate consistent backup.
+- Keep SQLite cached query plans independent of bound parameter values to avoid
+  repeated SQL compilation during journal replay.
 - Share bounded intent admission, wire cursors, SQLite worker delivery and native
   receipt verification while retaining each engine's authority and error rules.
   Remove unused internal dependencies and workspace metadata.

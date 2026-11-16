@@ -7,9 +7,14 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
-All ten library crates use candidate version 0.5.0. Their code, manifests, locks,
-CI and scripts are identical at `9a5a1db` and `be774e6`; intervening changes only
-add documentation and evidence. The
+All ten library crates use candidate version 0.5.0. The latest source adds
+connection-level SQLite query-plan stability to avoid repeated compilation of
+typed journal queries. Its isolated stable/MSRV tests and measurements are
+recorded below; **full qualification of this source change is pending**.
+
+The following table describes the preceding frozen checkpoint. Its code,
+manifests, locks, CI and scripts are identical at `9a5a1db` and `be774e6`;
+it does not automatically qualify the later SQLite change. The
 [candidate checkpoint](evidence/packaging/candidate-checkpoint.json) contains
 commands, source/archive identities, raw logs and the complete LLVM JSON report.
 
@@ -40,7 +45,8 @@ measurements, and line coverage is not branch completeness or a safety proof.
 - Complete the full campaign on the immutable `be774e6` checkout: three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
-  does not replace it. The older development rehearsal remains separate evidence.
+  does not replace it. Both that run and the older development rehearsal retain
+  their source scopes; the later SQLite setting also needs full qualification.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.
@@ -62,8 +68,8 @@ to its evidence and remaining obligation. “Implemented” below describes the
 checked capability, not final release qualification. The checkpoint, static API
 and capability archives have been rechecked against all 480 recorded member
 hashes; all 27 invariant-owner source hashes still match. Runtime/build inputs
-remain identical to `9a5a1db`. Documentation and package metadata still need final
-artifact reconciliation.
+were identical to `9a5a1db` at that review. The subsequent SQLite setting requires
+fresh source qualification and artifact reconciliation.
 
 | Acceptance condition | Evidence and disposition |
 | --- | --- |
@@ -117,6 +123,7 @@ recorded; no isolated-host or worst-case latency guarantee is implied.
 | Versioned legacy SQLite | [Fresh 31-pair comparison](evidence/sqlite-balanced/versioned-candidate.json) against original 0.4 retains all 62 measured reports, both binaries and 16 p50/p95 flags. Warm replay median run p50 increases **165.39–168.44%** across 16/128/512 records, and exact process retry increases **39.87%**, each over 5% in all 31 pairs. Earlier dependency attribution keeps its original scope; no acceptance is implied |
 | SQLite recompilation diagnostic | [CPU profiles, debugger counts and isolated query-plan stability probe](evidence/sqlite-balanced/reprepare-diagnostic.json) observe 27,157 internal recompilations in the candidate fixture versus 132 in original 0.4; the probe observes zero. Nine rotating triples reduce warm replay p50 about 62–64% versus candidate, but retain an append p95 flag and a small-history reopen flag versus original. The setting remains outside candidate code pending broader performance and correctness checks; it does not close acceptance |
 | Broader query-plan probe | [SQLite tests and full storage/recovery profiles](evidence/sqlite-balanced/qpsg-qualification.json) pass on stable/MSRV, with formatting and strict Clippy. Three stable comparison pairs per fixture plus one MSRV run each retain all 21 reports and nine binaries. The 32-writer last-finish median is about 429 ms in both variants, but native total rises 40.05 → 42.54 ms (+6.23%); all 31 descriptive p50/p95 flags remain. Three pairs do not establish causal regressions or equivalence. The global setting remains outside candidate code |
+| Longer query-plan comparison and adoption | [31 legacy triples and 15 native pairs](evidence/sqlite-balanced/qpsg-balanced.json) retain all 123 measured reports, five whole-process warmups and five binaries. The replay gain repeats; native total p50 is 51.89 → 51.17 ms in this later shared-host run, without establishing equivalence. All reopen, append-tail and phase flags remain open. The small setting is now carried into candidate source for full qualification; this is not acceptance of the remaining performance findings. Earlier probe dispositions describe their original checkpoints |
 | Timeline lookup | [Lazy validated hints](evidence/timeline-lookup/manifest.json) improve post-eviction paths while preserving original successful-hint behavior, ancestry/error precedence, digest checks and scan fallback. [All descriptive flags](evidence/timeline-lookup/lazy-triage.json.gz) remain available; the slower eager hint was rejected |
 | Durable machine | [Store profiles](evidence/machine-store-performance/manifest.json) cover single/contending writers and recovery. [Read-only preflight](evidence/machine-preflight-performance/manifest.json) resolves known stale/conflicting/duplicate requests before writer admission, then fully revalidates new work under the write transaction. The 32-writer race improves locally; writers that all observe the old head can still queue, and tail latency is not bounded |
 | Timeline over machine | [Adapter/native measurements](evidence/machine-timeline-performance/manifest.json) separate ownership, context and provenance cost; the comparator is the existing engine at that revision, not an original 0.4 binary |

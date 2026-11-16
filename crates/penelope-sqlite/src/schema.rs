@@ -73,6 +73,14 @@ pub(crate) fn open(path: &Path, limits: SqliteLimits) -> Result<Connection, Task
         return Err(TaskPortError::Exhausted);
     }
     let mut connection = Connection::open(path).map_err(|error| sql_error(&error))?;
+    // Queries bind typed identities and limits. Keep cached plans independent
+    // of parameter values instead of recompiling them during journal replay.
+    connection
+        .set_db_config(
+            rusqlite::config::DbConfig::SQLITE_DBCONFIG_ENABLE_QPSG,
+            true,
+        )
+        .map_err(|error| sql_error(&error))?;
     connection
         .busy_timeout(limits.busy_timeout)
         .map_err(|error| sql_error(&error))?;
