@@ -4,6 +4,18 @@ This maps the implemented APIs and their authority boundaries. Final release
 qualification remains open.
 Use Rust 1.89 or later. The facade defaults and existing imports remain supported.
 
+Choose the guarantees required by the application:
+
+| Layer | What it provides | Application responsibility |
+| --- | --- | --- |
+| Rust types | Associated state/event/intent types, enum-owned state-local data and exhaustive matches; an exclusive prepared handle is consumed on local publication | Encode domain distinctions in the model. Types alone do not prove legal transitions or correct predicates |
+| Runtime validation | Guards, candidate invariants, checked hierarchy paths, one selected transition and bounded intent staging before publication | Keep callbacks deterministic and free of external effects or mutable aliases into published state. Configured capacities do not bound arbitrary callback work |
+| Durable execution | With a configured journal: event identity, transactional revision CAS, exact receipts, checked recovery without dispatch, and outbox/native admission protocols | Authenticate callers and stored evidence, pin the model/codec, configure durability and reconcile unknown external outcomes through the native task/saga protocol |
+
+Local publication does not acquire durable guarantees. Enum state-local data
+prevents attaching fields to the wrong variant; it does not make every invalid
+domain transition unrepresentable. There is no general workflow typestate API.
+
 | Entry point | Current role | Example or check |
 | --- | --- | --- |
 | `penelope::machine` | Pure model, bounded owner, consuming local publication, hierarchy | `first-machine` tutorial consumer, `counter_machine`, `nested_order` |
