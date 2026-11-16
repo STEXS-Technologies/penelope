@@ -1,7 +1,8 @@
 # 0.4.0 baseline for the unified execution refactor
 
-Captured 2026-11-15 before production changes. F0 is in progress; this is not a
-claim that every qualification profile has been rerun.
+Original capture: 2026-11-15, before production changes. Commands and environment
+below describe the unchanged 0.4 baseline. Later evidence is listed at the end;
+[current candidate qualification](verification.md) has a separate source scope.
 
 ## Identity and environment
 
@@ -34,9 +35,10 @@ These inventories are not substitutes for behavioral compatibility tests.
 | `cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked` | Passed |
 | `cargo check -p penelope-timeline --no-default-features --target riscv32imafc-unknown-none-elf --locked` | Passed |
 
-The full CI command additionally selects `--all-targets`; that run and the
-separate fuzz, chaos, coverage, conformance, supply-chain and representative
-release-mode benchmark profiles remain pending. No timing/performance baseline
+At the original capture, the full CI command with `--all-targets` and separate
+fuzz, chaos, coverage, conformance, supply-chain and representative release-mode
+benchmark profiles were pending. The follow-up section records later results,
+including completed baseline chaos and baseline advisory failures. No timing/performance baseline
 is established by the test runs above. See `.github/workflows/ci.yml` and the
 proposal F0 for the complete required profile.
 

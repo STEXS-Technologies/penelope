@@ -7,22 +7,24 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
-All ten library crates use candidate version 0.5.0. The latest source adds
-connection-level SQLite query-plan stability to avoid repeated compilation of
-typed journal queries. The [current checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json)
-qualifies the following checks at `cefa55f`, with commands, source/archive
-identities, raw logs and full LLVM JSON. **Full release qualification remains
-open.** The [preceding checkpoint](evidence/packaging/candidate-checkpoint.json)
-retains its original `9a5a1db`/`be774e6` source scope.
+All ten library crates use candidate version 0.5.0. The latest production
+change is connection-level SQLite query-plan stability at `cefa55f`. The
+[current checkpoint](evidence/qualification/history-partition-checkpoint.json)
+qualifies all ten clean archives at `ce93ff8`, including the subsequent generated
+machine and exhaustive history-partition test additions. Production and
+dependencies are unchanged from the [production checkpoint](evidence/packaging/qpsg-candidate-checkpoint.json).
+Both retain commands, source/archive identities, raw logs and full LLVM JSON.
+**Full release qualification remains open.** Earlier checkpoints retain their
+original source scopes.
 
 | Gate | Verified result and scope |
 | --- | --- |
-| CI | All seven jobs pass at [`cefa55f`](https://github.com/STEXS-Technologies/penelope/actions/runs/43809187026): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`ce93ff8`](https://github.com/STEXS-Technologies/penelope/actions/runs/43814541688): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
-| Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. Only test/fuzz inputs change; production remains `cefa55f`. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; full final artifact reconciliation remains open |
-| Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; final artifact/coverage reconciliation remains open |
-| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests pass on both compilers, with every Penelope dependency resolved from those archives |
+| Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. Only test/fuzz inputs change; production remains `cefa55f`. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
+| Machine history partitions | [Exhaustive small-history check](evidence/qualification/machine-history-partitions.json): all 256 partitions under both count and byte limits, reopen between pages, a pinned upper revision after later writes and exact restored payload/state/intent/receipt data. All 14 machine-journal tests pass on stable/MSRV; removing continuity validation is caught. Test-only addition; the current checkpoint includes the test in both extracted-workspace runs and fresh coverage |
+| Published-content isolation | All ten actual 0.5 archives pass Cargo verification and literal-include checks; extracted-workspace all-target/all-feature tests report 96 harness summaries and 696 passes on each compiler, with both new tests observed and every Penelope dependency resolved from those archives |
 | Locks | Six active locks retain every external package identity and checksum; extracted-workspace normalization removes only fuzz-only `arbitrary`, `jobserver` and `libfuzzer-sys`, then both compiler runs use the same lock with `--locked` |
 | Frozen compatibility | 33,278 task/timeline observations and 3,136 saga observations match original 0.4; both legacy and prepared saga facade paths pass on both compilers; frozen corpora and baseline locks are unchanged |
 | Static API review | [Fourteen package/feature profiles](evidence/maintenance/public-api-audit.json) retain the checked original export bindings and pass the local-item signature checks. Independent export traversal and the unchanged consumer catch a facade reexport removal missed by the signature checker; a public-field removal is also caught |
@@ -31,12 +33,16 @@ retains its original `9a5a1db`/`be774e6` source scope.
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
-| Coverage | **14,879 / 15,814 lines = 94.0875%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
+| Coverage | **14,880 / 15,814 lines = 94.0938%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
 
 Earlier unsuccessful attempts remain in the preceding checkpoint. Current
 commands use the pinned conformance source and exclude the separate fuzz package
 from library tests. Debug benchmark smokes are not release timing measurements,
-and line coverage is not branch completeness or a safety proof.
+and line coverage is not branch completeness or a safety proof. The current checkpoint also retains a rejected
+attempt that reused an older compiled target and omitted the new history test.
+Its successful command exits were not accepted as qualification. A fresh target,
+explicit observations of both new tests and retained test-name comparison establish
+the recorded package results; subprocess-split output is documented in the recorder.
 
 ## Open release gates
 
