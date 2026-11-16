@@ -313,6 +313,28 @@
     "reviewed_blocks": 16,
     "scope": "Same-work methodology, nine recommended workload rows and five provisional gates. Report shape, revision and environment limits remain explicit; no sustained regression is accepted and final exact-source qualification remains open."
   },
+  "system_model_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+      "crates/penelope/src/diagnostics.rs": "25dd75120e746ebbea57893fdb33a3af3ad4100a8480266bec30d9d79af23819",
+      "crates/penelope/src/storage.rs": "f8e9291dcc922c6bf48ac110ee8898c76dd5233ee5bb999c27c0b13563ff747a",
+      "crates/penelope/src/runtime.rs": "f717a838ba267dd28c4a1d0f55f6e77786704ce0f05a28251f88531d60bf7d18",
+      "crates/penelope/src/integration.rs": "08c15eaf60c6546f321caa7a49613991b94aded678733922a13387859f5b751e",
+      "crates/penelope-core/src/machine/view.rs": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+      "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+      "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/0.5/timeline-machines.md": "be0804de15ac3149b17185fc796c69d810600eb6fe33336f737407f069b0c62f",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82",
+      "scripts/check-layer-boundaries.sh": "34788ee7f618f581a94972cce9f922058c62ddd9f85ceeca3ff32fa8a1b7b392"
+    },
+    "reviewed_blocks": 33,
+    "scope": "Debt/removal rationale, conceptual pipeline, native subsystem roles, facade/dependency sketches and final architectural position. Illustrative arrows/imports are not literal dependency or feature guarantees; release qualification remains open."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -322,15 +344,17 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 95,
-      "individually_reviewed_scoped_support": 142,
+      "reviewed_historical_proposal_metadata": 1,
+      "individually_reviewed_scoped_support": 170,
       "individually_reviewed_qualification_open": 2,
       "release_condition_open": 5,
       "reviewed_historical_baseline": 18,
       "table_layout": 7,
+      "illustrative_architecture_reviewed": 3,
       "section_label": 24,
+      "implementation_path_refinement_reviewed": 2,
+      "needs_individual_review": 62,
       "scoped_evidence_indexed": 163,
-      "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
       "individually_reviewed_measurement_scope": 14,
       "performance_acceptance_open": 2,
@@ -375,8 +399,20 @@
       "kind": "paragraph",
       "sha256": "cb3f6ed96badac62693cd8ddc5ba06af0b2e6cb32d46c84cc2b07ecee41da185",
       "preview": "**Status:** Implementation proposal, not an implemented or released capability\n**Baseline audited:** `STEXS-Te",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "reviewed_historical_proposal_metadata",
+      "assessment": "This is the immutable proposal metadata and original baseline/policy, not current release status. The approved Rust1.89 exception and implemented source are tracked in architecture/compatibility/verification; no final release qualification is claimed by this historical status text."
     },
     {
       "line": 10,
@@ -385,8 +421,20 @@
       "kind": "paragraph",
       "sha256": "d6bb89bbb11e7dd354a72a4418d52c8944bfeae31d679385d8e26aa30e96f955",
       "preview": "> **Central design decision:** Penelope becomes one framework for deterministic state evolution and reliable e",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The central decision is implemented as one canonical facade and shared inspection/primitives with explicit native authorities. It does not require sagas, tasks and timeline to execute through one evaluator. Maintenance evidence records actual consolidation and retained boundaries; full qualification remains open."
     },
     {
       "line": 16,
@@ -1063,8 +1111,20 @@
       "kind": "paragraph",
       "sha256": "7a529546ac9b096e2a3c9747f384cd33a05e61b4b9d0178bbbb85bdb8540c6d7",
       "preview": "**A. Two separate transition implementations plus a third computational convention.** Linear/graph saga decisi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "PreparedDecision unifies read-only inspection while saga/task adapters retain their original native decisions and wire. MachineTimeline delegates to RewindableComputation. Consumer coherence is provided by canonical namespaces and shared examples, without pretending all native state owners are interchangeable."
     },
     {
       "line": 70,
@@ -1073,8 +1133,20 @@
       "kind": "paragraph",
       "sha256": "0aed5827484e4a00d4fe65ff71abfbb65312d5799ee8534833195cf91127b414",
       "preview": "**B. Repeated infrastructure concerns.** Scope pinning, outcome/event identity, monotonic sequences, resource ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Shared helpers have explicit primitive owners and equivalence/negative controls in the maintenance audit. Machine scope/revision, task generation/ticks and timeline branch/frontiers remain distinct typed coordinates. Similar validation text alone is not proof that extraction is safe or all duplication absent."
     },
     {
       "line": 72,
@@ -1083,8 +1155,20 @@
       "kind": "paragraph",
       "sha256": "28248d9994843507970ac3a9ef675d9c1bebd6f5cf2aa9da7441c3c573e6a6b5",
       "preview": "**C. Effect terminology crosses several stages.** Saga `ProcessAction`, task effect evidence, and timeline sta",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The public API distinguishes proposed candidate, committed batch, receiver admission, dispatch and verified/reconciled external outcome. PreparedDecision supplies no generic commit/dispatch authority; native task/saga bridges validate their own receipts. Admission is not completion."
     },
     {
       "line": 74,
@@ -1093,8 +1177,20 @@
       "kind": "paragraph",
       "sha256": "c567eb6494f0679cc4aa571cb99b20436c13da8ae2b3aec9ac4d377f7c5f73f8",
       "preview": "**D. Persistence is not a generic free-standing model.** Process and task persistence exist, but arbitrary app",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The new machine metadata codec, accepted payload batch, MachineStore and SQLite journal provide independent scoped durable admission. Snapshot restore/event replay and outbox are implemented. Release-qualified durability remains subject to final campaign/performance gates."
     },
     {
       "line": 76,
@@ -1103,8 +1199,20 @@
       "kind": "paragraph",
       "sha256": "b2194fc1e7ac79690e0087eebb2a484b1d886778e08d590826dd076d7097e409",
       "preview": "**E. Debuggability is incidental.** Replay and typed records exist, but there is no uniform application-facing",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The public diagnostics map answers evaluation, refusal, commit, causation, downstream admission and execution-success questions from their corresponding native evidence. Refusals are separate from accepted history and legacy missing coordinates remain absent. This is a read-only contract, not a built-in telemetry backend or authenticated audit service."
     },
     {
       "line": 78,
@@ -1113,8 +1221,20 @@
       "kind": "paragraph",
       "sha256": "304253e3c1a5e7825731c7409e0c84a4dd3b1c57f44fc5e2cd5cf760dfb83df7",
       "preview": "**F. Consumer onboarding requires cross-crate knowledge.** One user-facing contract and focused import paths s",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The short README, source-checked first-machine tutorial and canonical public API map provide facade-first onboarding. Optional SQLite/process runtime are selected for their own profiles; pure-core users can deliberately select the portable internal crate. No knowledge of old subsystem paths is required by the basic machine tutorial."
     },
     {
       "line": 82,
@@ -1123,8 +1243,20 @@
       "kind": "paragraph",
       "sha256": "fd231866266b9b807280347d52b3c0c7fb6a36a8e67ef44468faab42576b7906",
       "preview": "Existing action/result coordinates, task generation and scope, timer logical time versus task ticks, timeline ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Domain-specific action/result identities, generations, tick/logical-time types, timeline frontiers, compensation ordering and external canonical correlation are retained. Shared inspection keeps native associated types and cannot issue a universal admission receipt. SQLite retains the documented WAL/FULL single-host profile."
     },
     {
       "line": 90,
@@ -1133,8 +1265,20 @@
       "kind": "code",
       "sha256": "d5085395a2ba5ab9239b1609f385f916941622d74c64f1cb573bef62450d0bb9",
       "preview": "```text\nAuthenticated/admitted external request or local event\n                  |\n                  v\n       ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "illustrative_architecture_reviewed",
+      "assessment": "The diagram describes the staged conceptual pipeline. Local events need not have durable admission; host authentication precedes hosted operations, accepted candidates are still tentative before publication, and dispatch/outcome reconciliation occurs separately. It is not an executable orchestrator or a cross-store atomic transaction."
     },
     {
       "line": 121,
@@ -1153,8 +1297,20 @@
       "kind": "item",
       "sha256": "019320c6cc6ed852529bdd6dc4547954703b635d8f6ae2d17734bb1f2389e5eb",
       "preview": "1. **Definition:** stable machine identity, schema/code compatibility and declared state/event/transition sema",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineScope pins definition fingerprint and state/event schemas; in-memory restore and durable preparation validate the supplied model. Identity does not establish authenticity or executable availability; authenticated migrations and retained codecs/models remain host duties."
     },
     {
       "line": 124,
@@ -1163,8 +1319,20 @@
       "kind": "item",
       "sha256": "bbdd317bc289a4c1ece84c7a78b4cd360c070b3352223980526fc16ea623b340",
       "preview": "2. **Decision:** pure, deterministic evaluation against an immutable current state; errors and rejected/unhand",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Evaluation borrows immutable published state and supplied context, with an isolated owned candidate and bounded staging. Rejection/unhandled/faults do not publish. Purity and absence of mutable aliases into live state remain application contracts; arbitrary Rust callback side effects are not automatically sandboxed."
     },
     {
       "line": 125,
@@ -1173,8 +1341,20 @@
       "kind": "item",
       "sha256": "649aef78f575e385a9cc103781a6b546cd9c920b75df4c588037bb439b2c263a",
       "preview": "3. **Publication:** in-memory owner assignment or atomic durable transition CAS, with stable provenance and st",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MemoryMachine moves the coherent state/head/provenance/intents tuple through a consuming handle. Durable publication separately verifies the exact complete batch receipt before consuming its handle. Neither a decoded record nor a PreparedDecision implementation can manufacture admission authority."
     },
     {
       "line": 126,
@@ -1183,8 +1363,20 @@
       "kind": "item",
       "sha256": "c20e4d40b7da432cc1f8b4433e07d9828e3a6bacc25031b82052630b4924ba7a",
       "preview": "4. **Execution:** optional tasks, sagas, timers and outbound effects; never automatically run inside a pure tr",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The core stages intents only. Explicit host services and native receivers perform later task/saga/timer work under their own journal and fencing contracts. Evaluation itself does not start workers, dispatch I/O or infer effect success."
     },
     {
       "line": 127,
@@ -1193,8 +1385,20 @@
       "kind": "item",
       "sha256": "c6b10834576fa64d101653471c0832253e095087b3c98f5c4988f2cd00ff35fd",
       "preview": "5. **History:** ordered machine events/revisions; optional snapshots; optional bounded timeline correction onl",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine revisions and events are ordered in the journal; snapshots and isolated original-event replay are separate supported recovery paths. Timeline branches/correction are optional and have independent finality, eligibility and restoration requirements."
     },
     {
       "line": 128,
@@ -1203,8 +1407,20 @@
       "kind": "item",
       "sha256": "e5d93bda558c351d43647dca625c8a98361f34f76505b22bb62bdeddf8375446",
       "preview": "6. **Observability:** structured transition and effect lifecycle evidence derived from committed records, with",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Provenance and native receipts expose structured transition/effect stages. Rejected attempts remain typed refusals against the unchanged state rather than accepted journal records. Host telemetry can use bounded redacted views but is not a new source of truth."
     },
     {
       "line": 132,
@@ -1213,8 +1429,20 @@
       "kind": "table",
       "sha256": "745c87185728064e840fefac2d07edbb1723bd01f87c42b13f6c8c069d61470f",
       "preview": "| Penelope concept | Unified interpretation | Existing behavior that must survive |",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Concept table header; the following rows map conceptual roles to separate native owners and retained guarantees."
     },
     {
       "line": 133,
@@ -1233,8 +1461,20 @@
       "kind": "table",
       "sha256": "53fced4779f05b35317c677bb71e1a83b841b92125ace2a2585dee56ad516127",
       "preview": "| `machine` | General typed application state + event reducer/transition handler | New capability; pure path u",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "machine is the general typed application transition API with bounded local ownership, using no required hosting or history engine in its portable-core profile."
     },
     {
       "line": 135,
@@ -1243,8 +1483,20 @@
       "kind": "table",
       "sha256": "674521ee4621c0757b97cad977848ac1efa76804c5eafdadcfa34a6be04e28b5",
       "preview": "| `saga` | Built-in machine that plans/coordinates externally executed steps | v1 process records, retries, co",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "saga is a specialized coordinating lifecycle exposed through canonical native functions and prepared views. Compensation, retries, action correlation, manual review and v1 process records retain their original semantics; it is not a general order-enum interpreter."
     },
     {
       "line": 136,
@@ -1253,8 +1505,20 @@
       "kind": "table",
       "sha256": "f4af153d3e47e83b8bfab9e9f9813b224c326095ac54f81508dd107c9d4beb9a",
       "preview": "| `task` | Built-in machine that manages recoverable execution and checkpoints | task v1 records, generation f",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "task is a specialized recoverable lifecycle whose prepared view does not start work. TaskControl/native supervisor retain journal-first launch, generation fencing, checkpoint and reconciliation authority."
     },
     {
       "line": 137,
@@ -1263,8 +1527,20 @@
       "kind": "table",
       "sha256": "e9bffc3063bb489efd55ee134252171c55d50ade04e64ec37139b6daf9220a7e",
       "preview": "| `timeline` | Optional history/revision/correction **mode** for deterministic model state | 0.4.0 bounded rep",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "timeline is an optional compatible-computation mode. MachineTimeline chooses the existing timeline owner and preserves captured context; it does not nest a MemoryMachine publisher or duplicate replay/finality machinery."
     },
     {
       "line": 138,
@@ -1273,8 +1549,20 @@
       "kind": "table",
       "sha256": "3a13aa760e5b52b64d6eeaedb363f8c74ef517f92a9e19f653b3d87432177848",
       "preview": "| `storage` | Durable admission, journaling, snapshots and outbox ports | Independent store contracts and auth",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "storage reexports backend-neutral protocol-specific ports. Process, task and machine commits keep different coordinates/receipts and authorization boundaries; snapshots do not imply persistent speculative timeline history."
     },
     {
       "line": 139,
@@ -1283,8 +1571,20 @@
       "kind": "table",
       "sha256": "2fb3b541c2cb4bf38d09905bc0008cc5e3e35b0c26f3420b903003937ffe90a6",
       "preview": "| `runtime` | Pluggable worker and timer integrations | Protected process runtime and no mandatory host execut",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "runtime exposes the existing task runtime/clock/reservation contracts. Protected Linux execution is a separately selected adapter, not a compulsory host executor for the portable machine core."
     },
     {
       "line": 140,
@@ -1293,8 +1593,20 @@
       "kind": "table",
       "sha256": "268ec55b099f414f3ada8247e121509ced98c6e95eae4dded7f6f1d2d0048649",
       "preview": "| `integration::statechronicle` | External canonical commitment verification | No conversion of Penelope's loc",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "integration::statechronicle retains verified external canonical-event correlation. A locally committed machine state or matching digest does not acquire StateChronicle authority or prove remote resource ownership."
     },
     {
       "line": 142,
@@ -1303,8 +1615,20 @@
       "kind": "paragraph",
       "sha256": "f661a08025ac74219035f21247b5e5a0dd31ae041db423e81565a135776768a6",
       "preview": "**Key rule:** A saga is not literally a generic order enum, and a task is not simply a saga step. They are *sp",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Specialized lifecycle semantics are intentional: common PreparedDecision inspection cannot replace task-generation control, saga recovery or timeline effect finality. Their associated types and missing legacy coordinates remain explicit."
     },
     {
       "line": 146,
@@ -1313,8 +1637,20 @@
       "kind": "paragraph",
       "sha256": "1931638c562294a16b99ea2aa7f5e474ae78d6cd88946970a35b27f7479db88e",
       "preview": "The user should normally write:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Facade-first use is implemented by canonical modules and runnable external consumers. The following snippet is a namespace illustration, not a claim that all feature selections expose timeline."
     },
     {
       "line": 148,
@@ -1323,8 +1659,20 @@
       "kind": "code",
       "sha256": "834ff6196b04416b18ba7227fdb20a1dc7c4d1320fcf5ede8056ac27b1ccf735",
       "preview": "```rust\nuse penelope::machine::{Machine, Transition, MemoryMachine};\nuse penelope::saga::{/* orchestration API",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "illustrative_architecture_reviewed",
+      "assessment": "The machine/saga/task paths exist. The timeline import is available only with the timeline feature; comment placeholders are illustrative and not a standalone runnable tutorial. The checked first-machine source supplies the actual complete program."
     },
     {
       "line": 155,
@@ -1333,8 +1681,20 @@
       "kind": "paragraph",
       "sha256": "e1dd66754de9b1c114d74619fd7eccd0b1d5f840af16eb7186325ccf47bb8186",
       "preview": "The above illustrates **proposed 0.5.0 namespace design**, not current compiling imports. Experienced users ma",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The plan labels the imports as a proposal-time sketch. Current public-api/getting-started documentation supplies implemented names and compiling consumers; experienced users may still select internal crates for portable or adapter-specific profiles."
     },
     {
       "line": 157,
@@ -1353,8 +1713,20 @@
       "kind": "code",
       "sha256": "1db9f7d82b7ecfa5e8b96a04767f4231fa12079675a17f436d8aaca7339677ab",
       "preview": "```text\npenelope-core       (no_std, no alloc required; shared decision primitives)\n       | \\\n       |  +-- p",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "illustrative_architecture_reviewed",
+      "assessment": "This responsibility diagram is deliberately not a literal Cargo dependency graph. The checked allowlist is authoritative: domain remains independent, intent depends on domain, core is portable, and adapter composition edges can be dev-only. No diagram arrow waives those constraints."
     },
     {
       "line": 174,
@@ -1363,8 +1735,20 @@
       "kind": "paragraph",
       "sha256": "82bf25039f6ce849c78733ec653fff733e008f447215a75243e9867a85ff7f62",
       "preview": "The diagram depicts responsibility, not an exact Cargo dependency graph; preserve actual DAG constraints and a",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "implementation_path_refinement_reviewed",
+      "assessment": "The kernel is in core::machine, ports in ports::machine and SQLite in sqlite::machine; no new published machine package was created. The draft executor::machine filename is deliberately refined to native machine_task/machine_saga and saga_machine owners, as reviewed at planline519. An extra umbrella module/evaluator is not required to duplicate that responsibility."
     },
     {
       "line": 182,
@@ -8455,8 +8839,20 @@
       "kind": "paragraph",
       "sha256": "be042259683be57801e145da5e71240d5a8bc1290f15fe45ff34abcd97e6fbab",
       "preview": "**Penelope 0.5.0 should be presented as one library with one fundamental contract:** deterministic, typed stat",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The final position is a shared conceptual deterministic transition/admission/execution model with separate native guarantees. Callback determinism and source authenticity remain explicit application responsibilities; the candidate is not yet advertised as a complete qualified release."
     },
     {
       "line": 1073,
@@ -8465,8 +8861,20 @@
       "kind": "paragraph",
       "sha256": "df6177837b92aaa06b21213dbbe5699a463d941917e28e90a3588f635da47e2f",
       "preview": "A user starts with `Machine`. When transitions become external, multi-step and compensating, they compose `Sag",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The introductory path starts with a local Machine and explicitly adds saga/task/native runtime or eligible timeline as needed. Existing users can retain old APIs/history without mandatory conversion; cross-component handoffs are typed and durably admitted rather than hidden mutation."
     },
     {
       "line": 1075,
@@ -8475,8 +8883,20 @@
       "kind": "paragraph",
       "sha256": "6fb94e29f72c4ebac66458fb4a3773d7a9d8408902de9a4005cc85f326e36ac5",
       "preview": "**Success is not \u201cwe now have four features.\u201d Success is that they behave like one deliberately designed syste",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../../verification.md",
+          "pointer": "Release acceptance review",
+          "scope_status": "shared_conceptual_pipeline_and_separate_native_authorities_with_open_release_gates"
+        },
+        {
+          "file": "integration-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_native_adapter_and_composition_checks_with_original_revision_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Coherence is assessed through canonical onboarding, common inspection, explicit owners, native typed handoffs and compatibility evidence. Feature count, code-count reduction or green examples alone do not close the remaining qualification/performance/release conditions."
     }
   ],
   "limits": [
