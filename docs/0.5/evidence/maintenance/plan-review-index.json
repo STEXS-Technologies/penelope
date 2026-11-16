@@ -265,6 +265,40 @@
     "reviewed_blocks": 16,
     "scope": "Ten executive decisions and six explicit non-goals. Shared conceptual semantics do not imply identical native evaluators; qualification and performance gates remain open."
   },
+  "historical_baseline_review": {
+    "source_commit": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "source_sha256": {
+      "Cargo.toml": "67b98276ff7fbdea688537955b2a45a6bc170a2fab94c0672e45f5e555700f35",
+      ".github/workflows/ci.yml": "0a600c95a469582f632fb5e90d41ef039e20fbfebec0adae786d19c47a65fc31",
+      "crates/penelope-executor/src/engine.rs": "d54e067575ca5c919be6be5e9c5609433368a94174d5a8129c501d5800f7b70f",
+      "crates/penelope-executor/src/graph.rs": "ef53355db5568f7b154a93595112471bc7cef4aa00f04d2a8d00faa46f3247e1",
+      "crates/penelope-core/src/lib.rs": "1bb093f0f03a31de3ce858df4b52012d7a52bd8535fd18c0cdc0422fb3aadc42",
+      "crates/penelope-core/src/task/contracts.rs": "01fe659d051a4f12fb83a47ab1182a28d6a6e79b18341037e71e6ac530ec9803",
+      "crates/penelope-core/src/task/projection.rs": "be2c88e75abe667ce77f437b7cf57862b990e2eec34778f545a70f9eb1caba58",
+      "crates/penelope-core/src/task/control.rs": "d265358ef05df8b6fb44bc7e9564ca799fd0633e8568f5aa06abfcd712a58229",
+      "crates/penelope-core/src/task/runtime.rs": "7baf8b0d2298b733b840ea748b3de04644735a76b30bc76a518e9ef4c43fc584",
+      "crates/penelope-core/src/timeline/wire.rs": "79145a6406b1bca725e4bfbc290f0d871f34af0212987041916295f67a6599ce",
+      "crates/penelope-timeline/src/contracts.rs": "d73c94cf643fcc274ccc7c13ff207d09b21b4a526a05820338008b529aa6dc04",
+      "crates/penelope-timeline/src/step.rs": "b8047129a694f8aa05a4f1ae547ad5ff46b606722f396da1c38cb3629df8b32a",
+      "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+      "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+      "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+      "crates/penelope-ports/src/implementation.rs": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5",
+      "crates/penelope-sqlite/src/schema.rs": "f017db5b0c9ec15cfefcd93cf57e8c1d9aa30dc566c6a9680571fd0f883e2435",
+      "crates/penelope-sqlite/src/process.rs": "22d0497fce81556566ad5a8b16e4b99244c496c9f70f453af67a724abb3f1ade",
+      "crates/penelope-sqlite/src/tasks.rs": "d52cb00c638cda01a8ac2b2cb823020500664a262d11d6388847aac33ec4abb0",
+      "crates/penelope-sqlite/src/worker.rs": "7c73597cb0da4c9417b2ff32a5818f5913f50a6f7a7b67c2b1653162fcc84d0b",
+      "crates/penelope-process-runtime/src/lib.rs": "d487c5960d3e2db9446aeaf88c61ce9c5a63f44442786660d5b0a0669d0ae391",
+      "crates/penelope-statechronicle/src/lib.rs": "35f8c8bc274222c693503fd5f2092ad9f472bd6754140efb4932bb911ab33437",
+      "crates/penelope/src/lib.rs": "83ea39d39e1faf8c1c870c73a78d1cf32835c9a974ec8962178cda6de289f6d5",
+      "crates/penelope/Cargo.toml": "5faa88eb55b144f3f1e127eba03f8bad81f58f2343b756f7d3fda4e7f6690a78",
+      "crates/penelope-core/Cargo.toml": "4286964519fc97e6d415e21fdb7a54318c99794447783dc8b91fad1028d9bec0",
+      "crates/penelope-timeline/Cargo.toml": "757c0799b3fb39c33036dba40211b7986041a44aa680c1761032d998afffdbfa",
+      "scripts/check-layer-boundaries.sh": "fd70da3909c9820768108885f0b4e347760685bfc60059b1667ceea259962074"
+    },
+    "reviewed_blocks": 18,
+    "scope": "Immutable0.4 source facts, starting subsystem boundaries and original policies. Current features and approvedMSRV are reviewed separately; chronology before every refactor is not proven."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -274,10 +308,11 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 129,
+      "needs_individual_review": 111,
       "individually_reviewed_scoped_support": 142,
       "individually_reviewed_qualification_open": 2,
       "release_condition_open": 5,
+      "reviewed_historical_baseline": 18,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
@@ -306,7 +341,8 @@
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
     "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
-    "../../verification.md": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2"
+    "../../verification.md": "59d1b5a2528cf18e0bd563260b65ba59fdd25027df5d310ae14e8d6f5906c2a2",
+    "../manifest.json": "3060456c52ddd98c26cfb39f73b6efa1e051e328fa9fccb063b14786581cefec"
   },
   "blocks": [
     {
@@ -688,8 +724,15 @@
       "kind": "paragraph",
       "sha256": "a9ef9ca23126460ba0e9c5d47fe6cb548aebbcb1e6e6bfad33237677a3fcd3fe",
       "preview": "The inspected repository declares **ten library workspace packages** (`penelope-core`, `penelope-domain`, `pen",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "This paragraph describes the proposal-time0.4 checkout. Local tagv0.4.0 resolves to42ec187; its workspace has ten default library packages plus fuzz, version0.4.0 and Rust1.85. It is not a current candidate inventory. Later baseline compile/benchmark evidence was collected separately; its timing before every refactor remains unproven."
     },
     {
       "line": 44,
@@ -698,8 +741,15 @@
       "kind": "table",
       "sha256": "db03e061902d5949ea8ece6ef0fabf17baa18dd50a111719ab0926a2d8155710",
       "preview": "| Existing subsystem | Verified implementation | What it already contributes | Boundary that must not be misre",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Historical baseline table header. The rows below describe0.4 subsystem boundaries, not missing0.5 implementations."
     },
     {
       "line": 45,
@@ -718,8 +768,15 @@
       "kind": "table",
       "sha256": "4321afda6bffde57fd16c2dc5e79e3a6d000c3eb967d05148c458490fa862d25",
       "preview": "| Linear saga | `penelope-executor/src/engine.rs` | Version-pinned definitions, steps, typed result decisions,",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original linear engine has pinned definitions, typed decisions, retries, compensation and replay for executable steps. Current canonical saga APIs retain that native contract rather than treating it as the arbitrary application-machine evaluator."
     },
     {
       "line": 47,
@@ -728,8 +785,15 @@
       "kind": "table",
       "sha256": "50ea6721f9dc43066979bc2177ccb502587b96d390d77d868a59220b2b2fbd66",
       "preview": "| Graph saga | `penelope-executor/src/engine.rs` + `graph.rs` | `ProcessGraphDefinition`, `GraphTransition`, `",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original graph engine keys edges by GraphTransitionOutcome and checks active actions, replay and visit limits. Graph topology is not a hierarchical active-state path. Current HSM remains a separate portable helper with its own path validation."
     },
     {
       "line": 48,
@@ -738,8 +802,15 @@
       "kind": "table",
       "sha256": "0eb54c5dc5238981d6eae4894c25f1ac232392030e05213008857fdacec2fbe6",
       "preview": "| Recoverable task | `penelope-core/src/task/{contracts,projection,control,runtime}.rs` | `TaskProjection`, `T",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Original TaskProjection/TaskControl govern task execution state, generation, recovery and checkpoints. They remain native authorities beneath the new inspection view; this baseline row does not describe the later general business-state machine."
     },
     {
       "line": 49,
@@ -748,8 +819,15 @@
       "kind": "table",
       "sha256": "86fa1f1a46882aa04163636e4788de68be3aa42b0551c5e4f97e34ea44fd20a6",
       "preview": "| Timeline | `penelope-core/src/timeline/*`, `penelope-timeline/src/*` | Immutable inputs, state anchors, scra",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Original timeline computation supplies scratch correction, anchors, exact-head publication and separate effect finality. Full persistent timeline recovery is not inferred from existing checkpoint metadata or the new durable machine journal."
     },
     {
       "line": 50,
@@ -758,8 +836,15 @@
       "kind": "table",
       "sha256": "88d897c8bc358c1e462a6c746b9324fdd382cc1c5dfe21c2890e34fc7e6cbe1a",
       "preview": "| Process ports | `penelope-ports/src/implementation.rs` | `AtomicProcessCommit`, `ProcessStore`, inbox/outbox",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Original process ports bind saga outcomes, actions, inbox/outbox, timers and authorization. AtomicProcessCommit remains saga-specific in the candidate; new machine ports have independent wire and receipt coordinates."
     },
     {
       "line": 51,
@@ -768,8 +853,15 @@
       "kind": "table",
       "sha256": "1241440d0330af899d733930658c28aa7837d0dee3e7baf4b8fac45f36122ca9",
       "preview": "| SQLite | `penelope-sqlite/src/{process,tasks,schema,worker}.rs` | WAL/FULL single-host adapter, process comm",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Original SQLite schema configures WAL/FULL and reaches schema6 with process/task stores and a bounded hosted queue. The candidate adds an independently scoped machine journal through forward-only migrations; the statement no machine journal is historical only."
     },
     {
       "line": 52,
@@ -778,8 +870,15 @@
       "kind": "table",
       "sha256": "1c10914b3538621272095f95670cfecf406dba66d13c7279435e0e005e3d6389",
       "preview": "| Process runtime | `penelope-process-runtime/src/*` | Protected Linux workers, execution generation enforceme",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original protected-process runtime is an optional supported Linux profile with generation enforcement and bounded IPC. It is not a portable-core scheduler or a distributed termination guarantee."
     },
     {
       "line": 53,
@@ -788,8 +887,15 @@
       "kind": "table",
       "sha256": "a993aecd86c4ebdcfa9bccfe98eed5b6cb08c0e00169670f3e55742725168efe",
       "preview": "| StateChronicle bridge | `penelope-statechronicle/src/*` | Correlates verified canonical events to exactly sc",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original StateChronicle facade exposes verified-event correlation, not inherited external authority. Current signed-source conformance is separately pinned and qualified; local hashes remain content identities."
     },
     {
       "line": 54,
@@ -798,8 +904,15 @@
       "kind": "table",
       "sha256": "e754f4a49d4b08ffe4db8de1c85bad29a636f753c13058b258ddbf26c2af8924",
       "preview": "| Public facade | `penelope/src/lib.rs`, `penelope/Cargo.toml` | Re-exports engine/graph/task/ports; timeline ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original facade reexports native subsystem APIs with optional timeline. The current canonical namespaces are additions preserving those old paths, so this row records the starting organization rather than current onboarding."
     },
     {
       "line": 58,
@@ -808,8 +921,15 @@
       "kind": "item",
       "sha256": "e38d60d5055c2d9050ec4639b048bc4ea2a6aeb9903fa0c21c44ec16c94176be",
       "preview": "- `GraphTransition` has `from_step`, `on: GraphTransitionOutcome`, and `to_step`; the outcome has `Succeeded`,",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The baseline GraphTransition has from_step/on/to_step and three result categories. ProcessGraphDefinition validation checks bounded references/reachability; native graph replay and action identity remain separate from HSM dispatch. Frozen parity is finite evidence, not all possible graphs."
     },
     {
       "line": 59,
@@ -818,8 +938,15 @@
       "kind": "item",
       "sha256": "751bfa702f9d822a8e4a5cd981661a7c7147b4d32e7846f29b75510543d8b729",
       "preview": "- `TaskProjection::apply()` builds a copied candidate, validates a `TaskRecord` and only assigns the candidate",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The baseline apply method copies TaskProjection, applies into the candidate and assigns only on success. Candidate preparation now shares that private evaluator while retaining the same publication rule and native status set; frozen observations check old behavior."
     },
     {
       "line": 60,
@@ -828,8 +955,15 @@
       "kind": "item",
       "sha256": "7dbc16507270a7c577bec244af9adb30e4a471850a4483685c9bf4d8991096d6",
       "preview": "- `TaskControl` commits at most one history record per advance and poisons after ambiguous journal/runtime out",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The baseline TaskControl contract explicitly commits at most one record per advance and poisons after ambiguous journal/runtime outcomes. Current source is separately checked byte-identical for this authority; machine inspection does not weaken reconstruction requirements."
     },
     {
       "line": 61,
@@ -838,8 +972,15 @@
       "kind": "item",
       "sha256": "9b5f5378c186a33b67ea9614d5c17909b6fbbbf603d5906471a9586226343e14",
       "preview": "- The timeline's `prepare_live_step()` computes on isolated scratch, validates, and returns an opaque `ReadySt",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "Baseline prepare_live_step documents isolated scratch and an opaque ReadyStep; ReplaySession has explicit abort/promotion. LiveTimeline owns coherent publication and effect handoff distinguishes eligibility/admission/execution. The adapter reuses these authorities rather than creating another correction engine."
     },
     {
       "line": 62,
@@ -848,8 +989,15 @@
       "kind": "item",
       "sha256": "eb7a62a5fc74eb78460eab8a424694b46d93106038d4c2f39e1ed52c45a68881",
       "preview": "- The timeline metadata format is independently tagged `penelope.timeline.v1`. Task records and saga v1 record",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original timeline v1 namespace remains independent of saga/task v1 contracts. New penelope.machine.v1 metadata, goldens and strict decoding were added without assigning new meaning to old records."
     },
     {
       "line": 63,
@@ -858,8 +1006,15 @@
       "kind": "item",
       "sha256": "cafdac4bf9e3fe7565ee70ae21db41969118ecadd3702fe9686b6fcca0bb7d38",
       "preview": "- The facade's only optional feature is currently `timeline`; `penelope-core` and `penelope-timeline` use defa",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "This is the original CI/feature policy: empty core/timeline defaults, optional facade timeline, Rust1.85 and RISC-V checks. The approved candidate minimum is1.89 with current CI; original1.85 evidence is not relabeled as a candidate guarantee."
     },
     {
       "line": 64,
@@ -868,8 +1023,15 @@
       "kind": "item",
       "sha256": "b295a377d12a4d8a0cf0240664b2df62842f48b0a1ba7836f7d4086f28bb17fc",
       "preview": "- `scripts/check-layer-boundaries.sh` hardcodes the current permitted dependency graph. Adding or moving modul",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../manifest.json",
+          "pointer": "/baseline_commit",
+          "scope_status": "original_source_and_later_baseline_evidence_not_historical_order_proof"
+        }
+      ],
+      "review_state": "reviewed_historical_baseline",
+      "assessment": "The original dependency allowlist is explicit. Current architecture checks deliberately encode the new permitted owners and dev-only composition edges; they retain exact dependency constraints rather than removing the gate."
     },
     {
       "line": 68,
