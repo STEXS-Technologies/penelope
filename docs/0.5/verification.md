@@ -1173,3 +1173,23 @@ strict all-target/all-feature Clippy (workspace and compatibility harness), and
 warning-denying API documentation pass. The checkpoint archive includes all
 commands and logs. These checks ran at `feabc53`, whose source/manifests/locks,
 CI and scripts match `9a5a1db`; only documentation and evidence differ.
+
+
+The versioned checkpoint now also passes extracted-archive workspace tests on
+both compilers. All ten package dependencies resolve exclusively to the matching
+0.5 archives. Both runs use the same locked normalized workspace; normalization
+removes only the three fuzz-only dependencies (`arbitrary`, `jobserver`,
+`libfuzzer-sys`), with no new external identity, version or checksum. Commands,
+archive identities, metadata, both locks and raw logs remain in the checkpoint
+archive. These are actual archive-content tests, including the real worker and
+SQLite kill/recovery suites; benchmark debug smoke output is not release
+performance evidence.
+
+Fresh full workspace LLVM coverage reports **14,874 / 15,807 lines = 94.0976%**,
+above the unchanged 94.0759% ratchet. All 72 reported source files belong to the
+isolated candidate checkout; the full JSON with regions and test logs is retained.
+The coverage checkout advanced from `feabc53` to `be774e6` only in documentation
+and evidence, with source/manifests/locks/CI/scripts identical to `9a5a1db`.
+Current coverage therefore preserves the narrow margin rather than claiming an
+improvement over the preceding failure-path checkpoint. Candidate CI, the full
+immutable-source chaos campaign and performance decisions remain open.
