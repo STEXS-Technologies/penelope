@@ -68,8 +68,11 @@ comparison; subprocess-split output is documented in the recorders.
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
   does not replace this. The already-running `9084239`/`cefa55f`/`be774e6`
-  campaigns and development rehearsal retain their original source/harness scopes;
-  none is relabeled as the final revision.
+  campaigns retain their original source/harness scopes. The
+  [development rehearsal](evidence/qualification/development-chaos-complete.json)
+  passed all 84 fuzz batches across three rounds. Its checkout advanced during
+  execution, so it supplies no immutable-revision qualification. None of these
+  campaigns is relabeled as the final revision.
   The [first final-source attempt](evidence/qualification/final-chaos-toolchain-interruption.json)
   stopped on a compiler-version tooling error after 21 fuzz batches, with unchanged
   source hashes. A fresh attempt uses installed `nightly-2026-08-05` through a

@@ -149,7 +149,7 @@
   "release_acceptance_review": {
     "production_source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
     "review_document": "../../verification.md",
-    "review_document_sha256": "41440cfd4194131ef935c1cba5aa99e94a8ef46e86960edefbab2fc4ab9130a6",
+    "review_document_sha256": "7146468386dbdde674c6872b3072a6a6373d8955d27d306f1f61f31dd4b37e77",
     "conditions": [
       {
         "plan_line": 980,
@@ -1012,7 +1012,7 @@
     "../maintenance/invariant-audit.json": "9d6c0d2147860c68cdd19451297b1db3ab1f6499fd12812bd381fe5da5f3e0bc",
     "../machine-performance/state-cost.json": "0ff0afe555fcd5b2ff740b4b636720187b922996af945985e503bf4609899eda",
     "../qualification/graph-start-package-checkpoint.json": "336011a986141d678f2208b10b0bb67c39a22f41d728125f0b972bd3a4f31d4f",
-    "../../verification.md": "41440cfd4194131ef935c1cba5aa99e94a8ef46e86960edefbab2fc4ab9130a6",
+    "../../verification.md": "7146468386dbdde674c6872b3072a6a6373d8955d27d306f1f61f31dd4b37e77",
     "../manifest.json": "3060456c52ddd98c26cfb39f73b6efa1e051e328fa9fccb063b14786581cefec",
     "../qualification/candidate-capability-performance.json": "6ac56974102c755ea60f44fffd89884b8a84db776b677ba9d49f174d2de80528",
     "../legacy-balanced/versioned-candidate.json": "6c95fa6b5801454859c1e5058947f39f78ea790dd3b5c8780281d2cd0863d362",

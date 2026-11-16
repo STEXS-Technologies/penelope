@@ -1,0 +1,29 @@
+{
+  "status": "Passed earlier development rehearsal; not final-source qualification",
+  "terminal_session": 56249,
+  "observed_exit_code": 0,
+  "recorded_utc": "2026-11-16T10:33:47.869806+00:00",
+  "source_scope": {
+    "launch_revision_recorded_by_prior_manifest": "77e2822",
+    "root_revision_at_terminal": "ca3bb420edaedca18873e056ea20e1836b757ca3",
+    "limitation": "Development checkout advanced during the campaign. No immutable pre/post source assertion; do not assign this pass to ca3bb42 or the current candidate. Final-source campaign runs separately in a frozen checkout."
+  },
+  "observed": {
+    "rounds": 3,
+    "completed_100000_run_batches": 84,
+    "fuzz_targets_per_round": 28,
+    "requested_property_cases_per_round": 10000,
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "terminal_marker": "pure chaos drill passed (3 repeated iterations)"
+  },
+  "scope": "Library transition/restart/timer checks and bounded malformed-input fuzzing, including private SQLite files. Not deployment chaos or proof of arbitrary external-effect recovery.",
+  "log": {
+    "path": "development-chaos-complete.log.gz",
+    "sha256": "732a334627f415df31ec3bda632c9516c0b399d5dca553c48626c018c440417a",
+    "uncompressed_sha256": "9699f2b77ea51ee8620e9eb58814352b55678f7b5845b1968e2487779e6b6ad7"
+  }
+}
