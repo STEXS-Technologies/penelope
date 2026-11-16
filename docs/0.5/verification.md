@@ -1037,6 +1037,12 @@ Two p50 profiles and one p95 profile cross the existing review thresholds:
 | `ring_replay`, 128 words, 1 step | p50 | 50 ns | 60 ns | +20.00% |
 | `history_append`, 128 words, 32 steps | p95 | 291 ns | 321 ns | +10.31% |
 
+`ring_replay` is the handwritten benchmark comparator: its timed closure calls
+`Ring::replay` and the fixture's integer computation, without invoking Penelope's
+replay API. Its flag is retained as a control observation, not attributed to a
+library replay implementation. This distinction does not normalize any result
+or waive a finding.
+
 The first profile repeats a historical flag. The latter two exploratory paired
 intervals span zero; this is not an equivalence test or permission to discard
 them. The earlier nine p50/two p95 findings remain retained. Different current
@@ -1105,3 +1111,30 @@ failures remain in the archive; all 34 archived members passed hash verification
 This is correctness evidence at `max_live=1`, not worker throughput, CPU isolation
 or a general saturation-performance qualification. Those scopes and final
 release qualification remain distinct and open.
+
+
+## Tests from independently packaged archives
+
+The [independent package checkpoint](evidence/packaging/independent-tests.json)
+qualifies source `d3ec00b`. All ten development archives pass Cargo library
+verification and literal-include validation. An extracted workspace patches each
+Penelope dependency to its matching archive; Cargo metadata confirms all ten
+resolve there. Full workspace all-target/all-feature tests pass on Rust 1.100
+and MSRV 1.89 with the same normalized lockfile. This includes real-worker,
+SQLite recovery/preflight and native slot-reuse checks plus benchmark smoke
+runs; these debug runs are not release performance measurements or doctests.
+
+The initial archive run exposed two executor architecture checks that assumed
+checkout-only source/fuzz files. All six architecture tests move byte-identically
+to the existing compatibility CI harness, with explicit stable/MSRV/release
+execution, formatting and strict Clippy. Both compilers pass them. The executor
+archive no longer carries those repository tests or a direct `syn` dev dependency.
+No architecture condition is skipped or relaxed.
+
+Constructing the reduced archive workspace initially refuses the root lock under
+`--locked`. Offline normalization removes only three fuzz-only dependencies;
+no external version or checksum changes. Subsequent tests use `--locked`. The
+archive retains both original and corrected crate sets, manifests, locks, source,
+commands and failure/success logs; all 74 members passed hash verification.
+Working crate versions remain 0.4.0. This is stronger package-isolation evidence,
+not final versioned 0.5 candidate qualification or publication.

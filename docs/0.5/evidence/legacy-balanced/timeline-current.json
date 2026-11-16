@@ -218,5 +218,10 @@
     "summary.json": "42b776fb5afebc442f296bc90886da66bfad8d2575334ecf7a3f53d3411ae8ab",
     "timeline-source-diff.patch": "576bca422308c40eb367fc142a342dfd3f30a719b50ca51a30c61342f480d81b"
   },
-  "open": "Historical flags remain retained. Current findings need diagnosis and explicit disposition; exact final candidate qualification remains open."
+  "open": "Historical flags remain retained. Current findings need diagnosis and explicit disposition; exact final candidate qualification remains open.",
+  "profile_roles": {
+    "history_capture": "Library API measurement",
+    "history_append": "Library API measurement",
+    "ring_replay": "Handwritten comparator; timed closure uses fixture Ring::replay and compute, not Penelope replay APIs. Observation retained without normalization or waiver."
+  }
 }

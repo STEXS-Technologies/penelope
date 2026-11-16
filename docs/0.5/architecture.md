@@ -114,6 +114,7 @@ The consolidation audit tracks these authoritative owners:
 | Blocking async I/O and response delivery | SQLite `DatabaseWorker<State>`: process, machine and native task adapters | Task journal owns its original connection, cache and transactions |
 | Native committed process proof | SQLite `committed_receipt`/`verify_committed_batch`: idempotent commit and read-only verifier | Verification never retries writes or dispatches actions |
 | Full source-to-receiver identity | `MachineIntentSource::binding_identity`: task and saga receivers | Host-pinned task/saga policies and native identities remain distinct |
+| Repository structure and newtype fuzz inventory | `ci/compat-0.4/tests/architecture.rs`, run by stable/MSRV/release CI | Checkout-only validation stays outside published library tests |
 
 Separate machine/task/process transactions remain necessary: each authenticates
 different history and scope, and only its native owner may advance that history.
