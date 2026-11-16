@@ -1051,3 +1051,38 @@ The archive also records all seven successful GitHub CI jobs for the exact
 measured revision ([run 43786989284](https://github.com/STEXS-Technologies/penelope/actions/runs/43786989284)).
 This is a development checkpoint, not final candidate or packaged-release
 qualification. Performance disposition and the full chaos campaign remain open.
+
+
+## Focused history-capture placement diagnostic
+
+The [capture placement diagnostic](evidence/legacy-balanced/timeline-capture-layout.json)
+uses the original workload helper with a temporary reporter selecting only
+`history_capture`, one word and one step. It preserves that helper's state model,
+setup, capture closure and latency reporter. Filtering changes code generation;
+these timings therefore do not replace the complete frozen-workload campaign.
+
+Eight binaries cover original/current source and four `.text` placements, with
+15 rotated rounds and 10,000 samples per process. Within each source variant,
+all four placements retain identical `.text` bytes. Process-median p50 results:
+
+| `.text` placement | Original source | Current source |
+| --- | --- | --- |
+| `0x20000` | 271 ns | 301 ns |
+| `0x20020` | 311 ns | 301 ns |
+| `0x20040` | 280 ns | 291 ns |
+| `0x20060` | 310 ns | 301 ns |
+
+Placement changes the elapsed result and reverses which source is faster. This
+establishes layout sensitivity in the focused fixture, not equivalence or an
+accepted disposition of the frozen 251→270 ns finding. Whole-process counters
+include setup and reporting; they do not isolate capture instructions. Frequency,
+caches and memory bandwidth remain uncontrolled.
+
+Inspection of the original retained full-workload binaries finds 284 instructions
+and size `0x60d` in each one-word `check_anchor_admission` specialization. Assembly
+matches after normalizing addresses and RIP-relative relocation displacements.
+This comparison is limited to that function and is not whole-program equivalence.
+Raw assembly, normalization output, all measurements, binaries, hashes, temporary
+source and build arguments remain in the archive; all 317 members passed hash
+verification. No focused benchmark, linker flag or production change is retained.
+The exact microarchitectural cause and performance acceptance remain open.
