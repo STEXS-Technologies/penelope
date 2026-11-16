@@ -335,6 +335,280 @@
     "reviewed_blocks": 33,
     "scope": "Debt/removal rationale, conceptual pipeline, native subsystem roles, facade/dependency sketches and final architectural position. Illustrative arrows/imports are not literal dependency or feature guarantees; release qualification remains open."
   },
+  "adversarial_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-core/src/task/control.rs": "d265358ef05df8b6fb44bc7e9564ca799fd0633e8568f5aa06abfcd712a58229",
+      "crates/penelope-core/src/task/projection.rs": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+      "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "crates/penelope-executor/src/engine.rs": "d54e067575ca5c919be6be5e9c5609433368a94174d5a8129c501d5800f7b70f",
+      "crates/penelope-executor/src/graph.rs": "ef53355db5568f7b154a93595112471bc7cef4aa00f04d2a8d00faa46f3247e1",
+      "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+      "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+      "crates/penelope-executor/tests/machine_saga.rs": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d",
+      "crates/penelope-executor/tests/task_recovery.rs": "77432a01dab0467aca8ffb102c933bfa32fbfaaadc7e368f2b30887c253460ba",
+      "crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+      "crates/penelope-ports/src/machine/store.rs": "9a9b723a4b25b791cd72368346c43c361c61bb3fa69b1c7007107643b52d8158",
+      "crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+      "crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+      "crates/penelope-sqlite/src/machine/delivery.rs": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51",
+      "crates/penelope-sqlite/src/machine/tests.rs": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+      "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+      "crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+      "crates/penelope-statechronicle/src/implementation.rs": "ac48d4363126352b723e67623e9275fbe33e19346425ace22bb21ccac89675be",
+      "crates/penelope-timeline/src/effects.rs": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+      "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+      "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+      "crates/penelope-timeline/tests/determinism.rs": "8dea5de0cae186774c933d684a4e975adb6763d0dbbad17996771bf4f15f9420",
+      "crates/penelope-timeline/tests/machine.rs": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+      "crates/penelope/tests/prepared_lifecycles.rs": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+      "docs/0.5/machine-storage.md": "c54f561f89f12a95aa6b5e999dab9a35fff1aa6710d2304606dcf7aaf87bd661",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/reliable-execution-operations.md": "2ec33f5244834b248f784791efab96926e35c065d619584bf4aebd0df9161690",
+      "scripts/conformance/statechronicle.rs": "1ada8de34589c61fc202c3dbb41399b0cfb19c46f5e85dd8475b411e927f51f1"
+    },
+    "reviewed_blocks": 13,
+    "current_test_observations": [
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "decisions_prepare_without_publishing_and_drop_aborts",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "model_refusal_failure_and_invalid_candidate_never_produce_a_commit_batch",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "codec_definition_length_digest_and_intent_charge_failures_leave_owner_unchanged",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "simultaneous_independent_workers_admit_one_competing_head",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/src/machine/tests.rs",
+        "function": "commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "stored_bytes_reconstruct_exact_receipt_and_non_clone_snapshot_without_pending_effects",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-timeline/tests/machine.rs",
+        "function": "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-timeline/tests/determinism.rs",
+        "function": "uncaptured_dependency_is_detected_only_when_same_baseline_verification_is_enabled",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-executor/tests/task_recovery.rs",
+        "function": "effect_interruption_requires_evidence_and_unknown_never_restarts",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope/tests/prepared_lifecycles.rs",
+        "function": "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope/tests/prepared_lifecycles.rs",
+        "function": "graph_preparation_retains_scope_and_refuses_foreign_action_without_mutation",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-executor/tests/machine_saga.rs",
+        "function": "changed_receiver_policy_and_foreign_native_receipt_cannot_acknowledge_source",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "scripts/conformance/statechronicle.rs",
+        "function": "signed_committed_source_binds_atomic_commit_and_deduplicates_after_reopen",
+        "jobs": [
+          "Optional StateChronicle signed-event conformance"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "every_byte_limit_and_input_digest_is_enforced_before_local_publication",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "full_history_refuses_new_events_but_preserves_exact_retries_and_rows",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "claim_bounds_and_scoped_delivery_quota_rollback_without_consuming_tokens",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "authorization_precedes_existence_duplicates_and_all_reads",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "policy_denies_claim_read_validation_and_duplicate_ack_before_receipt_lookup",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "a_caught_destructor_panic_cannot_unpoison_staging",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-core/tests/machine.rs",
+        "function": "superseded_state_drop_panics_only_after_all_published_values_agree",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-ports/tests/machine_preparation.rs",
+        "function": "codec_panics_before_and_after_evaluation_leave_the_original_owner_coherent",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machines.rs",
+        "function": "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-sqlite/tests/machine_outbox.rs",
+        "function": "downstream_acceptance_lost_ack_is_reconstructed_and_exact_retry_is_idempotent",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      },
+      {
+        "path": "crates/penelope-executor/tests/task_recovery.rs",
+        "function": "no_commit_or_lost_acknowledgement_never_dispatches",
+        "jobs": [
+          "Stable verification",
+          "Minimum supported Rust"
+        ]
+      }
+    ],
+    "compile_fail_doctests_stable": [
+      217,
+      224
+    ],
+    "scope": "Ten adversarial cases, invariant ownership and two host-authority policies. Callback purity/authentication/remote authority remain explicit host duties, and signed-source conformance is stable-only."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -345,15 +619,15 @@
     },
     "by_review_state": {
       "reviewed_historical_proposal_metadata": 1,
-      "individually_reviewed_scoped_support": 170,
+      "individually_reviewed_scoped_support": 183,
       "individually_reviewed_qualification_open": 2,
       "release_condition_open": 5,
       "reviewed_historical_baseline": 18,
       "table_layout": 7,
       "illustrative_architecture_reviewed": 3,
-      "section_label": 24,
+      "section_label": 26,
       "implementation_path_refinement_reviewed": 2,
-      "needs_individual_review": 62,
+      "needs_individual_review": 47,
       "scoped_evidence_indexed": 163,
       "individually_reviewed_release_notes_open": 1,
       "individually_reviewed_measurement_scope": 14,
@@ -4803,8 +5077,20 @@
       "kind": "paragraph",
       "sha256": "fc515d18cc37f1a912e4665275a9b3d5bdf737a8f8a74ea4e3bc529c2574cdeb",
       "preview": "Each invariant must have an assigned implementation owner and a negative test; do not leave it implicit across",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "All15 listed invariants have explicit owner paths and33 negative/boundary references representing29 distinct tests. Current CI observes the workspace cases on stable/MSRV and the signed-source case in its separate stable conformance job. The later replay path has separate qualification evidence; this reconciliation does not prove every possible adversarial input or finish full chaos."
     },
     {
       "line": 647,
@@ -4814,7 +5100,8 @@
       "sha256": "8aeae17f864d49ff39312c686766cc3998c6e02c70510ac004ec1144a8cb5eaf",
       "preview": "| Invariant | Owner | Failure behavior |",
       "evidence": [],
-      "review_state": "needs_individual_review"
+      "review_state": "section_label",
+      "assessment": "Invariant table header or adversarial-case label; obligations are reviewed in the numbered invariant record and following individual cases."
     },
     {
       "line": 648,
@@ -5074,7 +5361,8 @@
       "sha256": "262dddbdd6421eba6bac27c6a5c99f3231e94dac2cea095cae84c198f3609369",
       "preview": "Additional adversarial cases:",
       "evidence": [],
-      "review_state": "needs_individual_review"
+      "review_state": "section_label",
+      "assessment": "Invariant table header or adversarial-case label; obligations are reviewed in the numbered invariant record and following individual cases."
     },
     {
       "line": 667,
@@ -5083,8 +5371,20 @@
       "kind": "item",
       "sha256": "fca71ebb3a429deb1cddc8a9ef5d36961a33e474059d136bea57f925f8953728",
       "preview": "- Forged `machine_scope`, schema/definition digest, event ID or commit receipt.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Scope/model/codec/event/batch and every receipt coordinate are checked by owner/preparation/store boundaries, with substitution tests. Authorization precedes scoped reads/retries. In-memory IDs/digests remain caller assertions and hashes cannot authenticate hostile source bytes; the hosted principal and external evidence must be independently authenticated."
     },
     {
       "line": 668,
@@ -5093,8 +5393,20 @@
       "kind": "item",
       "sha256": "e345a541c8614db42a12d507f8d9105b2438597b82a807ae2fe03c97d886bb21",
       "preview": "- Wrong `expected_revision`, counter wraparound, truncated event log, reordered history, duplicate sequence, a",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Checked revisions refuse wraparound/stale heads; strict records and bounded history reject truncation, gaps/reordering and payload substitutions, while exact duplicates compare complete content. Independent history-partition and event-replay tests supplement the invariant corpus. Authenticated source/model availability remains required for recovery."
     },
     {
       "line": 669,
@@ -5103,8 +5415,20 @@
       "kind": "item",
       "sha256": "f9702368e238cad3bf11728b21560e969fc0d14951f1bf7e33dcde651c838831",
       "preview": "- A parent HSM handler accidentally catches an event after an explicit child rejection.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Only Unhandled bubbles to a parent. The current terminal child-rejection/fault test checks unchanged state/head and the exact visited path. Guard selection has no staging sink; a parent is not tried after explicit denial."
     },
     {
       "line": 670,
@@ -5113,8 +5437,20 @@
       "kind": "item",
       "sha256": "abbb53908edaaf2466095fc4580602265cb22b4ea287bf8a048699937e54f7fc",
       "preview": "- Guard evaluation based on ambient clock, RNG, external mutable state or nondeterministic hash iteration.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Supplied TransitionContext has no clock/RNG/host service, but arbitrary application callbacks can still access ambient or aliased state. The supported contract requires captured dependencies and deterministic callbacks; the existing uncaptured-dependency test documents detection only with same-baseline verification enabled. No automatic purity sandbox or proof is claimed."
     },
     {
       "line": 671,
@@ -5123,8 +5459,20 @@
       "kind": "item",
       "sha256": "c4dac781314846f05771feb88027e167973833c3caf6afe3a5b0c0f2d29d8c94",
       "preview": "- A transition produces more intents than capacity or signals an error after staging effects.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Bounded staging poisons on count/byte/identity failure even if the callback ignores the error or catches a payload-destructor panic. Model/hook errors after staging discard the whole tentative attempt. These checks preserve the previous publication; arbitrary callback side effects remain unsupported."
     },
     {
       "line": 672,
@@ -5133,8 +5481,20 @@
       "kind": "item",
       "sha256": "02d260542ffa233f12e72b8e99c5ecc35d26f8408a94f9f4f4b6fd35da1f8391",
       "preview": "- Receipt lost after full SQLite commit; second writer races the same event; delayed prior generation submits ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Lost commit ACK retains/retries exact content or resolves it from authoritative storage, competing writers revalidate under transactional CAS, and native generations fence delayed results. Native receiver/source acknowledgement tests cover recovery after downstream acceptance; neither a timeout nor admission receipt proves external completion."
     },
     {
       "line": 673,
@@ -5143,8 +5503,20 @@
       "kind": "item",
       "sha256": "bb26d2d949759218b83e7b8947c99a2920107efbe1e22fcbcd5219d893e5d3fe",
       "preview": "- Malformed snapshot or invalid schema migrated without permission.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Snapshot restore checks exact scope/model/codec, canonical bytes and invariants; malformed/checksummed substitutions fail. Existing task checkpoint migration requires explicit authorized import. There is no general automatic machine-schema migration service; changing interpretation requires a separate authenticated host decision."
     },
     {
       "line": 674,
@@ -5153,8 +5525,20 @@
       "kind": "item",
       "sha256": "dee412e832671bb72263ece4ae630b629806b737cf3cffaaec56ac12a6f3d357",
       "preview": "- Application code panics between candidate preparation and publication; callback reentrancy attempts another ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Unwind/drop and codec panic checks preserve publication; cleanup panic after a successful publish observes the coherent committed tuple. The owner-bound exclusive borrow and stable compile-fail doctests prevent simultaneous safe access/republication while a prepared handle lives. This does not promise prevention of arbitrary deadlocks or side effects through unsupported callback aliases."
     },
     {
       "line": 675,
@@ -5163,8 +5547,20 @@
       "kind": "item",
       "sha256": "b8e01335556f486d7fddf1a9ad2fbb197585a64e6738053884aa60a15c4e8cf6",
       "preview": "- A timeline correction that changes a prior state but would reproduce an already-finalized outgoing payment.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Existing timeline effect-finality and handoff remain authoritative through MachineTimeline; correction cannot roll back an admitted/finalized external effect. Native integration tests exercise captured context and finality. They do not reverse an actual bank payment or certify external settlement; application reconciliation still applies."
     },
     {
       "line": 676,
@@ -5173,8 +5569,20 @@
       "kind": "item",
       "sha256": "33417e53b43847e43cdef1935a5b1b8028814f84e456eeee3153c5901edc94ac",
       "preview": "- Two storage backends (machine and saga/task) accept separate writes and one crashes: ensure the bridge is re",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine and native receiver stores commit independently. Source-bound durable intent identity, exact native admission receipts and retryable acknowledgement recover the gap; lost-ACK/reopen tests observe idempotent downstream admission. The protected consumer checks verified results before a follow-up machine event. No cross-store atomicity or automatic external compensation is claimed."
     },
     {
       "line": 680,
@@ -5183,8 +5591,20 @@
       "kind": "paragraph",
       "sha256": "7621bea983d4386ca0697c7a6fa15043b5ab615abb97abc53a1a867245d8aa0c",
       "preview": "The pure `Machine` contract does **not** authenticate a caller. A hosted entry point must establish the princi",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The pure model is not an authenticator. Hosted MachineAuthorizer uses an application-owned context and operation-specific policy before scoped reads/duplicates/admission; native receiver policies remain mandatory. The operations/API guides place principal authentication, privileged override policy and secret-safe logging with the host. A digest or scope string supplies none of those authorities."
     },
     {
       "line": 684,
@@ -5193,8 +5613,20 @@
       "kind": "paragraph",
       "sha256": "3eabe56387ab6f6370b63386bed701847b3e2d189de679c24f3b5ec9d983a3ff",
       "preview": "A durable `MachineStore` is authoritative **for Penelope machine-state history in its own scope**. This does n",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "invariant-audit.json",
+          "pointer": "/invariants",
+          "scope_status": "fifteen_owners_and33_references_reobserved_in_current_CI_with_conformance_scope_separate"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_CI_log_identity_bound_to_archive"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "MachineStore is authoritative for its own admitted machine history only. StateChronicle/domain facts require independently verified canonical evidence; local receipts/hashes cannot prove remote ownership or execution. Current stable signed-source conformance checks exact binding under a pinned upstream, with no inherited authority."
     },
     {
       "line": 690,
