@@ -1136,5 +1136,30 @@ Constructing the reduced archive workspace initially refuses the root lock under
 no external version or checksum changes. Subsequent tests use `--locked`. The
 archive retains both original and corrected crate sets, manifests, locks, source,
 commands and failure/success logs; all 74 members passed hash verification.
-Working crate versions remain 0.4.0. This is stronger package-isolation evidence,
+At that checkpoint, crate versions remained 0.4.0. This is package-isolation evidence,
 not final versioned 0.5 candidate qualification or publication.
+
+
+## Versioned 0.5 development checkpoint
+
+The [candidate checkpoint](evidence/packaging/candidate-checkpoint.json) records
+source `9a5a1db`. All ten libraries and their active internal requirements use
+0.5.0. The six active lockfiles retain every external package identity and
+checksum; frozen baseline locks and corpora are unchanged. Locked metadata
+resolves the library crates inside the isolated candidate checkout.
+
+Legacy saga parity, compatibility tests (including all six repository architecture
+checks) and actual SQLite upgrade checks pass on Rust 1.100 and MSRV 1.89. The
+seven selected signed-source conformance tests pass against pinned StateChronicle
+`ae3d94bc`. Library all-target/all-feature tests and debug benchmark smoke runs
+pass on both compilers. Cargo verifies all ten archives and their literal Rust
+includes; every archive records source `9a5a1db`. All 242 local Markdown link
+paths resolve (this does not verify remote links, anchors or rendering).
+
+The archive retains commands, source manifests/locks, crate archives and raw logs.
+It also retains the initial refusal of an unpinned upstream checkout and two
+commands deliberately stopped after an omitted fuzz exclusion launched unbounded
+fuzz targets. The corrected documented library commands passed; the separate
+bounded chaos rehearsal was untouched. This checkpoint is neither final release
+qualification nor publication. Extracted-archive tests, final-source CI, coverage,
+chaos and performance decisions remain separate gates.

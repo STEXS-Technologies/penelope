@@ -1,0 +1,397 @@
+{
+  "source_commit": "9a5a1dbef9cbb1cf5453f403264ffcb82e303cbf",
+  "scope": "Versioned 0.5 development checkpoint: metadata, compatibility, migration, pinned conformance, source library tests and Cargo archive verification. Not completed release qualification.",
+  "checks": [
+    {
+      "label": "metadata-workspace",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.06512187200132757
+    },
+    {
+      "label": "metadata-compat",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.03295842000079574
+    },
+    {
+      "label": "metadata-consumer",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.04530570100178011
+    },
+    {
+      "label": "metadata-saga",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/saga-parity/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.036719020004966296
+    },
+    {
+      "label": "metadata-upgrade",
+      "args": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "ci/sqlite-upgrade/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.03346825499465922
+    },
+    {
+      "label": "publish-order",
+      "args": [
+        "python3",
+        "scripts/publish-order.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.07227139500173507
+    },
+    {
+      "label": "fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.6033986320035183
+    },
+    {
+      "label": "compat-fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.6049887070039404
+    },
+    {
+      "label": "layers",
+      "args": [
+        "./scripts/check-layer-boundaries.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.592159002997505
+    },
+    {
+      "label": "pins",
+      "args": [
+        "./scripts/check-action-pins.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.004942505998769775
+    },
+    {
+      "label": "wire",
+      "args": [
+        "python3",
+        "scripts/verify-machine-wire-fixtures.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 0.03334954599995399
+    },
+    {
+      "label": "parity-1.100.0",
+      "args": [
+        "./scripts/check-saga-machine-parity.sh"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 9.608010274001572
+    },
+    {
+      "label": "upgrade-1.100.0",
+      "args": [
+        "python3",
+        "scripts/check-sqlite-upgrade.py"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 2.4622017739966395
+    },
+    {
+      "label": "compat-tests-1.100.0",
+      "args": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 0,
+      "seconds": 5.318059256998822
+    },
+    {
+      "label": "parity-1.89.0",
+      "args": [
+        "./scripts/check-saga-machine-parity.sh"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 12.027661052998155
+    },
+    {
+      "label": "upgrade-1.89.0",
+      "args": [
+        "python3",
+        "scripts/check-sqlite-upgrade.py"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 3.049020370999642
+    },
+    {
+      "label": "compat-tests-1.89.0",
+      "args": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "ci/compat-0.4/Cargo.toml",
+        "--all-features",
+        "--locked"
+      ],
+      "toolchain": "1.89.0",
+      "exit_code": 0,
+      "seconds": 6.306959673005622
+    },
+    {
+      "label": "conformance",
+      "args": [
+        "python3",
+        "scripts/run-statechronicle-conformance.py",
+        "/home/ac/projects/statechronicle"
+      ],
+      "toolchain": "1.100.0",
+      "exit_code": 2,
+      "seconds": 0.03846289200009778
+    },
+    {
+      "label": "pinned-conformance",
+      "args": [
+        "python3",
+        "scripts/run-statechronicle-conformance.py",
+        "/home/ac/projects/.statechronicle-penelope-050"
+      ],
+      "exit_code": 0,
+      "selected_tests": 7,
+      "pinned_upstream": "ae3d94bc22c7835eaa3fdcd766e3c117929c12bb"
+    },
+    {
+      "label": "package-verification",
+      "args": [
+        "./scripts/publish-crates.sh"
+      ],
+      "exit_code": 0,
+      "mode": "default dry-run, no publication",
+      "archives": 10
+    },
+    {
+      "label": "library-tests-1.100.0",
+      "args": [
+        "cargo",
+        "+1.100.0",
+        "test",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "exit_code": 0,
+      "reported_harness_summaries": 95,
+      "scope": "Library tests and debug benchmark smoke runs; not release performance or doctests."
+    },
+    {
+      "label": "library-tests-1.89.0",
+      "args": [
+        "cargo",
+        "+1.89.0",
+        "test",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--exclude",
+        "penelope-fuzz"
+      ],
+      "exit_code": 0,
+      "reported_harness_summaries": 95,
+      "scope": "Library tests and debug benchmark smoke runs; not release performance or doctests."
+    }
+  ],
+  "external_lock_identities": "All external name/version/source/checksum identities unchanged in the six active lockfiles; frozen baseline locks and corpora untouched.",
+  "retained_unsuccessful_attempts": [
+    {
+      "label": "initial-conformance",
+      "exit_code": 2,
+      "reason": "The supplied sibling checkout had advanced past the explicitly pinned upstream; corrected using an isolated pinned worktree."
+    },
+    {
+      "label": "workspace-tests-without-fuzz-exclusion",
+      "versions": [
+        "1.100.0",
+        "1.89.0"
+      ],
+      "exit_code": 143,
+      "reason": "Missing --exclude penelope-fuzz launched an unbounded target; owned processes deliberately stopped. Correct documented library commands rerun. Separate chaos rehearsal unaffected."
+    }
+  ],
+  "open": "Exact final-source CI/coverage/chaos, performance dispositions, extracted-archive all-target tests and final release audit remain separate. No tag or publication.",
+  "archive": {
+    "file": "candidate-checkpoint.tar.gz",
+    "sha256": "e89e61c24143fe25a23ead2e70b57e98bc8824fd5008292206ef855287060b2c",
+    "member_count": 89,
+    "members_sha256": {
+      "initial/checks.json": "af594a84b6d621eca7a0f0a1b8ea3929469743251cf210cff6b0871fdb598db6",
+      "initial/compat-fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/compat-fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/compat-tests-1.100.0.stderr": "9890f415fb568557d4fe42c591d81f3e4a22b6356a340c763c48db9b89e82fdb",
+      "initial/compat-tests-1.100.0.stdout": "486c0d3f5a6f4d2f000e7ff5e951611d379438682d301842d9e14810313b6343",
+      "initial/compat-tests-1.89.0.stderr": "e282acb96451cbd7b8b67238d235aec41ba018f3ce146824b47fc4b0593516b4",
+      "initial/compat-tests-1.89.0.stdout": "4efa106cd2fdef8ef71a71e4f3f3c3842c67dd8f38f4b995af9035cf7437feba",
+      "initial/conformance.stderr": "d354cf31e24a33933f93e3f914082eba3e8782ee864381375d9243abd8d01a04",
+      "initial/conformance.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/layers.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/layers.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-compat.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-compat.stdout": "5c5fad17fd7efb5311da18cba75e64ec25e4d8174e0bff2e0d15d6ab8015e7f6",
+      "initial/metadata-consumer.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-consumer.stdout": "d1364cdb7a95dd3bc290a658d86837852efbd6ddb1e7266c0613a82f653dbfd0",
+      "initial/metadata-saga.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-saga.stdout": "94915f7ae1330ec0310ef923ee5b5125aeb760dbc988e0e835cf487f121d41d2",
+      "initial/metadata-upgrade.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-upgrade.stdout": "31e898c5ee45fee8919969bf53d84e5f5d49823ac3d56c56d329364daa9b1a5e",
+      "initial/metadata-workspace.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/metadata-workspace.stdout": "f41f09a93ffcf4b2ded34809877f144fd00a67445251d7dd25bc8f0110ca74b0",
+      "initial/parity-1.100.0.stderr": "e4e5bb9999df2f8dc1ddbf625d94ea0ecb655b170491aa45ebbb6f4daf9b4f26",
+      "initial/parity-1.100.0.stdout": "ddbd261c0dedf262961bd5b06d9b016775b88974924f6786ef1a6aecfeecbd8f",
+      "initial/parity-1.89.0.stderr": "edfa6522fc6e7dbb156753ebff436ea115287d29fe2db73c76d674c1e13dd18a",
+      "initial/parity-1.89.0.stdout": "ddbd261c0dedf262961bd5b06d9b016775b88974924f6786ef1a6aecfeecbd8f",
+      "initial/pins.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/pins.stdout": "6481846a8a7f560fb52821b340e12274a73d8e5f0f25ef82dc9fd6d9ccc3b1e1",
+      "initial/publish-order.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/publish-order.stdout": "5ba180433610edcfffc8e98d3af2b51cb9facfcf60274ad0847c9787b069eb54",
+      "initial/upgrade-1.100.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/upgrade-1.100.0.stdout": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "initial/upgrade-1.89.0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/upgrade-1.89.0.stdout": "8c2ba11520134e1d8a0fadabb5eb25a6d9e2eefa822b03f29f4b1ee7742642a1",
+      "initial/wire.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initial/wire.stdout": "b669bab0389458668298baf7a410c81f745d481dce6581e2d53863714f16595e",
+      "checkpoint/lock-identities.json": "a049a7a3f9c6c99374acf8c4f9ce69fc6dbc19bee55113b4150a7eb00fbcaaf0",
+      "checkpoint/doc-links.json": "db6cc2bac7925c35e80ab8ce5bc7870bd79cbf772961d63bd7ddb01a631892d7",
+      "checkpoint/package-identities.json": "310179610cb5133e7ec06fd238b6148e060c3fe01de9ef566d3ac88d21841862",
+      "checkpoint/package-checks.log": "5afd206793ef68e44560ca52c952114bf3d564f2115514fe2ad033787ebb7fa5",
+      "checkpoint/conformance.log": "51a08da34033732a1dd1f677eb8bc2a3ccdd099f47b057e558bd8a97c9679c45",
+      "checkpoint/library-tests.log": "1f9d52a0d67482d4506d219c23a58d36f1bd7c0e020aa6526868c17d61c047d8",
+      "checkpoint/library-msrv-tests.log": "b83ef272a2f8db25d154385e30865b59007f50b7113bb8ad44d5892dbd90a637",
+      "checkpoint/workspace-tests.log": "ae4eaf0fede6e3d407467e1d07dbad96c2fb9d427c74bb97f610d0bc853b08d3",
+      "checkpoint/workspace-msrv-tests.log": "0e2e17c13b75bf7c265597e9715bd097c1985bae7ff84b5c92fac2b957560982",
+      "drivers/penelope-check-050-candidate.py": "b244bafe10aa0c4a1dfb55df9fb1acd1501c135dd23332154103c5654cff4efa",
+      "drivers/penelope-record-050-candidate-checkpoint.py": "fc5d9cda18fa5a7158cb3b80c362ba7091456dbb5b5a797d382d2ffaa8e6e9fc",
+      "archives/penelope-0.5.0.crate": "3cbe1815a669b547702f2c759f287721d745b1a661de94ec8f2155dca3982c77",
+      "archives/penelope-core-0.5.0.crate": "789f085276849fc344b3d044fb40ff2801f92eb26c527337c03e78b5c6552b0e",
+      "archives/penelope-domain-0.5.0.crate": "eb4127b804a99bfb87691fc57039aa71b5f7fbcba5b1afb96e73feb31dae12f9",
+      "archives/penelope-executor-0.5.0.crate": "37d652b3bcaa8b04cd69eec78cbdcc72490cc31bf47762ddd8a870041512260f",
+      "archives/penelope-intent-0.5.0.crate": "dd17f35124111510e4a26ea0f203ef8942f3b7f699cf415b1a14d185f9ad817e",
+      "archives/penelope-ports-0.5.0.crate": "84db60fc907a3927633778dcf55e2b43a9ccd21d3b7821813fcb793d94135b3c",
+      "archives/penelope-process-runtime-0.5.0.crate": "1cfb74069150158389c02fcb01022bd53ac1d73d6601e0d47716abc2453db580",
+      "archives/penelope-sqlite-0.5.0.crate": "771cad5adda6c40c71334dd38b40642c04217bab52a37e8dc8dba04283d14d95",
+      "archives/penelope-statechronicle-0.5.0.crate": "4f51caa66240999c303b2196011a36ec1f88da328bed218aca5375df4d0a3a13",
+      "archives/penelope-timeline-0.5.0.crate": "9c9ebe7896a8864bea7c6c979454caadbe9c1801694ce1c2b9c9f0416d8c69c2",
+      "source/CHANGELOG.md": "2874473c451eb8d8a976feaef8f00bcf8b54558681ea10dbcfe19a14ad5ddec5",
+      "source/Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+      "source/Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+      "source/ci/compat-0.4/Cargo.lock": "54f0232ce690283c740d81c009c30a733116e87e4d399a5b2ec26404cc8ea15f",
+      "source/ci/compat-0.4/Cargo.toml": "50c8e430fb8bbe075141f6fea7b67f181244136f39ab7f2556a53a6d474cdb76",
+      "source/ci/compat-0.4/baseline/Cargo.lock": "394c2616403a3213b16dd9d169c017102fef2d19bef16b56a2a65527052516fd",
+      "source/ci/machine-consumer/Cargo.lock": "5bb85182314bfbc69f8df40fd566d71d411eb74a460f3ce2fde77b2b1756b311",
+      "source/ci/machine-consumer/Cargo.toml": "7227ef4ef9b7db0de601d724c16aa263c986b1fec0a779a0c905428aa5025928",
+      "source/ci/saga-parity/Cargo.lock": "1c420e223e0fcb7ba39c11be83325dcdaca334a39d0cb253ca07672a540b0f4b",
+      "source/ci/saga-parity/Cargo.toml": "4b985b9e7b56c84f49a69477f4e6c9f151ec84e09841acd68f965b3fa9809798",
+      "source/ci/saga-parity/baseline/Cargo.lock": "e8047b4a99d71f584e4ef42edba8111471f1c22a2f1e3761d8a4fe73aad5d6cf",
+      "source/ci/sqlite-upgrade/Cargo.lock": "ae9cac8da58e75dc673033d4214b6ec4a13c9dd9ef06f27e46fdc59af7452993",
+      "source/ci/sqlite-upgrade/Cargo.toml": "1627a953664197002d08363c006c0db84dabb202b5b06d44a0d76e569790ea1f",
+      "source/ci/sqlite-upgrade/baseline/Cargo.lock": "5e15d390edd204d756892ee27b2b616a29852d86b3413be0983a6c99a08c04d0",
+      "source/crates/penelope-core/Cargo.toml": "42a5ccd27442d5c3efefc7ad0aa85b23f4785092c733d874e97170012aa92d2b",
+      "source/crates/penelope-domain/Cargo.toml": "7f0b47c6d5539628c9818a2117fbbf3866fc8ae9e4c3da120842673f8da33ba8",
+      "source/crates/penelope-executor/Cargo.toml": "d4e7ad96f00940f0f8cfcea35ba83fd33508eaf0829e4c27b284d5d12815f29a",
+      "source/crates/penelope-intent/Cargo.toml": "f73cb0a634c1b08d4d26bf07ac094b47c678a63579ee379c693130551eb45d05",
+      "source/crates/penelope-ports/Cargo.toml": "740173b436b98a9b77dc8d7e163b94a87fbb6ee956b1d5355373d29600b3e10a",
+      "source/crates/penelope-process-runtime/Cargo.toml": "ca9dffbe89bc6c2aa9ea37cfc7c10a765b865cafa73883a4e1eacb7c10e7b134",
+      "source/crates/penelope-sqlite/Cargo.toml": "40f835c592dda731fbeb748233f68d36132131cabe9cb1772cfe0a94c6e2c054",
+      "source/crates/penelope-statechronicle/Cargo.toml": "ae87ede54f770b77b227be31337181520b2bb85321323c8c9d98463fc7b2d1b9",
+      "source/crates/penelope-timeline/Cargo.toml": "af42e5cab50e01185d27708e36262ecb88af4db039bdc246a65cb6be595beb56",
+      "source/crates/penelope/Cargo.toml": "5724eb84430f49db048753d86bd8efb99fb17704b6d370aee44074d4276dcb26",
+      "source/docs/0.5/README.md": "725cf20da63558e4131a21c61f038fd35a2dd16de50a82cca5f9be1be8524499",
+      "source/docs/RELEASE.md": "ba98ff0bbb154bbb43512a98825c1d73260527a9b234b53ca7d8f350bc399eea",
+      "source/fuzz/Cargo.toml": "309bd02cf49d8320d427f9b0946b5498e023be3bda31a4076b89a996b6edf914",
+      "source/scripts/check-package-includes.py": "426de902462db665a831648bdb42f82b488b57d5f1cec3265b663e68b8d551c2",
+      "source/scripts/conformance/Cargo.lock": "23d2ba4ad47b43768b671f5a2fc21b96e72a5566401198871fc1a231e0c39648",
+      "source/scripts/publish-crates.sh": "953743d875453849e3a5efdfdcff8473daa92089f4fb11f1b836a677d5392cd4",
+      "source/scripts/run-statechronicle-conformance.py": "4bcb614368003378eee226133f6c6119596d89a683c9652e3c9cf51386c0dd14"
+    }
+  }
+}
