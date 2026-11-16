@@ -48,7 +48,7 @@ impl OrderEffect {
             Self::Exit(node) => node as u8,
             Self::RequestPayment => 6,
             Self::NotifyCancellation => 7,
-            Self::Enter(node) => 8 + node as u8,
+            Self::Enter(node) => 8_u8.checked_add(node as u8).ok_or(MachineError::Capacity)?,
         };
         let mut identity = context.event.bytes();
         identity[31] = code;
@@ -146,7 +146,7 @@ impl HierarchyModel for Order {
             }
             (Node::Paid, OrderEvent::RefreshReceipt) => match current {
                 OrderState::Paid { receipt } => Ok(OrderState::Paid { receipt: *receipt }),
-                _ => Err(MachineError::InvalidHierarchy),
+                OrderState::Open(_) | OrderState::Cancelled => Err(MachineError::InvalidHierarchy),
             },
             (Node::Cancelled, OrderEvent::Cancel) => Ok(OrderState::Cancelled),
             _ => Err(MachineError::InvalidHierarchy),

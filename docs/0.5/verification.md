@@ -19,6 +19,7 @@ original source scopes.
 
 | Gate | Verified result and scope |
 | --- | --- |
+| CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; a new CI run and final archive reconciliation remain required |
 | CI | All seven jobs pass at [`ce93ff8`](https://github.com/STEXS-Technologies/penelope/actions/runs/43814541688): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
@@ -33,7 +34,7 @@ original source scopes.
 | Real database upgrade | An actual 0.4 writer populates 15 legacy tables; upgrade and two reopens preserve exact rows, replay and integrity on both compilers |
 | Conformance | All seven selected signed-source tests pass against pinned StateChronicle `ae3d94bc`; no unpinned upstream is substituted |
 | Portable profiles | Core bare/serde and timeline bare/alloc compile for `riscv32imafc-unknown-none-elf` on both compilers; CI separately runs allocation checks |
-| Nested example | [Runnable hierarchy follow-up](evidence/qualification/nested-example.json) checks six event attempts on stable/MSRV: exact hook order, guarded failures without hooks/state changes, external self-reentry and parent cancellation. Strict Clippy passes on both compilers; production is unchanged and package reconciliation remains separate |
+| Nested example | [Runnable hierarchy follow-up](evidence/qualification/nested-example.json) checks six event attempts on stable/MSRV: exact hook order, guarded failures without hooks/state changes, external self-reentry and parent cancellation. Independent-consumer Clippy passes on both compilers; the workspace lint follow-up above records the additional policy fixes. Production is unchanged and package reconciliation remains separate |
 | Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. All 72 coverage-reported production files remain unchanged; the all-ten archive checkpoint above retains its `ce93ff8` scope |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |

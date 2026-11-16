@@ -1,0 +1,110 @@
+{
+  "scope": "Workspace lint correction only; no library changes. Earlier independent-consumer Clippy did not inherit workspace lint policy. CI failure retained, not rewritten as success. Long campaigns and final package reconciliation remain open.",
+  "base_commit": "851a72251aac8c56ad5bb5082de684632d7654f3",
+  "source_sha256": "d00695d85c19ac866e7e6f68fd49e84d6c867a8f086aea6a7ae2dfea8c076bf2",
+  "failed_ci": "https://github.com/STEXS-Technologies/penelope/actions/runs/43820658385",
+  "workspace_clippy": {
+    "command": "RUSTC_WRAPPER= RUSTC_WORKSPACE_WRAPPER= CARGO_BUILD_JOBS=2 CARGO_TARGET_DIR=/home/ac/projects/penelope/target/repeated-kill cargo +1.100.0 clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings",
+    "exit_code": 0
+  },
+  "format_exit_code": 0,
+  "consumer_checks": [
+    {
+      "label": "run-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.24500401400291594
+    },
+    {
+      "label": "clippy-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.11762237900256878
+    },
+    {
+      "label": "run-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5091526999967755
+    },
+    {
+      "label": "clippy-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.14147426399722463
+    }
+  ],
+  "archive": {
+    "path": "workspace-example-lint.tar.gz",
+    "sha256": "6983b6ac89947bcae313bd1715b0ea2526e4a45304b96babb0117e50ad3281c7",
+    "members": {
+      "penelope-050-workspace-clippy-followup.log": "4c7b8895d4bbb8d3a9d2a7241272fea23fd1324f9ec32e510c064ef030b0603d",
+      "penelope-050-workspace-clippy-fixed.log": "cf710059c95056328f6fa7344bd23e2a4b783d66a339d4573ebdfe15b02fe6a6",
+      "penelope-050-ci-f36b-failed.log": "19b0b8c6a4aa7e24ad53e89c3a2641ad491723df7a8587b490dd9601f1957983",
+      "penelope-050-nested-example-workspace-lint.py": "b6ccf0a92ce1a5d5e150e73745557904025032391d28019e0543584ab4dbff20",
+      "checks.json": "bbd345822662e430751b5f11e6d33b148d1bfa65e2f258e0123cb75207d671ec",
+      "clippy-1.100.0.stderr": "96b6e90a2cb290572452915e2c6fd6109c3e67050d00ce1ca8e6ccfe2d3a6d41",
+      "clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clippy-1.89.0.stderr": "81ca54903b6cffcef5bf546bd358e23711314e223e6237eb1646e4cb95f00798",
+      "clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "run-1.100.0.stderr": "f628d052093ff1a9e955418871d130001a317a360d0ff9a34b638f8e9f65c79f",
+      "run-1.100.0.stdout": "72df0ff6ca471b6c65a5ecd824f041fe0e4a0812c1ed1f13c84e10970c2522d3",
+      "run-1.89.0.stderr": "937f25af12a92130bb5519fbb9060648dfff0b171305b54f4bfcf2a103cd0340",
+      "run-1.89.0.stdout": "72df0ff6ca471b6c65a5ecd824f041fe0e4a0812c1ed1f13c84e10970c2522d3"
+    }
+  }
+}
