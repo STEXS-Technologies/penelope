@@ -1,0 +1,96 @@
+{
+  "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+  "scope": "Three registered legacy property tests, each at least300 seconds with rotating integer seeds and10000 requested cases per batch. Not the full machine/timeline chaos campaign or a performance comparison.",
+  "command": [
+    "taskset",
+    "-c",
+    "4-7",
+    "python3",
+    "scripts/run_property_stress.py",
+    "--seconds",
+    "300",
+    "--cases",
+    "10000",
+    "--jobs",
+    "3",
+    "--output",
+    "/tmp/penelope-050-qpsg-property-stress/properties"
+  ],
+  "outcome": {
+    "source_commit": "cefa55faffe837fe30625205dd8236e9c242fb36",
+    "args": [
+      "taskset",
+      "-c",
+      "4-7",
+      "python3",
+      "scripts/run_property_stress.py",
+      "--seconds",
+      "300",
+      "--cases",
+      "10000",
+      "--jobs",
+      "3",
+      "--output",
+      "/tmp/penelope-050-qpsg-property-stress/properties"
+    ],
+    "status": "complete",
+    "scope": "Three registered legacy property tests, each at least300 seconds with rotating integer seeds and10000 requested cases per batch. Not the full machine/timeline chaos campaign or a performance comparison.",
+    "started_unix": 1794807811.5280976,
+    "exit_code": 0,
+    "source_unchanged": true,
+    "source_diff_exit": 0,
+    "ended_unix": 1794808120.604813
+  },
+  "properties": [
+    {
+      "test": "entry::engine::tests::retry_attempt_is_monotonic_within_the_bounded_retry_policy",
+      "elapsed_seconds": 300.0456860600025,
+      "batches": 2385,
+      "cases_per_batch": 10000,
+      "requested_cases": 23850000,
+      "first_seed": 1,
+      "last_seed": 2385,
+      "log": "/tmp/penelope-050-qpsg-property-stress/properties/entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log"
+    },
+    {
+      "test": "entry::engine::tests::live_transitions_and_event_replay_converge",
+      "elapsed_seconds": 300.12983082100254,
+      "batches": 1390,
+      "cases_per_batch": 10000,
+      "requested_cases": 13900000,
+      "first_seed": 1,
+      "last_seed": 1390,
+      "log": "/tmp/penelope-050-qpsg-property-stress/properties/entry-engine-tests-live_transitions_and_event_replay_converge.log"
+    },
+    {
+      "test": "seeded_checkpoint_crash_and_persistence_chaos",
+      "elapsed_seconds": 303.3257633139947,
+      "batches": 85,
+      "cases_per_batch": 10000,
+      "requested_cases": 850000,
+      "first_seed": 1,
+      "last_seed": 85,
+      "log": "/tmp/penelope-050-qpsg-property-stress/properties/seeded_checkpoint_crash_and_persistence_chaos.log"
+    }
+  ],
+  "requested_case_total": 38600000,
+  "limits": "Requested case counts are runner configuration, not independently instrumented case observations. Each exact test name is verified registered before execution. Three legacy properties only; not the complete new-machine/timeline property or fuzz qualification and not a flake-rate/performance estimate. Shared-host CPU affinity4-7 does not establish physical-core isolation.",
+  "archive": {
+    "file": "qpsg-property-stress.tar.gz",
+    "sha256": "db42c891d28e48d4bc16fbba451339b97e9cc9e69396bb364e9e2ed25609b2f1",
+    "member_count": 11,
+    "members_sha256": {
+      "source-diff.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source-post.json": "8a575ef803246be34ff7435086ec95178e8c7934aaa5754cd9f21df51b3711d4",
+      "campaign.log": "b2ce3a12adcab4dca77b138fcadce9433d9709952097e0a0c1b97b36947c6085",
+      "manifest.json": "e05556275e59f9dcdbf7719d2db5b7ab05348e1638968a78c52dc8077ee02971",
+      "source-pre.json": "8a575ef803246be34ff7435086ec95178e8c7934aaa5754cd9f21df51b3711d4",
+      "properties/summary.json": "53384f075ab2aa46b6090e94812452dca078201990145b7e7ec2addb6ea884e3",
+      "properties/seeded_checkpoint_crash_and_persistence_chaos.log": "6802690eb17e5b4b76f48e7f0dbad46ad6d9365eae7d68ef7f43b82f2278f634",
+      "properties/entry-engine-tests-live_transitions_and_event_replay_converge.log": "8b2c34101eb1ebd6310c168e4a52e249356e6b6da0d2a7e1e53346660c2818ba",
+      "properties/entry-engine-tests-retry_attempt_is_monotonic_within_the_bounded_retry_policy.log": "38239ed6008d6b0d27cc7a104693c1a9c8bc71b959345abd78741b8ac80ebdc0",
+      "driver.py": "42ebf132269c960025e315f3286ed8aeeea7873c0ce685350b7e8d3733ccc493",
+      "driver.log": "b651a4c3e552b29ec536f3417558a7e485cf3a6eb85d43571ebdc77cef902398"
+    }
+  }
+}
