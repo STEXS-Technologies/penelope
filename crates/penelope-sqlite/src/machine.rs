@@ -383,6 +383,8 @@ fn commit<const N: usize>(
             }
         }
     }
+    #[cfg(all(test, unix))]
+    tests::cut("after-preflight");
     let transaction = connection
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|e| db_error(&e))?;

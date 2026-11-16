@@ -7,21 +7,37 @@ use penelope_ports::machine::*;
 use std::{
     os::unix::process::ExitStatusExt,
     path::Path,
-    process::Command,
+    process::{Child, Command},
     time::{Duration, Instant},
 };
 use support::*;
+
+fn wait_for_marker(child: &mut Child, marker: &Path, phase: &str) {
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while std::fs::read(marker).ok().as_deref() != Some(phase.as_bytes()) {
+        if Instant::now() >= deadline {
+            drop(child.kill());
+            drop(child.wait());
+            panic!("child failed to reach {phase}");
+        }
+        std::thread::sleep(Duration::from_millis(2));
+    }
+}
 
 pub(super) fn cut(phase: &str) {
     if std::env::var("PENELOPE_MACHINE_CUT").ok().as_deref() != Some(phase) {
         return;
     }
     std::fs::write(std::env::var_os("PENELOPE_MACHINE_MARKER").unwrap(), phase).unwrap();
+    let resume = std::env::var_os("PENELOPE_MACHINE_RESUME");
     let deadline = Instant::now() + Duration::from_secs(20);
     while Instant::now() < deadline {
+        if resume.as_ref().is_some_and(|path| Path::new(path).exists()) {
+            return;
+        }
         std::thread::sleep(Duration::from_millis(2));
     }
-    panic!("parent did not kill commit child");
+    panic!("parent did not kill or resume commit child");
 }
 #[test]
 fn commit_process_helper() {
@@ -36,6 +52,7 @@ fn commit_process_helper() {
 fn sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack() {
     for phase in [
         "before-transaction",
+        "after-preflight",
         "after-begin",
         "after-event",
         "after-intents",
@@ -60,15 +77,7 @@ fn sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack
             .env("PENELOPE_MACHINE_MARKER", &marker)
             .spawn()
             .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(10);
-        while std::fs::read(&marker).ok().as_deref() != Some(phase.as_bytes()) {
-            if Instant::now() >= deadline {
-                drop(child.kill());
-                drop(child.wait());
-                panic!("child failed to reach {phase}");
-            }
-            std::thread::sleep(Duration::from_millis(2));
-        }
+        wait_for_marker(&mut child, &marker, phase);
         child.kill().unwrap();
         assert_eq!(child.wait().unwrap().signal(), Some(9));
         let reopened = support::open(&path);
@@ -95,6 +104,85 @@ fn sigkill_at_each_commit_boundary_recovers_all_or_nothing_and_resolves_lost_ack
         );
         assert_eq!(*restore(&reopened).read().1, 13);
         println!("machine phase={phase} signal=9 coherent_reopen=true exact_retry=true");
+    }
+}
+
+#[test]
+fn preflight_race_process_helper() {
+    let Some(path) = std::env::var_os("PENELOPE_MACHINE_RACE_DB") else {
+        return;
+    };
+    let store = support::open(Path::new(&path));
+    let result = block_on(store.commit(&true, batch(&mut owner(), 8, 4)));
+    match std::env::var("PENELOPE_MACHINE_RACE").unwrap().as_str() {
+        "duplicate" => {
+            let receipt = result.unwrap();
+            assert_eq!(
+                receipt.disposition,
+                MachineCommitDisposition::AlreadyCommitted
+            );
+            let stored = block_on(store.lookup(&true, SCOPE, receipt.event))
+                .unwrap()
+                .unwrap();
+            assert_eq!(receipt, stored.receipt());
+        }
+        "conflict" => assert_eq!(result.err(), Some(MachineStoreError::Conflict)),
+        "stale" => assert_eq!(result.err(), Some(MachineStoreError::StaleHead)),
+        _ => panic!("unknown preflight race case"),
+    }
+}
+
+#[test]
+fn commit_revalidates_duplicate_conflict_and_stale_after_preflight_snapshot() {
+    for (case, amount, event) in [("duplicate", 8, 4), ("conflict", 9, 4), ("stale", 9, 5)] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("race.db");
+        let store = support::open(&path);
+        block_on(store.bootstrap(&true, genesis())).unwrap();
+        let marker = directory.path().join("marker");
+        let resume = directory.path().join("resume");
+        let phase = "after-preflight";
+        let mut child = Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "machine::tests::preflight_race_process_helper",
+                "--nocapture",
+            ])
+            .env("PENELOPE_MACHINE_RACE_DB", &path)
+            .env("PENELOPE_MACHINE_RACE", case)
+            .env("PENELOPE_MACHINE_CUT", phase)
+            .env("PENELOPE_MACHINE_MARKER", &marker)
+            .env("PENELOPE_MACHINE_RESUME", &resume)
+            .spawn()
+            .unwrap();
+        wait_for_marker(&mut child, &marker, phase);
+        let accepted = batch(&mut owner(), amount, event);
+        let receipt = block_on(store.commit(&true, std::sync::Arc::clone(&accepted))).unwrap();
+        assert_eq!(receipt.disposition, MachineCommitDisposition::Committed);
+        let connection = rusqlite::Connection::open(&path).unwrap();
+        let tables = ["machine_heads", "machine_events", "machine_intents"];
+        let before = crate::write_snapshot::snapshot(&connection, &tables);
+        std::fs::write(&resume, []).unwrap();
+        assert!(child.wait().unwrap().success(), "{case}");
+        assert_eq!(
+            before,
+            crate::write_snapshot::snapshot(&connection, &tables),
+            "{case}"
+        );
+        let restored = restore(&store);
+        assert_eq!(restored.read().0.revision, MachineRevision::new(1));
+        assert_eq!(*restored.read().1, 5 + amount);
+        let retained = block_on(store.lookup(&true, SCOPE, receipt.event))
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            retained.batch().record().identity(),
+            accepted.record().identity()
+        );
+        assert!(retained.batch().intents().eq(accepted.intents()));
+        println!(
+            "preflight case={case} intervening_commit=true child_revalidated=true unchanged_rows=true"
+        );
     }
 }
 
@@ -224,15 +312,7 @@ fn sigkill_outbox_claim_and_ack_preserve_fencing_and_resolve_lost_receipts() {
             command.env("PENELOPE_OUTBOX_ACK", "1");
         }
         let mut child = command.spawn().unwrap();
-        let deadline = Instant::now() + Duration::from_secs(10);
-        while std::fs::read(&marker).ok().as_deref() != Some(phase.as_bytes()) {
-            if Instant::now() >= deadline {
-                drop(child.kill());
-                drop(child.wait());
-                panic!("child failed to reach {phase}");
-            }
-            std::thread::sleep(Duration::from_millis(2));
-        }
+        wait_for_marker(&mut child, &marker, phase);
         child.kill().unwrap();
         assert_eq!(child.wait().unwrap().signal(), Some(9));
         let reopened = outbox(std::sync::Arc::new(support::open(&path)));
@@ -314,15 +394,7 @@ fn sigkill_v7_outbox_migration_preserves_populated_machine_journal() {
             .env("PENELOPE_MIGRATION_MARKER", &marker)
             .spawn()
             .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(10);
-        while std::fs::read(&marker).ok().as_deref() != Some(phase.as_bytes()) {
-            if Instant::now() >= deadline {
-                drop(child.kill());
-                drop(child.wait());
-                panic!("v7 migration failed to reach {phase}");
-            }
-            std::thread::sleep(Duration::from_millis(2));
-        }
+        wait_for_marker(&mut child, &marker, phase);
         child.kill().unwrap();
         assert_eq!(child.wait().unwrap().signal(), Some(9));
         let recovered_connection = rusqlite::Connection::open(&path).unwrap();
@@ -400,15 +472,7 @@ fn sigkill_v8_receiver_migration_preserves_pending_uncertainty_and_accepted_rece
                 .env("PENELOPE_MIGRATION_MARKER", &marker)
                 .spawn()
                 .unwrap();
-            let deadline = Instant::now() + Duration::from_secs(10);
-            while std::fs::read(&marker).ok().as_deref() != Some(phase.as_bytes()) {
-                if Instant::now() >= deadline {
-                    drop(child.kill());
-                    drop(child.wait());
-                    panic!("v8 migration did not reach {phase}");
-                }
-                std::thread::sleep(Duration::from_millis(2));
-            }
+            wait_for_marker(&mut child, &marker, phase);
             child.kill().unwrap();
             assert_eq!(child.wait().unwrap().signal(), Some(9));
             let recovered_connection = rusqlite::Connection::open(&path).unwrap();

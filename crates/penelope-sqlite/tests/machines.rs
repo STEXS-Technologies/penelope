@@ -610,3 +610,44 @@ fn resolved_commits_do_not_wait_for_an_unrelated_writer() {
     connection.execute_batch("ROLLBACK").unwrap();
     assert_eq!(*restore(&store).read().1, 13);
 }
+
+#[test]
+fn full_history_refuses_new_events_but_preserves_exact_retries_and_rows() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("bounded.db");
+    let store = SqliteMachineStore::<_, 2>::open(
+        &path,
+        SqliteLimits {
+            max_history_records: 4,
+            ..SqliteLimits::default()
+        },
+        PAYLOADS,
+        Policy,
+        8,
+    )
+    .unwrap();
+    block_on(store.bootstrap(&true, genesis())).unwrap();
+    let retained = batch(&mut owner(), 1, 1);
+    let original = block_on(store.commit(&true, Arc::clone(&retained))).unwrap();
+    for id in 2..=4 {
+        block_on(store.commit(&true, batch(&mut restore(&store), 1, id))).unwrap();
+    }
+    let connection = rusqlite::Connection::open(&path).unwrap();
+    let tables = ["machine_heads", "machine_events", "machine_intents"];
+    let before = write_snapshot::snapshot(&connection, &tables);
+    assert_eq!(
+        block_on(store.commit(&true, batch(&mut restore(&store), 1, 5))).err(),
+        Some(MachineStoreError::Capacity)
+    );
+    assert_eq!(before, write_snapshot::snapshot(&connection, &tables));
+    let duplicate = block_on(store.commit(&true, retained)).unwrap();
+    assert_eq!(
+        duplicate.disposition,
+        MachineCommitDisposition::AlreadyCommitted
+    );
+    assert_eq!(duplicate.identity, original.identity);
+    assert_eq!(before, write_snapshot::snapshot(&connection, &tables));
+    let restored = restore(&store);
+    assert_eq!(restored.read().0.revision, MachineRevision::new(4));
+    assert_eq!(*restored.read().1, 9);
+}
