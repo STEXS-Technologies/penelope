@@ -1,0 +1,1161 @@
+{
+  "scope": "Every one of28 required-test clauses in plan13.1, mapped to29 named tests with observed passes on stable/MSRV plus20 archived external gates. This audits fixture evidence, not full release completion or every normative requirement elsewhere in the plan.",
+  "review_commit": "9295e3b5774eac2be58d54a269df83bd1a4e50a8",
+  "plan_sha256": "c0dea1ab385516a337e28936496907bcc8e932a9a8028bf8a1276180cd0f50a1",
+  "counts": {
+    "clauses": 28,
+    "named_tests": 29,
+    "external_gates": 20,
+    "statuses": {
+      "named_checks": 15,
+      "campaign_open": 2,
+      "supplementary_fuzz_pass_full_campaign_open": 1,
+      "partial_fuzz_replay_review_required": 1,
+      "seeded_crash_model_pass_fuzz_scope_distinct": 1,
+      "external_gates": 7,
+      "approved_msrv_amendment": 1
+    }
+  },
+  "items": [
+    {
+      "id": "13.1.1",
+      "group": "Unit / model checks",
+      "requirement": "Flat machine legal/illegal transition table and terminal/unknown event behavior.",
+      "status": "named_checks",
+      "assessment": "Flat accepted/rejected/unhandled and terminal revision behavior are checked; application predicates remain consumer code.",
+      "named_checks": [
+        "decisions_prepare_without_publishing_and_drop_aborts",
+        "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed"
+      ]
+    },
+    {
+      "id": "13.1.2",
+      "group": "Unit / model checks",
+      "requirement": "HSM nesting, bubbling, override, guard rejection, LCA entry/exit order, internal transitions and bounded depth.",
+      "status": "named_checks",
+      "assessment": "Explicit tree-model tests cover selection/hook/depth semantics; generated tables add varied bounded forests.",
+      "named_checks": [
+        "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact",
+        "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path",
+        "internal_and_external_self_transitions_are_distinct",
+        "malformed_or_exhausted_paths_fail_before_any_handler"
+      ]
+    },
+    {
+      "id": "13.1.3",
+      "group": "Unit / model checks",
+      "requirement": "State-local enum data construction and no accidental mutable publication bypass.",
+      "status": "named_checks",
+      "assessment": "Typed non-Clone state and exclusive consuming owner are checked. Core compile-fail doctests separately cover identity/borrow misuse; arbitrary interior aliases remain unsupported.",
+      "named_checks": [
+        "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt",
+        "decisions_prepare_without_publishing_and_drop_aborts"
+      ]
+    },
+    {
+      "id": "13.1.4",
+      "group": "Unit / model checks",
+      "requirement": "`MemoryMachine` atomicity on faults, resource limits, panic/unwind and staged intent failure.",
+      "status": "named_checks",
+      "assessment": "Failure, byte/count/revision bounds, poison and destructor-unwind publication are checked with typed state/head/intent assertions.",
+      "named_checks": [
+        "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+        "superseded_state_drop_panics_only_after_all_published_values_agree",
+        "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed"
+      ]
+    },
+    {
+      "id": "13.1.5",
+      "group": "Unit / model checks",
+      "requirement": "Transition identity and provenance correctness independent of debug strings.",
+      "status": "named_checks",
+      "assessment": "Typed exact record/origin comparisons do not depend on diagnostic formatting.",
+      "named_checks": [
+        "publication_retains_prior_intents_and_their_exact_origins_until_taken",
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch"
+      ]
+    },
+    {
+      "id": "13.1.6",
+      "group": "Property-based / model-based",
+      "requirement": "Compare a randomly generated bounded machine against an independent reference transition oracle.",
+      "status": "named_checks",
+      "assessment": "512 deterministic generated streams and varied table/parent inputs compare to a separate oracle; augmented fuzz varies those inputs further.",
+      "named_checks": [
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch"
+      ]
+    },
+    {
+      "id": "13.1.7",
+      "group": "Property-based / model-based",
+      "requirement": "Accepted sequence replay yields the same state/revision and intent-plan identities as live evaluation, under pinned deterministic inputs.",
+      "status": "named_checks",
+      "assessment": "Generated accepted-sequence replay compares exact states/revisions/records/intents under pinned tables and contexts; callback determinism is not enforced by Rust.",
+      "named_checks": [
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch",
+        "publication_retains_prior_intents_and_their_exact_origins_until_taken"
+      ]
+    },
+    {
+      "id": "13.1.8",
+      "group": "Property-based / model-based",
+      "requirement": "Duplicate identical event does not advance state; duplicate conflicting event never advances; stale revision never publishes.",
+      "status": "named_checks",
+      "assessment": "Historical deduplication is a journal guarantee. MemoryMachine intentionally does not retain a durable event-ID index.",
+      "named_checks": [
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+        "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+        "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed"
+      ]
+    },
+    {
+      "id": "13.1.9",
+      "group": "Property-based / model-based",
+      "requirement": "HSM refactor preserves flat-machine semantics when hierarchy has one active level.",
+      "status": "named_checks",
+      "assessment": "The generated fixture compares one-level Hierarchical dispatch directly against its flat table model.",
+      "named_checks": [
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch"
+      ]
+    },
+    {
+      "id": "13.1.10",
+      "group": "Property-based / model-based",
+      "requirement": "A history split into arbitrary pages reconstructs identically to a contiguous history, or fails on malformed boundaries.",
+      "status": "named_checks",
+      "assessment": "All256 small-history partitions under both count/byte limits, reopened readers and a missing revision are checked. This is exhaustive for nine captured records, not arbitrary-length histories.",
+      "named_checks": [
+        "every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap"
+      ]
+    },
+    {
+      "id": "13.1.11",
+      "group": "Fuzzing",
+      "requirement": "Machine v1 wire parser/golden vectors and malformed schema/payload decoding.",
+      "status": "campaign_open",
+      "assessment": "Wire raw/structured mutation and preparation fuzz targets exist; independent fixtures and unit substitution checks pass. Full current-production fuzz campaign is live.",
+      "named_checks": [
+        "independent_goldens_bind_endianness_causation_order_and_full_width_counters",
+        "every_truncation_mutation_and_trailing_byte_fails_closed",
+        "recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors"
+      ]
+    },
+    {
+      "id": "13.1.12",
+      "group": "Fuzzing",
+      "requirement": "Dynamic event sequences, guard errors, nested state paths, counter overflow and capacity exhaustion.",
+      "status": "supplementary_fuzz_pass_full_campaign_open",
+      "assessment": "Augmented fuzz_machine completes three100k rounds with generated guards/paths/capacities; full multi-target campaign remains separate and live.",
+      "named_checks": [
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch",
+        "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+        "malformed_or_exhausted_paths_fail_before_any_handler"
+      ]
+    },
+    {
+      "id": "13.1.13",
+      "group": "Fuzzing",
+      "requirement": "Replay under mutation of order, duplicate IDs, scope, fingerprint and event digest.",
+      "status": "partial_fuzz_replay_review_required",
+      "assessment": "Unit checks cover scope/definition/digest substitution, ordering and exact recovery. Existing fuzz receipt substitutions and raw parser mutation do not establish a targeted replay oracle for every listed field/order combination; inspect and strengthen that harness before closure.",
+      "named_checks": [
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+        "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+        "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+        "recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors",
+        "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch"
+      ]
+    },
+    {
+      "id": "13.1.14",
+      "group": "Fuzzing",
+      "requirement": "Cross-component intent/result substitution and authorization receipt validation.",
+      "status": "campaign_open",
+      "assessment": "Typed receipt/result/source substitution checks pass; machine task/saga/outbox fuzz targets exist. Full current-production target campaign remains open.",
+      "named_checks": [
+        "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+        "effectful_completion_requires_matching_independent_evidence"
+      ]
+    },
+    {
+      "id": "13.1.15",
+      "group": "Fuzzing",
+      "requirement": "SQLite serialized machines under repeated kill/reopen cycles with an independent model oracle.",
+      "status": "seeded_crash_model_pass_fuzz_scope_distinct",
+      "assessment": "Three seeded growing journals undergo48 real kills per compiler, checked against arithmetic/payload/prefix expectations. libFuzzer SQLite target exercises clean reopens; this seeded process-death model is a separate fixture and not a claim of kill-guided fuzz coverage.",
+      "named_checks": [
+        "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry"
+      ]
+    },
+    {
+      "id": "13.1.16",
+      "group": "Concurrency and crash",
+      "requirement": "Two or more writers racing the same head: exactly one distinct accepted transition; duplicates return exact matching receipts.",
+      "status": "named_checks",
+      "assessment": "Independent workers race the same expected head; conflicting IDs refuse and exact retained retries return matching receipts.",
+      "named_checks": [
+        "simultaneous_independent_workers_admit_one_competing_head",
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+        "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery"
+      ]
+    },
+    {
+      "id": "13.1.17",
+      "group": "Concurrency and crash",
+      "requirement": "Lost ACK after committed machine transition: reconstruct exact record and still dispatch each stable intent with consistent idempotency semantics.",
+      "status": "named_checks",
+      "assessment": "Committed record/pending source survives lost acknowledgement; receiver admission and source acknowledgement remain separately fenced.",
+      "named_checks": [
+        "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+        "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing"
+      ]
+    },
+    {
+      "id": "13.1.18",
+      "group": "Concurrency and crash",
+      "requirement": "Crash after external delivery but before verification: outcome remains unknown until independently reconciled; never interpreted as safely repeatable by default.",
+      "status": "named_checks",
+      "assessment": "Delivery uncertainty remains unresolved until native/independent evidence; effectful result relay and unknown reconciliation checks retain execution authority. This does not establish exactly-once external effects.",
+      "named_checks": [
+        "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing",
+        "effectful_completion_requires_matching_independent_evidence",
+        "invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch"
+      ]
+    },
+    {
+      "id": "13.1.19",
+      "group": "Concurrency and crash",
+      "requirement": "Simultaneous snapshot/replay readers never see a state paired with a different accepted head.",
+      "status": "named_checks",
+      "assessment": "Concurrent journal snapshot checks bind state/head/receipt; timeline replay/finality checks have independent semantics. Neither implies general concurrent application-state alias safety.",
+      "named_checks": [
+        "concurrent_reader_sees_one_coherent_state_head_receipt_tuple",
+        "corrected_replay_uses_captured_context_and_existing_finality_and_handoff"
+      ]
+    },
+    {
+      "id": "13.1.20",
+      "group": "Concurrency and crash",
+      "requirement": "Poisoned task supervisor and stopped generation cannot be bypassed through the generic `Machine` interface.",
+      "status": "named_checks",
+      "assessment": "Poison/reconciliation tests and inspection-only task preparation retain native admission authority; no generic commit/dispatch method is provided by PreparedDecision.",
+      "named_checks": [
+        "ambiguous_commit_poisoning_matches_hosted_profile",
+        "invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch",
+        "task_prepared_history_is_not_applied_until_the_native_owner_admits_it"
+      ]
+    },
+    {
+      "id": "13.1.21",
+      "group": "Compatibility",
+      "requirement": "Old serialized saga/task/timeline fixtures from v0.4.0 match exactly and still replay with the same policy decisions.",
+      "status": "external_gates",
+      "assessment": "The compatibility checkpoint records exactly33278 task/timeline and3136 saga observations plus source bindings. Review remains bounded to those corpora.",
+      "named_checks": [
+        "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+        "corrected_replay_uses_captured_context_and_existing_finality_and_handoff"
+      ]
+    },
+    {
+      "id": "13.1.22",
+      "group": "Compatibility",
+      "requirement": "External users compile unchanged against retained reexports and canonical new examples compile on Rust 1.85.0.",
+      "status": "approved_msrv_amendment",
+      "assessment": "Original clause says Rust1.85. User-approved architecture amendment raises supported MSRV to1.89 for patched SQLite. External consumers pass on1.89/1.100; no1.85 candidate compatibility is claimed.",
+      "named_checks": [
+        "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt"
+      ]
+    },
+    {
+      "id": "13.1.23",
+      "group": "Compatibility",
+      "requirement": "Old SQLite process/task fixture DB loads under the new version; v0.4 code does not silently reinterpret machine tables.",
+      "status": "external_gates",
+      "assessment": "Actual old-writer populated database upgrade and old-adapter refusal/backup-only rollback are recorded by the upgrade checkpoint, rather than inferred from new empty databases.",
+      "named_checks": [
+        "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state"
+      ]
+    },
+    {
+      "id": "13.1.24",
+      "group": "Compatibility",
+      "requirement": "Existing StateChronicle signed-event conformance remains intact, including rejected forged or uncommitted evidence.",
+      "status": "external_gates",
+      "assessment": "Pinned StateChronicle conformance and native checkpoint substitution tests cover signed-source trust boundary; no unpinned sibling checkout is substituted.",
+      "named_checks": [
+        "returned_evidence_must_match_every_scope_generation_and_blob_coordinate"
+      ]
+    },
+    {
+      "id": "13.1.25",
+      "group": "Portable and architecture",
+      "requirement": "`no_std` and no-alloc checks on machine core; RISC-V bare-metal build.",
+      "status": "external_gates",
+      "assessment": "Archived RISC-V core bare/serde and timeline bare/alloc builds plus allocation probes cover supported fixed-profile consumer types; no physical hardware guarantee.",
+      "named_checks": [
+        "malformed_or_exhausted_paths_fail_before_any_handler"
+      ]
+    },
+    {
+      "id": "13.1.26",
+      "group": "Portable and architecture",
+      "requirement": "`cargo metadata` dependency checks against exact allowlisted crate graph and external feature-matrix checks.",
+      "status": "external_gates",
+      "assessment": "Metadata, allowlisted layer checks, external consumers and14-profile source API review cover the declared graph/profiles; feature combinations outside those profiles are not inferred.",
+      "named_checks": []
+    },
+    {
+      "id": "13.1.27",
+      "group": "Portable and architecture",
+      "requirement": "Production core remains free of `std`, broker, database and runtime dependencies.",
+      "status": "external_gates",
+      "assessment": "Portable manifest/layer checks retain core no_std and no mandatory database/runtime/broker imports; hosted facade remains separate.",
+      "named_checks": []
+    },
+    {
+      "id": "13.1.28",
+      "group": "Portable and architecture",
+      "requirement": "One canonical public API; legacy ports remain discoverable without requiring downstream source renames.",
+      "status": "external_gates",
+      "assessment": "Canonical namespace map and unchanged old consumer retain selected legacy imports. Static export binding review supplements local-item signatures; no all-downstream proof is inferred.",
+      "named_checks": [
+        "task_prepared_history_is_not_applied_until_the_native_owner_admits_it"
+      ]
+    }
+  ],
+  "named_tests": {
+    "decisions_prepare_without_publishing_and_drop_aborts": {
+      "source": "crates/penelope-core/tests/machine.rs",
+      "source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "function": "decisions_prepare_without_publishing_and_drop_aborts",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed": {
+      "source": "crates/penelope-core/tests/machine.rs",
+      "source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "function": "scope_model_stale_head_pending_duplicates_and_budgets_fail_closed",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication": {
+      "source": "crates/penelope-core/tests/machine.rs",
+      "source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "function": "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "superseded_state_drop_panics_only_after_all_published_values_agree": {
+      "source": "crates/penelope-core/tests/machine.rs",
+      "source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "function": "superseded_state_drop_panics_only_after_all_published_values_agree",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "publication_retains_prior_intents_and_their_exact_origins_until_taken": {
+      "source": "crates/penelope-core/tests/machine.rs",
+      "source_sha256": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "function": "publication_retains_prior_intents_and_their_exact_origins_until_taken",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact": {
+      "source": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "source_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "function": "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path": {
+      "source": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "source_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "function": "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "internal_and_external_self_transitions_are_distinct": {
+      "source": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "source_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "function": "internal_and_external_self_transitions_are_distinct",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "malformed_or_exhausted_paths_fail_before_any_handler": {
+      "source": "crates/penelope-core/tests/machine_hierarchy.rs",
+      "source_sha256": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "function": "malformed_or_exhausted_paths_fail_before_any_handler",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch": {
+      "source": "crates/penelope-core/tests/generated_machines.rs",
+      "source_sha256": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+      "function": "generated_tables_and_hierarchies_match_reference_and_single_level_flat_dispatch",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "independent_goldens_bind_endianness_causation_order_and_full_width_counters": {
+      "source": "crates/penelope-core/tests/machine_wire.rs",
+      "source_sha256": "c24744aef241836d87e688eb86e5087366ee86241482df4cc3ec02b56a05009f",
+      "function": "independent_goldens_bind_endianness_causation_order_and_full_width_counters",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "every_truncation_mutation_and_trailing_byte_fails_closed": {
+      "source": "crates/penelope-core/tests/machine_wire.rs",
+      "source_sha256": "c24744aef241836d87e688eb86e5087366ee86241482df4cc3ec02b56a05009f",
+      "function": "every_truncation_mutation_and_trailing_byte_fails_closed",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt": {
+      "source": "crates/penelope-ports/tests/machine_preparation.rs",
+      "source_sha256": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+      "function": "accepted_non_clone_state_retains_exact_bytes_and_only_publishes_after_matching_receipt",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "drop_and_every_receipt_coordinate_substitution_abort_local_publication": {
+      "source": "crates/penelope-ports/tests/machine_preparation.rs",
+      "source_sha256": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+      "function": "drop_and_every_receipt_coordinate_substitution_abort_local_publication",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution": {
+      "source": "crates/penelope-ports/tests/machine_preparation.rs",
+      "source_sha256": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+      "function": "snapshot_restore_refuses_scope_codec_lossy_decoding_and_model_invariant_substitution",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors": {
+      "source": "crates/penelope-ports/tests/machine_preparation.rs",
+      "source_sha256": "fe409994b6979123dd1ccae38b6c5c60b911d79412ce6f55e7ec98b8a3d3ac9e",
+      "function": "recovery_refuses_every_payload_byte_substitution_and_all_payload_count_errors",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state": {
+      "source": "crates/penelope-sqlite/tests/machines.rs",
+      "source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "function": "competing_heads_conflicting_event_and_wrong_predecessor_leave_exact_state",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "simultaneous_independent_workers_admit_one_competing_head": {
+      "source": "crates/penelope-sqlite/tests/machines.rs",
+      "source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "function": "simultaneous_independent_workers_admit_one_competing_head",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "concurrent_reader_sees_one_coherent_state_head_receipt_tuple": {
+      "source": "crates/penelope-sqlite/tests/machines.rs",
+      "source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "function": "concurrent_reader_sees_one_coherent_state_head_receipt_tuple",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap": {
+      "source": "crates/penelope-sqlite/tests/machines.rs",
+      "source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "function": "every_small_history_partition_recovers_exact_records_across_reopens_and_refuses_a_gap",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery": {
+      "source": "crates/penelope-sqlite/tests/machines.rs",
+      "source_sha256": "bf8c9088d02d7354754be7f8ec71b762b5b19d35527117510a7ba5c0e003dbb2",
+      "function": "lost_ack_reopen_exact_duplicate_and_pending_payload_recovery",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing": {
+      "source": "crates/penelope-sqlite/tests/machine_outbox.rs",
+      "source_sha256": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+      "function": "claim_is_source_bound_and_reopen_preserves_uncertainty_and_fencing",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry": {
+      "source": "crates/penelope-sqlite/src/machine/tests.rs",
+      "source_sha256": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+      "function": "repeated_sigkill_on_a_growing_journal_preserves_every_prefix_and_exact_retry",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "337f05d85b4595acc0ecc79d4233db46a6d365f0de1f1901533db8e07d109c35",
+          "checkpoint": "../qualification/repeated-machine-kill.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "250e1a1463ca56dc71a331e6d3b1a0f2eee3129b96bd2bd99c66bf358f9e2c01",
+          "checkpoint": "../qualification/repeated-machine-kill.json"
+        }
+      ]
+    },
+    "effectful_completion_requires_matching_independent_evidence": {
+      "source": "crates/penelope-executor/tests/task_verified_result.rs",
+      "source_sha256": "fb00351b5bafb0962437894bae619229fe3e1ce1c3fbd11471a0fbd588d6e138",
+      "function": "effectful_completion_requires_matching_independent_evidence",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "ambiguous_commit_poisoning_matches_hosted_profile": {
+      "source": "crates/penelope-executor/tests/task_control.rs",
+      "source_sha256": "7f4084ee4376a8c9e5c31470a9ec67d3c55defd9db382e6a10b9b53f7d20fc16",
+      "function": "ambiguous_commit_poisoning_matches_hosted_profile",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch": {
+      "source": "crates/penelope-executor/tests/task_control_failures.rs",
+      "source_sha256": "10f52dc0f8418e4371183095788fa280301f4620e9b3e733b774d8784465c263",
+      "function": "invalid_reconciliation_preserves_state_and_unknown_cannot_dispatch",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "task_prepared_history_is_not_applied_until_the_native_owner_admits_it": {
+      "source": "crates/penelope/tests/prepared_lifecycles.rs",
+      "source_sha256": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+      "function": "task_prepared_history_is_not_applied_until_the_native_owner_admits_it",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "corrected_replay_uses_captured_context_and_existing_finality_and_handoff": {
+      "source": "crates/penelope-timeline/tests/machine.rs",
+      "source_sha256": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+      "function": "corrected_replay_uses_captured_context_and_existing_finality_and_handoff",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    },
+    "returned_evidence_must_match_every_scope_generation_and_blob_coordinate": {
+      "source": "crates/penelope-statechronicle/tests/task_checkpoint.rs",
+      "source_sha256": "f8097584f6aaa35a28b0173e85d5aacf93bf46f81da0252618bc7911c759fbb6",
+      "function": "returned_evidence_must_match_every_scope_generation_and_blob_coordinate",
+      "passing_observations": [
+        {
+          "compiler": "1.100.0",
+          "sha256": "b3dd16e2faa588df5792d51bd4f6629611eb857fd820174794552f1dded27ad9",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        },
+        {
+          "compiler": "1.89.0",
+          "sha256": "5bacbc070ad7262ce5207005f95ec254c5444609b4c6a334837e1730c18fd9bb",
+          "checkpoint": "../qualification/history-partition-checkpoint.json"
+        }
+      ]
+    }
+  },
+  "external_gates": {
+    "checkpoint": "../packaging/qpsg-candidate-checkpoint.json",
+    "checks": [
+      {
+        "group": "candidate",
+        "label": "metadata-workspace",
+        "args": [
+          "cargo",
+          "metadata",
+          "--manifest-path",
+          "Cargo.toml",
+          "--all-features",
+          "--locked",
+          "--format-version",
+          "1"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.06772429500415456
+      },
+      {
+        "group": "candidate",
+        "label": "metadata-compat",
+        "args": [
+          "cargo",
+          "metadata",
+          "--manifest-path",
+          "ci/compat-0.4/Cargo.toml",
+          "--all-features",
+          "--locked",
+          "--format-version",
+          "1"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.03886927300482057
+      },
+      {
+        "group": "candidate",
+        "label": "metadata-consumer",
+        "args": [
+          "cargo",
+          "metadata",
+          "--manifest-path",
+          "ci/machine-consumer/Cargo.toml",
+          "--all-features",
+          "--locked",
+          "--format-version",
+          "1"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.04916875300114043
+      },
+      {
+        "group": "candidate",
+        "label": "layers",
+        "args": [
+          "./scripts/check-layer-boundaries.sh"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.6756844699993962
+      },
+      {
+        "group": "candidate",
+        "label": "parity-1.100.0",
+        "args": [
+          "./scripts/check-saga-machine-parity.sh"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.5686603840003954
+      },
+      {
+        "group": "candidate",
+        "label": "parity-1.89.0",
+        "args": [
+          "./scripts/check-saga-machine-parity.sh"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.5493129250025959
+      },
+      {
+        "group": "candidate",
+        "label": "upgrade-1.100.0",
+        "args": [
+          "python3",
+          "scripts/check-sqlite-upgrade.py"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 1.3838841169999796
+      },
+      {
+        "group": "candidate",
+        "label": "upgrade-1.89.0",
+        "args": [
+          "python3",
+          "scripts/check-sqlite-upgrade.py"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 1.6628004199956194
+      },
+      {
+        "group": "candidate",
+        "label": "compat-tests-1.100.0",
+        "args": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "ci/compat-0.4/Cargo.toml",
+          "--all-features",
+          "--locked"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.4482466720000957
+      },
+      {
+        "group": "candidate",
+        "label": "compat-tests-1.89.0",
+        "args": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "ci/compat-0.4/Cargo.toml",
+          "--all-features",
+          "--locked"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.41407167699799174
+      },
+      {
+        "group": "candidate",
+        "label": "conformance",
+        "args": [
+          "python3",
+          "scripts/run-statechronicle-conformance.py",
+          "/home/ac/projects/.statechronicle-penelope-050"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 8.795194518999779
+      },
+      {
+        "group": "public",
+        "label": "doctests",
+        "args": [
+          "cargo",
+          "test",
+          "--workspace",
+          "--doc",
+          "--all-features",
+          "--locked",
+          "--exclude",
+          "penelope-fuzz"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 1.8551003679967835
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-core-None-1.100.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-core",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.059517958005017135
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-core-None-1.89.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-core",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.07334231199638452
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-core-serde-1.100.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-core",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked",
+          "--features",
+          "serde"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.05783789999986766
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-core-serde-1.89.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-core",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked",
+          "--features",
+          "serde"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.06924898300349014
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-timeline-None-1.100.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-timeline",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.057037438004044816
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-timeline-None-1.89.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-timeline",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.261864809996041
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-timeline-alloc-1.100.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-timeline",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked",
+          "--features",
+          "alloc"
+        ],
+        "toolchain": "1.100.0",
+        "exit_code": 0,
+        "seconds": 0.05600840500119375
+      },
+      {
+        "group": "public",
+        "label": "portable-penelope-timeline-alloc-1.89.0",
+        "args": [
+          "cargo",
+          "check",
+          "-p",
+          "penelope-timeline",
+          "--no-default-features",
+          "--target",
+          "riscv32imafc-unknown-none-elf",
+          "--locked",
+          "--features",
+          "alloc"
+        ],
+        "toolchain": "1.89.0",
+        "exit_code": 0,
+        "seconds": 0.06847933999961242
+      }
+    ]
+  },
+  "verified_production_checkpoint_archive": {
+    "sha256": "3209d69c90640ee83a9a58b80637ea3a75a9c5098a2624506c3a491ba814e528",
+    "members": 164,
+    "pinned_conformance_passes": 7
+  },
+  "reviewed_sources_sha256": {
+    "fuzz/fuzz_targets/fuzz_machine.rs": "fe4fde4a7ce6ce297328bece0a588c62db38f9d466ef7bbdf727e26d9d823c61",
+    "fuzz/fuzz_targets/fuzz_machine_commit.rs": "526f51a9914b333bc180100859aef13c168cd68610911e1b9cb91ccfb5302f5a",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "4ebba0144e34b37ee2001a62b89fdfc64977286722e3b1d3d037e9c1f6bc291d",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine_outbox.rs": "f24d4d181a5e1de73053585c42af70e8aa9585c1b93c5dab443cf6d940244725",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine_task.rs": "2b43953d81446c6f0f4aeb3f2b50d4984eeafb9a4079469a6e59c1eb7815f32b",
+    "fuzz/fuzz_targets/fuzz_sqlite_machine_saga.rs": "38ff62f4da4d7a832ea72fae0b9c85d1ce488cf36bb964078ef108dac932cbac",
+    "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+    "crates/penelope-core/src/machine/identities.rs": "718967acb68d104c8309269919f559393febbcd601bcee93986c9848c20a29b9",
+    "docs/0.5/architecture.md": "8f61d8051fd1a867d7e46a91b1528788cddfbf115c7b5497171e3776b691c120",
+    "docs/0.5/compatibility-matrix.md": "0d4aa74c96dd736c23139303e7bb30b65c329159578729304aa5d25d87ee2bd6"
+  },
+  "open": [
+    "Full current-production multi-target fuzz/chaos campaign remains live; shorter CI and supplementary single-target fuzz are not replacements.",
+    "Targeted replay mutation coverage for all scope/definition/digest/order roles remains only partially supported. Receipt mutation is not automatically replay mutation.",
+    "Process-kill oracle is a seeded test supplement; clean-reopen libFuzzer target does not itself kill child processes. Preserve that distinction in release claims.",
+    "Final source/harness/package/coverage reconciliation, performance findings and detailed normative review outside13.1 remain open."
+  ],
+  "generator": {
+    "file": "test-layer-audit.py.gz",
+    "sha256": "bc1df6aeeb7ca577a0a3208fbbcd7af517cfd92b5173187dc10897fb7e9a2c06",
+    "uncompressed_sha256": "240202e2ce43c919a9f1cb5a218f6aa5fdd30d14cd6a5ad5817730f62a30b063",
+    "scope": "Recorded review commit and retained raw logs; final source changes require deliberate reconciliation."
+  }
+}

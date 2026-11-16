@@ -74,7 +74,12 @@ The [phase work audit](evidence/maintenance/phase-audit.json) maps all 50 work
 items and nine gates in plan §11 to 67 source/evidence files. It distinguishes
 scoped implementation support from open performance/release work and unproven
 historical sequencing. Named test sets and the detailed clauses outside §11
-still require separate review; this is not a completion certificate.
+still require separate review; this is not a completion certificate. The
+[required test-layer audit](evidence/maintenance/test-layer-audit.json) maps all
+28 clauses in §13.1 to 29 observed stable/MSRV tests and 20 archived external
+gates. It retains the live campaign obligation, distinguishes seeded process
+kills from clean-reopen fuzzing, and leaves targeted replay-mutation coverage
+partially open.
 
 ### Release acceptance review — November 16, 2026
 
