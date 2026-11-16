@@ -226,6 +226,27 @@
     ],
     "scope": "Positional twelve-condition reconciliation with the existing human-readable review. Implemented capability is distinct from release qualification; no gate is closed solely by this index."
   },
+  "type_guard_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+      "crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+      "crates/penelope/examples/door_machine.rs": "a320d09191db9d49b315034df11162d5df8b658cd2efc375d327f4185087cf57",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3"
+    },
+    "reviewed_blocks": 10,
+    "named_tests_observed_both_compilers": [
+      "decisions_prepare_without_publishing_and_drop_aborts",
+      "ignored_staging_errors_validation_and_panics_preserve_the_entire_publication",
+      "rejection_and_fault_are_terminal_but_unhandled_walks_the_entire_path",
+      "leaf_to_parent_selection_and_lca_exit_action_entry_order_are_exact",
+      "each_hook_failure_bad_candidate_and_invariant_failure_discards_the_whole_attempt"
+    ],
+    "scope": "Enum data ownership, runtime guard dispositions, terminal refusal/fault and explicit purity boundaries; no automatic callback purity or universal typestate guarantee."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -235,11 +256,11 @@
       "code": 13
     },
     "by_review_state": {
-      "needs_individual_review": 155,
+      "needs_individual_review": 145,
       "table_layout": 7,
       "section_label": 24,
       "scoped_evidence_indexed": 163,
-      "individually_reviewed_scoped_support": 118,
+      "individually_reviewed_scoped_support": 128,
       "implementation_path_refinement_reviewed": 1,
       "individually_reviewed_release_notes_open": 1,
       "release_condition_open": 4,
@@ -1119,8 +1140,20 @@
       "kind": "paragraph",
       "sha256": "f850cedec0ae66ab31f27d05f172eb70ff33c5887fc1d3713720684cb78c6060",
       "preview": "Use normal Rust structs/enums, not a repeated string-valued graph schema. State-local data should be encoded w",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Machine uses ordinary associated State/Event types; the door example uses non-Clone enum variants with state-local key data and one trait implementation. Hierarchy remains optional. No repeated string registry, reflection or proc macro is required."
     },
     {
       "line": 225,
@@ -1129,8 +1162,20 @@
       "kind": "code",
       "sha256": "2bd45907bed6f60865677d217a09e9a213854381edcb8466294b21ce8d5eec74",
       "preview": "```rust\n// Proposed 0.5.0 consumer model; API names are illustrative.\n#[derive(Debug, Clone, PartialEq, Eq)]\np",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The illustrative order enum is a type-model sketch, not a literal compiling tutorial. The actual door/nested examples demonstrate variant-local fields; the checked first-machine tutorial uses the implemented signature. This sketch is not silently advertised as a separate API."
     },
     {
       "line": 246,
@@ -1139,8 +1184,20 @@
       "kind": "paragraph",
       "sha256": "769bcc9be58036b775b0166f27480b03f9c7b26fa422cd0ba7a945be6ec3b798",
       "preview": "For example, a `Created` order cannot simultaneously carry a tracking ID in that type. However, whether `Ship`",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Enum variants prevent fields from belonging to the wrong state variant, but legal event edges and guard predicates remain runtime checks. The public API states this limit. No general workflow typestate guarantee is claimed."
     },
     {
       "line": 250,
@@ -1149,8 +1206,20 @@
       "kind": "paragraph",
       "sha256": "f63f9ff1e1513802559f0368456d2e45ed0ee5f95ea7f986223c33cacfb053e1",
       "preview": "A guard is a deterministic validation step against the current state, event and captured context. It can retur",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Model transition receives immutable published state, the supplied event/context and a bounded staging sink. Callback determinism, absence of external effects and mutable-alias discipline are explicit application duties; these are not properties Rust or the library can prove for arbitrary model code."
     },
     {
       "line": 252,
@@ -1159,8 +1228,20 @@
       "kind": "item",
       "sha256": "b9d625ab48a78e556e3fcd3acda6133de969c132c4633840c55066f4b7de0b5d",
       "preview": "- **Allow** \u2014 proceed to the candidate.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Allow is the conceptual continuation into Transition::Accepted, not a second public guard evaluator. The candidate still passes complete invariants, revision checks and staged-intent limits before a consuming handle can publish."
     },
     {
       "line": 253,
@@ -1169,8 +1250,20 @@
       "kind": "item",
       "sha256": "7712b6a281dd9c9e5ca1813a0c11846371c2260cf0895707cfca7113257bd846",
       "preview": "- **Reject(code)** \u2014 no state/effect change; provide a stable, bounded code for diagnostics.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Transition::Rejected carries a bounded typed RejectCode and returns without assigning state/head/provenance or transferring staged intents. A poisoned staging sink takes precedence and returns a kernel failure even when the callback ignores the sink error; refusal does not clear a resource violation."
     },
     {
       "line": 254,
@@ -1179,8 +1272,20 @@
       "kind": "item",
       "sha256": "73d5dd7afdc82376319351466621a02773ef3968cebd3ba271412025581963cc",
       "preview": "- **Unhandled** \u2014 permit hierarchical parent fallback (if configured); otherwise refuse without mutating state",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Only Transition::Unhandled permits bounded leaf-to-parent fallback. Explicit child rejection and typed faults are terminal; flat unhandled events leave publication unchanged. Both compilers observe the terminal-rejection/fault versus fallback test."
     },
     {
       "line": 255,
@@ -1189,8 +1294,20 @@
       "kind": "item",
       "sha256": "aa16bb488e3370ec4adf625c90ef35bb7af88775126c09763003e7c26459f976",
       "preview": "- **Error(typed fault)** \u2014 abort evaluation without treating the attempt as a business denial.",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Typed model faults remain MachineFailure::Model and hierarchical model faults remain distinct from kernel hierarchy errors. They do not become business denial codes or accepted records. Hook failure/panic tests retain the complete previous publication and discard staged candidate effects."
     },
     {
       "line": 257,
@@ -1199,8 +1316,20 @@
       "kind": "paragraph",
       "sha256": "9084485ef02f2da8ada229aeb7f3389159fc3348929c51dc5f0ab463d5ad208f",
       "preview": "Guard ordering must be deterministic and defined, not based on map iteration, concurrency, or implicit handler",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hierarchy traversal order is an explicit bounded leaf-to-root path; selected hooks run exit/action/entry order. Model-local guard ordering remains written application code, not a registry iteration policy. Refusal exposes typed bounded codes without persisting arbitrary messages; application logs still must avoid secrets. Transition IDs and durable authorization operations are typed separately."
     },
     {
       "line": 261,
@@ -1373,8 +1502,20 @@
       "kind": "paragraph",
       "sha256": "f5976bf923c4e78fed1d7dffadd5df727dff18499a7ac2852a0a2bf63002a50c",
       "preview": "Offer structural safety with enum variants and exhaustive matches immediately. An optional typed transition/ty",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "named_guard_and_failure_isolation_tests_observed_both_compilers"
+        },
+        {
+          "file": "../qualification/door-ergonomics.json",
+          "pointer": "/negative_controls",
+          "scope_status": "enum_guard_example_mutations_with_original_source_scope"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Structural enum and exhaustive-match safety is available now. A general typestate transition builder is optional in the plan and is not implemented or claimed. Runtime validation and durable authority remain required even for structurally typed state."
     },
     {
       "line": 281,
