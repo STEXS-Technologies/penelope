@@ -1,0 +1,171 @@
+{
+  "scope": "Plan9.2 public nested-example follow-up. Existing model now demonstrates staged hook traces, invalid-payment guard, leaf-terminal refusal, external self-transition and parent cancellation through the same MemoryMachine owner. Source-consumer qualification only; not new library behavior or fresh all-ten package qualification.",
+  "base_commit": "4d537ea6d3b448a1b2fedb13003a182b34a84abf",
+  "source": {
+    "path": "crates/penelope/examples/nested_order.rs",
+    "sha256": "74377330e6b0a955cc380f870f41f32c365a3da55839bd5e266278fc8f119fa6"
+  },
+  "checks": [
+    {
+      "label": "run-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.16752616000303533
+    },
+    {
+      "label": "clippy-1.100.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.10213958199892659
+    },
+    {
+      "label": "run-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "run",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.24853823200101033
+    },
+    {
+      "label": "clippy-1.89.0",
+      "command": [
+        "taskset",
+        "-c",
+        "4-7",
+        "cargo",
+        "+1.89.0",
+        "clippy",
+        "--manifest-path",
+        "ci/machine-consumer/Cargo.toml",
+        "--bin",
+        "nested",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.11269144900143147
+    }
+  ],
+  "format_check_exit_code": 0,
+  "observations": {
+    "trace_sequences": [
+      [
+        "Exit(Draft)",
+        "RequestPayment",
+        "Enter(AwaitingPayment)"
+      ],
+      [],
+      [
+        "Exit(AwaitingPayment)",
+        "Exit(Open)",
+        "Enter(Paid)"
+      ],
+      [
+        "Exit(Paid)",
+        "Enter(Paid)"
+      ],
+      [],
+      [
+        "Exit(Draft)",
+        "Exit(Open)",
+        "NotifyCancellation",
+        "Enter(Cancelled)"
+      ]
+    ],
+    "events": 6,
+    "independent_local_scenarios": 2,
+    "guard_codes": [
+      1,
+      2
+    ],
+    "accepted_revisions_by_scenario": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        1
+      ]
+    ],
+    "receipt_state_retained_on_self_edge": 7,
+    "model_hook_logging": false,
+    "trace_effects_staged_until_publication": true,
+    "production_files_unchanged_from_current_package_checkpoint": 72
+  },
+  "archive": {
+    "file": "nested-example.tar.gz",
+    "sha256": "f7d67ab3473f71fbb0554e37589f2d26ecaa00d9d544c885e9ab8ab2f685c45b",
+    "members_sha256": {
+      "final/fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final/fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final/clippy-1.89.0.stderr": "f409e74e26f60d9e9ec48bf25bf5a9d8508a003a567789ddb8c70e3aeb4476ad",
+      "final/clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final/run-1.89.0.stderr": "f628d052093ff1a9e955418871d130001a317a360d0ff9a34b638f8e9f65c79f",
+      "final/run-1.89.0.stdout": "72df0ff6ca471b6c65a5ecd824f041fe0e4a0812c1ed1f13c84e10970c2522d3",
+      "final/clippy-1.100.0.stderr": "c3df9a81ba06ca9ee4887808fddc11c9934421434d30c4e0501924b9d4c538ca",
+      "final/clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final/checks.json": "71d6b9147c23f8d3cb50ab625057524d57c7487cc08b481b37b477fe304394c5",
+      "final/run-1.100.0.stderr": "77d19649148621772cad815a37c41fc6e83376156428f8ad7623718e82fd7513",
+      "final/run-1.100.0.stdout": "72df0ff6ca471b6c65a5ecd824f041fe0e4a0812c1ed1f13c84e10970c2522d3",
+      "earlier-verbose-output/clippy-1.89.0.stderr": "4c97fba663dc8b11a8a3c0294b6086471695fd087dbd2d544b59a9ed80610e63",
+      "earlier-verbose-output/clippy-1.89.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "earlier-verbose-output/run-1.89.0.stderr": "1f71bc8eda873a99cd308f68e243223988fdaa9c08e12cfcea6996af0b21fe1e",
+      "earlier-verbose-output/run-1.89.0.stdout": "5d22c88985bcb38d361f2aa2bdc4ec93aee8c08dc1b36694a9862fef947f6713",
+      "earlier-verbose-output/clippy-1.100.0.stderr": "f409e74e26f60d9e9ec48bf25bf5a9d8508a003a567789ddb8c70e3aeb4476ad",
+      "earlier-verbose-output/clippy-1.100.0.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "earlier-verbose-output/checks.json": "98beef5cbf590ee8013464513b42d43b08e433ff8a14ee346178be88680acc2c",
+      "earlier-verbose-output/run-1.100.0.stderr": "3499d07092013afa8f813a6b593a6ad2cd278f539cc96e384b32d20472b5bf34",
+      "earlier-verbose-output/run-1.100.0.stdout": "5d22c88985bcb38d361f2aa2bdc4ec93aee8c08dc1b36694a9862fef947f6713",
+      "driver.py": "c031216b4a586aaa46910dba864c246e2fbe30a6f04d4efa6c2e3347522c49c4",
+      "earlier-driver.py": "ebffa7143c6d4db7f548a78d283af15c834d45b5b0156f96490ca33c961ff993",
+      "recorder.py": "1dbc91e00dd08fed3a00fe5b951fef1f47d53fc8df6a417c9fc9b343332bf325",
+      "nested_order.rs": "74377330e6b0a955cc380f870f41f32c365a3da55839bd5e266278fc8f119fa6"
+    }
+  },
+  "limits": [
+    "Earlier verbose-output checks are retained separately; final runs validate compact output and final source.",
+    "Fixture identities and deterministic one-byte trace metadata demonstrate local preparation, not authentication or durable delivery.",
+    "No Clone or heap-backed state is introduced; this run is not an allocator measurement. Existing allocator/hierarchy tests retain their independent source and fixture scopes.",
+    "Full chaos, retained performance findings, remaining normative/test review and final artifact reconciliation remain open."
+  ]
+}

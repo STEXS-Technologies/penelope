@@ -33,7 +33,10 @@ the candidate. There are no parallel regions or implicit completion loops.
 
 The examples `counter_machine` and `nested_order` compile unchanged in the
 independent `ci/machine-consumer` package, which depends only on the facade.
-The nested enum example covers parent fallback, rejection and intent staging.
+The nested enum example prints the source/event and guard code on refusal.
+Its staged trace shows exit/action/entry order, external self-reentry and parent
+cancellation; rejected events emit no hook trace. Logging happens after publication,
+not inside model evaluation.
 Neither example requires Clone, a state registration map or a serializer.
 
 Validation includes generated transition tables and parent forests, flat arithmetic

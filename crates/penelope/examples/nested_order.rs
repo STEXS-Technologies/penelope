@@ -13,12 +13,15 @@ enum OrderState {
     Paid { receipt: u64 },
     Cancelled,
 }
+#[derive(Debug)]
 enum OrderEvent {
     Submit,
     PaymentConfirmed(u64),
+    RefreshReceipt,
     Cancel,
 }
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
 enum Node {
     Root,
     Open,
@@ -29,8 +32,35 @@ enum Node {
 }
 #[derive(Debug)]
 enum OrderEffect {
+    Exit(Node),
+    Enter(Node),
     RequestPayment,
     NotifyCancellation,
+}
+impl OrderEffect {
+    // Trace hooks stage bounded data; logging happens only after publication.
+    fn stage<S: IntentSink<Self>>(
+        self,
+        context: &TransitionContext,
+        intents: &mut S,
+    ) -> Result<(), MachineError> {
+        let code = match self {
+            Self::Exit(node) => node as u8,
+            Self::RequestPayment => 6,
+            Self::NotifyCancellation => 7,
+            Self::Enter(node) => 8 + node as u8,
+        };
+        let mut identity = context.event.bytes();
+        identity[31] = code;
+        intents.stage(ProposedIntent {
+            metadata: IntentMetadata {
+                identity: MachineIntentId::from_bytes(identity),
+                digest: Digest::of(&[code]).0,
+                payload_bytes: 1,
+            },
+            payload: self,
+        })
+    }
 }
 struct Order;
 const DEFINITION: MachineDefinition = MachineDefinition {
@@ -76,16 +106,17 @@ impl HierarchyModel for Order {
         event: &OrderEvent,
         _: &TransitionContext,
     ) -> Result<HierarchyDecision<Node>, MachineError> {
-        let target = match (node, event) {
-            (Node::Draft, OrderEvent::Submit) => Node::AwaitingPayment,
+        let (target, transition) = match (node, event) {
+            (Node::Draft, OrderEvent::Submit) => (Node::AwaitingPayment, 1),
             (Node::AwaitingPayment, OrderEvent::PaymentConfirmed(0)) => {
                 return Ok(HierarchyDecision::Rejected {
                     reason: RejectCode::new(1),
                 });
             }
-            (Node::AwaitingPayment, OrderEvent::PaymentConfirmed(_)) => Node::Paid,
+            (Node::AwaitingPayment, OrderEvent::PaymentConfirmed(_)) => (Node::Paid, 2),
+            (Node::Paid, OrderEvent::RefreshReceipt) => (Node::Paid, 4),
             // Both open leaves bubble cancellation to their common parent.
-            (Node::Open, OrderEvent::Cancel) => Node::Cancelled,
+            (Node::Open, OrderEvent::Cancel) => (Node::Cancelled, 3),
             (Node::Paid, OrderEvent::Cancel) => {
                 return Ok(HierarchyDecision::Rejected {
                     reason: RejectCode::new(2),
@@ -96,18 +127,13 @@ impl HierarchyModel for Order {
         Ok(HierarchyDecision::Selected(HierarchyPlan {
             target,
             kind: TransitionKind::External,
-            transition: TransitionId::new(match target {
-                Node::AwaitingPayment => 1,
-                Node::Paid => 2,
-                Node::Cancelled => 3,
-                Node::Root | Node::Open | Node::Draft => 0,
-            }),
+            transition: TransitionId::new(transition),
         }))
     }
     fn candidate(
         &self,
         plan: HierarchyPlan<Node>,
-        _: &OrderState,
+        current: &OrderState,
         event: &OrderEvent,
         _: &TransitionContext,
     ) -> Result<OrderState, MachineError> {
@@ -118,10 +144,35 @@ impl HierarchyModel for Order {
             (Node::Paid, OrderEvent::PaymentConfirmed(receipt)) => {
                 Ok(OrderState::Paid { receipt: *receipt })
             }
+            (Node::Paid, OrderEvent::RefreshReceipt) => match current {
+                OrderState::Paid { receipt } => Ok(OrderState::Paid { receipt: *receipt }),
+                _ => Err(MachineError::InvalidHierarchy),
+            },
             (Node::Cancelled, OrderEvent::Cancel) => Ok(OrderState::Cancelled),
             _ => Err(MachineError::InvalidHierarchy),
         }
     }
+    fn exit<S: IntentSink<OrderEffect>>(
+        &self,
+        node: Node,
+        _: &OrderState,
+        _: &mut OrderState,
+        context: &TransitionContext,
+        intents: &mut S,
+    ) -> Result<(), MachineError> {
+        OrderEffect::Exit(node).stage(context, intents)
+    }
+    fn enter<S: IntentSink<OrderEffect>>(
+        &self,
+        node: Node,
+        _: &OrderState,
+        _: &mut OrderState,
+        context: &TransitionContext,
+        intents: &mut S,
+    ) -> Result<(), MachineError> {
+        OrderEffect::Enter(node).stage(context, intents)
+    }
+
     fn action<S: IntentSink<OrderEffect>>(
         &self,
         plan: HierarchyPlan<Node>,
@@ -135,36 +186,26 @@ impl HierarchyModel for Order {
             Node::Cancelled => OrderEffect::NotifyCancellation,
             Node::Root | Node::Open | Node::Draft | Node::Paid => return Ok(()),
         };
-        intents.stage(ProposedIntent {
-            metadata: IntentMetadata {
-                identity: MachineIntentId::from_bytes(context.event.bytes()),
-                digest: context.event_digest,
-                payload_bytes: 1,
-            },
-            payload: effect,
-        })
+        effect.stage(context, intents)
     }
 }
-fn main() -> Result<(), MachineFailure<HierarchyFailure<MachineError>>> {
+fn run(events: &[(u8, OrderEvent)]) -> Result<(), MachineFailure<HierarchyFailure<MachineError>>> {
     let scope = MachineScope {
         tenant: MachineTenantId::from_bytes([1; 32]),
         instance: MachineId::from_bytes([2; 32]),
         definition: DEFINITION,
     };
-    let mut order = MemoryMachine::<_, 2>::new(
+    let mut order = MemoryMachine::<_, 4>::new(
         Hierarchical::<_, 3>::new(Order),
         scope,
         OrderState::Open(Open::Draft),
         IntentLimits {
-            max_intents: 2,
-            max_payload_bytes: 2,
+            max_intents: 4,
+            max_payload_bytes: 4,
         },
     )?;
-    for (ordinal, event) in [
-        (1, OrderEvent::Submit),
-        (2, OrderEvent::PaymentConfirmed(7)),
-        (3, OrderEvent::Cancel),
-    ] {
+    for (ordinal, event) in events {
+        let ordinal = *ordinal;
         // Fixture IDs/digest; real admission must bind the actual event and evidence.
         let context = TransitionContext {
             expected: order.read().0,
@@ -172,11 +213,31 @@ fn main() -> Result<(), MachineFailure<HierarchyFailure<MachineError>>> {
             event_digest: [ordinal; 32],
             logical_time: MachineLogicalTime::new(u64::from(ordinal)),
         };
-        println!("decision={:?}", order.handle(&event, context)?);
+        println!("source={:?} event={event:?}", order.read().1);
+        match order.handle(event, context)? {
+            HandleOutcome::Accepted(record) => println!(
+                "Accepted revision={} transition={}",
+                record.revision.get(),
+                record.transition.get()
+            ),
+            HandleOutcome::Rejected { reason } => println!("Rejected guard={}", reason.get()),
+            HandleOutcome::Unhandled => println!("Unhandled"),
+        }
         println!("state={:?}", order.read().1);
         for intent in order.take_intents() {
             println!("intent={:?} (not dispatched)", intent.intent.payload);
         }
     }
     Ok(())
+}
+
+fn main() -> Result<(), MachineFailure<HierarchyFailure<MachineError>>> {
+    run(&[
+        (1, OrderEvent::Submit),
+        (2, OrderEvent::PaymentConfirmed(0)), // Guard refuses; no hooks run.
+        (3, OrderEvent::PaymentConfirmed(7)),
+        (4, OrderEvent::RefreshReceipt), // External self-edge exits and reenters Paid.
+        (5, OrderEvent::Cancel),         // Paid refuses; the parent cannot override it.
+    ])?;
+    run(&[(1, OrderEvent::Cancel)]) // Draft bubbles to Open's cancellation handler.
 }
