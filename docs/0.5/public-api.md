@@ -1,17 +1,18 @@
-# Implemented public preparation and inspection
+# Public API
 
 This maps the implemented APIs and their authority boundaries. Final release
 qualification remains open.
 Use Rust 1.89 or later. The facade defaults and existing imports remain supported.
 
-| Entry point | Current role | Compiled consumer |
+| Entry point | Current role | Example or check |
 | --- | --- | --- |
 | `penelope::machine` | Pure model, bounded owner, consuming local publication, hierarchy | `first-machine` tutorial consumer, `counter_machine`, `nested_order` |
 | `penelope::saga` | Existing linear/graph engines and prepared decision adapters | `trade`, `ci/saga-parity` |
 | `penelope::task` | Task record/projection/control contracts, prepared record inspection, hosted supervisor | `prepared_decisions`, existing recovery examples |
 | `penelope::diagnostics::PreparedDecision` | Shared read-only candidate, predecessor, provenance and intent inspection | Shared example inspection helper and independent facade consumers |
-| `penelope::storage` | Existing process/task ports; machine codec, journal and authorization contracts | Durable examples, `prepared_decisions` |
+| `penelope::storage` | Process/task ports; machine codec, journal and authorization contracts | Durable examples, `prepared_decisions` |
 | `penelope::runtime` | Existing runtime integration boundaries | Existing task/runtime examples |
+| `penelope::integration` | Correlation with independently verified external evidence | Pinned signed-source conformance checks the adapter |
 | `penelope::timeline` (feature `timeline`) | Captured `MachineTimeline` adapter over existing replay, history, finality and handoff | `timeline_machine`, independent facade consumer |
 
 `PreparedDecision` is defined once in the portable machine module and reexported
@@ -29,15 +30,19 @@ and `publish` makes the local state/head/intent tuple visible. Its view contains
 only newly staged intents, while earlier committed pending intents stay with the
 owner. Local publication supplies no durable admission or historical deduplication.
 
-`MachineCommitRecord<INTENTS>` supplies the independent bounded
+`MachineCommitRecord<INTENTS>` supplies the bounded
 [`penelope.machine.v1` metadata codec](machine-wire.md). It binds event/state
 digests, native provenance, causation and ordered intent metadata. Constructing
-or decoding a record proves neither acceptance nor durable admission; [canonical payload preparation](machine-preparation.md) now binds the native
-accepted candidate and checks exact receipt coordinates. `MachineStoredCommit` checks retained payloads and supports scoped canonical
-snapshot restoration without event evaluation or dispatch. The [optional SQLite journal](machine-storage.md) now implements authorized
-admission, coherent snapshots, exact lookup and bounded history. The source-bound outbox and [native task receiver](machine-storage.md#admit-a-recoverable-task)
-provide separately acknowledged admission. The [native saga receiver](machine-storage.md#admit-a-saga) likewise uses existing
-process commits and authorization. Final release qualification remains pending.
+or decoding a record proves neither acceptance nor durable admission.
+[Canonical payload preparation](machine-preparation.md) binds the accepted
+candidate and checks exact receipt coordinates. `MachineStoredCommit` checks
+retained payloads and restores a scoped snapshot without evaluation or dispatch.
+
+The [optional SQLite journal](machine-storage.md) provides authorized admission,
+coherent snapshots, exact lookup and bounded history. Its source-bound outbox
+hands work to [native task](machine-storage.md#admit-a-recoverable-task) and
+[saga receivers](machine-storage.md#admit-a-saga). Each receiver verifies and
+acknowledges its own durable admission through the existing native protocol.
 
 `prepare_linear` delegates exactly once to the original `decide` and borrows its
 source input and definition. `into_parts` produces the original replay event and
@@ -76,5 +81,5 @@ distinct from timeline branch/revision, and intents retain timeline finality.
 The [canonical tutorial](../getting-started.md) composes durable machine
 recovery, native task admission, verified worker results and saga admission.
 Those bridges retain their native authority boundaries; prepared inspection
-alone never supplies authority. Final performance, coverage, chaos and exact
-release-candidate qualification remain open; see [verification](verification.md).
+alone never supplies authority. See [verification](verification.md) for current
+passing checks and open release gates.

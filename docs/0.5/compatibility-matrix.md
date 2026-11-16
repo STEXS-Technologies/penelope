@@ -50,6 +50,16 @@ and Rust 1.89 without regenerating expected data from candidate libraries. These
 bounded fixtures supplement existing wire and migration suites; they do not
 prove every possible downstream program or deployment compatible.
 
+The [static API audit](evidence/maintenance/public-api-audit.json) compares all ten
+crates across 14 package/feature profiles against original 0.4 source, using each
+revision's locked dependencies. Checked public export bindings remain intact;
+local-item signature checks pass with a strict patch-level compatibility policy.
+The signature checker misses a removed facade reexport, so an independent binding
+inventory and the unchanged consumer verify that boundary. A separate public-field
+removal is caught by the signature checker. Both controls and restored source
+identities are retained. This host-only review supplements behavior, MSRV and
+portable checks; it does not establish compatibility for every downstream program.
+
 `python3 scripts/check-sqlite-upgrade.py` opens a frozen database written by the
 actual `42ec187` adapters with their original locked dependencies. It verifies
 all legacy table rows and schemas, exact task/process replay, payload bytes and

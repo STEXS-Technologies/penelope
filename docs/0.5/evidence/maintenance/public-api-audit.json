@@ -1,0 +1,457 @@
+{
+  "scope": "Static public API review against actual original0.4 source, complementing frozen compile/replay fixtures. No complete downstream compatibility, all-target or formal equivalence claim.",
+  "revisions": {
+    "before": "42ec187c9adfc7403b06215f405f2575f53c35c2",
+    "after": "0f01d2437a802be4ad48377dda484717552ad381"
+  },
+  "production_code_unchanged": "Candidate Rust/manifests/locks/CI/scripts still match qualified9a5a1db; audit source snapshots restored to their exact Git blob identities after negative controls.",
+  "compiler": "1.100.0",
+  "target": "x86_64-unknown-linux-gnu",
+  "rustdoc_format_version": 61,
+  "tools": "cargo-semver-checks0.51.0; independently resolved Penelope reexport binding inventory; frozen0.4 consumer compiled with rustc",
+  "documentation_generation": "Both revisions use cargo rustdoc --lib --locked with their own original lockfiles. RUSTC_BOOTSTRAP=1 enables unstable rustdoc JSON output on the same pinned1.100 compiler; it is a documentation-generation setting, not a new production toolchain policy.",
+  "environment_overrides": {
+    "RUSTC_WRAPPER": "",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "RUSTC_BOOTSTRAP": "1",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "release_type_override": "patch, so a0.4\u21920.5 version change cannot suppress breaking-change diagnostics",
+  "profiles": [
+    {
+      "package": "penelope-core",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 73,
+      "export_bindings_after": 127,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-domain",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 47,
+      "export_bindings_after": 47,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-intent",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 3,
+      "export_bindings_after": 3,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-ports",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 141,
+      "export_bindings_after": 178,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-executor",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 66,
+      "export_bindings_after": 81,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-statechronicle",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 13,
+      "export_bindings_after": 13,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-sqlite",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 7,
+      "export_bindings_after": 10,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-process-runtime",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 9,
+      "export_bindings_after": 9,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-timeline",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 68,
+      "export_bindings_after": 73,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope",
+      "profile": "default",
+      "features": [],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 543,
+      "export_bindings_after": 850,
+      "removed_or_rebound": {},
+      "module_owner_changes": {
+        "penelope::task": {
+          "before": {
+            "kind": "module",
+            "definition": "penelope_core::task"
+          },
+          "after": {
+            "kind": "module",
+            "definition": "penelope::task"
+          }
+        }
+      }
+    },
+    {
+      "package": "penelope-core",
+      "profile": "serde",
+      "features": [
+        "--features",
+        "serde"
+      ],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 73,
+      "export_bindings_after": 127,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-timeline",
+      "profile": "alloc",
+      "features": [
+        "--features",
+        "alloc"
+      ],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 68,
+      "export_bindings_after": 73,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope-timeline",
+      "profile": "std",
+      "features": [
+        "--all-features"
+      ],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 69,
+      "export_bindings_after": 74,
+      "removed_or_rebound": {},
+      "module_owner_changes": {}
+    },
+    {
+      "package": "penelope",
+      "profile": "timeline",
+      "features": [
+        "--features",
+        "timeline"
+      ],
+      "compare_exit_code": 0,
+      "semver_checks": {
+        "pass": 229,
+        "skip": 31,
+        "failed": 0
+      },
+      "export_bindings_before": 611,
+      "export_bindings_after": 923,
+      "removed_or_rebound": {},
+      "module_owner_changes": {
+        "penelope::task": {
+          "before": {
+            "kind": "module",
+            "definition": "penelope_core::task"
+          },
+          "after": {
+            "kind": "module",
+            "definition": "penelope::task"
+          }
+        }
+      }
+    }
+  ],
+  "all_lockfiles_unchanged": true,
+  "negative_controls": [
+    {
+      "change": "Make the existing TaskScope.task field pub(crate) in the candidate snapshot.",
+      "result": "Core documentation still builds; semver-checks returns100 with struct_pub_field_missing, naming TaskScope.task. Source restored exactly.",
+      "caught": true
+    },
+    {
+      "change": "Remove the legacy root TaskSupervisor reexport in the candidate snapshot.",
+      "result": "semver-checks returns0 and misses the removal. Independent export inventory identifies penelope::TaskSupervisor missing; unchanged frozen consumer fails with unresolved import (exit101). Exact source restoration makes that consumer pass.",
+      "caught_by_signature_checker": false,
+      "caught_by_binding_inventory_and_frozen_consumer": true
+    }
+  ],
+  "retained_unsuccessful_attempts": [
+    {
+      "kind": "CLI usage",
+      "exit_code": 2,
+      "reason": "--all-features conflicts with --current-rustdoc; feature selection already belongs to JSON generation. Corrected invocation passes."
+    },
+    {
+      "kind": "Negative-control coverage",
+      "exit_code": 1,
+      "reason": "Initial driver deliberately refuses to accept the missed facade reexport. The failed assertion and diagnostics are retained, followed by independent binding and frozen-consumer controls."
+    }
+  ],
+  "limits": [
+    "Host Linuxx86_64, Rust1.100 documentation only. Existing MSRV and portable consumer/build results remain separately scoped.",
+    "229 passing checks and31 skipped checks per profile describe the installed checker; they do not prove every generic, cfg, macro or downstream source program compatible.",
+    "The binding inventory compares public module/item paths and nominal definition identities; it does not compare methods, fields, trait impls or signatures and does not expand third-party modules. Source ownership changes for modules are recorded separately because module identity is not a nominal Rust type; old nested exported bindings must still remain.",
+    "The initial binding traversal was corrected to expand public glob exports from private implementation modules and to avoid treating a glob-imported module as a replacement for its destination module. Final inventories have no unresolved Penelope binding or traversal cycle; raw compiler JSON remains independently inspectable.",
+    "The approved Rust1.85\u21921.89 MSRV change is outside this source-signature inventory. Existing wire, behavioral, crash and migration checks remain necessary."
+  ],
+  "archive": {
+    "file": "public-api-audit.tar.gz",
+    "sha256": "e992020d9284a83db85bae59d0871984d76551bfe5c249b7512f1315d60ab960",
+    "member_count": 152,
+    "members_sha256": {
+      "raw/tool-identities.json": "0ab8dfae59b8e1f8a3e9b22c7c291825b99ca62381865e007c1b1e7250906576",
+      "raw/restored-source-identities.json": "f2f330cb13683adceb6723f48c934c4dc7c442bde47220fb268155c76a452fa4",
+      "raw/legacy-import-control.json": "a024f1e4308277f6c0404af244fd3d59dd6adcf6f3afe00124d3bfd5bd81c317",
+      "raw/restored-legacy-import.stderr": "432983d518a58008f57da46267d6834d328d7f667124da049b822f09a4078f1b",
+      "raw/restored-legacy-import.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/legacy-import-control-checks.json": "87dc57fcd3f6809157c7e470299d272c1399c35b444f0929d4b6984428170dff",
+      "raw/negative-legacy-import.stderr": "239982e16df20417a6f3fe863721113d190151cd64a162c3c71d1128d0b8ced4",
+      "raw/negative-legacy-import.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/negative-facade-lib.rs": "95f0ae6232876c694939c8e90be05fac3678db457976ff56c054ad6704de8bad",
+      "raw/followup.json": "1b681a9268dd6d5c4e6a77fd626235fd8be26709942520e65c1d4e657b9a3fd8",
+      "raw/restored-core-sha256.txt": "fcc2c0030a6c296df3a42238e58acac4a61c46f937c86381bf4c29012e2e12e4",
+      "raw/negative-core-control.json": "19018c888b3f854ab8d828627e9268797ee58823fe6b0bddad92606f302ebc97",
+      "raw/negative-core-compare.stderr": "adca929b316fcbdfe48c94f0924155dfdd7f37407ea8f92a07daab4a2c8f7354",
+      "raw/negative-core-compare.stdout": "9dbcecc23cf3711922200c9f69892fdecad80532e001b6c292d56693f6218bbd",
+      "raw/after-core-private-task-field.json": "cd368b83d658653ed995d726686fde4cadc6f5457499b709cff10742f40adb40",
+      "raw/controls-checks.json": "a1e3a80485e8753af30bb60c21415e8b2eb11c6344ca26290533dddb3ec6739a",
+      "raw/negative-core-document.stderr": "39d616b385d292f53cf2430399abaac3bf12dd51e7a22c2707b6bdc001caf1dc",
+      "raw/negative-core-document.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/negative-core-task-scope.rs": "6aff643d0e6c690299264e68c8efdb389270b50d4fc6f14df66ec706a870c137",
+      "raw/reexports.json": "67b88f3083289505e1ad2244e9881f76c85b7490fcd9372181107f75f83f668e",
+      "raw/negative-removed-root-export.stderr": "a405fa9af2ff3ffb3c22a79ebd07772ed45d9090e31168d6f7dbe26c13236ea8",
+      "raw/negative-removed-root-export.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-removed-root-export.json": "2020fee9b775f345d9a47874280ce8cc57024852bf7be68ee5dc64c439ac4d6e",
+      "raw/after-penelope-removed-root-export.stderr": "53da4cd572812e9fd14ebcb1a706ab539d05a9950a4fc8d0c89d8f54d0dd89dc",
+      "raw/after-penelope-removed-root-export.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-timeline.stderr": "a405fa9af2ff3ffb3c22a79ebd07772ed45d9090e31168d6f7dbe26c13236ea8",
+      "raw/compare-penelope-timeline.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-timeline.json": "8cd9f0d0207485f8e654c607c25483107767629bfe6fb6071047c09f0ed912c1",
+      "raw/after-penelope-timeline.stderr": "5438db9c1433b4f7c84e7ecd06b31ecc8993db778ec5c95ddcd7f011199bfee0",
+      "raw/after-penelope-timeline.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-timeline.json": "b9a3014e915e625ab26f2bb854d5f7f5f5853dafe63a66778b65569249951af3",
+      "raw/before-penelope-timeline.stderr": "f98ca7463695c2475bde0319857daa22ea4d9b5366a93717293202969fed6856",
+      "raw/before-penelope-timeline.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-timeline-std.stderr": "ee1f573f889dbfc27cb0d54a69b2ea9477876dd4123fb43dbe8f369d3fd7b6c8",
+      "raw/compare-penelope-timeline-std.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-timeline-std.json": "fe52940f9a6cbbae6e80dacec19e1225fdae021cbe6f6200f00fe7a1b500169c",
+      "raw/before-penelope-timeline-std.stderr": "be5fda1b08309dc489155f61297767de8aab756e4c1896bf1303a208f1ad71a7",
+      "raw/before-penelope-timeline-std.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-timeline-std.json": "61b4f9ee101a7acff6f483f457f516b5356dee1bb94b04ffcf233437d791d861",
+      "raw/after-penelope-timeline-std.stderr": "e4405bcd50f179274ab044779b1e9b2f3f0d324cd7ba2c17ea4d88eebd983dfe",
+      "raw/after-penelope-timeline-std.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-timeline-alloc.stderr": "7b5279679ab652eaa1a5450cd86b762c492dd7e7f4a8293d8cd1f10d784e5b77",
+      "raw/compare-penelope-timeline-alloc.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-timeline-alloc.json": "133e198a690e7b5ae51d9edcc2b182b72e98a096e80d1f21e8f79212a94a4c05",
+      "raw/after-penelope-timeline-alloc.stderr": "b0b3078b3fb8a176fd46608cb7b3f55c6a60fe6aa348189cdc5c91ab7f23ae63",
+      "raw/after-penelope-timeline-alloc.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-timeline-alloc.json": "3af765ecd78a34bae419eba5777885d6e297bd64376522a9b5e44fbf607924a7",
+      "raw/before-penelope-timeline-alloc.stderr": "afd9947a5c4d7a97820a6b7fe6bcab1f5230574b5dae3a367efa511b4bdc14cf",
+      "raw/before-penelope-timeline-alloc.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-core-serde.stderr": "85cecf1f440b187b0d811b6ae25ab02d812a14e8bae4f2b71446bc34969938b7",
+      "raw/compare-penelope-core-serde.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-core-serde.json": "f15f828289b2c1d0e4ce092fc9a96a22adc2c81f981a4955ea6e727d9aba6c8b",
+      "raw/after-penelope-core-serde.stderr": "ec64081b36e29201241c78306a2b1a90e01e03c715470559754a8de3fdc1a112",
+      "raw/after-penelope-core-serde.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-core-serde.json": "9a4c4cdc5e168b4b18c983724d6f2a616149228180c46a45723fe927c79faab0",
+      "raw/before-penelope-core-serde.stderr": "bb47419aa1a99f42e15a634857cfcdd781df9a93beadb88eb6037dd3798453a3",
+      "raw/before-penelope-core-serde.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-default.stderr": "8777e8f43073e27f2b66f92a25b2b9cab21ccd2daa23d1ee6824251573b3d635",
+      "raw/compare-penelope-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-default.json": "3119814c99afcc9d391a8f9070d568bc06ebbacbd5339f7b313fd44e02874ea2",
+      "raw/after-penelope-default.stderr": "626a44e317510c80842c6ab3ef0458e67b1f82ffd4709ad1d8dab9a64c14fc48",
+      "raw/after-penelope-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-default.json": "28df61745db74a7791119c49598535ee6298a1ea494930c9c75c328dd8131366",
+      "raw/before-penelope-default.stderr": "dab0fe604ae82b5a685192f7fa84ab60558e3cb7d2927c27ac033504b9d098c2",
+      "raw/before-penelope-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-timeline-default.stderr": "137301875bfae77c85d1006e2e5050e4ff72354896410e039521ae3496c791d4",
+      "raw/compare-penelope-timeline-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-timeline-default.json": "133e198a690e7b5ae51d9edcc2b182b72e98a096e80d1f21e8f79212a94a4c05",
+      "raw/after-penelope-timeline-default.stderr": "a2fa3808dfb7ebbc718a9a827205d096fc77d2fe13f922083ff697f9321d9204",
+      "raw/after-penelope-timeline-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-timeline-default.json": "3af765ecd78a34bae419eba5777885d6e297bd64376522a9b5e44fbf607924a7",
+      "raw/before-penelope-timeline-default.stderr": "afd9947a5c4d7a97820a6b7fe6bcab1f5230574b5dae3a367efa511b4bdc14cf",
+      "raw/before-penelope-timeline-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-process-runtime-default.stderr": "4d14ed7fbb3149bfa8baf06137c14a696ca6a030609923ad0d9a698d826ba3f4",
+      "raw/compare-penelope-process-runtime-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-process-runtime-default.json": "c8476c4dfd7cac5299abb81e98753c10ef7c7dc8fcf7785050fa93179b1a571f",
+      "raw/after-penelope-process-runtime-default.stderr": "7cb842bc233bd16728d8c42bfc0cde4b6ad494873fcfce84e5d1c6a6222b3489",
+      "raw/after-penelope-process-runtime-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-process-runtime-default.json": "fb54c17eaee3a7ed20ef9713ad9a77304c4c8e86f02afdb61d8778bc11fb0ee3",
+      "raw/before-penelope-process-runtime-default.stderr": "87f2d6fe9e133a4d4aa26b99ca53ce76ae5752c646844c7b27a21f8b9b418fa8",
+      "raw/before-penelope-process-runtime-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-sqlite-default.stderr": "436bc259b73721aab6aecab08dd58359cacc5e3b31f6ea6fd5f3c247d0fe26f3",
+      "raw/compare-penelope-sqlite-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-sqlite-default.json": "40e1bf8bfcd304d796dceca602080a038bb0687109b88e2dd0a172df733a4c5d",
+      "raw/after-penelope-sqlite-default.stderr": "1be0395041ee62cc9d69d12c7cd81c9d0691c925423cce99a6cc8850ddbc753e",
+      "raw/after-penelope-sqlite-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-sqlite-default.json": "66f9462fd9d6d2f3f1ed93706a2cae5ec409da3ac0bebecff67f0df756f57e6b",
+      "raw/before-penelope-sqlite-default.stderr": "39b114ce72f1c26e5bad2f1459a55646dd7bec4ffcfca27b27e7e3f2c24bbe4d",
+      "raw/before-penelope-sqlite-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-statechronicle-default.stderr": "726fcc68545aa85e111b28bf72b8145326b601f6361cf3b15155af189536c985",
+      "raw/compare-penelope-statechronicle-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-statechronicle-default.json": "0747c793140bda1db5504debc305b8265967fc41c3b4a2370e68ab085cc3eabb",
+      "raw/after-penelope-statechronicle-default.stderr": "c917583fbb3bbadf0b3fe7247777b59e88d9c15d03350c6354e4908c0c432310",
+      "raw/after-penelope-statechronicle-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-statechronicle-default.json": "1bc1b441f7c879ef058a051ddbb25b0f6ff33a7e8af521487c0df12f8a6ef532",
+      "raw/before-penelope-statechronicle-default.stderr": "5c74d82bcad8677f42c003efb4aaf1fce1c571e3582f12f3faad97a780d05950",
+      "raw/before-penelope-statechronicle-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-executor-default.stderr": "d66978a4c94f2987a04b7b751f633e08f312c6395894e37b5e84ec812c095945",
+      "raw/compare-penelope-executor-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-executor-default.json": "1065861706b41a217d103f9d77ea5bb0350f599aff212a46ba40464c7d721722",
+      "raw/after-penelope-executor-default.stderr": "e06b879a13030701f3a39908291b6a5b70231cce55c12a0ebc0d90cb1f8cc12c",
+      "raw/after-penelope-executor-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-executor-default.json": "c550951f96b212a2b63723bb42496bb88038473c818e99429e303a65fdeac275",
+      "raw/before-penelope-executor-default.stderr": "7b96801dcacdbd574de8a04890fac3946f1b35677315d88ecb79203f86b7fa96",
+      "raw/before-penelope-executor-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-ports-default.stderr": "9988439dcf823c0fb5d665af5dd3c66f56bdd090df697d905e7e117f92682142",
+      "raw/compare-penelope-ports-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-ports-default.json": "949ab44fe33b92dcce87a5ff0f167bfbe42fe4aeaebf2c65e7a56aceac1b6563",
+      "raw/before-penelope-ports-default.stderr": "a92af4e2fe8405738deacf4206d93b117ade610b5068c7647c176389dce91bbf",
+      "raw/before-penelope-ports-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-ports-default.json": "6e86863dfc0245d5732b40a5c2a8897e550bb9b7100c1e60bb5d6a7c91f6cec2",
+      "raw/after-penelope-ports-default.stderr": "ae44418ba41f8617cb331ad6c44f1572962fc502867902be5af6818868151fa1",
+      "raw/after-penelope-ports-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-intent-default.stderr": "e6f679169c9975ee1d81c54a95623f2604d8bcce34926870fa61deeb644eea40",
+      "raw/compare-penelope-intent-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-intent-default.json": "ec8fc45a4401b721e1f385f5ffd1b034f65eafb7690c3eb31335d342308bb046",
+      "raw/after-penelope-intent-default.json": "6f3c74b456867759ff704da1530af9e65a43921b81a4e45030d446bb9fdcd9a5",
+      "raw/before-penelope-intent-default.stderr": "00385149290059d7104a8e3e08ec0ef7f9cb4009b87aac72027465988311b9fa",
+      "raw/before-penelope-intent-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-intent-default.stderr": "b2f1a2a9f9960cb2d745ac679505ab0a806829842f1bdff832f6d519b30b8ab1",
+      "raw/after-penelope-intent-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-domain-default.stderr": "e9dbe7b0ea9eeb10476511789b22f4ea685f4d48f5c856f136517fad6670c437",
+      "raw/compare-penelope-domain-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-domain-default.json": "1ede4fe7438b63ceaac09171ea225cb9392c2a387e621b10d401f397ccba5f08",
+      "raw/before-penelope-domain-default.stderr": "c6616b6877bf7491685d5dcf62071cdacc09066aeff9a0df05b7850498cd52e1",
+      "raw/before-penelope-domain-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/after-penelope-domain-default.json": "ef0170c93bb17c4879327f00427d8fbcfd0ba2f33e5bcae647e74f3e51a73889",
+      "raw/after-penelope-domain-default.stderr": "c4f970d2e925a97be4124faf15b5516a99c629c3e0c1ce98cf86f57d522e7e1e",
+      "raw/after-penelope-domain-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/compare-penelope-core-default.stderr": "a9c12d397dbd32ba0621b86de828833842ed3ad91963fd2588e5f21259379077",
+      "raw/compare-penelope-core-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/metadata.json": "1787143e23f3519049b179cc4ba21ac3a9f2bfee48bdbc560a1254a508270a34",
+      "raw/checks.json": "8b2598ee51b5e5b87d1fb532a7b8fb3ea0744847ba970d68afcf620a9942229f",
+      "raw/after-penelope-core-default.json": "4ab9a067d41190fc3e655d1e89e1b1f89158f282c7db4628fde7ecf861052ac2",
+      "raw/after-penelope-core-default.stderr": "ee0fb5087e74ec918ca88671d3b550df6a1869909e2d8d5aeab0574b747b62e0",
+      "raw/after-penelope-core-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw/before-penelope-core-default.json": "610ba5d726be14c489a3f0561c6cb7c6f4da91339e25f1be21449933dd02882a",
+      "raw/before-penelope-core-default.stderr": "ca486f20c1550ccdcb2f8f74c46e7808d4575c391d73f2fd27e9cc6b8a59fd1a",
+      "raw/before-penelope-core-default.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "drivers-and-attempts/penelope-050-audit-public-api.py": "dae3d3a1d7c4d05c3668a1f3efe5e3fe209b9eb9da65f97d455d94814253bdce",
+      "drivers-and-attempts/penelope-050-audit-public-api.log": "4fd22145d050381dbfb5a7ade0ae5d2ef8222b07852910f63e0e96b7609ab978",
+      "drivers-and-attempts/penelope-050-audit-reexports.py": "677eeb5c4be7d299b5b5eee452f6e27b9250e0762392b04071940f2a3ff07070",
+      "drivers-and-attempts/penelope-050-audit-reexports.log": "ca74a6e8b341133c504712cd9e35809a0d01f5b3cf8b9c55aafc01804932a7c3",
+      "drivers-and-attempts/penelope-050-audit-api-controls.py": "21fed5206f988cd956a31a875664596523fb5f8a1c895c526bf1cacfaf02524b",
+      "drivers-and-attempts/penelope-050-audit-api-controls.log": "96d992a8463942cf186956e99513eb5c2ed2395f1023cf47cc7451b5a9a4a94c",
+      "drivers-and-attempts/penelope-050-audit-legacy-import-control.py": "1dd3408b4a5c7a1618666d11390b37f250802525f3ba7357b07497558b8a5564",
+      "drivers-and-attempts/penelope-050-audit-legacy-import-control.log": "15d945987b169d1eb45a5f1ef6c1d4956a47f52b0e66cc936c67803b492eccd3",
+      "drivers-and-attempts/penelope-record-050-api-audit.py": "020f01dc7bf1f52fe46e6bf562cedba57cc817e6d9090b5dd0b65f8feff22a1e",
+      "drivers-and-attempts/penelope-050-api-after-core.log": "044ca92d3c823403f98116617ed70caa27b3b0fdac8daf3c1c2d08d7125c5c9e",
+      "drivers-and-attempts/penelope-050-api-before-core.log": "0e50006033e2f5a406862eaf7b40fafbbb8343c748381cf5ccd54579205169a3",
+      "drivers-and-attempts/penelope-050-api-core-compare.log": "2de56064ae8721d256b78f35f257a761a082714a25715a77ec4dcf8d887983d0",
+      "drivers-and-attempts/penelope-050-api-core-compare-corrected.log": "dcf4da1a53ddd57c4a1fd2d9415b6312cd0f72913f9a8458c4fd9697be67fb23"
+    }
+  }
+}
