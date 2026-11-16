@@ -80,10 +80,10 @@ artifact reconciliation.
 | Qualification complete | **Open:** immutable full chaos, legacy performance findings and final source/artifact reconciliation. Seven green CI jobs and passing extracted packages do not close these obligations |
 | Release controlled | Candidate versions/order and unreleased notes are prepared. **Open:** final dated release entry and artifact reconciliation after qualification; tagging/publication still require separate authorization |
 
-The §13.2 measurement audit also retains a scope gap: the legacy SQLite paired
-comparison uses earlier candidate `e8a701d`, whereas the versioned eight-benchmark
-comparison excludes that workload. Reconcile or refresh that comparison against
-the frozen release source before closing database performance review. Current
+The §13.2 SQLite scope gap is now covered by the separate
+[versioned 31-pair refresh](evidence/sqlite-balanced/versioned-candidate.json).
+It confirms substantial legacy replay and exact-retry findings; database
+performance acceptance remains open. Current
 machine-store timings and process resource observations do not supply measured
 WAL size, per-commit physical disk writes or a general throughput bound. Earlier
 empty `rlib_artifacts` inventories likewise supply no binary-size evidence;
@@ -109,6 +109,7 @@ recorded; no isolated-host or worst-case latency guarantee is implied.
 | Legacy timeline | [Later 31-pair comparison](evidence/legacy-balanced/timeline-current.json) retains history-capture p50 251 → 270 ns and history-append p95 291 → 321 ns flags. Its flagged `ring_replay` profile is a handwritten control, not a Penelope replay API call; it is neither subtracted nor used to waive library findings |
 | Capture placement | [Focused placement experiment](evidence/legacy-balanced/timeline-capture-layout.json) reverses which revision is faster. Its filtered fixture is diagnostic, not a replacement for the frozen full benchmark; normalized assembly equality covers one helper, not the whole program |
 | Legacy SQLite | [Balanced comparison and patched-dependency controls](evidence/sqlite-balanced/manifest.json) retain substantial replay/exact-retry costs. Patched original dependencies reproduce much of that cost; attribution does not accept it. No security downgrade or weaker validation is used |
+| Versioned legacy SQLite | [Fresh 31-pair comparison](evidence/sqlite-balanced/versioned-candidate.json) against original 0.4 retains all 62 measured reports, both binaries and 16 p50/p95 flags. Warm replay median run p50 increases **165.39–168.44%** across 16/128/512 records, and exact process retry increases **39.87%**, each over 5% in all 31 pairs. Earlier dependency attribution keeps its original scope; no acceptance is implied |
 | Timeline lookup | [Lazy validated hints](evidence/timeline-lookup/manifest.json) improve post-eviction paths while preserving original successful-hint behavior, ancestry/error precedence, digest checks and scan fallback. [All descriptive flags](evidence/timeline-lookup/lazy-triage.json.gz) remain available; the slower eager hint was rejected |
 | Durable machine | [Store profiles](evidence/machine-store-performance/manifest.json) cover single/contending writers and recovery. [Read-only preflight](evidence/machine-preflight-performance/manifest.json) resolves known stale/conflicting/duplicate requests before writer admission, then fully revalidates new work under the write transaction. The 32-writer race improves locally; writers that all observe the old head can still queue, and tail latency is not bounded |
 | Timeline over machine | [Adapter/native measurements](evidence/machine-timeline-performance/manifest.json) separate ownership, context and provenance cost; the comparator is the existing engine at that revision, not an original 0.4 binary |
