@@ -34,6 +34,20 @@ fuzz_target!(|data: &[u8]| {
                     scope: SCOPE,
                     revision: MachineRevision::new(commits.len() as u64),
                 };
+                // An out-of-order future revision cannot become the next event.
+                // ID99 is outside the admitted input-ID range0..16.
+                if byte(1) & 128 != 0 {
+                    let future = MachineHead {
+                        revision: MachineRevision::new(head.revision.get() + 1),
+                        ..head
+                    };
+                    let mut premature =
+                        MemoryMachine::<_, 2>::restore(Model, future, state, INTENTS).unwrap();
+                    assert_eq!(
+                        block_on(store.commit(&true, batch(&mut premature, amount, 99))).err(),
+                        Some(MachineStoreError::StaleHead)
+                    );
+                }
                 let mut native =
                     MemoryMachine::<_, 2>::restore(Model, head, state, INTENTS).unwrap();
                 let request = batch(&mut native, amount, id);
@@ -51,15 +65,23 @@ fuzz_target!(|data: &[u8]| {
                 }
             }
             1 => {
-                if let Some((_, _, _, request)) =
-                    commits.get(usize::from(byte(1)) % commits.len().max(1))
-                {
+                // Replay an arbitrary suffix in reverse order. Every accepted
+                // request retains its original receipt; none advances the head.
+                for (_, _, _, request) in commits.iter().rev().take(usize::from(byte(1) % 4) + 1) {
                     let receipt = block_on(store.commit(&true, Arc::clone(request))).unwrap();
                     assert_eq!(
                         receipt.disposition,
                         MachineCommitDisposition::AlreadyCommitted
                     );
                     assert_eq!(receipt.identity, request.record().identity());
+                    assert_eq!(
+                        receipt.head.revision,
+                        request.record().header().transition.revision
+                    );
+                    assert_eq!(
+                        receipt.event,
+                        request.record().header().transition.context.event
+                    );
                 }
             }
             2 => {
@@ -86,6 +108,46 @@ fuzz_target!(|data: &[u8]| {
                         stored.batch().intents().next().unwrap().1,
                         result.to_le_bytes()
                     );
+                    // Recompute valid framing after changing one identity role.
+                    // Structural decoding is not source authentication; pinned
+                    // restoration must still refuse every foreign scope/model.
+                    let mut header = stored.batch().record().header();
+                    let scope = &mut header.transition.context.expected.scope;
+                    let variant = byte(2) % 6;
+                    match variant {
+                        0 => scope.tenant = MachineTenantId::from_bytes([99; 32]),
+                        1 => scope.instance = MachineId::from_bytes([99; 32]),
+                        2 => {
+                            scope.definition.fingerprint = MachineDefinitionId::from_bytes([99; 32])
+                        }
+                        3 => scope.definition.state_schema = 99,
+                        4 => scope.definition.event_schema = 99,
+                        _ => header.transition.context.event_digest[0] ^= 1,
+                    }
+                    let altered = MachineCommitRecord::<2>::new(
+                        header,
+                        stored.batch().record().intents().copied(),
+                    )
+                    .unwrap();
+                    let mut wire = vec![0; altered.encoded_len()];
+                    altered.encode(&mut wire).unwrap();
+                    let recovered = MachineStoredCommit::<2>::decode(
+                        &wire,
+                        stored.batch().event(),
+                        stored.batch().state(),
+                        stored.batch().intents().map(|(_, payload)| payload),
+                        PAYLOADS,
+                    );
+                    if variant == 5 {
+                        assert_eq!(recovered.err(), Some(MachineRecoveryError::PayloadMismatch));
+                    } else {
+                        let recovered = recovered.unwrap();
+                        assert!(
+                            recovered
+                                .restore(Model, &Codec, SCOPE, &mut [0; 8], INTENTS)
+                                .is_err()
+                        );
+                    }
                 }
             }
             5 => {

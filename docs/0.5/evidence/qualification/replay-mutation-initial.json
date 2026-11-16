@@ -1,0 +1,273 @@
+{
+  "status": "bounded_initial_checks_pass_full_rounds_running",
+  "base_commit": "f36b77db8e205ef8d8f21945406f162155b58526",
+  "captured_utc": "2026-11-16T07:09:37.230051+00:00",
+  "scope": "Augmented existing SQLite machine fuzz harness and deterministic corpus only. Real historical requests replay in reverse with exact original receipts; future-head admission refuses; checksummed scope/model substitutions decode structurally but fail pinned restore; altered event digest fails payload binding. Existing duplicate-content and contiguous-history arithmetic oracle remain active. No new API/dependency/runtime behavior.",
+  "source_sha256": {
+    "fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "a1cecadfaa2533c15891a36e9efbd8411ed88180f59970d3ca5e06a3829e1361",
+    "scripts/seed-machine-corpus.py": "c5f59c53ef80d3711a5b337250144eefe9fcfe21023f8b96255d5dda5b250a4c"
+  },
+  "production_files_unchanged_from_current_package_checkpoint": 72,
+  "initial_checks": [
+    {
+      "label": "seed-generator",
+      "command": [
+        "python3",
+        "scripts/seed-machine-corpus.py",
+        "--root",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds"
+      ],
+      "exit_code": 0,
+      "seconds": 0.03529244699893752
+    },
+    {
+      "label": "seed-0",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-journal-v1-9587f2ede7c6d9283f662ab801885ea4f3d358644a9f7b48eff17acb0644227b"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05557294800382806
+    },
+    {
+      "label": "seed-1",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-journal-v1-b86a92a35fbf1f858fefadd7bd239a7500e78df360301e37d11b7509de8fa8e4"
+      ],
+      "exit_code": 0,
+      "seconds": 0.056615665002027526
+    },
+    {
+      "label": "seed-2",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-journal-v1-caec2d96f80e26b3eade8586d9d7a47ce9cca8a2441c69a19140bbd98b80200b"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05649166500370484
+    },
+    {
+      "label": "seed-3",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-journal-v1-f4cb09109d06d72529636fb00590c2a7aa16ca56f66ca508f15468e9847cc317"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05813250799837988
+    },
+    {
+      "label": "seed-4",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-77e3eb5b973a9435840bdd7a9e25833b68e1483708bab41a3f5b130e38ddf033"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05060323000361677
+    },
+    {
+      "label": "seed-5",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-a3be51d2bf8f2fac646c8f03c25cf602146f1369c3690ebc05b64d9d58218711"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05084915600309614
+    },
+    {
+      "label": "seed-6",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-ac817d77f990da67b3bafadebd09f4bb3ed372d97ff1992b128c3bce5f4ec541"
+      ],
+      "exit_code": 0,
+      "seconds": 0.04930947800312424
+    },
+    {
+      "label": "seed-7",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-c28adfba184ac45c7c2b34050695ae79375ada24327e17e70d2e1d7d27bca06e"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05156395799713209
+    },
+    {
+      "label": "seed-8",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-d2edcdc78fbbfc07c5698d36e468ff2c895882dbb7dfff2ae3bc4fb1fcf8e89e"
+      ],
+      "exit_code": 0,
+      "seconds": 0.050338257002294995
+    },
+    {
+      "label": "seed-9",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "-runs=1",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine/penelope-replay-v1-e9a9d2f2a3052921875d960a4aee984a9e40bb54966850dff093a8b8d440eead"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05126483899948653
+    },
+    {
+      "label": "smoke",
+      "command": [
+        "/home/ac/projects/penelope/target/replay-mutation-fuzz/x86_64-unknown-linux-gnu/release/fuzz_sqlite_machine",
+        "/tmp/penelope-050-replay-mutation-fuzz/seeds/fuzz_sqlite_machine",
+        "-runs=1000",
+        "-seed=1",
+        "-max_len=96"
+      ],
+      "exit_code": 0,
+      "seconds": 21.3036861340006
+    },
+    {
+      "label": "clippy",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "clippy",
+        "--manifest-path",
+        "fuzz/Cargo.toml",
+        "--bin",
+        "fuzz_sqlite_machine",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 8.958796744998835
+    },
+    {
+      "label": "format",
+      "command": [
+        "cargo",
+        "+1.100.0",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6181371490019956
+    }
+  ],
+  "deterministic_seed_sha256": {
+    "penelope-journal-v1-9587f2ede7c6d9283f662ab801885ea4f3d358644a9f7b48eff17acb0644227b": "9587f2ede7c6d9283f662ab801885ea4f3d358644a9f7b48eff17acb0644227b",
+    "penelope-journal-v1-b86a92a35fbf1f858fefadd7bd239a7500e78df360301e37d11b7509de8fa8e4": "b86a92a35fbf1f858fefadd7bd239a7500e78df360301e37d11b7509de8fa8e4",
+    "penelope-journal-v1-caec2d96f80e26b3eade8586d9d7a47ce9cca8a2441c69a19140bbd98b80200b": "caec2d96f80e26b3eade8586d9d7a47ce9cca8a2441c69a19140bbd98b80200b",
+    "penelope-journal-v1-f4cb09109d06d72529636fb00590c2a7aa16ca56f66ca508f15468e9847cc317": "f4cb09109d06d72529636fb00590c2a7aa16ca56f66ca508f15468e9847cc317",
+    "penelope-replay-v1-77e3eb5b973a9435840bdd7a9e25833b68e1483708bab41a3f5b130e38ddf033": "77e3eb5b973a9435840bdd7a9e25833b68e1483708bab41a3f5b130e38ddf033",
+    "penelope-replay-v1-a3be51d2bf8f2fac646c8f03c25cf602146f1369c3690ebc05b64d9d58218711": "a3be51d2bf8f2fac646c8f03c25cf602146f1369c3690ebc05b64d9d58218711",
+    "penelope-replay-v1-ac817d77f990da67b3bafadebd09f4bb3ed372d97ff1992b128c3bce5f4ec541": "ac817d77f990da67b3bafadebd09f4bb3ed372d97ff1992b128c3bce5f4ec541",
+    "penelope-replay-v1-c28adfba184ac45c7c2b34050695ae79375ada24327e17e70d2e1d7d27bca06e": "c28adfba184ac45c7c2b34050695ae79375ada24327e17e70d2e1d7d27bca06e",
+    "penelope-replay-v1-d2edcdc78fbbfc07c5698d36e468ff2c895882dbb7dfff2ae3bc4fb1fcf8e89e": "d2edcdc78fbbfc07c5698d36e468ff2c895882dbb7dfff2ae3bc4fb1fcf8e89e",
+    "penelope-replay-v1-e9a9d2f2a3052921875d960a4aee984a9e40bb54966850dff093a8b8d440eead": "e9a9d2f2a3052921875d960a4aee984a9e40bb54966850dff093a8b8d440eead"
+  },
+  "binary_sha256": "886893ea63ee264ceaa88e1fa020c6bac501fbc22e120ed3141a8464144c9239",
+  "tools": {
+    "rustc-nightly": {
+      "args": [
+        "rustc",
+        "+nightly",
+        "--version",
+        "--verbose"
+      ],
+      "stdout": "rustc 1.99.0-nightly (7608eb7b0 2026-08-05)\nbinary: rustc\ncommit-hash: 7608eb7b07eaf93f16d7cf5bcb2098eca87503df\ncommit-date: 2026-08-05\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0-nightly\nLLVM version: 23.1.0\n"
+    },
+    "cargo-nightly": {
+      "args": [
+        "cargo",
+        "+nightly",
+        "--version"
+      ],
+      "stdout": "cargo 1.99.0-nightly (7c83d4cc0 2026-07-29)\n"
+    },
+    "cargo-fuzz": {
+      "args": [
+        "cargo",
+        "fuzz",
+        "--version"
+      ],
+      "stdout": "cargo-fuzz 0.13.2\n"
+    },
+    "host": {
+      "args": [
+        "uname",
+        "-a"
+      ],
+      "stdout": "Linux customer.sfiabgr1.isp.starlink.com 7.2.15-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Nov  1 17:37:08 UTC 2026 x86_64 GNU/Linux\n"
+    }
+  },
+  "long_campaign": {
+    "status": "running_at_capture",
+    "requested_rounds": 3,
+    "requested_runs_per_round": 100000,
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "maximum_input_length": 96,
+    "source_worktree": "/home/ac/projects/.penelope-050-replay-qualification",
+    "manifest": "/tmp/penelope-050-replay-mutation-fuzz/manifest.json",
+    "scope": "Separate supplementary single-target campaign. Full-target current-production campaign remains independent; no terminal long-campaign claim is made."
+  },
+  "archive": {
+    "file": "replay-mutation-initial.tar.gz",
+    "sha256": "ceedd50e97b156854c63463f2026ffc008bbbb520669cd00e4d441a5497e9690",
+    "members_sha256": {
+      "manifest-snapshot.json": "8d7e15be74362a3757389484ea0dd2b2e80cd13a1128860397a20a77bd153881",
+      "source-pre.json": "45e97c3dce70f4d21c26367971933ef4d122dc77d13a745c941510f263874577",
+      "driver.py": "4d837250539bd84a36e2c43cd3f1e49e5636bee99bfc1699feecb299baca68a9",
+      "recorder.py": "69e205a8ced4faf2f2e601422080d6529ab740e2edde50923c9b9dde940cdd60",
+      "initial-checks/seed-generator.log": "cc1c8507c40f6aecdb303153c90ef1da06961dd3dad211b3d8cc6f79a8173612",
+      "initial-checks/seed-0.log": "12c71b72cc124c999645751b708b74523fcd6e3283c38175258b3d0391516d80",
+      "initial-checks/seed-1.log": "2f7ae32ead506c9a68d24d185a314afc405a6a0e54e7c85a1f27883560ea675e",
+      "initial-checks/seed-2.log": "8ea28fc920a68ee680359ac0ea9a3342224c3de171c75b3947fe2318eb830aad",
+      "initial-checks/seed-3.log": "818a5c47e0cd990eb537caf58d2fd6d48ca68f6ae75733b939b33d01322969ff",
+      "initial-checks/seed-4.log": "76394ac5aa73e52069f40b59d2c6c8cd67ca287ad6cc9550c5fcee4472d47694",
+      "initial-checks/seed-5.log": "3d3ae72fd88a111c7520a35ec16d27455a2b649aea9012792186731fa80b2ce7",
+      "initial-checks/seed-6.log": "9079b1e5655304a59243cb5c8ff4093a93caabe15f217199f0751c94a179344f",
+      "initial-checks/seed-7.log": "282382f507f1c6591b5b49f006eed3ca6e77c8e372b018a482329b9d8fe905e0",
+      "initial-checks/seed-8.log": "0bb3c8423a3f48429c2a0a5d7a79d89065b4aebe5f55a8f23fe68da38d893b81",
+      "initial-checks/seed-9.log": "707e45f2434aa5418aadc2654df1f5a6903df2f58590f10709a00194f9736008",
+      "initial-checks/smoke.log": "4af4e0c50fe22e914b0f53839193d401670f8d3cbcf1a5d82c5dea291410ff6c",
+      "initial-checks/clippy.log": "ee671f090cc07dc451fff1404883321d7ed2c31b823bafc70799fb6e9143daae",
+      "initial-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seeds/penelope-journal-v1-9587f2ede7c6d9283f662ab801885ea4f3d358644a9f7b48eff17acb0644227b": "9587f2ede7c6d9283f662ab801885ea4f3d358644a9f7b48eff17acb0644227b",
+      "seeds/penelope-journal-v1-b86a92a35fbf1f858fefadd7bd239a7500e78df360301e37d11b7509de8fa8e4": "b86a92a35fbf1f858fefadd7bd239a7500e78df360301e37d11b7509de8fa8e4",
+      "seeds/penelope-journal-v1-caec2d96f80e26b3eade8586d9d7a47ce9cca8a2441c69a19140bbd98b80200b": "caec2d96f80e26b3eade8586d9d7a47ce9cca8a2441c69a19140bbd98b80200b",
+      "seeds/penelope-journal-v1-f4cb09109d06d72529636fb00590c2a7aa16ca56f66ca508f15468e9847cc317": "f4cb09109d06d72529636fb00590c2a7aa16ca56f66ca508f15468e9847cc317",
+      "seeds/penelope-replay-v1-77e3eb5b973a9435840bdd7a9e25833b68e1483708bab41a3f5b130e38ddf033": "77e3eb5b973a9435840bdd7a9e25833b68e1483708bab41a3f5b130e38ddf033",
+      "seeds/penelope-replay-v1-a3be51d2bf8f2fac646c8f03c25cf602146f1369c3690ebc05b64d9d58218711": "a3be51d2bf8f2fac646c8f03c25cf602146f1369c3690ebc05b64d9d58218711",
+      "seeds/penelope-replay-v1-ac817d77f990da67b3bafadebd09f4bb3ed372d97ff1992b128c3bce5f4ec541": "ac817d77f990da67b3bafadebd09f4bb3ed372d97ff1992b128c3bce5f4ec541",
+      "seeds/penelope-replay-v1-c28adfba184ac45c7c2b34050695ae79375ada24327e17e70d2e1d7d27bca06e": "c28adfba184ac45c7c2b34050695ae79375ada24327e17e70d2e1d7d27bca06e",
+      "seeds/penelope-replay-v1-d2edcdc78fbbfc07c5698d36e468ff2c895882dbb7dfff2ae3bc4fb1fcf8e89e": "d2edcdc78fbbfc07c5698d36e468ff2c895882dbb7dfff2ae3bc4fb1fcf8e89e",
+      "seeds/penelope-replay-v1-e9a9d2f2a3052921875d960a4aee984a9e40bb54966850dff093a8b8d440eead": "e9a9d2f2a3052921875d960a4aee984a9e40bb54966850dff093a8b8d440eead",
+      "source/fuzz/fuzz_targets/fuzz_sqlite_machine.rs": "a1cecadfaa2533c15891a36e9efbd8411ed88180f59970d3ca5e06a3829e1361",
+      "source/scripts/seed-machine-corpus.py": "c5f59c53ef80d3711a5b337250144eefe9fcfe21023f8b96255d5dda5b250a4c",
+      "tools/rustc-nightly.txt": "7901989e3c66d79a527d17c02e5cf62d8499630df125f795baac03170e58605c",
+      "tools/cargo-nightly.txt": "3797bcb327a6eb966ff3de86a862741cc6efbea6b261ffe930a6071becff8237",
+      "tools/cargo-fuzz.txt": "3e2aa5c2baaf44e5a4968cc3fedb864f4717f85b713deacf3fc4294162358ca1",
+      "tools/host.txt": "ad6f9abe7cb8c2dc314e0c01f326efa2cc68625baedd5293550838235ca316be"
+    }
+  },
+  "limits": [
+    "Reverse replay here means idempotent resubmission of exact historical requests; it does not claim an arbitrary external replay-stream interpreter or detection of all malicious journal rewrites.",
+    "Recovery-byte hashes do not authenticate a source. Foreign-scope refusal is checked against the explicitly pinned configured scope.",
+    "The SQLite fuzz target still uses clean reopens. Actual process-kill model testing remains a separate fixture.",
+    "Full campaign completion, final source/harness/artifact reconciliation, performance findings and remaining detailed plan review stay open."
+  ]
+}

@@ -30,7 +30,12 @@ def main() -> None:
             operations += [(5, index, index) for index in range(5)]
             data = bytes(value for operation in operations for value in operation)
             write_seed(directory, 'penelope-journal-v1-', data)
-    print('fuzz_sqlite_machine: 4 deterministic deep journal sequences')
+    for role in range(6):
+        operations = [(0, 0, 1), (0, 1, 2), (4, 1, role), (1, 3, 0),
+                      (0, 128, 3), (0, 2, 1), (3, 0, 0), (5, 3, 4), (2, 0, 0)]
+        data = bytes(value for operation in operations for value in operation)
+        write_seed(directory, 'penelope-replay-v1-', data)
+    print('fuzz_sqlite_machine: 10 deep journal/replay mutation sequences')
     directory = root / 'fuzz_sqlite_machine_outbox'
     directory.mkdir(parents=True, exist_ok=True)
     sequences = [
