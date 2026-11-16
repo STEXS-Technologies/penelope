@@ -2,7 +2,7 @@
 use super::*;
 
 #[test]
-fn live_capacity_does_not_reject_the_exact_reserved_start_retry() {
+fn live_capacity_preserves_reserved_retries_and_reuses_fenced_slots() {
     let directory = tempfile::tempdir().unwrap();
     let definition = definition(2);
     let input = [9]; // Sleeping worker remains alive until explicitly fenced.
@@ -48,7 +48,7 @@ fn live_capacity_does_not_reject_the_exact_reserved_start_retry() {
     for _ in 0..3 {
         runtime.start(request).unwrap();
     }
-    assert_eq!(std::fs::read(manifest).unwrap(), identity);
+    assert_eq!(std::fs::read(&manifest).unwrap(), identity);
     let foreign = TaskScope {
         task: TaskId::from_digest(Digest([8; 32])),
         ..scope
@@ -70,8 +70,57 @@ fn live_capacity_does_not_reject_the_exact_reserved_start_retry() {
             })
             .is_err()
     );
-    runtime.fence(scope, projection.generation()).unwrap();
-    assert_eq!(runtime.start(request), Err(TaskPortError::Conflict));
+    // Authorize a second real task through the native journal/supervisor. Its
+    // durable start decision must not create another worker while the slot is full.
+    let mut second: Supervisor =
+        TaskSupervisor::restore(journal, runtime, foreign, definition, TaskTick::ZERO).unwrap();
+    second.submit(&input, 1, TaskTick::ZERO).unwrap();
+    assert_eq!(
+        second.advance(TaskTick::new(1)),
+        Err(TaskPortError::Exhausted.into())
+    );
+    let waiting = *second.projection();
+    assert_eq!(waiting.status(), TaskStatus::Running);
+    assert_eq!(waiting.output(), None);
+    let (_journal, mut retained_runtime) = second.into_parts();
+    let waiting_request = TaskStart {
+        scope: foreign,
+        generation: waiting.generation(),
+        execution_deadline: waiting.execution_deadline(),
+        ..request
+    };
+    assert_eq!(
+        retained_runtime.start(waiting_request),
+        Err(TaskPortError::Exhausted)
+    );
+    // The existing worker and its reserved identity survived both refusals.
+    assert_eq!(std::fs::read(&manifest).unwrap(), identity);
+    retained_runtime
+        .fence(scope, projection.generation())
+        .unwrap();
+    assert_eq!(
+        retained_runtime.start(request),
+        Err(TaskPortError::Conflict)
+    );
+    // Reuse the released slot for the exact journal-authorized second request.
+    // This exercises native runtime admission only; the failed supervisor still
+    // requires reconstruction before it may control the task again.
+    retained_runtime.start(waiting_request).unwrap();
+    retained_runtime.start(waiting_request).unwrap();
+    assert_eq!(
+        retained_runtime
+            .poll(foreign, waiting.generation(), &mut [0; 64])
+            .unwrap()
+            .progress,
+        RuntimeProgress::Pending
+    );
+    retained_runtime
+        .fence(foreign, waiting.generation())
+        .unwrap();
+    assert_eq!(
+        retained_runtime.start(waiting_request),
+        Err(TaskPortError::Conflict)
+    );
 }
 
 #[test]
