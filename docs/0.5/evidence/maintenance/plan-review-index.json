@@ -609,6 +609,33 @@
     ],
     "scope": "Ten adversarial cases, invariant ownership and two host-authority policies. Callback purity/authentication/remote authority remain explicit host duties, and signed-source conformance is stable-only."
   },
+  "core_sketch_and_extraction_review": {
+    "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+    "source_sha256": {
+      "crates/penelope-core/src/__private.rs": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+      "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+      "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+      "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+      "crates/penelope-core/src/machine/identities.rs": "718967acb68d104c8309269919f559393febbcd601bcee93986c9848c20a29b9",
+      "crates/penelope-core/src/machine/wire.rs": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+      "crates/penelope-core/src/machine/view.rs": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+      "crates/penelope-core/src/task/identities.rs": "7c664cb39e2bc91a7d780d0afda6e2e8cb5e4f5db33a11e5d4d3bf95e2c01942",
+      "crates/penelope-core/src/timeline/identities.rs": "2def725fa0f157c9f01a21d32ae8e8dc8fd82108b8781a76d6d98dc12e090d55",
+      "crates/penelope-core/src/timeline/wire.rs": "e3254164b25dc0ca7bbdb61cd253d5a502ededc906f33063077e4cda6916436e",
+      "crates/penelope-timeline/src/effects.rs": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+      "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+      "crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+      "crates/penelope/examples/door_machine.rs": "a320d09191db9d49b315034df11162d5df8b658cd2efc375d327f4185087cf57",
+      "crates/penelope/examples/nested_order.rs": "ed1292014e8d16f0616b25d99c00ca39b7dad2dbd43eb6edf5f436d9a1a0f4f8",
+      "crates/penelope/examples/support/counter.rs": "862b014c33f352e95ab7683f8d7fd9b3d1237f161ccd2da850c9a43cd1ce93c8",
+      "crates/penelope/examples/prepared_decisions.rs": "a9d410fa986d815021cfadbb0850325f25d0c588a87d16b039bb5b240653f938",
+      "docs/getting-started.md": "0d61f32c7b78f87841ad659a01f3fd72de19aab2eb56a791deec2088c6f30283",
+      "docs/0.5/public-api.md": "8d8b7b25f129933947ea9426ac7d02620fb65844d83663491350821b6ab047e3",
+      "docs/0.5/architecture.md": "52049a89e2621811f7c2843fdfc3b0646caa676f1d0f59440adec513fdc8bd82"
+    },
+    "reviewed_blocks": 20,
+    "scope": "Actual trait refinements, context/owned-state boundaries, shared-helper extraction and flat/nested ergonomics. Illustrative sketches are distinct from compiling public fixtures; pre-implementation chronology remains unproven."
+  },
   "counts": {
     "blocks": 514,
     "by_kind": {
@@ -619,7 +646,7 @@
     },
     "by_review_state": {
       "reviewed_historical_proposal_metadata": 1,
-      "individually_reviewed_scoped_support": 183,
+      "individually_reviewed_scoped_support": 200,
       "individually_reviewed_qualification_open": 2,
       "release_condition_open": 5,
       "reviewed_historical_baseline": 18,
@@ -627,8 +654,10 @@
       "illustrative_architecture_reviewed": 3,
       "section_label": 26,
       "implementation_path_refinement_reviewed": 2,
-      "needs_individual_review": 47,
+      "API_supported_historical_sequence_unproven": 1,
+      "illustrative_API_refinement_reviewed": 2,
       "scoped_evidence_indexed": 163,
+      "needs_individual_review": 27,
       "individually_reviewed_release_notes_open": 1,
       "individually_reviewed_measurement_scope": 14,
       "performance_acceptance_open": 2,
@@ -2031,8 +2060,25 @@
       "kind": "paragraph",
       "sha256": "1fad17766894e983b9909dee017abdf87da24d3041476f2143404320589ffe88",
       "preview": "The following is an *API design sketch*, not existing Penelope code. Exact names, lifetimes and generics must ",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "API_supported_historical_sequence_unproven",
+      "assessment": "The proposal sketch was refined into the current compile-tested trait and external fixtures. Current API names/generics are documented; the stricter temporal demand for fixtures before all implementation remains part of the unproven historical sequence, not certified by present-day compilation."
     },
     {
       "line": 184,
@@ -2041,8 +2087,25 @@
       "kind": "code",
       "sha256": "cca26b7893b4e7e918a56b579967868886a48b86191fd0e0cf57d72fbb29958e",
       "preview": "```rust\npub trait Machine {\n    type State;\n    type Event;\n    type Effect;\n    type Error;\n\n    fn transitio",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "illustrative_API_refinement_reviewed",
+      "assessment": "The implemented Machine retains the sketched associated types and reference-based generic-sink transition. It additionally requires definition/validate and Accepted carries a typed transition ID. This fenced sketch is illustrative, not a second supported signature; runnable source consumers check the actual API."
     },
     {
       "line": 207,
@@ -2051,8 +2114,25 @@
       "kind": "paragraph",
       "sha256": "e6abdb1deb796e2f3bd5464927d2849efa87bd2941abb95bc2f9ae2ce587a9b9",
       "preview": "`TransitionContext` contains immutable, **supplied** logical information only: exact machine scope, definition",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "TransitionContext supplies expected MachineHead including scope/definition/schema, event identity/digest and logical time. It contains no ambient service. Local coordinates are caller assertions until independently bound by a durable codec/store; arbitrary callback I/O or mutable aliases cannot be automatically prevented."
     },
     {
       "line": 209,
@@ -2183,8 +2263,25 @@
       "kind": "paragraph",
       "sha256": "c0ab226918c9f409a049da84527f990f39999ab28b800f791a34166fa70893fc",
       "preview": "**Performance note:** Returning an owned next state can require copying complex application state. That is acc",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The trait has no blanket Clone or serialization bound. Owned-state8B-to64KiB fixtures separate copying, consumer transition and publication. No general zero-copy or delta-edit extension is promised, and optional timeline convenience Clone requirements do not leak into the base contract."
     },
     {
       "line": 223,
@@ -2391,8 +2488,25 @@
       "kind": "paragraph",
       "sha256": "665645c6e8ba1abbba5abcbe9d02dff9ee5c7bdfc349bc44b7eb8effbfd0667e",
       "preview": "0.5.0 should support **single-active-path hierarchy**, not just flat enums:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hierarchy is one bounded active path with model-owned leaf/parent IDs. Leaf-to-root dispatch, terminal denial/faults, selected exit/action/entry order, explicit self/internal semantics and poisoned staging are tested. Cyclic parent paths fail rather than looping; sequential events may recur under caller budgets. Orthogonal regions are explicitly unsupported."
     },
     {
       "line": 263,
@@ -2545,8 +2659,25 @@
       "kind": "paragraph",
       "sha256": "dc8f9cd5d843138e096587676e7496ea6dd278d15d7d2ae8b070183d15b11eda",
       "preview": "A hierarchy should be an optional helper atop the same `Machine` contract. Flat enums and hand-written matches",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hierarchical implements the same Machine contract and uses the same MemoryMachine/port publication paths. Flat models implement the trait directly, without reflection, registration, hierarchy workspace or an extra evaluator. Measurements retain their finite profile and open comparative limits."
     },
     {
       "line": 277,
@@ -2577,8 +2708,25 @@
       "kind": "paragraph",
       "sha256": "eaa63fe034737dbee5cc4d3da61b76dfb69a0dece10d899f18fb7e8cac9476fe",
       "preview": "Audit reusable primitives from existing implementations and centralize only when equivalence is proven:",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Extraction follows the reviewed maintenance criteria: identify equivalent semantics, preserve errors/order/bounds, compare native behavior and reject slower or weaker alternatives. Similar-looking native recovery/finality code is deliberately retained when contracts differ; counts alone do not prove all semantic duplication absent."
     },
     {
       "line": 283,
@@ -2587,8 +2735,25 @@
       "kind": "item",
       "sha256": "0a5773890d37cdef4bf80d350935979cf5b883f22e57e8d639f94048ca26d8c8",
       "preview": "- A candidate-publication protocol (`expected revision -> validated ready token -> CAS/publish`) with distinct",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Local and durable preparation share the same consuming candidate; durable preparation adds canonical payload binding and verified receipt checks. PreparedDecision shares inspection but has no universal publish/commit operation. Native task and timeline publication remain distinct authorities."
     },
     {
       "line": 284,
@@ -2597,8 +2762,25 @@
       "kind": "item",
       "sha256": "0aae38a3a9a05cb23530c80c6f651b0673be920e432ffc220359de0060c97787",
       "preview": "- Bounded intent staging and poison-on-overflow logic. Timeline `EffectSink` currently contains timeline-speci",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The internal admit_intent helper centralizes count-before-identity-before-byte preflight. Memory/wire/timeline call it with their native error categories. Adapters pre-poison before payload destruction; timeline retains its StepContext, retained-batch ordering and public EffectSink semantics."
     },
     {
       "line": 285,
@@ -2607,8 +2789,25 @@
       "kind": "item",
       "sha256": "885b4eddd501174bf75f116f4968a289abf0ac6119b96973af669e310c2eecfe",
       "preview": "- Typed deterministic refusal/error classification: rejected, stale/conflict, corrupt/incompatible, quota, unt",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Rejected/Unhandled are explicit dispositions and model faults remain concrete typed variants. Storage conflict/corruption/quota/authorization and native ambiguity/recovery have their own typed categories. The documentation relates lifecycle stages without inventing a universal error enum that erases native distinctions or changes error precedence."
     },
     {
       "line": 286,
@@ -2617,8 +2816,25 @@
       "kind": "item",
       "sha256": "a99d03fdee13d7234a70c82816337776eec59185dfbb897777dfacecd617a8fb",
       "preview": "- Immutable event identity, sequence and scope validation helpers, without erasing existing saga/task/timeline",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Identity construction/checked counter and bounded byte primitives are shared internally while MachineRevision, task ticks/generations, saga steps and timeline branches retain different public newtypes. The private helpers are not an unchecked universal identity conversion API."
     },
     {
       "line": 287,
@@ -2627,8 +2843,25 @@
       "kind": "item",
       "sha256": "78942abb1b4b3bf90f7c927b629a63e6aec79a6a3f4a49bd2ef6af47179a1442",
       "preview": "- Batch replay correctness helpers: ordered sequence, duplicate detection, exact definition identity, replay b",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Native saga/task/timeline replay retain protocol-specific sequence and rejection rules. Machine snapshot restoration shares its own native restore helper, and original-event replay reuses normal preparation with complete regenerated-batch comparison. Generic replay is not forced across incompatible histories; frozen and independent model tests retain scope."
     },
     {
       "line": 288,
@@ -2637,8 +2870,25 @@
       "kind": "item",
       "sha256": "1d6c91d09f0b948c641e2b5b28ad03025a07ac55cef45f034d6c3e7029fe0d88",
       "preview": "- Stable definition/schema identity validation and migration admission, without changing old wire representati",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Definitions/schemas are pinned at construction/preparation/recovery and mismatches are refused. Legacy migration admission and new machine host-authenticated interpretation policy remain separate. No automatic general model migration or old-wire reinterpretation is added merely to centralize a helper."
     },
     {
       "line": 289,
@@ -2647,8 +2897,25 @@
       "kind": "item",
       "sha256": "a163fbff4d6447d3718490ef098c0f03979454c27a1851a789d61bfa4c069868",
       "preview": "- Common transition-provenance **view** structs that can be constructed from existing saga/task/timeline histo",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "PreparedDecision supplies machine, linear/graph saga and task candidate inspection with native associated types. Timeline state/intents retain the shared machine TransitionRecord while native timeline steps/sessions keep their own API; no PreparedDecision implementation for timeline is claimed. Legacy absent coordinates remain absent, and proposed provenance is not a committed receipt. Diagnostics map lifecycle questions to native evidence."
     },
     {
       "line": 291,
@@ -2657,8 +2924,25 @@
       "kind": "paragraph",
       "sha256": "2e5ea267a8a5a466d9275a01c9616017e1d050abc2cd42469422d0be0202ac6f",
       "preview": "**Do not** move every `StepId`, `TaskTick`, and `TimelineRevision` into one generic integer type. Domain disti",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Domain distinctions remain intentional: no blanket StepId/TaskTick/TimelineRevision integer alias or implicit cross-protocol conversion was introduced. Explicit timeline intent correlation assigns bytes under that adapter contract, without converting authority or merging frontier/revision meaning."
     },
     {
       "line": 299,
@@ -4753,10 +5037,25 @@
           "file": "../qualification/door-package-checkpoint.json",
           "pointer": "/ci",
           "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
+        },
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
         }
       ],
-      "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The actual door example uses one non-Clone state enum with variant-local key data, one event enum and one Machine implementation. No SQL, scheduler, string registry or duplicate graph table is required. Stable/MSRV source/package consumers and independent eight-event oracle/mutations check this profile; explicit fixture metadata remains visible."
     },
     {
       "line": 566,
@@ -4775,10 +5074,25 @@
           "file": "../qualification/door-package-checkpoint.json",
           "pointer": "/ci",
           "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
+        },
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
         }
       ],
-      "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
+      "review_state": "illustrative_API_refinement_reviewed",
+      "assessment": "This illustrative door sketch predates definition/validate/transition-ID requirements and is not copied into the compiling tutorial. The actual door source uses the implemented trait, guards, state-local data and stable refusal codes. Current package/source checks validate that exact example on both compilers."
     },
     {
       "line": 612,
@@ -4797,10 +5111,25 @@
           "file": "../qualification/door-package-checkpoint.json",
           "pointer": "/ci",
           "scope_status": "all_ten_archives_and_seven_CI_jobs_at_c0e9997"
+        },
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
         }
       ],
-      "review_state": "needs_individual_review",
-      "assessment": "The runnable door example uses the actual API and covers enum-local data, accepted edges, guard refusals and unhandled decisions. It retains explicit local fixture metadata and stages no effects. The separate counter/durable examples cover effects; this link does not certify every clause in this block. The separate c0e9997 checkpoint qualifies all ten archives and source CI; later signature changes retain a separate scope."
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Door demonstrates legal/illegal edges, stable guarded refusals and Unhandled; nested/counter examples add staged effects and ordered hooks, and durable progression handles verified task-result errors/ambiguity. The flat door itself stages no effects, so it is not misrepresented as an external-effect demonstration."
     },
     {
       "line": 616,
@@ -4809,8 +5138,25 @@
       "kind": "paragraph",
       "sha256": "b10392b97bbd8a36e8f2961e4c01841c5f3cc222c8798c7190f159a337d8aaaa",
       "preview": "A second example must model a *nested* state machine: e.g. `Connection::{Disconnected, Connecting, Connected::",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "The checked nested-order example supplies typed parent/leaf events, explicit override/fallback, guard refusals and deterministic exit/entry traces. Its six complete traces and three compiled semantic negative controls cover the stated ergonomic profile; allocation probes separately use a non-Clone enum with local fields."
     },
     {
       "line": 618,
@@ -4957,8 +5303,25 @@
       "kind": "paragraph",
       "sha256": "a07581170f0a8151a18a6eaa15737b8488aeae5f3a81a1998dccbba11666bf04",
       "preview": "A public macro is optional sugar, not the only way to define hierarchy. Do not copy Statig's surface syntax ju",
-      "evidence": [],
-      "review_state": "needs_individual_review"
+      "evidence": [
+        {
+          "file": "core-contract-audit.json",
+          "pointer": "/",
+          "scope_status": "recorded_core_contract_tests_and_owner_scope"
+        },
+        {
+          "file": "acceptance-audit.json",
+          "pointer": "/criteria",
+          "scope_status": "shared_helper_and_retained_protocol_boundary_review"
+        },
+        {
+          "file": "../qualification/graph-start-package-checkpoint.json",
+          "pointer": "/ci",
+          "scope_status": "current_archive_and_CI_consumer_checks_not_historical_sequence_proof"
+        }
+      ],
+      "review_state": "individually_reviewed_scoped_support",
+      "assessment": "Hierarchy uses ordinary Rust traits/enums with no required proc macro and explicitly excludes orthogonal/parallel regions. No Statig/SCXML equivalence or syntax compatibility is claimed; optional macro sugar is not a missing mandatory feature."
     },
     {
       "line": 633,
