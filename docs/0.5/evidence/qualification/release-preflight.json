@@ -1,0 +1,37 @@
+{
+  "purpose": "Release-control preflight before final qualification; does not authorize tagging or publication.",
+  "checked_at_utc": "2026-11-17T01:07:47.045768+00:00",
+  "source_commit": "c6d2f8a6dd06beb9154cc4b0d470cf93febb61a3",
+  "cargo_metadata_command": "cargo metadata --locked --no-deps --format-version=1",
+  "release_order_command": "python3 scripts/publish-order.py --emit",
+  "publishable_crate_count": 10,
+  "dependency_order": [
+    "penelope-core",
+    "penelope-domain",
+    "penelope-intent",
+    "penelope-ports",
+    "penelope-statechronicle",
+    "penelope-timeline",
+    "penelope-sqlite",
+    "penelope-executor",
+    "penelope",
+    "penelope-process-runtime"
+  ],
+  "versions": {
+    "penelope-core": "0.5.0",
+    "penelope-domain": "0.5.0",
+    "penelope-intent": "0.5.0",
+    "penelope-ports": "0.5.0",
+    "penelope-statechronicle": "0.5.0",
+    "penelope-timeline": "0.5.0",
+    "penelope-sqlite": "0.5.0",
+    "penelope-executor": "0.5.0",
+    "penelope": "0.5.0",
+    "penelope-process-runtime": "0.5.0"
+  },
+  "all_versions_match_candidate_0_5_0": true,
+  "changelog_sha256": "47f53e8caea68aa1610c9133a990964a1339bc0e2dbd72f81d1b0786733324b9",
+  "changelog_state": "0.5.0 dated entry is not present yet; current entry remains Unreleased until qualification completes.",
+  "tag_or_publish_performed": false,
+  "scope_limit": "Preflight validates metadata and declared order only; package verification and exact-candidate release reconciliation remain required."
+}

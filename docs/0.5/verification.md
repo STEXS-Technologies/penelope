@@ -64,7 +64,7 @@ comparison; subprocess-split output is documented in the recorders.
 
 ## Open release gates
 
-- Qualify the final immutable library sources at `8dfe89d`: three rounds,
+- Qualify the corrected immutable library sources: three rounds,
   10,000 property cases and 100,000 requested fuzz executions per target, with
   per-round seeds 1/2/3 and pre/post source hashes. CI's shorter bounded fuzz run
   does not replace this. The already-running `9084239`/`cefa55f`/`be774e6`
@@ -77,15 +77,38 @@ comparison; subprocess-split output is documented in the recorders.
   stopped on a compiler-version tooling error after 21 fuzz batches, with unchanged
   source hashes. A fresh attempt uses installed `nightly-2026-08-05` through a
   retained invocation wrapper; its 1,000-run worker-protocol preflight passes.
-  Neither the failed attempt nor this preflight closes full qualification.
+  The subsequent pinned run at `8dfe89d` stopped after 53 of 84 batches when an
+  outbox fuzz input exceeded the shared test helper's 10-second wall-clock
+  deadline; libFuzzer recorded that unit at 23 seconds. The archived crash and
+  slow-unit inputs both replay in under 100 ms, so the exact failure does not
+  reproduce outside the long campaign. The [failure record and raw archive](evidence/qualification/final-chaos-deadline-failure.json)
+  preserve the failed scope and inputs. The harness now allows 60 seconds only
+  in fuzz builds (regular tests retain 10 seconds), and the bounded-fuzz runner
+  sets libFuzzer's per-input limit to 90 seconds. The corrected target builds,
+  both archived inputs replay, and a seeded 1,000-run smoke completes 2,165
+  executions. These checks do not close full qualification; the complete
+  three-round campaign must run again on the corrected immutable source.
+  Before the fix, branch tip `a068f13` had matching SHA-256 values for all 480
+  selected build/runtime inputs in the [branch input comparison](evidence/qualification/current-branch-input-equivalence.json);
+  this establishes input equality, not commit identity. The corrected source's
+  immutable run remains open.
 - Resolve findings from the completed versioned same-workload performance
   comparison against original 0.4 (`42ec187`): 31 alternating pairs across all
   eight selected legacy benchmarks, with 1,000 samples per timeline profile.
   Retain every finding and resolve review blockers under
-  [plan §13.2](plan.md#132-baseline-performance-methodology).
+  [plan §13.2](plan.md#132-baseline-performance-methodology). The
+  [post-QPSG SQLite runner](evidence/sqlite-balanced/post-qpsg-candidate.py)
+  now records 31 alternating durable-store pairs against the frozen 0.4
+  baseline. The paired [result summarizer](evidence/sqlite-balanced/summarize-post-qpsg.py)
+  was exercised against the archived 31-pair report format; it validates every
+  report and retains medians, paired flags and exploratory bootstrap intervals.
+  The final candidate comparison remains to be run after pinned chaos completes.
 - Finish the requirement-by-requirement maintenance/release audit, dated release
   notes and final source/artifact reconciliation. Passing earlier checkpoints
-  does not qualify later source automatically.
+  does not qualify later source automatically. The
+  [release preflight](evidence/qualification/release-preflight.json) confirms
+  ten `0.5.0` packages and dependency order; the dated changelog entry remains
+  deferred until qualification is complete.
 
 No regression acceptance is recorded. Diagnosis, intervals spanning zero and a
 smaller number of flags do not by themselves establish equivalence or waive a

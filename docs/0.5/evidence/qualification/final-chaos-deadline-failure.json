@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "status": "failed_harness_deadline",
+  "source_commit": "8dfe89d343f498d58b2e752980b43fa99e20c00d",
+  "start_utc": "2026-11-16T19:27:36.008216+00:00",
+  "end_utc": "2026-11-17T00:41:30.856427+00:00",
+  "elapsed_seconds": 18834.847930638993,
+  "campaign_exit_code": 1,
+  "completed_fuzz_batches": 53,
+  "required_fuzz_batches": 84,
+  "failing_round_seed": 2,
+  "target": "fuzz_sqlite_machine_outbox",
+  "failure": "Test helper block_on deadline assertion at crates/penelope-sqlite/tests/support/machines.rs:142; libFuzzer recorded the unit as taking 23 seconds.",
+  "artifact_replay": "Both recorded inputs pass against the old and corrected-source pinned binaries when replayed individually; observed execution is under 100 ms per input. This supports a campaign-time wall-clock deadline false positive and does not establish a product crash.",
+  "fix": "Use a 60-second block_on deadline only for fuzz builds, retain the 10-second regular test deadline, and set libFuzzer per-input timeout to 90 seconds.",
+  "fix_validation": "The corrected fuzz target builds; both exact artifacts replay successfully; a seeded 1,000-run campaign completed 2,165 executions (including corpus inputs) with no timeout.",
+  "source_hashes_unchanged": true,
+  "archive": {
+    "file": "final-chaos-deadline-failure.tar.gz",
+    "sha256": "2697bff5cd7563a881986324d926fc1be7cc38262449a1d62108519081f3e098",
+    "members_sha256": {
+      "raw/manifest.json": "5c33fa59cc1a9eefccec41e13e7950c6c08ef7d4000c8ab91413331b08d111ee",
+      "raw/campaign.log": "391469f41a1c1ccce99bce1e5db3e889b72011ab483696aa3fba3a3929514533",
+      "raw/pinned-worker-smoke.log": "99ccb8a98dcd7a43049e92f6b41a1aa85539f805e0d43f3139d720f317c3b4c0",
+      "reproduction/exact-input-replay.log": "1de4f80ef033208a8c9900fc6eff80ed5e7b99d03b4b4f366883632218a888d8",
+      "inputs/crash-4c483e7edc1924d8ba91cd77ecef09d758cefdda": "058167c308f3c47ecb8a56de4bfbab46acf107114a74a433d53475b67cdc253e",
+      "inputs/slow-unit-4f78ee5802176ef1f2df9e69df28cfefeea2e360": "cc6f660c1738244b14ed5dc8573b6d6b736a283c808a43b7e43f2e43fa3e1ac1"
+    }
+  },
+  "limits": [
+    "This failed attempt does not qualify the source or any remaining release gate.",
+    "The timeout cause is diagnosed from the harness assertion, 23-second slow-unit record, and non-reproducing exact artifact replays; no database correctness issue was observed in these specific artifacts."
+  ]
+}
