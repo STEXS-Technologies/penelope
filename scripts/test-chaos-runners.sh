@@ -34,7 +34,7 @@ for iteration in range(3):
     assert {call['args'][3] for call in block[1:]} == targets, block
     for call in block[1:]:
         assert call['args'][:3] == ['+nightly', 'fuzz', 'run'], call
-        assert call['args'][4:] == ['--', '-runs=1', f'-seed={iteration + 1}'], call
+        assert call['args'][4:] == ['--', '-runs=1', '-timeout=90', f'-seed={iteration + 1}'], call
 PY
 for invalid_seed in 0 -1 2147483648 999999999999999999999999 01 '1 2' garbage; do
   for runner in run_bounded_fuzz.sh run_pure_chaos_drill.sh; do
