@@ -130,11 +130,16 @@ impl Wake for ThreadWake {
         self.0.unpark();
     }
 }
+#[allow(unexpected_cfgs)] // `fuzzing` is supplied by cargo-fuzz, not Cargo features.
 pub(super) fn block_on<T>(future: impl Future<Output = T>) -> T {
     let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
     let mut context = Context::from_waker(&waker);
     let mut future = Box::pin(future);
-    let deadline = Instant::now() + Duration::from_secs(10);
+    // Fuzzing repeatedly creates SQLite workers and can hit long scheduler or
+    // filesystem delays. Keep a bounded wait, but leave enough headroom for
+    // those runs; libFuzzer also has an explicit per-input timeout.
+    let timeout = if cfg!(fuzzing) { 60 } else { 10 };
+    let deadline = Instant::now() + Duration::from_secs(timeout);
     loop {
         if let Poll::Ready(value) = future.as_mut().poll(&mut context) {
             return value;

@@ -17,7 +17,9 @@ fi
 
 # Optional explicit seeds make repeated campaigns reproducible. With no seed,
 # libFuzzer retains its normal randomized selection.
-fuzz_options=(-runs="${fuzz_runs}")
+# Bound stuck inputs while allowing the SQLite worker-backed targets room for
+# slow local scheduling and filesystem activity during long campaigns.
+fuzz_options=(-runs="${fuzz_runs}" -timeout=90)
 if [[ -n "${PENELOPE_FUZZ_SEED:-}" ]]; then
   if ! [[ "${PENELOPE_FUZZ_SEED}" =~ ^[1-9][0-9]{0,9}$ ]] \
     || (( PENELOPE_FUZZ_SEED > 2147483647 )); then
