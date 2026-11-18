@@ -7,7 +7,7 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
-The working tree includes a timeline optimization that borrows lineage and
+The `238380b` candidate includes a timeline optimization that borrows lineage and
 optional override records instead of copying them on every lookup. Its
 [local source/artifact reconciliation](evidence/qualification/lineage-borrow-qualification.json)
 records the exact patch over `7ab93d2`, matching all 449 tracked crate/workspace
@@ -15,9 +15,16 @@ inputs between this checkout and the isolated qualification tree. Both compiler
 workspace runs report 700 passes. Ten final archives verify, extracted-workspace
 checks pass on both compilers, and final packaged executor tests include the
 strengthened admission-race and receipt-read failure assertions. Strict Clippy,
-warning-denying API docs and the unchanged coverage ratchet pass. This local
-patch has no clean-commit CI result yet. The clean `7ab93d2` results below retain
-their earlier scope. Rejected SQLite and serializer experiments are not integrated.
+warning-denying API docs and the unchanged coverage ratchet pass. The
+[clean `238380b` checkpoint](evidence/qualification/lineage-clean-checkpoint.json)
+now retains all seven green CI jobs, ten freshly verified clean archives and
+member-level reconciliation to the tested packages. Every member matches except
+recorded VCS identity and any reconciled internal lock checksums; no new
+700-check extracted run is claimed. All 449 source inputs match the local
+qualification, including all 72 coverage-reported production hashes. All 58
+indexed named checks are observed in both current compiler CI jobs. The clean
+`7ab93d2` results below retain their earlier scope. Rejected SQLite and serializer
+experiments are not integrated.
 
 All ten library crates use candidate version 0.5.0. The
 [preceding clean source/artifact reconciliation](evidence/qualification/pre-pr-reconciliation.json)
@@ -54,7 +61,7 @@ retain their earlier source scopes.
 | Gate | Verified result and scope |
 | --- | --- |
 | CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
-| CI | All seven jobs pass at [`7ab93d2`](https://github.com/STEXS-Technologies/penelope/actions/runs/43997881950): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`238380b`](https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
@@ -150,7 +157,8 @@ comparison; subprocess-split output is documented in the recorders.
   It is not a new eight-workload final-source qualification or proof that an
   unflagged historical profile is equivalent.
 - The requirement-reference and source/package reconciliation is complete for
-  `7ab93d2`, with open acceptance conditions preserved. Final performance
+  `238380b`, with open acceptance conditions preserved. Its ten clean archives
+  reconcile to the tested local patch, and all seven CI jobs pass. Final performance
   disposition, full campaign qualification and dated release notes remain open.
   Later code changes or the eventual release revision require their own source
   and artifact reconciliation. The

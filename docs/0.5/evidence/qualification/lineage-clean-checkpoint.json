@@ -1,0 +1,1661 @@
+{
+  "source_commit": "238380bd7d90da35495286c9616434ee045033ba",
+  "scope": "Clean committed source/artifact checkpoint after timeline borrowing and deterministic native-admission tests. Fresh ten-archive package verification, actual archive-content reconciliation and all seven CI jobs. No performance acceptance or release qualification granted.",
+  "ci": {
+    "conclusion": "success",
+    "headSha": "238380bd7d90da35495286c9616434ee045033ba",
+    "jobs": [
+      {
+        "completedAt": "2026-11-18T01:21:48Z",
+        "conclusion": "success",
+        "databaseId": 134500645541,
+        "name": "Stable verification",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:15Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:19Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:15Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:19Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/check-action-pins.sh",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:20Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/check-layer-boundaries.sh",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:23Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/test-layer-boundaries.sh",
+            "number": 7,
+            "startedAt": "2026-11-18T01:16:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:23Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/verify-machine-wire-fixtures.py",
+            "number": 8,
+            "startedAt": "2026-11-18T01:16:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:26Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/test-chaos-runners.sh",
+            "number": 9,
+            "startedAt": "2026-11-18T01:16:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:28Z",
+            "conclusion": "success",
+            "name": "Run python3 -m unittest discover -s scripts/tests",
+            "number": 10,
+            "startedAt": "2026-11-18T01:16:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:28Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/publish-order.py --emit",
+            "number": 11,
+            "startedAt": "2026-11-18T01:16:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:29Z",
+            "conclusion": "success",
+            "name": "Run cargo fmt --all --check",
+            "number": 12,
+            "startedAt": "2026-11-18T01:16:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:34Z",
+            "conclusion": "success",
+            "name": "Run cargo check --manifest-path ci/compat-0.4/Cargo.toml --locked",
+            "number": 13,
+            "startedAt": "2026-11-18T01:16:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:40Z",
+            "conclusion": "success",
+            "name": "Run cargo test --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked",
+            "number": 14,
+            "startedAt": "2026-11-18T01:16:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:41Z",
+            "conclusion": "success",
+            "name": "Run cargo fmt --manifest-path ci/compat-0.4/Cargo.toml --all -- --check",
+            "number": 15,
+            "startedAt": "2026-11-18T01:16:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:42Z",
+            "conclusion": "success",
+            "name": "Run cargo clippy --manifest-path ci/compat-0.4/Cargo.toml --all-targets --all-features --locked -- -D warnings",
+            "number": 16,
+            "startedAt": "2026-11-18T01:16:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:48Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked",
+            "number": 17,
+            "startedAt": "2026-11-18T01:16:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:48Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked",
+            "number": 18,
+            "startedAt": "2026-11-18T01:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:48Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin door --locked",
+            "number": 19,
+            "startedAt": "2026-11-18T01:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:48Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/check-nested-example.py",
+            "number": 20,
+            "startedAt": "2026-11-18T01:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:48Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked",
+            "number": 21,
+            "startedAt": "2026-11-18T01:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:49Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked",
+            "number": 22,
+            "startedAt": "2026-11-18T01:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:08Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked",
+            "number": 23,
+            "startedAt": "2026-11-18T01:16:49Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:17Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/check-saga-machine-parity.sh",
+            "number": 24,
+            "startedAt": "2026-11-18T01:17:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:26Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/check-sqlite-upgrade.py",
+            "number": 25,
+            "startedAt": "2026-11-18T01:17:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:26Z",
+            "conclusion": "success",
+            "name": "Run cargo check -p penelope-core --no-default-features --locked",
+            "number": 26,
+            "startedAt": "2026-11-18T01:17:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:26Z",
+            "conclusion": "success",
+            "name": "Run cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+            "number": 27,
+            "startedAt": "2026-11-18T01:17:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:27Z",
+            "conclusion": "success",
+            "name": "Run cargo test --workspace --doc --all-features --locked --exclude penelope-fuzz",
+            "number": 28,
+            "startedAt": "2026-11-18T01:21:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:33Z",
+            "conclusion": "success",
+            "name": "Run cargo clippy --workspace --all-targets --all-features --locked --exclude penelope-fuzz -- -D warnings",
+            "number": 29,
+            "startedAt": "2026-11-18T01:21:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:35Z",
+            "conclusion": "success",
+            "name": "Run RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --all-features --locked --exclude penelope-fuzz",
+            "number": 30,
+            "startedAt": "2026-11-18T01:21:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:39Z",
+            "conclusion": "success",
+            "name": "Run cargo bench -p penelope-executor --bench linear_saga --locked",
+            "number": 31,
+            "startedAt": "2026-11-18T01:21:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:39Z",
+            "conclusion": "success",
+            "name": "Run cargo bench -p penelope-executor --bench parallel_linear_saga --locked",
+            "number": 32,
+            "startedAt": "2026-11-18T01:21:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:40Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope --example trade --locked",
+            "number": 33,
+            "startedAt": "2026-11-18T01:21:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:40Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope --example trade_compensation --locked",
+            "number": 34,
+            "startedAt": "2026-11-18T01:21:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:40Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope --example trade_retry_timer --locked",
+            "number": 35,
+            "startedAt": "2026-11-18T01:21:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:40Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope --example trade_manual_review --locked",
+            "number": 36,
+            "startedAt": "2026-11-18T01:21:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:40Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope --example trade_competing_lock --locked",
+            "number": 37,
+            "startedAt": "2026-11-18T01:21:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:41Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope-executor --example recoverable_task --locked",
+            "number": 38,
+            "startedAt": "2026-11-18T01:21:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:42Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope-timeline --example rewindable_simulation --locked",
+            "number": 39,
+            "startedAt": "2026-11-18T01:21:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:42Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope-timeline --example quickstart --locked",
+            "number": 40,
+            "startedAt": "2026-11-18T01:21:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:42Z",
+            "conclusion": "success",
+            "name": "Run cargo run -p penelope-sqlite --example optimistic_timeline --locked",
+            "number": 41,
+            "startedAt": "2026-11-18T01:21:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:43Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/run-executor-saga-example.sh",
+            "number": 42,
+            "startedAt": "2026-11-18T01:21:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:46Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/run-supervised-saga-example.sh",
+            "number": 43,
+            "startedAt": "2026-11-18T01:21:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:46Z",
+            "conclusion": "skipped",
+            "name": "Preserve property regression seeds",
+            "number": 44,
+            "startedAt": "2026-11-18T01:21:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:46Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 87,
+            "startedAt": "2026-11-18T01:21:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:46Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 88,
+            "startedAt": "2026-11-18T01:21:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:46Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 89,
+            "startedAt": "2026-11-18T01:21:46Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500645541"
+      },
+      {
+        "completedAt": "2026-11-18T01:16:34Z",
+        "conclusion": "success",
+        "databaseId": 134500645854,
+        "name": "Allocation-free portable core",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:19Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:19Z",
+            "conclusion": "success",
+            "name": "Run rustc --version",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:22Z",
+            "conclusion": "success",
+            "name": "Run cargo test -p penelope-core --test task_allocations --no-default-features --locked",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:23Z",
+            "conclusion": "success",
+            "name": "Run cargo test -p penelope-core --test machine_allocations --no-default-features --locked",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:25Z",
+            "conclusion": "success",
+            "name": "Run cargo test -p penelope-core --test task_allocations --features serde --locked",
+            "number": 7,
+            "startedAt": "2026-11-18T01:16:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:29Z",
+            "conclusion": "success",
+            "name": "Run cargo check -p penelope-core --no-default-features --target riscv32imafc-unknown-none-elf --locked",
+            "number": 8,
+            "startedAt": "2026-11-18T01:16:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:31Z",
+            "conclusion": "success",
+            "name": "Run cargo check -p penelope-core --features serde --target riscv32imafc-unknown-none-elf --locked",
+            "number": 9,
+            "startedAt": "2026-11-18T01:16:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:32Z",
+            "conclusion": "success",
+            "name": "Run cargo check -p penelope-timeline --no-default-features --target riscv32imafc-unknown-none-elf --locked",
+            "number": 10,
+            "startedAt": "2026-11-18T01:16:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:32Z",
+            "conclusion": "success",
+            "name": "Run cargo check -p penelope-timeline --features alloc --target riscv32imafc-unknown-none-elf --locked",
+            "number": 11,
+            "startedAt": "2026-11-18T01:16:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:32Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 22,
+            "startedAt": "2026-11-18T01:16:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:32Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 23,
+            "startedAt": "2026-11-18T01:16:32Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500645854"
+      },
+      {
+        "completedAt": "2026-11-18T01:18:16Z",
+        "conclusion": "success",
+        "databaseId": 134500645890,
+        "name": "Supply-chain verification",
+        "startedAt": "2026-11-18T01:15:56Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:14Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:16Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:16Z",
+            "conclusion": "success",
+            "name": "Run cargo install cargo-audit --locked",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:11Z",
+            "conclusion": "success",
+            "name": "Run cargo install cargo-deny --locked",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:13Z",
+            "conclusion": "success",
+            "name": "Run cargo audit",
+            "number": 7,
+            "startedAt": "2026-11-18T01:18:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:14Z",
+            "conclusion": "success",
+            "name": "Run cargo deny check advisories bans licenses sources",
+            "number": 8,
+            "startedAt": "2026-11-18T01:18:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:14Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 15,
+            "startedAt": "2026-11-18T01:18:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:14Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 16,
+            "startedAt": "2026-11-18T01:18:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:18:14Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-11-18T01:18:14Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500645890"
+      },
+      {
+        "completedAt": "2026-11-18T01:17:21Z",
+        "conclusion": "success",
+        "databaseId": 134500645910,
+        "name": "Optional StateChronicle signed-event conformance",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:16:01Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:13Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:16:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:14Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:27Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:34Z",
+            "conclusion": "success",
+            "name": "Run rustup toolchain install 1.100.0 --profile minimal",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:18Z",
+            "conclusion": "success",
+            "name": "Run python3 penelope-conformance/scripts/run-statechronicle-conformance.py statechronicle-upstream",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:18Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 11,
+            "startedAt": "2026-11-18T01:17:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:18Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 12,
+            "startedAt": "2026-11-18T01:17:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:18Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-11-18T01:17:18Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500645910"
+      },
+      {
+        "completedAt": "2026-11-18T01:21:49Z",
+        "conclusion": "success",
+        "databaseId": 134500645933,
+        "name": "Bounded fuzzing",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:13Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@be39649afda95dbf70f87cce95f68b8d5797b296",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:13Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:29Z",
+            "conclusion": "success",
+            "name": "Run cargo install cargo-fuzz --locked",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:43Z",
+            "conclusion": "success",
+            "name": "Run PENELOPE_FUZZ_RUNS=1000 ./scripts/run_bounded_fuzz.sh",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:43Z",
+            "conclusion": "skipped",
+            "name": "Preserve reproducible fuzz failures",
+            "number": 7,
+            "startedAt": "2026-11-18T01:21:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:48Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c",
+            "number": 13,
+            "startedAt": "2026-11-18T01:21:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:48Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 14,
+            "startedAt": "2026-11-18T01:21:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:21:48Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-11-18T01:21:48Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500645933"
+      },
+      {
+        "completedAt": "2026-11-18T01:17:29Z",
+        "conclusion": "success",
+        "databaseId": 134500646108,
+        "name": "Secret scanning",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:03Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:28Z",
+            "conclusion": "success",
+            "name": "Scan repository history for obvious secrets",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:28Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 6,
+            "startedAt": "2026-11-18T01:17:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:28Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7,
+            "startedAt": "2026-11-18T01:17:28Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500646108"
+      },
+      {
+        "completedAt": "2026-11-18T01:26:46Z",
+        "conclusion": "success",
+        "databaseId": 134500646120,
+        "name": "Minimum supported Rust",
+        "startedAt": "2026-11-18T01:15:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-18T01:15:59Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-18T01:15:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-11-18T01:15:59Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:22Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87",
+            "number": 3,
+            "startedAt": "2026-11-18T01:16:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:22Z",
+            "conclusion": "success",
+            "name": "Run rustc --version",
+            "number": 4,
+            "startedAt": "2026-11-18T01:16:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:35Z",
+            "conclusion": "success",
+            "name": "Run cargo test --manifest-path ci/compat-0.4/Cargo.toml --all-features --locked",
+            "number": 5,
+            "startedAt": "2026-11-18T01:16:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:45Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin first-machine --locked",
+            "number": 6,
+            "startedAt": "2026-11-18T01:16:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:45Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin flat --locked",
+            "number": 7,
+            "startedAt": "2026-11-18T01:16:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:45Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin door --locked",
+            "number": 8,
+            "startedAt": "2026-11-18T01:16:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:46Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/check-nested-example.py",
+            "number": 9,
+            "startedAt": "2026-11-18T01:16:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:46Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin decisions --locked",
+            "number": 10,
+            "startedAt": "2026-11-18T01:16:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:16:47Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin timeline --features timeline --locked",
+            "number": 11,
+            "startedAt": "2026-11-18T01:16:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:00Z",
+            "conclusion": "success",
+            "name": "Run cargo run --manifest-path ci/machine-consumer/Cargo.toml --bin durable --features durable --locked",
+            "number": 12,
+            "startedAt": "2026-11-18T01:16:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:23Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/run-supervised-saga-example.sh",
+            "number": 13,
+            "startedAt": "2026-11-18T01:17:00Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:42Z",
+            "conclusion": "success",
+            "name": "Run ./scripts/check-saga-machine-parity.sh",
+            "number": 14,
+            "startedAt": "2026-11-18T01:17:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:17:56Z",
+            "conclusion": "success",
+            "name": "Run python3 scripts/check-sqlite-upgrade.py",
+            "number": 15,
+            "startedAt": "2026-11-18T01:17:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:26:44Z",
+            "conclusion": "success",
+            "name": "Run cargo test --workspace --all-targets --all-features --locked --exclude penelope-fuzz",
+            "number": 16,
+            "startedAt": "2026-11-18T01:17:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:26:44Z",
+            "conclusion": "skipped",
+            "name": "Preserve MSRV property regression seeds",
+            "number": 17,
+            "startedAt": "2026-11-18T01:26:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:26:44Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 34,
+            "startedAt": "2026-11-18T01:26:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-18T01:26:44Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 35,
+            "startedAt": "2026-11-18T01:26:44Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867/job/134500646120"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/STEXS-Technologies/penelope/actions/runs/44214450867"
+  },
+  "archives": {
+    "source_commit": "238380bd7d90da35495286c9616434ee045033ba",
+    "tracked_inputs_compared": 449,
+    "clean_worktree": true,
+    "archives": [
+      {
+        "archive": "penelope-0.5.0.crate",
+        "sha256": "3e1f7907a48fb29609e8e8adb4bd550729fca61abe01b011b0df4a4d7cf91f32",
+        "qualified_archive_sha256": "3a1f5e8e003bcc666141f61244947260f9b779477555926284eeb1830deada33",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope"
+        }
+      },
+      {
+        "archive": "penelope-core-0.5.0.crate",
+        "sha256": "fd770a113ebd533d770ee7e8185bc0e16a888b13e0841cf8d0ec0ccbc68e7081",
+        "qualified_archive_sha256": "adde574d6796490a8c492b74943e6455fc85c9236ee8c12ccd45451ec1998fbb",
+        "changed_members": [
+          ".cargo_vcs_info.json"
+        ],
+        "lock_identity_check": null,
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-core"
+        }
+      },
+      {
+        "archive": "penelope-domain-0.5.0.crate",
+        "sha256": "39a643b0158a37a9f9aac14316b5b3f5ad6931eb9446e07789ba36998b3f378d",
+        "qualified_archive_sha256": "575abf1de66512c9dd5b00ce361b66ee128e8383546e62f8c5675a9b5980a80a",
+        "changed_members": [
+          ".cargo_vcs_info.json"
+        ],
+        "lock_identity_check": null,
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-domain"
+        }
+      },
+      {
+        "archive": "penelope-executor-0.5.0.crate",
+        "sha256": "dcbee363f2aa02a978d3d76a7947f13f41df789d05f6fc68f7b946ac217103fd",
+        "qualified_archive_sha256": "0a16897f656672ea88a8b44dfcfd763d9fc30b53cb5eb4e02bb46786dd09fb86",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-executor"
+        }
+      },
+      {
+        "archive": "penelope-intent-0.5.0.crate",
+        "sha256": "59dbafd0948590d91aeff6fa70fcf44a9edf5eaafa46f6a21ee645d5121f0e51",
+        "qualified_archive_sha256": "0ec1e31fab5375d5384947086a75c940ba12b8d4837ec839f62ddcccc643e8c1",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-intent"
+        }
+      },
+      {
+        "archive": "penelope-ports-0.5.0.crate",
+        "sha256": "c9e4bf43082cdb2171368d2fc72bebf76bd8848812238f4c13b68f54905cca0b",
+        "qualified_archive_sha256": "fda740b1e0d26b341ebb9a08553805fa6c3076f865a222549dfbad53ee61c7ba",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-ports"
+        }
+      },
+      {
+        "archive": "penelope-process-runtime-0.5.0.crate",
+        "sha256": "0e79fa66a49dec89bdfffedf26f7f6bef08e1f3d7781b64faae0cc0d154825b6",
+        "qualified_archive_sha256": "5c79d38bbc680051a6e938e18117d82427e35df6907db6e04fd177bbf8a88f5f",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-process-runtime"
+        }
+      },
+      {
+        "archive": "penelope-sqlite-0.5.0.crate",
+        "sha256": "31233f5a9e7ad653ef3e0869a98957cf2a5cb969bd3440a5ae3a2f324a3c91a5",
+        "qualified_archive_sha256": "2a859d64b7150d06b30742d64dec55f56f24fea3582d46a5ae57b41074fec6ce",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-sqlite"
+        }
+      },
+      {
+        "archive": "penelope-statechronicle-0.5.0.crate",
+        "sha256": "c2ce07663bd39829d1988297eb7326d606e9992ebcce15e6007004880fa9d7cd",
+        "qualified_archive_sha256": "d1aff08699ef0204b2832fe895d81448f361aa2b596d59317fb05466a07d8c7b",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-statechronicle"
+        }
+      },
+      {
+        "archive": "penelope-timeline-0.5.0.crate",
+        "sha256": "acd54d7cdaefe56833698244a0ecd89f0336e77aac1346443c24e464fcd7235c",
+        "qualified_archive_sha256": "a418ae00cfcbe3b0e29985db3f87fd039316df74084813540082fee1eaa6ccec",
+        "changed_members": [
+          ".cargo_vcs_info.json",
+          "Cargo.lock"
+        ],
+        "lock_identity_check": "Only internal archive checksums may change; package identity set and every external source/version/checksum match.",
+        "vcs": {
+          "git": {
+            "sha1": "238380bd7d90da35495286c9616434ee045033ba"
+          },
+          "path_in_vcs": "crates/penelope-timeline"
+        }
+      }
+    ],
+    "scope": "Every archive member matches tested local-patch final archives except VCS identity and any reconciled internal lock checksums. No new 700-check extracted test run claimed."
+  },
+  "source_inputs_sha256": {
+    "Cargo.lock": "ee673574a53d5bb30f8c933821ab5c3a4d52f151cc9bef76d662923b50557248",
+    "Cargo.toml": "e426551d023985c2b673c39b47d9646a702bd69bf2a045382b6f3de57662eff8",
+    "crates/penelope-core/Cargo.toml": "42a5ccd27442d5c3efefc7ad0aa85b23f4785092c733d874e97170012aa92d2b",
+    "crates/penelope-core/benches/machine_hierarchy.rs": "05e9ffd423704a80b9ca0c6d05b9a6c30163ca23224f34744325e14d88314cd3",
+    "crates/penelope-core/benches/machine_operations.rs": "02e08b726bd3a49873d3d7387867f669760c0cdc6d6dc952271a79f794a2884e",
+    "crates/penelope-core/benches/machine_state_cost.rs": "b2a675f1df9673271c0ee77b19a2ac49fde9eea4ea93056a053105f53bc3a0f0",
+    "crates/penelope-core/benches/support/measurement.rs": "338745bfdc3bd7978fe5ecdde0a486f011471df77f618c7637de462c44b652e4",
+    "crates/penelope-core/src/__private.rs": "032eed4ce082561dd65ce87969f26ff82d0fa8b720172f1a1b5ec663d25d7678",
+    "crates/penelope-core/src/implementation.rs": "26d606de4f868788fb6a846015bbe152704556ac0709ad09688e130d0bfe88bd",
+    "crates/penelope-core/src/lib.rs": "2c25e3253bda3fff9becc244dc65b09ba408ca76328e5b21a9b3d0c6de1e6757",
+    "crates/penelope-core/src/machine/contracts.rs": "a6f2da31098da7c406b23ce43bf9550139afd158af361d4171a71da21ca4cbe6",
+    "crates/penelope-core/src/machine/hierarchy.rs": "44a59df8d6411c394756eab53c8597d2ce15bd4c93eaf6b24a4236d0b13f2020",
+    "crates/penelope-core/src/machine/identities.rs": "718967acb68d104c8309269919f559393febbcd601bcee93986c9848c20a29b9",
+    "crates/penelope-core/src/machine/memory.rs": "e3dc5ccce5bdb449c0850645243aa19b02a6630ebdbd3caeb972fc2911eb00d7",
+    "crates/penelope-core/src/machine/mod.rs": "b289851045ab7b46b5786e4a14e3a8fc20ae7db1ca8bc37cf38b31acb6c025af",
+    "crates/penelope-core/src/machine/view.rs": "677252170a809a52316b19e04147709b87b85fc50a2157a622aff1bcb3d8f171",
+    "crates/penelope-core/src/machine/wire.rs": "25e4b24e64832b4f28de8110c68683a92a996d19d17aa3fc8dedc451a8679078",
+    "crates/penelope-core/src/mod.rs": "5f1a265da7a14c04af4b7a2d8de744e065c709746575953a4d8c70737af78841",
+    "crates/penelope-core/src/task/contracts.rs": "01fe659d051a4f12fb83a47ab1182a28d6a6e79b18341037e71e6ac530ec9803",
+    "crates/penelope-core/src/task/control.rs": "d265358ef05df8b6fb44bc7e9564ca799fd0633e8568f5aa06abfcd712a58229",
+    "crates/penelope-core/src/task/identities.rs": "7c664cb39e2bc91a7d780d0afda6e2e8cb5e4f5db33a11e5d4d3bf95e2c01942",
+    "crates/penelope-core/src/task/mod.rs": "0ab43ec5dc093ccb87c79113cfe11832d7db1b989448e75c090f35a5809d8186",
+    "crates/penelope-core/src/task/projection.rs": "346f16489e294e4c840229a0dff31bfebdb1deb7dd18a618939f044f2896974f",
+    "crates/penelope-core/src/task/runtime.rs": "7baf8b0d2298b733b840ea748b3de04644735a76b30bc76a518e9ef4c43fc584",
+    "crates/penelope-core/src/timeline/contracts.rs": "716e111025c890bdd76dffbdb3ddbce588f6ef0faec2fc85029fa4a05a9e95ce",
+    "crates/penelope-core/src/timeline/identities.rs": "2def725fa0f157c9f01a21d32ae8e8dc8fd82108b8781a76d6d98dc12e090d55",
+    "crates/penelope-core/src/timeline/mod.rs": "e5fb9df688b6c614e5fb1c6a19d8fecb628715aedafa30e0c831d6bb1c77d7ce",
+    "crates/penelope-core/src/timeline/projection.rs": "55781d4b5c5ad295c42a512eecf9eaf519b1b896117bf67d38a7200d41dd708d",
+    "crates/penelope-core/src/timeline/replay_plan.rs": "7f3e0d09878a95dbf3cb139fea2974008f3d80fce4e4614a93dd7f54e4312279",
+    "crates/penelope-core/src/timeline/wire.rs": "e3254164b25dc0ca7bbdb61cd253d5a502ededc906f33063077e4cda6916436e",
+    "crates/penelope-core/tests/fixtures/machine-v1/caused.bin": "3b410e70f87684593c3ba2fd8fc218b0818fb66f5837a26c5d5a2d528b1b5f79",
+    "crates/penelope-core/tests/fixtures/machine-v1/empty.bin": "3e4d8501f6ba9ac0556b9892272307e14aebc967f486fa947e8de2ab2dd4eb98",
+    "crates/penelope-core/tests/fixtures/machine-v1/manifest.json": "f676134b0fc0e9c64cf9e1d6f7ffcf52e69aa38bee9afb3820e8577954b1c1eb",
+    "crates/penelope-core/tests/fixtures/timeline_v1/anchor.hex": "ff9c569807e270e476321442e2aeba284bc509d66821db0325653576a00305fb",
+    "crates/penelope-core/tests/fixtures/timeline_v1/checkpoint-empty.hex": "305c07a2360955921cc00156b201f3fac84211ea198c17246db67cf9e89718c4",
+    "crates/penelope-core/tests/fixtures/timeline_v1/checkpoint-full.hex": "ea03da0ede4fc0f1ad3711e61ad6f99b58f380e4ae10881e5357c74ac67badce",
+    "crates/penelope-core/tests/fixtures/timeline_v1/fork-input.hex": "bebadb5236ceea32d4338dc91c87fe95911de954214230a6d5fc5a2b866d919c",
+    "crates/penelope-core/tests/fixtures/timeline_v1/fork-state.hex": "1025e62edfc10cec01db317ef1c5f3b72537d564664d20924c53ba5c4cc4ea63",
+    "crates/penelope-core/tests/fixtures/timeline_v1/input.hex": "8da7b297c5bd90b7fea8648a402061f7485c3c34a0fe1f04840c274ebd9330cb",
+    "crates/penelope-core/tests/fixtures/timeline_v1/intent.hex": "fd5fe329cece3cbdae718bc99d52c523161c1d80e1761bfc6293a1031b70279f",
+    "crates/penelope-core/tests/generated_machines.rs": "52fdfaabe9302d96dd421afd746710309f632192f1d25255d80fa2f3da46c8ee",
+    "crates/penelope-core/tests/intent_admission.rs": "5b84e98875ab92236437e1614a52c01730dde883d5d77f665caaf6a3b11cc1f1",
+    "crates/penelope-core/tests/machine.rs": "f9f9cfdfa2870a62346d85ceb5984899d8ca4a004cf83d769320b0250154e03a",
+    "crates/penelope-core/tests/machine_allocations.rs": "73e1dfb19f91ee8dfb41db55c804ef528c92537c02d1b8641b63dddf470af422",
+    "crates/penelope-core/tests/machine_hierarchy.rs": "ac2450b0d4d30f0ddd88ccfb5d1f488f976da2cea7fc030f810d1c51586d564d",
+    "crates/penelope-core/tests/machine_wire.rs": "c24744aef241836d87e688eb86e5087366ee86241482df4cc3ec02b56a05009f",
+    "crates/penelope-core/tests/prepared_task.rs": "8738404c75f0bb0b8e24e24c82a68df02e1e3df8aaaa7ed0ad577743b55d5ef3",
+    "crates/penelope-core/tests/support/allocations.rs": "0e2bfddecfebb1105ddeff953cf740f981a9017f36f5b0119361d44123550e69",
+    "crates/penelope-core/tests/support/generated_machine.rs": "6f8acc942fb9708fbd3e7cf3a44279d4c6363faf6033868947d99fb082fd48ef",
+    "crates/penelope-core/tests/support/task_projection_0_4.rs": "be2c88e75abe667ce77f437b7cf57862b990e2eec34778f545a70f9eb1caba58",
+    "crates/penelope-core/tests/task_allocations.rs": "3ea4f8135f35c3913b161db2779c1a02d35d0384288b732795f6c846c32d784a",
+    "crates/penelope-core/tests/timeline_plans.rs": "7e5033fb00aaac12966e9718976efea5e5172392049349feb39364fad28c67af",
+    "crates/penelope-core/tests/timeline_projection.rs": "028dc2759667e921623b22f469ec515d44f853dfc6720de3a1df3ff0db561dba",
+    "crates/penelope-core/tests/timeline_wire.rs": "ab4c3958b3bbf045eb04fbbcebc18f1f8da1b9c6c59673bb27618dd0a9b4a2df",
+    "crates/penelope-domain/Cargo.toml": "7f0b47c6d5539628c9818a2117fbbf3866fc8ae9e4c3da120842673f8da33ba8",
+    "crates/penelope-domain/benches/action_effect_allocations.rs": "decd28c3f45be5032e8f826aec65817adeb77410494c3c6ad0cf37a831074bb3",
+    "crates/penelope-domain/benches/action_effect_key.rs": "79408a20c8c85d3268f053e352964aee84ee9cb50bd6670f3be1cf0298422ed2",
+    "crates/penelope-domain/benches/effect_key_allocations.rs": "635541710f72e1331acdba70759d97aa4c40fa50408faadaf4d15809353b0bdd",
+    "crates/penelope-domain/benches/effect_key_encoding.rs": "03f8b9876c5f16c501609b1bf241354f1f7163ff76e9de2d43b2c6eeb92f6831",
+    "crates/penelope-domain/benches/identifier_decode.rs": "cf165699b2d9a120d777908bd7713285505a306ebf7b70c2f5b593b741cd0d3e",
+    "crates/penelope-domain/src/identifier_serde.rs": "a9333281e94c51bca02ea0fd0926c61d2354cb7900bc7e44a37bcc8963c9c15b",
+    "crates/penelope-domain/src/identifier_text.rs": "891835e58d34622dd4b429155229d65379b7c38ba225be884b3b0d846af58484",
+    "crates/penelope-domain/src/implementation.rs": "6a6dbcb7306305bce4d145e0f0e479ed5d4d14c0b2702de09cae79124502d1bb",
+    "crates/penelope-domain/src/lib.rs": "84557db68cdbb60eefd971d7c0972f4fdad6f445421cca1c5c7d0c989e98ff9e",
+    "crates/penelope-domain/src/mod.rs": "eee93e629d57890f8e71d6f7b77fe39201308801b11dae51af5ce7a00a8c140b",
+    "crates/penelope-domain/tests/action_effect_allocations.rs": "d3cbc1109a72b04317456310d070fb9520e7617693e159451486ca6042a00b1f",
+    "crates/penelope-domain/tests/action_effect_identity.rs": "105f62998646d67dd1dccbd4a66df54b3c256f171ba0615d6b42c8d7da9ead65",
+    "crates/penelope-domain/tests/effect_key_encoding.rs": "cc985b19b59881dec3849b28dffd28c0c3436f81539a8a0a6bc995811ee371f3",
+    "crates/penelope-domain/tests/fixtures/current/canonical-command.json": "8a51456777ca3bd814f65eb07ad4f32eb07052f6e2e7db8e141b28bc567bcc9d",
+    "crates/penelope-domain/tests/fixtures/current/canonical-event.json": "8df8b514724829c85406b91e0014a92ecee089d3c43f45aa96995b61ca3d133e",
+    "crates/penelope-domain/tests/fixtures/current/manual-review.json": "b042f350f98d17acf3e30c61a979db2c4bbfb97a8129dca4117d80f5e244ed02",
+    "crates/penelope-domain/tests/fixtures/current/process-action.json": "dda4fc66e114a9615c6e309adbb216b199521d8fb62591cb2f1eb48c09afcd4d",
+    "crates/penelope-domain/tests/fixtures/current/process-definition.json": "2e4f98a51cd8ea7526da3961cab124c401298032a99048234b72fb5d2bad43dc",
+    "crates/penelope-domain/tests/fixtures/current/process-input-envelope.json": "05a53dc6c9461a9d12aef7df36e9999efe2c0a3f93effa7e5ed950fadbda7c4a",
+    "crates/penelope-domain/tests/fixtures/current/process-input.json": "5e389f43e20d98deb965fc0d88e26e28be87126bdb37a33264b0af60e63bcb87",
+    "crates/penelope-domain/tests/fixtures/current/process-outcome.json": "b6f13a5c2bd10481c8231804e37b70100b2d1a40e4dc2c27b375ddb34dcb2a52",
+    "crates/penelope-domain/tests/golden_wire.rs": "93e746451ecfa5f37342e3354bc9f7afee1e526847936bbabbb7a5145ae119c9",
+    "crates/penelope-domain/tests/identifier_allocations.rs": "0a73c0af19273a08ab9e05c40dd1ec90f9e29c95814a50cd3569eaa23f47c0b4",
+    "crates/penelope-domain/tests/identifier_contract.rs": "0ad704c87600544ab64508707a15f18c4b3a89d6edb2d4d33ebc5934e5c4d8f0",
+    "crates/penelope-domain/tests/outcome_scope_validation.rs": "5ea43884a07f6207e151ead5e51703a78f45278a44a7435b3fe1bdb87de4afd9",
+    "crates/penelope-domain/tests/scope_encoding.rs": "88208c5c17e93153ffc46fd339efac0c9ecc19ad1f48a324c1813cef86e6fa4c",
+    "crates/penelope-domain/tests/support/action_effect_fixture.rs": "28b0cb4a1cd625a0bb3465cef587ccc7352d588c224746e59c1c23cfc7a0c8ad",
+    "crates/penelope-domain/tests/support/effect_key_fixture.rs": "83105533f4c9fc433cf88f09be5e8c1aebbda44e5f9d6c97367ae17319a12c3b",
+    "crates/penelope-domain/tests/support/shared/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-executor/Cargo.toml": "d4e7ad96f00940f0f8cfcea35ba83fd33508eaf0829e4c27b284d5d12815f29a",
+    "crates/penelope-executor/benches/application_overhead.rs": "407f3cf9196dc0800b4b5cc3991c436a7bb2eaaef85acc9d050c7950398b1dd9",
+    "crates/penelope-executor/benches/application_workloads.rs": "26e8d8d8db964c914160a28da3c279c16000fadae6702e9de725cb8dc6a94cd5",
+    "crates/penelope-executor/benches/definition_validation.rs": "a6e3c1fa65c712c089d19746fe42421de9c0ddc31e853d4f18586778cbe21091",
+    "crates/penelope-executor/benches/durable_timer_workload.rs": "76cf94b632be63f0df935caefa6475381155cdcde4e506786e6c4cfd92edc637",
+    "crates/penelope-executor/benches/graph_saga.rs": "d3e1f5140dea49dc0fc47a44fc35835ab94a9ef9e5c9741c04ff9be98ffb54bd",
+    "crates/penelope-executor/benches/lease_batch_service_allocations.rs": "8a27e6bfdc83ea5b83dfd6304253f438e4d8fb1e4dc8288af4aa43da8952b7f8",
+    "crates/penelope-executor/benches/lease_batch_services.rs": "11492725c48f4e72c669789ffc5fc9963c982816cd6526f4ffbea905cd9c28f9",
+    "crates/penelope-executor/benches/linear_saga.rs": "a5aba410b111ff34dc08bbf72d2a13fa9a20af645cbd69c6b0d90d5b7adf0a3d",
+    "crates/penelope-executor/benches/parallel_graph_saga.rs": "183a243eee36c6dea4ec5d52189bb4e53fcb15323f0386c14b0947b74d5a9252",
+    "crates/penelope-executor/benches/parallel_linear_saga.rs": "9c8325c2b1fb9a88bf780a1aad2e74a66c95978494cd783909c9407428d0da63",
+    "crates/penelope-executor/benches/replay_saga.rs": "480eb26ae97ec12df3d75eddd5f8288b143c192773b6c992c0dbfcb1f0f9b882",
+    "crates/penelope-executor/benches/support/application_workloads/storage.rs": "65a91c6489311ed09e96a582c7a28da4df50c2e3e1b50d7bb9589ccca9126472",
+    "crates/penelope-executor/benches/support/application_workloads/workflow.rs": "dfc8f1debfff3fa2173ceb78a40415d323975ad0a4a0addc572b920715f76fa3",
+    "crates/penelope-executor/benches/support/timer_workload/ports.rs": "a7061ecdccee563daceb70f60a67954c937c147a0cfdc98d2b8d396dc3a7944d",
+    "crates/penelope-executor/benches/support/timer_workload/workflow.rs": "0134f379ecc62961056b2c72a177d8c65e89ad1c00341aa7088982f72bef3217",
+    "crates/penelope-executor/benches/task_poll.rs": "03666c17f20cf237b792a24da01575f3539514908d57a7e8fc1befd44a26b5ba",
+    "crates/penelope-executor/benches/timer_input.rs": "2650536fde9097d771afe6473e031546d6358645230269183ff757ab88d18f30",
+    "crates/penelope-executor/benches/timer_input_allocations.rs": "f63b005b16beda2a373736a8b8322b3bd7657775c4c3fb2c15247861ce4f7623",
+    "crates/penelope-executor/examples/recoverable_task.rs": "d541efc3efc8238c68bf10363b0db8c5403b74d53ae7589b7d01f8c9c132a13c",
+    "crates/penelope-executor/examples/saga_recoverable_task.rs": "91fed70be01adce55c25756f89800f3a48fc798fe65a02d06ae6a373ce3d9352",
+    "crates/penelope-executor/examples/support/saga.rs": "82af612edfe86c14e69a13e8a8a198485a003035d72a48e4a89da2f92c9b7133",
+    "crates/penelope-executor/src/composition.rs": "92d27c317c13635402fc8b193697bb03b70ddeaa9b9e0cd7b6e781930bb36e42",
+    "crates/penelope-executor/src/engine.rs": "d54e067575ca5c919be6be5e9c5609433368a94174d5a8129c501d5800f7b70f",
+    "crates/penelope-executor/src/graph.rs": "ef53355db5568f7b154a93595112471bc7cef4aa00f04d2a8d00faa46f3247e1",
+    "crates/penelope-executor/src/graph_outcomes.rs": "f5844d310637d717a136e76df802737c5f6f2c793afb28b2a04b26f1591acd39",
+    "crates/penelope-executor/src/lease_batch_index.rs": "1f8aa0ceef2335b00aa40211d7cf9e4a26635819a290d232b31dd8302b536d5f",
+    "crates/penelope-executor/src/lib.rs": "af3547eec6631f8e04934902e24bd6db551168a8d6faa507d4c390403d5fb116",
+    "crates/penelope-executor/src/machine_saga.rs": "ed5f3c49a547d98c3bc8a85cafba5cdb705510f1872656ea7771ff8999dbc36d",
+    "crates/penelope-executor/src/machine_task.rs": "aa39233e5f23c20cd7b70c0843a136a54456bfb1f2c162abcc447712d0b7abd7",
+    "crates/penelope-executor/src/mod.rs": "1f317cf1b14191d6a469500cf7308b13d96a196e4e3b00c3683768d16cc424f6",
+    "crates/penelope-executor/src/saga_machine.rs": "e60c0882db124c3430c8c6d5d620c058cd709a9c1600dfa8e748cf25cdf2e38e",
+    "crates/penelope-executor/src/services.rs": "01c17fa051446b7bc0337687e9aaaa3fb25271cc68cb980abf8e54503e41bf4e",
+    "crates/penelope-executor/src/task.rs": "053cd0e10746be2909e0719ff016e5262ac592163efe8553499ee5fd1f3c7612",
+    "crates/penelope-executor/src/timer_input.rs": "cd6f615024dab47c4a743ad1c0836a34b581a8c2c4ff8061e76030a89d11fd06",
+    "crates/penelope-executor/tests/application_workloads.rs": "c51aee28336e82e334fbb1e87bc597afa35c01f926b5e1fbfb2c7edb2e619514",
+    "crates/penelope-executor/tests/definition_allocations.rs": "4675d0860c7d081160d66e928697c9af0890576199baff888fb513837e1288c0",
+    "crates/penelope-executor/tests/fixtures/task-definition-fingerprint-v1.json": "0df9724ef6dea48ee8b74612d40e2c0fdcf6efbd06ef26700345dfd9c87de3cb",
+    "crates/penelope-executor/tests/fixtures/task-definition-v1.json": "fffd814a2528fcf3f95393411583265c3ef87d893f1e9696315278c1550d99e5",
+    "crates/penelope-executor/tests/fixtures/task-start-v1.json": "4993b54cc3c9ca33a6940d9a366d11651c1bcce857beec7822731258933a02ae",
+    "crates/penelope-executor/tests/graph_validation_parity.rs": "c4e7200df975b2176ed465f35a814eba49860e26682e5f04d67a868a3b5aab9f",
+    "crates/penelope-executor/tests/lease_batch_allocations.rs": "6bb8558d21fd90ce86a4988784a6c1cbabd423029eea286b89ac9d266981df63",
+    "crates/penelope-executor/tests/lease_batch_identity.rs": "d5d720562d34717a1bcce19d4e2a3bbb42ade156c5c40914266df68bde22efe0",
+    "crates/penelope-executor/tests/linear_validation_parity.rs": "a88e77112c66611ec6ebe825307a7f00de7eead22deb09e57551c8e78d440380",
+    "crates/penelope-executor/tests/machine_saga.rs": "25cb2189a30bddd33a19745a8d3b689b9e10fe68e160bb1deb0ff81cc8efc27d",
+    "crates/penelope-executor/tests/machine_task.rs": "623cc6854eca26ec6aea7f78d20764097e714ed47a3cc5843318b4927e3c6f6d",
+    "crates/penelope-executor/tests/supervisor_error_compat.rs": "52fed46e009469dc9ffcb657442a9aa42f522f3fd5fcc752e4059692f13a1380",
+    "crates/penelope-executor/tests/support/lease_batch_fixture.rs": "289332e961f12b2aacfa2cde806477f97bac566f5814cdfc80641cfe1e1c12cf",
+    "crates/penelope-executor/tests/support/machine_saga_crash.rs": "ab9fde615d7d27a234f4677250f3b12d4161224a651ff475ed3f5b6dd718616e",
+    "crates/penelope-executor/tests/support/machine_task_crash.rs": "c33d15de9db4b3466c669a6dfb4a6155057caedbe73db2c7b3c3858f2b4e5218",
+    "crates/penelope-executor/tests/support/shared/machines.rs": "c7d90e375e5a9cd935741197ecdc5a673b4d24aa62f075247857116d3b0c08de",
+    "crates/penelope-executor/tests/support/shared/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-executor/tests/support/shared/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-executor/tests/support/sqlite_journal.rs": "1b24bb75c103f94ddf0ba29fdf8643374fb070e5f43ca8449bda191821570e30",
+    "crates/penelope-executor/tests/support/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "crates/penelope-executor/tests/support/timer_batch_faults.rs": "8ef7d6db910044bdff706dd22d06eef28876d8d58946ea3a0d5969d4ea8c49bd",
+    "crates/penelope-executor/tests/support/timer_input_fixture.rs": "8310422d43ca8a9e197bfd1e0682d37ed79af6dfaf927d6e483fe47d0f578be7",
+    "crates/penelope-executor/tests/support/timer_input_legacy.rs": "c396abaad9929afad61b378db74a920c4a9725b1a9cf6acd23116e3f221d7395",
+    "crates/penelope-executor/tests/task_adversarial.rs": "7798d0674d78a2701cf8c001d22e5f0c884af0110bbacab9731cf5d2869656b6",
+    "crates/penelope-executor/tests/task_audit.rs": "2c035cf45aa7df29e4ccefaf9e395a707d2b07d88c68beafedcd197f89fd71e0",
+    "crates/penelope-executor/tests/task_concurrency.rs": "8e1ffb330796cc0a73af4f9ae14d588b310a0ed7a0bcd3cb6f5bd79d6c07104d",
+    "crates/penelope-executor/tests/task_contracts.rs": "1092ce077b77388471e479a0ce5aaae21164c32fb0b8bde40989e7f9f3fd3510",
+    "crates/penelope-executor/tests/task_control.rs": "7f4084ee4376a8c9e5c31470a9ec67d3c55defd9db382e6a10b9b53f7d20fc16",
+    "crates/penelope-executor/tests/task_control_failures.rs": "10f52dc0f8418e4371183095788fa280301f4620e9b3e733b774d8784465c263",
+    "crates/penelope-executor/tests/task_effect_bridge.rs": "e8139b6e97d92da50d91fdcb8a28e64219006a80b14f2cd442f64420033e9bff",
+    "crates/penelope-executor/tests/task_newtypes.rs": "841965485427e63789a6de278af1ac2d0fd5c1ce99780f335412a2aed3d84b0b",
+    "crates/penelope-executor/tests/task_process_crash.rs": "ff208b49caeb6fbffca372795cad9900b5f5a352c4ec379015e346fe6e852718",
+    "crates/penelope-executor/tests/task_recovery.rs": "77432a01dab0467aca8ffb102c933bfa32fbfaaadc7e368f2b30887c253460ba",
+    "crates/penelope-executor/tests/task_security.rs": "05d0d9fe168cfd6a589b95b57a783c690035eadcb58b82863d6fd7c6210f337c",
+    "crates/penelope-executor/tests/task_sqlite_recovery.rs": "e85b2bccc67d003d7409d90c5268d5c82ba674a25a8de272d3e039f07509f441",
+    "crates/penelope-executor/tests/task_verified_result.rs": "fb00351b5bafb0962437894bae619229fe3e1ce1c3fbd11471a0fbd588d6e138",
+    "crates/penelope-executor/tests/timer_batch_recovery.rs": "ddae554bef8c44578f85b05f9b86cb42e2e1882da433f56c978034151483a047",
+    "crates/penelope-executor/tests/timer_input_allocations.rs": "37308dc310a1bf875b5b14f8f3e160a8e06fd0a79c9306c4edb0ea805d0cde51",
+    "crates/penelope-executor/tests/timer_input_identity.rs": "93a8b6e08f78d1eaea2ee1944880a38b7c46893416d421e5167323cb4fecab56",
+    "crates/penelope-intent/Cargo.toml": "f73cb0a634c1b08d4d26bf07ac094b47c678a63579ee379c693130551eb45d05",
+    "crates/penelope-intent/src/implementation.rs": "aeca1d74ef8eb5441988baf474ed11489253d57b6f8c8281755faf978ba09302",
+    "crates/penelope-intent/src/lib.rs": "84557db68cdbb60eefd971d7c0972f4fdad6f445421cca1c5c7d0c989e98ff9e",
+    "crates/penelope-intent/src/mod.rs": "0191c80b5c9ea8878413ccf925b9e3ac9898f292e0d68b1e1357681e2801a2de",
+    "crates/penelope-ports/Cargo.toml": "740173b436b98a9b77dc8d7e163b94a87fbb6ee956b1d5355373d29600b3e10a",
+    "crates/penelope-ports/benches/atomic_validation.rs": "9d41d3b3bf48feb7b86c0d2f0bb305f94e71dcb34e35340a7af808b72a9fdfd4",
+    "crates/penelope-ports/benches/atomic_validation_allocations.rs": "d63437f02be7b31e4fce541082ae149a244841ff5f7dd1ce9a43eed180842c53",
+    "crates/penelope-ports/benches/contract_throughput.rs": "218f9bfd235b1b76244d58290bbdcf1281c0445bd2efc3310093ef3a7d3c516c",
+    "crates/penelope-ports/benches/outcome_log.rs": "54e2ca6bc50b78c395fc39cdf1dd8375fc2808a5176b7556b72985b70a88f038",
+    "crates/penelope-ports/benches/outcome_log_allocations.rs": "0e9b44189d4969cf3e3a34abee604b30c46e95be781748b3315492c79eae8b64",
+    "crates/penelope-ports/benches/support/outcome_log_allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-ports/benches/support/outcome_log_fixture.rs": "0d78e962023ec36a31ebe7bb8e0a7089e86f88f30c395fa84647de1fe460f911",
+    "crates/penelope-ports/benches/timer_claim_allocations.rs": "0de57019e8b2addda0d7daf381a5e781bb7aae5f5d8d111e4863920ce96ab021",
+    "crates/penelope-ports/benches/timer_claim_validation.rs": "04efec680b9a16ffd97569a482b0b50bbc6ed523b0fd5a5bbbc24b188891f0ff",
+    "crates/penelope-ports/src/implementation.rs": "afb6bfdfdf4458964399a2032aabdd073cacc00600f828d334f12d524a083ec5",
+    "crates/penelope-ports/src/inbox.rs": "de182aa34afb288901c8c4ef256d3d6b1cfdf53312ce32c9a8a4511e603cf667",
+    "crates/penelope-ports/src/lib.rs": "974b590827f3e6869374970633e5bc6b66f20e2354e8f9b4a7f41830851acc7d",
+    "crates/penelope-ports/src/machine.rs": "67fa349b6a0a1eae50e54df1b1f361a7b53c1039d5708effeea49eb71cf533e5",
+    "crates/penelope-ports/src/machine/delivery.rs": "6b33777d36cdd30ca0d8c89b3897996a57377aa87ac6b80c84414efe8a610b38",
+    "crates/penelope-ports/src/machine/recovery.rs": "3e44401fbecd6ea70c2700ff6d353a524495a33b36683ab647f4d5da13783471",
+    "crates/penelope-ports/src/machine/store.rs": "9a9b723a4b25b791cd72368346c43c361c61bb3fa69b1c7007107643b52d8158",
+    "crates/penelope-ports/src/machine/task.rs": "46aed09aada7f72322243ab901c2b6eed6f1ae6b46b81afec0ef0b8080f37e96",
+    "crates/penelope-ports/src/mod.rs": "0191c80b5c9ea8878413ccf925b9e3ac9898f292e0d68b1e1357681e2801a2de",
+    "crates/penelope-ports/src/payloads.rs": "64d494fc053376085a4e422953676d778fcbe4d73ee210842903dc556a41f92b",
+    "crates/penelope-ports/src/process_commits.rs": "3420a0a2ceb24dbdd39a72bda1756cc5c9e692c17836a00b39b5dfa0c55c7c14",
+    "crates/penelope-ports/src/tasks.rs": "3c2d6cb774f4503f7b0cc9fa3d42e916e8928462539ed0478a60fa8a517570af",
+    "crates/penelope-ports/tests/atomic_commit_faults.rs": "98639ce823f9f7f68f1d26c768486c26a29bd66e4fca6f458e5ad1ff86935529",
+    "crates/penelope-ports/tests/atomic_outcome_scope.rs": "92384c9e4bce8ca8b7346d6fd3f7c336fbd14122064034daf91bfa1233e05a95",
+    "crates/penelope-ports/tests/atomic_scope_allocations.rs": "d4db50c6216ccdc1ce51cb303a9a554fbbac674e0a8a946f3c205c840fdabfb2",
+    "crates/penelope-ports/tests/atomic_validation_parity.rs": "8447c631f6db0e495504d11cd5c960d1df8f3b4bdede5253f4374c8697acec39",
+    "crates/penelope-ports/tests/machine_preparation.rs": "c48bc756670eef3ddd1c07f503c6ce7eeb96c310ebc469a338c4ba0feaa69667",
+    "crates/penelope-ports/tests/machine_task.rs": "740b36df2f622c94298b68d417f3db7ddea726c0aa86cabf6f4ef34690543104",
+    "crates/penelope-ports/tests/outcome_log_allocations.rs": "e16eee5709e323b18dae359af7c61fb79f9bed39542a6243402047e4592e8443",
+    "crates/penelope-ports/tests/outcome_log_scope.rs": "2db06a9e87cece2e107566b3cff0b87032ca2735172268a7af370c854741d440",
+    "crates/penelope-ports/tests/ports_conformance.rs": "de52b741d79da15a7823a0dcadb870237acb6ffeb0bd01f6fa056055e446e825",
+    "crates/penelope-ports/tests/support/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+    "crates/penelope-ports/tests/support/legacy_atomic_validator.rs": "4c23a205b1d3df419c562ae4b2593b5fc71f77e1c29bbe5347c13e2c8151ceba",
+    "crates/penelope-ports/tests/support/shared/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "crates/penelope-ports/tests/support/timer_claim_fixture.rs": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+    "crates/penelope-ports/tests/timer_claim_allocations.rs": "5a3402712bba76ebd328f00113ad832b99df731f6a1711e982b7f0ba975669f8",
+    "crates/penelope-ports/tests/timer_claim_validation.rs": "4c13d567db1c19d4194a9e7e0687a79a0f1b0a467acfdf88fedc10d8555c7493",
+    "crates/penelope-process-runtime/Cargo.toml": "ca9dffbe89bc6c2aa9ea37cfc7c10a765b865cafa73883a4e1eacb7c10e7b134",
+    "crates/penelope-process-runtime/README.md": "66cbcc76230606f1cf7d74c06a97d954233152c6496703332ec087f28d7e48ff",
+    "crates/penelope-process-runtime/benches/dispatch.rs": "f207f496cbd492b2bd5325a707aeb86be03e57b6143e3c7afae62eed65ede8e6",
+    "crates/penelope-process-runtime/benches/fence.rs": "80b3a1e9214cab657dac71b2e1ca71bb6f391429cf635dd080e078e0ff0ee30f",
+    "crates/penelope-process-runtime/benches/support/dispatch.rs": "57ca56f9fc966775d8b2afe06a3ed2bb5fd945b86599fe9876f3d95261c76f9c",
+    "crates/penelope-process-runtime/benches/support/fence.rs": "a48d0a0fcd1ad255eed26cc66d636f38703f4f05780f1a896444cb86dd9a4245",
+    "crates/penelope-process-runtime/benches/worker_protocol.rs": "420dd926a6274613166c6b9832b9f569559dad68b24b7dbb3ce93b7db1e7f526",
+    "crates/penelope-process-runtime/examples/saga_recoverable_task.rs": "d1682fd37d4584e2ae3ecc04c93141f37c185f27a117513e91ec7dbc59156f20",
+    "crates/penelope-process-runtime/examples/support/saga.rs": "ad2032a905ce02abf985e7c38d4b90552eeca633ef3333c2e74f90507b887411",
+    "crates/penelope-process-runtime/src/fence_tests.rs": "422ce4951c98f73f866852cbb3f874c224ede1da1340c2bb17f9abd4de7ba74a",
+    "crates/penelope-process-runtime/src/image.rs": "8936ed62e319ec19ffdd77be51299263cea749b3a514adb26675b114352d8ece",
+    "crates/penelope-process-runtime/src/io_tests.rs": "4d2b50654e68af810f14f14f312b538d12d7a988beb864f82fc047e7105fa159",
+    "crates/penelope-process-runtime/src/lib.rs": "d487c5960d3e2db9446aeaf88c61ce9c5a63f44442786660d5b0a0669d0ae391",
+    "crates/penelope-process-runtime/src/registry.rs": "ab5f405cfb99e35c1c9607f7b95fdf93f4491feaf341af85a2f51e67e0b5a879",
+    "crates/penelope-process-runtime/src/registry_tests.rs": "a45537073973c47a005ab3006d77280052dddfdcbf70a31c2d054e5af1812a95",
+    "crates/penelope-process-runtime/src/runtime.rs": "a024260f020df2354e5d1f33b9611383355a4a63a047a61b9505aefc9a986837",
+    "crates/penelope-process-runtime/src/sandbox.rs": "632b48a25ce31579748dbe2bcb322a0f80127f79c5fd59fe3d84f4a8e2f52498",
+    "crates/penelope-process-runtime/src/sandbox_tests.rs": "52f1e67d370fcf4e546204aa53665ad0c223f04a3bbd8e11795d098e08017a98",
+    "crates/penelope-process-runtime/src/worker.rs": "1ed2963ed79f8e1870090a1f47dced052318cd6560433678bc68009524142127",
+    "crates/penelope-process-runtime/tests/fixtures/worker.c": "16d3806b462155469c2dc2fb914bf75de204b11b1e07bc8282f58d979d32dc28",
+    "crates/penelope-process-runtime/tests/runtime.rs": "768b638159680129c91e3290e27c5951afe12324f03612828fcf720da082123f",
+    "crates/penelope-process-runtime/tests/support/cancellation.rs": "8adc465126a623315883b9c5050430ef2c037b3fbc7e45753cfd2ee5665012cb",
+    "crates/penelope-process-runtime/tests/support/checkpoint_state.rs": "aba4b8fd7f80c773d59876f7d441d8e2c8bfd7e746cb9fdff91b6265110633fa",
+    "crates/penelope-process-runtime/tests/support/concurrency.rs": "3509daab2872c0a22414ca737c1282a9524835aa4c89a4c65b8f8466b4fabadd",
+    "crates/penelope-process-runtime/tests/support/fence_contracts.rs": "453b847efdc22b65ea33db0ad55cbcf395ab77149d1e9ddceb2e5808a0aa0977",
+    "crates/penelope-process-runtime/tests/support/filesystem_paths.rs": "c6e85c48bfb846db5fc9701bc76177fe8109d0bb0d94ce97efafc5ccdd65bce8",
+    "crates/penelope-process-runtime/tests/support/graph_timer.rs": "2433b85be2500f7e0ced4c731a5d6a5c9a9c375d0a2ea2e6a07df6ceede2a88d",
+    "crates/penelope-process-runtime/tests/support/launch_contracts.rs": "f8fd85f72b9ba3049498a3e5b55ea0c5d1da262a5da55590150a1e8498373d15",
+    "crates/penelope-process-runtime/tests/support/protocol_fixture.rs": "d4c384c56c8faff1ae1001abf99593e7e6120b8e0f8ccb5574ee758521f35b98",
+    "crates/penelope-process-runtime/tests/support/runtime_allocation_probe.rs": "32ce5326cc80106813e951b4bdf55816c4f2e2764fd0c7ff78a3709487ab7849",
+    "crates/penelope-process-runtime/tests/support/runtime_fixture.rs": "540fa2c2222a9dc3d3d80d6112c74476a7dd6add447c2f1f6284aff946f060ac",
+    "crates/penelope-process-runtime/tests/support/sagas.rs": "e26b555e007dd83acf7909fbc1e261514c9876a2046627baf1c97a06921373b7",
+    "crates/penelope-process-runtime/tests/support/service_faults.rs": "a9a799ff05f6c12a68be980209c539ca40d9ac79afa356ac378ebdb9d067016d",
+    "crates/penelope-process-runtime/tests/support/services.rs": "69814cb63778f81f302bd3d3c7a0b7313f209ec3aa7f69517fea7e61471a06bd",
+    "crates/penelope-process-runtime/tests/support/timer_crash.rs": "53f67961a73e6bc42f210693fba8e1a6f08d4a9f86294ef3e3ef0f3837c184bb",
+    "crates/penelope-process-runtime/tests/support/timer_saga.rs": "acbeaafb8823b24a8046ccf605597f4e31416eb3fc995bfaa5f151409b7a2259",
+    "crates/penelope-process-runtime/tests/support/worker_protocol.rs": "3648127b9a81bb6ebd75bf0167e91755b3327a1eb2ee24a6011b595709ad442e",
+    "crates/penelope-process-runtime/tests/worker_protocol_allocations.rs": "b5745c968d6bd65dedb8d3ada54feb1f532e9dd5688cfe75af535a2785c9c882",
+    "crates/penelope-sqlite/Cargo.toml": "40f835c592dda731fbeb748233f68d36132131cabe9cb1772cfe0a94c6e2c054",
+    "crates/penelope-sqlite/README.md": "f7825a1cdbb8a13a66720d1cde011efbec2e22bd83c03f7edbb6d1fbec8a3a86",
+    "crates/penelope-sqlite/benches/claim_history.rs": "5cb1c6f933302b3fdc28dad1fb35f903fbc92c7c2c3d698fa552544af8208d84",
+    "crates/penelope-sqlite/benches/claim_selection.rs": "9c695148d8105214aadb22c87d185ac83d4f536c8ef7f83924f9a131f96c6798",
+    "crates/penelope-sqlite/benches/durable_store.rs": "22453b576a939abbad480a6498ed1859c93e98b237d0d7038e5c6a2cc2d0dc66",
+    "crates/penelope-sqlite/benches/inbox_accept.rs": "67f98e4f075b32efea9a52446b1b16d4f134df3f9f4bd2278f2cc8878137f4aa",
+    "crates/penelope-sqlite/benches/inbox_accept_allocations.rs": "5745cf42cf5f7ddd8577e73cf8da83e86507487cf5f1d757abe7cc8d71fa77d2",
+    "crates/penelope-sqlite/benches/lease_batch.rs": "6e1d835098a89c87c773441c60cf39bfca68e73172d1a00c065a69ad0b3915f5",
+    "crates/penelope-sqlite/benches/lease_claim.rs": "495288104c6301ea90a4b133af3ec341df85b2f44633bf28471a6eabf4324c88",
+    "crates/penelope-sqlite/benches/lease_claim_profile_allocations.rs": "387c743e83dc131f2c07e93e65736d78b6be8ba1ee1873a3d0c2ee093fccc3d0",
+    "crates/penelope-sqlite/benches/lease_claim_profiles.rs": "9afb0e53d4bd58fe875d90261fccb30d48a6cd64d455d24e75cd13ea4d3cea1c",
+    "crates/penelope-sqlite/benches/lease_completion_allocations.rs": "520fea2b22cc9975a9e5bd33c58464386da85feea504acfd8df3515dcbf0b72e",
+    "crates/penelope-sqlite/benches/machine_backpressure.rs": "eca67a70467004b4e75e4b80e8e483c197b1ed7b4472dd6448b41b1f2fcfcce4",
+    "crates/penelope-sqlite/benches/machine_store.rs": "67ad68a5e072d7a0871322ddb3e951e5e74f026e64b9fc78742fdc2a95c96330",
+    "crates/penelope-sqlite/benches/pending_history.rs": "92c2b59ccebffbd2a214a8d5c778b244df584e4586d454f79a5e14654c0f7b57",
+    "crates/penelope-sqlite/benches/pending_input_allocations.rs": "5940d2690bbde23708cbccde42ff7d662689d4905104c9c734f4d784256b920a",
+    "crates/penelope-sqlite/benches/pending_inputs.rs": "acdb7aecbea02d767ffbcc157ecb5c0b8eaeb42dc4e9fc111a7765456615fd72",
+    "crates/penelope-sqlite/benches/process_append_allocations.rs": "0d24c018a88a39f2454f06ebb279f35b75d41ee92a98ed228d12647d9fada04f",
+    "crates/penelope-sqlite/benches/process_commit_allocations.rs": "e15bb32864c51c0fc40c1800a47834ca418ccbe211f7e8d1ebe803d17e4b0098",
+    "crates/penelope-sqlite/benches/process_encoding.rs": "02edfbe144d0c0a2f0c97d0a64c5a12948d2ecb46539307ddaa8e6560e650ee2",
+    "crates/penelope-sqlite/benches/process_encoding_allocations.rs": "605cc17e45c32e9f9aefed9c7ac79367050febd3932c8c6acd200a190f38e13e",
+    "crates/penelope-sqlite/benches/process_payload_allocations.rs": "110f37394cb733d2e3d3bfb0e2c52a56a39389dd83c91d80bcabe3bd418206cb",
+    "crates/penelope-sqlite/benches/process_payloads.rs": "4285d900813feac46b36878a436fa9c8887ff6c49df59fe636126e7a112e90ef",
+    "crates/penelope-sqlite/benches/process_replay.rs": "325295b9c2a1c82b97b7ed14bc756dcfea75a02cea77dc60958f23c87b55f656",
+    "crates/penelope-sqlite/benches/process_replay_allocations.rs": "11d8318ba23a09ea61bd5db57b1e503a38202f0111a595e7d442176ae10014f9",
+    "crates/penelope-sqlite/benches/support/caller_allocator.rs": "e6c4179f7055f7fe2ad327e043faab0cb0df0c38ebc0a6444cb437f9badc9a27",
+    "crates/penelope-sqlite/benches/support/inbox_fixture.rs": "cc52c76c9772991a8cabc9143b102d5497855a2ad577f7dce90d9379c58cc669",
+    "crates/penelope-sqlite/benches/support/lease_claim_fixture.rs": "a382ed33ae32fa463afc01b81feb51f77fcc501ec25e9498d3805034128ec053",
+    "crates/penelope-sqlite/benches/support/payload_fixture.rs": "36ed871887b706f9c3768cf82fc0c4c274eaa4685cd9d7598d981540592fbbeb",
+    "crates/penelope-sqlite/benches/support/pending_fixture.rs": "1aa32c9321099772ed79b1abf8f08483e65daa9485441a2ef76ef54c9c0fbbff",
+    "crates/penelope-sqlite/benches/support/process_append_fixture.rs": "9aea2bb6802310b01e6496718874e0a691674c63468c71bb8eacc98b803514c2",
+    "crates/penelope-sqlite/benches/support/process_encoding_fixture.rs": "33c239b701eaca66b0017b8492d717d058469eab273d6068b1ab026fbc3d29d7",
+    "crates/penelope-sqlite/benches/support/process_replay_fixture.rs": "0c061934c99caab5cf8ede2f79427cc1b103f921ab0880240e0d7deec4485ed0",
+    "crates/penelope-sqlite/benches/support/task_blob_fixture.rs": "bf07435754f97b6341ac97dc67ee78edbd000d0ba30615e46dbc25f664972c01",
+    "crates/penelope-sqlite/benches/support/task_read_allocator.rs": "17c5689f1a3b863f8bc50bbf79a68b0dc54279c212f6d984e3e9781fb3e9ba02",
+    "crates/penelope-sqlite/benches/support/task_read_fixture.rs": "bb3abfd3626541a301092cd8060fe28e8cf5c90c9d165145de3a3fdd2c45f790",
+    "crates/penelope-sqlite/benches/support/task_reconstruction_fixture.rs": "ad215e02dcdff21b53f608f0720b9c85e2685d397fce347bba1e1ac962a3d81b",
+    "crates/penelope-sqlite/benches/task_blob_allocations.rs": "a9c7aa757ba03a0cef8068e862f92198e7d41ae7dcd8aa99f90324e2425fb988",
+    "crates/penelope-sqlite/benches/task_blob_commits.rs": "8e611f44c59e0273f4f81053f03c774c09af67ba882ee9c6c6fdf0edee4cbeef",
+    "crates/penelope-sqlite/benches/task_blobs.rs": "769563ddd68ef4d8685aaded5b64d56d9a77164a604d2072fad0cd4012ca66ca",
+    "crates/penelope-sqlite/benches/task_read_allocations.rs": "1dcd25ef9de8f0b6de2ebe2616300f98c39e7dcabf9b332967ffc3b6502c16fd",
+    "crates/penelope-sqlite/benches/task_reads.rs": "02f459b156cccbd51017c48ef87e6ff1f5dd28256e04ee0d52e1a4743b6dff2c",
+    "crates/penelope-sqlite/benches/task_reconstruction.rs": "f0e87121ec6d7b88825a6f2875b131c03aa692276b7a3b578c5a7cfb75a30520",
+    "crates/penelope-sqlite/benches/task_reconstruction_allocations.rs": "92dd764fac4a9389ae88f5acd2ea38684629e9a16a8fd41de2227be939b7532f",
+    "crates/penelope-sqlite/benches/worker_poll.rs": "32aa1f7f3853c0cbbaba3a0242387d55e0ec89e9ee5eca57e7ef9a3667e11522",
+    "crates/penelope-sqlite/examples/optimistic_timeline.rs": "dfdf9f6dfa18abfea0f0941ac0afb1e93fc4129bb71b600594ff40c710ebc67f",
+    "crates/penelope-sqlite/examples/support/invoice_handoff.rs": "0274cf39b1d2454f6801afd8b7425e4b36795423aa506554924261121ce06bef",
+    "crates/penelope-sqlite/examples/support/invoice_model.rs": "547c66b08115d6b08202d8737b2e6b63114fd4530f486bb65b62c352e10e7dcd",
+    "crates/penelope-sqlite/src/async_task_tests.rs": "5f03ef3caf096ed6dd9e69169a72e17af9a04a97eb45133058dc8f68c82b0a1b",
+    "crates/penelope-sqlite/src/async_tasks.rs": "6ec0fd3402d86965e21221e3ef733929a16096f27cfe73630d523e41ab172be5",
+    "crates/penelope-sqlite/src/authority.rs": "cf784bce3c532e86e99e7d55ce0110b3091646e4108443a1a03b060578c05571",
+    "crates/penelope-sqlite/src/fault_tests.rs": "3d96b05a31ee07b186f1e4191895f2899c1fc71d4804ec6f9551f29b0d05560c",
+    "crates/penelope-sqlite/src/inbox.rs": "72996f4b67968939eba29e5dea69e0a6b42997b96495ca938a90c765e894ec34",
+    "crates/penelope-sqlite/src/inbox_retry_tests.rs": "285f03ac836fa5d690e3aab6057d1c3b247310e1b80a8bb125210773e724eabe",
+    "crates/penelope-sqlite/src/key_tests.rs": "9e5e01f07f635c800675b6505ccfd49addd1f2cf0c943af7773364046b60b488",
+    "crates/penelope-sqlite/src/lease_clock_tests.rs": "40d8638294f0eb654f738f88e8aacf558d5125157aeb9b72fe1a5d7c7f0d09f9",
+    "crates/penelope-sqlite/src/lease_counter.rs": "4be3d1b76d6d02961b06ea6604eb5247748fb60451b12f246e07371d7e90fa94",
+    "crates/penelope-sqlite/src/lease_scope_tests.rs": "a975793f89e89b4e2eb21284f73a4746c738a693de0604562be84d5dc1ef4f5a",
+    "crates/penelope-sqlite/src/leases.rs": "b7c5ba819acc3a601c7d2ab1aad39f6d34b685e8f61bc12f7cffd1e7baba4820",
+    "crates/penelope-sqlite/src/lib.rs": "be5d2f47139cd456ae93ca90aaa56fe4e910468411a09cd9cd55a8d3da97ac95",
+    "crates/penelope-sqlite/src/lifecycle.rs": "506d506c00bbff650120c7245ebfeff4f4cb19e8d64c0de6df8ba8e4a160f763",
+    "crates/penelope-sqlite/src/machine.rs": "a295e0ef5badbdbb65c230bf5971d91eceefa61dee2ba463d43996409e6a9311",
+    "crates/penelope-sqlite/src/machine/delivery.rs": "1024e8fc61be273fe4a1adc1519c82113de3c25e2b98c62f9a4630b19de1df51",
+    "crates/penelope-sqlite/src/machine/delivery/state.rs": "ca6d0636746b1abfa3fecb773d3875030f1c440aa9c9a7f65a05dc1b57320ba6",
+    "crates/penelope-sqlite/src/machine/read.rs": "59e8114456e45ed6292bd813d6772122a8642208906ffb8201cd665c495512e8",
+    "crates/penelope-sqlite/src/machine/tests.rs": "7701e86cf1174b5cd048da67ddb62b3de74ad09daabde3040ad54ca48aa22903",
+    "crates/penelope-sqlite/src/payload_retry_tests.rs": "b3a586c67c489a0b4be22e2bf1b89d024fb371fe3ca3035a019431afdfddbd08",
+    "crates/penelope-sqlite/src/payloads.rs": "fa03f0a0414fe5ffcc0114fcbd9bd15aca36878c8c05e25796f1d2362f407eef",
+    "crates/penelope-sqlite/src/process.rs": "e47852e85e1496582f019cbd85eb16cdc17520816af968d17b613680be18eaba",
+    "crates/penelope-sqlite/src/process_commit_boundary_tests.rs": "eff965a42344b6d5ab3e145b3da47cc351ea44696b2d30b0df882b73fd5292be",
+    "crates/penelope-sqlite/src/process_commit_verifier.rs": "6fd2e3fc149440c01e74365fd249656073a1682ca76675071cd234a0945f67b1",
+    "crates/penelope-sqlite/src/process_encode_tests.rs": "e0ffa5fb41eb09cc7e39135f71eab662c8f165e0b584e3168d7e518a9c0ebb7f",
+    "crates/penelope-sqlite/src/process_fault_tests.rs": "abfc1c9565f2658d6e30b726c0e6a2830863a892ed6686843d266231713550b7",
+    "crates/penelope-sqlite/src/process_snapshot_tests.rs": "89e52f2838e14ace3d21922053abc0353d4826444f7da3414dfe5c61e2596a63",
+    "crates/penelope-sqlite/src/schema.rs": "f5e1cb0b2940a78237309555c245dce0bde76c270bda6910ccb6f4156ce401e4",
+    "crates/penelope-sqlite/src/schema_inbox_tests.rs": "61378f6198aaf6942ed9402c08da6652061eaf961068f555740454a7aca731e6",
+    "crates/penelope-sqlite/src/schema_tests.rs": "f61a438ac88cecbe3472a10fb1742ee2ddfb3c7028b1c70d91757116eef3bfb7",
+    "crates/penelope-sqlite/src/task_blob_snapshot_tests.rs": "70ba9f18c7e942682a3698447a662fe06c9db1ecc7611956734b9454fa52b3ef",
+    "crates/penelope-sqlite/src/task_commit_boundary_tests.rs": "93fbe83b9bed44e7c958bfd8757695a9380c560c4a1022ee914044cb6416b104",
+    "crates/penelope-sqlite/src/task_decode.rs": "c2c7918c4cabb2b7a2b00e6563ee9d1e6ea69e225ca82145703ef8f1e77e5c87",
+    "crates/penelope-sqlite/src/task_decode_tests.rs": "eda2513e0578101399c4dfc9d043633d9c8f254a5d8b527402aa039801955401",
+    "crates/penelope-sqlite/src/tasks.rs": "ddef8f5a0a4bd1a78ecbf06cb04a5e501f305ea4eac1f27409a21e4deb5f398c",
+    "crates/penelope-sqlite/src/worker.rs": "88138a000f046fc91d49cdf945f5450b91aa4e4471155c7fabeaf61dab661dc4",
+    "crates/penelope-sqlite/src/worker_panic_tests.rs": "e553a5a22ba59d5abadff18a4186377b24ca23021ffdac124acbe38e6a95ce0e",
+    "crates/penelope-sqlite/src/worker_transaction_tests.rs": "32608c070ac58adad4fffba1d2376cc9cdbb385354c0d9554e96bc02ee456e11",
+    "crates/penelope-sqlite/src/worker_waker_tests.rs": "df89ffeb49f7a6b73a133e1c3f40e9995356e315900052ca90ab474a21ee6ef6",
+    "crates/penelope-sqlite/tests/lease_claim_profile_allocations.rs": "6141d03f49390413af2484cc6f304f938660624d51105292c794230c2907aa9a",
+    "crates/penelope-sqlite/tests/machine_outbox.rs": "e8b469e87599551cda1c8d636b5b2f7ceaeb38091dca43a73e57b95c70f0d6e1",
+    "crates/penelope-sqlite/tests/machines.rs": "5ba05b08f63052b00a73bee59ea9e4a4f7952a3b19bba462daffa12d1c4a9762",
+    "crates/penelope-sqlite/tests/process.rs": "5358fdf8edd13cddce1dbb9c24dd260ba3bba6760931684d0ed28fd86041438e",
+    "crates/penelope-sqlite/tests/process_append_allocations.rs": "9e9712389cdd0a5a315350bb1d2b0adceeae6c0ba0f6ec53b5a9f9ed0498b74c",
+    "crates/penelope-sqlite/tests/process_encoding_allocations.rs": "245a359478320a62a297dccd7a35aef32a0d61d488a9aab3d4d7edf0fe1353c9",
+    "crates/penelope-sqlite/tests/support/append_outcomes.rs": "0f315aca0cbe13c3f9fa9ecd794791e499047029235c6ff109857b4abb593744",
+    "crates/penelope-sqlite/tests/support/authority_columns.rs": "523f16683cf554b2a656c3f742f0a243e771aa9c281e83cb4eea78204396eab7",
+    "crates/penelope-sqlite/tests/support/authority_race.rs": "3a5342a981d6d0cf1f83fef23ba044616d5c350150be077cb3b18e41a8bb3aa9",
+    "crates/penelope-sqlite/tests/support/cache_usage.rs": "53c7ebaef5d12228b557eccd775476ce27eee15bc3622ac385e1b93dc8f607da",
+    "crates/penelope-sqlite/tests/support/claim_indexes.rs": "9314a2a3a29cf7c89813d277a6a3a27cc0f87e3759252030ca2828b1ddf42146",
+    "crates/penelope-sqlite/tests/support/commit_encoding.rs": "b93cf00aa57f94c16ab7f8e06f519d42dde4eeca9a4d079116bb5007cc82489d",
+    "crates/penelope-sqlite/tests/support/commit_integrity.rs": "2aea4d14a58f601bad3b51db5bd2b9b5ee34a0a98b19d720c7987925a239d464",
+    "crates/penelope-sqlite/tests/support/commit_retry_encodings.rs": "710d3a7f24746f013b8bffb9712d196b1aaba28c1c6eae178a9a257dc6e550f1",
+    "crates/penelope-sqlite/tests/support/concurrent_quota.rs": "7d12c76f4bad961ee2e03db66b6985d0ea3d8e9457be799fcee0736db56b531e",
+    "crates/penelope-sqlite/tests/support/inbox_concurrency.rs": "6784eafcc58939fd23b037ac018b6a8d94440a4b9b08da11be2674c77673cd35",
+    "crates/penelope-sqlite/tests/support/inbox_index.rs": "45a97cf2fa128b7970a08ff26909ca9a4329bf3ba805cba3591740a254626034",
+    "crates/penelope-sqlite/tests/support/inbox_retry_lock.rs": "77fe042a24131c97a2828506ec26f0c4bf826b7c5f36b7304773d5b635182426",
+    "crates/penelope-sqlite/tests/support/inbox_validation.rs": "6dbea6a181cfd91d559f14fecff328f3e7be709121cc37ff9a4d1670a7911164",
+    "crates/penelope-sqlite/tests/support/lease_contracts.rs": "438150a8d8bebbe588b981c542b6b00a95fe9109a84d102c2893f1cf65acde52",
+    "crates/penelope-sqlite/tests/support/lease_encoding.rs": "c9e9ff40ff37ba0b67fc59db6a09fc5a9c0ab8572621f7b5bc0dce4a4b23968a",
+    "crates/penelope-sqlite/tests/support/machine_schema.rs": "87417d77fc60435cc916beea2a9ad023ef24bc3dfeadc4cb5ee46e2cab8a4bec",
+    "crates/penelope-sqlite/tests/support/machines.rs": "c7d90e375e5a9cd935741197ecdc5a673b4d24aa62f075247857116d3b0c08de",
+    "crates/penelope-sqlite/tests/support/outbox_race.rs": "e82fd97c7aea3409e0a8e4eeab5a77d9552b0c89ddab4d4262f62e29fa8e5eb8",
+    "crates/penelope-sqlite/tests/support/payload_columns.rs": "d9753b8231db6edc7c072b03931e9f85a5da05cb1009ff8f79f78ed15594b55b",
+    "crates/penelope-sqlite/tests/support/payload_retry_lock.rs": "9cca443c72224ee6aed43891cc306a78331df9363ff37816bdeb6dc756b99e37",
+    "crates/penelope-sqlite/tests/support/pending_inbox.rs": "380ac4fc7fbb4bae53646a527fcb104132cbddef2423397af576bf24fefb9244",
+    "crates/penelope-sqlite/tests/support/process_frontier.rs": "107163f6b6fff4e52f2c8af404dd4a3c5880e789bf3ebbfcf23006c84bcd1630",
+    "crates/penelope-sqlite/tests/support/record_limits.rs": "1307888c31ef9b03a80b4524171c8b15108c718128eb913e4933d3d0619562a2",
+    "crates/penelope-sqlite/tests/support/replay_cache.rs": "7df7db0ee3b1eeff5f24ea215ae9ad916fb0393defc74cb75bf464fc27e64f9f",
+    "crates/penelope-sqlite/tests/support/replay_columns.rs": "37d183c2ea408083a9dffef85b31372e9fae8b32e740e669801968d386ac0125",
+    "crates/penelope-sqlite/tests/support/replay_scope.rs": "bf36f2485bef27c0813651fa7bfd6b4dbeb80fa0b731d5523ac15b92489cb1ab",
+    "crates/penelope-sqlite/tests/support/retirement_race.rs": "cdfea1b3bb57ced3da456616e5ed524ceda8ce5441981d09fdd4533161a2f523",
+    "crates/penelope-sqlite/tests/support/shared/atomic_validation_fixture.rs": "c13d6663e95a25810f4ba1a2d00349134ae618ee8e50fb44975651fc4544208a",
+    "crates/penelope-sqlite/tests/support/shared/tasks.rs": "18147971e31d32f7d79ec7311b47b5052bdf8a6cdfd6ed8636f4ae74bc9c1808",
+    "crates/penelope-sqlite/tests/support/shared/timer_claim_fixture.rs": "ffa32bc6184dfc6a7416b9814fde526ab638a428f31e99caf7c5fddb4f29f56b",
+    "crates/penelope-sqlite/tests/support/suppressed_process_writes.rs": "503f0da2861047545db165334ff8fdff0448709b480c34081bbfa62644ae0721",
+    "crates/penelope-sqlite/tests/support/suppressed_task_writes.rs": "5c23267d8828d52e3e9f9b0c836a7cc8014572a9f1918550639ac0f6bcbe61fe",
+    "crates/penelope-sqlite/tests/support/task_append_frontier.rs": "da333c018614113ad4c9c9c14cb718880ea835327ca551ecf53775daead62309",
+    "crates/penelope-sqlite/tests/support/task_blob_columns.rs": "7ae5ee22e95ba08e3cc2e4b36258f868c7cf163515a52c8ae12177152e9f5df3",
+    "crates/penelope-sqlite/tests/support/task_cache_revision.rs": "795f1fd0082253dc8dfbefd4d4b815a9fc4deae814b08d6e43a344e311a8c870",
+    "crates/penelope-sqlite/tests/support/task_columns.rs": "3adc024bf42789bdb2d246feb70264340109abf5d465e03315ec6eb8363a9682",
+    "crates/penelope-sqlite/tests/support/task_confirm_bounds.rs": "750c34b2a36e8c082b7ff80d7536a8849cfbe72a4fbf95f23ed9a082796a778b",
+    "crates/penelope-sqlite/tests/support/task_frontier.rs": "e276a0b28d248ae4baea6d167f44db0018b62880a1dc11fe53eb7082bb374702",
+    "crates/penelope-sqlite/tests/support/task_orphan_usage.rs": "07b2d6fa992cfcc36d62bc443838660498904cc0aa9ce07d723b43193c88aa48",
+    "crates/penelope-sqlite/tests/support/task_replay_memo.rs": "6fd98d618d36a8bb3e6d3000df18b7364eea37525f8e8aca408cc2707fcb1e23",
+    "crates/penelope-sqlite/tests/support/task_statement_cache.rs": "29d9c3a08c699c920297b9f3d22d6334c861f7a51655ab8258bb53a60175bf35",
+    "crates/penelope-sqlite/tests/support/timer_cancel_race.rs": "11657096a913f9f3450574722223579c1a41e092a8502c064ee3d5095664f4c8",
+    "crates/penelope-sqlite/tests/support/timer_validation.rs": "41ea8b993fc612591f74b254b73b06a0e64d10f827861b2cc77dc828557d2d9a",
+    "crates/penelope-sqlite/tests/support/wal_checkpoint.rs": "d901a16907ef57b07059e6b12c49d309faf77c6d5a397027da4de38fbf495c0d",
+    "crates/penelope-sqlite/tests/support/write_snapshot.rs": "8f8133318f86462a0eb02e38fc2445a2cbc43efcf4530563f8af9856f002024d",
+    "crates/penelope-sqlite/tests/tasks.rs": "18789c3fc15909e637403b8113bd564477a75e663b660b07efda6771a7679611",
+    "crates/penelope-statechronicle/Cargo.toml": "ae87ede54f770b77b227be31337181520b2bb85321323c8c9d98463fc7b2d1b9",
+    "crates/penelope-statechronicle/src/implementation.rs": "ac48d4363126352b723e67623e9275fbe33e19346425ace22bb21ccac89675be",
+    "crates/penelope-statechronicle/src/lib.rs": "35f8c8bc274222c693503fd5f2092ad9f472bd6754140efb4932bb911ab33437",
+    "crates/penelope-statechronicle/src/mod.rs": "0191c80b5c9ea8878413ccf925b9e3ac9898f292e0d68b1e1357681e2801a2de",
+    "crates/penelope-statechronicle/src/task.rs": "8e4b8d6dd8daf88a7b669a788ce73ffc544835fc45eb089f49c31e3364fe21e0",
+    "crates/penelope-statechronicle/tests/task_checkpoint.rs": "f8097584f6aaa35a28b0173e85d5aacf93bf46f81da0252618bc7911c759fbb6",
+    "crates/penelope-timeline/Cargo.toml": "af42e5cab50e01185d27708e36262ecb88af4db039bdc246a65cb6be595beb56",
+    "crates/penelope-timeline/README.md": "c776e2005f885dc2e23900123867dc1fedc05311853b84f6d6753c1f8f897bd0",
+    "crates/penelope-timeline/benches/machine_timeline.rs": "3ce3874ef183ab275c50e9b10f19a96104e53db0dd78de4e512372059b91a434",
+    "crates/penelope-timeline/benches/support/allocator.rs": "71ba530fa1da636d9b3815df5b0e511385953e31c0fd9e179e1e69684fc1a538",
+    "crates/penelope-timeline/benches/support/effects_workload.rs": "ae5a4a99979791294ee33c884cea580cecadf220479cc0ed90d5b357d8e047b2",
+    "crates/penelope-timeline/benches/support/history_workload.rs": "235cd13eda40936141391abc68d1e969777d7d33985dcf45b3f8595ecfeb6de4",
+    "crates/penelope-timeline/benches/support/workload.rs": "104a3290dc31407f84f0950eed6121a6f30d4d5db1aa335e3b30bb439b0c7f6c",
+    "crates/penelope-timeline/benches/timeline_allocations.rs": "d6d9de64c2917eecc80b7ca795551e18eb029f64c85898d7a2ca78548d61b60f",
+    "crates/penelope-timeline/benches/timeline_memory.rs": "72f771773ecfa265a36d9aabb5f3ff2861b291e3b3ef561ba8e759a8b4fcc180",
+    "crates/penelope-timeline/benches/timeline_operations.rs": "ba6bd713204ceeb6a653112dec736b8019728f29d2676869da8fcd7e9689d295",
+    "crates/penelope-timeline/benches/timeline_throughput.rs": "8ae2570990847e8ac0231113ab48effc301a1709e7fc40fd73126739c6104aa2",
+    "crates/penelope-timeline/examples/quickstart.rs": "7af1939ab1f90ae3498e503f49caa5658fde399fe649f17d52cce4897e98acf4",
+    "crates/penelope-timeline/examples/rewindable_simulation.rs": "7e3f736daadd2c5608210ae31def03cc4acbc9917beb9b5bd60ceb2ef4d09b96",
+    "crates/penelope-timeline/src/captured.rs": "9637e69f6cf079c353bd9cd2e05af2f4d92c7b5434705ac9fc2dfc1b9d14f76f",
+    "crates/penelope-timeline/src/contracts.rs": "d73c94cf643fcc274ccc7c13ff207d09b21b4a526a05820338008b529aa6dc04",
+    "crates/penelope-timeline/src/effects.rs": "6dad051a9bae9888dbd471bb68bb331602c77d1d8cbe08b26f7b0df5970bffd0",
+    "crates/penelope-timeline/src/ergonomic.rs": "80ea311b2e24fc371e52cf1d5e26e761e138f15e90fe25931c8e14bfe7b4ceb1",
+    "crates/penelope-timeline/src/handoff.rs": "a550327f19324f84571eca1521ace7d850968e0df3e7e937d87f23582629c077",
+    "crates/penelope-timeline/src/history.rs": "fd98f44ede7404eff668d7e11ce08c7b53047251acfa847725a40543afb510f2",
+    "crates/penelope-timeline/src/lib.rs": "9b0e33518519dd1d8abfa290f7abc66a68d9bca2c21e81792c77ea0e17ad716c",
+    "crates/penelope-timeline/src/live.rs": "e7d7c84e3fa9e9960afbe76229ee3dfe5f4b4d63a385bfb1c39206f97927656b",
+    "crates/penelope-timeline/src/machine.rs": "5b3340fd0806ade0cd0959e57b36570790b90d316bd4c34bb3eb5dc4191a8e5e",
+    "crates/penelope-timeline/src/pinned.rs": "5cc9f1747c75f5357bd4a98ed3622c5a3ed023aef6ea870cd1d3e577cc69d280",
+    "crates/penelope-timeline/src/session.rs": "ed0dce6d5813f1dacde39db256f6632133fda922a2aa942ae21450f9f34701a6",
+    "crates/penelope-timeline/src/shared.rs": "0ec353b2767a59dace8329b3370303d7c916b56b51e1e5d01f3f599e6ea091bc",
+    "crates/penelope-timeline/src/step.rs": "b8047129a694f8aa05a4f1ae547ad5ff46b606722f396da1c38cb3629df8b32a",
+    "crates/penelope-timeline/tests/ancestry_lookup.rs": "fc119c15d8c346324dc78b5a3098e453a98b80d1babcdcbbf23ea9124c39581b",
+    "crates/penelope-timeline/tests/captured_lookup.rs": "e1feda0e2de4a8c78a469c4276d62311cab311233bf32683905d41995d22103b",
+    "crates/penelope-timeline/tests/client_prediction.rs": "7e94612d324007a573dce3bf07acb4bcd3f04b8d15861c92775ba5faf75d8ca0",
+    "crates/penelope-timeline/tests/determinism.rs": "8dea5de0cae186774c933d684a4e975adb6763d0dbbad17996771bf4f15f9420",
+    "crates/penelope-timeline/tests/effects_sequences.rs": "8419732073b9caf9252c869a020502062e96f55f5aa1d191adde4ebcfbcbf099",
+    "crates/penelope-timeline/tests/effects_unwind.rs": "c68a95671d6eb4b9b1c324ed6c81d4fbff469384882999abb41b51ea327d220c",
+    "crates/penelope-timeline/tests/history.rs": "2bfdc3a444d84f2ee5bd37acba67b7714a6f747dde8f3fceb959df97e9b83a9c",
+    "crates/penelope-timeline/tests/history_lookup.rs": "54df55c108804c0725c756c88c6e237143283b3b5f8aa732c139256e96d83c2c",
+    "crates/penelope-timeline/tests/machine.rs": "f9b663cef58d813ab3fb539990f13f4f0f6c92f52bb2306cab4cbf646eb844c5",
+    "crates/penelope-timeline/tests/materialization.rs": "f11d62f1e3d0a24b55f9a894cfdc388d7358fcbf146702605c1a12ab33f39067",
+    "crates/penelope-timeline/tests/model.rs": "a13f45261fedc2fc74e44ffe77b969b5a5ad28d5c6591deae0f4345162e27f14",
+    "crates/penelope-timeline/tests/replay.rs": "fd891aaa2b7f8fc2bb5eb9ea389b2f5b54f7c25faa204adb7b9e4bfbe992b611",
+    "crates/penelope-timeline/tests/retirement_unwind.rs": "b2cb7924c5cdfad0c033d8f91c56c237db4a7923994174717ff921ca8f302dfc",
+    "crates/penelope-timeline/tests/snapshot_lookup.rs": "450eed8b34a0eb57e1a819497860578c4d2ecee8c3df57b9831df905a42f83c1",
+    "crates/penelope-timeline/tests/support/ancestry_lookup.rs": "d74de08a1c35a5239d40fc6df38b98ffe8b779e634d08e32160d09225fce4af6",
+    "crates/penelope-timeline/tests/support/effects_sequences.rs": "b31a18ca9a67aebd0111807b68586c8f114093bb74632a8dcf82f9d2b1f6e850",
+    "crates/penelope-timeline/tests/support/history_lookup.rs": "61e8794280f17ad3754ebb336aebf9099f81689c1d4f200dd3b9a3ce77001c0b",
+    "crates/penelope-timeline/tests/support/snapshot_lookup.rs": "99de1c876779e3a4f844d09c8dea2d5d6d5d88be25dea4fc675c2c5400a6c466",
+    "crates/penelope-timeline/tests/support/timeline_model.rs": "455de4916e4e90d1d7254e99e46bc8d5bc4511bdada4175a2f1ebeec05ec2242",
+    "crates/penelope/Cargo.toml": "5724eb84430f49db048753d86bd8efb99fb17704b6d370aee44074d4276dcb26",
+    "crates/penelope/examples/counter_machine.rs": "e7c80c30dd4af4b0b7b6ecd3f3a4e3fae1013b030e83de9f3e8f969397a98d19",
+    "crates/penelope/examples/door_machine.rs": "a320d09191db9d49b315034df11162d5df8b658cd2efc375d327f4185087cf57",
+    "crates/penelope/examples/nested_order.rs": "ed1292014e8d16f0616b25d99c00ca39b7dad2dbd43eb6edf5f436d9a1a0f4f8",
+    "crates/penelope/examples/prepared_decisions.rs": "a9d410fa986d815021cfadbb0850325f25d0c588a87d16b039bb5b240653f938",
+    "crates/penelope/examples/support/counter.rs": "862b014c33f352e95ab7683f8d7fd9b3d1237f161ccd2da850c9a43cd1ce93c8",
+    "crates/penelope/examples/support/counter_codec.rs": "6afb81fa45a217caf281ca2966fe0ccecbb36f3b05b30cd4959f45fcd5345df4",
+    "crates/penelope/examples/support/inspection.rs": "f3976d8214755851a8fe5ff8b2191863fde601a07eef8837afb79c0dc8b87328",
+    "crates/penelope/examples/timeline_machine.rs": "fbbc66e6d467cc295818669eb82eaebf8562663df329406178e69725362599f3",
+    "crates/penelope/examples/trade.rs": "a08618e110e5d639e1fabb477b465ae5d198e7099db4a3704565368a14e492b5",
+    "crates/penelope/examples/trade_compensation.rs": "9d0a1877b0f83f132f0c746d03c80a2caa7c4bcc7df257add263e6523fcdefcf",
+    "crates/penelope/examples/trade_competing_lock.rs": "046b19d886c88d688567bc4ed0d1937a0634c5d389e9eb25ea0d97a20ef03181",
+    "crates/penelope/examples/trade_manual_review.rs": "47746e9ac616ccc2e8740c8ff0fd9bf686e4ad6f800f852b8979cb9a6f83c41b",
+    "crates/penelope/examples/trade_retry_timer.rs": "e9212e43e85d697e6c3e698b67729659e48ac85d4d0e8b7bf23f9697dfe951e2",
+    "crates/penelope/src/diagnostics.rs": "25dd75120e746ebbea57893fdb33a3af3ad4100a8480266bec30d9d79af23819",
+    "crates/penelope/src/integration.rs": "08c15eaf60c6546f321caa7a49613991b94aded678733922a13387859f5b751e",
+    "crates/penelope/src/lib.rs": "f53678fdabf7a3322b62c557ca2c7a4836d311e20cb8980d98e035096fdd5139",
+    "crates/penelope/src/runtime.rs": "f717a838ba267dd28c4a1d0f55f6e77786704ce0f05a28251f88531d60bf7d18",
+    "crates/penelope/src/saga.rs": "d685773d7c4d42588bda3a1cf77f5be9f6774dc66265559e1c5f6e7c3308baef",
+    "crates/penelope/src/storage.rs": "f8e9291dcc922c6bf48ac110ee8898c76dd5233ee5bb999c27c0b13563ff747a",
+    "crates/penelope/src/task.rs": "000afab91929fedd4bf95edd8290c5d012da0294d5ae9a23f5e614b2a5050e6f",
+    "crates/penelope/tests/prepared_lifecycles.rs": "f952178bae552a78f25c7b228d188d2db84fe6e746f1e8dbad9c1547d5b49165",
+    "rust-toolchain.toml": "ff969a0bfc49d99dccf1d0b206f0301c7b66c3caa9a7948f3c4754962b6e367d"
+  },
+  "test_and_coverage_evidence": "lineage-borrow-qualification.json",
+  "coverage_scope": "All 72 production hashes and all 449 tracked crate/workspace inputs match the earlier local patch qualification. Retains its 94.0809% result, not a new coverage run.",
+  "packaged_test_scope": "Clean archives match the final tested local-patch archives member-for-member except recorded VCS identity and any reconciled internal lock checksums. Actual clean archives retained. This input/content proof does not claim another 700-check extracted run.",
+  "requirement_reference_check": {
+    "blocks": 514,
+    "references": {
+      "other_files": 63,
+      "json_pointers": 656
+    },
+    "named_ci_observations": {
+      "Stable verification": 58,
+      "Minimum supported Rust": 58
+    },
+    "limits": "Reference and test-name validity do not prove semantic completeness; historical reviews retain their original scopes."
+  },
+  "performance_dispositions": "lineage-performance-followup.json",
+  "remaining": [
+    "Performance findings require explicit evidence-backed disposition under plan \u00a713.2.",
+    "Full immutable-source chaos remains incomplete and excluded from this stabilization pass by the user.",
+    "Dated release notes, tag, publication and merge remain deferred."
+  ],
+  "pr_opened": false,
+  "archive": {
+    "file": "lineage-clean-checkpoint.tar.gz",
+    "sha256": "7028b67015f5e3c627d428b04f4dbeea8f51d908dc36fca8b3489c9d98f2996f",
+    "members_sha256": {
+      "recorder.py": "c3ed4b7aae6d7b3274b007f58c1226a63fd03afe48d7c1ec1b1f8333a0a97a30",
+      "archive-reconciliation.json": "82bcbe73c557e395df2d193337442eed726984cebb22e663bcb323643c187861",
+      "ci.json": "32e2a101139da1a018b19795566295f01f620de098873f880c3313c8f25fcc14",
+      "ci.log": "681da7b1bb37eb2700a1f6343be4f632f863f73d4c93a46d7f40026d878b777a",
+      "package-verification.log": "c44069974d1bfff3e6efe50e3702a3c5855ca8b965b1d2d6c40b63c5a8286d7d",
+      "packages/penelope-0.5.0.crate": "3e1f7907a48fb29609e8e8adb4bd550729fca61abe01b011b0df4a4d7cf91f32",
+      "packages/penelope-core-0.5.0.crate": "fd770a113ebd533d770ee7e8185bc0e16a888b13e0841cf8d0ec0ccbc68e7081",
+      "packages/penelope-domain-0.5.0.crate": "39a643b0158a37a9f9aac14316b5b3f5ad6931eb9446e07789ba36998b3f378d",
+      "packages/penelope-executor-0.5.0.crate": "dcbee363f2aa02a978d3d76a7947f13f41df789d05f6fc68f7b946ac217103fd",
+      "packages/penelope-intent-0.5.0.crate": "59dbafd0948590d91aeff6fa70fcf44a9edf5eaafa46f6a21ee645d5121f0e51",
+      "packages/penelope-ports-0.5.0.crate": "c9e4bf43082cdb2171368d2fc72bebf76bd8848812238f4c13b68f54905cca0b",
+      "packages/penelope-process-runtime-0.5.0.crate": "0e79fa66a49dec89bdfffedf26f7f6bef08e1f3d7781b64faae0cc0d154825b6",
+      "packages/penelope-sqlite-0.5.0.crate": "31233f5a9e7ad653ef3e0869a98957cf2a5cb969bd3440a5ae3a2f324a3c91a5",
+      "packages/penelope-statechronicle-0.5.0.crate": "c2ce07663bd39829d1988297eb7326d606e9992ebcce15e6007004880fa9d7cd",
+      "packages/penelope-timeline-0.5.0.crate": "acd54d7cdaefe56833698244a0ecd89f0336e77aac1346443c24e464fcd7235c"
+    }
+  }
+}
