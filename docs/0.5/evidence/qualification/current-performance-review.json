@@ -1,0 +1,675 @@
+{
+  "source_commit": "7ab93d2cbb426f1e058fb7abc76c42c3f8582178",
+  "reviewed_at_utc": "2026-11-18T00:39:42.726595+00:00",
+  "scope": "Performance disposition inventory for current-source review. Produces a concrete list of remaining decisions; does not grant review approval.",
+  "comparisons": {
+    "sqlite": "../sqlite-balanced/post-qpsg-current.json",
+    "legacy": "../legacy-balanced/current-source.json"
+  },
+  "decisions": [
+    {
+      "family": "sqlite",
+      "profile": {
+        "metric": "/tasks/0/checkpoint_append/p95_ns"
+      },
+      "median_before": 695414,
+      "median_after": 818322,
+      "median_delta_percent": 17.6740761618259,
+      "paired_threshold_exceedances": 14,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "sqlite",
+      "profile": {
+        "metric": "/tasks/0/reopen_and_record_and_blob_replay/p50_ns"
+      },
+      "median_before": 287095,
+      "median_after": 317694,
+      "median_delta_percent": 10.658144516623413,
+      "paired_threshold_exceedances": 27,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "parallel_graph_saga",
+        "operation": "parallel graph-saga",
+        "metric": "ns_per_operation"
+      },
+      "median_before": 110.6828525,
+      "median_after": 118.595075,
+      "median_delta_percent": 7.148553114855805,
+      "paired_threshold_exceedances": 11,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "contract_throughput",
+        "operation": "canonical DTO encoding",
+        "metric": "ns_per_operation"
+      },
+      "median_before": 302.5991,
+      "median_after": 349.27254,
+      "median_delta_percent": 15.424183350181808,
+      "paired_threshold_exceedances": 31,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 251,
+      "median_after": 280,
+      "median_delta_percent": 11.553784860557759,
+      "paired_threshold_exceedances": 17,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "median_before": 251,
+      "median_after": 280,
+      "median_delta_percent": 11.553784860557759,
+      "paired_threshold_exceedances": 19,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 251,
+      "median_after": 280,
+      "median_delta_percent": 11.553784860557759,
+      "paired_threshold_exceedances": 18,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "median_before": 251,
+      "median_after": 280,
+      "median_delta_percent": 11.553784860557759,
+      "paired_threshold_exceedances": 19,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 512,
+        "metric": "p50_ns"
+      },
+      "median_before": 260,
+      "median_after": 281,
+      "median_delta_percent": 8.07692307692307,
+      "paired_threshold_exceedances": 20,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 512,
+        "metric": "p95_ns"
+      },
+      "median_before": 271,
+      "median_after": 301,
+      "median_delta_percent": 11.070110701107016,
+      "paired_threshold_exceedances": 19,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "promote",
+        "state_words": 128,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 121,
+      "median_after": 130,
+      "median_delta_percent": 7.438016528925617,
+      "paired_threshold_exceedances": 8,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_capture",
+        "state_words": 128,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "median_before": 30,
+      "median_after": 40,
+      "median_delta_percent": 33.33333333333333,
+      "paired_threshold_exceedances": 13,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "core_reserve_promote",
+        "state_words": 512,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 160,
+      "median_after": 170,
+      "median_delta_percent": 6.25,
+      "paired_threshold_exceedances": 15,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_restore",
+        "state_words": 512,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 60,
+      "median_after": 70,
+      "median_delta_percent": 16.666666666666675,
+      "paired_threshold_exceedances": 10,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_restore",
+        "state_words": 512,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "median_before": 61,
+      "median_after": 70,
+      "median_delta_percent": 14.754098360655732,
+      "paired_threshold_exceedances": 10,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "core_prepare",
+        "state_words": 512,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 130,
+      "median_after": 140,
+      "median_delta_percent": 7.692307692307687,
+      "paired_threshold_exceedances": 9,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_capture",
+        "state_words": 512,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "median_before": 91,
+      "median_after": 100,
+      "median_delta_percent": 9.8901098901099,
+      "paired_threshold_exceedances": 10,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_capture",
+        "state_words": 512,
+        "steps": 512,
+        "metric": "p50_ns"
+      },
+      "median_before": 91,
+      "median_after": 100,
+      "median_delta_percent": 9.8901098901099,
+      "paired_threshold_exceedances": 12,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "ring_restore",
+        "state_words": 512,
+        "steps": 512,
+        "metric": "p50_ns"
+      },
+      "median_before": 60,
+      "median_after": 70,
+      "median_delta_percent": 16.666666666666675,
+      "paired_threshold_exceedances": 10,
+      "disposition": "retained fixture control; no library performance claim",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 210,
+      "median_after": 290,
+      "median_delta_percent": 38.095238095238095,
+      "paired_threshold_exceedances": 31,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p95_ns"
+      },
+      "median_before": 231,
+      "median_after": 291,
+      "median_delta_percent": 25.974025974025984,
+      "paired_threshold_exceedances": 30,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "median_before": 1673,
+      "median_after": 2194,
+      "median_delta_percent": 31.141661685594734,
+      "paired_threshold_exceedances": 22,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "median_before": 4970,
+      "median_after": 5340,
+      "median_delta_percent": 7.444668008048283,
+      "paired_threshold_exceedances": 29,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 6994,
+      "median_after": 8877,
+      "median_delta_percent": 26.923076923076916,
+      "paired_threshold_exceedances": 31,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p95_ns"
+      },
+      "median_before": 7164,
+      "median_after": 8928,
+      "median_delta_percent": 24.623115577889454,
+      "paired_threshold_exceedances": 24,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 14067,
+      "median_after": 15349,
+      "median_delta_percent": 9.113528115447501,
+      "paired_threshold_exceedances": 31,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "median_before": 33104,
+      "median_after": 38865,
+      "median_delta_percent": 17.402730787820197,
+      "paired_threshold_exceedances": 31,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p95_ns"
+      },
+      "median_before": 35839,
+      "median_after": 39717,
+      "median_delta_percent": 10.820614414464691,
+      "paired_threshold_exceedances": 19,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "median_before": 55016,
+      "median_after": 58242,
+      "median_delta_percent": 5.863748727642859,
+      "paired_threshold_exceedances": 23,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 110,
+      "median_after": 120,
+      "median_delta_percent": 9.090909090909083,
+      "paired_threshold_exceedances": 14,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 121,
+      "median_after": 130,
+      "median_delta_percent": 7.438016528925617,
+      "paired_threshold_exceedances": 17,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 150,
+      "median_after": 160,
+      "median_delta_percent": 6.666666666666665,
+      "paired_threshold_exceedances": 15,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 101,
+      "median_after": 110,
+      "median_delta_percent": 8.910891089108919,
+      "paired_threshold_exceedances": 16,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_imported",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "median_before": 100,
+      "median_after": 110,
+      "median_delta_percent": 10.000000000000009,
+      "paired_threshold_exceedances": 14,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_root",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "median_before": 110,
+      "median_after": 120,
+      "median_delta_percent": 9.090909090909083,
+      "paired_threshold_exceedances": 16,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_root",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "median_before": 111,
+      "median_after": 120,
+      "median_delta_percent": 8.108108108108114,
+      "paired_threshold_exceedances": 9,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "median_before": 131,
+      "median_after": 140,
+      "median_delta_percent": 6.870229007633588,
+      "paired_threshold_exceedances": 19,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_inherited",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "median_before": 161,
+      "median_after": 170,
+      "median_delta_percent": 5.590062111801242,
+      "paired_threshold_exceedances": 14,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "median_before": 110,
+      "median_after": 120,
+      "median_delta_percent": 9.090909090909083,
+      "paired_threshold_exceedances": 18,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_materialize_inherited",
+        "state_words": 512,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "median_before": 155050,
+      "median_after": 162915,
+      "median_delta_percent": 5.0725572396001395,
+      "paired_threshold_exceedances": 16,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "effects_handoff_one_cap512",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "median_before": 161,
+      "median_after": 170,
+      "median_delta_percent": 5.590062111801242,
+      "paired_threshold_exceedances": 11,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "effects_read_cap512",
+        "state_words": 1,
+        "steps": 64,
+        "metric": "p50_ns"
+      },
+      "median_before": 41,
+      "median_after": 50,
+      "median_delta_percent": 21.95121951219512,
+      "paired_threshold_exceedances": 8,
+      "disposition": "open review blocker; neither fixed nor explicitly accepted",
+      "acceptance_granted": false
+    }
+  ],
+  "open_library_flags": 36,
+  "historical_findings": "Preserved in the versioned candidate and diagnostic manifests. Earlier severe SQLite replay/retry flags do not recur in the current run; they are not deleted or silently accepted.",
+  "merge_recommendation": "Hold merge under plan \u00a713.2 while library performance blockers lack a fix or explicit evidence-backed acceptance. Full chaos remains a separate incomplete qualification gate; the user excluded its execution, not its status.",
+  "pr_opened": false
+}

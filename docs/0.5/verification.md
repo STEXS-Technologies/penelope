@@ -7,12 +7,36 @@ how to run the gates. Tagging and publication require separate authorization.
 
 ## Current candidate
 
+The working tree includes a timeline optimization that borrows lineage and
+optional override records instead of copying them on every lookup. Its
+[local source/artifact reconciliation](evidence/qualification/lineage-borrow-qualification.json)
+records the exact patch over `7ab93d2`, matching all 449 tracked crate/workspace
+inputs between this checkout and the isolated qualification tree. Both compiler
+workspace runs report 700 passes. Ten final archives verify, extracted-workspace
+checks pass on both compilers, and final packaged executor tests include the
+strengthened admission-race and receipt-read failure assertions. Strict Clippy,
+warning-denying API docs and the unchanged coverage ratchet pass. This local
+patch has no clean-commit CI result yet. The clean `7ab93d2` results below retain
+their earlier scope. Rejected SQLite and serializer experiments are not integrated.
+
 All ten library crates use candidate version 0.5.0. The
-[current checkpoint](evidence/qualification/graph-start-package-checkpoint.json)
-qualifies ten clean archives at `8dfe89d`, with 700 passing checks on Rust 1.100
-and MSRV 1.89, explicit packaged-example runs, fresh coverage and seven green CI
-jobs. It retains source/archive identities, raw logs, external dependency identities
-and full LLVM JSON. **Full release qualification remains open.**
+[preceding clean source/artifact reconciliation](evidence/qualification/pre-pr-reconciliation.json)
+verifies ten clean archives at `7ab93d2`, with 700 reported passing checks on each
+of Rust 1.100 and MSRV 1.89, explicit packaged-example runs, fresh coverage and
+seven green CI jobs. All 72 coverage-reported production files match the preceding
+checkpoint. The only changed crate input is the SQLite test helper's fuzz-only
+timeout adjustment; the fresh archives contain that adjustment. The record retains
+the clean source, package/lock identities, raw logs, full LLVM JSON and an initial
+recorder interruption caused by interleaved child-process summary output. Cargo
+passed; the corrected recorder reused that successful stable run and completed
+the remaining compiler/example checks. **Full release qualification remains open.**
+
+The earlier [graph-start checkpoint](evidence/qualification/graph-start-package-checkpoint.json)
+retains its `8dfe89d` source and archive identities. The current reconciliation
+checks all 514 plan-review blocks, 656 JSON pointers and 63 other evidence targets,
+and observes all 58 indexed named checks in both current compiler CI jobs.
+Historical hash differences retain their source scopes and explicit dispositions;
+reference validity and matching tests do not prove semantic completeness.
 
 The [graph-start ownership fix](evidence/qualification/graph-start-ownership.json)
 removes an unnecessary definition borrow while retaining the original function
@@ -30,7 +54,7 @@ retain their earlier source scopes.
 | Gate | Verified result and scope |
 | --- | --- |
 | CI follow-up | Later example changes exposed two workspace-only Clippy errors in CI at `f36b77d`. The [lint correction](evidence/qualification/workspace-example-lint.json) passes the full stable workspace check and preserves both compiler runs and all six event traces; the current checkpoint includes subsequent green CI and clean archive checks |
-| CI | All seven jobs pass at [`8dfe89d`](https://github.com/STEXS-Technologies/penelope/actions/runs/43840278717): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
+| CI | All seven jobs pass at [`7ab93d2`](https://github.com/STEXS-Technologies/penelope/actions/runs/43997881950): stable, MSRV, bounded fuzz, signed-source conformance, portable core, supply-chain and secrets |
 | Library tests | All-target/all-feature tests pass on Rust 1.100 and MSRV 1.89; stable doctests, strict workspace/compatibility Clippy and warning-denying API docs pass |
 | Timed legacy properties | [Three registered properties](evidence/qualification/qpsg-property-stress.json) pass at `cefa55f`, each for at least 300 seconds with rotating seeds and 10,000 requested cases per batch. Exact registration, per-test logs and unchanged source hashes are retained; this does not replace full machine/timeline chaos |
 | Generated machine models | [Supplementary test/fuzz qualification](evidence/qualification/generated-machine-models.json): varied bounded transition tables and parent forests, exact provenance/intent/path oracle, one-level flat equivalence, stable/MSRV tests and two caught production mutations. The augmented machine target completes three independent 100,000-run fuzz rounds. That supplementary run changes only test/fuzz inputs and retains its `cefa55f` production scope. The [clean core archive](evidence/qualification/generated-machine-package.json) at `9a8134f` includes both new files and passes the extracted test on both compilers. [Fresh coverage](evidence/qualification/generated-machine-coverage.json) runs the added test and retains the same 94.0875% line result; the current checkpoint includes both additions in the full extracted workspace |
@@ -50,7 +74,7 @@ retain their earlier source scopes.
 | Shared decision example | [Graph view addition](evidence/qualification/graph-example.json) extends the existing machine/linear-saga/task example, with source-consumer runs and strict Clippy on stable/MSRV. That example follow-up records unchanged production at its source revision; the current all-ten archive checkpoint includes the example |
 | Consumer progression | First-machine tutorial, flat, nested, decision, timeline and durable machine/task/saga binaries run on both compilers |
 | Repository checks | All six checkout-only architecture tests run in the compatibility harness; layer boundaries, action pins and formatting pass |
-| Coverage | **14,925 / 15,860 lines = 94.1047%**, above the unchanged **94.0759%** ratchet; all 72 reported source files belong to the candidate checkout |
+| Coverage | Local timeline/test patch: **14,925 / 15,864 lines = 94.0809%**, above the unchanged **94.0759%** ratchet; all 72 reported source hashes match this checkout. Earlier `7ab93d2`: **14,925 / 15,860 = 94.1047%** |
 
 Earlier unsuccessful attempts remain in the preceding checkpoint. Current
 commands use the pinned conformance source and exclude the separate fuzz package
@@ -102,23 +126,68 @@ comparison; subprocess-split output is documented in the recorders.
   baseline. The paired [result summarizer](evidence/sqlite-balanced/summarize-post-qpsg.py)
   was exercised against the archived 31-pair report format; it validates every
   report and retains medians, paired flags and exploratory bootstrap intervals.
-  The final candidate comparison remains to be run after pinned chaos completes.
-- Finish the requirement-by-requirement maintenance/release audit, dated release
-  notes and final source/artifact reconciliation. Passing earlier checkpoints
-  does not qualify later source automatically. The
+  The [current-source comparison](evidence/sqlite-balanced/post-qpsg-current.json)
+  is now complete at `7ab93d2`: all 62 measured reports, warmups, both binaries
+  and source inventories are retained. Warm replay and exact retry do not cross
+  their thresholds in this run. Two flags remain: 16-record reopen/replay p50
+  287,095 → 317,694 ns (+10.66%, 27/31 pairs above 5%) and 16-record append p95
+  695,414 → 818,322 ns (+17.67%, 14/31 pairs above 10%). The latter is the maximum
+  of only 14 append observations per process. No flag is waived by that limited
+  sampling or its exploratory interval. The comparison ran without a new chaos
+  campaign; it does not close or waive the separate campaign obligation.
+  The [fresh eight-workload legacy comparison](evidence/legacy-balanced/current-source.json)
+  also retains 496 measured processes at `7ab93d2`, 16 binaries and unchanged
+  fixtures. Its 40 flags include six handwritten controls. The
+  [`7ab93d2` disposition inventory](evidence/qualification/current-performance-review.json)
+  lists all **36 library review flags** across both comparisons; none is accepted.
+  The later [31-round timeline borrowing comparison](evidence/legacy-balanced/lineage-borrow.json)
+  retains all 640 profiles at 1,000 observations each, original/candidate/probe
+  binaries and code-generation diagnostics. Selected inherited-read p50 improves
+  18.42–30.69% versus `7ab93d2` and 3.29–5.41% versus original 0.4; no inherited-read
+  threshold flag remains in that run. Seven other library p50 flags remain.
+  The [per-profile follow-up](evidence/qualification/lineage-performance-followup.json)
+  maps all historical findings to the later evidence without granting acceptance.
+  It is not a new eight-workload final-source qualification or proof that an
+  unflagged historical profile is equivalent.
+- The requirement-reference and source/package reconciliation is complete for
+  `7ab93d2`, with open acceptance conditions preserved. Final performance
+  disposition, full campaign qualification and dated release notes remain open.
+  Later code changes or the eventual release revision require their own source
+  and artifact reconciliation. The
   [release preflight](evidence/qualification/release-preflight.json) confirms
-  ten `0.5.0` packages and dependency order; the dated changelog entry remains
-  deferred until qualification is complete.
+  ten `0.5.0` packages and dependency order; the current reconciliation independently
+  rechecks both. The dated changelog entry remains deferred until qualification
+  is complete. This stabilization pass deliberately excludes a new full chaos
+  campaign and performs no tagging or publication.
+
+An [owning-serializer experiment](evidence/legacy-balanced/owned-serializer-rejected.json)
+was rejected after 31 rotating original/candidate/probe comparisons. Its DTO
+loop-mean medians were 309.91 / 355.15 / 361.51 ns. Both compiler test suites,
+golden wire checks and allocation checks passed, but the probe did not improve
+the frozen workload. The code was not integrated and the DTO finding remains open.
+
+A [current-schema open experiment](evidence/sqlite-balanced/current-schema-open-rejected.json)
+was also rejected after 31 rotating original/candidate/probe comparisons. Avoiding
+the migration writer lock for version 9 improves 16-record reopen/replay p50 by
+only 1.34% versus the candidate and remains 7.06% slower than original 0.4.
+All 61 SQLite unit tests passed on both compilers, including held-writer and
+future-version controls. Correctness passed, but the performance finding remains
+open and the schema change was not integrated.
 
 No regression acceptance is recorded. Diagnosis, intervals spanning zero and a
 smaller number of flags do not by themselves establish equivalence or waive a
-sustained regression. Current coverage passes at 94.1047%, compared with the
+sustained regression. Local patch coverage passes at 94.0809%; both preceding
+failed reports (94.0683% and 94.0746%) are retained. The executor race now forces
+both initial empty reads and exactly one native conflict. The lost-ACK check
+also refuses source acceptance during an unavailable native receipt read and
+then retries the same receipt successfully. No coverage threshold was lowered.
+The preceding `7ab93d2` coverage passes at 94.1047%, compared with the
 event-replay checkpoint's 94.1173%. The two fewer covered lines are confined to
 the SQLite payload adapter (78/91 versus 80/91); all other production file line
 totals are unchanged. The fresh result is retained. Aggregate coverage does not
 prove every new branch is exercised. The 15-invariant audit retains its recorded 27 owner
 source hashes and 33 boundary-test references. The replay addition has separate
-current evidence; final reconciliation must include that additional path.
+current evidence; the current clean-archive runs include those added replay checks.
 
 The [phase work audit](evidence/maintenance/phase-audit.json) maps all 50 work
 items and nine gates in plan §11 to 67 source/evidence files. It distinguishes
@@ -165,7 +234,7 @@ release reconciliation remain open.
 | One public API | Canonical facade, migration table and source-derived first-machine tutorial are checked on stable/MSRV. Advanced durable metadata remains explicit; no local convenience layer is claimed |
 | Reduced fragmentation | Shared owners and retained protocol boundaries are documented in ADR-050-06; inventories and rejected simplifications are retained. Production source grew with capabilities; exact clone counts do not prove absence of semantic duplication |
 | Portable and bounded | Stable/MSRV RISC-V compilation, allocation probes, capacity/fault tests and invariant audit pass in their stated profiles. No physical-board, arbitrary callback or whole-process memory bound is inferred |
-| Qualification complete | **Open:** immutable full chaos, legacy performance findings and final source/artifact reconciliation. Seven green CI jobs and passing extracted packages do not close these obligations |
+| Qualification complete | **Open:** immutable full chaos and performance acceptance. The later `7ab93d2` source/artifact reconciliation is complete within its recorded scope; seven green CI jobs and passing extracted packages do not close the remaining obligations |
 | Release controlled | Candidate versions/order and unreleased notes are prepared. **Open:** final dated release entry and artifact reconciliation after qualification; tagging/publication still require separate authorization |
 
 The §13.2 SQLite scope gap is now covered by the separate
@@ -193,6 +262,8 @@ recorded; no isolated-host or worst-case latency guarantee is implied.
 
 | Workload or finding | Retained evidence and disposition |
 | --- | --- |
+| Current-source legacy refresh | [31 pairs at `7ab93d2`](evidence/legacy-balanced/current-source.json): all eight unchanged workloads, 496 measured processes, 16 retained binaries and 1,000 timeline samples per profile/process. DTO encoding loop means are 302.60 → 349.27 ns (+15.42%, 31/31 pairs above 5%); one-word/one-step inherited reads are 210 → 290 ns p50 (+38.10%, 31/31 pairs) and 231 → 291 ns p95 (+25.97%, 30/31 pairs). Parallel graph-saga loop means flag at +7.15% (11/31 pairs above 5%). All 40 flags, including six handwritten controls, remain visible; none is accepted. Package tests on CPUs8–9 and coverage on CPUs10–11 may overlap serial CPU4/parallel CPUs4–7 measurements; shared-host interference remains uncontrolled |
+| Current-source legacy SQLite | [Post-QPSG 31 pairs at `7ab93d2`](evidence/sqlite-balanced/post-qpsg-current.json): previous warm-replay and exact-retry threshold flags do not recur in this run. Small-history reopen p50 remains +10.66% and append p95 flags at +17.67%. Both remain open. Ten replay samples and fourteen small-history append samples per process do not establish tail bounds or equivalence; all earlier reports remain retained |
 | Versioned candidate capabilities | [Frozen-source refresh](evidence/qualification/candidate-capability-performance.json) at `31c0cde`: seven existing harnesses, three stable runs and one MSRV run each, full 101-sample release profiles, all 14 executables retained. Flat/hierarchy/owned-state/timeline allocation probes pass within their recorded scope; SQLite races, bounded queues and real-worker recovery preserve their invariants. These observations do not accept legacy regressions |
 | Current contention and recovery | In that refresh, the 32-writer race has a median run p50 last-finish time of **429.90 ms** and median run p99 of **1,429.94 ms**; the sequential protected recovery workflow has median run p50 **40.06 ms**. Writers that all see the old head can still queue. Earlier local preflight improvements do not establish a general latency improvement or bound |
 | Versioned 0.5 versus 0.4 | [Complete 31-pair comparison](evidence/legacy-balanced/versioned-candidate.json): all 496 measured processes and 16 binary identities retained. DTO encoding loop means are 312.95 → 357.19 ns (+14.14%, 27/31 pairs over 5%); timeline retains 31 p50 and 9 p95 flags, including five handwritten Ring control flags. Saga/task loop-mean profiles do not cross the review threshold; that does not establish equivalence |

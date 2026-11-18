@@ -1,0 +1,837 @@
+{
+  "source_scope": "7ab93d2 plus lineage borrowing patch, plus test-only deterministic admission and receipt-read failure checks. No clean branch-tip CI yet.",
+  "previous_inventory": "current-performance-review.json",
+  "timeline_evidence": "../legacy-balanced/lineage-borrow.json",
+  "serializer_probe": "../legacy-balanced/owned-serializer-rejected.json",
+  "sqlite_probe": "../sqlite-balanced/current-schema-open-rejected.json",
+  "historical_library_dispositions": [
+    {
+      "family": "sqlite",
+      "profile": {
+        "metric": "/tasks/0/checkpoint_append/p95_ns"
+      },
+      "median_before": 695414,
+      "median_after": 818322,
+      "median_delta_percent": 17.6740761618259,
+      "paired_threshold_exceedances": 14,
+      "disposition": "Still open; rejected serializer/SQLite probes do not resolve this finding.",
+      "acceptance_granted": false
+    },
+    {
+      "family": "sqlite",
+      "profile": {
+        "metric": "/tasks/0/reopen_and_record_and_blob_replay/p50_ns"
+      },
+      "median_before": 287095,
+      "median_after": 317694,
+      "median_delta_percent": 10.658144516623413,
+      "paired_threshold_exceedances": 27,
+      "disposition": "Still open; rejected serializer/SQLite probes do not resolve this finding.",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "parallel_graph_saga",
+        "operation": "parallel graph-saga",
+        "metric": "ns_per_operation"
+      },
+      "median_before": 110.6828525,
+      "median_after": 118.595075,
+      "median_delta_percent": 7.148553114855805,
+      "paired_threshold_exceedances": 11,
+      "disposition": "Still open; rejected serializer/SQLite probes do not resolve this finding.",
+      "acceptance_granted": false
+    },
+    {
+      "family": "legacy",
+      "profile": {
+        "benchmark": "contract_throughput",
+        "operation": "canonical DTO encoding",
+        "metric": "ns_per_operation"
+      },
+      "median_before": 302.5991,
+      "median_after": 349.27254,
+      "median_delta_percent": 15.424183350181808,
+      "paired_threshold_exceedances": 31,
+      "disposition": "Still open; rejected serializer/SQLite probes do not resolve this finding.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 11.553784860557759,
+      "followup_medians": {
+        "original": 251,
+        "candidate": 281,
+        "probe": 251
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 11.553784860557759,
+      "followup_medians": {
+        "original": 251,
+        "candidate": 281,
+        "probe": 251
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 11.553784860557759,
+      "followup_medians": {
+        "original": 260,
+        "candidate": 281,
+        "probe": 251
+      },
+      "followup_delta_percent": -3.4615384615384603,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 11.553784860557759,
+      "followup_medians": {
+        "original": 260,
+        "candidate": 281,
+        "probe": 251
+      },
+      "followup_delta_percent": -3.4615384615384603,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 512,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 8.07692307692307,
+      "followup_medians": {
+        "original": 260,
+        "candidate": 281,
+        "probe": 260
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_capture",
+        "state_words": 1,
+        "steps": 512,
+        "metric": "p95_ns"
+      },
+      "previous_delta_percent": 11.070110701107016,
+      "followup_medians": {
+        "original": 271,
+        "candidate": 301,
+        "probe": 271
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "promote",
+        "state_words": 128,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 7.438016528925617,
+      "followup_medians": {
+        "original": 130,
+        "candidate": 121,
+        "probe": 130
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "core_reserve_promote",
+        "state_words": 512,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 6.25,
+      "followup_medians": {
+        "original": 170,
+        "candidate": 160,
+        "probe": 161
+      },
+      "followup_delta_percent": -5.294117647058827,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "core_prepare",
+        "state_words": 512,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 7.692307692307687,
+      "followup_medians": {
+        "original": 140,
+        "candidate": 130,
+        "probe": 130
+      },
+      "followup_delta_percent": -7.14285714285714,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 38.095238095238095,
+      "followup_medians": {
+        "original": 210,
+        "candidate": 290,
+        "probe": 201
+      },
+      "followup_delta_percent": -4.285714285714281,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p95_ns"
+      },
+      "previous_delta_percent": 25.974025974025984,
+      "followup_medians": {
+        "original": 221,
+        "candidate": 291,
+        "probe": 211
+      },
+      "followup_delta_percent": -4.524886877828049,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 31.141661685594734,
+      "followup_medians": {
+        "original": 1663,
+        "candidate": 2194,
+        "probe": 1573
+      },
+      "followup_delta_percent": -5.411906193625981,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 7.444668008048283,
+      "followup_medians": {
+        "original": 4930,
+        "candidate": 5401,
+        "probe": 4800
+      },
+      "followup_delta_percent": -2.6369168356997985,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 26.923076923076916,
+      "followup_medians": {
+        "original": 6994,
+        "candidate": 8897,
+        "probe": 6653
+      },
+      "followup_delta_percent": -4.875607663711756,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p95_ns"
+      },
+      "previous_delta_percent": 24.623115577889454,
+      "followup_medians": {
+        "original": 7144,
+        "candidate": 8938,
+        "probe": 6784
+      },
+      "followup_delta_percent": -5.039193729003355,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 9.113528115447501,
+      "followup_medians": {
+        "original": 13816,
+        "candidate": 15631,
+        "probe": 13386
+      },
+      "followup_delta_percent": -3.112333526346267,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 17.402730787820197,
+      "followup_medians": {
+        "original": 32904,
+        "candidate": 39005,
+        "probe": 31822
+      },
+      "followup_delta_percent": -3.288353999513738,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_read_all_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p95_ns"
+      },
+      "previous_delta_percent": 10.820614414464691,
+      "followup_medians": {
+        "original": 34026,
+        "candidate": 40688,
+        "probe": 32433
+      },
+      "followup_delta_percent": -4.681713983424441,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_full_correction_inherited",
+        "state_words": 1,
+        "steps": 128,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 5.863748727642859,
+      "followup_medians": {
+        "original": 54305,
+        "candidate": 59364,
+        "probe": 52282
+      },
+      "followup_delta_percent": -3.7252555013350563,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 9.090909090909083,
+      "followup_medians": {
+        "original": 110,
+        "candidate": 110,
+        "probe": 110
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 7.438016528925617,
+      "followup_medians": {
+        "original": 120,
+        "candidate": 121,
+        "probe": 120
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_inherited",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 6.666666666666665,
+      "followup_medians": {
+        "original": 150,
+        "candidate": 151,
+        "probe": 150
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 8.910891089108919,
+      "followup_medians": {
+        "original": 100,
+        "candidate": 101,
+        "probe": 100
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_imported",
+        "state_words": 1,
+        "steps": 32,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 10.000000000000009,
+      "followup_medians": {
+        "original": 100,
+        "candidate": 100,
+        "probe": 100
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_root",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 9.090909090909083,
+      "followup_medians": {
+        "original": 110,
+        "candidate": 111,
+        "probe": 110
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_root",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 8.108108108108114,
+      "followup_medians": {
+        "original": 111,
+        "candidate": 111,
+        "probe": 120
+      },
+      "followup_delta_percent": 8.108108108108114,
+      "followup_threshold_flag": true,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_inherited",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 6.870229007633588,
+      "followup_medians": {
+        "original": 131,
+        "candidate": 140,
+        "probe": 130
+      },
+      "followup_delta_percent": -0.7633587786259555,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_restore_inherited",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 5.590062111801242,
+      "followup_medians": {
+        "original": 161,
+        "candidate": 170,
+        "probe": 151
+      },
+      "followup_delta_percent": -6.211180124223603,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "snapshot_at_child_snapshot",
+        "state_words": 1,
+        "steps": 63,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 9.090909090909083,
+      "followup_medians": {
+        "original": 110,
+        "candidate": 111,
+        "probe": 110
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "history_materialize_inherited",
+        "state_words": 512,
+        "steps": 1,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 5.0725572396001395,
+      "followup_medians": {
+        "original": 154379,
+        "candidate": 165750,
+        "probe": 152716
+      },
+      "followup_delta_percent": -1.0772190518140379,
+      "followup_threshold_flag": false,
+      "disposition": "Borrowing removes unconditional copies; inherited lookup improvement confirmed by codegen and full matrix. Historical scope preserved; no acceptance granted.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "effects_handoff_one_cap512",
+        "state_words": 1,
+        "steps": 8,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 5.590062111801242,
+      "followup_medians": {
+        "original": 161,
+        "candidate": 161,
+        "probe": 161
+      },
+      "followup_delta_percent": 0.0,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    },
+    {
+      "profile": {
+        "benchmark": "timeline_operations",
+        "operation": "effects_read_cap512",
+        "state_words": 1,
+        "steps": 64,
+        "metric": "p50_ns"
+      },
+      "previous_delta_percent": 21.95121951219512,
+      "followup_medians": {
+        "original": 41,
+        "candidate": 50,
+        "probe": 40
+      },
+      "followup_delta_percent": -2.4390243902439046,
+      "followup_threshold_flag": false,
+      "disposition": "Later observation retained; absence of a flag does not establish a fix or acceptance.",
+      "acceptance_granted": false
+    }
+  ],
+  "current_timeline_flags": [
+    {
+      "operation": "owned_apply_input",
+      "state_words": 1,
+      "steps": 128,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 130,
+        "candidate": 131,
+        "probe": 140
+      },
+      "probe_delta_percent": {
+        "original": 7.692307692307687,
+        "candidate": 6.870229007633588
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": true
+      },
+      "paired_threshold_exceedances": {
+        "original": 17,
+        "candidate": 12
+      }
+    },
+    {
+      "operation": "promote",
+      "state_words": 128,
+      "steps": 8,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 121,
+        "candidate": 121,
+        "probe": 130
+      },
+      "probe_delta_percent": {
+        "original": 7.438016528925617,
+        "candidate": 7.438016528925617
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": true
+      },
+      "paired_threshold_exceedances": {
+        "original": 11,
+        "candidate": 11
+      }
+    },
+    {
+      "operation": "core_prepare",
+      "state_words": 128,
+      "steps": 32,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 131,
+        "candidate": 140,
+        "probe": 140
+      },
+      "probe_delta_percent": {
+        "original": 6.870229007633588,
+        "candidate": 0.0
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": false
+      },
+      "paired_threshold_exceedances": {
+        "original": 12,
+        "candidate": 10
+      }
+    },
+    {
+      "operation": "promote",
+      "state_words": 128,
+      "steps": 32,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 121,
+        "candidate": 130,
+        "probe": 130
+      },
+      "probe_delta_percent": {
+        "original": 7.438016528925617,
+        "candidate": 0.0
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": false
+      },
+      "paired_threshold_exceedances": {
+        "original": 11,
+        "candidate": 12
+      }
+    },
+    {
+      "operation": "snapshot_restore_root",
+      "state_words": 1,
+      "steps": 63,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 111,
+        "candidate": 111,
+        "probe": 120
+      },
+      "probe_delta_percent": {
+        "original": 8.108108108108114,
+        "candidate": 8.108108108108114
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": true
+      },
+      "paired_threshold_exceedances": {
+        "original": 12,
+        "candidate": 13
+      }
+    },
+    {
+      "operation": "effects_stage_cap8",
+      "state_words": 1,
+      "steps": 0,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 161,
+        "candidate": 161,
+        "probe": 170
+      },
+      "probe_delta_percent": {
+        "original": 5.590062111801242,
+        "candidate": 5.590062111801242
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": true
+      },
+      "paired_threshold_exceedances": {
+        "original": 13,
+        "candidate": 12
+      }
+    },
+    {
+      "operation": "effects_handoff_one_cap64",
+      "state_words": 1,
+      "steps": 8,
+      "metric": "p50_ns",
+      "medians": {
+        "original": 161,
+        "candidate": 161,
+        "probe": 170
+      },
+      "probe_delta_percent": {
+        "original": 5.590062111801242,
+        "candidate": 5.590062111801242
+      },
+      "review_flags": {
+        "original": true,
+        "candidate": true
+      },
+      "paired_threshold_exceedances": {
+        "original": 13,
+        "candidate": 11
+      }
+    }
+  ],
+  "current_timeline_flag_count": 7,
+  "unchanged_other_workload_flags": 4,
+  "scope_limits": "The seven timeline flags plus four earlier non-timeline flags describe different source/run scopes. This is not a new complete eight-workload comparison and does not certify eleven as the exhaustive final-branch total. No previous finding is silently waived.",
+  "acceptance_granted": false,
+  "merge_recommendation": "Hold merge pending explicit dispositions under plan \u00a713.2 and remaining qualification. No PR opened; full chaos excluded from this stabilization pass."
+}

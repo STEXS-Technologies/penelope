@@ -311,7 +311,7 @@ impl<
             return Err(TimelineError::Conflict);
         }
         self.check_plan(plan)?;
-        let parent = self.lineage(plan.expected_head().branch())?;
+        let parent = self.lineage(plan.expected_head().branch())?.branch;
         if reservation.branch() <= self.last_branch {
             return Err(TimelineError::Conflict);
         }
@@ -323,7 +323,7 @@ impl<
             .ok_or(TimelineError::Capacity)?;
         *slot = Some(Lineage {
             branch: reservation.branch(),
-            parent: Some(parent.branch),
+            parent: Some(parent),
             inherited_through: plan.expected_head().step(),
             admitted_through: plan.expected_head().step(),
             state_changed_from: plan.corrected_step(),
@@ -675,12 +675,11 @@ impl<
         }
         Ok(())
     }
-    fn lineage(&self, branch: TimelineBranchId) -> Result<Lineage, TimelineError> {
+    fn lineage(&self, branch: TimelineBranchId) -> Result<&Lineage, TimelineError> {
         self.branches
             .iter()
             .flatten()
             .find(|entry| entry.branch == branch)
-            .copied()
             .ok_or(TimelineError::HistoryUnavailable)
     }
     fn check_payload<T: HistoryPayload>(
@@ -879,8 +878,12 @@ impl<
                 self.verify_input(entry)?;
                 return Ok(entry);
             }
-            if let Some(record) = lineage.input_override.filter(|record| record.step == step) {
-                return self.exact_input(record);
+            if let Some(record) = lineage
+                .input_override
+                .as_ref()
+                .filter(|record| record.step == step)
+            {
+                return self.exact_input(*record);
             }
             if step > lineage.inherited_through {
                 return Err(TimelineError::HistoryUnavailable);
@@ -920,8 +923,12 @@ impl<
                 self.verify_anchor(entry)?;
                 return Ok(entry);
             }
-            if let Some(anchor) = lineage.state_override.filter(|anchor| anchor.step == step) {
-                return self.exact_anchor(anchor);
+            if let Some(anchor) = lineage
+                .state_override
+                .as_ref()
+                .filter(|anchor| anchor.step == step)
+            {
+                return self.exact_anchor(*anchor);
             }
             if step >= lineage.state_changed_from {
                 return Err(TimelineError::HistoryUnavailable);

@@ -342,6 +342,7 @@ fn receiver_policy_identity_changes_with_definition_schema_and_namespace_before_
 struct LostAck {
     inner: Arc<SqliteAsyncTaskJournal>,
     lose: AtomicBool,
+    fail_read: AtomicBool,
 }
 #[async_trait]
 impl AsyncTaskJournal for LostAck {
@@ -350,6 +351,9 @@ impl AsyncTaskJournal for LostAck {
         scope: TaskScope,
         sequence: TaskSequence,
     ) -> Result<Option<TaskRecord>, TaskPortError> {
+        if self.fail_read.swap(false, Ordering::SeqCst) {
+            return Err(TaskPortError::Unavailable);
+        }
         self.inner.read(scope, sequence).await
     }
     async fn commit(
@@ -380,6 +384,7 @@ fn lost_native_commit_ack_leaves_pending_source_and_reconstructs_the_original_in
     let tasks = Arc::new(LostAck {
         inner: journal(&directory.path().join("tasks.db")),
         lose: AtomicBool::new(true),
+        fail_read: AtomicBool::new(false),
     });
     let receiver =
         Arc::new(MachineTaskReceiver::new(Arc::clone(&tasks), NAMESPACE, definition(), 1).unwrap());
@@ -404,6 +409,20 @@ fn lost_native_commit_ack_leaves_pending_source_and_reconstructs_the_original_in
     );
     let accepted = block_on(receiver.accept(&outbox, &true, &lease, TaskTick::new(2))).unwrap();
     assert_eq!(accepted.tick, TaskTick::new(1));
+    // An unavailable native receipt read must leave source acceptance pending;
+    // retry the same durable receipt after the receiver backend recovers.
+    tasks.fail_read.store(true, Ordering::SeqCst);
+    assert_eq!(
+        block_on(outbox.acknowledge(&true, &lease, &accepted)),
+        Err(MachineStoreError::Unavailable)
+    );
+    assert_eq!(
+        block_on(outbox.status(&true, SCOPE, lease.metadata().source.intent.identity))
+            .unwrap()
+            .unwrap()
+            .accepted,
+        None
+    );
     block_on(outbox.acknowledge(&true, &lease, &accepted)).unwrap();
 }
 
@@ -472,14 +491,62 @@ fn target_specific_authorization_precedes_any_native_admission() {
         None
     );
 }
+/// Hold both initial empty reads until each independent writer is ready to commit.
+struct RacingJournal {
+    inner: Arc<SqliteAsyncTaskJournal>,
+    initial_reads: Arc<std::sync::Barrier>,
+    conflicts: Arc<AtomicU64>,
+}
+#[async_trait]
+impl AsyncTaskJournal for RacingJournal {
+    async fn read(
+        &self,
+        scope: TaskScope,
+        sequence: TaskSequence,
+    ) -> Result<Option<TaskRecord>, TaskPortError> {
+        let record = self.inner.read(scope, sequence).await?;
+        if sequence == TaskSequence::ZERO && record.is_none() {
+            self.initial_reads.wait();
+        }
+        Ok(record)
+    }
+    async fn commit(
+        &self,
+        record: &TaskRecord,
+        blob: Option<&[u8]>,
+    ) -> Result<TaskRecord, TaskPortError> {
+        let result = self.inner.commit(record, blob).await;
+        if matches!(result, Err(TaskPortError::Conflict)) {
+            self.conflicts.fetch_add(1, Ordering::SeqCst);
+        }
+        result
+    }
+    async fn read_blob(
+        &self,
+        scope: TaskScope,
+        blob: BlobRef,
+        buffer: &mut [u8],
+    ) -> Result<usize, TaskPortError> {
+        self.inner.read_blob(scope, blob, buffer).await
+    }
+}
 #[test]
 fn independent_native_writers_reconstruct_one_exact_receipt_after_racing_admission() {
     let directory = tempfile::tempdir().unwrap();
     let store = source(&directory.path().join("machine.db"));
     let path = directory.path().join("tasks.db");
+    let initial_reads = Arc::new(std::sync::Barrier::new(2));
+    let conflicts = Arc::new(AtomicU64::new(0));
+    let racing_journal = || {
+        Arc::new(RacingJournal {
+            inner: journal(&path),
+            initial_reads: Arc::clone(&initial_reads),
+            conflicts: Arc::clone(&conflicts),
+        })
+    };
     let receiver =
-        Arc::new(MachineTaskReceiver::new(journal(&path), NAMESPACE, definition(), 1).unwrap());
-    let other = MachineTaskReceiver::new(journal(&path), NAMESPACE, definition(), 1).unwrap();
+        Arc::new(MachineTaskReceiver::new(racing_journal(), NAMESPACE, definition(), 1).unwrap());
+    let other = MachineTaskReceiver::new(racing_journal(), NAMESPACE, definition(), 1).unwrap();
     let outbox = Arc::new(
         SqliteMachineOutbox::new(
             store,
@@ -504,6 +571,7 @@ fn independent_native_writers_reconstruct_one_exact_receipt_after_racing_admissi
         block_on(other.accept(&*second_outbox, &true, &second_lease, TaskTick::new(2))).unwrap()
     });
     assert_eq!(a.join().unwrap(), result.join().unwrap());
+    assert_eq!(conflicts.load(Ordering::SeqCst), 1);
     let connection = rusqlite::Connection::open(path).unwrap();
     let records: u32 = connection
         .query_row("SELECT count(*) FROM task_records", [], |row| row.get(0))

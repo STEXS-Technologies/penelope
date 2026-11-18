@@ -20,8 +20,8 @@ boundaries behind the facade.
 | F4 — Task | Native prepared views, task admission, worker recovery and verified result progression | [Canonical tutorial](../getting-started.md), [storage](machine-storage.md#admit-a-recoverable-task); final qualification remains open |
 | F5 — Timeline | Machine adapter reuses existing correction/finality engine | [Composition](timeline-machines.md); retained legacy performance findings require review |
 | F6 — Durability | Authorized SQLite journal, snapshots, event replay, outbox and native receivers | [Storage](machine-storage.md), [wire](machine-wire.md), [upgrade/rollback](compatibility-matrix.md); the event-replay checkpoint includes source/package tests; full campaign qualification remains open |
-| F7 — Coherence and maintenance | Canonical facade/tutorial, shared helpers, docs cleanup and maintenance inventory | [Extraction boundaries](architecture.md#adr-050-06-extraction-boundaries), [verification](verification.md); performance matrix and final audit remain open |
-| F8 — Candidate | Event-replay source CI, extracted-package tests and coverage pass | [Current gates](verification.md#current-candidate); full immutable-source chaos, performance conclusions, final audit and dated release notes remain open |
+| F7 — Coherence and maintenance | Canonical facade/tutorial, shared helpers, docs cleanup, maintenance inventory and current source/artifact audit | [Extraction boundaries](architecture.md#adr-050-06-extraction-boundaries), [verification](verification.md); performance acceptance and final release review remain open |
+| F8 — Candidate | Clean `7ab93d2` CI/archive checkpoint plus local timeline/test-patch stable/MSRV, final archives, coverage and source/artifact reconciliation pass | [Current gates](verification.md#current-candidate); local patch still requires clean branch-tip CI; full immutable-source chaos, performance acceptance and dated release notes remain open. This stabilization pass excludes a new full chaos campaign |
 
 ## Stabilization focus
 
